@@ -3,6 +3,7 @@ include platform/build/soong:/OWNERS
 # Since this file affects all Android developers, lock it down. There is still
 # round the world timzeone coverage.
 per-file envsetup.sh = joeo@google.com, jingwen@google.com, lberki@google.com
+per-file shell_utils.sh = joeo@google.com, jingwen@google.com, lberki@google.com
 
 # Finalization scripts
 per-file finalize* = smoreland@google.com, alexbuy@google.com

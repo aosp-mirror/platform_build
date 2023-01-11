@@ -48,8 +48,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"apacheBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
+				{"apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
+				{"apacheBin.meta_lic", "apacheLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -60,8 +60,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"mitBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"mitBin.meta_lic", "mitBin.meta_lic", "mitBin.meta_lic", "notice"},
-				{"mitBin.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
+				{"mitBin.meta_lic", "mitBin.meta_lic", "notice"},
+				{"mitBin.meta_lic", "mitLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -72,9 +72,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+				{"apacheBin.meta_lic", "apacheBin.meta_lic", "notice|restricted_if_statically_linked"},
+				{"apacheBin.meta_lic", "lgplLib.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -85,7 +84,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
+				{"apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
 			},
 		},
 		{
@@ -96,7 +95,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
+				{"apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
 			},
 		},
 		{
@@ -116,8 +115,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
+				{"apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
+				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -137,7 +136,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "dependentModule.meta_lic", "notice"},
+				{"dependentModule.meta_lic", "dependentModule.meta_lic", "notice"},
 			},
 		},
 		{
@@ -157,9 +156,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"lgplBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"lgplBin.meta_lic", "lgplBin.meta_lic", "lgplBin.meta_lic", "restricted"},
-				{"lgplBin.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"lgplBin.meta_lic", "apacheLib.meta_lic", "lgplBin.meta_lic", "restricted"},
+				{"lgplBin.meta_lic", "lgplBin.meta_lic", "restricted_if_statically_linked"},
+				{"lgplBin.meta_lic", "apacheLib.meta_lic", "notice|restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -170,8 +168,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"lgplBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"lgplBin.meta_lic", "lgplBin.meta_lic", "lgplBin.meta_lic", "restricted"},
-				{"lgplBin.meta_lic", "apacheLib.meta_lic", "lgplBin.meta_lic", "restricted"},
+				{"lgplBin.meta_lic", "lgplBin.meta_lic", "restricted_if_statically_linked"},
+				{"lgplBin.meta_lic", "apacheLib.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -182,7 +180,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"lgplBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"lgplBin.meta_lic", "lgplBin.meta_lic", "lgplBin.meta_lic", "restricted"},
+				{"lgplBin.meta_lic", "lgplBin.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -193,7 +191,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"lgplBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"lgplBin.meta_lic", "lgplBin.meta_lic", "lgplBin.meta_lic", "restricted"},
+				{"lgplBin.meta_lic", "lgplBin.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -204,9 +202,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"gplBin.meta_lic", "gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
-				{"gplBin.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"gplBin.meta_lic", "apacheLib.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "apacheLib.meta_lic", "notice|restricted"},
 			},
 		},
 		{
@@ -217,8 +214,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"gplBin.meta_lic", "gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
-				{"gplBin.meta_lic", "apacheLib.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "apacheLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -229,11 +226,9 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplContainer.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"gplContainer.meta_lic", "gplContainer.meta_lic", "gplContainer.meta_lic", "restricted"},
-				{"gplContainer.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"gplContainer.meta_lic", "apacheLib.meta_lic", "gplContainer.meta_lic", "restricted"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "gplContainer.meta_lic", "restricted"},
+				{"gplContainer.meta_lic", "gplContainer.meta_lic", "restricted"},
+				{"gplContainer.meta_lic", "apacheLib.meta_lic", "notice|restricted"},
+				{"apacheLib.meta_lic", "apacheLib.meta_lic", "notice|restricted"},
 			},
 		},
 		{
@@ -244,9 +239,9 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplContainer.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"gplContainer.meta_lic", "gplContainer.meta_lic", "gplContainer.meta_lic", "restricted"},
-				{"gplContainer.meta_lic", "apacheLib.meta_lic", "gplContainer.meta_lic", "restricted"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "gplContainer.meta_lic", "restricted"},
+				{"gplContainer.meta_lic", "gplContainer.meta_lic", "restricted"},
+				{"gplContainer.meta_lic", "apacheLib.meta_lic", "restricted"},
+				{"apacheLib.meta_lic", "apacheLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -258,12 +253,11 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"apacheContainer.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice|restricted"},
+				{"apacheContainer.meta_lic", "apacheLib.meta_lic", "notice"},
+				{"apacheContainer.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
+				{"gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -275,9 +269,9 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"apacheContainer.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "restricted"},
+				{"apacheContainer.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -289,11 +283,9 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"apacheBin.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "apacheLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"apacheBin.meta_lic", "apacheBin.meta_lic", "notice|restricted"},
+				{"apacheBin.meta_lic", "apacheLib.meta_lic", "notice|restricted"},
+				{"apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -305,9 +297,9 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"apacheBin.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "apacheLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"apacheBin.meta_lic", "apacheBin.meta_lic", "restricted"},
+				{"apacheBin.meta_lic", "apacheLib.meta_lic", "restricted"},
+				{"apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -318,7 +310,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"gplBin.meta_lic", "gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -329,7 +321,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"gplBin.meta_lic", "gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -340,9 +332,9 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"gplBin.meta_lic", "gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
-				{"gplBin.meta_lic", "apacheLib.meta_lic", "gplBin.meta_lic", "restricted"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "apacheLib.meta_lic", "restricted"},
+				{"apacheLib.meta_lic", "apacheLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -353,7 +345,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -382,8 +374,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
-				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
+				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", "notice"},
 			},
 		},
 		{
@@ -403,7 +395,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
+				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -432,9 +424,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"proprietary.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"proprietary.meta_lic", "proprietary.meta_lic", "proprietary.meta_lic", "proprietary"},
-				{"proprietary.meta_lic", "proprietary.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"proprietary.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"proprietary.meta_lic", "proprietary.meta_lic", "restricted|proprietary"},
+				{"proprietary.meta_lic", "gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -445,8 +436,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"proprietary.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"proprietary.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"proprietary.meta_lic", "proprietary.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"proprietary.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"proprietary.meta_lic", "proprietary.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -457,7 +448,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"proprietary.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"proprietary.meta_lic", "proprietary.meta_lic", "proprietary.meta_lic", "proprietary"},
+				{"proprietary.meta_lic", "proprietary.meta_lic", "proprietary"},
 			},
 		},
 		{
@@ -468,9 +459,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplBin.meta_lic", "proprietary.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"gplBin.meta_lic", "gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
-				{"gplBin.meta_lic", "proprietary.meta_lic", "proprietary.meta_lic", "proprietary"},
-				{"gplBin.meta_lic", "proprietary.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "proprietary.meta_lic", "restricted|proprietary"},
 			},
 		},
 		{
@@ -481,8 +471,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplBin.meta_lic", "proprietary.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"gplBin.meta_lic", "gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
-				{"gplBin.meta_lic", "proprietary.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "proprietary.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -493,7 +483,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"gplBin.meta_lic", "proprietary.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"gplBin.meta_lic", "proprietary.meta_lic", "proprietary.meta_lic", "proprietary"},
+				{"gplBin.meta_lic", "proprietary.meta_lic", "proprietary"},
 			},
 		},
 		{
@@ -504,8 +494,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"mitBin.meta_lic", "by_exception.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"mitBin.meta_lic", "mitBin.meta_lic", "mitBin.meta_lic", "notice"},
-				{"mitBin.meta_lic", "by_exception.meta_lic", "by_exception.meta_lic", "by_exception_only"},
+				{"mitBin.meta_lic", "mitBin.meta_lic", "notice"},
+				{"mitBin.meta_lic", "by_exception.meta_lic", "by_exception_only"},
 			},
 		},
 		{
@@ -525,7 +515,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"mitBin.meta_lic", "by_exception.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"mitBin.meta_lic", "by_exception.meta_lic", "by_exception.meta_lic", "by_exception_only"},
+				{"mitBin.meta_lic", "by_exception.meta_lic", "by_exception_only"},
 			},
 		},
 		{
@@ -536,8 +526,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"by_exception.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"by_exception.meta_lic", "by_exception.meta_lic", "by_exception.meta_lic", "by_exception_only"},
-				{"by_exception.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
+				{"by_exception.meta_lic", "by_exception.meta_lic", "by_exception_only"},
+				{"by_exception.meta_lic", "mitLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -557,7 +547,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"by_exception.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"by_exception.meta_lic", "by_exception.meta_lic", "by_exception.meta_lic", "by_exception_only"},
+				{"by_exception.meta_lic", "by_exception.meta_lic", "by_exception_only"},
 			},
 		},
 		{
@@ -568,8 +558,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"mitBin.meta_lic", "mplLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"mitBin.meta_lic", "mitBin.meta_lic", "mitBin.meta_lic", "notice"},
-				{"mitBin.meta_lic", "mplLib.meta_lic", "mplLib.meta_lic", "reciprocal"},
+				{"mitBin.meta_lic", "mitBin.meta_lic", "notice"},
+				{"mitBin.meta_lic", "mplLib.meta_lic", "reciprocal"},
 			},
 		},
 		{
@@ -580,7 +570,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"mitBin.meta_lic", "mplLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"mitBin.meta_lic", "mplLib.meta_lic", "mplLib.meta_lic", "reciprocal"},
+				{"mitBin.meta_lic", "mplLib.meta_lic", "reciprocal"},
 			},
 		},
 		{
@@ -591,8 +581,8 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"mplBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"mplBin.meta_lic", "mplBin.meta_lic", "mplBin.meta_lic", "reciprocal"},
-				{"mplBin.meta_lic", "mitLib.meta_lic", "mitLib.meta_lic", "notice"},
+				{"mplBin.meta_lic", "mplBin.meta_lic", "reciprocal"},
+				{"mplBin.meta_lic", "mitLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -603,7 +593,7 @@ func TestWalkResolutionsForCondition(t *testing.T) {
 				{"mplBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"mplBin.meta_lic", "mplBin.meta_lic", "mplBin.meta_lic", "reciprocal"},
+				{"mplBin.meta_lic", "mplBin.meta_lic", "reciprocal"},
 			},
 		},
 	}
@@ -639,8 +629,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"apacheBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
+				{"apacheBin.meta_lic", "notice"},
+				{"apacheLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -651,8 +641,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"mitBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"mitBin.meta_lic", "mitBin.meta_lic", "notice"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "notice"},
+				{"mitBin.meta_lic", "notice"},
+				{"mitLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -663,9 +653,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "lgplLib.meta_lic", "restricted"},
-				{"lgplLib.meta_lic", "lgplLib.meta_lic", "restricted"},
+				{"apacheBin.meta_lic", "notice"},
+				{"lgplLib.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -676,7 +665,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"apacheBin.meta_lic", "lgplLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedActions: []act{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
+				{"apacheBin.meta_lic", "notice"},
 			},
 		},
 		{
@@ -687,7 +676,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
 			},
 			expectedActions: []act{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
+				{"apacheBin.meta_lic", "notice"},
 			},
 		},
 		{
@@ -707,8 +696,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
+				{"apacheBin.meta_lic", "notice"},
+				{"gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -728,7 +717,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
 			},
 			expectedActions: []act{
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "notice"},
+				{"dependentModule.meta_lic", "notice"},
 			},
 		},
 		{
@@ -748,9 +737,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"lgplBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"lgplBin.meta_lic", "lgplBin.meta_lic", "restricted"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"apacheLib.meta_lic", "lgplBin.meta_lic", "restricted"},
+				{"lgplBin.meta_lic", "restricted_if_statically_linked"},
+				{"apacheLib.meta_lic", "notice|restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -761,8 +749,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"lgplBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"lgplBin.meta_lic", "lgplBin.meta_lic", "restricted"},
-				{"apacheLib.meta_lic", "lgplBin.meta_lic", "restricted"},
+				{"lgplBin.meta_lic", "restricted_if_statically_linked"},
+				{"apacheLib.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -773,7 +761,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"lgplBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedActions: []act{
-				{"lgplBin.meta_lic", "lgplBin.meta_lic", "restricted"},
+				{"lgplBin.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -784,7 +772,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"lgplBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedActions: []act{
-				{"lgplBin.meta_lic", "lgplBin.meta_lic", "restricted"},
+				{"lgplBin.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -795,9 +783,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"apacheLib.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "restricted"},
+				{"apacheLib.meta_lic", "notice|restricted"},
 			},
 		},
 		{
@@ -808,8 +795,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
-				{"apacheLib.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "restricted"},
+				{"apacheLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -820,11 +807,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplContainer.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"gplContainer.meta_lic", "gplContainer.meta_lic", "restricted"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"apacheLib.meta_lic", "gplContainer.meta_lic", "restricted"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"apacheLib.meta_lic", "gplContainer.meta_lic", "restricted"},
+				{"gplContainer.meta_lic", "restricted"},
+				{"apacheLib.meta_lic", "notice|restricted"},
 			},
 		},
 		{
@@ -835,9 +819,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplContainer.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"gplContainer.meta_lic", "gplContainer.meta_lic", "restricted"},
-				{"apacheLib.meta_lic", "gplContainer.meta_lic", "restricted"},
-				{"apacheLib.meta_lic", "gplContainer.meta_lic", "restricted"},
+				{"gplContainer.meta_lic", "restricted"},
+				{"apacheLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -849,11 +832,9 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"apacheContainer.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "notice"},
-				{"apacheContainer.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"apacheContainer.meta_lic", "notice|restricted"},
+				{"apacheLib.meta_lic", "notice"},
+				{"gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -865,8 +846,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"apacheContainer.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"apacheContainer.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"apacheContainer.meta_lic", "restricted"},
+				{"gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -878,11 +859,9 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"apacheBin.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
-				{"apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "notice"},
-				{"apacheLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"apacheBin.meta_lic", "notice|restricted"},
+				{"apacheLib.meta_lic", "notice|restricted"},
+				{"gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -894,9 +873,9 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"apacheBin.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"apacheBin.meta_lic", "restricted"},
+				{"apacheLib.meta_lic", "restricted"},
+				{"gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -907,7 +886,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedActions: []act{
-				{"gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -918,7 +897,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedActions: []act{
-				{"gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -929,8 +908,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedActions: []act{
-				{"gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
-				{"apacheLib.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "restricted"},
+				{"apacheLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -941,7 +920,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"dynamic"}},
 			},
 			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
+				{"gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -970,8 +949,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "notice"},
+				{"gplWithClasspathException.meta_lic", "permissive"},
+				{"apacheBin.meta_lic", "notice"},
 			},
 		},
 		{
@@ -991,7 +970,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", []string{"dynamic"}},
 			},
 			expectedActions: []act{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "permissive"},
+				{"gplWithClasspathException.meta_lic", "permissive"},
 			},
 		},
 		{
@@ -1020,9 +999,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"proprietary.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"proprietary.meta_lic", "proprietary.meta_lic", "proprietary"},
-				{"proprietary.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"proprietary.meta_lic", "restricted|proprietary"},
+				{"gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -1033,8 +1011,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"proprietary.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"proprietary.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"gplLib.meta_lic", "restricted"},
+				{"proprietary.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -1045,7 +1023,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"proprietary.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"proprietary.meta_lic", "proprietary.meta_lic", "proprietary"},
+				{"proprietary.meta_lic", "proprietary"},
 			},
 		},
 		{
@@ -1056,9 +1034,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplBin.meta_lic", "proprietary.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
-				{"proprietary.meta_lic", "proprietary.meta_lic", "proprietary"},
-				{"proprietary.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "restricted"},
+				{"proprietary.meta_lic", "restricted|proprietary"},
 			},
 		},
 		{
@@ -1069,8 +1046,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplBin.meta_lic", "proprietary.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
-				{"proprietary.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "restricted"},
+				{"proprietary.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -1081,7 +1058,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"gplBin.meta_lic", "proprietary.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"proprietary.meta_lic", "proprietary.meta_lic", "proprietary"},
+				{"proprietary.meta_lic", "proprietary"},
 			},
 		},
 		{
@@ -1092,8 +1069,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"mitBin.meta_lic", "by_exception.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"mitBin.meta_lic", "mitBin.meta_lic", "notice"},
-				{"by_exception.meta_lic", "by_exception.meta_lic", "by_exception_only"},
+				{"mitBin.meta_lic", "notice"},
+				{"by_exception.meta_lic", "by_exception_only"},
 			},
 		},
 		{
@@ -1113,7 +1090,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"mitBin.meta_lic", "by_exception.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"by_exception.meta_lic", "by_exception.meta_lic", "by_exception_only"},
+				{"by_exception.meta_lic", "by_exception_only"},
 			},
 		},
 		{
@@ -1124,8 +1101,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"by_exception.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"by_exception.meta_lic", "by_exception.meta_lic", "by_exception_only"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "notice"},
+				{"by_exception.meta_lic", "by_exception_only"},
+				{"mitLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -1145,7 +1122,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"by_exception.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"by_exception.meta_lic", "by_exception.meta_lic", "by_exception_only"},
+				{"by_exception.meta_lic", "by_exception_only"},
 			},
 		},
 		{
@@ -1156,8 +1133,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"mitBin.meta_lic", "mplLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"mitBin.meta_lic", "mitBin.meta_lic", "notice"},
-				{"mplLib.meta_lic", "mplLib.meta_lic", "reciprocal"},
+				{"mitBin.meta_lic", "notice"},
+				{"mplLib.meta_lic", "reciprocal"},
 			},
 		},
 		{
@@ -1168,7 +1145,7 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"mitBin.meta_lic", "mplLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"mplLib.meta_lic", "mplLib.meta_lic", "reciprocal"},
+				{"mplLib.meta_lic", "reciprocal"},
 			},
 		},
 		{
@@ -1179,8 +1156,8 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"mplBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"mplBin.meta_lic", "mplBin.meta_lic", "reciprocal"},
-				{"mitLib.meta_lic", "mitLib.meta_lic", "notice"},
+				{"mplBin.meta_lic", "reciprocal"},
+				{"mitLib.meta_lic", "notice"},
 			},
 		},
 		{
@@ -1191,7 +1168,25 @@ func TestWalkActionsForCondition(t *testing.T) {
 				{"mplBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
 			expectedActions: []act{
-				{"mplBin.meta_lic", "mplBin.meta_lic", "reciprocal"},
+				{"mplBin.meta_lic", "reciprocal"},
+			},
+		},
+		{
+			name:      "regress-walk-twice",
+			condition: ImpliesShared,
+			roots:     []string{"mitBin.meta_lic", "apacheBin.meta_lic", "gplLib.meta_lic"},
+			edges: []annotated{
+				{"apacheBin.meta_lic", "mitLib.meta_lic", []string{"dynamic"}},
+				{"apacheBin.meta_lic", "gplLib.meta_lic", []string{"dynamic"}},
+				{"mitBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
+				{"mitBin.meta_lic", "lgplLib.meta_lic", []string{"static"}},
+			},
+			expectedActions: []act{
+				{"apacheBin.meta_lic", "restricted"},
+				{"mitLib.meta_lic", "restricted|restricted_if_statically_linked"},
+				{"gplLib.meta_lic", "restricted"},
+				{"mitBin.meta_lic", "restricted_if_statically_linked"},
+				{"lgplLib.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 	}

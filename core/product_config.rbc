@@ -59,6 +59,12 @@ def __print_attr(attr, value):
         if _options.format == "pretty":
             print(attr, "=", repr(value))
         elif _options.format == "make":
+            value = list(value)
+            for i, x in enumerate(value):
+                if type(x) == "tuple" and len(x) == 1:
+                    value[i] = "@inherit:" + x[0] + ".mk"
+                elif type(x) != "string":
+                    fail("Wasn't a list of strings:", attr, " value:", value)
             print(attr, ":=", " ".join(value))
     elif _options.format == "pretty":
         print(attr, "=", repr(value))
