@@ -16,15 +16,15 @@ package compliance
 
 // ShippedNodes returns the set of nodes in a license graph where the target or
 // a derivative work gets distributed. (caches result)
-func ShippedNodes(lg *LicenseGraph) *TargetNodeSet {
+func ShippedNodes(lg *LicenseGraph) TargetNodeSet {
 	lg.mu.Lock()
 	shipped := lg.shippedNodes
 	lg.mu.Unlock()
 	if shipped != nil {
-		return shipped
+		return *shipped
 	}
 
-	tset := make(map[*TargetNode]struct{})
+	tset := make(TargetNodeSet)
 
 	WalkTopDown(NoEdgeContext{}, lg, func(lg *LicenseGraph, tn *TargetNode, path TargetEdgePath) bool {
 		if _, alreadyWalked := tset[tn]; alreadyWalked {
@@ -39,7 +39,7 @@ func ShippedNodes(lg *LicenseGraph) *TargetNodeSet {
 		return true
 	})
 
-	shipped = &TargetNodeSet{tset}
+	shipped = &tset
 
 	lg.mu.Lock()
 	if lg.shippedNodes == nil {
@@ -50,5 +50,5 @@ func ShippedNodes(lg *LicenseGraph) *TargetNodeSet {
 	}
 	lg.mu.Unlock()
 
-	return shipped
+	return *shipped
 }

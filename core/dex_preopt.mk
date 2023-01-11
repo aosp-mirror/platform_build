@@ -64,9 +64,21 @@ boot_zip := $(PRODUCT_OUT)/boot.zip
 bootclasspath_jars := $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES)
 
 # TODO remove system_server_jars usages from boot.zip and depend directly on system_server.zip file.
+
+# Use "/system" path for JARs with "platform:" prefix.
+# These JARs counterintuitively use "platform" prefix but they will
+# be actually installed to /system partition.
+platform_system_server_jars = $(filter platform:%, $(PRODUCT_SYSTEM_SERVER_JARS))
 system_server_jars := \
-  $(foreach m,$(PRODUCT_SYSTEM_SERVER_JARS),\
+  $(foreach m,$(platform_system_server_jars),\
     $(PRODUCT_OUT)/system/framework/$(call word-colon,2,$(m)).jar)
+
+# For the remaining system server JARs use the partition signified by the prefix.
+# For example, prefix "system_ext:" will use "/system_ext" path.
+other_system_server_jars = $(filter-out $(platform_system_server_jars), $(PRODUCT_SYSTEM_SERVER_JARS))
+system_server_jars += \
+  $(foreach m,$(other_system_server_jars),\
+    $(PRODUCT_OUT)/$(call word-colon,1,$(m))/framework/$(call word-colon,2,$(m)).jar)
 
 $(boot_zip): PRIVATE_BOOTCLASSPATH_JARS := $(bootclasspath_jars)
 $(boot_zip): PRIVATE_SYSTEM_SERVER_JARS := $(system_server_jars)
