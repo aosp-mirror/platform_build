@@ -1852,11 +1852,6 @@ function _wrap_build()
         color_reset=""
     fi
 
-    if [[ "x${USE_RBE}" == "x" && $mins -gt 15 && "${ANDROID_BUILD_ENVIRONMENT_CONFIG}" == "googler" ]]; then
-        echo
-        echo "${color_warning}Start using RBE (http://go/build-fast) to get faster builds!${color_reset}"
-    fi
-
     echo
     if [ $ret -eq 0 ] ; then
         echo -n "${color_success}#### build completed successfully "
