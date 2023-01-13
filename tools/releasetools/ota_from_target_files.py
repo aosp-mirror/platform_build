@@ -205,7 +205,8 @@ A/B OTA specific options
 
   --partial "<PARTITION> [<PARTITION>[...]]"
       Generate partial updates, overriding ab_partitions list with the given
-      list.
+      list. Specify --partial= without partition list to let tooling auto detect
+      partial partition list.
 
   --custom_image <custom_partition=custom_image>
       Use the specified custom_image to update custom_partition when generating
@@ -856,6 +857,31 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     target_info = common.BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
     source_info = None
 
+  if OPTIONS.partial == []:
+    logger.info(
+        "Automatically detecting partial partition list from input target files.")
+    OPTIONS.partial = target_info.get(
+        "partial_ota_update_partitions_list").split()
+    assert OPTIONS.partial, "Input target_file does not have"
+    " partial_ota_update_partitions_list defined, failed to auto detect partial"
+    " partition list. Please specify list of partitions to update manually via"
+    " --partial=a,b,c , or generate a complete OTA by removing the --partial"
+    " option"
+    OPTIONS.partial.sort()
+    if source_info:
+      source_partial_list = source_info.get(
+          "partial_ota_update_partitions_list").split()
+      if source_partial_list:
+        source_partial_list.sort()
+        if source_partial_list != OPTIONS.partial:
+          logger.warning("Source build and target build have different partial partition lists. Source: %s, target: %s, taking the intersection.",
+                         source_partial_list, OPTIONS.partial)
+          OPTIONS.partial = list(
+              set(OPTIONS.partial) and set(source_partial_list))
+          OPTIONS.partial.sort()
+    logger.info("Automatically deduced partial partition list: %s",
+                OPTIONS.partial)
+
   if target_info.vendor_suppressed_vabc:
     logger.info("Vendor suppressed VABC. Disabling")
     OPTIONS.disable_vabc = True
@@ -1107,9 +1133,12 @@ def main(argv):
     elif o == "--boot_variable_file":
       OPTIONS.boot_variable_file = a
     elif o == "--partial":
-      partitions = a.split()
-      if not partitions:
-        raise ValueError("Cannot parse partitions in {}".format(a))
+      if a:
+        partitions = a.split()
+        if not partitions:
+          raise ValueError("Cannot parse partitions in {}".format(a))
+      else:
+        partitions = []
       OPTIONS.partial = partitions
     elif o == "--custom_image":
       custom_partition, custom_image = a.split("=")
@@ -1190,12 +1219,11 @@ def main(argv):
                                  "vabc_compression_param=",
                                  "security_patch_level=",
                              ], extra_option_handler=option_handler)
+  common.InitLogging()
 
   if len(args) != 2:
     common.Usage(__doc__)
     sys.exit(1)
-
-  common.InitLogging()
 
   # Load the build info dicts from the zip directly or the extracted input
   # directory. We don't need to unzip the entire target-files zips, because they
