@@ -27,6 +27,10 @@ b build "$test_target"
 b build "$test_target" --run-soong-tests
 b build --run-soong-tests "$test_target"
 b --run-soong-tests build "$test_target"
+# Test that the bazel server can be restarted once shut down. If run in a
+# docker container, you need to run the docker container with --init or
+# have some other process as PID 1 that can reap zombies.
+b shutdown
 b cquery 'kind(test, //build/bazel/examples/android_app/...)' --config=android
 b run $test_target -- --help >/dev/null
 
