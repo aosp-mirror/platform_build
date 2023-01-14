@@ -1132,6 +1132,21 @@ def AddImagesToTargetFiles(filename):
           item for item in vbmeta_partitions
           if item not in vbmeta_vendor.split()]
       vbmeta_partitions.append("vbmeta_vendor")
+    custom_avb_partitions = OPTIONS.info_dict.get("avb_custom_vbmeta_images_partition_list", "").strip().split()
+    if custom_avb_partitions:
+      for avb_part in custom_avb_partitions:
+        partition_name = "vbmeta_" + avb_part
+        included_partitions = OPTIONS.info_dict.get("avb_vbmeta_{}".format(avb_part), "").strip().split()
+        assert included_partitions, "Custom vbmeta partition {0} missing avb_vbmeta_{0} prop".format(avb_part)
+        banner(partition_name)
+        logger.info("VBMeta partition {} needs {}".format(partition_name, included_partitions))
+        partitions[partition_name] = AddVBMeta(
+            output_zip, partitions, partition_name, included_partitions)
+        vbmeta_partitions = [
+            item for item in vbmeta_partitions
+            if item not in included_partitions]
+        vbmeta_partitions.append(partition_name)
+
 
     if OPTIONS.info_dict.get("avb_building_vbmeta_image") == "true":
       banner("vbmeta")
