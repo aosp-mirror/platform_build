@@ -4090,7 +4090,8 @@ endif # end of AVB for BUILDING_SYSTEM_OTHER_IMAGE
 
 INTERNAL_AVB_PARTITIONS_IN_CHAINED_VBMETA_IMAGES := \
     $(BOARD_AVB_VBMETA_SYSTEM) \
-    $(BOARD_AVB_VBMETA_VENDOR)
+    $(BOARD_AVB_VBMETA_VENDOR) \
+    $(foreach partition,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS),$(BOARD_AVB_VBMETA_$(call to-upper,$(partition))))
 
 # Not allowing the same partition to appear in multiple groups.
 ifneq ($(words $(sort $(INTERNAL_AVB_PARTITIONS_IN_CHAINED_VBMETA_IMAGES))),$(words $(INTERNAL_AVB_PARTITIONS_IN_CHAINED_VBMETA_IMAGES)))
@@ -4396,6 +4397,11 @@ ifdef BOARD_AVB_VBMETA_VENDOR
 $(eval $(call check-and-set-avb-args,vbmeta_vendor))
 endif
 
+ifdef BOARD_AVB_VBMETA_CUSTOM_PARTITIONS
+$(foreach partition,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS),$(eval $(call check-and-set-avb-args,vbmeta_$(partition))))
+$(foreach partition,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS),$(eval BOARD_AVB_MAKE_VBMETA_$(call to-upper,$(partition))_IMAGE_ARGS += --padding_size 4096))
+endif
+
 ifneq ($(strip $(BOARD_CUSTOMIMAGES_PARTITION_LIST)),)
 $(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
     $(eval $(call check-and-set-custom-avb-chain-args,$(partition))))
@@ -4422,6 +4428,13 @@ endif
 ifdef BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX
 BOARD_AVB_MAKE_VBMETA_VENDOR_IMAGE_ARGS += \
     --rollback_index $(BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX)
+endif
+
+ifdef BOARD_AVB_VBMETA_CUSTOM_PARTITIONS
+  $(foreach partition,$(call to-upper,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)), \
+      $(if $(BOARD_AVB_VBMETA_$(partition)_ROLLBACK_INDEX),$(eval \
+        BOARD_AVB_MAKE_VBMETA_$(partition)_IMAGE_ARGS += \
+          --rollback_index $(BOARD_AVB_VBMETA_$(partition)_ROLLBACK_INDEX))))
 endif
 
 # $(1): the directory to extract public keys to
@@ -4480,7 +4493,11 @@ define extract-avb-chain-public-keys
   $(if $(BOARD_CUSTOMIMAGES_PARTITION_LIST),\
     $(hide) $(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
         $(AVBTOOL) extract_public_key --key $(BOARD_AVB_$(call to-upper,$(partition))_KEY_PATH) \
-            --output $(1)/$(partition).avbpubkey;))
+            --output $(1)/$(partition).avbpubkey;)) \
+  $(if $(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS),\
+    $(hide) $(foreach partition,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS), \
+        $(AVBTOOL) extract_public_key --key $(BOARD_AVB_VBMETA_$(call to-upper,$(partition))_KEY_PATH) \
+            --output $(1)/vbmeta_$(partition).avbpubkey;))
 endef
 
 # Builds a chained VBMeta image. This VBMeta image will contain the descriptors for the partitions
@@ -4492,13 +4509,13 @@ endef
 # $(1): VBMeta image name, such as "vbmeta_system", "vbmeta_vendor" etc.
 # $(2): Output filename.
 define build-chained-vbmeta-image
-  $(call pretty,"Target chained vbmeta image: $@")
-  $(hide) $(AVBTOOL) make_vbmeta_image \
-      $(INTERNAL_AVB_$(call to-upper,$(1))_SIGNING_ARGS) \
-      $(BOARD_AVB_MAKE_$(call to-upper,$(1))_IMAGE_ARGS) \
-      $(foreach image,$(BOARD_AVB_$(call to-upper,$(1))), \
-          --include_descriptors_from_image $(call images-for-partitions,$(image))) \
-      --output $@
+	$(call pretty,"Target chained vbmeta image: $@")
+	$(hide) $(AVBTOOL) make_vbmeta_image \
+	    $(INTERNAL_AVB_$(call to-upper,$(1))_SIGNING_ARGS) \
+	    $(BOARD_AVB_MAKE_$(call to-upper,$(1))_IMAGE_ARGS) \
+	    $(foreach image,$(BOARD_AVB_$(call to-upper,$(1))), \
+	        --include_descriptors_from_image $(call images-for-partitions,$(image))) \
+	    --output $@
 endef
 
 ifdef BUILDING_SYSTEM_IMAGE
@@ -4526,7 +4543,26 @@ $(INSTALLED_VBMETA_VENDORIMAGE_TARGET): \
 
 $(call declare-1p-container,$(INSTALLED_VBMETA_VENDORIMAGE_TARGET),)
 
-UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_VBMETA_VENDORIMAGE_TARGET)
+UNMOUNTED_NOTICE_VENDOR_DEPS += $(INSTALLED_VBMETA_VENDORIMAGE_TARGET)
+endif
+
+ifdef BOARD_AVB_VBMETA_CUSTOM_PARTITIONS
+define declare-custom-vbmeta-target
+INSTALLED_VBMETA_$(call to-upper,$(1))IMAGE_TARGET := $(PRODUCT_OUT)/vbmeta_$(call to-lower,$(1)).img
+$$(INSTALLED_VBMETA_$(call to-upper,$(1))IMAGE_TARGET): \
+	    $(AVBTOOL) \
+	    $(call images-for-partitions,$(BOARD_AVB_VBMETA_$(call to-upper,$(1)))) \
+	    $(BOARD_AVB_VBMETA_$(call to-upper,$(1))_KEY_PATH)
+	$$(call build-chained-vbmeta-image,vbmeta_$(call to-lower,$(1)))
+
+$(call declare-1p-container,$(INSTALLED_VBMETA_$(call to-upper,$(1))IMAGE_TARGET),)
+
+UNMOUNTED_NOTICE_VENDOR_DEPS += $(INSTALLED_VBMETA_$(call to-upper,$(1))IMAGE_TARGET)
+endef
+
+$(foreach partition,\
+          $(call to-upper,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)),\
+          $(eval $(call declare-custom-vbmeta-target,$(partition))))
 endif
 
 define build-vbmetaimage-target
@@ -4566,8 +4602,10 @@ $(INSTALLED_VBMETAIMAGE_TARGET): \
 	    $(INSTALLED_RECOVERYIMAGE_TARGET) \
 	    $(INSTALLED_VBMETA_SYSTEMIMAGE_TARGET) \
 	    $(INSTALLED_VBMETA_VENDORIMAGE_TARGET) \
+      $(foreach partition,$(call to-upper,$( BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)),$(INSTALLED_VBMETA_$(partition)IMAGE_TARGET)) \
 	    $(BOARD_AVB_VBMETA_SYSTEM_KEY_PATH) \
 	    $(BOARD_AVB_VBMETA_VENDOR_KEY_PATH) \
+      $(foreach partition,$(call to-upper,$( BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)),$(BOARD_AVB_VBMETA_$(partition)_KEY_PATH)) \
 	    $(BOARD_AVB_KEY_PATH)
 	$(build-vbmetaimage-target)
 
@@ -5319,6 +5357,15 @@ ifneq (,$(strip $(BOARD_AVB_VBMETA_VENDOR)))
 	$(hide) echo "avb_vbmeta_vendor_algorithm=$(BOARD_AVB_VBMETA_VENDOR_ALGORITHM)" >> $@
 	$(hide) echo "avb_vbmeta_vendor_rollback_index_location=$(BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX_LOCATION)" >> $@
 endif # BOARD_AVB_VBMETA_VENDOR_KEY_PATH
+ifneq (,$(strip $(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)))
+	$(hide) echo "avb_custom_vbmeta_images_partition_list=$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)" >> $@
+	$(hide) $(foreach partition,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS),\
+	echo "avb_vbmeta_$(partition)=$(BOARD_AVB_VBMETA_$(call to-upper,$(partition)))" >> $@ ;\
+	echo "avb_vbmeta_$(partition)_args=$(BOARD_AVB_MAKE_VBMETA_$(call to-upper,$(partition))_IMAGE_ARGS)" >> $@ ;\
+	echo "avb_vbmeta_$(partition)_key_path=$(BOARD_AVB_VBMETA_$(call to-upper,$(partition))_KEY_PATH)" >> $@ ;\
+	echo "avb_vbmeta_$(partition)_algorithm=$(BOARD_AVB_VBMETA_$(call to-upper,$(partition))_ALGORITHM)" >> $@ ;\
+	echo "avb_vbmeta_$(partition)_rollback_index_location=$(BOARD_AVB_VBMETA_$(call to-upper,$(partition))_ROLLBACK_INDEX_LOCATION)" >> $@ ;)
+endif # BOARD_AVB_VBMETA_CUSTOM_PARTITIONS
 endif # BOARD_AVB_ENABLE
 ifdef BOARD_BPT_INPUT_FILES
 	$(hide) echo "board_bpt_enable=true" >> $@
