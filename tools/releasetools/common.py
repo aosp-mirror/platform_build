@@ -3403,7 +3403,7 @@ class BlockDifference(object):
     #   compression_time:   75s  | 265s               | 719s
     #   decompression_time: 15s  | 25s                | 25s
 
-    if not self.src:
+    if not self.src and not OPTIONS.info_dict.get("board_non_ab_ota_disable_compression"):
       brotli_cmd = ['brotli', '--quality=6',
                     '--output={}.new.dat.br'.format(self.path),
                     '{}.new.dat'.format(self.path)]
