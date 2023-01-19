@@ -29,11 +29,16 @@ PRODUCT_PACKAGES += \
     adb_debug.prop \
     userdebug_plat_sepolicy.cil \
 
+
+# For targets using dedicated recovery partition, generic ramdisk
+# might be relocated to recovery partition
 _my_paths := \
     $(TARGET_COPY_OUT_RAMDISK)/ \
     $(TARGET_COPY_OUT_DEBUG_RAMDISK)/ \
     system/usr/share/zoneinfo/tz_version \
     system/usr/share/zoneinfo/tzdata \
+    $(TARGET_COPY_OUT_RECOVERY)/root/first_stage_ramdisk/system \
+
 
 # We use the "relaxed" version here because tzdata / tz_version is only produced
 # by this makefile on a subset of devices.
