@@ -122,6 +122,7 @@ endif
 # without exceptions).
 PRODUCT_SYSTEM_PROPERTIES += \
     pm.dexopt.post-boot?=extract \
+    pm.dexopt.boot-after-mainline-update?=verify \
     pm.dexopt.install?=speed-profile \
     pm.dexopt.install-fast?=skip \
     pm.dexopt.install-bulk?=speed-profile \
