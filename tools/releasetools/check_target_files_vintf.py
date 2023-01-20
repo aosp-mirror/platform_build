@@ -237,7 +237,7 @@ def PrepareApexDirectory(inp):
   if OPTIONS.search_path:
     debugfs_path = os.path.join(OPTIONS.search_path, 'bin', 'debugfs_static')
     deapexer_path = os.path.join(OPTIONS.search_path, 'bin', 'deapexer')
-    blkid_path = os.path.join(OPTIONS.search_path, 'bin', 'blkid')
+    blkid_path = os.path.join(OPTIONS.search_path, 'bin', 'blkid_static')
     fsckerofs_path = os.path.join(OPTIONS.search_path, 'bin', 'fsck.erofs')
     if os.path.isfile(deapexer_path):
       deapexer = deapexer_path
