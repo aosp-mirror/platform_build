@@ -12,29 +12,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-# This file enables baseline features, such as io_uring,
-# userspace merge, etc. But sets compression method to none.
-# This .mk file also removes snapuserd from vendor ramdisk,
-# as T launching devices will have init_boot which has snapuserd
-# in generic ramdisk.
-# T launching devices should include this .mk file, and configure
-# compression algorithm by setting
-# PRODUCT_VIRTUAL_AB_COMPRESSION_METHOD to gz or brotli. Complete
-# set of supported algorithms can be found in
-# system/core/fs_mgr/libsnapshot/cow_writer.cpp
-
-PRODUCT_VIRTUAL_AB_OTA := true
-
-PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.enabled=true
-
-PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.compression.enabled=true
-PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.userspace.snapshots.enabled=true
-PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.io_uring.enabled=true
-PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.compression.xor.enabled=true
-
-PRODUCT_VIRTUAL_AB_COMPRESSION := true
-PRODUCT_VIRTUAL_AB_COMPRESSION_METHOD ?= none
-PRODUCT_PACKAGES += \
-    snapuserd \
-
+# This file should be used only for T launching devices. We maintain
+# this file just for backward compatibility for T launch devices
+# so that build doesn't break.
+#
+# All U+ launching devices should instead use vabc_features.mk.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/vabc_features.mk)
