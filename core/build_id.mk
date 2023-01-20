@@ -8,4 +8,4 @@
 # (like "CRB01").  It must be a single word, and is
 # capitalized by convention.
 
-BUILD_ID=GAMES
+BUILD_ID=AGS4.230120.001
