@@ -36,6 +36,7 @@ ifneq ($(TARGET_BUILD_APPS),)
 PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/aosp_arm64.mk \
     $(LOCAL_DIR)/aosp_arm.mk \
+    $(LOCAL_DIR)/aosp_riscv64.mk \
     $(LOCAL_DIR)/aosp_x86_64.mk \
     $(LOCAL_DIR)/aosp_x86.mk \
     $(LOCAL_DIR)/full.mk \
