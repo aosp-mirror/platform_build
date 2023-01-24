@@ -282,7 +282,7 @@ endif;
   needed_property_files = (
       NonAbOtaPropertyFiles(),
   )
-  FinalizeMetadata(metadata, staging_file, output_file, needed_property_files)
+  FinalizeMetadata(metadata, staging_file, output_file, needed_property_files, package_key=OPTIONS.package_key)
 
 
 def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_file):
@@ -537,7 +537,7 @@ endif;
   needed_property_files = (
       NonAbOtaPropertyFiles(),
   )
-  FinalizeMetadata(metadata, staging_file, output_file, needed_property_files)
+  FinalizeMetadata(metadata, staging_file, output_file, needed_property_files, package_key=OPTIONS.package_key)
 
 
 def GenerateNonAbOtaPackage(target_file, output_file, source_file=None):
