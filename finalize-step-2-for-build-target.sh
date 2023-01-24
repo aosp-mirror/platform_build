@@ -8,8 +8,6 @@ function finalize_step_2_main() {
     local top="$(dirname "$0")"/../..
     local m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug"
 
-    revert_to_unfinalized_state
-
     # vndk etc finalization
     source $top/build/make/finalize-aidl-vndk-sdk-resources.sh
 
