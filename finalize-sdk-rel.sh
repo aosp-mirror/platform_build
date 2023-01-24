@@ -14,7 +14,7 @@ function finalize_sdk_rel() {
 
     # adb keys
     $m adb
-    LOGNAME=android-eng HOSTNAME=google.com adb keygen "$DEV_SRC_DIR/vendor/google/security/adb/${PLATFORM_VERSION}.adb_key"
+    LOGNAME=android-eng HOSTNAME=google.com "$DEV_SRC_DIR/out/host/linux-x86/bin/adb" keygen "$DEV_SRC_DIR/vendor/google/security/adb/${PLATFORM_VERSION}.adb_key"
 
     # build/make/core/version_defaults.mk
     sed -i -e "s/PLATFORM_VERSION_CODENAME.${BUILD_PREFIX} := .*/PLATFORM_VERSION_CODENAME.${BUILD_PREFIX} := REL/g" "$DEV_SRC_DIR/build/make/core/version_defaults.mk"
@@ -29,13 +29,13 @@ function finalize_sdk_rel() {
     cp -r "$DEV_SRC_DIR/system/sepolicy/private/" "$DEV_SRC_DIR/system/sepolicy/prebuilts/api/${PLATFORM_SDK_VERSION}.0/"
 
     # prebuilts/abi-dumps/ndk
-    git -C "$DEV_SRC_DIR/prebuilts/abi-dumps/ndk" mv current ${PLATFORM_SDK_VERSION}
+    mv "$DEV_SRC_DIR/prebuilts/abi-dumps/ndk/current" "$DEV_SRC_DIR/prebuilts/abi-dumps/ndk/$PLATFORM_SDK_VERSION"
 
     # prebuilts/abi-dumps/vndk
-    git -C "$DEV_SRC_DIR/prebuilts/abi-dumps/vndk" mv ${PLATFORM_CODENAME} ${PLATFORM_SDK_VERSION}
+    mv "$DEV_SRC_DIR/prebuilts/abi-dumps/vndk/$PLATFORM_CODENAME" "$DEV_SRC_DIR/prebuilts/abi-dumps/vndk/$PLATFORM_SDK_VERSION"
 
     # prebuilts/abi-dumps/platform
-    git -C "$DEV_SRC_DIR/prebuilts/abi-dumps/platform" mv current ${PLATFORM_SDK_VERSION}
+    mv "$DEV_SRC_DIR/prebuilts/abi-dumps/platform/current" "$DEV_SRC_DIR/prebuilts/abi-dumps/platform/$PLATFORM_SDK_VERSION"
 }
 
 finalize_sdk_rel
