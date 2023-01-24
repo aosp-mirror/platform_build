@@ -132,8 +132,10 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files=No
 
   # Re-sign the package after updating the metadata entry.
   if no_signing:
+    logger.info(f"Signing disabled for output file {output_file}")
     shutil.copy(prelim_signing, output_file)
   else:
+    logger.info(f"Signing the output file {output_file} with key {package_key}")
     SignOutput(prelim_signing, output_file, package_key, pw)
 
   # Reopen the final signed zip to double check the streaming metadata.
