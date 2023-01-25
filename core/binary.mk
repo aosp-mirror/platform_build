@@ -58,6 +58,9 @@ my_conlyflags := $(LOCAL_CONLYFLAGS)
 my_cppflags := $(LOCAL_CPPFLAGS)
 my_cflags_no_override := $(GLOBAL_CLANG_CFLAGS_NO_OVERRIDE)
 my_cppflags_no_override := $(GLOBAL_CLANG_CPPFLAGS_NO_OVERRIDE)
+ifeq ($(my_32_64_bit_suffix), 64)
+  my_cflags_no_override += $(GLOBAL_CLANG_CFLAGS_64_NO_OVERRIDE)
+endif
 ifdef is_third_party
     my_cflags_no_override += $(GLOBAL_CLANG_EXTERNAL_CFLAGS_NO_OVERRIDE)
     my_cppflags_no_override += $(GLOBAL_CLANG_EXTERNAL_CFLAGS_NO_OVERRIDE)
