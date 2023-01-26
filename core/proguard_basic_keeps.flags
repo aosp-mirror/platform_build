@@ -83,13 +83,14 @@
 # 1) runtime-visible annotations will still be kept, and 2) compile-time
 # annotations are stripped by R8 anyway.
 # Note: The ** prefix is used to accommodate jarjar repackaging.
-# TODO(b/242088131): Remove these exemptions after resolving transitive libs
-# dependencies that are provided to R8.
+# TODO(b/266561579): Remove this exemptions after resolving jarjar-ed transitive libs
 -dontwarn **android**.annotation*.**
--dontwarn **com.google.errorprone.annotations.**
--dontwarn javax.annotation.**
--dontwarn org.checkerframework.**
--dontwarn org.jetbrains.annotations.**
+
+# These classes generate warnings of the kind `Library class extends program class`
+# because some apps have deps that statically include the same libraries as the app,
+# and r8 complains that a library is implementing a class provided by the app (the "program").
+-dontwarn com.google.protobuf.**
+-dontwarn kotlin.reflect.jvm.internal.ReflectionFactoryImpl
 
 # Less spammy.
 -dontnote
