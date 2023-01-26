@@ -87,6 +87,7 @@ PRODUCT_APEX_SYSTEM_SERVER_JARS := \
     com.android.configinfrastructure:service-configinfrastructure \
     com.android.healthconnect:service-healthconnect \
     com.android.media:service-media-s \
+    com.android.ondevicepersonalization:service-ondevicepersonalization \
     com.android.permission:service-permission \
     com.android.rkpd:service-rkp \
 
