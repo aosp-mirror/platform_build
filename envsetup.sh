@@ -297,7 +297,22 @@ function set_lunch_paths()
     if [ -n $ANDROID_PYTHONPATH ]; then
         export PYTHONPATH=${PYTHONPATH//$ANDROID_PYTHONPATH/}
     fi
-    export ANDROID_PYTHONPATH=$T/development/python-packages:
+    # //development/python-packages contains both a pseudo-PYTHONPATH which
+    # mimics an already assembled venv, but also contains real Python packages
+    # that are not in that layout until they are installed. We can fake it for
+    # the latter type by adding the package source directories to the PYTHONPATH
+    # directly. For the former group, we only need to add the python-packages
+    # directory itself.
+    #
+    # This could be cleaned up by converting the remaining packages that are in
+    # the first category into a typical python source layout (that is, another
+    # layer of directory nesting) and automatically adding all subdirectories of
+    # python-packages to the PYTHONPATH instead of manually curating this. We
+    # can't convert the packages like adb to the other style because doing so
+    # would prevent exporting type info from those packages.
+    #
+    # http://b/266688086
+    export ANDROID_PYTHONPATH=$T/development/python-packages/adb:$T/development/python-packages:
     if [ -n $VENDOR_PYTHONPATH ]; then
         ANDROID_PYTHONPATH=$ANDROID_PYTHONPATH$VENDOR_PYTHONPATH
     fi
