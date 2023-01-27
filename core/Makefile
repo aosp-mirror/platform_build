@@ -5063,6 +5063,7 @@ INTERNAL_OTATOOLS_MODULES := \
   img2simg \
   img_from_target_files \
   imgdiff \
+  initrd_bootconfig \
   libconscrypt_openjdk_jni \
   lpmake \
   lpunpack \
