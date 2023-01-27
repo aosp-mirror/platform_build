@@ -79,6 +79,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - ggrep:      Greps on all local Gradle files.
 - gogrep:     Greps on all local Go files.
 - jgrep:      Greps on all local Java files.
+- jsongrep:   Greps on all local Json files.
 - ktgrep:     Greps on all local Kotlin files.
 - resgrep:    Greps on all local res/*.xml files.
 - mangrep:    Greps on all local AndroidManifest.xml files.
@@ -87,6 +88,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - rsgrep:     Greps on all local Rust files.
 - sepgrep:    Greps on all local sepolicy files.
 - sgrep:      Greps on all local source files.
+- tomlgrep:   Greps on all local Toml files.
 - pygrep:     Greps on all local Python files.
 - godir:      Go to the directory containing a file.
 - allmod:     List all modules.
@@ -1233,6 +1235,18 @@ function jgrep()
 function rsgrep()
 {
     find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.rs" \
+        -exec grep --color -n "$@" {} +
+}
+
+function jsongrep()
+{
+    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.json" \
+        -exec grep --color -n "$@" {} +
+}
+
+function tomlgrep()
+{
+    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.toml" \
         -exec grep --color -n "$@" {} +
 }
 
