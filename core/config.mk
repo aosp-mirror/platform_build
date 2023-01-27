@@ -431,6 +431,9 @@ $(hide) $(HOST_OTOOL) -l $(1) | grep LC_ID_DYLIB -A 5 > $(2)
 $(hide) $(HOST_NM) -gP $(1) | cut -f1-2 -d" " | (grep -v U$$ >> $(2) || true)
 endef
 
+# Pick a Java compiler.
+include $(BUILD_SYSTEM)/combo/javac.mk
+
 ifeq ($(CALLED_FROM_SETUP),true)
 include $(BUILD_SYSTEM)/ccache.mk
 include $(BUILD_SYSTEM)/goma.mk
@@ -452,9 +455,6 @@ endif
 ifeq (,$(filter 1 true,$(WITH_TIDY_ONLY)))
   WITH_TIDY_ONLY :=
 endif
-
-# Pick a Java compiler.
-include $(BUILD_SYSTEM)/combo/javac.mk
 
 # ---------------------------------------------------------------
 # Check that the configuration is current.  We check that
