@@ -25,3 +25,8 @@ PRODUCT_SHIPPING_API_LEVEL := 29
 # Builds using a module product should build modules from source, even if
 # BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE says otherwise.
 PRODUCT_MODULE_BUILD_FROM_SOURCE := true
+
+# Build sdk from source if the branch is not using slim manifests.
+ifneq (,$(strip $(wildcard frameworks/base/Android.bp)))
+  UNBUNDLED_BUILD_SDKS_FROM_SOURCE := true
+endif
