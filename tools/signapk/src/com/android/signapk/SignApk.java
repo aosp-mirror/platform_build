@@ -675,6 +675,15 @@ class SignApk {
         }
     }
 
+    private static int getStoredEntryDataAlignmentForSo(String targetProduct) {
+
+        /* Special TARGET_PRODUCT with 16K page size */
+        if (targetProduct != null && targetProduct.toLowerCase().contains("_16k")) {
+            return 16384;
+        }
+        /* default alignment otherwise */
+        return 4096;
+    }
     /**
      * Returns the multiple (in bytes) at which the provided {@code STORED} entry's data must start
      * relative to start of file or {@code 0} if alignment of this entry's data is not important.
@@ -687,7 +696,7 @@ class SignApk {
         if (entryName.endsWith(".so")) {
             // Align .so contents to memory page boundary to enable memory-mapped
             // execution.
-            return 16384;
+            return getStoredEntryDataAlignmentForSo(System.getenv("TARGET_PRODUCT"));
         } else {
             return defaultAlignment;
         }
