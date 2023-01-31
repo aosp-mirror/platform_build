@@ -596,6 +596,19 @@ $(foreach kmd,$(BOARD_KERNEL_MODULE_DIRS), \
     $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-recovery-as-boot-load,$(kmd))),\
     $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,GENERIC_RAMDISK,$(TARGET_RAMDISK_OUT),,modules.load,,$(kmd)))))
 
+ifeq ($(BOARD_SYSTEM_KERNEL_MODULES),)
+ifneq ($(BOARD_SYSTEM_DLKM_SRC),)
+ifneq ($(wildcard $(BOARD_SYSTEM_DLKM_SRC)/*),)
+  SYSTEM_KERNEL_MODULES := $(call find-files-in-subdirs,$(BOARD_SYSTEM_DLKM_SRC),*.ko,.)
+  SRC_SYSTEM_KERNEL_MODULES := $(patsubst %,$(BOARD_SYSTEM_DLKM_SRC)/%,$(SYSTEM_KERNEL_MODULES))
+  DST_SYSTEM_KERNEL_MODULES := $(patsubst %,:$(TARGET_OUT_SYSTEM_DLKM)/%,$(SYSTEM_KERNEL_MODULES))
+  SYSTEM_KERNEL_MODULE_COPY_PAIRS := $(join $(SRC_SYSTEM_KERNEL_MODULES),$(DST_SYSTEM_KERNEL_MODULES))
+  ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(SYSTEM_KERNEL_MODULE_COPY_PAIRS))
+endif
+endif
+endif
+
+
 # -----------------------------------------------------------------
 # Cert-to-package mapping.  Used by the post-build signing tools.
 # Use a macro to add newline to each echo command
