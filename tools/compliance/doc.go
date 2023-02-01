@@ -11,6 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+// Much of this content appears too in README.md
+// When changing this file consider whether the change also applies to README.md
+
 /*
 
 Package compliance provides an approved means for reading, consuming, and
@@ -30,6 +34,13 @@ A LicenseGraph is an immutable graph of the targets and dependencies reachable
 from a specific set of root targets. In general, the root targets will be the
 artifacts in a release or distribution. While conceptually immutable, parts of
 the graph may be loaded or evaluated lazily.
+
+Conceptually, the graph itself will always be a directed acyclic graph. One
+representation is a set of directed edges. Another is a set of nodes with
+directed edges to their dependencies.
+
+The edges have annotations, which can distinguish between build tools, runtime
+dependencies, and dependencies like 'contains' that make a derivative work.
 
 LicenseCondition
 ----------------
@@ -51,17 +62,13 @@ the policy.
 
 `ActsOn` is the target to share, give notice for, hide etc.
 
-`Resolves` is the license condition that the action resolves.
+`Resolves` is the set of condition types that the action resolves.
 
-Remember: Each license condition pairs a condition name with an originating
-target so each resolution in a ResolutionSet has two targets it applies to and
-one target from which it originates, all of which may be the same target.
-
-For most condition types, `ActsOn` and `Resolves.Origin` will be the same
-target. For example, a notice condition policy means attribution or notice must
-be given for the target where the condition originates. Likewise, a proprietary
-condition policy means the privacy of the target where the condition originates
-must be respected. i.e. The thing acted on is the origin.
+For most condition types, `ActsOn` will be the target where the condition
+originated. For example, a notice condition policy means attribution or notice
+must be given for the target where the condition originates. Likewise, a
+proprietary condition policy means the privacy of the target where the
+condition originates must be respected. i.e. The thing acted on is the origin.
 
 Restricted conditions are different. The infectious nature of restricted often
 means sharing code that is not the target where the restricted condition

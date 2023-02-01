@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2019 The Android Open Source Project
 #
@@ -196,11 +196,7 @@ class ELFParser(object):
   def _read_llvm_readobj(cls, elf_file_path, header, llvm_readobj):
     """Run llvm-readobj and parse the output."""
     cmd = [llvm_readobj, '--dynamic-table', '--dyn-symbols', elf_file_path]
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, _ = proc.communicate()
-    rc = proc.returncode
-    if rc != 0:
-      raise subprocess.CalledProcessError(rc, cmd, out)
+    out = subprocess.check_output(cmd, text=True)
     lines = out.splitlines()
     return cls._parse_llvm_readobj(elf_file_path, header, lines)
 
@@ -411,8 +407,7 @@ class Checker(object):
     # Chech whether all DT_NEEDED entries are specified.
     for lib in self._file_under_test.dt_needed:
       if lib not in specified_sonames:
-        self._error('DT_NEEDED "{}" is not specified in shared_libs.'
-                    .format(lib.decode('utf-8')))
+        self._error(f'DT_NEEDED "{lib}" is not specified in shared_libs.')
         missing_shared_libs = True
 
     if missing_shared_libs:
@@ -467,7 +462,7 @@ class Checker(object):
     """Check whether all undefined symbols are resolved to a definition."""
     all_elf_files = [self._file_under_test] + self._shared_libs
     missing_symbols = []
-    for sym, imported_vers in self._file_under_test.imported.iteritems():
+    for sym, imported_vers in self._file_under_test.imported.items():
       for imported_ver in imported_vers:
         lib = self._find_symbol_from_libs(all_elf_files, sym, imported_ver)
         if not lib:
@@ -475,16 +470,14 @@ class Checker(object):
 
     if missing_symbols:
       for sym, ver in sorted(missing_symbols):
-        sym = sym.decode('utf-8')
         if ver:
-          sym += '@' + ver.decode('utf-8')
-        self._error('Unresolved symbol: {}'.format(sym))
+          sym += '@' + ver
+        self._error(f'Unresolved symbol: {sym}')
 
       self._note()
       self._note('Some dependencies might be changed, thus the symbol(s) '
                  'above cannot be resolved.')
-      self._note('Please re-build the prebuilt file: "{}".'
-                 .format(self._file_path))
+      self._note(f'Please re-build the prebuilt file: "{self._file_path}".')
 
       self._note()
       self._note('If this is a new prebuilt file and it is designed to have '

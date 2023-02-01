@@ -1097,6 +1097,7 @@ class SignApk {
         boolean signUsingApkSignatureSchemeV2 = true;
         boolean signUsingApkSignatureSchemeV4 = false;
         SigningCertificateLineage certLineage = null;
+        Integer rotationMinSdkVersion = null;
 
         int argstart = 0;
         while (argstart < args.length && args[argstart].startsWith("-")) {
@@ -1155,6 +1156,15 @@ class SignApk {
                 } catch (Exception e) {
                     throw new IllegalArgumentException(
                             "Error reading lineage file: " + e.getMessage());
+                }
+                ++argstart;
+            } else if ("--rotation-min-sdk-version".equals(args[argstart])) {
+                String rotationMinSdkVersionString = args[++argstart];
+                try {
+                    rotationMinSdkVersion = Integer.parseInt(rotationMinSdkVersionString);
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException(
+                            "--rotation-min-sdk-version must be a decimal number: " + rotationMinSdkVersionString);
                 }
                 ++argstart;
             } else {
@@ -1248,15 +1258,22 @@ class SignApk {
                     }
                 }
 
-                try (ApkSignerEngine apkSigner =
-                        new DefaultApkSignerEngine.Builder(
-                                createSignerConfigs(privateKey, publicKey), minSdkVersion)
-                                .setV1SigningEnabled(true)
-                                .setV2SigningEnabled(signUsingApkSignatureSchemeV2)
-                                .setOtherSignersSignaturesPreserved(false)
-                                .setCreatedBy("1.0 (Android SignApk)")
-                                .setSigningCertificateLineage(certLineage)
-                                .build()) {
+                DefaultApkSignerEngine.Builder builder = new DefaultApkSignerEngine.Builder(
+                    createSignerConfigs(privateKey, publicKey), minSdkVersion)
+                    .setV1SigningEnabled(true)
+                    .setV2SigningEnabled(signUsingApkSignatureSchemeV2)
+                    .setOtherSignersSignaturesPreserved(false)
+                    .setCreatedBy("1.0 (Android SignApk)");
+
+                if (certLineage != null) {
+                   builder = builder.setSigningCertificateLineage(certLineage);
+                }
+
+                if (rotationMinSdkVersion != null) {
+                   builder = builder.setMinSdkVersionForRotation(rotationMinSdkVersion);
+                }
+
+                try (ApkSignerEngine apkSigner = builder.build()) {
                     // We don't preserve the input APK's APK Signing Block (which contains v2
                     // signatures)
                     apkSigner.inputApkSigningBlock(null);

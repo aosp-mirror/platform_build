@@ -29,6 +29,11 @@ PRODUCT_PACKAGES += \
     shell_and_utilities_recovery \
     watchdogd.recovery \
 
+PRODUCT_VENDOR_PROPERTIES += \
+    ro.recovery.usb.vid?=18D1 \
+    ro.recovery.usb.adb.pid?=D001 \
+    ro.recovery.usb.fastboot.pid?=4EE0 \
+
 # These had been pulled in via init_second_stage.recovery, but may not be needed.
 PRODUCT_HOST_PACKAGES += \
     e2fsdroid \
@@ -41,7 +46,7 @@ PRODUCT_HOST_PACKAGES += \
 
 # Base modules and settings for the vendor partition.
 PRODUCT_PACKAGES += \
-    android.hardware.cas@1.2-service \
+    android.hardware.cas-service.example \
     boringssl_self_test_vendor \
     dumpsys_vendor \
     fs_config_files_nonsystem \
@@ -69,13 +74,18 @@ PRODUCT_PACKAGES += \
     shell_and_utilities_vendor \
 
 # OMX not supported for 64bit_only builds
+# Only supported when SHIPPING_API_LEVEL is less than or equal to 33
 ifneq ($(TARGET_SUPPORTS_OMX_SERVICE),false)
-    PRODUCT_PACKAGES += \
+    PRODUCT_PACKAGES_SHIPPING_API_LEVEL_33 += \
         android.hardware.media.omx@1.0-service \
 
 endif
 
-# Base module when shipping api level is less than or equal to 29
+# Base modules when shipping api level is less than or equal to 33
+PRODUCT_PACKAGES_SHIPPING_API_LEVEL_33 += \
+    android.hardware.cas@1.2-service \
+
+# Base modules when shipping api level is less than or equal to 29
 PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29 += \
     android.hardware.configstore@1.1-service \
     vndservice \

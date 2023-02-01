@@ -17,10 +17,11 @@ package compliance
 import (
 	"fmt"
 	"io"
-	"io/fs"
 	"sort"
 	"strings"
 	"testing"
+
+	"android/soong/tools/compliance/testfs"
 )
 
 const (
@@ -42,7 +43,7 @@ license_conditions: "restricted"
 	Classpath = `` +
 		`package_name: "Free Software"
 license_kinds: "SPDX-license-identifier-GPL-2.0-with-classpath-exception"
-license_conditions: "restricted"
+license_conditions: "permissive"
 `
 
 	// DependentModule starts a test metadata file for a module in the same package as `Classpath`.
@@ -56,7 +57,7 @@ license_conditions: "notice"
 	LGPL = `` +
 		`package_name: "Free Library"
 license_kinds: "SPDX-license-identifier-LGPL-2.0"
-license_conditions: "restricted"
+license_conditions: "restricted_if_statically_linked"
 `
 
 	// MPL starts a test metadata file for a module with MPL 2.0 reciprical licensing.
@@ -120,74 +121,25 @@ func newTestNode(lg *LicenseGraph, targetName string) *TargetNode {
 	return tn
 }
 
-// newTestCondition constructs a test license condition in the license graph.
-func newTestCondition(lg *LicenseGraph, targetName string, conditionName string) LicenseCondition {
-	tn := newTestNode(lg, targetName)
-	cl := LicenseConditionSetFromNames(tn, conditionName).AsList()
+// newTestCondition constructs a test license condition.
+func newTestCondition(conditionName string) LicenseCondition {
+	cl := LicenseConditionSetFromNames(conditionName).AsList()
 	if len(cl) == 0 {
 		panic(fmt.Errorf("attempt to create unrecognized condition: %q", conditionName))
 	} else if len(cl) != 1 {
 		panic(fmt.Errorf("unexpected multiple conditions from condition name: %q: got %d, want 1", conditionName, len(cl)))
 	}
 	lc := cl[0]
-	tn.licenseConditions = tn.licenseConditions.Plus(lc)
 	return lc
 }
 
-// newTestConditionSet constructs a test license condition set in the license graph.
-func newTestConditionSet(lg *LicenseGraph, targetName string, conditionName []string) LicenseConditionSet {
-	tn := newTestNode(lg, targetName)
-	cs := LicenseConditionSetFromNames(tn, conditionName...)
+// newTestConditionSet constructs a test license condition set.
+func newTestConditionSet(conditionName []string) LicenseConditionSet {
+	cs := LicenseConditionSetFromNames(conditionName...)
 	if cs.IsEmpty() {
 		panic(fmt.Errorf("attempt to create unrecognized condition: %q", conditionName))
 	}
-	tn.licenseConditions = tn.licenseConditions.Union(cs)
 	return cs
-}
-
-// testFS implements a test file system (fs.FS) simulated by a map from filename to []byte content.
-type testFS map[string][]byte
-
-// Open implements fs.FS.Open() to open a file based on the filename.
-func (fs *testFS) Open(name string) (fs.File, error) {
-	if _, ok := (*fs)[name]; !ok {
-		return nil, fmt.Errorf("unknown file %q", name)
-	}
-	return &testFile{fs, name, 0}, nil
-}
-
-// testFile implements a test file (fs.File) based on testFS above.
-type testFile struct {
-	fs   *testFS
-	name string
-	posn int
-}
-
-// Stat not implemented to obviate implementing fs.FileInfo.
-func (f *testFile) Stat() (fs.FileInfo, error) {
-	return nil, fmt.Errorf("unimplemented")
-}
-
-// Read copies bytes from the testFS map.
-func (f *testFile) Read(b []byte) (int, error) {
-	if f.posn < 0 {
-		return 0, fmt.Errorf("file not open: %q", f.name)
-	}
-	if f.posn >= len((*f.fs)[f.name]) {
-		return 0, io.EOF
-	}
-	n := copy(b, (*f.fs)[f.name][f.posn:])
-	f.posn += n
-	return n, nil
-}
-
-// Close marks the testFile as no longer in use.
-func (f *testFile) Close() error {
-	if f.posn < 0 {
-		return fmt.Errorf("file already closed: %q", f.name)
-	}
-	f.posn = -1
-	return nil
 }
 
 // edge describes test data edges to define test graphs.
@@ -268,7 +220,7 @@ func toGraph(stderr io.Writer, roots []string, edges []annotated) (*LicenseGraph
 			deps[edge.dep] = []annotated{}
 		}
 	}
-	fs := make(testFS)
+	fs := make(testfs.TestFS)
 	for file, edges := range deps {
 		body := meta[file]
 		for _, edge := range edges {
@@ -327,12 +279,12 @@ func (l byAnnotatedEdge) Less(i, j int) bool {
 
 // act describes test data resolution actions to define test action sets.
 type act struct {
-	actsOn, origin, condition string
+	actsOn, condition string
 }
 
 // String returns a human-readable string representing the test action.
 func (a act) String() string {
-	return fmt.Sprintf("%s{%s:%s}", a.actsOn, a.origin, a.condition)
+	return fmt.Sprintf("%s{%s}", a.actsOn, a.condition)
 }
 
 // toActionSet converts a list of act test data into a test action set.
@@ -340,7 +292,7 @@ func toActionSet(lg *LicenseGraph, data []act) ActionSet {
 	as := make(ActionSet)
 	for _, a := range data {
 		actsOn := newTestNode(lg, a.actsOn)
-		cs := newTestConditionSet(lg, a.origin, strings.Split(a.condition, "|"))
+		cs := newTestConditionSet(strings.Split(a.condition, "|"))
 		as[actsOn] = cs
 	}
 	return as
@@ -348,7 +300,7 @@ func toActionSet(lg *LicenseGraph, data []act) ActionSet {
 
 // res describes test data resolutions to define test resolution sets.
 type res struct {
-	attachesTo, actsOn, origin, condition string
+	attachesTo, actsOn, condition string
 }
 
 // toResolutionSet converts a list of res test data into a test resolution set.
@@ -360,7 +312,7 @@ func toResolutionSet(lg *LicenseGraph, data []res) ResolutionSet {
 		if _, ok := rmap[attachesTo]; !ok {
 			rmap[attachesTo] = make(ActionSet)
 		}
-		cs := newTestConditionSet(lg, r.origin, strings.Split(r.condition, ":"))
+		cs := newTestConditionSet(strings.Split(r.condition, "|"))
 		rmap[attachesTo][actsOn] |= cs
 	}
 	return rmap
@@ -460,15 +412,13 @@ func toConflictList(lg *LicenseGraph, data []confl) []SourceSharePrivacyConflict
 	result := make([]SourceSharePrivacyConflict, 0, len(data))
 	for _, c := range data {
 		fields := strings.Split(c.share, ":")
-		oshare := fields[0]
 		cshare := fields[1]
 		fields = strings.Split(c.privacy, ":")
-		oprivacy := fields[0]
 		cprivacy := fields[1]
 		result = append(result, SourceSharePrivacyConflict{
 			newTestNode(lg, c.sourceNode),
-			newTestCondition(lg, oshare, cshare),
-			newTestCondition(lg, oprivacy, cprivacy),
+			newTestCondition(cshare),
+			newTestCondition(cprivacy),
 		})
 	}
 	return result
@@ -521,7 +471,7 @@ func checkSame(rsActual, rsExpected ResolutionSet, t *testing.T) {
 			expectedConditions := expectedRl[i].Resolves()
 			actualConditions := actualRl[i].Resolves()
 			if expectedConditions != actualConditions {
-				t.Errorf("unexpected conditions apply to %q acting on %q: got %04x with names %s, want %04x with names %s",
+				t.Errorf("unexpected conditions apply to %q acting on %q: got %#v with names %s, want %#v with names %s",
 					target.name, expectedRl[i].actsOn.name,
 					actualConditions, actualConditions.Names(),
 					expectedConditions, expectedConditions.Names())
@@ -586,7 +536,7 @@ func checkResolves(rsActual, rsExpected ResolutionSet, t *testing.T) {
 			expectedConditions := expectedRl[i].Resolves()
 			actualConditions := actualRl[i].Resolves()
 			if expectedConditions != (expectedConditions & actualConditions) {
-				t.Errorf("expected conditions missing from %q acting on %q: got %04x with names %s, want %04x with names %s",
+				t.Errorf("expected conditions missing from %q acting on %q: got %#v with names %s, want %#v with names %s",
 					target.name, expectedRl[i].actsOn.name,
 					actualConditions, actualConditions.Names(),
 					expectedConditions, expectedConditions.Names())

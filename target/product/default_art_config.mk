@@ -51,12 +51,16 @@ PRODUCT_BOOT_JARS += \
 # Note: core-icu4j is moved back to PRODUCT_BOOT_JARS in product_config.mk at a later stage.
 # Note: For modules available in Q, DO NOT add new entries here.
 PRODUCT_APEX_BOOT_JARS := \
+    com.android.adservices:framework-adservices \
+    com.android.adservices:framework-sdksandbox \
     com.android.appsearch:framework-appsearch \
+    com.android.btservices:framework-bluetooth \
     com.android.conscrypt:conscrypt \
     com.android.i18n:core-icu4j \
     com.android.ipsec:android.net.ipsec.ike \
     com.android.media:updatable-media \
     com.android.mediaprovider:framework-mediaprovider \
+    com.android.ondevicepersonalization:framework-ondevicepersonalization \
     com.android.os.statsd:framework-statsd \
     com.android.permission:framework-permission \
     com.android.permission:framework-permission-s \
@@ -65,16 +69,21 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.tethering:framework-connectivity \
     com.android.tethering:framework-connectivity-t \
     com.android.tethering:framework-tethering \
-    com.android.wifi:framework-wifi
+    com.android.uwb:framework-uwb \
+    com.android.virt:framework-virtualization \
+    com.android.wifi:framework-wifi \
 
 # List of system_server classpath jars delivered via apex.
 # Keep the list sorted by module names and then library names.
 # Note: For modules available in Q, DO NOT add new entries here.
 PRODUCT_APEX_SYSTEM_SERVER_JARS := \
+    com.android.adservices:service-adservices \
+    com.android.adservices:service-sdksandbox \
     com.android.appsearch:service-appsearch \
     com.android.art:service-art \
     com.android.media:service-media-s \
     com.android.permission:service-permission \
+    com.android.rkpd:service-rkp \
 
 # Use $(wildcard) to avoid referencing the profile in thin manifests that don't have the
 # art project.
@@ -90,9 +99,11 @@ PRODUCT_STANDALONE_SYSTEM_SERVER_JARS := \
 # Keep the list sorted by module names and then library names.
 # Note: For modules available in Q, DO NOT add new entries here.
 PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS := \
+    com.android.btservices:service-bluetooth \
     com.android.os.statsd:service-statsd \
     com.android.scheduling:service-scheduling \
     com.android.tethering:service-connectivity \
+    com.android.uwb:service-uwb \
     com.android.wifi:service-wifi \
 
 # Minimal configuration for running dex2oat (default argument values).
@@ -103,3 +114,5 @@ PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.image-dex2oat-Xmx=64m \
     dalvik.vm.dex2oat-Xms=64m \
     dalvik.vm.dex2oat-Xmx=512m \
+
+PRODUCT_ENABLE_UFFD_GC := false  # TODO(jiakaiz): Change this to "default".

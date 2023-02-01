@@ -27,48 +27,44 @@ var (
 	// binc represents a compiler or other toolchain binary used for
 	// building the other binaries.
 	bottomUp = []res{
-		{"image", "image", "image", "notice"},
-		{"image", "image", "bin2", "restricted"},
-		{"image", "bin1", "bin1", "reciprocal"},
-		{"image", "bin2", "bin2", "restricted"},
-		{"image", "lib1", "lib1", "notice"},
-		{"image", "lib2", "lib2", "notice"},
-		{"binc", "binc", "binc", "proprietary"},
-		{"bin1", "bin1", "bin1", "reciprocal"},
-		{"bin1", "lib1", "lib1", "notice"},
-		{"bin2", "bin2", "bin2", "restricted"},
-		{"bin2", "lib2", "lib2", "notice"},
-		{"lib1", "lib1", "lib1", "notice"},
-		{"lib2", "lib2", "lib2", "notice"},
+		{"image", "image", "notice|restricted"},
+		{"image", "bin1", "reciprocal"},
+		{"image", "bin2", "restricted"},
+		{"image", "lib1", "notice"},
+		{"image", "lib2", "notice"},
+		{"binc", "binc", "proprietary"},
+		{"bin1", "bin1", "reciprocal"},
+		{"bin1", "lib1", "notice"},
+		{"bin2", "bin2", "restricted"},
+		{"bin2", "lib2", "notice"},
+		{"lib1", "lib1", "notice"},
+		{"lib2", "lib2", "notice"},
 	}
 
 	// notice describes bottomUp after a top-down notice resolve.
 	notice = []res{
-		{"image", "image", "image", "notice"},
-		{"image", "image", "bin2", "restricted"},
-		{"image", "bin1", "bin1", "reciprocal"},
-		{"image", "bin2", "bin2", "restricted"},
-		{"image", "lib1", "lib1", "notice"},
-		{"image", "lib2", "bin2", "restricted"},
-		{"image", "lib2", "lib2", "notice"},
-		{"bin1", "bin1", "bin1", "reciprocal"},
-		{"bin1", "lib1", "lib1", "notice"},
-		{"bin2", "bin2", "bin2", "restricted"},
-		{"bin2", "lib2", "bin2", "restricted"},
-		{"bin2", "lib2", "lib2", "notice"},
-		{"lib1", "lib1", "lib1", "notice"},
-		{"lib2", "lib2", "lib2", "notice"},
+		{"image", "image", "notice|restricted"},
+		{"image", "bin1", "reciprocal"},
+		{"image", "bin2", "restricted"},
+		{"image", "lib1", "notice"},
+		{"image", "lib2", "notice|restricted"},
+		{"bin1", "bin1", "reciprocal"},
+		{"bin1", "lib1", "notice"},
+		{"bin2", "bin2", "restricted"},
+		{"bin2", "lib2", "notice|restricted"},
+		{"lib1", "lib1", "notice"},
+		{"lib2", "lib2", "notice"},
 	}
 
 	// share describes bottomUp after a top-down share resolve.
 	share = []res{
-		{"image", "image", "bin2", "restricted"},
-		{"image", "bin1", "bin1", "reciprocal"},
-		{"image", "bin2", "bin2", "restricted"},
-		{"image", "lib2", "bin2", "restricted"},
-		{"bin1", "bin1", "bin1", "reciprocal"},
-		{"bin2", "bin2", "bin2", "restricted"},
-		{"bin2", "lib2", "bin2", "restricted"},
+		{"image", "image", "restricted"},
+		{"image", "bin1", "reciprocal"},
+		{"image", "bin2", "restricted"},
+		{"image", "lib2", "restricted"},
+		{"bin1", "bin1", "reciprocal"},
+		{"bin2", "bin2", "restricted"},
+		{"bin2", "lib2", "restricted"},
 	}
 
 	// proprietary describes bottomUp after a top-down proprietary resolve.

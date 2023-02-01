@@ -50,9 +50,10 @@ PRODUCT_PACKAGES += \
     charger \
     cmd \
     com.android.adbd \
+    com.android.adservices \
     com.android.appsearch \
+    com.android.btservices \
     com.android.conscrypt \
-    com.android.cronet \
     com.android.extservices \
     com.android.i18n \
     com.android.ipsec \
@@ -60,15 +61,18 @@ PRODUCT_PACKAGES += \
     com.android.media \
     com.android.media.swcodec \
     com.android.mediaprovider \
+    com.android.ondevicepersonalization \
     com.android.os.statsd \
     com.android.permission \
     com.android.resolv \
+    com.android.rkpd \
     com.android.neuralnetworks \
     com.android.scheduling \
     com.android.sdkext \
-    com.android.sepolicy \
     com.android.tethering \
     com.android.tzdata \
+    com.android.uwb \
+    com.android.virt \
     com.android.wifi \
     ContactsProvider \
     content \
@@ -118,6 +122,7 @@ PRODUCT_PACKAGES += \
     init_system \
     input \
     installd \
+    IntentResolver \
     ip \
     iptables \
     ip-up-vpn \
@@ -199,7 +204,6 @@ PRODUCT_PACKAGES += \
     libvulkan \
     libwilhelm \
     linker \
-    linkerconfig \
     llkd \
     lmkd \
     LocalTransport \
@@ -218,6 +222,7 @@ PRODUCT_PACKAGES += \
     mke2fs \
     mkfs.erofs \
     monkey \
+    mtectrl \
     mtpd \
     ndc \
     netd \
@@ -235,6 +240,7 @@ PRODUCT_PACKAGES += \
     pppd \
     preinstalled-packages-platform.xml \
     privapp-permissions-platform.xml \
+    prng_seeder \
     racoon \
     recovery-persist \
     resize2fs \
@@ -313,6 +319,11 @@ ifeq ($(EMMA_INSTRUMENT),true)
   endif # EMMA_INSTRUMENT_STATIC
 endif # EMMA_INSTRUMENT
 
+# For testing purposes
+ifeq ($(FORCE_AUDIO_SILENT), true)
+    PRODUCT_SYSTEM_PROPERTIES += ro.audio.silent=1
+endif
+
 # Host tools to install
 PRODUCT_HOST_PACKAGES += \
     BugReport \
@@ -366,7 +377,6 @@ PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     arping \
-    com.android.sepolicy.cert-debug.der \
     dmuserd \
     idlcli \
     init-debug.rc \
@@ -378,6 +388,7 @@ PRODUCT_PACKAGES_DEBUG := \
     procrank \
     profcollectd \
     profcollectctl \
+    record_binder \
     servicedispatcher \
     showmap \
     sqlite3 \

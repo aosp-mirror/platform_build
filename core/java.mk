@@ -200,10 +200,6 @@ ifdef full_classes_jar
 $(eval $(call copy-one-file,$(full_classes_jar),$(full_classes_stubs_jar)))
 ALL_MODULES.$(my_register_name).STUBS := $(full_classes_stubs_jar)
 
-# The layers file allows you to enforce a layering between java packages.
-# Run build/make/tools/java-layers.py for more details.
-layers_file := $(addprefix $(LOCAL_PATH)/, $(LOCAL_JAVA_LAYERS_FILE))
-$(full_classes_compiled_jar): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
 $(full_classes_compiled_jar): PRIVATE_WARNINGS_ENABLE := $(LOCAL_WARNINGS_ENABLE)
 
 # Compile the java files to a .jar file.

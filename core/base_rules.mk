@@ -600,7 +600,11 @@ ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
       # Manually handle the case where the
       # output file is in the recovery or ramdisk partition.
       ifneq (,$(filter $(TARGET_RECOVERY_ROOT_OUT)/%,$(my_module_path)))
-        my_init_rc_path := $(TARGET_RECOVERY_ROOT_OUT)/system/etc
+        ifneq (,$(filter $(TARGET_RECOVERY_ROOT_OUT)/first_stage_ramdisk/%,$(my_module_path)))
+            my_init_rc_path := $(TARGET_RECOVERY_ROOT_OUT)/first_stage_ramdisk/system/etc
+        else
+            my_init_rc_path := $(TARGET_RECOVERY_ROOT_OUT)/system/etc
+        endif
       else ifneq (,$(filter $(TARGET_RAMDISK_OUT)/%,$(my_module_path)))
         my_init_rc_path := $(TARGET_RAMDISK_OUT)/system/etc
       else
@@ -1012,7 +1016,11 @@ ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS := \
     $(ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS) $(LOCAL_SYSTEM_SHARED_LIBRARIES)
 
 ALL_MODULES.$(my_register_name).LOCAL_RUNTIME_LIBRARIES := \
-    $(ALL_MODULES.$(my_register_name).LOCAL_RUNTIME_LIBRARIES) $(LOCAL_RUNTIME_LIBRARIES)
+    $(ALL_MODULES.$(my_register_name).LOCAL_RUNTIME_LIBRARIES) $(LOCAL_RUNTIME_LIBRARIES) \
+    $(LOCAL_JAVA_LIBRARIES)
+
+ALL_MODULES.$(my_register_name).LOCAL_STATIC_LIBRARIES := \
+    $(ALL_MODULES.$(my_register_name).LOCAL_STATIC_LIBRARIES) $(LOCAL_STATIC_JAVA_LIBRARIES)
 
 ifdef LOCAL_TEST_DATA
   # Export the list of targets that are handled as data inputs and required
@@ -1034,6 +1042,24 @@ endif
 ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS := \
   $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS) \
   $(filter-out $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS),$(my_supported_variant))
+
+##########################################################################
+## When compiling against API imported module, use API import stub
+## libraries.
+##########################################################################
+ifneq ($(LOCAL_USE_VNDK),)
+  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+    apiimport_postfix := .apiimport
+    ifeq ($(LOCAL_USE_VNDK_PRODUCT),true)
+      apiimport_postfix := .apiimport.product
+    else
+      apiimport_postfix := .apiimport.vendor
+    endif
+
+    my_required_modules := $(foreach l,$(my_required_modules), \
+      $(if $(filter $(l), $(API_IMPORTED_SHARED_LIBRARIES)), $(l)$(apiimport_postfix), $(l)))
+  endif
+endif
 
 ##########################################################################
 ## When compiling against the VNDK, add the .vendor or .product suffix to
@@ -1120,6 +1146,9 @@ ALL_MODULES.$(my_register_name).FILE_CONTEXTS := $(LOCAL_FILE_CONTEXTS)
 endif
 ifdef LOCAL_IS_UNIT_TEST
 ALL_MODULES.$(my_register_name).IS_UNIT_TEST := $(LOCAL_IS_UNIT_TEST)
+endif
+ifdef LOCAL_TEST_OPTIONS_TAGS
+ALL_MODULES.$(my_register_name).TEST_OPTIONS_TAGS := $(LOCAL_TEST_OPTIONS_TAGS)
 endif
 test_config :=
 

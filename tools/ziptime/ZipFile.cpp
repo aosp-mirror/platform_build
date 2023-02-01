@@ -40,8 +40,7 @@ status_t ZipFile::rewrite(const char* zipFileName)
     /* open the file */
     mZipFp = fopen(zipFileName, "r+b");
     if (mZipFp == NULL) {
-        int err = errno;
-        LOG("fopen failed: %d\n", err);
+        LOG("fopen \"%s\" failed: %s\n", zipFileName, strerror(errno));
         return -1;
     }
 
@@ -72,52 +71,39 @@ status_t ZipFile::rewrite(const char* zipFileName)
  */
 status_t ZipFile::rewriteCentralDir(void)
 {
-    status_t result = 0;
-    uint8_t* buf = NULL;
-    off_t fileLength, seekStart;
-    long readAmount;
-    int i;
-
-    fseek(mZipFp, 0, SEEK_END);
-    fileLength = ftell(mZipFp);
+    fseeko(mZipFp, 0, SEEK_END);
+    off_t fileLength = ftello(mZipFp);
     rewind(mZipFp);
 
     /* too small to be a ZIP archive? */
     if (fileLength < EndOfCentralDir::kEOCDLen) {
-        LOG("Length is %ld -- too small\n", (long)fileLength);
-        result = -1;
-        goto bail;
+        LOG("Length is %lld -- too small\n", (long long) fileLength);
+        return -1;
     }
 
-    buf = new uint8_t[EndOfCentralDir::kMaxEOCDSearch];
-    if (buf == NULL) {
-        LOG("Failure allocating %d bytes for EOCD search",
-             EndOfCentralDir::kMaxEOCDSearch);
-        result = -1;
-        goto bail;
-    }
-
+    off_t seekStart;
+    size_t readAmount;
     if (fileLength > EndOfCentralDir::kMaxEOCDSearch) {
         seekStart = fileLength - EndOfCentralDir::kMaxEOCDSearch;
         readAmount = EndOfCentralDir::kMaxEOCDSearch;
     } else {
         seekStart = 0;
-        readAmount = (long) fileLength;
+        readAmount = fileLength;
     }
-    if (fseek(mZipFp, seekStart, SEEK_SET) != 0) {
-        LOG("Failure seeking to end of zip at %ld", (long) seekStart);
-        result = -1;
-        goto bail;
+    if (fseeko(mZipFp, seekStart, SEEK_SET) != 0) {
+        LOG("Failure seeking to end of zip at %lld", (long long) seekStart);
+        return -1;
     }
 
     /* read the last part of the file into the buffer */
-    if (fread(buf, 1, readAmount, mZipFp) != (size_t) readAmount) {
-        LOG("short file? wanted %ld\n", readAmount);
-        result = -1;
-        goto bail;
+    uint8_t buf[EndOfCentralDir::kMaxEOCDSearch];
+    if (fread(buf, 1, readAmount, mZipFp) != readAmount) {
+        LOG("short file? wanted %zu\n", readAmount);
+        return -1;
     }
 
     /* find the end-of-central-dir magic */
+    int i;
     for (i = readAmount - 4; i >= 0; i--) {
         if (buf[i] == 0x50 &&
             ZipEntry::getLongLE(&buf[i]) == EndOfCentralDir::kSignature)
@@ -127,15 +113,14 @@ status_t ZipFile::rewriteCentralDir(void)
     }
     if (i < 0) {
         LOG("EOCD not found, not Zip\n");
-        result = -1;
-        goto bail;
+        return -1;
     }
 
     /* extract eocd values */
-    result = mEOCD.readBuf(buf + i, readAmount - i);
+    status_t result = mEOCD.readBuf(buf + i, readAmount - i);
     if (result != 0) {
-        LOG("Failure reading %ld bytes of EOCD values", readAmount - i);
-        goto bail;
+        LOG("Failure reading %zu bytes of EOCD values", readAmount - i);
+        return result;
     }
 
     /*
@@ -152,30 +137,24 @@ status_t ZipFile::rewriteCentralDir(void)
      * The only thing we really need right now is the file comment, which
      * we're hoping to preserve.
      */
-    if (fseek(mZipFp, mEOCD.mCentralDirOffset, SEEK_SET) != 0) {
+    if (fseeko(mZipFp, mEOCD.mCentralDirOffset, SEEK_SET) != 0) {
         LOG("Failure seeking to central dir offset %" PRIu32 "\n",
              mEOCD.mCentralDirOffset);
-        result = -1;
-        goto bail;
+        return -1;
     }
 
     /*
      * Loop through and read the central dir entries.
      */
-    int entry;
-    for (entry = 0; entry < mEOCD.mTotalNumEntries; entry++) {
+    for (int entry = 0; entry < mEOCD.mTotalNumEntries; entry++) {
         ZipEntry* pEntry = new ZipEntry;
-
         result = pEntry->initAndRewriteFromCDE(mZipFp);
+        delete pEntry;
         if (result != 0) {
             LOG("initFromCDE failed\n");
-            delete pEntry;
-            goto bail;
+            return -1;
         }
-
-        delete pEntry;
     }
-
 
     /*
      * If all went well, we should now be back at the EOCD.
@@ -183,18 +162,14 @@ status_t ZipFile::rewriteCentralDir(void)
     uint8_t checkBuf[4];
     if (fread(checkBuf, 1, 4, mZipFp) != 4) {
         LOG("EOCD check read failed\n");
-        result = -1;
-        goto bail;
+        return -1;
     }
     if (ZipEntry::getLongLE(checkBuf) != EndOfCentralDir::kSignature) {
         LOG("EOCD read check failed\n");
-        result = -1;
-        goto bail;
+        return -1;
     }
 
-bail:
-    delete[] buf;
-    return result;
+    return 0;
 }
 
 /*

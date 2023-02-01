@@ -24,6 +24,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"android/soong/response"
@@ -238,7 +239,8 @@ func xmlNotice(ctx *context, files ...string) error {
 	}
 	fmt.Fprintln(ctx.stdout, "</licenses>")
 
-	*ctx.deps = ni.InputNoticeFiles()
+	*ctx.deps = ni.InputFiles()
+	sort.Strings(*ctx.deps)
 
 	return nil
 }

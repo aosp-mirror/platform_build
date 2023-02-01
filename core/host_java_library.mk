@@ -56,10 +56,6 @@ ALL_MODULES.$(my_register_name).SRCS := $(ALL_MODULES.$(my_register_name).SRCS) 
 
 include $(BUILD_SYSTEM)/java_common.mk
 
-# The layers file allows you to enforce a layering between java packages.
-# Run build/make/tools/java-layers.py for more details.
-layers_file := $(addprefix $(LOCAL_PATH)/, $(LOCAL_JAVA_LAYERS_FILE))
-
 # List of dependencies for anything that needs all java sources in place
 java_sources_deps := \
     $(java_sources) \
@@ -72,7 +68,6 @@ $(java_source_list_file): $(java_sources_deps)
 
 # TODO(b/143658984): goma can't handle the --system argument to javac.
 #$(full_classes_compiled_jar): .KATI_NINJA_POOL := $(GOMA_POOL)
-$(full_classes_compiled_jar): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES :=
