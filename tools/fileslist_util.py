@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2016 The Android Open Source Project
 #
@@ -15,7 +15,9 @@
 # limitations under the License.
 #
 
-import getopt, json, sys
+import argparse
+import json
+import sys
 
 def PrintFileNames(path):
   with open(path) as jf:
@@ -27,42 +29,25 @@ def PrintCanonicalList(path):
   with open(path) as jf:
     data = json.load(jf)
   for line in data:
-    print "{0:12d}  {1}".format(line["Size"], line["Name"])
+    print(f"{line['Size']:12d}  {line['Name']}")
 
-def PrintUsage(name):
-  print("""
-Usage: %s -[nc] json_files_list
- -n produces list of files only
- -c produces classic installed-files.txt
-""" % (name))
+def main():
+  parser = argparse.ArgumentParser()
+  parser.add_argument("-n", action="store_true",
+                      help="produces list of files only")
+  parser.add_argument("-c", action="store_true",
+                      help="produces classic installed-files.txt")
+  parser.add_argument("json_files_list")
+  args = parser.parse_args()
 
-def main(argv):
-  try:
-    opts, args = getopt.getopt(argv[1:], "nc", "")
-  except getopt.GetoptError, err:
-    print(err)
-    PrintUsage(argv[0])
-    sys.exit(2)
-
-  if len(opts) == 0:
-    print("No conversion option specified")
-    PrintUsage(argv[0])
-    sys.exit(2)
-
-  if len(args) == 0:
-    print("No input file specified")
-    PrintUsage(argv[0])
-    sys.exit(2)
-
-  for o, a in opts:
-    if o == ("-n"):
-      PrintFileNames(args[0])
-      sys.exit()
-    elif o == ("-c"):
-      PrintCanonicalList(args[0])
-      sys.exit()
-    else:
-      assert False, "Unsupported option"
+  if args.n and args.c:
+    sys.exit("Cannot specify both -n and -c")
+  elif args.n:
+    PrintFileNames(args.json_files_list)
+  elif args.c:
+    PrintCanonicalList(args.json_files_list)
+  else:
+    sys.exit("No conversion option specified")
 
 if __name__ == '__main__':
-  main(sys.argv)
+  main()

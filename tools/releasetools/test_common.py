@@ -222,17 +222,17 @@ class BuildInfoTest(test_utils.ReleaseToolsTestCase):
     info_dict = copy.deepcopy(self.TEST_INFO_FINGERPRINT_DICT)
     build_info = common.BuildInfo(info_dict)
     self.assertEqual(
-      'product-brand/product-name/product-device:version-release/build-id/'
-      'version-incremental:build-type/build-tags', build_info.fingerprint)
+        'product-brand/product-name/product-device:version-release/build-id/'
+        'version-incremental:build-type/build-tags', build_info.fingerprint)
 
     build_props = info_dict['build.prop'].build_props
     del build_props['ro.build.id']
     build_props['ro.build.legacy.id'] = 'legacy-build-id'
     build_info = common.BuildInfo(info_dict, use_legacy_id=True)
     self.assertEqual(
-      'product-brand/product-name/product-device:version-release/'
-      'legacy-build-id/version-incremental:build-type/build-tags',
-      build_info.fingerprint)
+        'product-brand/product-name/product-device:version-release/'
+        'legacy-build-id/version-incremental:build-type/build-tags',
+        build_info.fingerprint)
 
     self.assertRaises(common.ExternalError, common.BuildInfo, info_dict, None,
                       False)
@@ -241,9 +241,9 @@ class BuildInfoTest(test_utils.ReleaseToolsTestCase):
     info_dict['vbmeta_digest'] = 'abcde12345'
     build_info = common.BuildInfo(info_dict, use_legacy_id=False)
     self.assertEqual(
-      'product-brand/product-name/product-device:version-release/'
-      'legacy-build-id.abcde123/version-incremental:build-type/build-tags',
-      build_info.fingerprint)
+        'product-brand/product-name/product-device:version-release/'
+        'legacy-build-id.abcde123/version-incremental:build-type/build-tags',
+        build_info.fingerprint)
 
   def test___getitem__(self):
     target_info = common.BuildInfo(self.TEST_INFO_DICT, None)
@@ -376,7 +376,7 @@ class BuildInfoTest(test_utils.ReleaseToolsTestCase):
     info_dict['build.prop'].build_props[
         'ro.product.property_source_order'] = 'bad-source'
     with self.assertRaisesRegexp(common.ExternalError,
-        'Invalid ro.product.property_source_order'):
+                                 'Invalid ro.product.property_source_order'):
       info = common.BuildInfo(info_dict, None)
       info.GetBuildProp('ro.product.device')
 
@@ -459,7 +459,7 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
       time.sleep(5)  # Make sure the atime/mtime will change measurably.
 
       common.ZipWrite(zip_file, test_file_name, **extra_zipwrite_args)
-      common.ZipClose(zip_file)
+      zip_file.close()
 
       self._verify(zip_file, zip_file_name, arcname, sha1_hash.hexdigest(),
                    test_file_name, expected_stat, expected_mode,
@@ -494,7 +494,7 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
         expected_mode = extra_args.get("perms", zinfo_perms)
 
       common.ZipWriteStr(zip_file, zinfo_or_arcname, contents, **extra_args)
-      common.ZipClose(zip_file)
+      zip_file.close()
 
       self._verify(zip_file, zip_file_name, arcname, sha1(contents).hexdigest(),
                    expected_mode=expected_mode,
@@ -536,7 +536,7 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
 
       common.ZipWrite(zip_file, test_file_name, **extra_args)
       common.ZipWriteStr(zip_file, arcname_small, small, **extra_args)
-      common.ZipClose(zip_file)
+      zip_file.close()
 
       # Verify the contents written by ZipWrite().
       self._verify(zip_file, zip_file_name, arcname_large,
@@ -550,12 +550,6 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     finally:
       os.remove(zip_file_name)
       os.remove(test_file_name)
-
-  def _test_reset_ZIP64_LIMIT(self, func, *args):
-    default_limit = (1 << 31) - 1
-    self.assertEqual(default_limit, zipfile.ZIP64_LIMIT)
-    func(*args)
-    self.assertEqual(default_limit, zipfile.ZIP64_LIMIT)
 
   def test_ZipWrite(self):
     file_contents = os.urandom(1024)
@@ -581,7 +575,7 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     })
 
   def test_ZipWrite_resets_ZIP64_LIMIT(self):
-    self._test_reset_ZIP64_LIMIT(self._test_ZipWrite, "")
+    self._test_ZipWrite("")
 
   def test_ZipWriteStr(self):
     random_string = os.urandom(1024)
@@ -632,9 +626,9 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     })
 
   def test_ZipWriteStr_resets_ZIP64_LIMIT(self):
-    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, 'foo', b'')
+    self._test_ZipWriteStr('foo', b'')
     zinfo = zipfile.ZipInfo(filename="foo")
-    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, zinfo, b'')
+    self._test_ZipWriteStr(zinfo, b'')
 
   def test_bug21309935(self):
     zip_file = tempfile.NamedTemporaryFile(delete=False)
@@ -656,7 +650,7 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
       zinfo = zipfile.ZipInfo(filename="qux")
       zinfo.external_attr = 0o700 << 16
       common.ZipWriteStr(zip_file, zinfo, random_string, perms=0o400)
-      common.ZipClose(zip_file)
+      zip_file.close()
 
       self._verify(zip_file, zip_file_name, "foo",
                    sha1(random_string).hexdigest(),
@@ -683,7 +677,7 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
       common.ZipWrite(output_zip, entry_file.name, arcname='Test1')
       common.ZipWrite(output_zip, entry_file.name, arcname='Test2')
       common.ZipWrite(output_zip, entry_file.name, arcname='Test3')
-      common.ZipClose(output_zip)
+      output_zip.close()
     zip_file.close()
 
     try:
@@ -731,8 +725,8 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
       common.ZipWrite(output_zip, entry_file.name, arcname='Foo3')
       common.ZipWrite(output_zip, entry_file.name, arcname='Bar4')
       common.ZipWrite(output_zip, entry_file.name, arcname='Dir5/Baz5')
-      common.ZipClose(output_zip)
-    common.ZipClose(output_zip)
+      output_zip.close()
+    output_zip.close()
     return zip_file
 
   @test_utils.SkipIfExternalToolsUnavailable()
@@ -819,9 +813,9 @@ class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
   )
 
   APKCERTS_CERTMAP1 = {
-      'RecoveryLocalizer.apk' : 'certs/devkey',
-      'Settings.apk' : 'build/make/target/product/security/platform',
-      'TV.apk' : 'PRESIGNED',
+      'RecoveryLocalizer.apk': 'certs/devkey',
+      'Settings.apk': 'build/make/target/product/security/platform',
+      'TV.apk': 'PRESIGNED',
   }
 
   APKCERTS_TXT2 = (
@@ -836,10 +830,10 @@ class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
   )
 
   APKCERTS_CERTMAP2 = {
-      'Compressed1.apk' : 'certs/compressed1',
-      'Compressed2a.apk' : 'certs/compressed2',
-      'Compressed2b.apk' : 'certs/compressed2',
-      'Compressed3.apk' : 'certs/compressed3',
+      'Compressed1.apk': 'certs/compressed1',
+      'Compressed2a.apk': 'certs/compressed2',
+      'Compressed2b.apk': 'certs/compressed2',
+      'Compressed3.apk': 'certs/compressed3',
   }
 
   APKCERTS_TXT3 = (
@@ -848,7 +842,7 @@ class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
   )
 
   APKCERTS_CERTMAP3 = {
-      'Compressed4.apk' : 'certs/compressed4',
+      'Compressed4.apk': 'certs/compressed4',
   }
 
   # Test parsing with no optional fields, both optional fields, and only the
@@ -865,9 +859,9 @@ class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
   )
 
   APKCERTS_CERTMAP4 = {
-      'RecoveryLocalizer.apk' : 'certs/devkey',
-      'Settings.apk' : 'build/make/target/product/security/platform',
-      'TV.apk' : 'PRESIGNED',
+      'RecoveryLocalizer.apk': 'certs/devkey',
+      'Settings.apk': 'build/make/target/product/security/platform',
+      'TV.apk': 'PRESIGNED',
   }
 
   def setUp(self):
@@ -971,7 +965,7 @@ class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
     extracted_from_privkey = common.ExtractAvbPublicKey('avbtool', privkey)
     extracted_from_pubkey = common.ExtractAvbPublicKey('avbtool', pubkey)
     with open(extracted_from_privkey, 'rb') as privkey_fp, \
-        open(extracted_from_pubkey, 'rb') as pubkey_fp:
+            open(extracted_from_pubkey, 'rb') as pubkey_fp:
       self.assertEqual(privkey_fp.read(), pubkey_fp.read())
 
   def test_ParseCertificate(self):
@@ -1235,7 +1229,8 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     self.assertEqual(
         '1-5 9-10',
         sparse_image.file_map['//system/file1'].extra['text_str'])
-    self.assertTrue(sparse_image.file_map['//system/file2'].extra['incomplete'])
+    self.assertTrue(
+        sparse_image.file_map['//system/file2'].extra['incomplete'])
     self.assertTrue(
         sparse_image.file_map['/system/app/file3'].extra['incomplete'])
 
@@ -1343,7 +1338,7 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
       'recovery_api_version': 3,
       'fstab_version': 2,
       'system_root_image': 'true',
-      'no_recovery' : 'true',
+      'no_recovery': 'true',
       'recovery_as_boot': 'true',
   }
 
@@ -1664,6 +1659,7 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     self.assertRaises(common.ExternalError, common._GenerateGkiCertificate,
                       test_file.name, 'generic_kernel')
 
+
 class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
   """Checks the format of install-recovery.sh.
 
@@ -1673,7 +1669,7 @@ class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
   def setUp(self):
     self._tempdir = common.MakeTempDir()
     # Create a fake dict that contains the fstab info for boot&recovery.
-    self._info = {"fstab" : {}}
+    self._info = {"fstab": {}}
     fake_fstab = [
         "/dev/soc.0/by-name/boot /boot emmc defaults defaults",
         "/dev/soc.0/by-name/recovery /recovery emmc defaults defaults"]
@@ -2020,11 +2016,11 @@ class PartitionBuildPropsTest(test_utils.ReleaseToolsTestCase):
           input_zip, 'odm', placeholder_values)
 
     self.assertEqual({
-      'ro.odm.build.date.utc': '1578430045',
-      'ro.odm.build.fingerprint':
-      'google/coral/coral:10/RP1A.200325.001/6337676:user/dev-keys',
-      'ro.product.odm.device': 'coral',
-      'ro.product.odm.name': 'product1',
+        'ro.odm.build.date.utc': '1578430045',
+        'ro.odm.build.fingerprint':
+        'google/coral/coral:10/RP1A.200325.001/6337676:user/dev-keys',
+        'ro.product.odm.device': 'coral',
+        'ro.product.odm.name': 'product1',
     }, partition_props.build_props)
 
     with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip:
@@ -2186,3 +2182,29 @@ class PartitionBuildPropsTest(test_utils.ReleaseToolsTestCase):
       }
       self.assertRaises(ValueError, common.PartitionBuildProps.FromInputFile,
                         input_zip, 'odm', placeholder_values)
+
+  def test_partitionBuildProps_fromInputFile_deepcopy(self):
+    build_prop = [
+        'ro.odm.build.date.utc=1578430045',
+        'ro.odm.build.fingerprint='
+        'google/coral/coral:10/RP1A.200325.001/6337676:user/dev-keys',
+        'ro.product.odm.device=coral',
+    ]
+    input_file = self._BuildZipFile({
+        'ODM/etc/build.prop': '\n'.join(build_prop),
+    })
+
+    with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip:
+      placeholder_values = {
+          'ro.boot.product.device_name': ['std', 'pro']
+      }
+      partition_props = common.PartitionBuildProps.FromInputFile(
+          input_zip, 'odm', placeholder_values)
+
+    copied_props = copy.deepcopy(partition_props)
+    self.assertEqual({
+        'ro.odm.build.date.utc': '1578430045',
+        'ro.odm.build.fingerprint':
+        'google/coral/coral:10/RP1A.200325.001/6337676:user/dev-keys',
+        'ro.product.odm.device': 'coral',
+    }, copied_props.build_props)

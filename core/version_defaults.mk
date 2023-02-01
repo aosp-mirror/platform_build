@@ -40,10 +40,10 @@ ifdef INTERNAL_BUILD_ID_MAKEFILE
   include $(INTERNAL_BUILD_ID_MAKEFILE)
 endif
 
-DEFAULT_PLATFORM_VERSION := TP1A
+DEFAULT_PLATFORM_VERSION := UP1A
 .KATI_READONLY := DEFAULT_PLATFORM_VERSION
-MIN_PLATFORM_VERSION := TP1A
-MAX_PLATFORM_VERSION := TP1A
+MIN_PLATFORM_VERSION := UP1A
+MAX_PLATFORM_VERSION := UP1A
 
 # The last stable version name of the platform that was released.  During
 # development, this stays at that previous version, while the codename indicates
@@ -53,12 +53,12 @@ PLATFORM_VERSION_LAST_STABLE := 13
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
-PLATFORM_VERSION_CODENAME.TP1A := REL
+PLATFORM_VERSION_CODENAME.UP1A := UpsideDownCake
 
 # This is the user-visible version.  In a final release build it should
 # be empty to use PLATFORM_VERSION as the user-visible version.  For
 # a preview release it can be set to a user-friendly value like `12 Preview 1`
-PLATFORM_DISPLAY_VERSION := 13
+PLATFORM_DISPLAY_VERSION :=
 
 ifndef PLATFORM_SDK_VERSION
   # This is the canonical definition of the SDK version, which defines
@@ -82,7 +82,7 @@ PLATFORM_SDK_EXTENSION_VERSION := 5
 .KATI_READONLY := PLATFORM_SDK_EXTENSION_VERSION
 
 # This is the sdk extension version that PLATFORM_SDK_VERSION ships with.
-PLATFORM_BASE_SDK_EXTENSION_VERSION := 3
+PLATFORM_BASE_SDK_EXTENSION_VERSION := $(PLATFORM_SDK_EXTENSION_VERSION)
 .KATI_READONLY := PLATFORM_BASE_SDK_EXTENSION_VERSION
 
 # This are all known codenames.
@@ -90,7 +90,7 @@ PLATFORM_VERSION_KNOWN_CODENAMES := \
 Base Base11 Cupcake Donut Eclair Eclair01 EclairMr1 Froyo Gingerbread GingerbreadMr1 \
 Honeycomb HoneycombMr1 HoneycombMr2 IceCreamSandwich IceCreamSandwichMr1 \
 JellyBean JellyBeanMr1 JellyBeanMr2 Kitkat KitkatWatch Lollipop LollipopMr1 M N NMr1 O OMr1 P \
-Q R S Sv2 Tiramisu
+Q R S Sv2 Tiramisu UpsideDownCake
 
 # Convert from space separated list to comma separated
 PLATFORM_VERSION_KNOWN_CODENAMES := \
@@ -103,7 +103,7 @@ ifndef PLATFORM_SECURITY_PATCH
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-    PLATFORM_SECURITY_PATCH := 2023-03-01
+    PLATFORM_SECURITY_PATCH := 2023-03-05
 endif
 
 include $(BUILD_SYSTEM)/version_util.mk

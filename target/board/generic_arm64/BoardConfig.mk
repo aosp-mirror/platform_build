@@ -52,6 +52,9 @@ TARGET_2ND_ARCH_VARIANT := armv8-a
 TARGET_2ND_CPU_VARIANT := generic
 endif
 
+# Include 64-bit mediaserver to support 64-bit only devices
+TARGET_DYNAMIC_64_32_MEDIASERVER := true
+
 include build/make/target/board/BoardConfigGsiCommon.mk
 
 # Some vendors still haven't cleaned up all device specific directories under

@@ -187,30 +187,23 @@ func Test(t *testing.T) {
 				},
 				{
 					project:    "device/library",
-					conditions: []string{"restricted_allows_dynamic_linking"},
+					conditions: []string{"restricted_if_statically_linked"},
 				},
 				{
 					project:    "dynamic/binary",
 					conditions: []string{"restricted"},
 				},
 				{
-					project: "highest/apex",
-					conditions: []string{
-						"restricted",
-						"restricted_allows_dynamic_linking",
-					},
-				},
-				{
 					project: "static/binary",
 					conditions: []string{
-						"restricted_allows_dynamic_linking",
+						"restricted_if_statically_linked",
 					},
 				},
 				{
 					project: "static/library",
 					conditions: []string{
 						"reciprocal",
-						"restricted_allows_dynamic_linking",
+						"restricted_if_statically_linked",
 					},
 				},
 			},
@@ -225,15 +218,8 @@ func Test(t *testing.T) {
 					conditions: []string{"restricted"},
 				},
 				{
-					project: "container/zip",
-					conditions: []string{
-						"restricted",
-						"restricted_allows_dynamic_linking",
-					},
-				},
-				{
 					project:    "device/library",
-					conditions: []string{"restricted_allows_dynamic_linking"},
+					conditions: []string{"restricted_if_statically_linked"},
 				},
 				{
 					project:    "dynamic/binary",
@@ -242,14 +228,14 @@ func Test(t *testing.T) {
 				{
 					project: "static/binary",
 					conditions: []string{
-						"restricted_allows_dynamic_linking",
+						"restricted_if_statically_linked",
 					},
 				},
 				{
 					project: "static/library",
 					conditions: []string{
 						"reciprocal",
-						"restricted_allows_dynamic_linking",
+						"restricted_if_statically_linked",
 					},
 				},
 			},
@@ -263,14 +249,14 @@ func Test(t *testing.T) {
 					project: "device/library",
 					conditions: []string{
 						"restricted",
-						"restricted_allows_dynamic_linking",
+						"restricted_if_statically_linked",
 					},
 				},
 				{
 					project: "distributable/application",
 					conditions: []string{
 						"restricted",
-						"restricted_allows_dynamic_linking",
+						"restricted_if_statically_linked",
 					},
 				},
 			},
@@ -283,20 +269,20 @@ func Test(t *testing.T) {
 				{
 					project: "device/library",
 					conditions: []string{
-						"restricted_allows_dynamic_linking",
+						"restricted_if_statically_linked",
 					},
 				},
 				{
 					project: "static/binary",
 					conditions: []string{
-						"restricted_allows_dynamic_linking",
+						"restricted_if_statically_linked",
 					},
 				},
 				{
 					project: "static/library",
 					conditions: []string{
 						"reciprocal",
-						"restricted_allows_dynamic_linking",
+						"restricted_if_statically_linked",
 					},
 				},
 			},
@@ -320,10 +306,6 @@ func Test(t *testing.T) {
 					project:    "dynamic/binary",
 					conditions: []string{"restricted"},
 				},
-				{
-					project:    "highest/apex",
-					conditions: []string{"restricted"},
-				},
 			},
 		},
 		{
@@ -333,10 +315,6 @@ func Test(t *testing.T) {
 			expectedOut: []projectShare{
 				{
 					project:    "base/library",
-					conditions: []string{"restricted"},
-				},
-				{
-					project:    "container/zip",
 					conditions: []string{"restricted"},
 				},
 				{
@@ -381,10 +359,6 @@ func Test(t *testing.T) {
 					project:    "bin/threelibraries",
 					conditions: []string{"restricted"},
 				},
-				{
-					project:    "container/zip",
-					conditions: []string{"restricted"},
-				},
 			},
 		},
 		{
@@ -394,10 +368,6 @@ func Test(t *testing.T) {
 			expectedOut: []projectShare{
 				{
 					project:    "bin/threelibraries",
-					conditions: []string{"restricted"},
-				},
-				{
-					project:    "container/zip",
 					conditions: []string{"restricted"},
 				},
 				{
@@ -417,10 +387,6 @@ func Test(t *testing.T) {
 			expectedOut: []projectShare{
 				{
 					project:    "bin/threelibraries",
-					conditions: []string{"restricted"},
-				},
-				{
-					project:    "container/zip",
 					conditions: []string{"restricted"},
 				},
 				{
@@ -444,10 +410,6 @@ func Test(t *testing.T) {
 			expectedOut: []projectShare{
 				{
 					project:    "bin/threelibraries",
-					conditions: []string{"restricted"},
-				},
-				{
-					project:    "container/zip",
 					conditions: []string{"restricted"},
 				},
 				{

@@ -87,13 +87,23 @@ ifeq ($(LOCAL_MODULE_CLASS),APPS)
   endif
 endif
 
+# TODO: Replace this hardcoded list of optional uses-libraries with build logic
+# that propagates optionality via the generated exported-sdk-libs files.
+# Hardcodng doesn't scale and enforces a single choice on each library, while in
+# reality this is a choice of the library users (which may differ).
+my_optional_sdk_lib_names := \
+    android.test.base \
+    android.test.mock \
+    androidx.window.extensions \
+    androidx.window.sidecar
+
 $(fixed_android_manifest): PRIVATE_MANIFEST_FIXER_FLAGS := $(my_manifest_fixer_flags)
 # These two libs are added as optional dependencies (<uses-library> with
 # android:required set to false). This is because they haven't existed in pre-P
 # devices, but classes in them were in bootclasspath jars, etc. So making them
 # hard dependencies (andriod:required=true) would prevent apps from being
 # installed to such legacy devices.
-$(fixed_android_manifest): PRIVATE_OPTIONAL_SDK_LIB_NAMES := android.test.base android.test.mock
+$(fixed_android_manifest): PRIVATE_OPTIONAL_SDK_LIB_NAMES := $(my_optional_sdk_lib_names)
 $(fixed_android_manifest): $(MANIFEST_FIXER)
 $(fixed_android_manifest): $(main_android_manifest)
 	echo $(PRIVATE_OPTIONAL_SDK_LIB_NAMES) | tr ' ' '\n' > $(PRIVATE_EXPORTED_SDK_LIBS_FILE).optional
@@ -109,3 +119,5 @@ $(fixed_android_manifest): $(main_android_manifest)
 	   ) \
 	  $< $@
 	rm $(PRIVATE_EXPORTED_SDK_LIBS_FILE).optional
+
+my_optional_sdk_lib_names :=

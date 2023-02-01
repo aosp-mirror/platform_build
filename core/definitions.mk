@@ -595,12 +595,10 @@ endef
 ## license metadata.
 ###########################################################
 define declare-copy-target-license-metadata
-$(strip $(if $(filter $(OUT_DIR)%,$(2)),$(eval _dir:=$(call license-metadata-dir,$(1)))\
+$(strip $(if $(filter $(OUT_DIR)%,$(2)),\
   $(eval _tgt:=$(strip $(1)))\
-  $(eval _meta := $(call append-path,$(_dir),$(patsubst $(OUT_DIR)%,out%,$(_tgt).meta_lic)))\
   $(eval ALL_COPIED_TARGETS.$(_tgt).SOURCES := $(ALL_COPIED_TARGETS.$(_tgt).SOURCES) $(filter $(OUT_DIR)%,$(2)))\
-  $(eval ALL_COPIED_TARGETS += $(_tgt)),\
-  $(eval ALL_TARGETS.$(1).META_LIC:=$(module_license_metadata))))
+  $(eval ALL_COPIED_TARGETS += $(_tgt))))
 endef
 
 ###########################################################
@@ -641,6 +639,7 @@ $(2): PRIVATE_PATH := $(_path)
 $(2): PRIVATE_IS_CONTAINER := $(ALL_MODULES.$(1).IS_CONTAINER)
 $(2): PRIVATE_PACKAGE_NAME := $(strip $(ALL_MODULES.$(1).LICENSE_PACKAGE_NAME))
 $(2): PRIVATE_INSTALL_MAP := $(_map)
+$(2): PRIVATE_MODULE_NAME := $(1)
 $(2): PRIVATE_MODULE_TYPE := $(ALL_MODULES.$(1).MODULE_TYPE)
 $(2): PRIVATE_MODULE_CLASS := $(ALL_MODULES.$(1).MODULE_CLASS)
 $(2): PRIVATE_INSTALL_MAP := $(_map)
@@ -651,6 +650,7 @@ $(2) : $(foreach d,$(_deps),$(call word-colon,1,$(d))) $(foreach n,$(_notices),$
 	mkdir -p $$(dir $$@)
 	mkdir -p $$(dir $$(PRIVATE_ARGUMENT_FILE))
 	$$(call dump-words-to-file,\
+	    $$(addprefix -mn ,$$(PRIVATE_MODULE_NAME))\
 	    $$(addprefix -mt ,$$(PRIVATE_MODULE_TYPE))\
 	    $$(addprefix -mc ,$$(PRIVATE_MODULE_CLASS))\
 	    $$(addprefix -k ,$$(PRIVATE_KINDS))\
@@ -744,11 +744,10 @@ $(strip $(eval ALL_TARGETS.$(1).META_LIC:=$(_meta)))
 $(strip $(eval _dep:=))
 $(strip $(foreach s,$(ALL_COPIED_TARGETS.$(1).SOURCES),\
   $(eval _dmeta:=$(ALL_TARGETS.$(s).META_LIC))\
-  $(if $(filter 0p,$(_dmeta)),\
-    $(if $(filter-out 0p,$(_dep)),,$(eval ALL_TARGETS.$(1).META_LIC:=0p)),\
-    $(if $(_dep),\
-      $(if $(filter-out $(_dep),$(_dmeta)),$(error cannot copy target from multiple modules: $(1) from $(_dep) and $(_dmeta))),
-      $(eval _dep:=$(_dmeta))))))
+  $(if $(filter-out 0p,$(_dep)),\
+      $(if $(filter-out $(_dep),$(_dmeta)),$(error cannot copy target from multiple modules: $(1) from $(_dep) and $(_dmeta))),\
+      $(eval _dep:=$(_dmeta)))))
+$(if $(filter 0p,$(_dep)),$(eval ALL_TARGETS.$(1).META_LIC:=0p))
 $(strip $(if $(strip $(_dep)),,$(error cannot copy target from unknown module: $(1) from $(ALL_COPIED_TARGETS.$(1).SOURCES))))
 
 ifneq (0p,$(ALL_TARGETS.$(1).META_LIC))
@@ -770,6 +769,11 @@ $(_meta) : $(_dep) $(COPY_LICENSE_METADATA)
 	  -o $$@
 
 endif
+
+$(eval _dep:=)
+$(eval _dmeta:=)
+$(eval _meta:=)
+$(eval _dir:=)
 endef
 
 ###########################################################
@@ -987,9 +991,9 @@ $(strip \
   $(foreach t,$(sort $(ALL_0P_TARGETS)), \
     $(eval ALL_TARGETS.$(t).META_LIC := 0p) \
   ) \
+  $(foreach t,$(sort $(ALL_COPIED_TARGETS)),$(eval $(call copied-target-license-metadata-rule,$(t)))) \
   $(foreach t,$(sort $(ALL_NON_MODULES)),$(eval $(call non-module-license-metadata-rule,$(t)))) \
   $(foreach m,$(sort $(ALL_MODULES)),$(eval $(call license-metadata-rule,$(m)))) \
-  $(foreach t,$(sort $(ALL_COPIED_TARGETS)),$(eval $(call copied-target-license-metadata-rule,$(t)))) \
   $(eval $(call build-all-license-metadata-rule)))
 endef
 
@@ -2119,6 +2123,7 @@ $(hide) $(PRIVATE_CXX_LINK) \
      $(PRIVATE_HOST_GLOBAL_LDFLAGS) \
   ) \
   $(PRIVATE_LDFLAGS) \
+  $(PRIVATE_CRTBEGIN) \
   $(PRIVATE_ALL_OBJECTS) \
   -Wl,--whole-archive \
   $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
@@ -2127,8 +2132,10 @@ $(hide) $(PRIVATE_CXX_LINK) \
   $(PRIVATE_ALL_STATIC_LIBRARIES) \
   $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
   $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_HOST_LIBPROFILE_RT)) \
+  $(PRIVATE_LIBCRT_BUILTINS) \
   $(PRIVATE_ALL_SHARED_LIBRARIES) \
   -o $@ \
+  $(PRIVATE_CRTEND) \
   $(PRIVATE_LDLIBS)
 endef
 endif
@@ -2262,6 +2269,7 @@ endef
 ifneq ($(HOST_CUSTOM_LD_COMMAND),true)
 define transform-host-o-to-executable-inner
 $(hide) $(PRIVATE_CXX_LINK) \
+  $(PRIVATE_CRTBEGIN) \
   $(PRIVATE_ALL_OBJECTS) \
   -Wl,--whole-archive \
   $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
@@ -2270,6 +2278,7 @@ $(hide) $(PRIVATE_CXX_LINK) \
   $(PRIVATE_ALL_STATIC_LIBRARIES) \
   $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
   $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_HOST_LIBPROFILE_RT)) \
+  $(PRIVATE_LIBCRT_BUILTINS) \
   $(PRIVATE_ALL_SHARED_LIBRARIES) \
   $(foreach path,$(PRIVATE_RPATHS), \
     -Wl,-rpath,\$$ORIGIN/$(path)) \
@@ -2278,6 +2287,7 @@ $(hide) $(PRIVATE_CXX_LINK) \
   ) \
   $(PRIVATE_LDFLAGS) \
   -o $@ \
+  $(PRIVATE_CRTEND) \
   $(PRIVATE_LDLIBS)
 endef
 endif
@@ -2602,8 +2612,6 @@ $(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) $(if $(PRIVATE_SRCJARS),-o -s $(PRIV
     $(if $(PRIVATE_SRCJARS),\@$(PRIVATE_SRCJAR_LIST_FILE)) \
     || ( rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) ; exit 41 ) \
 fi
-$(if $(PRIVATE_JAVA_LAYERS_FILE), $(hide) build/make/tools/java-layers.py \
-    $(PRIVATE_JAVA_LAYERS_FILE) @$(PRIVATE_JAVA_SOURCE_LIST),)
 $(if $(PRIVATE_JAR_EXCLUDE_FILES), $(hide) find $(PRIVATE_CLASS_INTERMEDIATES_DIR) \
     -name $(word 1, $(PRIVATE_JAR_EXCLUDE_FILES)) \
     $(addprefix -o -name , $(wordlist 2, 999, $(PRIVATE_JAR_EXCLUDE_FILES))) \
@@ -2734,7 +2742,7 @@ define transform-classes.jar-to-dex
 @mkdir -p $(dir $@)tmp
 $(hide) rm -f $(dir $@)classes*.dex $(dir $@)d8_input.jar
 $(hide) $(ZIP2ZIP) -j -i $< -o $(dir $@)d8_input.jar "**/*.class"
-$(hide) $(D8_WRAPPER) $(DX_COMMAND) $(DEX_FLAGS) \
+$(hide) $(D8_WRAPPER) $(D8_COMMAND) \
     --output $(dir $@)tmp \
     $(addprefix --lib ,$(PRIVATE_D8_LIBS)) \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
@@ -2976,6 +2984,19 @@ $(2): $(1)
 	$$(copy-file-to-target)
 endef
 
+# Define a rule to copy a license metadata file. For use via $(eval).
+# $(1): source license metadata file
+# $(2): destination license metadata file
+# $(3): built targets
+# $(4): installed targets
+define copy-one-license-metadata-file
+$(2): PRIVATE_BUILT=$(3)
+$(2): PRIVATE_INSTALLED=$(4)
+$(2): $(1)
+	@echo "Copy: $$@"
+	$$(call copy-license-metadata-file-to-target,$$(PRIVATE_BUILT),$$(PRIVATE_INSTALLED))
+endef
+
 define copy-and-uncompress-dexs
 $(2): $(1) $(ZIPALIGN) $(ZIP2ZIP)
 	@echo "Uncompress dexs in: $$@"
@@ -3024,7 +3045,7 @@ endef
 # $(2): destination file
 define copy-init-script-file-checked
 ifdef TARGET_BUILD_UNBUNDLED
-# TODO (b/185624993): Remove the chck on TARGET_BUILD_UNBUNDLED when host_init_verifier can run
+# TODO (b/185624993): Remove the check on TARGET_BUILD_UNBUNDLED when host_init_verifier can run
 # without requiring the HIDL interface map.
 $(2): $(1)
 else ifneq ($(HOST_OS),darwin)
@@ -3161,6 +3182,17 @@ define copy-file-to-target
 @mkdir -p $(dir $@)
 $(hide) rm -f $@
 $(hide) cp "$<" "$@"
+endef
+
+# Same as copy-file-to-target, but assume file is a licenes metadata file,
+# and append built from $(1) and installed from $(2).
+define copy-license-metadata-file-to-target
+@mkdir -p $(dir $@)
+$(hide) rm -f $@
+$(hide) cp "$<" "$@" $(strip \
+  $(foreach b,$(1), && (grep -F 'built: "'"$(b)"'"' "$@" >/dev/null || echo 'built: "'"$(b)"'"' >>"$@")) \
+  $(foreach i,$(2), && (grep -F 'installed: "'"$(i)"'"' "$@" >/dev/null || echo 'installed: "'"$(i)"'"' >>"$@")) \
+)
 endef
 
 # The same as copy-file-to-target, but use the local
@@ -3339,7 +3371,7 @@ endif
 define transform-jar-to-dex-r8
 @echo R8: $@
 $(hide) rm -f $(PRIVATE_PROGUARD_DICTIONARY)
-$(hide) $(R8_WRAPPER) $(R8_COMPAT_PROGUARD) $(DEX_FLAGS) \
+$(hide) $(R8_WRAPPER) $(R8_COMMAND) \
     -injars '$<' \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
     --no-data-resources \
@@ -3486,8 +3518,6 @@ STATS.MODULE_TYPE := \
   STATIC_TEST_LIBRARY \
   HOST_STATIC_TEST_LIBRARY \
   NOTICE_FILE \
-  HOST_DALVIK_JAVA_LIBRARY \
-  HOST_DALVIK_STATIC_JAVA_LIBRARY \
   base_rules \
   HEADER_LIBRARY \
   HOST_TEST_CONFIG \
@@ -3531,11 +3561,11 @@ define create-suite-dependencies
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval $(if $(strip $(module_license_metadata)),\
     $$(foreach f,$$(my_compat_dist_$(suite)),$$(call declare-copy-target-license-metadata,$$(call word-colon,2,$$(f)),$$(call word-colon,1,$$(f)))),\
-    $$(eval my_test_data += $$(foreach f,$$(my_compat_dist_$(suite)), $$(call word-colon,2,$$(f)))) \
+    $$(eval my_test_data += $$(my_compat_dist_$(suite))) \
   )) \
   $(eval $(if $(strip $(module_license_metadata)),\
     $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(call declare-copy-target-license-metadata,$$(call word-colon,2,$$(f)),$$(call word-colon,1,$$(f)))),\
-    $$(eval my_test_config += $$(foreach f,$$(my_compat_dist_config_$(suite)), $$(call word-colon,2,$$(f)))) \
+    $$(eval my_test_config += $$(my_compat_dist_config_$(suite))) \
   )) \
   $(if $(filter $(suite),$(ALL_COMPATIBILITY_SUITES)),,\
     $(eval ALL_COMPATIBILITY_SUITES += $(suite)) \
@@ -3813,6 +3843,10 @@ endef
 -include $(TOPDIR)vendor/*/build/core/definitions.mk
 -include $(TOPDIR)device/*/build/core/definitions.mk
 -include $(TOPDIR)product/*/build/core/definitions.mk
+# Also the project-specific definitions.mk file
+-include $(TOPDIR)vendor/*/*/build/core/definitions.mk
+-include $(TOPDIR)device/*/*/build/core/definitions.mk
+-include $(TOPDIR)product/*/*/build/core/definitions.mk
 
 # broken:
 #	$(foreach file,$^,$(if $(findstring,.a,$(suffix $file)),-l$(file),$(file)))

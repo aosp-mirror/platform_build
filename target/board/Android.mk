@@ -19,8 +19,11 @@ board_info_txt := $(TARGET_BOARD_INFO_FILE)
 ifndef board_info_txt
 board_info_txt := $(wildcard $(TARGET_DEVICE_DIR)/board-info.txt)
 endif
-$(INSTALLED_ANDROID_INFO_TXT_TARGET): $(board_info_txt) build/make/tools/check_radio_versions.py
-	$(hide) build/make/tools/check_radio_versions.py $< $(BOARD_INFO_CHECK)
+CHECK_RADIO_VERSIONS := $(HOST_OUT_EXECUTABLES)/check_radio_versions$(HOST_EXECUTABLE_SUFFIX)
+$(INSTALLED_ANDROID_INFO_TXT_TARGET): $(board_info_txt) $(CHECK_RADIO_VERSIONS)
+	$(hide) $(CHECK_RADIO_VERSIONS) \
+		--board_info_txt $(board_info_txt) \
+		--board_info_check $(BOARD_INFO_CHECK)
 	$(call pretty,"Generated: ($@)")
 ifdef board_info_txt
 	$(hide) grep -v '#' $< > $@

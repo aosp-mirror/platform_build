@@ -30,8 +30,28 @@ prebuilt_etc {
 }
 
 prebuilt_etc {
+    name: "preinstalled-packages-platform-generic-system.xml",
+    sub_dir: "sysconfig",
+    src: "preinstalled-packages-platform-generic-system.xml",
+}
+
+prebuilt_etc {
     name: "preinstalled-packages-platform-handheld-product.xml",
     product_specific: true,
     sub_dir: "sysconfig",
     src: "preinstalled-packages-platform-handheld-product.xml",
 }
+
+prebuilt_etc {
+    name: "preinstalled-packages-platform-handheld-system.xml",
+    sub_dir: "sysconfig",
+    src: "preinstalled-packages-platform-handheld-system.xml",
+}
+
+prebuilt_etc {
+    name: "preinstalled-packages-platform-telephony-product.xml",
+    product_specific: true,
+    sub_dir: "sysconfig",
+    src: "preinstalled-packages-platform-telephony-product.xml",
+}
+

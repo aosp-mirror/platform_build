@@ -1,0 +1,30 @@
+# Copyright 2023 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+load("//build/make/core:product_config.rbc", "rblf")
+load("//build/make/tests/input_variables.rbc", input_variables_init = "init")
+load(":product.rbc", "init")
+
+
+def assert_eq(expected, actual):
+    if expected != actual:
+        fail("Expected '%s', got '%s'" % (expected, actual))
+
+def test():
+    (globals, globals_base) = rblf.product_configuration("test/device", init, input_variables_init)
+    assert_eq(["foo", "bar"], globals["PRODUCTS.test/device.mk.PRODUCT_PACKAGES"])
+    assert_eq(["foo", ("test/inherit1",)], globals["PRODUCT_PACKAGES_COPY"])
+
+    # Ideally we would check that rblf.printvars returns the correct result, but we don't have
+    # a good way to intercept its output or mock rblf_cli
