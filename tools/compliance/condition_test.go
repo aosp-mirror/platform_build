@@ -21,22 +21,22 @@ import (
 func TestConditionSetHas(t *testing.T) {
 	impliesShare := ImpliesShared
 
-	t.Logf("testing with imliesShare=%04x", impliesShare)
+	t.Logf("testing with imliesShare=%#v", impliesShare)
 
 	if impliesShare.HasAny(NoticeCondition) {
-		t.Errorf("impliesShare.HasAny(\"notice\"=%04x) got true, want false", NoticeCondition)
+		t.Errorf("impliesShare.HasAny(\"notice\"=%#v) got true, want false", NoticeCondition)
 	}
 
 	if !impliesShare.HasAny(RestrictedCondition) {
-		t.Errorf("impliesShare.HasAny(\"restricted\"=%04x) got false, want true", RestrictedCondition)
+		t.Errorf("impliesShare.HasAny(\"restricted\"=%#v) got false, want true", RestrictedCondition)
 	}
 
 	if !impliesShare.HasAny(ReciprocalCondition) {
-		t.Errorf("impliesShare.HasAny(\"reciprocal\"=%04x) got false, want true", ReciprocalCondition)
+		t.Errorf("impliesShare.HasAny(\"reciprocal\"=%#v) got false, want true", ReciprocalCondition)
 	}
 
 	if impliesShare.HasAny(LicenseCondition(0x0000)) {
-		t.Errorf("impliesShare.HasAny(nil=%04x) got true, want false", LicenseCondition(0x0000))
+		t.Errorf("impliesShare.HasAny(nil=%#v) got true, want false", LicenseCondition(0x0000))
 	}
 }
 
@@ -44,7 +44,7 @@ func TestConditionName(t *testing.T) {
 	for expected, condition := range RecognizedConditionNames {
 		actual := condition.Name()
 		if expected != actual {
-			t.Errorf("unexpected name for condition %04x: got %s, want %s", condition, actual, expected)
+			t.Errorf("unexpected name for condition %#v: got %s, want %s", condition, actual, expected)
 		}
 	}
 }
@@ -62,6 +62,6 @@ func TestConditionName_InvalidCondition(t *testing.T) {
 		t.Errorf("invalid condition unexpected name: got %s, wanted panic", name)
 	}()
 	if !panicked {
-		t.Errorf("no expected panic for %04x.Name(): got no panic, wanted panic", lc)
+		t.Errorf("no expected panic for %#v.Name(): got no panic, wanted panic", lc)
 	}
 }

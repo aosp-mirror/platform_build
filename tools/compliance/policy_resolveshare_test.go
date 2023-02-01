@@ -40,9 +40,7 @@ func TestResolveSourceSharing(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:  "independentmodulestaticrestricted",
@@ -50,10 +48,7 @@ func TestResolveSourceSharing(t *testing.T) {
 			edges: []annotated{
 				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:  "dependentmodulerestricted",
@@ -61,9 +56,7 @@ func TestResolveSourceSharing(t *testing.T) {
 			edges: []annotated{
 				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:  "dependentmodulerestrictedshipclasspath",
@@ -71,11 +64,7 @@ func TestResolveSourceSharing(t *testing.T) {
 			edges: []annotated{
 				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:  "lgplonfprestricted",
@@ -84,8 +73,8 @@ func TestResolveSourceSharing(t *testing.T) {
 				{"lgplBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"lgplBin.meta_lic", "lgplBin.meta_lic", "lgplBin.meta_lic", "restricted"},
-				{"lgplBin.meta_lic", "apacheLib.meta_lic", "lgplBin.meta_lic", "restricted"},
+				{"lgplBin.meta_lic", "lgplBin.meta_lic", "restricted_if_statically_linked"},
+				{"lgplBin.meta_lic", "apacheLib.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -95,7 +84,7 @@ func TestResolveSourceSharing(t *testing.T) {
 				{"lgplBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"lgplBin.meta_lic", "lgplBin.meta_lic", "lgplBin.meta_lic", "restricted"},
+				{"lgplBin.meta_lic", "lgplBin.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -105,7 +94,7 @@ func TestResolveSourceSharing(t *testing.T) {
 				{"lgplBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"lgplBin.meta_lic", "lgplBin.meta_lic", "lgplBin.meta_lic", "restricted"},
+				{"lgplBin.meta_lic", "lgplBin.meta_lic", "restricted_if_statically_linked"},
 			},
 		},
 		{
@@ -115,8 +104,8 @@ func TestResolveSourceSharing(t *testing.T) {
 				{"gplBin.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"gplBin.meta_lic", "gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
-				{"gplBin.meta_lic", "apacheLib.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "apacheLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -126,9 +115,9 @@ func TestResolveSourceSharing(t *testing.T) {
 				{"gplContainer.meta_lic", "apacheLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"gplContainer.meta_lic", "gplContainer.meta_lic", "gplContainer.meta_lic", "restricted"},
-				{"gplContainer.meta_lic", "apacheLib.meta_lic", "gplContainer.meta_lic", "restricted"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "gplContainer.meta_lic", "restricted"},
+				{"gplContainer.meta_lic", "gplContainer.meta_lic", "restricted"},
+				{"gplContainer.meta_lic", "apacheLib.meta_lic", "restricted"},
+				{"apacheLib.meta_lic", "apacheLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -139,9 +128,9 @@ func TestResolveSourceSharing(t *testing.T) {
 				{"apacheContainer.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheContainer.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"gplLib.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"apacheContainer.meta_lic", "apacheContainer.meta_lic", "restricted"},
+				{"apacheContainer.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -152,9 +141,9 @@ func TestResolveSourceSharing(t *testing.T) {
 				{"apacheBin.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"apacheBin.meta_lic", "apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"apacheBin.meta_lic", "apacheLib.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"apacheBin.meta_lic", "apacheBin.meta_lic", "restricted"},
+				{"apacheBin.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"apacheBin.meta_lic", "apacheLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -164,7 +153,7 @@ func TestResolveSourceSharing(t *testing.T) {
 				{"gplBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"gplBin.meta_lic", "gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -174,9 +163,9 @@ func TestResolveSourceSharing(t *testing.T) {
 				{"gplBin.meta_lic", "apacheLib.meta_lic", []string{"dynamic"}},
 			},
 			expectedResolutions: []res{
-				{"gplBin.meta_lic", "gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
-				{"gplBin.meta_lic", "apacheLib.meta_lic", "gplBin.meta_lic", "restricted"},
-				{"apacheLib.meta_lic", "apacheLib.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "apacheLib.meta_lic", "restricted"},
+				{"apacheLib.meta_lic", "apacheLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -185,9 +174,7 @@ func TestResolveSourceSharing(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:  "independentmodulereversestaticrestricted",
@@ -195,10 +182,7 @@ func TestResolveSourceSharing(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", []string{"static"}},
 			},
-			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"gplWithClasspathException.meta_lic", "apacheBin.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:  "dependentmodulereverserestricted",
@@ -206,9 +190,7 @@ func TestResolveSourceSharing(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:  "dependentmodulereverserestrictedshipdependent",
@@ -216,11 +198,7 @@ func TestResolveSourceSharing(t *testing.T) {
 			edges: []annotated{
 				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", []string{"dynamic"}},
 			},
-			expectedResolutions: []res{
-				{"gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"gplWithClasspathException.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-				{"dependentModule.meta_lic", "dependentModule.meta_lic", "gplWithClasspathException.meta_lic", "restricted"},
-			},
+			expectedResolutions: []res{},
 		},
 		{
 			name:  "ponrrestricted",
@@ -229,8 +207,8 @@ func TestResolveSourceSharing(t *testing.T) {
 				{"proprietary.meta_lic", "gplLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"proprietary.meta_lic", "proprietary.meta_lic", "gplLib.meta_lic", "restricted"},
-				{"proprietary.meta_lic", "gplLib.meta_lic", "gplLib.meta_lic", "restricted"},
+				{"proprietary.meta_lic", "proprietary.meta_lic", "restricted"},
+				{"proprietary.meta_lic", "gplLib.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -240,8 +218,8 @@ func TestResolveSourceSharing(t *testing.T) {
 				{"gplBin.meta_lic", "proprietary.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"gplBin.meta_lic", "gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
-				{"gplBin.meta_lic", "proprietary.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "gplBin.meta_lic", "restricted"},
+				{"gplBin.meta_lic", "proprietary.meta_lic", "restricted"},
 			},
 		},
 		{
@@ -267,7 +245,7 @@ func TestResolveSourceSharing(t *testing.T) {
 				{"mitBin.meta_lic", "mplLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"mitBin.meta_lic", "mplLib.meta_lic", "mplLib.meta_lic", "reciprocal"},
+				{"mitBin.meta_lic", "mplLib.meta_lic", "reciprocal"},
 			},
 		},
 		{
@@ -277,7 +255,7 @@ func TestResolveSourceSharing(t *testing.T) {
 				{"mplBin.meta_lic", "mitLib.meta_lic", []string{"static"}},
 			},
 			expectedResolutions: []res{
-				{"mplBin.meta_lic", "mplBin.meta_lic", "mplBin.meta_lic", "reciprocal"},
+				{"mplBin.meta_lic", "mplBin.meta_lic", "reciprocal"},
 			},
 		},
 	}

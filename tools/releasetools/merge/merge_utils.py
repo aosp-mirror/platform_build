@@ -178,7 +178,6 @@ def InferItemList(input_namelist, framework):
     item_set.update([
         'META/liblz4.so',
         'META/postinstall_config.txt',
-        'META/update_engine_config.txt',
         'META/zucchini_config.txt',
     ])
   else:  # vendor

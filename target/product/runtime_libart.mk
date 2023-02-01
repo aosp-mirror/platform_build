@@ -95,7 +95,6 @@ endif
 # The thermal cutoff value is currently set to THERMAL_STATUS_MODERATE.
 PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.usejit=true \
-    dalvik.vm.usejitprofiles=true \
     dalvik.vm.dexopt.secondary=true \
     dalvik.vm.dexopt.thermal-cutoff=2 \
     dalvik.vm.appimageformat=lz4
@@ -165,3 +164,13 @@ PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.usap_pool_size_max?=3 \
     dalvik.vm.usap_pool_size_min?=1 \
     dalvik.vm.usap_pool_refill_delay_ms?=3000
+
+# Allow dexopt files that are side-effects of already allowlisted files.
+# This is only necessary when ART is prebuilt.
+ifeq (false,$(ART_MODULE_BUILD_FROM_SOURCE))
+  PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
+      system/framework/%.art \
+      system/framework/%.oat \
+      system/framework/%.odex \
+      system/framework/%.vdex
+endif

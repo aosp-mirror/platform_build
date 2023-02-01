@@ -142,7 +142,6 @@ class MergeUtilsTest(test_utils.ReleaseToolsTestCase):
         'META/liblz4.so',
         'META/postinstall_config.txt',
         'META/product_filesystem_config.txt',
-        'META/update_engine_config.txt',
         'META/zucchini_config.txt',
         'PRODUCT/*',
         'SYSTEM/*',

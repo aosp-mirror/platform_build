@@ -24,6 +24,8 @@ _product_list_vars :=
 
 _product_single_value_vars += PRODUCT_NAME
 _product_single_value_vars += PRODUCT_MODEL
+_product_single_value_vars += PRODUCT_NAME_FOR_ATTESTATION
+_product_single_value_vars += PRODUCT_MODEL_FOR_ATTESTATION
 
 # The resoure configuration options to use for this product.
 _product_list_vars += PRODUCT_LOCALES
@@ -43,6 +45,7 @@ _product_list_vars += PRODUCT_PACKAGES_TESTS
 _product_single_value_vars += PRODUCT_DEVICE
 _product_single_value_vars += PRODUCT_MANUFACTURER
 _product_single_value_vars += PRODUCT_BRAND
+_product_single_value_vars += PRODUCT_BRAND_FOR_ATTESTATION
 
 # These PRODUCT_SYSTEM_* flags, if defined, are used in place of the
 # corresponding PRODUCT_* flags for the sysprops on /system.
@@ -136,10 +139,7 @@ _product_list_vars += PRODUCT_BOOT_JARS
 # PRODUCT_BOOT_JARS, so that device-specific jars go after common jars.
 _product_list_vars += PRODUCT_BOOT_JARS_EXTRA
 
-_product_single_value_vars += PRODUCT_SUPPORTS_BOOT_SIGNER
 _product_single_value_vars += PRODUCT_SUPPORTS_VBOOT
-_product_single_value_vars += PRODUCT_SUPPORTS_VERITY
-_product_single_value_vars += PRODUCT_SUPPORTS_VERITY_FEC
 _product_list_vars += PRODUCT_SYSTEM_SERVER_APPS
 # List of system_server classpath jars on the platform.
 _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS
@@ -168,7 +168,6 @@ _product_list_vars += PRODUCT_DEXPREOPT_SPEED_APPS
 _product_list_vars += PRODUCT_LOADED_BY_PRIVILEGED_MODULES
 _product_single_value_vars += PRODUCT_VBOOT_SIGNING_KEY
 _product_single_value_vars += PRODUCT_VBOOT_SIGNING_SUBKEY
-_product_single_value_vars += PRODUCT_VERITY_SIGNING_KEY
 _product_single_value_vars += PRODUCT_SYSTEM_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_VENDOR_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_PRODUCT_VERITY_PARTITION
@@ -267,6 +266,9 @@ _product_list_vars += PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION
 # This flag implies PRODUCT_USE_DYNAMIC_PARTITIONS.
 _product_single_value_vars += PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
 
+# List of tags that will be used to gate blueprint modules from the build graph
+_product_list_vars += PRODUCT_INCLUDE_TAGS
+
 # When this is true, various build time as well as runtime debugfs restrictions are enabled.
 _product_single_value_vars += PRODUCT_SET_DEBUGFS_RESTRICTIONS
 
@@ -360,19 +362,34 @@ _product_single_value_vars += PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES
 # This option is only meant to be set by compliance GSI targets.
 _product_single_value_vars += PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
 
-# If set, metadata files for the following artifacts will be generated.
-# - system/framework/*.jar
-# - system/framework/oat/<arch>/*.{oat,vdex,art}
-# - system/etc/boot-image.prof
-# - system/etc/dirty-image-objects
-# One fsverity metadata container file per one input file will be generated in
-# system.img, with a suffix ".fsv_meta". e.g. a container file for
-# "/system/framework/foo.jar" will be "system/framework/foo.jar.fsv_meta".
-_product_single_value_vars += PRODUCT_SYSTEM_FSVERITY_GENERATE_METADATA
+# If set, fsverity metadata files will be generated for each files in the
+# allowlist, plus an manifest APK per partition. For example,
+# /system/framework/service.jar will come with service.jar.fsv_meta in the same
+# directory; the file information will also be included in
+# /system/etc/security/fsverity/BuildManifest.apk
+_product_single_value_vars += PRODUCT_FSVERITY_GENERATE_METADATA
 
 # If true, sets the default for MODULE_BUILD_FROM_SOURCE. This overrides
 # BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE but not an explicitly set value.
 _product_single_value_vars += PRODUCT_MODULE_BUILD_FROM_SOURCE
+
+# If true, installs a full version of com.android.virt APEX.
+_product_single_value_vars += PRODUCT_AVF_ENABLED
+
+# List of .json files to be merged/compiled into vendor/etc/linker.config.pb
+_product_list_vars += PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS
+
+# Whether to use userfaultfd GC.
+# Possible values are:
+# - "default" or empty: both the build system and the runtime determine whether to use userfaultfd
+#   GC based on the vendor API level
+# - "true": forces the build system to use userfaultfd GC regardless of the vendor API level; the
+#   runtime determines whether to use userfaultfd GC based on the kernel support. Note that the
+#   device may have to re-compile everything on the first boot if the kernel doesn't support
+#   userfaultfd
+# - "false": disallows the build system and the runtime to use userfaultfd GC even if the device
+#   supports it
+_product_single_value_vars += PRODUCT_ENABLE_UFFD_GC
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)

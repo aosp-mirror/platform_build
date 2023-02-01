@@ -34,7 +34,6 @@ $(call add_soong_config_var_value,ANDROID,MIXED_SEPOLICY_VERSION,$(BOARD_SEPOLIC
 endif
 $(call add_soong_config_var,ANDROID,BOARD_USES_ODMIMAGE)
 $(call add_soong_config_var,ANDROID,BOARD_USES_RECOVERY_AS_BOOT)
-$(call add_soong_config_var,ANDROID,BOARD_BUILD_SYSTEM_ROOT_IMAGE)
 $(call add_soong_config_var,ANDROID,PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT)
 
 # Default behavior for the tree wrt building modules or using prebuilts. This
@@ -76,7 +75,9 @@ $(call soong_config_set,art_module,source_build,$(ART_MODULE_BUILD_FROM_SOURCE))
 # are controlled by the MODULE_BUILD_FROM_SOURCE environment variable by
 # default.
 INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
+  bluetooth \
   permission \
+  uwb \
   wifi \
 
 $(foreach m, $(INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES),\
@@ -86,6 +87,10 @@ $(foreach m, $(INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES),\
 # Apex build mode variables
 ifdef APEX_BUILD_FOR_PRE_S_DEVICES
 $(call add_soong_config_var_value,ANDROID,library_linking_strategy,prefer_static)
+else
+ifdef KEEP_APEX_INHERIT
+$(call add_soong_config_var_value,ANDROID,library_linking_strategy,prefer_static)
+endif
 endif
 
 ifeq (true,$(MODULE_BUILD_FROM_SOURCE))
@@ -97,9 +102,13 @@ ifeq (eng,$(TARGET_BUILD_VARIANT))
 $(call soong_config_set,messaging,build_variant_eng,true)
 endif
 
-# TODO(b/203088572): Remove when Java optimizations enabled by default for
-# SystemUI.
+# Enable SystemUI optimizations by default unless explicitly set.
+SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
+
+ifdef PRODUCT_AVF_ENABLED
+$(call add_soong_config_var_value,ANDROID,avf_enabled,$(PRODUCT_AVF_ENABLED))
+endif
 
 # Enable system_server optimizations by default unless explicitly set or if
 # there may be dependent runtime jars.
@@ -117,3 +126,11 @@ else
   SYSTEM_OPTIMIZE_JAVA ?= true
 endif
 $(call add_soong_config_var,ANDROID,SYSTEM_OPTIMIZE_JAVA)
+
+# Check for SupplementalApi module.
+ifeq ($(wildcard packages/modules/SupplementalApi),)
+$(call add_soong_config_var_value,ANDROID,include_nonpublic_framework_api,false)
+else
+$(call add_soong_config_var_value,ANDROID,include_nonpublic_framework_api,true)
+endif
+

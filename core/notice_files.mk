@@ -11,6 +11,8 @@ endif
 
 ifneq (,$(strip $(LOCAL_LICENSE_PACKAGE_NAME)))
 license_package_name:=$(strip $(LOCAL_LICENSE_PACKAGE_NAME))
+else
+license_package_name:=
 endif
 
 ifneq (,$(strip $(LOCAL_LICENSE_INSTALL_MAP)))
@@ -127,9 +129,13 @@ module_license_metadata :=
 ifdef my_register_name
   module_license_metadata := $(call local-meta-intermediates-dir)/$(my_register_name).meta_lic
 
-  $(foreach target,$(ALL_MODULES.$(my_register_name).BUILT) $(ALL_MODULES.$(my_register_name).INSTALLED) $(foreach bi,$(LOCAL_SOONG_BUILT_INSTALLED),$(call word-colon,1,$(bi))) \
-      $(my_test_data) $(my_test_config),\
+  $(foreach target,$(ALL_MODULES.$(my_register_name).BUILT) $(ALL_MODULES.$(my_register_name).INSTALLED) $(foreach bi,$(LOCAL_SOONG_BUILT_INSTALLED),$(call word-colon,1,$(bi))),\
     $(eval ALL_TARGETS.$(target).META_LIC := $(module_license_metadata)))
+
+  $(foreach f,$(my_test_data) $(my_test_config),\
+    $(if $(strip $(ALL_TARGETS.$(call word-colon,1,$(f)).META_LIC)), \
+      $(call declare-copy-target-license-metadata,$(call word-colon,2,$(f)),$(call word-colon,1,$(f))), \
+      $(eval ALL_TARGETS.$(call word-colon,2,$(f)).META_LIC := $(module_license_metadata))))
 
   ALL_MODULES.$(my_register_name).META_LIC := $(strip $(ALL_MODULES.$(my_register_name).META_LIC) $(module_license_metadata))
 

@@ -40,14 +40,28 @@ cc_binary_host {
     cflags: ["-Werror"],
 }
 
+python_binary_host {
+    name: "fs_config_generator",
+    srcs: ["fs_config_generator.py"],
+}
+
+python_test_host {
+    name: "test_fs_config_generator",
+    main: "test_fs_config_generator.py",
+    srcs: [
+        "test_fs_config_generator.py",
+        "fs_config_generator.py",
+    ],
+}
+
 target_fs_config_gen_filegroup {
     name: "target_fs_config_gen",
 }
 
 genrule {
     name: "oemaids_header_gen",
-    tool_files: ["fs_config_generator.py"],
-    cmd: "$(location fs_config_generator.py) oemaid --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    tools: ["fs_config_generator"],
+    cmd: "$(location fs_config_generator) oemaid --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
     srcs: [
         ":target_fs_config_gen",
         ":android_filesystem_config_header",
@@ -67,8 +81,8 @@ cc_library_headers {
 // TARGET_FS_CONFIG_GEN files.
 genrule {
     name: "passwd_gen_system",
-    tool_files: ["fs_config_generator.py"],
-    cmd: "$(location fs_config_generator.py) passwd --partition=system --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    tools: ["fs_config_generator"],
+    cmd: "$(location fs_config_generator) passwd --partition=system --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
     srcs: [
         ":target_fs_config_gen",
         ":android_filesystem_config_header",
@@ -84,8 +98,8 @@ prebuilt_etc {
 
 genrule {
     name: "passwd_gen_vendor",
-    tool_files: ["fs_config_generator.py"],
-    cmd: "$(location fs_config_generator.py) passwd --partition=vendor --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    tools: ["fs_config_generator"],
+    cmd: "$(location fs_config_generator) passwd --partition=vendor --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
     srcs: [
         ":target_fs_config_gen",
         ":android_filesystem_config_header",
@@ -102,8 +116,8 @@ prebuilt_etc {
 
 genrule {
     name: "passwd_gen_odm",
-    tool_files: ["fs_config_generator.py"],
-    cmd: "$(location fs_config_generator.py) passwd --partition=odm --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    tools: ["fs_config_generator"],
+    cmd: "$(location fs_config_generator) passwd --partition=odm --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
     srcs: [
         ":target_fs_config_gen",
         ":android_filesystem_config_header",
@@ -120,8 +134,8 @@ prebuilt_etc {
 
 genrule {
     name: "passwd_gen_product",
-    tool_files: ["fs_config_generator.py"],
-    cmd: "$(location fs_config_generator.py) passwd --partition=product --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    tools: ["fs_config_generator"],
+    cmd: "$(location fs_config_generator) passwd --partition=product --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
     srcs: [
         ":target_fs_config_gen",
         ":android_filesystem_config_header",
@@ -138,8 +152,8 @@ prebuilt_etc {
 
 genrule {
     name: "passwd_gen_system_ext",
-    tool_files: ["fs_config_generator.py"],
-    cmd: "$(location fs_config_generator.py) passwd --partition=system_ext --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    tools: ["fs_config_generator"],
+    cmd: "$(location fs_config_generator) passwd --partition=system_ext --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
     srcs: [
         ":target_fs_config_gen",
         ":android_filesystem_config_header",
@@ -159,8 +173,8 @@ prebuilt_etc {
 // TARGET_FS_CONFIG_GEN files.
 genrule {
     name: "group_gen_system",
-    tool_files: ["fs_config_generator.py"],
-    cmd: "$(location fs_config_generator.py) group --partition=system --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    tools: ["fs_config_generator"],
+    cmd: "$(location fs_config_generator) group --partition=system --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
     srcs: [
         ":target_fs_config_gen",
         ":android_filesystem_config_header",
@@ -176,8 +190,8 @@ prebuilt_etc {
 
 genrule {
     name: "group_gen_vendor",
-    tool_files: ["fs_config_generator.py"],
-    cmd: "$(location fs_config_generator.py) group --partition=vendor --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    tools: ["fs_config_generator"],
+    cmd: "$(location fs_config_generator) group --partition=vendor --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
     srcs: [
         ":target_fs_config_gen",
         ":android_filesystem_config_header",
@@ -194,8 +208,8 @@ prebuilt_etc {
 
 genrule {
     name: "group_gen_odm",
-    tool_files: ["fs_config_generator.py"],
-    cmd: "$(location fs_config_generator.py) group --partition=odm --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    tools: ["fs_config_generator"],
+    cmd: "$(location fs_config_generator) group --partition=odm --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
     srcs: [
         ":target_fs_config_gen",
         ":android_filesystem_config_header",
@@ -212,8 +226,8 @@ prebuilt_etc {
 
 genrule {
     name: "group_gen_product",
-    tool_files: ["fs_config_generator.py"],
-    cmd: "$(location fs_config_generator.py) group --partition=product --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    tools: ["fs_config_generator"],
+    cmd: "$(location fs_config_generator) group --partition=product --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
     srcs: [
         ":target_fs_config_gen",
         ":android_filesystem_config_header",
@@ -230,8 +244,8 @@ prebuilt_etc {
 
 genrule {
     name: "group_gen_system_ext",
-    tool_files: ["fs_config_generator.py"],
-    cmd: "$(location fs_config_generator.py) group --partition=system_ext --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    tools: ["fs_config_generator"],
+    cmd: "$(location fs_config_generator) group --partition=system_ext --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
     srcs: [
         ":target_fs_config_gen",
         ":android_filesystem_config_header",

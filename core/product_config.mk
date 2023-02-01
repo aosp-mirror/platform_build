@@ -274,6 +274,14 @@ endif
 current_product_makefile :=
 
 #############################################################################
+# Check product include tag allowlist
+BLUEPRINT_INCLUDE_TAGS_ALLOWLIST := com.android.mainline_go com.android.mainline
+.KATI_READONLY := BLUEPRINT_INCLUDE_TAGS_ALLOWLIST
+$(foreach include_tag,$(PRODUCT_INCLUDE_TAGS), \
+	$(if $(filter $(include_tag),$(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST)),,\
+	$(call pretty-error, $(include_tag) is not in BLUEPRINT_INCLUDE_TAGS_ALLOWLIST: $(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST))))
+#############################################################################
+
 # Quick check and assign default values
 
 TARGET_DEVICE := $(PRODUCT_DEVICE)
@@ -429,7 +437,7 @@ endif
 
 # Show a warning wall of text if non-compliance-GSI products set this option.
 ifdef PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
-  ifeq (,$(filter gsi_arm gsi_arm64 gsi_x86 gsi_x86_64 gsi_car_arm64 gsi_car_x86_64,$(PRODUCT_NAME)))
+  ifeq (,$(filter gsi_arm gsi_arm64 gsi_x86 gsi_x86_64 gsi_car_arm64 gsi_car_x86_64 gsi_tv_arm gsi_tv_arm64,$(PRODUCT_NAME)))
     $(warning PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT is set but \
       PRODUCT_NAME ($(PRODUCT_NAME)) doesn't look like a GSI for compliance \
       testing. This is a special configuration for compliance GSI, so do make \
@@ -472,6 +480,9 @@ endif
 ifdef PRODUCT_SHIPPING_API_LEVEL
   ifneq (,$(call math_gt_or_eq,29,$(PRODUCT_SHIPPING_API_LEVEL)))
     PRODUCT_PACKAGES += $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29)
+  endif
+  ifneq (,$(call math_gt_or_eq,33,$(PRODUCT_SHIPPING_API_LEVEL)))
+    PRODUCT_PACKAGES += $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_33)
   endif
 endif
 

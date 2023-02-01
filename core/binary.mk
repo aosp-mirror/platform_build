@@ -19,7 +19,11 @@ include $(BUILD_SYSTEM)/use_lld_setup.mk
 # supply that, for example, when building libc itself.
 ifdef LOCAL_IS_HOST_MODULE
   ifeq ($(LOCAL_SYSTEM_SHARED_LIBRARIES),none)
+    ifdef USE_HOST_MUSL
+      my_system_shared_libraries := libc_musl
+    else
       my_system_shared_libraries :=
+    endif
   else
       my_system_shared_libraries := $(LOCAL_SYSTEM_SHARED_LIBRARIES)
   endif
@@ -54,6 +58,9 @@ my_conlyflags := $(LOCAL_CONLYFLAGS)
 my_cppflags := $(LOCAL_CPPFLAGS)
 my_cflags_no_override := $(GLOBAL_CLANG_CFLAGS_NO_OVERRIDE)
 my_cppflags_no_override := $(GLOBAL_CLANG_CPPFLAGS_NO_OVERRIDE)
+ifeq ($(my_32_64_bit_suffix), 64)
+  my_cflags_no_override += $(GLOBAL_CLANG_CFLAGS_64_NO_OVERRIDE)
+endif
 ifdef is_third_party
     my_cflags_no_override += $(GLOBAL_CLANG_EXTERNAL_CFLAGS_NO_OVERRIDE)
     my_cppflags_no_override += $(GLOBAL_CLANG_EXTERNAL_CFLAGS_NO_OVERRIDE)
@@ -348,9 +355,11 @@ my_ldlibs := $(filter $(my_allowed_ldlibs),$(my_ldlibs))
 else # LOCAL_IS_HOST_MODULE
   # Add -ldl, -lpthread, -lm and -lrt to host builds to match the default behavior of
   # device builds
-  my_ldlibs += -ldl -lpthread -lm
-  ifneq ($(HOST_OS),darwin)
-    my_ldlibs += -lrt
+  ifndef USE_HOST_MUSL
+    my_ldlibs += -ldl -lpthread -lm
+    ifneq ($(HOST_OS),darwin)
+      my_ldlibs += -lrt
+    endif
   endif
 endif
 
@@ -1144,6 +1153,28 @@ ifneq ($(filter hwaddress,$(my_sanitize)),)
   my_static_libraries := $(call use_soong_sanitized_static_libraries,\
     $(my_static_libraries),hwasan)
 endif
+
+###################################################################
+## When compiling against API imported module, use API import stub
+## libraries.
+##################################################################
+
+apiimport_postfix := .apiimport
+
+ifneq ($(LOCAL_USE_VNDK),)
+  ifeq ($(LOCAL_USE_VNDK_PRODUCT),true)
+    apiimport_postfix := .apiimport.product
+  else
+    apiimport_postfix := .apiimport.vendor
+  endif
+endif
+
+my_shared_libraries := $(foreach l,$(my_shared_libraries), \
+ $(if $(filter $(l), $(API_IMPORTED_SHARED_LIBRARIES)), $(l)$(apiimport_postfix), $(l)))
+my_system_shared_libraries := $(foreach l,$(my_system_shared_libraries), \
+ $(if $(filter $(l), $(API_IMPORTED_SHARED_LIBRARIES)), $(l)$(apiimport_postfix), $(l)))
+my_header_libraries := $(foreach l,$(my_header_libraries), \
+ $(if $(filter $(l), $(API_IMPORTED_HEADER_LIBRARIES)), $(l)$(apiimport_postfix), $(l)))
 
 ###########################################################
 ## When compiling against the VNDK, use LL-NDK libraries

@@ -100,7 +100,8 @@ buffer.write("/* This file is auto-generated.  DO NOT MODIFY.\n"
              " * Source file: %s\n"
              " */\n\n" % (fn,))
 
-buffer.write("package %s;\n\n" % (tagfile.options["java_package"][0],))
+# .rstrip(";") to avoid an empty top-level statement errorprone error
+buffer.write("package %s;\n\n" % (tagfile.options["java_package"][0].rstrip(";"),))
 
 basename, _ = os.path.splitext(os.path.basename(fn))
 
