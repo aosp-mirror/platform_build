@@ -1,0 +1,6 @@
+# Comments are allowed
+name: "testdata"
+description: "Restricted Test Data"
+third_party {
+    version: "1.0"
+}

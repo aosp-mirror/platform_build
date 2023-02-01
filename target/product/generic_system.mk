@@ -32,6 +32,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     LiveWallpapersPicker \
     PartnerBookmarksProvider \
+    preinstalled-packages-platform-generic-system.xml \
     Stk \
     Tag \
 

@@ -43,19 +43,16 @@ using namespace android;
  */
 status_t ZipEntry::initAndRewriteFromCDE(FILE* fp)
 {
-    status_t result;
-    long posn;
-
     /* read the CDE */
-    result = mCDE.rewrite(fp);
+    status_t result = mCDE.rewrite(fp);
     if (result != 0) {
         LOG("mCDE.rewrite failed\n");
         return result;
     }
 
     /* using the info in the CDE, go load up the LFH */
-    posn = ftell(fp);
-    if (fseek(fp, mCDE.mLocalHeaderRelOffset, SEEK_SET) != 0) {
+    off_t posn = ftello(fp);
+    if (fseeko(fp, mCDE.mLocalHeaderRelOffset, SEEK_SET) != 0) {
         LOG("local header seek failed (%" PRIu32 ")\n",
             mCDE.mLocalHeaderRelOffset);
         return -1;
@@ -67,7 +64,7 @@ status_t ZipEntry::initAndRewriteFromCDE(FILE* fp)
         return result;
     }
 
-    if (fseek(fp, posn, SEEK_SET) != 0)
+    if (fseeko(fp, posn, SEEK_SET) != 0)
         return -1;
 
     return 0;

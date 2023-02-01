@@ -92,6 +92,9 @@ $(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
 -include test/catbox/tools/build/config.mk
 # CTS-Root-specific config.
 -include test/cts-root/tools/build/config.mk
+# WVTS-specific config.
+-include test/wvts/tools/build/config.mk
+
 
 # Clean rules
 .PHONY: clean-dex-files
@@ -460,6 +463,9 @@ BUILD_WITHOUT_PV := true
 
 ADDITIONAL_SYSTEM_PROPERTIES += net.bt.name=Android
 
+# This property is set by flashing debug boot image, so default to false.
+ADDITIONAL_SYSTEM_PROPERTIES += ro.force.debuggable=0
+
 # ------------------------------------------------------------
 # Define a function that, given a list of module tags, returns
 # non-empty if that module should be installed in /system.
@@ -489,6 +495,8 @@ endif
 #
 # Typical build; include any Android.mk files we can find.
 #
+
+include $(BUILD_SYSTEM)/art_config.mk
 
 # Bring in dex_preopt.mk
 # This creates some modules so it needs to be included after
@@ -931,7 +939,7 @@ $(foreach suite,general-tests device-tests vts tvts art-host-tests host-unit-tes
     $(eval my_deps := $(call get-all-shared-libs-deps,$(m)))\
     $(foreach dep,$(my_deps),\
       $(foreach f,$(ALL_MODULES.$(dep).HOST_SHARED_LIBRARY_FILES),\
-        $(if $(filter $(suite),device-tests general-tests),\
+        $(if $(filter $(suite),device-tests general-tests art-host-tests host-unit-tests),\
           $(eval my_testcases := $(HOST_OUT_TESTCASES)),\
           $(eval my_testcases := $$(COMPATIBILITY_TESTCASES_OUT_$(suite))))\
         $(eval target := $(my_testcases)/$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
@@ -1597,6 +1605,9 @@ vbmetasystemimage: $(INSTALLED_VBMETA_SYSTEMIMAGE_TARGET)
 .PHONY: vbmetavendorimage
 vbmetavendorimage: $(INSTALLED_VBMETA_VENDORIMAGE_TARGET)
 
+.PHONY: vbmetacustomimages
+vbmetacustomimages: $(foreach partition,$(call to-upper,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)),$(INSTALLED_VBMETA_$(partition)IMAGE_TARGET))
+
 # The droidcore-unbundled target depends on the subset of targets necessary to
 # perform a full system build (either unbundled or not).
 .PHONY: droidcore-unbundled
@@ -1843,30 +1854,28 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
     $(INSTALLED_FILES_JSON_ROOT) \
   )
 
-  ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
-    $(call dist-for-goals, droidcore-unbundled, \
-      $(INSTALLED_FILES_FILE_RAMDISK) \
-      $(INSTALLED_FILES_JSON_RAMDISK) \
-      $(INSTALLED_FILES_FILE_DEBUG_RAMDISK) \
-      $(INSTALLED_FILES_JSON_DEBUG_RAMDISK) \
-      $(INSTALLED_FILES_FILE_VENDOR_RAMDISK) \
-      $(INSTALLED_FILES_JSON_VENDOR_RAMDISK) \
-      $(INSTALLED_FILES_FILE_VENDOR_KERNEL_RAMDISK) \
-      $(INSTALLED_FILES_JSON_VENDOR_KERNEL_RAMDISK) \
-      $(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK) \
-      $(INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK) \
-      $(INSTALLED_DEBUG_RAMDISK_TARGET) \
-      $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) \
-      $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET) \
-      $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET) \
-      $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
-      $(INSTALLED_VENDOR_TEST_HARNESS_RAMDISK_TARGET) \
-      $(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET) \
-      $(INSTALLED_VENDOR_RAMDISK_TARGET) \
-      $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \
-      $(INSTALLED_VENDOR_KERNEL_RAMDISK_TARGET) \
-    )
-  endif
+  $(call dist-for-goals, droidcore-unbundled, \
+    $(INSTALLED_FILES_FILE_RAMDISK) \
+    $(INSTALLED_FILES_JSON_RAMDISK) \
+    $(INSTALLED_FILES_FILE_DEBUG_RAMDISK) \
+    $(INSTALLED_FILES_JSON_DEBUG_RAMDISK) \
+    $(INSTALLED_FILES_FILE_VENDOR_RAMDISK) \
+    $(INSTALLED_FILES_JSON_VENDOR_RAMDISK) \
+    $(INSTALLED_FILES_FILE_VENDOR_KERNEL_RAMDISK) \
+    $(INSTALLED_FILES_JSON_VENDOR_KERNEL_RAMDISK) \
+    $(INSTALLED_FILES_FILE_VENDOR_DEBUG_RAMDISK) \
+    $(INSTALLED_FILES_JSON_VENDOR_DEBUG_RAMDISK) \
+    $(INSTALLED_DEBUG_RAMDISK_TARGET) \
+    $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) \
+    $(INSTALLED_TEST_HARNESS_RAMDISK_TARGET) \
+    $(INSTALLED_TEST_HARNESS_BOOTIMAGE_TARGET) \
+    $(INSTALLED_VENDOR_DEBUG_BOOTIMAGE_TARGET) \
+    $(INSTALLED_VENDOR_TEST_HARNESS_RAMDISK_TARGET) \
+    $(INSTALLED_VENDOR_TEST_HARNESS_BOOTIMAGE_TARGET) \
+    $(INSTALLED_VENDOR_RAMDISK_TARGET) \
+    $(INSTALLED_VENDOR_DEBUG_RAMDISK_TARGET) \
+    $(INSTALLED_VENDOR_KERNEL_RAMDISK_TARGET) \
+  )
 
   ifeq ($(PRODUCT_EXPORT_BOOT_IMAGE_TO_DIST),true)
     $(call dist-for-goals, droidcore-unbundled, $(INSTALLED_BOOTIMAGE_TARGET))

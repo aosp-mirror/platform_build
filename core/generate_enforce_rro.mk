@@ -38,7 +38,7 @@ endif
 
 LOCAL_FULL_MANIFEST_FILE := $(rro_android_manifest_file)
 
-LOCAL_AAPT_FLAGS += --auto-add-overlay
+LOCAL_AAPT_FLAGS += --auto-add-overlay --keep-raw-values
 LOCAL_RESOURCE_DIR := $(enforce_rro_source_overlays)
 
 ifeq (product,$(enforce_rro_partition))

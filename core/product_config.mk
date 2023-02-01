@@ -210,7 +210,6 @@ $(foreach f,$(android_products_makefiles), \
 # Dedup, extract product names, etc.
 product_paths := $(sort $(product_paths))
 all_named_products := $(sort $(call _first,$(product_paths),:))
-all_product_makefiles := $(sort $(call _second,$(product_paths),:))
 current_product_makefile := $(call _second,$(filter $(TARGET_PRODUCT):%,$(product_paths)),:)
 COMMON_LUNCH_CHOICES := $(sort $(common_lunch_choices))
 
@@ -230,7 +229,6 @@ endif
 
 ifneq (,$(filter $(TARGET_PRODUCT),$(products_using_starlark_config)))
   RBC_PRODUCT_CONFIG := true
-  RBC_BOARD_CONFIG := true
 endif
 
 ifndef RBC_PRODUCT_CONFIG
@@ -274,10 +272,16 @@ endif
 ############################################################################
 
 current_product_makefile :=
-all_product_makefiles :=
-all_product_configs :=
 
 #############################################################################
+# Check product include tag allowlist
+BLUEPRINT_INCLUDE_TAGS_ALLOWLIST := com.android.mainline_go com.android.mainline
+.KATI_READONLY := BLUEPRINT_INCLUDE_TAGS_ALLOWLIST
+$(foreach include_tag,$(PRODUCT_INCLUDE_TAGS), \
+	$(if $(filter $(include_tag),$(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST)),,\
+	$(call pretty-error, $(include_tag) is not in BLUEPRINT_INCLUDE_TAGS_ALLOWLIST: $(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST))))
+#############################################################################
+
 # Quick check and assign default values
 
 TARGET_DEVICE := $(PRODUCT_DEVICE)
@@ -476,6 +480,9 @@ endif
 ifdef PRODUCT_SHIPPING_API_LEVEL
   ifneq (,$(call math_gt_or_eq,29,$(PRODUCT_SHIPPING_API_LEVEL)))
     PRODUCT_PACKAGES += $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29)
+  endif
+  ifneq (,$(call math_gt_or_eq,33,$(PRODUCT_SHIPPING_API_LEVEL)))
+    PRODUCT_PACKAGES += $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_33)
   endif
 endif
 

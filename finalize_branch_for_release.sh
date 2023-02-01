@@ -1,27 +1,28 @@
 #!/bin/bash
 
-set -e
+set -ex
 
-source ../envsetup.sh
+function finalize_main() {
+    local top="$(dirname "$0")"/../..
 
-# default target to modify tree and build SDK
-lunch aosp_arm64-userdebug
+    # default target to modify tree and build SDK
+    local m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug"
 
-set -x
+    # Build finalization artifacts.
+    source $top/build/make/finalize-aidl-vndk-sdk-resources.sh
 
-# This script is WIP and only finalizes part of the Android branch for release.
-# The full process can be found at (INTERNAL) go/android-sdk-finalization.
+    # This command tests:
+    #   The release state for AIDL.
+    #   ABI difference between user and userdebug builds.
+    #   Resource/SDK finalization.
+    # In the future, we would want to actually turn the branch into the REL
+    # state and test with that.
+    AIDL_FROZEN_REL=true $m
 
-# VNDK snapshot (TODO)
-# SDK snapshots (TODO)
-# Update references in the codebase to new API version (TODO)
-# ...
+    # Build SDK (TODO)
+    # lunch sdk...
+    # m ...
+}
 
-AIDL_TRANSITIVE_FREEZE=true m aidl-freeze-api
+finalize_main
 
-# TODO(b/229413853): test while simulating 'rel' for more requirements AIDL_FROZEN_REL=true
-m # test build
-
-# Build SDK (TODO)
-# lunch sdk...
-# m ...

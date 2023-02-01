@@ -25,7 +25,7 @@ define gather-all-makefiles-for-current-product-inner
 		$(if $(filter $(p),$(_all_products_visited)),, \
 			$(p) \
 			$(eval _all_products_visited += $(p)) \
-			$(call all-products-inner, $(PRODUCTS.$(strip $(p)).INHERITS_FROM))
+			$(call gather-all-makefiles-for-current-product-inner, $(PRODUCTS.$(strip $(p)).INHERITS_FROM))
 		) \
 	)
 endef

@@ -26,6 +26,8 @@ Common goals are:
     clean                   (aka clobber) equivalent to rm -rf out/
     checkbuild              Build every module defined in the source tree
     droid                   Default target
+    sync                    Build everything in the default target except the images,
+                            for use with adb sync.
     nothing                 Do not build anything, just parse and validate the build structure
 
     java                    Build all the java code in the source tree
