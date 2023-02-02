@@ -123,6 +123,7 @@ PRODUCT_PACKAGES += \
     incident-helper-cmd \
     init.environ.rc \
     init_system \
+    initial-package-stopped-states.xml \
     input \
     installd \
     IntentResolver \
