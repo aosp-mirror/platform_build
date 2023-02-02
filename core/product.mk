@@ -24,6 +24,8 @@ _product_list_vars :=
 
 _product_single_value_vars += PRODUCT_NAME
 _product_single_value_vars += PRODUCT_MODEL
+_product_single_value_vars += PRODUCT_NAME_FOR_ATTESTATION
+_product_single_value_vars += PRODUCT_MODEL_FOR_ATTESTATION
 
 # The resoure configuration options to use for this product.
 _product_list_vars += PRODUCT_LOCALES
@@ -43,6 +45,7 @@ _product_list_vars += PRODUCT_PACKAGES_TESTS
 _product_single_value_vars += PRODUCT_DEVICE
 _product_single_value_vars += PRODUCT_MANUFACTURER
 _product_single_value_vars += PRODUCT_BRAND
+_product_single_value_vars += PRODUCT_BRAND_FOR_ATTESTATION
 
 # These PRODUCT_SYSTEM_* flags, if defined, are used in place of the
 # corresponding PRODUCT_* flags for the sysprops on /system.
