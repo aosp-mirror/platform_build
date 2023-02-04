@@ -31,6 +31,10 @@ java_binary_host {
         "conscrypt-unbundled",
     ],
 
+    // b/267608166: Prevent target Java 17 so the host-side tool can run in an
+    // environment where JDK 11 is available.
+    java_version: "11",
+
     jni_libs: ["libconscrypt_openjdk_jni"],
 
     // The post-build signing tools need signapk.jar (and its shared libraries,
