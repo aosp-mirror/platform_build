@@ -46,6 +46,11 @@ assert_eq("", rblf.mkstrip(" \n \t    "))
 assert_eq("a b c", rblf.mkstrip("  a b   \n  c \t"))
 assert_eq("1", rblf.mkstrip("1 "))
 
+assert_eq(["a", "b"], rblf.words("a b"))
+assert_eq(["a", "b", "c"], rblf.words(["a b", "c"]))
+# 1-tuple like we use in product variables
+assert_eq(["a b", ("c",)], rblf.words(["a b", ("c",)]))
+
 assert_eq("b1 b2", rblf.mksubst("a", "b", "a1 a2"))
 assert_eq(["b1", "x2"], rblf.mksubst("a", "b", ["a1", "x2"]))
 
