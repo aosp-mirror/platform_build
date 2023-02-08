@@ -1275,7 +1275,7 @@ $(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(INTERNAL_PREBUILT_INIT_BOOT_IMAGE) $(AVBT
 	$(AVBTOOL) add_hash_footer \
 	    --image $@ \
 	    $(call get-partition-size-argument,$(BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE)) \
-	    --partition_name boot $(INTERNAL_AVB_INIT_BOOT_SIGNING_ARGS) \
+	    --partition_name init_boot $(INTERNAL_AVB_INIT_BOOT_SIGNING_ARGS) \
 	    $(BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS)
 
 $(call declare-1p-container,$(INSTALLED_INIT_BOOT_IMAGE_TARGET),)
