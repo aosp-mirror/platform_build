@@ -502,10 +502,6 @@ ifneq (,$(TARGET_BUILD_APPS)$(TARGET_BUILD_UNBUNDLED_IMAGE))
   DISABLE_PREOPT := true
 endif
 ifeq (true,$(TARGET_BUILD_UNBUNDLED))
-  # Don't disable dexpreopt for an unbundled build. Dexpreopt generates profiles that need to be
-  # installed in the APEX. Soong will skip the dex2oat step after it generates the build rule for
-  # profiles.
-  DISABLE_PREOPT :=
   ifneq (true,$(UNBUNDLED_BUILD_SDKS_FROM_SOURCE))
     TARGET_BUILD_USE_PREBUILT_SDKS := true
   endif
