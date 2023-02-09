@@ -289,7 +289,6 @@ PRODUCT_PACKAGES += \
     viewcompiler \
     voip-common \
     vold \
-    WallpaperBackup \
     watchdogd \
     wificond \
     wifi.rc \
@@ -322,6 +321,11 @@ ifeq ($(EMMA_INSTRUMENT),true)
     endif # EMMA_INSTRUMENT_FRAMEWORK
   endif # EMMA_INSTRUMENT_STATIC
 endif # EMMA_INSTRUMENT
+
+ifeq (,$(DISABLE_WALLPAPER_BACKUP))
+  PRODUCT_PACKAGES += \
+    WallpaperBackup
+endif
 
 # For testing purposes
 ifeq ($(FORCE_AUDIO_SILENT), true)
@@ -412,7 +416,11 @@ PRODUCT_PACKAGES_DEBUG := \
 # The set of packages whose code can be loaded by the system server.
 PRODUCT_SYSTEM_SERVER_APPS += \
     SettingsProvider \
+
+ifeq (,$(DISABLE_WALLPAPER_BACKUP))
+  PRODUCT_SYSTEM_SERVER_APPS += \
     WallpaperBackup
+endif
 
 PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE := \
     libdumpcoverage
