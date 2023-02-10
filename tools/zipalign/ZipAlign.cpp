@@ -38,7 +38,7 @@ static bool isDirectory(ZipEntry* entry) {
 static int getAlignment(bool pageAlignSharedLibs, int defaultAlignment,
     ZipEntry* pEntry) {
 
-    static const int kPageAlignment = 4096;
+    static const int kPageAlignment = TARGET_PAGE_SIZE;
 
     if (!pageAlignSharedLibs) {
         return defaultAlignment;
