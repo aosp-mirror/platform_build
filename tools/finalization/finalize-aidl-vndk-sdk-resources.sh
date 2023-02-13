@@ -69,9 +69,9 @@ function finalize_aidl_vndk_sdk_resources() {
     sed -i -e "/=.*$((${FINA_PLATFORM_SDK_VERSION}-1)),/a \\  SDK_${FINA_PLATFORM_CODENAME_JAVA} = ${FINA_PLATFORM_SDK_VERSION}," "$top/frameworks/base/tools/aapt2/SdkConstants.h"
 
     # Bump Mainline SDK extension version.
-    "$top/packages/modules/SdkExtensions/gen_sdk/bump_sdk.sh" ${MAINLINE_EXTENSION}
+    "$top/packages/modules/SdkExtensions/gen_sdk/bump_sdk.sh" ${FINA_MAINLINE_EXTENSION}
     local version_defaults="$top/build/make/core/version_defaults.mk"
-    sed -i -e "s/PLATFORM_SDK_EXTENSION_VERSION := .*/PLATFORM_SDK_EXTENSION_VERSION := ${MAINLINE_EXTENSION}/g" $version_defaults
+    sed -i -e "s/PLATFORM_SDK_EXTENSION_VERSION := .*/PLATFORM_SDK_EXTENSION_VERSION := ${FINA_MAINLINE_EXTENSION}/g" $version_defaults
 
     # Force update current.txt
     $m clobber
