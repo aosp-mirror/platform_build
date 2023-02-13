@@ -22,9 +22,6 @@ function finalize_step_2_main() {
 
     local m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug"
 
-    # vndk etc finalization
-    source $top/build/make/tools/finalization/finalize-aidl-vndk-sdk-resources.sh
-
     # prebuilts etc
     source $top/build/make/tools/finalization/finalize-sdk-rel.sh
 
