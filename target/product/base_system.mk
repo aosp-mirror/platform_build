@@ -57,7 +57,7 @@ PRODUCT_PACKAGES += \
     com.android.conscrypt \
     com.android.devicelock \
     com.android.extservices \
-    com.android.healthconnect \
+    com.android.healthfitness \
     com.android.i18n \
     com.android.ipsec \
     com.android.location.provider \
