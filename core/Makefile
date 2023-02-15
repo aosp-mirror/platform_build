@@ -181,6 +181,7 @@ endif
 
 ifeq ($(HOST_OS),linux)
 $(call dist-for-goals,sdk,$(API_FINGERPRINT))
+$(call dist-for-goals,droidcore,$(API_FINGERPRINT))
 endif
 
 INSTALLED_RECOVERYIMAGE_TARGET :=
