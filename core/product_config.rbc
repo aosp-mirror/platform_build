@@ -462,6 +462,9 @@ def _addsuffix(suffix, string_or_list):
 
 def __words(string_or_list):
     if type(string_or_list) == "list":
+        for x in string_or_list:
+            if type(x) != "string":
+                return string_or_list
         string_or_list = " ".join(string_or_list)
     return _mkstrip(string_or_list).split()
 

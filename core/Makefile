@@ -596,6 +596,19 @@ $(foreach kmd,$(BOARD_KERNEL_MODULE_DIRS), \
     $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-recovery-as-boot-load,$(kmd))),\
     $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,GENERIC_RAMDISK,$(TARGET_RAMDISK_OUT),,modules.load,,$(kmd)))))
 
+ifeq ($(BOARD_SYSTEM_KERNEL_MODULES),)
+ifneq ($(BOARD_SYSTEM_DLKM_SRC),)
+ifneq ($(wildcard $(BOARD_SYSTEM_DLKM_SRC)/*),)
+  SYSTEM_KERNEL_MODULES := $(call find-files-in-subdirs,$(BOARD_SYSTEM_DLKM_SRC),*.ko,.)
+  SRC_SYSTEM_KERNEL_MODULES := $(patsubst %,$(BOARD_SYSTEM_DLKM_SRC)/%,$(SYSTEM_KERNEL_MODULES))
+  DST_SYSTEM_KERNEL_MODULES := $(patsubst %,:$(TARGET_OUT_SYSTEM_DLKM)/%,$(SYSTEM_KERNEL_MODULES))
+  SYSTEM_KERNEL_MODULE_COPY_PAIRS := $(join $(SRC_SYSTEM_KERNEL_MODULES),$(DST_SYSTEM_KERNEL_MODULES))
+  ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(SYSTEM_KERNEL_MODULE_COPY_PAIRS))
+endif
+endif
+endif
+
+
 # -----------------------------------------------------------------
 # Cert-to-package mapping.  Used by the post-build signing tools.
 # Use a macro to add newline to each echo command
@@ -1275,7 +1288,7 @@ $(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(INTERNAL_PREBUILT_INIT_BOOT_IMAGE) $(AVBT
 	$(AVBTOOL) add_hash_footer \
 	    --image $@ \
 	    $(call get-partition-size-argument,$(BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE)) \
-	    --partition_name boot $(INTERNAL_AVB_INIT_BOOT_SIGNING_ARGS) \
+	    --partition_name init_boot $(INTERNAL_AVB_INIT_BOOT_SIGNING_ARGS) \
 	    $(BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS)
 
 $(call declare-1p-container,$(INSTALLED_INIT_BOOT_IMAGE_TARGET),)
@@ -7080,17 +7093,9 @@ FUZZ_SHARED_DEPS := $(call copy-many-files,$(strip $(FUZZ_TARGET_SHARED_DEPS_INS
 haiku: $(SOONG_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_FUZZ_TARGETS)
 $(call dist-for-goals,haiku,$(SOONG_FUZZ_PACKAGING_ARCH_MODULES))
 $(call dist-for-goals,haiku,$(PRODUCT_OUT)/module-info.json)
-
-.PHONY: haiku-java-device
-haiku-java-device: $(SOONG_JAVA_FUZZ_DEVICE_PACKAGING_ARCH_MODULES) $(ALL_JAVA_FUZZ_DEVICE_TARGETS)
-$(call dist-for-goals,haiku-java-device,$(SOONG_JAVA_FUZZ_DEVICE_PACKAGING_ARCH_MODULES))
-$(call dist-for-goals,haiku-java-device,$(PRODUCT_OUT)/module-info.json)
-
-.PHONY: haiku-java-host
-haiku-java-host: $(SOONG_JAVA_FUZZ_HOST_PACKAGING_ARCH_MODULES) $(ALL_JAVA_FUZZ_HOST_TARGETS)
-$(call dist-for-goals,haiku-java-host,$(SOONG_JAVA_FUZZ_HOST_PACKAGING_ARCH_MODULES))
-$(call dist-for-goals,haiku-java-host,$(PRODUCT_OUT)/module-info.json)
-
+.PHONY: haiku-java
+haiku-java: $(SOONG_JAVA_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_JAVA_FUZZ_TARGETS)
+$(call dist-for-goals,haiku-java,$(SOONG_JAVA_FUZZ_PACKAGING_ARCH_MODULES))
 .PHONY: haiku-rust
 haiku-rust: $(SOONG_RUST_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_RUST_FUZZ_TARGETS)
 $(call dist-for-goals,haiku-rust,$(SOONG_RUST_FUZZ_PACKAGING_ARCH_MODULES))
