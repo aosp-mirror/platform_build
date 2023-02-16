@@ -2,6 +2,42 @@
 
 set -ex
 
+function finalize_modules_utils() {
+    local shortCodename="${FINAL_PLATFORM_CODENAME:0:1}"
+    local methodPlaceholder="INSERT_NEW_AT_LEAST_${shortCodename}_METHOD_HERE"
+
+    local tmpfile=$(mktemp /tmp/finalization.XXXXXX)
+    echo "    /** Checks if the device is running on a release version of Android $FINAL_PLATFORM_CODENAME or newer */
+    @ChecksSdkIntAtLeast(api = $FINAL_PLATFORM_SDK_VERSION /* BUILD_VERSION_CODES.$FINAL_PLATFORM_CODENAME */)
+    public static boolean isAtLeast${FINAL_PLATFORM_CODENAME:0:1}() {
+        return SDK_INT >= $FINAL_PLATFORM_SDK_VERSION;
+    }" > "$tmpfile"
+
+    local javaFuncRegex='\/\*\*[^{]*isAtLeast'"${shortCodename}"'() {[^{}]*}'
+    local javaFuncReplace="N;N;N;N;N;N;N;N; s/$javaFuncRegex/$methodPlaceholder/; /$javaFuncRegex/!{P;D};"
+
+    local javaSdkLevel="$top/frameworks/libs/modules-utils/java/com/android/modules/utils/build/SdkLevel.java"
+    sed -i "$javaFuncReplace" $javaSdkLevel
+
+    sed -i "/${methodPlaceholder}"'/{
+           r '"$tmpfile"'
+           d}' $javaSdkLevel
+
+    echo "// Checks if the device is running on release version of Android ${FINAL_PLATFORM_CODENAME:0:1} or newer.
+inline bool IsAtLeast${FINAL_PLATFORM_CODENAME:0:1}() { return android_get_device_api_level() >= $FINAL_PLATFORM_SDK_VERSION; }" > "$tmpfile"
+
+    local cppFuncRegex='\/\/[^{]*IsAtLeast'"${shortCodename}"'() {[^{}]*}'
+    local cppFuncReplace="N;N;N;N;N;N; s/$cppFuncRegex/$methodPlaceholder/; /$cppFuncRegex/!{P;D};"
+
+    local cppSdkLevel="$top/frameworks/libs/modules-utils/build/include/android-modules-utils/sdk_level.h"
+    sed -i "$cppFuncReplace" $cppSdkLevel
+    sed -i "/${methodPlaceholder}"'/{
+           r '"$tmpfile"'
+           d}' $cppSdkLevel
+
+    rm "$tmpfile"
+}
+
 function finalize_aidl_vndk_sdk_resources() {
     local top="$(dirname "$0")"/../../../..
     source $top/build/make/tools/finalization/environment.sh
@@ -50,6 +86,9 @@ function finalize_aidl_vndk_sdk_resources() {
     echo "DONE: THIS INTENTIONALLY MAY FAIL AND REPAIR ITSELF"
 
     # Finalize SDK
+
+    # frameworks/libs/modules-utils
+    finalize_modules_utils
 
     # build/make
     local version_defaults="$top/build/make/core/version_defaults.mk"
