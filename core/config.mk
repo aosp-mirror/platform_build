@@ -445,6 +445,11 @@ endif
 ifneq ($(filter true,$(SOONG_ALLOW_MISSING_DEPENDENCIES)),)
 ALLOW_MISSING_DEPENDENCIES := true
 endif
+# Mac builds default to ALLOW_MISSING_DEPENDENCIES, at least until the host
+# tools aren't enabled by default for Mac.
+ifeq ($(HOST_OS),darwin)
+  ALLOW_MISSING_DEPENDENCIES := true
+endif
 .KATI_READONLY := ALLOW_MISSING_DEPENDENCIES
 
 TARGET_BUILD_USE_PREBUILT_SDKS :=
