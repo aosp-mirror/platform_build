@@ -302,6 +302,8 @@ def RunAndCheckOutput(args, verbose=None, **kwargs):
   Raises:
     ExternalError: On non-zero exit from the command.
   """
+  if verbose is None:
+    verbose = OPTIONS.verbose
   proc = Run(args, verbose=verbose, **kwargs)
   output, _ = proc.communicate()
   if output is None:
@@ -2903,13 +2905,12 @@ def ZipDelete(zip_filename, entries, force=False):
 
     fd, new_zipfile = tempfile.mkstemp(dir=os.path.dirname(zip_filename))
     os.close(fd)
+    cmd = ["zip2zip", "-i", zip_filename, "-o", new_zipfile]
+    for entry in entries:
+      cmd.append("-x")
+      cmd.append(entry)
+    RunAndCheckOutput(cmd)
 
-    with zipfile.ZipFile(new_zipfile, 'w') as zout:
-      for item in zin.infolist():
-        if item.filename in entries:
-          continue
-        buffer = zin.read(item.filename)
-        zout.writestr(item, buffer)
 
   os.replace(new_zipfile, zip_filename)
 
