@@ -167,6 +167,10 @@ ifeq ($(HOST_OS),linux)
   else
     $(error Unsupported HOST_CROSS_OS $(HOST_CROSS_OS))
   endif
+else ifeq ($(HOST_OS),darwin)
+  HOST_CROSS_OS := darwin
+  HOST_CROSS_ARCH := arm64
+  HOST_CROSS_2ND_ARCH :=
 endif
 
 ifeq ($(HOST_OS),)
