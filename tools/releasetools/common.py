@@ -1547,14 +1547,20 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
 
 
 def _MakeRamdisk(sourcedir, fs_config_file=None,
+                 dev_node_file=None,
                  ramdisk_format=RamdiskFormat.GZ):
   ramdisk_img = tempfile.NamedTemporaryFile()
 
-  if fs_config_file is not None and os.access(fs_config_file, os.F_OK):
-    cmd = ["mkbootfs", "-f", fs_config_file,
-           os.path.join(sourcedir, "RAMDISK")]
-  else:
-    cmd = ["mkbootfs", os.path.join(sourcedir, "RAMDISK")]
+  cmd = ["mkbootfs"]
+
+  if fs_config_file and os.access(fs_config_file, os.F_OK):
+    cmd.extend(["-f", fs_config_file])
+
+  if dev_node_file and os.access(dev_node_file, os.F_OK):
+    cmd.extend(["-n", dev_node_file])
+
+  cmd.append(os.path.join(sourcedir, "RAMDISK"))
+
   p1 = Run(cmd, stdout=subprocess.PIPE)
   if ramdisk_format == RamdiskFormat.LZ4:
     p2 = Run(["lz4", "-l", "-12", "--favor-decSpeed"], stdin=p1.stdout,
@@ -1572,7 +1578,8 @@ def _MakeRamdisk(sourcedir, fs_config_file=None,
   return ramdisk_img
 
 
-def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
+def _BuildBootableImage(image_name, sourcedir, fs_config_file,
+                        dev_node_file=None, info_dict=None,
                         has_ramdisk=False, two_step_image=False):
   """Build a bootable image from the specified sourcedir.
 
@@ -1614,7 +1621,7 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
 
   if has_ramdisk:
     ramdisk_format = GetRamdiskFormat(info_dict)
-    ramdisk_img = _MakeRamdisk(sourcedir, fs_config_file,
+    ramdisk_img = _MakeRamdisk(sourcedir, fs_config_file, dev_node_file,
                                ramdisk_format=ramdisk_format)
 
   # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
@@ -1822,7 +1829,8 @@ def HasRamdisk(partition_name, info_dict=None):
 
 
 def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
-                     info_dict=None, two_step_image=False):
+                     info_dict=None, two_step_image=False,
+                     dev_nodes=False):
   """Return a File object with the desired bootable image.
 
   Look for it in 'unpack_dir'/BOOTABLE_IMAGES under the name 'prebuilt_name',
@@ -1858,6 +1866,8 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
   fs_config = "META/" + tree_subdir.lower() + "_filesystem_config.txt"
   data = _BuildBootableImage(prebuilt_name, os.path.join(unpack_dir, tree_subdir),
                              os.path.join(unpack_dir, fs_config),
+                             os.path.join(unpack_dir, 'META/ramdisk_node_list')
+                                if dev_nodes else None,
                              info_dict, has_ramdisk, two_step_image)
   if data:
     return File(name, data)
