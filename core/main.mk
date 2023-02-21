@@ -1345,6 +1345,13 @@ else ifdef FULL_BUILD
                   $(if $(ALL_MODULES.$(m).INSTALLED),\
                     $(if $(filter-out $(HOST_OUT_ROOT)/%,$(ALL_MODULES.$(m).INSTALLED)),,\
                       $(m))))
+    ifeq ($(TARGET_ARCH),riscv64)
+      # HACK: riscv64 can't build the device version of bcc and ld.mc due to a
+      # dependency on an old version of LLVM, but they are listed in
+      # base_system.mk which can't add them conditionally based on the target
+      # architecture.
+      _host_modules := $(filter-out bcc ld.mc,$(_host_modules))
+    endif
     $(call maybe-print-list-and-error,$(sort $(_host_modules)),\
       Host modules should be in PRODUCT_HOST_PACKAGES$(comma) not PRODUCT_PACKAGES)
   endif
