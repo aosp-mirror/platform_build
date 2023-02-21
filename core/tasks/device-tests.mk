@@ -39,7 +39,7 @@ $(device-tests-zip) : $(COMPATIBILITY.device-tests.FILES) $(my_host_shared_lib_f
 	grep $(HOST_OUT_TESTCASES) $@-shared-libs.list > $@-host-shared-libs.list || true
 	grep $(TARGET_OUT_TESTCASES) $@.list > $@-target.list || true
 	grep -e .*\\.config$$ $@-target.list > $@-target-test-configs.list || true
-	$(hide) $(SOONG_ZIP) -d -o $@ -P host -C $(HOST_OUT) -l $@-host.list -P target -C $(PRODUCT_OUT) -l $@-target.list
+	$(hide) $(SOONG_ZIP) -d -o $@ -P host -C $(HOST_OUT) -l $@-host.list -P target -C $(PRODUCT_OUT) -l $@-target.list -sha256
 	$(hide) $(SOONG_ZIP) -d -o $(device-tests-configs-zip) \
 	  -P host -C $(HOST_OUT) -l $@-host-test-configs.list \
 	  -P target -C $(PRODUCT_OUT) -l $@-target-test-configs.list

@@ -181,6 +181,7 @@ endif
 
 ifeq ($(HOST_OS),linux)
 $(call dist-for-goals,sdk,$(API_FINGERPRINT))
+$(call dist-for-goals,droidcore,$(API_FINGERPRINT))
 endif
 
 INSTALLED_RECOVERYIMAGE_TARGET :=
@@ -599,9 +600,9 @@ $(foreach kmd,$(BOARD_KERNEL_MODULE_DIRS), \
 ifeq ($(BOARD_SYSTEM_KERNEL_MODULES),)
 ifneq ($(BOARD_SYSTEM_DLKM_SRC),)
 ifneq ($(wildcard $(BOARD_SYSTEM_DLKM_SRC)/*),)
-  SYSTEM_KERNEL_MODULES := $(call find-files-in-subdirs,$(BOARD_SYSTEM_DLKM_SRC),*.ko,.)
-  SRC_SYSTEM_KERNEL_MODULES := $(patsubst %,$(BOARD_SYSTEM_DLKM_SRC)/%,$(SYSTEM_KERNEL_MODULES))
-  DST_SYSTEM_KERNEL_MODULES := $(patsubst %,:$(TARGET_OUT_SYSTEM_DLKM)/%,$(SYSTEM_KERNEL_MODULES))
+  SYSTEM_KERNEL_MODULES := $(shell find $(BOARD_SYSTEM_DLKM_SRC) -type f)
+  SRC_SYSTEM_KERNEL_MODULES := $(SYSTEM_KERNEL_MODULES)
+  DST_SYSTEM_KERNEL_MODULES := $(patsubst $(BOARD_SYSTEM_DLKM_SRC)/%,:$(TARGET_OUT_SYSTEM_DLKM)/%,$(SRC_SYSTEM_KERNEL_MODULES))
   SYSTEM_KERNEL_MODULE_COPY_PAIRS := $(join $(SRC_SYSTEM_KERNEL_MODULES),$(DST_SYSTEM_KERNEL_MODULES))
   ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(SYSTEM_KERNEL_MODULE_COPY_PAIRS))
 endif
@@ -5143,7 +5144,7 @@ INTERNAL_OTATOOLS_MODULES += \
 
 ifeq (true,$(PRODUCT_SUPPORTS_VBOOT))
 INTERNAL_OTATOOLS_MODULES += \
-  futility \
+  futility-host \
   vboot_signer
 endif
 
@@ -6159,6 +6160,7 @@ endif
 ifdef BUILDING_INIT_BOOT_IMAGE
 	$(hide) $(call package_files-copy-root, $(TARGET_RAMDISK_OUT),$(zip_root)/INIT_BOOT/RAMDISK)
 	$(hide) $(call fs_config,$(zip_root)/INIT_BOOT/RAMDISK,) > $(zip_root)/META/init_boot_filesystem_config.txt
+	$(hide) cp $(RAMDISK_NODE_LIST) $(zip_root)/META/ramdisk_node_list
 ifdef BOARD_KERNEL_PAGESIZE
 	$(hide) echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/INIT_BOOT/pagesize
 endif # BOARD_KERNEL_PAGESIZE

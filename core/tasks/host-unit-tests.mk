@@ -41,7 +41,7 @@ $(host_unit_tests_zip) : $(COMPATIBILITY.host-unit-tests.FILES) $(my_host_shared
 	grep $(TARGET_OUT_TESTCASES) $@.list > $@-target.list || true
 	$(hide) $(SOONG_ZIP) -d -o $@ -P host -C $(HOST_OUT) -l $@-host.list \
 	  -P target -C $(PRODUCT_OUT) -l $@-target.list \
-	  -P host/testcases -C $(HOST_OUT) -l $@-host-libs.list
+	  -P host/testcases -C $(HOST_OUT) -l $@-host-libs.list -sha256
 	rm -f $@.list $@-host.list $@-target.list $@-host-libs.list
 
 host-unit-tests: $(host_unit_tests_zip)
