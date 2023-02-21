@@ -5127,6 +5127,8 @@ INTERNAL_OTATOOLS_MODULES := \
   verity_verifier \
   zipalign \
   zucchini \
+  zip2zip \
+
 
 # Additional tools to unpack and repack the apex file.
 INTERNAL_OTATOOLS_MODULES += \
