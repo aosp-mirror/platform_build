@@ -121,6 +121,10 @@ endif
 
 $(call soong_config_set,art_module,source_build,$(ART_MODULE_BUILD_FROM_SOURCE))
 
+ifdef TARGET_BOARD_AUTO
+  $(call add_soong_config_var_value, ANDROID, target_board_auto, $(TARGET_BOARD_AUTO))
+endif
+
 # Ensure that those mainline modules who have individually toggleable prebuilts
 # are controlled by the MODULE_BUILD_FROM_SOURCE environment variable by
 # default.
@@ -151,6 +155,10 @@ endif
 # Enable SystemUI optimizations by default unless explicitly set.
 SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
+
+# Disable Compose in SystemUI by default.
+SYSTEMUI_USE_COMPOSE ?= false
+$(call add_soong_config_var,ANDROID,SYSTEMUI_USE_COMPOSE)
 
 # Enable system_server optimizations by default unless explicitly set or if
 # there may be dependent runtime jars.
