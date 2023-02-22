@@ -7,14 +7,13 @@ function commit_step_1_changes() {
     set +e
     repo forall -c '\
         if [[ $(git status --short) ]]; then
-            repo start "$FINA_PLATFORM_CODENAME-SDK-Finalization" ;
+            repo start "$FINAL_PLATFORM_CODENAME-SDK-Finalization" ;
             git add -A . ;
-            git commit -m "$FINA_PLATFORM_CODENAME is now $FINA_PLATFORM_SDK_VERSION" \
-                       -m "Ignore-AOSP-First: $FINA_PLATFORM_CODENAME Finalization
-Bug: $FINA_BUG_ID
+            git commit -m "$FINAL_PLATFORM_CODENAME is now $FINAL_PLATFORM_SDK_VERSION" \
+                       -m "Ignore-AOSP-First: $FINAL_PLATFORM_CODENAME Finalization
+Bug: $FINAL_BUG_ID
 Test: build";
             repo upload --cbr --no-verify -o nokeycheck -t -y . ;
-            git clean -fdx ; git reset --hard ;
         fi'
 }
 
@@ -27,11 +26,11 @@ function finalize_step_1_main() {
     # vndk etc finalization
     source $top/build/make/tools/finalization/finalize-aidl-vndk-sdk-resources.sh
 
-    # build to confirm everything is OK
-    AIDL_FROZEN_REL=true $m
-
     # move all changes to finalization branch/topic and upload to gerrit
     commit_step_1_changes
+
+    # build to confirm everything is OK
+    AIDL_FROZEN_REL=true $m
 }
 
 finalize_step_1_main
