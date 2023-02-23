@@ -17,8 +17,11 @@
      Documentation at frameworks/base/data/etc/preinstalled-packages-platform.xml
 -->
 <config>
-    <install-in-user-type package="com.android.wallpapercropper">
+    <!--  Android Keyboard (AOSP) (LatinIME) TODO(b/258055479) -->
+    <install-in-user-type package="com.android.inputmethod.latin">
+        <install-in user-type="SYSTEM" />
         <install-in user-type="FULL" />
+        <install-in user-type="PROFILE" />
     </install-in-user-type>
 
     <!--  Calendar  -->
@@ -28,30 +31,43 @@
         <do-not-install-in user-type="android.os.usertype.profile.CLONE" />
     </install-in-user-type>
 
-    <!--  Camera  -->
+    <!--  Camera (Camera2) -->
     <install-in-user-type package="com.android.camera2">
         <install-in user-type="FULL" />
         <install-in user-type="PROFILE" />
         <do-not-install-in user-type="android.os.usertype.profile.CLONE" />
     </install-in-user-type>
 
-    <!--  Clock  -->
+    <!--  Clock (DeskClock) -->
     <install-in-user-type package="com.android.deskclock">
         <install-in user-type="FULL" />
         <do-not-install-in user-type="android.os.usertype.profile.CLONE" />
     </install-in-user-type>
 
-    <!--  Contacts  -->
+    <!--  Contacts -->
     <install-in-user-type package="com.android.contacts">
         <install-in user-type="FULL" />
         <install-in user-type="PROFILE" />
         <do-not-install-in user-type="android.os.usertype.profile.CLONE" />
     </install-in-user-type>
 
-    <!--  Gallery -->
+    <!--  Gallery (Gallery2) -->
     <install-in-user-type package="com.android.gallery3d">
         <install-in user-type="FULL" />
         <install-in user-type="PROFILE" />
         <do-not-install-in user-type="android.os.usertype.profile.CLONE" />
+    </install-in-user-type>
+
+    <!--  Search (QuickSearchBox) TODO(b/258055479) -->
+    <install-in-user-type package="com.android.quicksearchbox">
+        <install-in user-type="SYSTEM" />
+        <install-in user-type="FULL" />
+        <install-in user-type="PROFILE" />
+        <do-not-install-in user-type="android.os.usertype.profile.CLONE" />
+    </install-in-user-type>
+
+    <!-- WallpaperCropper -->
+    <install-in-user-type package="com.android.wallpapercropper">
+        <install-in user-type="FULL" />
     </install-in-user-type>
 </config>
