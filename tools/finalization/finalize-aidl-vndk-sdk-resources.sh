@@ -2,6 +2,29 @@
 
 set -ex
 
+function apply_droidstubs_hack() {
+    if ! grep -q 'STOPSHIP: RESTORE THIS LOGIC WHEN DECLARING "REL" BUILD' "$top/build/soong/java/droidstubs.go" ; then 
+        git -C "$top/build/soong" apply --allow-empty ../../build/make/tools/finalization/build_soong_java_droidstubs.go.apply_hack.diff
+    fi
+}
+
+function finalize_bionic_ndk() {
+    # Adding __ANDROID_API_<>__.
+    # If this hasn't done then it's not used and not really needed. Still, let's check and add this.
+    local api_level="$top/bionic/libc/include/android/api-level.h"
+    if ! grep -q "\__.*$((${FINAL_PLATFORM_SDK_VERSION}))" $api_level ; then
+        local tmpfile=$(mktemp /tmp/finalization.XXXXXX)
+        echo "
+/** Names the \"${FINAL_PLATFORM_CODENAME:0:1}\" API level ($FINAL_PLATFORM_SDK_VERSION), for comparison against \`__ANDROID_API__\`. */
+#define __ANDROID_API_${FINAL_PLATFORM_CODENAME:0:1}__ $FINAL_PLATFORM_SDK_VERSION" > "$tmpfile"
+
+        local api_level="$top/bionic/libc/include/android/api-level.h"
+        sed -i -e "/__.*$((${FINAL_PLATFORM_SDK_VERSION}-1))/r""$tmpfile" $api_level
+
+        rm "$tmpfile"
+    fi
+}
+
 function finalize_modules_utils() {
     local shortCodename="${FINAL_PLATFORM_CODENAME:0:1}"
     local methodPlaceholder="INSERT_NEW_AT_LEAST_${shortCodename}_METHOD_HERE"
@@ -48,25 +71,13 @@ function finalize_aidl_vndk_sdk_resources() {
     # default target to modify tree and build SDK
     local m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug"
 
-    # This script is WIP and only finalizes part of the Android branch for release.
     # The full process can be found at (INTERNAL) go/android-sdk-finalization.
 
-    # Update references in the codebase to new API version (TODO)
+    # apply droidstubs hack to prevent tools from incrementing an API version
+    apply_droidstubs_hack
 
     # bionic/NDK
-    # Adding __ANDROID_API_<>__.
-    # If this hasn't done then it's not used and not really needed. Still, let's check and add this.
-    if ! grep -q "\__.*$((${FINAL_PLATFORM_SDK_VERSION}))" api-level.h ; then
-        local tmpfile=$(mktemp /tmp/finalization.XXXXXX)
-        echo "
-/** Names the \"${FINAL_PLATFORM_CODENAME:0:1}\" API level ($FINAL_PLATFORM_SDK_VERSION), for comparison against \`__ANDROID_API__\`. */
-#define __ANDROID_API_${FINAL_PLATFORM_CODENAME:0:1}__ $FINAL_PLATFORM_SDK_VERSION" > "$tmpfile"
-
-        local api_level="$top/bionic/libc/include/android/api-level.h"
-        sed -i -e "/__.*$((${FINAL_PLATFORM_SDK_VERSION}-1))/r""$tmpfile" $api_level
-
-        rm "$tmpfile"
-    fi
+    finalize_bionic_ndk
 
     # VNDK definitions for new SDK version
     cp "$top/development/vndk/tools/definition-tool/datasets/vndk-lib-extra-list-current.txt" \

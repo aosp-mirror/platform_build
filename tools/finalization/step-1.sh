@@ -14,7 +14,6 @@ function commit_step_1_changes() {
 Bug: $FINAL_BUG_ID
 Test: build";
             repo upload --cbr --no-verify -o nokeycheck -t -y . ;
-            git clean -fdx ; git reset --hard ;
         fi'
 }
 
@@ -27,11 +26,11 @@ function finalize_step_1_main() {
     # vndk etc finalization
     source $top/build/make/tools/finalization/finalize-aidl-vndk-sdk-resources.sh
 
-    # build to confirm everything is OK
-    AIDL_FROZEN_REL=true $m
-
     # move all changes to finalization branch/topic and upload to gerrit
     commit_step_1_changes
+
+    # build to confirm everything is OK
+    AIDL_FROZEN_REL=true $m
 }
 
 finalize_step_1_main
