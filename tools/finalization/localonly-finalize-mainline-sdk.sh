@@ -13,8 +13,8 @@ function finalize_locally_mainline_sdk() {
     TARGET_BUILD_VARIANT=userdebug UNBUNDLED_BUILD_SDKS_FROM_SOURCE=true "$top/vendor/google/build/mainline_modules_sdks.sh"
 
     # Update prebuilts.
-    "$top/prebuilts/build-tools/path/linux-x86/python3" "$top/packages/modules/common/tools/finalize_sdk.py" -l -b 0 -f ${FINAL_MAINLINE_EXTENSION} -r '' 0
-    # "$top/prebuilts/build-tools/path/linux-x86/python3" "$top/prebuilts/sdk/update_prebuilts.py" --local_mode -f ${FINAL_PLATFORM_SDK_VERSION} -e ${FINAL_MAINLINE_EXTENSION} --bug 1 1
+    # "$top/prebuilts/build-tools/path/linux-x86/python3" "$top/packages/modules/common/tools/finalize_sdk.py" -l -b 0 -f ${FINAL_MAINLINE_EXTENSION} -r '' 0
+    "$top/prebuilts/build-tools/path/linux-x86/python3" "$top/prebuilts/sdk/update_prebuilts.py" --local_mode -f ${FINAL_PLATFORM_SDK_VERSION} -e ${FINAL_MAINLINE_EXTENSION} --bug 1 1
 }
 
 finalize_locally_mainline_sdk
