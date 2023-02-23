@@ -66,6 +66,12 @@ PRODUCT_PACKAGES := \
   init_system \
   linker \
   shell_and_utilities \
+  com.android.art \
+  com.android.conscrypt \
+  com.android.i18n \
+  com.android.runtime \
+  com.android.tzdata \
+  com.android.os.statsd \
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/default_art_config.mk)
 PRODUCT_USES_DEFAULT_ART_CONFIG := false
