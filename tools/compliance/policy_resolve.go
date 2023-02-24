@@ -14,10 +14,6 @@
 
 package compliance
 
-import (
-	"sync"
-)
-
 var (
 	// AllResolutions is a TraceConditions function that resolves all
 	// unfiltered license conditions.
@@ -53,16 +49,10 @@ func TraceBottomUpConditions(lg *LicenseGraph, conditionsFn TraceConditions) {
 		// amap identifes targets previously walked. (guarded by mu)
 		amap := make(map[*TargetNode]struct{})
 
-		// mu guards concurrent access to amap
-		var mu sync.Mutex
-
 		var walk func(target *TargetNode, treatAsAggregate bool) LicenseConditionSet
 
 		walk = func(target *TargetNode, treatAsAggregate bool) LicenseConditionSet {
 			priorWalkResults := func() (LicenseConditionSet, bool) {
-				mu.Lock()
-				defer mu.Unlock()
-
 				if _, alreadyWalked := amap[target]; alreadyWalked {
 					if treatAsAggregate {
 						return target.resolution, true
@@ -84,25 +74,17 @@ func TraceBottomUpConditions(lg *LicenseGraph, conditionsFn TraceConditions) {
 				return cs
 			}
 
-			c := make(chan LicenseConditionSet, len(target.edges))
 			// add all the conditions from all the dependencies
 			for _, edge := range target.edges {
-				go func(edge *TargetEdge) {
-					// walk dependency to get its conditions
-					cs := walk(edge.dependency, treatAsAggregate && edge.dependency.IsContainer())
+				// walk dependency to get its conditions
+				dcs := walk(edge.dependency, treatAsAggregate && edge.dependency.IsContainer())
 
-					// turn those into the conditions that apply to the target
-					cs = depConditionsPropagatingToTarget(lg, edge, cs, treatAsAggregate)
-
-					c <- cs
-				}(edge)
+				// turn those into the conditions that apply to the target
+				dcs = depConditionsPropagatingToTarget(lg, edge, dcs, treatAsAggregate)
+				cs |= dcs
 			}
-			for i := 0; i < len(target.edges); i++ {
-				cs |= <-c
-			}
-			mu.Lock()
 			target.resolution |= cs
-			mu.Unlock()
+			cs = target.resolution
 
 			// return conditions up the tree
 			return cs
@@ -133,33 +115,21 @@ func TraceTopDownConditions(lg *LicenseGraph, conditionsFn TraceConditions) {
 
 	// short-cut if already walked and cached
 	lg.onceTopDown.Do(func() {
-		wg := &sync.WaitGroup{}
-		wg.Add(1)
-
 		// start with the conditions propagated up the graph
 		TraceBottomUpConditions(lg, conditionsFn)
 
 		// amap contains the set of targets already walked. (guarded by mu)
 		amap := make(map[*TargetNode]struct{})
 
-		// mu guards concurrent access to amap
-		var mu sync.Mutex
-
 		var walk func(fnode *TargetNode, cs LicenseConditionSet, treatAsAggregate bool)
 
 		walk = func(fnode *TargetNode, cs LicenseConditionSet, treatAsAggregate bool) {
-			defer wg.Done()
 			continueWalk := func() bool {
-				mu.Lock()
-				defer mu.Unlock()
-
-				depcs := fnode.resolution
-				_, alreadyWalked := amap[fnode]
-				if alreadyWalked {
+				if _, alreadyWalked := amap[fnode]; alreadyWalked {
 					if cs.IsEmpty() {
 						return false
 					}
-					if cs.Difference(depcs).IsEmpty() {
+					if cs.Difference(fnode.resolution).IsEmpty() {
 						// no new conditions
 
 						// pure aggregates never need walking a 2nd time with same conditions
@@ -172,8 +142,9 @@ func TraceTopDownConditions(lg *LicenseGraph, conditionsFn TraceConditions) {
 						}
 						// previously walked as pure aggregate; need to re-walk as non-aggregate
 					}
+				} else {
+					fnode.resolution |= conditionsFn(fnode)
 				}
-				fnode.resolution |= conditionsFn(fnode)
 				fnode.resolution |= cs
 				fnode.pure = treatAsAggregate
 				amap[fnode] = struct{}{}
@@ -189,19 +160,15 @@ func TraceTopDownConditions(lg *LicenseGraph, conditionsFn TraceConditions) {
 				dcs := targetConditionsPropagatingToDep(lg, edge, cs, treatAsAggregate, conditionsFn)
 				dnode := edge.dependency
 				// add the conditions to the dependency
-				wg.Add(1)
-				go walk(dnode, dcs, treatAsAggregate && dnode.IsContainer())
+				walk(dnode, dcs, treatAsAggregate && dnode.IsContainer())
 			}
 		}
 
 		// walk each of the roots
 		for _, rname := range lg.rootFiles {
 			rnode := lg.targets[rname]
-			wg.Add(1)
 			// add the conditions to the root and its transitive closure
-			go walk(rnode, NewLicenseConditionSet(), rnode.IsContainer())
+			walk(rnode, NewLicenseConditionSet(), rnode.IsContainer())
 		}
-		wg.Done()
-		wg.Wait()
 	})
 }

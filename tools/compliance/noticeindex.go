@@ -42,7 +42,7 @@ type NoticeIndex struct {
 	// rs identifies the set of resolutions upon which the index is based.
 	rs ResolutionSet
 	// shipped identifies the set of target nodes shipped directly or as derivative works.
-	shipped *TargetNodeSet
+	shipped TargetNodeSet
 	// rootFS locates the root of the file system from which to read the files.
 	rootFS fs.FS
 	// hash maps license text filenames to content hashes

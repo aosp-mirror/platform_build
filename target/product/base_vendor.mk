@@ -46,7 +46,7 @@ PRODUCT_HOST_PACKAGES += \
 
 # Base modules and settings for the vendor partition.
 PRODUCT_PACKAGES += \
-    android.hardware.cas@1.2-service \
+    android.hardware.cas-service.example \
     boringssl_self_test_vendor \
     dumpsys_vendor \
     fs_config_files_nonsystem \
@@ -81,7 +81,11 @@ ifneq ($(TARGET_SUPPORTS_OMX_SERVICE),false)
 
 endif
 
-# Base module when shipping api level is less than or equal to 29
+# Base modules when shipping api level is less than or equal to 33
+PRODUCT_PACKAGES_SHIPPING_API_LEVEL_33 += \
+    android.hardware.cas@1.2-service \
+
+# Base modules when shipping api level is less than or equal to 29
 PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29 += \
     android.hardware.configstore@1.1-service \
     vndservice \

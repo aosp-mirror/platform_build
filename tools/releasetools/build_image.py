@@ -232,11 +232,13 @@ def CheckHeadroom(ext4fs_output, prop_dict):
             mount_point, total_blocks, used_blocks, headroom_blocks,
             adjusted_blocks))
 
+
 def CalculateSizeAndReserved(prop_dict, size):
   fs_type = prop_dict.get("fs_type", "")
   partition_headroom = int(prop_dict.get("partition_headroom", 0))
   # If not specified, give us 16MB margin for GetDiskUsage error ...
-  reserved_size = int(prop_dict.get("partition_reserved_size", BYTES_IN_MB * 16))
+  reserved_size = int(prop_dict.get(
+      "partition_reserved_size", BYTES_IN_MB * 16))
 
   if fs_type == "erofs":
     reserved_size = int(prop_dict.get("partition_reserved_size", 0))
@@ -248,6 +250,7 @@ def CalculateSizeAndReserved(prop_dict, size):
     reserved_size = partition_headroom
 
   return size + reserved_size
+
 
 def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
   """Builds a pure image for the files under in_dir and writes it to out_file.
@@ -518,11 +521,12 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   disable_sparse = "disable_sparse" in prop_dict
   mkfs_output = None
   if (prop_dict.get("use_dynamic_partition_size") == "true" and
-      "partition_size" not in prop_dict):
+          "partition_size" not in prop_dict):
     # If partition_size is not defined, use output of `du' + reserved_size.
     # For compressed file system, it's better to use the compressed size to avoid wasting space.
     if fs_type.startswith("erofs"):
-      mkfs_output = BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config)
+      mkfs_output = BuildImageMkfs(
+          in_dir, prop_dict, out_file, target_out, fs_config)
       if "erofs_sparse_flag" in prop_dict and not disable_sparse:
         image_path = UnsparseImage(out_file, replace=False)
         size = GetDiskUsage(image_path)
@@ -612,7 +616,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     prop_dict["image_size"] = str(max_image_size)
 
   if not mkfs_output:
-    mkfs_output = BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config)
+    mkfs_output = BuildImageMkfs(
+        in_dir, prop_dict, out_file, target_out, fs_config)
 
   # Update the image (eg filesystem size). This can be different eg if mkfs
   # rounds the requested size down due to alignment.
@@ -628,6 +633,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   # Create the verified image if this is to be verified.
   if verity_image_builder:
     verity_image_builder.Build(out_file)
+
 
 def ImagePropFromGlobalDict(glob_dict, mount_point):
   """Build an image property dictionary from the global dictionary.
@@ -738,7 +744,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       # This property is legacy and only used on a few partitions. b/202600377
       allowed_partitions = set(["system", "system_other", "data", "oem"])
       if mount_point not in allowed_partitions:
-          continue
+        continue
 
     if (mount_point == "system_other") and (dest_prop != "partition_size"):
       # Propagate system properties to system_other. They'll get overridden
@@ -793,6 +799,7 @@ def LoadGlobalDict(filename):
 
 def GlobalDictFromImageProp(image_prop, mount_point):
   d = {}
+
   def copy_prop(src_p, dest_p):
     if src_p in image_prop:
       d[dest_p] = image_prop[src_p]
@@ -818,6 +825,56 @@ def GlobalDictFromImageProp(image_prop, mount_point):
   elif mount_point == "system_ext":
     copy_prop("partition_size", "system_ext_size")
   return d
+
+
+def BuildVBMeta(in_dir, glob_dict, output_path):
+  """Creates a VBMeta image.
+
+  It generates the requested VBMeta image. The requested image could be for
+  top-level or chained VBMeta image, which is determined based on the name.
+
+  Args:
+    output_path: Path to generated vbmeta.img
+    partitions: A dict that's keyed by partition names with image paths as
+        values. Only valid partition names are accepted, as partitions listed
+        in common.AVB_PARTITIONS and custom partitions listed in
+        OPTIONS.info_dict.get("avb_custom_images_partition_list")
+    name: Name of the VBMeta partition, e.g. 'vbmeta', 'vbmeta_system'.
+    needed_partitions: Partitions whose descriptors should be included into the
+        generated VBMeta image.
+
+  Returns:
+    Path to the created image.
+
+  Raises:
+    AssertionError: On invalid input args.
+  """
+  vbmeta_partitions = common.AVB_PARTITIONS[:]
+  name = os.path.basename(output_path).rstrip(".img")
+  vbmeta_system = glob_dict.get("avb_vbmeta_system", "").strip()
+  vbmeta_vendor = glob_dict.get("avb_vbmeta_vendor", "").strip()
+  if "vbmeta_system" in name:
+    vbmeta_partitions = vbmeta_system.split()
+  elif "vbmeta_vendor" in name:
+    vbmeta_partitions = vbmeta_vendor.split()
+  else:
+    if vbmeta_system:
+      vbmeta_partitions = [
+          item for item in vbmeta_partitions
+          if item not in vbmeta_system.split()]
+      vbmeta_partitions.append("vbmeta_system")
+
+    if vbmeta_vendor:
+      vbmeta_partitions = [
+          item for item in vbmeta_partitions
+          if item not in vbmeta_vendor.split()]
+      vbmeta_partitions.append("vbmeta_vendor")
+
+
+  partitions = {part: os.path.join(in_dir, part + ".img")
+                for part in vbmeta_partitions}
+  partitions = {part:path for (part, path) in partitions.items() if os.path.exists(path)}
+  common.BuildVBMeta(output_path, partitions, name, vbmeta_partitions)
 
 
 def main(argv):
@@ -866,14 +923,21 @@ def main(argv):
       mount_point = "product"
     elif image_filename == "system_ext.img":
       mount_point = "system_ext"
+    elif "vbmeta" in image_filename:
+      mount_point = "vbmeta"
     else:
       logger.error("Unknown image file name %s", image_filename)
       sys.exit(1)
 
-    image_properties = ImagePropFromGlobalDict(glob_dict, mount_point)
+    if "vbmeta" != mount_point:
+      image_properties = ImagePropFromGlobalDict(glob_dict, mount_point)
 
   try:
-    BuildImage(in_dir, image_properties, out_file, target_out)
+    if "vbmeta" in os.path.basename(out_file):
+      OPTIONS.info_dict = glob_dict
+      BuildVBMeta(in_dir, glob_dict, out_file)
+    else:
+      BuildImage(in_dir, image_properties, out_file, target_out)
   except:
     logger.error("Failed to build %s from %s", out_file, in_dir)
     raise

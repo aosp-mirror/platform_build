@@ -64,3 +64,8 @@ python_binary_host {
   name: "check_elf_file",
   srcs: ["check_elf_file.py"],
 }
+
+python_binary_host {
+  name: "generate_gts_shared_report",
+  srcs: ["generate_gts_shared_report.py"],
+}

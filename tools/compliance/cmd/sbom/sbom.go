@@ -271,6 +271,17 @@ func getProjectMetadata(_ *context, pmix *projectmetadata.Index,
 	return pms[index], nil
 }
 
+// inputFiles returns the complete list of files read
+func inputFiles(lg *compliance.LicenseGraph, pmix *projectmetadata.Index, licenseTexts []string) []string {
+	projectMeta := pmix.AllMetadataFiles()
+	targets :=  lg.TargetNames()
+	files := make([]string, 0, len(licenseTexts)+len(targets)+len(projectMeta))
+	files = append(files, licenseTexts...)
+	files = append(files, targets...)
+	files = append(files, projectMeta...)
+	return files
+}
+
 // sbomGenerator implements the spdx bom utility
 
 // SBOM is part of the new government regulation issued to improve national cyber security
@@ -332,9 +343,9 @@ func sbomGenerator(ctx *context, files ...string) ([]string, error) {
 			if isMainPackage {
 				mainPackage = getDocumentName(ctx, tn, pm)
 				fmt.Fprintf(ctx.stdout, "SPDXVersion: SPDX-2.2\n")
-				fmt.Fprintf(ctx.stdout, "DataLicense: CC-1.0\n")
+				fmt.Fprintf(ctx.stdout, "DataLicense: CC0-1.0\n")
 				fmt.Fprintf(ctx.stdout, "DocumentName: %s\n", mainPackage)
-				fmt.Fprintf(ctx.stdout, "SPDXID: SPDXRef-DOCUMENT-%s\n", mainPackage)
+				fmt.Fprintf(ctx.stdout, "SPDXID: SPDXRef-DOCUMENT\n")
 				fmt.Fprintf(ctx.stdout, "DocumentNamespace: Android\n")
 				fmt.Fprintf(ctx.stdout, "Creator: Organization: Google LLC\n")
 				fmt.Fprintf(ctx.stdout, "Created: %s\n", ctx.creationTime().Format("2006-01-02T15:04:05Z"))
@@ -352,8 +363,8 @@ func sbomGenerator(ctx *context, files ...string) ([]string, error) {
 			}()
 			if len(path) == 0 {
 				relationships = append(relationships,
-					fmt.Sprintf("Relationship: SPDXRef-DOCUMENT-%s DESCRIBES SPDXRef-Package-%s",
-						mainPackage, getPackageName(ctx, tn)))
+					fmt.Sprintf("Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-%s",
+						getPackageName(ctx, tn)))
 			} else {
 				// Check parent and identify annotation
 				parent := path[len(path)-1]
@@ -417,6 +428,7 @@ func sbomGenerator(ctx *context, files ...string) ([]string, error) {
 		fmt.Fprintf(ctx.stdout, "ExtractedText: <text>%v</text>\n", string(text))
 	}
 
-	deps := licenseTexts
+	deps := inputFiles(lg, pmix, licenseTexts)
+	sort.Strings(deps)
 	return deps, nil
 }

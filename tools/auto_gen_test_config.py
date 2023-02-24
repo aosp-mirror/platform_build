@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2017 The Android Open Source Project
 #
@@ -69,7 +69,7 @@ def main(argv):
   module = os.path.splitext(os.path.basename(target_config))[0]
   instrumentation = instrumentation_elements[0]
   manifest = manifest_elements[0]
-  if instrumentation.attributes.has_key(ATTRIBUTE_LABEL):
+  if ATTRIBUTE_LABEL in instrumentation.attributes:
     label = instrumentation.attributes[ATTRIBUTE_LABEL].value
   else:
     label = module

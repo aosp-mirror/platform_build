@@ -247,40 +247,16 @@ func WalkResolutionsForCondition(lg *LicenseGraph, conditions LicenseConditionSe
 // WalkActionsForCondition performs a top-down walk of the LicenseGraph
 // resolving all distributed works for `conditions`.
 func WalkActionsForCondition(lg *LicenseGraph, conditions LicenseConditionSet) ActionSet {
-	shipped := ShippedNodes(lg)
-
-	// cmap identifies previously walked target/condition pairs.
-	cmap := make(map[resolutionKey]struct{})
-
 	// amap maps 'actsOn' targets to the applicable conditions
 	//
 	// amap is the resulting ActionSet
 	amap := make(ActionSet)
-	WalkTopDown(ApplicableConditionsContext{conditions}, lg, func(lg *LicenseGraph, tn *TargetNode, path TargetEdgePath) bool {
-		universe := conditions
-		if len(path) > 0 {
-			universe = path[len(path)-1].ctx.(LicenseConditionSet)
+
+	for tn := range ShippedNodes(lg) {
+		if cs := conditions.Intersection(tn.resolution); !cs.IsEmpty() {
+			amap[tn] = cs
 		}
-		if universe.IsEmpty() {
-			return false
-		}
-		key := resolutionKey{tn, universe}
-		if _, ok := cmap[key]; ok {
-			return false
-		}
-		if !shipped.Contains(tn) {
-			return false
-		}
-		cs := universe.Intersection(tn.resolution)
-		if !cs.IsEmpty() {
-			if _, ok := amap[tn]; ok {
-				amap[tn] = cs
-			} else {
-				amap[tn] = amap[tn].Union(cs)
-			}
-		}
-		return true
-	})
+	}
 
 	return amap
 }

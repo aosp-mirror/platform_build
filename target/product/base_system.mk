@@ -54,7 +54,6 @@ PRODUCT_PACKAGES += \
     com.android.appsearch \
     com.android.btservices \
     com.android.conscrypt \
-    com.android.cronet \
     com.android.extservices \
     com.android.i18n \
     com.android.ipsec \
@@ -123,6 +122,7 @@ PRODUCT_PACKAGES += \
     init_system \
     input \
     installd \
+    IntentResolver \
     ip \
     iptables \
     ip-up-vpn \
@@ -204,7 +204,6 @@ PRODUCT_PACKAGES += \
     libvulkan \
     libwilhelm \
     linker \
-    linkerconfig \
     llkd \
     lmkd \
     LocalTransport \
@@ -389,6 +388,7 @@ PRODUCT_PACKAGES_DEBUG := \
     procrank \
     profcollectd \
     profcollectctl \
+    record_binder \
     servicedispatcher \
     showmap \
     sqlite3 \
