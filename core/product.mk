@@ -24,6 +24,8 @@ _product_list_vars :=
 
 _product_single_value_vars += PRODUCT_NAME
 _product_single_value_vars += PRODUCT_MODEL
+_product_single_value_vars += PRODUCT_NAME_FOR_ATTESTATION
+_product_single_value_vars += PRODUCT_MODEL_FOR_ATTESTATION
 
 # The resoure configuration options to use for this product.
 _product_list_vars += PRODUCT_LOCALES
@@ -43,6 +45,7 @@ _product_list_vars += PRODUCT_PACKAGES_TESTS
 _product_single_value_vars += PRODUCT_DEVICE
 _product_single_value_vars += PRODUCT_MANUFACTURER
 _product_single_value_vars += PRODUCT_BRAND
+_product_single_value_vars += PRODUCT_BRAND_FOR_ATTESTATION
 
 # These PRODUCT_SYSTEM_* flags, if defined, are used in place of the
 # corresponding PRODUCT_* flags for the sysprops on /system.
@@ -263,6 +266,9 @@ _product_list_vars += PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION
 # This flag implies PRODUCT_USE_DYNAMIC_PARTITIONS.
 _product_single_value_vars += PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
 
+# List of tags that will be used to gate blueprint modules from the build graph
+_product_list_vars += PRODUCT_INCLUDE_TAGS
+
 # When this is true, various build time as well as runtime debugfs restrictions are enabled.
 _product_single_value_vars += PRODUCT_SET_DEBUGFS_RESTRICTIONS
 
@@ -369,6 +375,9 @@ _product_single_value_vars += PRODUCT_MODULE_BUILD_FROM_SOURCE
 
 # If true, installs a full version of com.android.virt APEX.
 _product_single_value_vars += PRODUCT_AVF_ENABLED
+
+# List of .json files to be merged/compiled into vendor/etc/linker.config.pb
+_product_list_vars += PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS
 
 # Whether to use userfaultfd GC.
 # Possible values are:

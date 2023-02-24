@@ -4,7 +4,11 @@
 # set -ex
 
 function finalize_revert_local_changes_main() {
-    local top="$(dirname "$0")"/../..
+    local top="$(dirname "$0")"/../../../..
+    local m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug"
+
+    # remove the out folder
+    $m clobber
 
     repo selfupdate
 

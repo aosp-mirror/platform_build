@@ -95,7 +95,6 @@ endif
 # The thermal cutoff value is currently set to THERMAL_STATUS_MODERATE.
 PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.usejit=true \
-    dalvik.vm.usejitprofiles=true \
     dalvik.vm.dexopt.secondary=true \
     dalvik.vm.dexopt.thermal-cutoff=2 \
     dalvik.vm.appimageformat=lz4
@@ -123,6 +122,7 @@ endif
 # without exceptions).
 PRODUCT_SYSTEM_PROPERTIES += \
     pm.dexopt.post-boot?=extract \
+    pm.dexopt.boot-after-mainline-update?=verify \
     pm.dexopt.install?=speed-profile \
     pm.dexopt.install-fast?=skip \
     pm.dexopt.install-bulk?=speed-profile \

@@ -1,0 +1,60 @@
+package_name:  "Android"
+projects:  "container/zip"
+license_kinds:  "SPDX-license-identifier-MIT"
+license_conditions:  "notice"
+is_container:  true
+built:  "out/target/product/fictional/obj/ETC/container_intermediates/container.zip"
+installed:  "out/target/product/fictional/data/container.zip"
+install_map {
+  from_path:  "out/target/product/fictional/system/lib/"
+  container_path:  "/"
+}
+install_map {
+  from_path:  "out/target/product/fictional/system/bin/"
+  container_path:  "/"
+}
+sources:  "out/target/product/fictional/system/bin/bin1"
+sources:  "out/target/product/fictional/system/bin/bin2"
+sources:  "out/target/product/fictional/system/bin/bin3"
+sources:  "out/target/product/fictional/system/bin/bin4"
+sources:  "out/target/product/fictional/system/bin/bin5"
+sources:  "out/target/product/fictional/system/bin/bin6"
+sources:  "out/target/product/fictional/system/bin/bin7"
+sources:  "out/target/product/fictional/system/bin/bin8"
+sources:  "out/target/product/fictional/system/bin/bin9"
+deps:  {
+  file:  "testdata/regressconcur/bin/bin1.meta_lic"
+  annotations:  "static"
+}
+deps:  {
+  file:  "testdata/regressconcur/bin/bin2.meta_lic"
+  annotations:  "static"
+}
+deps:  {
+  file:  "testdata/regressconcur/bin/bin3.meta_lic"
+  annotations:  "static"
+}
+deps:  {
+  file:  "testdata/regressconcur/bin/bin4.meta_lic"
+  annotations:  "static"
+}
+deps:  {
+  file:  "testdata/regressconcur/bin/bin5.meta_lic"
+  annotations:  "static"
+}
+deps:  {
+  file:  "testdata/regressconcur/bin/bin6.meta_lic"
+  annotations:  "static"
+}
+deps:  {
+  file:  "testdata/regressconcur/bin/bin7.meta_lic"
+  annotations:  "static"
+}
+deps:  {
+  file:  "testdata/regressconcur/bin/bin8.meta_lic"
+  annotations:  "static"
+}
+deps:  {
+  file:  "testdata/regressconcur/bin/bin9.meta_lic"
+  annotations:  "static"
+}

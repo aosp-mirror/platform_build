@@ -126,8 +126,13 @@ $(notdir $(patsubst $(tag_patterns),%,$(filter $(tag_patterns),$(2))))
 endef
 
 VNDK_ABI_DUMP_DIR := prebuilts/abi-dumps/vndk/$(PLATFORM_VNDK_VERSION)
-NDK_ABI_DUMP_DIR := prebuilts/abi-dumps/ndk/$(PLATFORM_VNDK_VERSION)
-PLATFORM_ABI_DUMP_DIR := prebuilts/abi-dumps/platform/$(PLATFORM_VNDK_VERSION)
+ifeq (REL,$(PLATFORM_VERSION_CODENAME))
+    NDK_ABI_DUMP_DIR := prebuilts/abi-dumps/ndk/$(PLATFORM_SDK_VERSION)
+    PLATFORM_ABI_DUMP_DIR := prebuilts/abi-dumps/platform/$(PLATFORM_SDK_VERSION)
+else
+    NDK_ABI_DUMP_DIR := prebuilts/abi-dumps/ndk/current
+    PLATFORM_ABI_DUMP_DIR := prebuilts/abi-dumps/platform/current
+endif
 VNDK_ABI_DUMPS := $(call find-abi-dump-paths,$(VNDK_ABI_DUMP_DIR))
 NDK_ABI_DUMPS := $(call find-abi-dump-paths,$(NDK_ABI_DUMP_DIR))
 PLATFORM_ABI_DUMPS := $(call find-abi-dump-paths,$(PLATFORM_ABI_DUMP_DIR))
@@ -141,7 +146,7 @@ $(check-vndk-abi-dump-list-timestamp): PRIVATE_LSDUMP_PATHS := $(LSDUMP_PATHS)
 $(check-vndk-abi-dump-list-timestamp): PRIVATE_STUB_LIBRARIES := $(STUB_LIBRARIES)
 $(check-vndk-abi-dump-list-timestamp):
 	$(eval added_vndk_abi_dumps := $(strip $(sort $(filter-out \
-	  $(call filter-abi-dump-paths,LLNDK VNDK-SP VNDK-core,$(PRIVATE_LSDUMP_PATHS)), \
+	  $(call filter-abi-dump-paths,VNDK-SP VNDK-core,$(PRIVATE_LSDUMP_PATHS)), \
 	  $(notdir $(VNDK_ABI_DUMPS))))))
 	$(if $(added_vndk_abi_dumps), \
 	  echo -e "Found unexpected ABI reference dump files under $(VNDK_ABI_DUMP_DIR). It is caused by mismatch between Android.bp and the dump files. Run \`find \$${ANDROID_BUILD_TOP}/$(VNDK_ABI_DUMP_DIR) '(' -name $(subst $(space), -or -name ,$(added_vndk_abi_dumps)) ')' -delete\` to delete the dump files.")
@@ -154,7 +159,7 @@ $(check-vndk-abi-dump-list-timestamp):
 	  echo -e "Found unexpected ABI reference dump files under $(NDK_ABI_DUMP_DIR). It is caused by mismatch between Android.bp and the dump files. Run \`find \$${ANDROID_BUILD_TOP}/$(NDK_ABI_DUMP_DIR) '(' -name $(subst $(space), -or -name ,$(added_ndk_abi_dumps)) ')' -delete\` to delete the dump files.")
 
 	$(eval added_platform_abi_dumps := $(strip $(sort $(filter-out \
-	  $(call filter-abi-dump-paths,PLATFORM,$(PRIVATE_LSDUMP_PATHS)) \
+	  $(call filter-abi-dump-paths,LLNDK PLATFORM,$(PRIVATE_LSDUMP_PATHS)) \
 	  $(addsuffix .lsdump,$(PRIVATE_STUB_LIBRARIES)), \
 	  $(notdir $(PLATFORM_ABI_DUMPS))))))
 	$(if $(added_platform_abi_dumps), \

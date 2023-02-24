@@ -81,11 +81,11 @@ ifneq ($(filter-out false,$(USE_RBE)),)
   endif
 
   ifdef RBE_R8
-    R8_WRAPPER := $(strip $(RBE_WRAPPER) --labels=type=compile,compiler=r8 --exec_strategy=$(r8_exec_strategy) --platform=$(java_r8_d8_platform) --inputs=$(OUT_DIR)/soong/host/linux-x86/framework/r8-compat-proguard.jar,build/make/core/proguard_basic_keeps.flags --toolchain_inputs=$(JAVA))
+    R8_WRAPPER := $(strip $(RBE_WRAPPER) --labels=type=compile,compiler=r8 --exec_strategy=$(r8_exec_strategy) --platform=$(java_r8_d8_platform) --inputs=$(OUT_DIR)/host/linux-x86/framework/r8.jar,build/make/core/proguard_basic_keeps.flags --toolchain_inputs=$(firstword $(JAVA)))
   endif
 
   ifdef RBE_D8
-    D8_WRAPPER := $(strip $(RBE_WRAPPER) --labels=type=compile,compiler=d8 --exec_strategy=$(d8_exec_strategy) --platform=$(java_r8_d8_platform) --inputs=$(OUT_DIR)/soong/host/linux-x86/framework/d8.jar --toolchain_inputs=$(JAVA))
+    D8_WRAPPER := $(strip $(RBE_WRAPPER) --labels=type=compile,compiler=d8 --exec_strategy=$(d8_exec_strategy) --platform=$(java_r8_d8_platform) --inputs=$(OUT_DIR)/host/linux-x86/framework/d8.jar --toolchain_inputs=$(firstword $(JAVA)))
   endif
 
   rbe_dir :=

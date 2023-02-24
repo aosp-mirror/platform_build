@@ -1,3 +1,55 @@
+# Copyright (C) 2022 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# gettop is duplicated here and in shell_utils.mk, because it's difficult
+# to find shell_utils.make without it for all the novel ways this file can be
+# sourced.  Other common functions should only be in one place or the other.
+function _gettop_once
+{
+    local TOPFILE=build/make/core/envsetup.mk
+    if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
+        # The following circumlocution ensures we remove symlinks from TOP.
+        (cd "$TOP"; PWD= /bin/pwd)
+    else
+        if [ -f $TOPFILE ] ; then
+            # The following circumlocution (repeated below as well) ensures
+            # that we record the true directory name and not one that is
+            # faked up with symlink names.
+            PWD= /bin/pwd
+        else
+            local HERE=$PWD
+            local T=
+            while [ \( ! \( -f $TOPFILE \) \) -a \( "$PWD" != "/" \) ]; do
+                \cd ..
+                T=`PWD= /bin/pwd -P`
+            done
+            \cd "$HERE"
+            if [ -f "$T/$TOPFILE" ]; then
+                echo "$T"
+            fi
+        fi
+    fi
+}
+T=$(_gettop_once)
+if [ ! "$T" ]; then
+    echo "Couldn't locate the top of the tree. Always source build/envsetup.sh from the root of the tree." >&2
+    return 1
+fi
+IMPORTING_ENVSETUP=true source $T/build/make/shell_utils.sh
+
+
+# Help
 function hmm() {
 cat <<EOF
 
@@ -27,6 +79,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - ggrep:      Greps on all local Gradle files.
 - gogrep:     Greps on all local Go files.
 - jgrep:      Greps on all local Java files.
+- jsongrep:   Greps on all local Json files.
 - ktgrep:     Greps on all local Kotlin files.
 - resgrep:    Greps on all local res/*.xml files.
 - mangrep:    Greps on all local AndroidManifest.xml files.
@@ -35,6 +88,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - rsgrep:     Greps on all local Rust files.
 - sepgrep:    Greps on all local sepolicy files.
 - sgrep:      Greps on all local source files.
+- tomlgrep:   Greps on all local Toml files.
 - pygrep:     Greps on all local Python files.
 - godir:      Go to the directory containing a file.
 - allmod:     List all modules.
@@ -174,7 +228,10 @@ function check_variant()
     return 1
 }
 
-function setpaths()
+
+# Add directories to PATH that are dependent on the lunch target.
+# For directories that are not lunch-specific, add them in set_global_paths
+function set_lunch_paths()
 {
     local T=$(gettop)
     if [ ! "$T" ]; then
@@ -186,96 +243,80 @@ function setpaths()
     #                                                                #
     #              Read me before you modify this code               #
     #                                                                #
-    #   This function sets ANDROID_BUILD_PATHS to what it is adding  #
-    #   to PATH, and the next time it is run, it removes that from   #
-    #   PATH.  This is required so lunch can be run more than once   #
-    #   and still have working paths.                                #
+    #   This function sets ANDROID_LUNCH_BUILD_PATHS to what it is   #
+    #   adding to PATH, and the next time it is run, it removes that #
+    #   from PATH.  This is required so lunch can be run more than   #
+    #   once and still have working paths.                           #
     #                                                                #
     ##################################################################
 
-    # Note: on windows/cygwin, ANDROID_BUILD_PATHS will contain spaces
+    # Note: on windows/cygwin, ANDROID_LUNCH_BUILD_PATHS will contain spaces
     # due to "C:\Program Files" being in the path.
 
-    # out with the old
-    if [ -n "$ANDROID_BUILD_PATHS" ] ; then
-        export PATH=${PATH/$ANDROID_BUILD_PATHS/}
+    # Handle compat with the old ANDROID_BUILD_PATHS variable. 
+    # TODO: Remove this after we think everyone has lunched again.
+    if [ -z "$ANDROID_LUNCH_BUILD_PATHS" -a -n "$ANDROID_BUILD_PATHS" ] ; then
+      ANDROID_LUNCH_BUILD_PATHS="$ANDROID_BUILD_PATHS"
+      ANDROID_BUILD_PATHS=
     fi
     if [ -n "$ANDROID_PRE_BUILD_PATHS" ] ; then
         export PATH=${PATH/$ANDROID_PRE_BUILD_PATHS/}
         # strip leading ':', if any
         export PATH=${PATH/:%/}
+        ANDROID_PRE_BUILD_PATHS=
     fi
 
-    # and in with the new
+    # Out with the old...
+    if [ -n "$ANDROID_LUNCH_BUILD_PATHS" ] ; then
+        export PATH=${PATH/$ANDROID_LUNCH_BUILD_PATHS/}
+    fi
 
-    export ANDROID_DEV_SCRIPTS=$T/development/scripts:$T/prebuilts/devtools/tools
+    # And in with the new...
+    ANDROID_LUNCH_BUILD_PATHS=$(get_abs_build_var SOONG_HOST_OUT_EXECUTABLES)
+    ANDROID_LUNCH_BUILD_PATHS+=:$(get_abs_build_var HOST_OUT_EXECUTABLES)
 
-    # add kernel specific binaries
-    case $(uname -s) in
-        Linux)
-            export ANDROID_DEV_SCRIPTS=$ANDROID_DEV_SCRIPTS:$T/prebuilts/misc/linux-x86/dtc:$T/prebuilts/misc/linux-x86/libufdt
-            ;;
-        *)
-            ;;
-    esac
-
-    ANDROID_BUILD_PATHS=$(get_build_var ANDROID_BUILD_PATHS)
-    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_DEV_SCRIPTS
-
-    # Append llvm binutils prebuilts path to ANDROID_BUILD_PATHS.
+    # Append llvm binutils prebuilts path to ANDROID_LUNCH_BUILD_PATHS.
     local ANDROID_LLVM_BINUTILS=$(get_abs_build_var ANDROID_CLANG_PREBUILTS)/llvm-binutils-stable
-    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_LLVM_BINUTILS
+    ANDROID_LUNCH_BUILD_PATHS+=:$ANDROID_LLVM_BINUTILS
 
     # Set up ASAN_SYMBOLIZER_PATH for SANITIZE_HOST=address builds.
     export ASAN_SYMBOLIZER_PATH=$ANDROID_LLVM_BINUTILS/llvm-symbolizer
 
-    # If prebuilts/android-emulator/<system>/ exists, prepend it to our PATH
-    # to ensure that the corresponding 'emulator' binaries are used.
-    case $(uname -s) in
-        Darwin)
-            ANDROID_EMULATOR_PREBUILTS=$T/prebuilts/android-emulator/darwin-x86_64
-            ;;
-        Linux)
-            ANDROID_EMULATOR_PREBUILTS=$T/prebuilts/android-emulator/linux-x86_64
-            ;;
-        *)
-            ANDROID_EMULATOR_PREBUILTS=
-            ;;
-    esac
-    if [ -n "$ANDROID_EMULATOR_PREBUILTS" -a -d "$ANDROID_EMULATOR_PREBUILTS" ]; then
-        ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_EMULATOR_PREBUILTS
-        export ANDROID_EMULATOR_PREBUILTS
-    fi
-
-    # Append asuite prebuilts path to ANDROID_BUILD_PATHS.
+    # Append asuite prebuilts path to ANDROID_LUNCH_BUILD_PATHS.
     local os_arch=$(get_build_var HOST_PREBUILT_TAG)
-    local ACLOUD_PATH="$T/prebuilts/asuite/acloud/$os_arch"
-    local AIDEGEN_PATH="$T/prebuilts/asuite/aidegen/$os_arch"
-    local ATEST_PATH="$T/prebuilts/asuite/atest/$os_arch"
-    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ACLOUD_PATH:$AIDEGEN_PATH:$ATEST_PATH
-
-    # Build system
-    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$T/build/bazel/bin
-
-    export ANDROID_BUILD_PATHS=$(tr -s : <<<"${ANDROID_BUILD_PATHS}:")
-    export PATH=$ANDROID_BUILD_PATHS$PATH
-
-    # out with the duplicate old
-    if [ -n $ANDROID_PYTHONPATH ]; then
-        export PYTHONPATH=${PYTHONPATH//$ANDROID_PYTHONPATH/}
-    fi
-    # and in with the new
-    export ANDROID_PYTHONPATH=$T/development/python-packages:
-    if [ -n $VENDOR_PYTHONPATH  ]; then
-        ANDROID_PYTHONPATH=$ANDROID_PYTHONPATH$VENDOR_PYTHONPATH
-    fi
-    export PYTHONPATH=$ANDROID_PYTHONPATH$PYTHONPATH
+    ANDROID_LUNCH_BUILD_PATHS+=:$T/prebuilts/asuite/acloud/$os_arch
+    ANDROID_LUNCH_BUILD_PATHS+=:$T/prebuilts/asuite/aidegen/$os_arch
+    ANDROID_LUNCH_BUILD_PATHS+=:$T/prebuilts/asuite/atest/$os_arch
 
     export ANDROID_JAVA_HOME=$(get_abs_build_var ANDROID_JAVA_HOME)
     export JAVA_HOME=$ANDROID_JAVA_HOME
     export ANDROID_JAVA_TOOLCHAIN=$(get_abs_build_var ANDROID_JAVA_TOOLCHAIN)
-    export ANDROID_PRE_BUILD_PATHS=$ANDROID_JAVA_TOOLCHAIN:
-    export PATH=$ANDROID_PRE_BUILD_PATHS$PATH
+    ANDROID_LUNCH_BUILD_PATHS+=:$ANDROID_JAVA_TOOLCHAIN
+
+    # Fix up PYTHONPATH
+    if [ -n $ANDROID_PYTHONPATH ]; then
+        export PYTHONPATH=${PYTHONPATH//$ANDROID_PYTHONPATH/}
+    fi
+    # //development/python-packages contains both a pseudo-PYTHONPATH which
+    # mimics an already assembled venv, but also contains real Python packages
+    # that are not in that layout until they are installed. We can fake it for
+    # the latter type by adding the package source directories to the PYTHONPATH
+    # directly. For the former group, we only need to add the python-packages
+    # directory itself.
+    #
+    # This could be cleaned up by converting the remaining packages that are in
+    # the first category into a typical python source layout (that is, another
+    # layer of directory nesting) and automatically adding all subdirectories of
+    # python-packages to the PYTHONPATH instead of manually curating this. We
+    # can't convert the packages like adb to the other style because doing so
+    # would prevent exporting type info from those packages.
+    #
+    # http://b/266688086
+    export ANDROID_PYTHONPATH=$T/development/python-packages/adb:$T/development/python-packages:
+    if [ -n $VENDOR_PYTHONPATH ]; then
+        ANDROID_PYTHONPATH=$ANDROID_PYTHONPATH$VENDOR_PYTHONPATH
+    fi
+    export PYTHONPATH=$ANDROID_PYTHONPATH$PYTHONPATH
 
     unset ANDROID_PRODUCT_OUT
     export ANDROID_PRODUCT_OUT=$(get_abs_build_var PRODUCT_OUT)
@@ -293,9 +334,67 @@ function setpaths()
     unset ANDROID_TARGET_OUT_TESTCASES
     export ANDROID_TARGET_OUT_TESTCASES=$(get_abs_build_var TARGET_OUT_TESTCASES)
 
-    # needed for building linux on MacOS
-    # TODO: fix the path
-    #export HOST_EXTRACFLAGS="-I "$T/system/kernel_headers/host_include
+    # Finally, set PATH
+    export PATH=$ANDROID_LUNCH_BUILD_PATHS:$PATH
+}
+
+# Add directories to PATH that are NOT dependent on the lunch target.
+# For directories that are lunch-specific, add them in set_lunch_paths
+function set_global_paths()
+{
+    local T=$(gettop)
+    if [ ! "$T" ]; then
+        echo "Couldn't locate the top of the tree.  Try setting TOP."
+        return
+    fi
+
+    ##################################################################
+    #                                                                #
+    #              Read me before you modify this code               #
+    #                                                                #
+    #   This function sets ANDROID_GLOBAL_BUILD_PATHS to what it is  #
+    #   adding to PATH, and the next time it is run, it removes that #
+    #   from PATH.  This is required so envsetup.sh can be sourced   #
+    #   more than once and still have working paths.                 #
+    #                                                                #
+    ##################################################################
+
+    # Out with the old...
+    if [ -n "$ANDROID_GLOBAL_BUILD_PATHS" ] ; then
+        export PATH=${PATH/$ANDROID_GLOBAL_BUILD_PATHS/}
+    fi
+
+    # And in with the new...
+    ANDROID_GLOBAL_BUILD_PATHS=$T/build/bazel/bin
+    ANDROID_GLOBAL_BUILD_PATHS+=:$T/development/scripts
+    ANDROID_GLOBAL_BUILD_PATHS+=:$T/prebuilts/devtools/tools
+
+    # add kernel specific binaries
+    if [ $(uname -s) = Linux ] ; then
+        ANDROID_GLOBAL_BUILD_PATHS+=:$T/prebuilts/misc/linux-x86/dtc
+        ANDROID_GLOBAL_BUILD_PATHS+=:$T/prebuilts/misc/linux-x86/libufdt
+    fi
+
+    # If prebuilts/android-emulator/<system>/ exists, prepend it to our PATH
+    # to ensure that the corresponding 'emulator' binaries are used.
+    case $(uname -s) in
+        Darwin)
+            ANDROID_EMULATOR_PREBUILTS=$T/prebuilts/android-emulator/darwin-x86_64
+            ;;
+        Linux)
+            ANDROID_EMULATOR_PREBUILTS=$T/prebuilts/android-emulator/linux-x86_64
+            ;;
+        *)
+            ANDROID_EMULATOR_PREBUILTS=
+            ;;
+    esac
+    if [ -n "$ANDROID_EMULATOR_PREBUILTS" -a -d "$ANDROID_EMULATOR_PREBUILTS" ]; then
+        ANDROID_GLOBAL_BUILD_PATHS+=:$ANDROID_EMULATOR_PREBUILTS
+        export ANDROID_EMULATOR_PREBUILTS
+    fi
+
+    # Finally, set PATH
+    export PATH=$ANDROID_GLOBAL_BUILD_PATHS:$PATH
 }
 
 function printconfig()
@@ -310,7 +409,7 @@ function printconfig()
 
 function set_stuff_for_environment()
 {
-    setpaths
+    set_lunch_paths
     set_sequence_number
 
     export ANDROID_BUILD_TOP=$(gettop)
@@ -414,9 +513,7 @@ function multitree_lunch()
     # Lunch must be run in the topdir, but this way we get a clear error
     # message, instead of FileNotFound.
     local T=$(multitree_gettop)
-    if [ -n "$T" ]; then
-      "$T/orchestrator/build/orchestrator/core/lunch.py" "$@"
-    else
+    if [ -z "$T" ]; then
       _multitree_lunch_error
       return 1
     fi
@@ -900,33 +997,6 @@ function banchan()
     destroy_build_var_cache
 }
 
-function gettop
-{
-    local TOPFILE=build/make/core/envsetup.mk
-    if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
-        # The following circumlocution ensures we remove symlinks from TOP.
-        (cd "$TOP"; PWD= /bin/pwd)
-    else
-        if [ -f $TOPFILE ] ; then
-            # The following circumlocution (repeated below as well) ensures
-            # that we record the true directory name and not one that is
-            # faked up with symlink names.
-            PWD= /bin/pwd
-        else
-            local HERE=$PWD
-            local T=
-            while [ \( ! \( -f $TOPFILE \) \) -a \( "$PWD" != "/" \) ]; do
-                \cd ..
-                T=`PWD= /bin/pwd -P`
-            done
-            \cd "$HERE"
-            if [ -f "$T/$TOPFILE" ]; then
-                echo "$T"
-            fi
-        fi
-    fi
-}
-
 # TODO: Merge into gettop as part of launching multitree
 function multitree_gettop
 {
@@ -1180,6 +1250,18 @@ function jgrep()
 function rsgrep()
 {
     find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.rs" \
+        -exec grep --color -n "$@" {} +
+}
+
+function jsongrep()
+{
+    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.json" \
+        -exec grep --color -n "$@" {} +
+}
+
+function tomlgrep()
+{
+    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.toml" \
         -exec grep --color -n "$@" {} +
 }
 
@@ -1799,11 +1881,6 @@ function _wrap_build()
         color_reset=""
     fi
 
-    if [[ "x${USE_RBE}" == "x" && $mins -gt 15 && "${ANDROID_BUILD_ENVIRONMENT_CONFIG}" == "googler" ]]; then
-        echo
-        echo "${color_warning}Start using RBE (http://go/build-fast) to get faster builds!${color_reset}"
-    fi
-
     echo
     if [ $ret -eq 0 ] ; then
         echo -n "${color_success}#### build completed successfully "
@@ -2004,5 +2081,7 @@ function avbtool() {
 }
 
 validate_current_shell
+set_global_paths
 source_vendorsetup
 addcompletions
+
