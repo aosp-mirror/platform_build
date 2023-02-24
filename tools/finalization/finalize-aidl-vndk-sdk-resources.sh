@@ -3,7 +3,7 @@
 set -ex
 
 function apply_droidstubs_hack() {
-    if ! grep -q 'STOPSHIP: RESTORE THIS LOGIC WHEN DECLARING "REL" BUILD' "$top/build/soong/java/droidstubs.go" ; then 
+    if ! grep -q 'STOPSHIP: RESTORE THIS LOGIC WHEN DECLARING "REL" BUILD' "$top/build/soong/java/droidstubs.go" ; then
         git -C "$top/build/soong" apply --allow-empty ../../build/make/tools/finalization/build_soong_java_droidstubs.go.apply_hack.diff
     fi
 }
