@@ -1341,6 +1341,14 @@ def main(argv):
     source_spl = source_build_prop.GetProp(SECURITY_PATCH_LEVEL_PROP_NAME)
     target_spl = target_build_prop.GetProp(SECURITY_PATCH_LEVEL_PROP_NAME)
     is_spl_downgrade = target_spl < source_spl
+    if is_spl_downgrade and target_build_prop.GetProp("ro.build.tags") == "release-keys":
+      raise common.ExternalError(
+          "Target security patch level {} is older than source SPL {} "
+          "A locked bootloader will reject SPL downgrade no matter "
+          "what(even if data wipe is done), so SPL downgrade on any "
+          "release-keys build is not allowed.".format(target_spl, source_spl))
+
+    logger.info("SPL downgrade on %s", target_build_prop.GetProp("ro.build.tags"))
     if is_spl_downgrade and not OPTIONS.spl_downgrade and not OPTIONS.downgrade:
       raise common.ExternalError(
           "Target security patch level {} is older than source SPL {} applying "
