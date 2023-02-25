@@ -79,7 +79,7 @@ endif
 # are controlled by the MODULE_BUILD_FROM_SOURCE environment variable by
 # default.
 INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
-  bluetooth \
+  btservices \
   permission \
   uwb \
   wifi \
