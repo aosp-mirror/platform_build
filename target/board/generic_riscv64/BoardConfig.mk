@@ -26,6 +26,3 @@ include build/make/target/board/BoardConfigGsiCommon.mk
 
 # Temporary hack while prebuilt modules are missing riscv64.
 ALLOW_MISSING_DEPENDENCIES := true
-
-# Temporary until dex2oat works when targeting riscv64
-WITH_DEXPREOPT := false
