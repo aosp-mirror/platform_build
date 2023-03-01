@@ -203,7 +203,7 @@ _board_strip_readonly_list += $(_build_broken_var_list) \
 
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
-  WITH_DEXPREOPT ?= true
+  WITH_DEXPREOPT := true
 endif
 
 # ###############################################################
