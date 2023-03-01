@@ -727,29 +727,33 @@ def GetTargetFilesZipForCustomImagesUpdates(input_file, custom_images):
 
   Returns:
     The filename of a target-files.zip which has renamed the custom images in
-    the IMAGS/ to their partition names.
+    the IMAGES/ to their partition names.
   """
-  # Use zip2zip to avoid extracting the zipfile.
+
+  # First pass: use zip2zip to copy the target files contents, excluding
+  # the "custom" images that will be replaced.
   target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
   cmd = ['zip2zip', '-i', input_file, '-o', target_file]
 
-  with zipfile.ZipFile(input_file, allowZip64=True) as input_zip:
-    namelist = input_zip.namelist()
-
-  # Write {custom_image}.img as {custom_partition}.img.
+  images = {}
   for custom_partition, custom_image in custom_images.items():
     default_custom_image = '{}.img'.format(custom_partition)
     if default_custom_image != custom_image:
-      logger.info("Update custom partition '%s' with '%s'",
-                  custom_partition, custom_image)
-      # Default custom image need to be deleted first.
-      namelist.remove('IMAGES/{}'.format(default_custom_image))
-      # IMAGES/{custom_image}.img:IMAGES/{custom_partition}.img.
-      cmd.extend(['IMAGES/{}:IMAGES/{}'.format(custom_image,
-                                               default_custom_image)])
+      src = 'IMAGES/' + custom_image
+      dst = 'IMAGES/' + default_custom_image
+      cmd.extend(['-x', dst])
+      images[dst] = src
 
-  cmd.extend(['{}:{}'.format(name, name) for name in namelist])
   common.RunAndCheckOutput(cmd)
+
+  # Second pass: write {custom_image}.img as {custom_partition}.img.
+  with zipfile.ZipFile(input_file, allowZip64=True) as input_zip:
+    with zipfile.ZipFile(target_file, 'a', allowZip64=True) as output_zip:
+      for dst, src in images.items():
+        data = input_zip.read(src)
+        logger.info("Update custom partition '%s'", dst)
+        common.ZipWriteStr(output_zip, dst, data)
+      output_zip.close()
 
   return target_file
 
