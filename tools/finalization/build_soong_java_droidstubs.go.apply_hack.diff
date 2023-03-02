@@ -1,0 +1,30 @@
+From 12eea1512f2612f41b5cf7004ee2e6a189d548d7 Mon Sep 17 00:00:00 2001
+From: Alex Buynytskyy <alexbuy@google.com>
+Date: Thu, 01 Sep 2022 10:44:21 -0700
+Subject: [PATCH] Hacky workaround for half-finalized builds.
+
+Metalava increments the SDK level by one when it's not "REL", so we
+temporarily force the build to be "REL" while we're still in the
+process of finalizing it.
+
+This CL must be reverted as part of actually declaring "REL".
+
+Bug: none
+Test: Build
+Change-Id: I8c24c6dabec0270bc384d8465c582a4ddbe8bd6c
+---
+
+diff --git a/java/droidstubs.go b/java/droidstubs.go
+index 5777b18..ec4a0f4 100644
+--- a/java/droidstubs.go
++++ b/java/droidstubs.go
+@@ -386,7 +386,8 @@
+ 	}
+ 	if apiVersions != nil {
+ 		cmd.FlagWithArg("--current-version ", ctx.Config().PlatformSdkVersion().String())
+-		cmd.FlagWithArg("--current-codename ", ctx.Config().PlatformSdkCodename())
++		// STOPSHIP: RESTORE THIS LOGIC WHEN DECLARING "REL" BUILD
++		// cmd.FlagWithArg("--current-codename ", ctx.Config().PlatformSdkCodename())
+ 		cmd.FlagWithInput("--apply-api-levels ", apiVersions)
+ 	}
+ }

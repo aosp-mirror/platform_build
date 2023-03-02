@@ -156,6 +156,15 @@ def move_only_exists(source, destination):
     shutil.move(source, destination)
 
 
+def remove_file_if_exists(file_name):
+  """Remove the file if it exists and skip otherwise."""
+
+  try:
+    os.remove(file_name)
+  except FileNotFoundError:
+    pass
+
+
 def create_merged_package(temp_dir):
   """Merges two target files packages into one target files structure.
 
@@ -210,8 +219,7 @@ def rebuild_image_with_sepolicy(target_files_dir):
   If odm is present then odm is preferred -- otherwise vendor is used.
   """
   partition = 'vendor'
-  if os.path.exists(os.path.join(target_files_dir, 'ODM')) or os.path.exists(
-      os.path.join(target_files_dir, 'IMAGES/odm.img')):
+  if os.path.exists(os.path.join(target_files_dir, 'ODM')):
     partition = 'odm'
   partition_img = '{}.img'.format(partition)
   partition_map = '{}.map'.format(partition)
@@ -245,7 +253,8 @@ def rebuild_image_with_sepolicy(target_files_dir):
   if not OPTIONS.vendor_otatools:
     # Remove the partition from the merged target-files archive. It will be
     # rebuilt later automatically by generate_missing_images().
-    os.remove(os.path.join(target_files_dir, 'IMAGES', partition_img))
+    remove_file_if_exists(
+        os.path.join(target_files_dir, 'IMAGES', partition_img))
     return
 
   # TODO(b/192253131): Remove the need for vendor_otatools by fixing
@@ -274,7 +283,8 @@ def rebuild_image_with_sepolicy(target_files_dir):
       symlinks=True)
 
   # Delete then rebuild the partition.
-  os.remove(os.path.join(vendor_target_files_dir, 'IMAGES', partition_img))
+  remove_file_if_exists(
+      os.path.join(vendor_target_files_dir, 'IMAGES', partition_img))
   rebuild_partition_command = [
       os.path.join(vendor_otatools_dir, 'bin', 'add_img_to_target_files'),
       '--verbose',
