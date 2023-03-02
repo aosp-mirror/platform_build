@@ -141,7 +141,7 @@ endif
 	    fi;)
 	$(hide) echo "# end of file" >> $$@
 
-$(call declare-0p-target,$(2))
+$(call declare-1p-target,$(2))
 endef
 
 # -----------------------------------------------------------------
