@@ -4781,8 +4781,8 @@ $(BUILT_KERNEL_CONFIGS_FILE): $(BOARD_KERNEL_CONFIG_FILE)
 $(BUILT_KERNEL_VERSION_FILE):
 	echo $(BOARD_KERNEL_VERSION) > $@
 
-$(call declare-0p-target,$(BUILT_KERNEL_CONFIGS_FILE))
-$(call declare-0p-target,$(BUILT_KERNEL_VERSION_FILE))
+$(call declare-license-metadata,$(BUILT_KERNEL_CONFIGS_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
+$(call declare-license-metadata,$(BUILT_KERNEL_VERSION_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
 
 my_board_extracted_kernel := true
 endif # BOARD_KERNEL_VERSION
@@ -4807,7 +4807,7 @@ $(BUILT_KERNEL_CONFIGS_FILE): $(EXTRACT_KERNEL) $(firstword $(INSTALLED_KERNEL_T
 	  --output-configs $@ \
 	  --output-release $(BUILT_KERNEL_VERSION_FILE)
 
-$(call declare-0p-target,$(BUILT_KERNEL_CONFIGS_FILE))
+$(call declare-license-metadata,$(BUILT_KERNEL_CONFIGS_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
 
 my_board_extracted_kernel := true
 endif # INSTALLED_KERNEL_TARGET
@@ -4828,7 +4828,7 @@ $(BUILT_KERNEL_CONFIGS_FILE): \
 	  --output-configs $@ \
 	  --output-release $(BUILT_KERNEL_VERSION_FILE)
 
-$(call declare-0p-target,$(BUILT_KERNEL_CONFIGS_FILE))
+$(call declare-license-metadata,$(BUILT_KERNEL_CONFIGS_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
 
 my_board_extracted_kernel := true
 endif # INSTALLED_BOOTIMAGE_TARGET
