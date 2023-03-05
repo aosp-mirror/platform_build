@@ -51,7 +51,7 @@ $(test_suite_jdk): PRIVATE_JDK_DIR := $(test_suite_jdk_dir)
 $(test_suite_jdk): PRIVATE_SUBDIR := $(test_suite_subdir)
 $(test_suite_jdk): $(shell find $(test_suite_jdk_dir) -type f | sort)
 $(test_suite_jdk): $(SOONG_ZIP)
-	$(SOONG_ZIP) -o $@ -P $(PRIVATE_SUBDIR)/jdk -C $(PRIVATE_JDK_DIR) -D $(PRIVATE_JDK_DIR)
+	$(SOONG_ZIP) -o $@ -P $(PRIVATE_SUBDIR)/jdk -C $(PRIVATE_JDK_DIR) -D $(PRIVATE_JDK_DIR) -sha256
 
 $(call declare-license-metadata,$(test_suite_jdk),SPDX-license-identifier-GPL-2.0-with-classpath-exception,permissive,\
   $(test_suite_jdk_dir)/legal/java.base/LICENSE,JDK,prebuilts/jdk/$(notdir $(patsubst %/,%,$(dir $(test_suite_jdk_dir)))))
@@ -123,7 +123,7 @@ $(compatibility_zip): $(compatibility_zip_deps) | $(ADB) $(ACP)
 	cp $(PRIVATE_TOOLS) $(PRIVATE_OUT_DIR)/tools
 	$(if $(PRIVATE_DYNAMIC_CONFIG),$(hide) cp $(PRIVATE_DYNAMIC_CONFIG) $(PRIVATE_OUT_DIR)/testcases/$(PRIVATE_SUITE_NAME).dynamic)
 	find $(PRIVATE_RESOURCES) | sort >$@.list
-	$(SOONG_ZIP) -d -o $@.tmp -C $(dir $@) -l $@.list
+	$(SOONG_ZIP) -d -o $@.tmp -C $(dir $@) -l $@.list -sha256
 	$(MERGE_ZIPS) $@ $@.tmp $(PRIVATE_JDK)
 	rm -f $@.tmp
 # Build a list of tests

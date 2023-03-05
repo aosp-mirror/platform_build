@@ -383,6 +383,7 @@ PRODUCT_PACKAGES_DEBUG := \
     iotop \
     iperf3 \
     iw \
+    libclang_rt.ubsan_standalone \
     logpersist.start \
     logtagd.rc \
     procrank \
