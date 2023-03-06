@@ -3513,17 +3513,17 @@ ifdef BOARD_USES_VENDOR_DLKMIMAGE
   INTERNAL_VENDORIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT_VENDOR)/lib/modules,/vendor_dlkm/lib/modules,vendor_dlkm.img)
 endif
 
-# Install vendor/etc/linker.config.pb when PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS is set
-ifneq ($(strip $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS)),)
+# Install vendor/etc/linker.config.pb with PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS and STUB_LIBRARIES
 vendor_linker_config_file := $(TARGET_OUT_VENDOR)/etc/linker.config.pb
 $(vendor_linker_config_file): private_linker_config_fragments := $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS)
 $(vendor_linker_config_file): $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS) | $(HOST_OUT_EXECUTABLES)/conv_linker_config
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config proto \
 		--source $(call normalize-path-list,$(private_linker_config_fragments)) \
 		--output $@
+	$(HOST_OUT_EXECUTABLES)/conv_linker_config systemprovide --source $@ \
+		--output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT_VENDOR)"
 $(call define declare-0p-target,$(vendor_linker_config_file),)
 INTERNAL_VENDORIMAGE_FILES += $(vendor_linker_config_file)
-endif
 
 INSTALLED_FILES_FILE_VENDOR := $(PRODUCT_OUT)/installed-files-vendor.txt
 INSTALLED_FILES_JSON_VENDOR := $(INSTALLED_FILES_FILE_VENDOR:.txt=.json)
