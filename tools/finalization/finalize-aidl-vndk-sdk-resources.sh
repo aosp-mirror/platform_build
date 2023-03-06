@@ -69,7 +69,7 @@ function finalize_aidl_vndk_sdk_resources() {
     local SDK_VERSION="public static final int $FINAL_PLATFORM_CODENAME_JAVA = $FINAL_PLATFORM_SDK_VERSION;"
 
     # default target to modify tree and build SDK
-    local m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug"
+    local m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug DIST_DIR=out/dist"
 
     # The full process can be found at (INTERNAL) go/android-sdk-finalization.
 
