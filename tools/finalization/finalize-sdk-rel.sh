@@ -19,7 +19,7 @@ function finalize_sdk_rel() {
     source $top/build/make/tools/finalization/environment.sh
 
     # default target to modify tree and build SDK
-    local m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug"
+    local m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug DIST_DIR=out/dist"
 
     # revert droidstubs hack now we are switching to REL
     revert_droidstubs_hack
