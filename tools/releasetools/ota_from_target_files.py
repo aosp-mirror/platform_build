@@ -894,6 +894,9 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     logger.info("VABC XOR Not supported, disabling")
     OPTIONS.enable_vabc_xor = False
 
+  if OPTIONS.vabc_compression_param == "none":
+    logger.info("VABC Compression algorithm is set to 'none', disabling VABC xor")
+    OPTIONS.enable_vabc_xor = False
   additional_args = []
 
   # Prepare custom images.
