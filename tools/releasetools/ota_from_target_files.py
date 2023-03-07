@@ -893,6 +893,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
           (source_info is not None and not source_info.is_vabc_xor):
     logger.info("VABC XOR Not supported, disabling")
     OPTIONS.enable_vabc_xor = False
+
   additional_args = []
 
   # Prepare custom images.
@@ -923,7 +924,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   # Metadata to comply with Android OTA package format.
   metadata = GetPackageMetadata(target_info, source_info)
   # Generate payload.
-  payload = PayloadGenerator(OPTIONS.include_secondary, OPTIONS.wipe_user_data)
+  payload = PayloadGenerator(wipe_user_data=OPTIONS.wipe_user_data)
 
   partition_timestamps_flags = []
   # Enforce a max timestamp this payload can be applied on top of.
