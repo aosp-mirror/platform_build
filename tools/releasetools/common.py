@@ -2121,9 +2121,7 @@ def GetUserImage(which, tmpdir, input_zip,
   if info_dict is None:
     info_dict = LoadInfoDict(input_zip)
 
-  is_sparse = info_dict.get("extfs_sparse_flag")
-  if info_dict.get(which + "_disable_sparse"):
-    is_sparse = False
+  is_sparse = IsSparseImage(os.path.join(tmpdir, "IMAGES", which + ".img"))
 
   # When target uses 'BOARD_EXT4_SHARE_DUP_BLOCKS := true', images may contain
   # shared blocks (i.e. some blocks will show up in multiple files' block
