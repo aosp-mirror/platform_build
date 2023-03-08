@@ -1001,7 +1001,8 @@ def AddImagesToTargetFiles(filename):
   if has_init_boot:
     banner("init_boot")
     init_boot_image = common.GetBootableImage(
-        "IMAGES/init_boot.img", "init_boot.img", OPTIONS.input_tmp, "INIT_BOOT")
+        "IMAGES/init_boot.img", "init_boot.img", OPTIONS.input_tmp, "INIT_BOOT",
+        dev_nodes=True)
     if init_boot_image:
       partitions['init_boot'] = os.path.join(
           OPTIONS.input_tmp, "IMAGES", "init_boot.img")

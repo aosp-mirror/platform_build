@@ -1210,7 +1210,7 @@ case `uname -s` in
     Darwin)
         function sgrep()
         {
-            find -E . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.(c|h|cc|cpp|hpp|S|java|kt|xml|sh|mk|aidl|vts|proto)' \
+            find -E . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.(c|h|cc|cpp|hpp|S|java|kt|xml|sh|mk|aidl|vts|proto|rs|go)' \
                 -exec grep --color -n "$@" {} +
         }
 
@@ -1218,7 +1218,7 @@ case `uname -s` in
     *)
         function sgrep()
         {
-            find . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.\(c\|h\|cc\|cpp\|hpp\|S\|java\|kt\|xml\|sh\|mk\|aidl\|vts\|proto\)' \
+            find . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.\(c\|h\|cc\|cpp\|hpp\|S\|java\|kt\|xml\|sh\|mk\|aidl\|vts\|proto\|rs\|go\)' \
                 -exec grep --color -n "$@" {} +
         }
         ;;
@@ -1879,11 +1879,6 @@ function _wrap_build()
         color_failed=""
         color_success=""
         color_reset=""
-    fi
-
-    if [[ "x${USE_RBE}" == "x" && $mins -gt 15 && "${ANDROID_BUILD_ENVIRONMENT_CONFIG}" == "googler" ]]; then
-        echo
-        echo "${color_warning}Start using RBE (http://go/build-fast) to get faster builds!${color_reset}"
     fi
 
     echo
