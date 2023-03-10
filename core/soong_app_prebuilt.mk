@@ -162,18 +162,20 @@ $(LOCAL_BUILT_MODULE): | $(call copy-many-files, $(my_jni_lib_symbols_copy_files
 # embedded JNI will already have been handled by soong
 my_embed_jni :=
 my_prebuilt_jni_libs :=
-ifdef LOCAL_SOONG_JNI_LIBS_$(TARGET_ARCH)
-  my_2nd_arch_prefix :=
-  LOCAL_JNI_SHARED_LIBRARIES := $(LOCAL_SOONG_JNI_LIBS_$(TARGET_ARCH))
-  partition_lib_pairs :=  $(LOCAL_SOONG_JNI_LIBS_PARTITION_$(TARGET_ARCH))
-  include $(BUILD_SYSTEM)/install_jni_libs_internal.mk
-endif
-ifdef TARGET_2ND_ARCH
-  ifdef LOCAL_SOONG_JNI_LIBS_$(TARGET_2ND_ARCH)
-    my_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
-    LOCAL_JNI_SHARED_LIBRARIES := $(LOCAL_SOONG_JNI_LIBS_$(TARGET_2ND_ARCH))
-    partition_lib_pairs :=  $(LOCAL_SOONG_JNI_LIBS_PARTITION_$(TARGET_2ND_ARCH))
+ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
+  ifdef LOCAL_SOONG_JNI_LIBS_$(TARGET_ARCH)
+    my_2nd_arch_prefix :=
+    LOCAL_JNI_SHARED_LIBRARIES := $(LOCAL_SOONG_JNI_LIBS_$(TARGET_ARCH))
+    partition_lib_pairs :=  $(LOCAL_SOONG_JNI_LIBS_PARTITION_$(TARGET_ARCH))
     include $(BUILD_SYSTEM)/install_jni_libs_internal.mk
+  endif
+  ifdef TARGET_2ND_ARCH
+    ifdef LOCAL_SOONG_JNI_LIBS_$(TARGET_2ND_ARCH)
+      my_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
+      LOCAL_JNI_SHARED_LIBRARIES := $(LOCAL_SOONG_JNI_LIBS_$(TARGET_2ND_ARCH))
+      partition_lib_pairs :=  $(LOCAL_SOONG_JNI_LIBS_PARTITION_$(TARGET_2ND_ARCH))
+      include $(BUILD_SYSTEM)/install_jni_libs_internal.mk
+    endif
   endif
 endif
 LOCAL_SHARED_JNI_LIBRARIES :=
