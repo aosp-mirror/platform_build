@@ -598,6 +598,7 @@ python_defaults {
         "testdata/**/*",
         ":com.android.apex.compressed.v1",
         ":com.android.apex.compressed.v1_original",
+        ":com.android.apex.vendor.foo.with_vintf"
     ],
     target: {
         darwin: {
