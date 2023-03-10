@@ -543,3 +543,19 @@ $(eval $(call build-properties,\
     $(empty)))
 
 $(eval $(call declare-1p-target,$(INSTALLED_RAMDISK_BUILD_PROP_TARGET)))
+
+ALL_INSTALLED_BUILD_PROP_FILES := \
+  $(INSTALLED_BUILD_PROP_TARGET) \
+  $(INSTALLED_VENDOR_BUILD_PROP_TARGET) \
+  $(INSTALLED_PRODUCT_BUILD_PROP_TARGET) \
+  $(INSTALLED_ODM_BUILD_PROP_TARGET) \
+  $(INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET) \
+  $(INSTALLED_ODM_DLKM_BUILD_PROP_TARGET) \
+  $(INSTALLED_SYSTEM_DLKM_BUILD_PROP_TARGET) \
+  $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET) \
+  $(INSTALLED_RAMDISK_BUILD_PROP_TARGET)
+
+# $1 installed file path, e.g. out/target/product/vsoc_x86_64/system/build.prop
+define is-build-prop
+$(if $(findstring $1,$(ALL_INSTALLED_BUILD_PROP_FILES)),Y)
+endef
