@@ -267,8 +267,3 @@ ifdef LOCAL_PREBUILT_COVERAGE_ARCHIVE
 endif
 
 SOONG_ALREADY_CONV += $(LOCAL_MODULE)
-
-###########################################################
-## SBOM generation
-###########################################################
-include $(BUILD_SBOM_GEN)
