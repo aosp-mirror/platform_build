@@ -3131,11 +3131,14 @@ ifdef BUILDING_SYSTEM_IMAGE
 SYSTEM_LINKER_CONFIG := $(TARGET_OUT)/etc/linker.config.pb
 SYSTEM_LINKER_CONFIG_SOURCE := $(call intermediates-dir-for,ETC,system_linker_config)/system_linker_config
 $(SYSTEM_LINKER_CONFIG): PRIVATE_SYSTEM_LINKER_CONFIG_SOURCE := $(SYSTEM_LINKER_CONFIG_SOURCE)
-$(SYSTEM_LINKER_CONFIG) : $(INTERNAL_SYSTEMIMAGE_FILES) $(SYSTEM_LINKER_CONFIG_SOURCE) | conv_linker_config
+$(SYSTEM_LINKER_CONFIG): $(INTERNAL_SYSTEMIMAGE_FILES) $(SYSTEM_LINKER_CONFIG_SOURCE) | conv_linker_config
+	@echo Creating linker config: $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config systemprovide --source $(PRIVATE_SYSTEM_LINKER_CONFIG_SOURCE) \
-	  --output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT)"
+		--output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT)"
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config append --source $@ --output $@ --key requireLibs \
-	 --value "$(foreach lib,$(LLNDK_MOVED_TO_APEX_LIBRARIES), $(lib).so)"
+		--value "$(foreach lib,$(LLNDK_MOVED_TO_APEX_LIBRARIES), $(lib).so)"
 
 $(call declare-1p-target,$(SYSTEM_LINKER_CONFIG),)
 $(call declare-license-deps,$(SYSTEM_LINKER_CONFIG),$(INTERNAL_SYSTEMIMAGE_FILES) $(SYSTEM_LINKER_CONFIG_SOURCE))
@@ -3517,6 +3520,9 @@ endif
 vendor_linker_config_file := $(TARGET_OUT_VENDOR)/etc/linker.config.pb
 $(vendor_linker_config_file): private_linker_config_fragments := $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS)
 $(vendor_linker_config_file): $(INTERNAL_VENDORIMAGE_FILES) $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS) | $(HOST_OUT_EXECUTABLES)/conv_linker_config
+	@echo Creating linker config: $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config proto \
 		--source $(call normalize-path-list,$(private_linker_config_fragments)) \
 		--output $@
