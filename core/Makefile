@@ -3131,11 +3131,14 @@ ifdef BUILDING_SYSTEM_IMAGE
 SYSTEM_LINKER_CONFIG := $(TARGET_OUT)/etc/linker.config.pb
 SYSTEM_LINKER_CONFIG_SOURCE := $(call intermediates-dir-for,ETC,system_linker_config)/system_linker_config
 $(SYSTEM_LINKER_CONFIG): PRIVATE_SYSTEM_LINKER_CONFIG_SOURCE := $(SYSTEM_LINKER_CONFIG_SOURCE)
-$(SYSTEM_LINKER_CONFIG) : $(INTERNAL_SYSTEMIMAGE_FILES) $(SYSTEM_LINKER_CONFIG_SOURCE) | conv_linker_config
+$(SYSTEM_LINKER_CONFIG): $(INTERNAL_SYSTEMIMAGE_FILES) $(SYSTEM_LINKER_CONFIG_SOURCE) | conv_linker_config
+	@echo Creating linker config: $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config systemprovide --source $(PRIVATE_SYSTEM_LINKER_CONFIG_SOURCE) \
-	  --output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT)"
+		--output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT)"
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config append --source $@ --output $@ --key requireLibs \
-	 --value "$(foreach lib,$(LLNDK_MOVED_TO_APEX_LIBRARIES), $(lib).so)"
+		--value "$(foreach lib,$(LLNDK_MOVED_TO_APEX_LIBRARIES), $(lib).so)"
 
 $(call declare-1p-target,$(SYSTEM_LINKER_CONFIG),)
 $(call declare-license-deps,$(SYSTEM_LINKER_CONFIG),$(INTERNAL_SYSTEMIMAGE_FILES) $(SYSTEM_LINKER_CONFIG_SOURCE))
@@ -3513,17 +3516,20 @@ ifdef BOARD_USES_VENDOR_DLKMIMAGE
   INTERNAL_VENDORIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT_VENDOR)/lib/modules,/vendor_dlkm/lib/modules,vendor_dlkm.img)
 endif
 
-# Install vendor/etc/linker.config.pb when PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS is set
-ifneq ($(strip $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS)),)
+# Install vendor/etc/linker.config.pb with PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS and STUB_LIBRARIES
 vendor_linker_config_file := $(TARGET_OUT_VENDOR)/etc/linker.config.pb
 $(vendor_linker_config_file): private_linker_config_fragments := $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS)
-$(vendor_linker_config_file): $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS) | $(HOST_OUT_EXECUTABLES)/conv_linker_config
+$(vendor_linker_config_file): $(INTERNAL_VENDORIMAGE_FILES) $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS) | $(HOST_OUT_EXECUTABLES)/conv_linker_config
+	@echo Creating linker config: $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config proto \
 		--source $(call normalize-path-list,$(private_linker_config_fragments)) \
 		--output $@
+	$(HOST_OUT_EXECUTABLES)/conv_linker_config systemprovide --source $@ \
+		--output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT_VENDOR)"
 $(call define declare-0p-target,$(vendor_linker_config_file),)
 INTERNAL_VENDORIMAGE_FILES += $(vendor_linker_config_file)
-endif
 
 INSTALLED_FILES_FILE_VENDOR := $(PRODUCT_OUT)/installed-files-vendor.txt
 INSTALLED_FILES_JSON_VENDOR := $(INSTALLED_FILES_FILE_VENDOR:.txt=.json)
@@ -4723,7 +4729,7 @@ check_vintf_system_log := $(intermediates)/check_vintf_system.log
 check_vintf_all_deps += $(check_vintf_system_log)
 $(check_vintf_system_log): $(HOST_OUT_EXECUTABLES)/checkvintf $(check_vintf_system_deps)
 	@( $< --check-one --dirmap /system:$(TARGET_OUT) > $@ 2>&1 ) || ( cat $@ && exit 1 )
-$(call declare-0p-target,$(check_vintf_system_log))
+$(call declare-1p-target,$(check_vintf_system_log))
 check_vintf_system_log :=
 
 # -- Check framework manifest against frozen manifests for GSI targets. They need to be compatible.
@@ -4735,7 +4741,7 @@ $(vintffm_log): $(HOST_OUT_EXECUTABLES)/vintffm $(check_vintf_system_deps)
 	@( $< --check --dirmap /system:$(TARGET_OUT) \
 	  $(VINTF_FRAMEWORK_MANIFEST_FROZEN_DIR) > $@ 2>&1 ) || ( cat $@ && exit 1 )
 
-$(call declare-0p-target,$(vintffm_log))
+$(call declare-1p-target,$(vintffm_log))
 
 endif # check_vintf_system_deps
 check_vintf_system_deps :=
@@ -4759,7 +4765,7 @@ $(check_vintf_vendor_log): $(HOST_OUT_EXECUTABLES)/checkvintf $(check_vintf_vend
 	  ( $< --check-one --dirmap /vendor:$(TARGET_OUT_VENDOR) --dirmap /apex:$(APEX_OUT) \
 	       --property ro.boot.product.vendor.sku=$(filter-out EMPTY_VENDOR_SKU_PLACEHOLDER,$(vendor_sku)) \
 	       > $@ 2>&1 ) || ( cat $@ && exit 1 ); )
-$(call declare-0p-target,$(check_vintf_vendor_log))
+$(call declare-1p-target,$(check_vintf_vendor_log))
 check_vintf_vendor_log :=
 endif # check_vintf_vendor_deps
 check_vintf_vendor_deps :=
@@ -4781,8 +4787,8 @@ $(BUILT_KERNEL_CONFIGS_FILE): $(BOARD_KERNEL_CONFIG_FILE)
 $(BUILT_KERNEL_VERSION_FILE):
 	echo $(BOARD_KERNEL_VERSION) > $@
 
-$(call declare-0p-target,$(BUILT_KERNEL_CONFIGS_FILE))
-$(call declare-0p-target,$(BUILT_KERNEL_VERSION_FILE))
+$(call declare-license-metadata,$(BUILT_KERNEL_CONFIGS_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
+$(call declare-license-metadata,$(BUILT_KERNEL_VERSION_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
 
 my_board_extracted_kernel := true
 endif # BOARD_KERNEL_VERSION
@@ -4807,7 +4813,7 @@ $(BUILT_KERNEL_CONFIGS_FILE): $(EXTRACT_KERNEL) $(firstword $(INSTALLED_KERNEL_T
 	  --output-configs $@ \
 	  --output-release $(BUILT_KERNEL_VERSION_FILE)
 
-$(call declare-0p-target,$(BUILT_KERNEL_CONFIGS_FILE))
+$(call declare-license-metadata,$(BUILT_KERNEL_CONFIGS_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
 
 my_board_extracted_kernel := true
 endif # INSTALLED_KERNEL_TARGET
@@ -4828,7 +4834,7 @@ $(BUILT_KERNEL_CONFIGS_FILE): \
 	  --output-configs $@ \
 	  --output-release $(BUILT_KERNEL_VERSION_FILE)
 
-$(call declare-0p-target,$(BUILT_KERNEL_CONFIGS_FILE))
+$(call declare-license-metadata,$(BUILT_KERNEL_CONFIGS_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
 
 my_board_extracted_kernel := true
 endif # INSTALLED_BOOTIMAGE_TARGET
@@ -4920,7 +4926,7 @@ $(check_vintf_compatible_log): $(HOST_OUT_EXECUTABLES)/checkvintf $(check_vintf_
 	       --property ro.boot.product.vendor.sku=$(filter-out EMPTY_VENDOR_SKU_PLACEHOLDER,$(vendor_sku)) \
 	       >> $@ 2>&1 ) || (cat $@ && exit 1); ))
 
-$(call declare-0p-target,$(check_vintf_compatible_log))
+$(call declare-1p-target,$(check_vintf_compatible_log))
 
 check_vintf_compatible_log :=
 check_vintf_compatible_args :=
@@ -4985,7 +4991,7 @@ $(check_all_partition_sizes_log): \
 	  $(call intermediates-dir-for,PACKAGING,check-all-partition-sizes)/misc_info.txt, \
 	  $@)
 
-$(call declare-0p-target,$(check_all_partition_sizes_log))
+$(call declare-1p-target,$(check_all_partition_sizes_log))
 
 .PHONY: check-all-partition-sizes
 check-all-partition-sizes: $(check_all_partition_sizes_log)
