@@ -78,7 +78,7 @@ endif
 .KATI_READONLY := PLATFORM_SDK_VERSION
 
 # This is the sdk extension version of this tree.
-PLATFORM_SDK_EXTENSION_VERSION := 6
+PLATFORM_SDK_EXTENSION_VERSION := 5
 .KATI_READONLY := PLATFORM_SDK_EXTENSION_VERSION
 
 # This is the sdk extension version that PLATFORM_SDK_VERSION ships with.
