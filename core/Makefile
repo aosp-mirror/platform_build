@@ -474,7 +474,10 @@ $(if $(strip $(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver))$(BOARD_$(1)_KERNEL_MODU
     $(eval BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver) := $(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)))) \
   $(if $(filter false,$(BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver))),\
     $(eval BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver) :=),) \
-  $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)),$(2),$(3),$(call intermediates-dir-for,PACKAGING,depmod_$(1)$(_sep)$(_kver)),$(BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver)),$(4),$(BOARD_$(1)_KERNEL_MODULES_ARCHIVE$(_sep)$(_kver)),$(_stripped_staging_dir),$(_kver),$(7),$(8)))) \
+  $(eval _files := $(call build-image-kernel-modules,$(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)),$(2),$(3),$(call intermediates-dir-for,PACKAGING,depmod_$(1)$(_sep)$(_kver)),$(BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver)),$(4),$(BOARD_$(1)_KERNEL_MODULES_ARCHIVE$(_sep)$(_kver)),$(_stripped_staging_dir),$(_kver),$(7),$(8))) \
+  $(call copy-many-files,$(_files)) \
+  $(eval _modules := $(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)) ANDROID-GEN ANDROID-GEN ANDROID-GEN ANDROID-GEN) \
+  $(eval KERNEL_MODULE_COPY_FILES += $(join $(addsuffix :,$(_modules)),$(_files)))) \
 $(if $(_kver), \
   $(eval _dir := $(_kver)/), \
   $(eval _dir :=)) \
@@ -487,6 +490,7 @@ $(if $(BOARD_$(1)_KERNEL_MODULES_BLOCKLIST_FILE$(_sep)$(_kver)), \
   $(eval $(call build-image-kernel-modules-blocklist-file, \
     $(BOARD_$(1)_KERNEL_MODULES_BLOCKLIST_FILE$(_sep)$(_kver)), \
     $(2)/lib/modules/$(_dir)modules.blocklist)) \
+  $(eval ALL_KERNEL_MODULES_BLOCKLIST += $(2)/lib/modules/$(_dir)modules.blocklist) \
   $(2)/lib/modules/$(_dir)modules.blocklist)
 endef
 
@@ -1634,6 +1638,21 @@ installed_odm_dlkm_notice_xml_gz := $(TARGET_OUT_ODM_DLKM)/etc/NOTICE.xml.gz
 target_system_dlkm_notice_file_txt := $(TARGET_OUT_INTERMEDIATES)/NOTICE_SYSTEM_DLKM.txt
 target_system_dlkm_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE_SYSTEM_DLKM.xml.gz
 installed_system_dlkm_notice_xml_gz := $(TARGET_OUT_SYSTEM_DLKM)/etc/NOTICE.xml.gz
+
+ALL_INSTALLED_NOTICE_FILES := \
+  $(installed_notice_html_or_xml_gz) \
+  $(installed_vendor_notice_xml_gz) \
+  $(installed_product_notice_xml_gz) \
+  $(installed_system_ext_notice_xml_gz) \
+  $(installed_odm_notice_xml_gz) \
+  $(installed_vendor_dlkm_notice_xml_gz) \
+  $(installed_odm_dlkm_notice_xml_gz) \
+  $(installed_system_dlkm_notice_xml_gz) \
+
+# $1 installed file path, e.g. out/target/product/vsoc_x86_64/system_ext/etc/NOTICE.xml.gz
+define is-notice-file
+$(if $(findstring $1,$(ALL_INSTALLED_NOTICE_FILES)),Y)
+endef
 
 # Notice files are copied to TARGET_OUT_NOTICE_FILES as a side-effect of their module
 # being built. A notice xml file must depend on all modules that could potentially
@@ -3061,15 +3080,19 @@ $(1): $(HOST_OUT_EXECUTABLES)/fsverity_manifest_generator \
 	    --cert $$(PRIVATE_KEY).x509.pem \
 	    --key $$(PRIVATE_KEY).pk8
 
-ALL_DEFAULT_INSTALLED_MODULES += $(1)
+$(1).idsig: $(1)
+
+ALL_DEFAULT_INSTALLED_MODULES += $(1) $(1).idsig
 
 endef  # fsverity-generate-and-install-manifest-apk
 
 $(eval $(call fsverity-generate-and-install-manifest-apk, \
   $(TARGET_OUT)/etc/security/fsverity/BuildManifest.apk,system))
+ALL_FSVERITY_BUILD_MANIFEST_APK += $(TARGET_OUT)/etc/security/fsverity/BuildManifest.apk $(TARGET_OUT)/etc/security/fsverity/BuildManifest.apk.idsig
 ifdef BUILDING_SYSTEM_EXT_IMAGE
   $(eval $(call fsverity-generate-and-install-manifest-apk, \
     $(TARGET_OUT_SYSTEM_EXT)/etc/security/fsverity/BuildManifestSystemExt.apk,system_ext))
+  ALL_FSVERITY_BUILD_MANIFEST_APK += $(TARGET_OUT_SYSTEM_EXT)/etc/security/fsverity/BuildManifestSystemExt.apk $(TARGET_OUT_SYSTEM_EXT)/etc/security/fsverity/BuildManifestSystemExt.apk.idsig
 endif
 
 endif  # PRODUCT_FSVERITY_GENERATE_METADATA
@@ -3144,6 +3167,7 @@ $(call declare-1p-target,$(SYSTEM_LINKER_CONFIG),)
 $(call declare-license-deps,$(SYSTEM_LINKER_CONFIG),$(INTERNAL_SYSTEMIMAGE_FILES) $(SYSTEM_LINKER_CONFIG_SOURCE))
 
 FULL_SYSTEMIMAGE_DEPS += $(SYSTEM_LINKER_CONFIG)
+ALL_DEFAULT_INSTALLED_MODULES += $(SYSTEM_LINKER_CONFIG)
 
 # installed file list
 # Depending on anything that $(BUILT_SYSTEMIMAGE) depends on.
@@ -3530,6 +3554,7 @@ $(vendor_linker_config_file): $(INTERNAL_VENDORIMAGE_FILES) $(PRODUCT_VENDOR_LIN
 		--output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT_VENDOR)"
 $(call define declare-0p-target,$(vendor_linker_config_file),)
 INTERNAL_VENDORIMAGE_FILES += $(vendor_linker_config_file)
+ALL_DEFAULT_INSTALLED_MODULES += $(vendor_linker_config_file)
 
 INSTALLED_FILES_FILE_VENDOR := $(PRODUCT_OUT)/installed-files-vendor.txt
 INSTALLED_FILES_JSON_VENDOR := $(INSTALLED_FILES_FILE_VENDOR:.txt=.json)
