@@ -5146,6 +5146,7 @@ INTERNAL_OTATOOLS_MODULES += \
   debugfs_static \
   dump_apex_info \
   fsck.erofs \
+  make_erofs \
   merge_zips \
   resize2fs \
   soong_zip \
