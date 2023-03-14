@@ -334,6 +334,9 @@ python_library_host {
         "ota_utils.py",
         "payload_signer.py",
     ],
+    libs: [
+        "releasetools_common",
+    ],
 }
 
 python_binary_host {
@@ -351,6 +354,21 @@ python_binary_host {
         "update_payload",
         "care_map_proto_py",
         "releasetools_common",
+        "ota_utils_lib",
+    ],
+}
+
+python_binary_host {
+    name: "create_brick_ota",
+    version: {
+        py3: {
+            embedded_launcher: true,
+        },
+    },
+    srcs: [
+        "create_brick_ota.py",
+    ],
+    libs: [
         "ota_utils_lib",
     ],
 }
