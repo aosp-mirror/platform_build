@@ -69,3 +69,19 @@ python_binary_host {
   name: "generate_gts_shared_report",
   srcs: ["generate_gts_shared_report.py"],
 }
+
+python_binary_host {
+    name: "generate-sbom",
+    srcs: [
+        "generate-sbom.py",
+    ],
+    version: {
+        py3: {
+            embedded_launcher: true,
+        },
+    },
+    libs: [
+        "metadata_file_proto_py",
+        "libprotobuf-python",
+    ],
+}
