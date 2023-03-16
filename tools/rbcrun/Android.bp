@@ -19,7 +19,7 @@ package {
 
 blueprint_go_binary {
     name: "rbcrun",
-    srcs: ["cmd/rbcrun.go"],
+    srcs: ["rbcrun/rbcrun.go"],
     deps: ["rbcrun-module"],
 }
 
