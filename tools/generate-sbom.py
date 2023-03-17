@@ -86,7 +86,7 @@ NVD_CPE23 = 'NVD-CPE2.3:'
 ISSUE_NO_METADATA = 'No metadata generated in Make for installed files:'
 ISSUE_NO_METADATA_FILE = 'No METADATA file found for installed file:'
 ISSUE_METADATA_FILE_INCOMPLETE = 'METADATA file incomplete:'
-ISSUE_UNKNOWN_SECURITY_TAG_TYPE = "Unknown security tag type:"
+ISSUE_UNKNOWN_SECURITY_TAG_TYPE = 'Unknown security tag type:'
 INFO_METADATA_FOUND_FOR_PACKAGE = 'METADATA file found for packages:'
 
 
@@ -116,7 +116,7 @@ def new_doc_header(doc_id):
       DATA_LICENSE: 'CC0-1.0',
       SPDXID: doc_id,
       DOCUMENT_NAME: args.build_version,
-      DOCUMENT_NAMESPACE: 'https://www.google.com/sbom/spdx/android/' + args.build_version,
+      DOCUMENT_NAMESPACE: f'https://www.google.com/sbom/spdx/android/{args.build_version}',
       CREATOR: 'Organization: Google, LLC',
       CREATED: '<timestamp>',
       EXTERNAL_DOCUMENT_REF: [],
@@ -133,7 +133,7 @@ def new_package_record(id, name, version, supplier, download_location=None, file
   if version:
     package[PACKAGE_VERSION] = version
   if supplier:
-    package[PACKAGE_SUPPLIER] = 'Organization: ' + supplier
+    package[PACKAGE_SUPPLIER] = f'Organization: {supplier}'
   if external_refs:
     package[PACKAGE_EXTERNAL_REF] = external_refs
 
@@ -163,20 +163,20 @@ def encode_for_spdxid(s):
 
 
 def new_package_id(package_name, type):
-  return 'SPDXRef-{}-{}'.format(type, encode_for_spdxid(package_name))
+  return f'SPDXRef-{type}-{encode_for_spdxid(package_name)}'
 
 
 def new_external_doc_ref(package_name, sbom_url, sbom_checksum):
-  doc_ref_id = 'DocumentRef-{}-{}'.format(PKG_UPSTREAM, encode_for_spdxid(package_name))
-  return '{}: {} {} {}'.format(EXTERNAL_DOCUMENT_REF, doc_ref_id, sbom_url, sbom_checksum), doc_ref_id
+  doc_ref_id = f'DocumentRef-{PKG_UPSTREAM}-{encode_for_spdxid(package_name)}'
+  return f'{EXTERNAL_DOCUMENT_REF}: {doc_ref_id} {sbom_url} {sbom_checksum}', doc_ref_id
 
 
 def new_file_id(file_path):
-  return 'SPDXRef-' + encode_for_spdxid(file_path)
+  return f'SPDXRef-{encode_for_spdxid(file_path)}'
 
 
 def new_relationship_record(id1, relationship, id2):
-  return '{}: {} {} {}'.format(RELATIONSHIP, id1, relationship, id2)
+  return f'{RELATIONSHIP}: {id1} {relationship} {id2}'
 
 
 def checksum(file_path):
@@ -185,9 +185,9 @@ def checksum(file_path):
   if os.path.islink(file_path):
     h.update(os.readlink(file_path).encode('utf-8'))
   else:
-    with open(file_path, "rb") as f:
+    with open(file_path, 'rb') as f:
       h.update(f.read())
-  return "SHA1: " + h.hexdigest()
+  return f'SHA1: {h.hexdigest()}'
 
 
 def is_soong_prebuilt_module(file_metadata):
@@ -249,9 +249,9 @@ def get_source_package_info(file_metadata, metadata_file_path):
   external_refs = []
   for tag in metadata_proto.third_party.security.tag:
     if tag.lower().startswith((NVD_CPE23 + 'cpe:2.3:').lower()):
-      external_refs.append("{}: SECURITY cpe23Type {}".format(PACKAGE_EXTERNAL_REF, tag.removeprefix(NVD_CPE23)))
+      external_refs.append(f'{PACKAGE_EXTERNAL_REF}: SECURITY cpe23Type {tag.removeprefix(NVD_CPE23)}')
     elif tag.lower().startswith((NVD_CPE23 + 'cpe:/').lower()):
-      external_refs.append("{}: SECURITY cpe22Type {}".format(PACKAGE_EXTERNAL_REF, tag.removeprefix(NVD_CPE23)))
+      external_refs.append(f'{PACKAGE_EXTERNAL_REF}: SECURITY cpe22Type {tag.removeprefix(NVD_CPE23)}')
 
   if metadata_proto.name:
     return metadata_proto.name, external_refs
@@ -490,7 +490,7 @@ def write_json_sbom(all_records, product_package_id):
 
 def save_report(report):
   prefix, _ = os.path.splitext(args.output_file)
-  with open(prefix + '-gen-report.txt', 'w', encoding="utf-8") as report_file:
+  with open(prefix + '-gen-report.txt', 'w', encoding='utf-8') as report_file:
     for type, issues in report.items():
       report_file.write(type + '\n')
       for issue in issues:
@@ -526,28 +526,28 @@ def installed_file_has_metadata(installed_file_metadata, report):
 def report_metadata_file(metadata_file_path, installed_file_metadata, report):
   if metadata_file_path:
     report[INFO_METADATA_FOUND_FOR_PACKAGE].append(
-        "installed_file: {}, module_path: {}, METADATA file: {}".format(
+        'installed_file: {}, module_path: {}, METADATA file: {}'.format(
             installed_file_metadata['installed_file'],
             installed_file_metadata['module_path'],
             metadata_file_path + '/METADATA'))
 
     package_metadata = metadata_file_pb2.Metadata()
-    with open(metadata_file_path + '/METADATA', "rt") as f:
+    with open(metadata_file_path + '/METADATA', 'rt') as f:
       text_format.Parse(f.read(), package_metadata)
 
     if not metadata_file_path in metadata_file_protos:
       metadata_file_protos[metadata_file_path] = package_metadata
       if not package_metadata.name:
-        report[ISSUE_METADATA_FILE_INCOMPLETE].append('{} does not has "name"'.format(metadata_file_path + '/METADATA'))
+        report[ISSUE_METADATA_FILE_INCOMPLETE].append(f'{metadata_file_path}/METADATA does not has "name"')
 
       if not package_metadata.third_party.version:
         report[ISSUE_METADATA_FILE_INCOMPLETE].append(
-            '{} does not has "third_party.version"'.format(metadata_file_path + '/METADATA'))
+            f'{metadata_file_path}/METADATA does not has "third_party.version"')
 
       for tag in package_metadata.third_party.security.tag:
         if not tag.startswith(NVD_CPE23):
           report[ISSUE_UNKNOWN_SECURITY_TAG_TYPE].append(
-              "Unknown security tag type: {} in {}".format(tag, metadata_file_path + '/METADATA'))
+              f'Unknown security tag type: {tag} in {metadata_file_path}/METADATA')
   else:
     report[ISSUE_NO_METADATA_FILE].append(
         "installed_file: {}, module_path: {}".format(
@@ -576,7 +576,7 @@ def generate_fragment():
 def main():
   global args
   args = get_args()
-  log("Args:", vars(args))
+  log('Args:', vars(args))
 
   if args.unbundled:
     generate_fragment()
