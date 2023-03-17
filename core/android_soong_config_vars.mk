@@ -77,6 +77,7 @@ $(call soong_config_set,art_module,source_build,$(ART_MODULE_BUILD_FROM_SOURCE))
 INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
   bluetooth \
   permission \
+  rkpd \
   uwb \
   wifi \
 
