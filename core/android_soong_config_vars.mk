@@ -81,6 +81,7 @@ endif
 INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
   btservices \
   permission \
+  rkpd \
   uwb \
   wifi \
 
