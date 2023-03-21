@@ -5441,6 +5441,9 @@ endif
 ifeq ($(TARGET_OTA_ALLOW_NON_AB),true)
 	$(hide) echo "allow_non_ab=true" >> $@
 endif
+ifeq ($(BOARD_NON_AB_OTA_DISABLE_COMPRESSION),true)
+	$(hide) echo "board_non_ab_ota_disable_compression=true" >> $@
+endif
 ifdef BOARD_PREBUILT_DTBOIMAGE
 	$(hide) echo "has_dtbo=true" >> $@
 ifeq ($(BOARD_AVB_ENABLE),true)

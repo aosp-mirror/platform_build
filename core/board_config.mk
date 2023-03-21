@@ -954,6 +954,11 @@ ifneq ($(TARGET_OTA_ALLOW_NON_AB),true)
   endif
 endif
 
+# For Non A/B full OTA, disable brotli compression.
+ifeq ($(TARGET_OTA_ALLOW_NON_AB),true)
+  BOARD_NON_AB_OTA_DISABLE_COMPRESSION := true
+endif
+
 # Quick check for building generic OTA packages. Currently it only supports A/B OTAs.
 ifeq ($(PRODUCT_BUILD_GENERIC_OTA_PACKAGE),true)
   ifneq ($(AB_OTA_UPDATER),true)
