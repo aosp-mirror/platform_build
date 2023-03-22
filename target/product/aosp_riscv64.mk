@@ -79,6 +79,12 @@ PRODUCT_USES_DEFAULT_ART_CONFIG := false
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     root/init.zygote64.rc
 
+# TODO(b/206676167): This property can be removed when renderscript is removed.
+# Prevents framework from attempting to load renderscript libraries, which are
+# not supported on this architecture.
+PRODUCT_SYSTEM_PROPERTIES += \
+    config.disable_renderscript=1 \
+
 # This build configuration supports 64-bit apps only
 PRODUCT_NAME := aosp_riscv64
 PRODUCT_DEVICE := generic_riscv64
