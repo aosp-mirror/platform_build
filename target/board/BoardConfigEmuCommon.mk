@@ -58,11 +58,6 @@ ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
 
   # 8G
   BOARD_EMULATOR_DYNAMIC_PARTITIONS_SIZE ?= 8589934592
-
-  # in build environment to speed up make -j
-  ifeq ($(QEMU_DISABLE_AVB),true)
-    BOARD_AVB_ENABLE := false
-  endif
 else ifeq ($(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),true)
   # Enable dynamic system image size and reserved 64MB in it.
   BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 67108864
