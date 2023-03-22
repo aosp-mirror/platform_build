@@ -81,6 +81,7 @@ endif
 INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
   bluetooth \
   permission \
+  rkpd \
   uwb \
   wifi \
 
