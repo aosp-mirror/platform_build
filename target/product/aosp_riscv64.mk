@@ -30,8 +30,7 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
 # GSI for system/product & support 64-bit apps only
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
-#$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
-TARGET_FLATTEN_APEX := false
+$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
 
 #
 # All components inherited here go to system_ext image
@@ -57,24 +56,6 @@ $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_riscv64/device.mk)
 ifeq (aosp_riscv64,$(TARGET_PRODUCT))
 $(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_release.mk)
 endif
-
-# TODO: this list should come via mainline_system.mk, but for now list
-# just the modules that work for riscv64.
-PRODUCT_PACKAGES := \
-  init.environ.rc \
-  init_first_stage \
-  init_system \
-  linker \
-  shell_and_utilities \
-  com.android.art \
-  com.android.conscrypt \
-  com.android.i18n \
-  com.android.runtime \
-  com.android.tzdata \
-  com.android.os.statsd \
-
-$(call inherit-product, $(SRC_TARGET_DIR)/product/default_art_config.mk)
-PRODUCT_USES_DEFAULT_ART_CONFIG := false
 
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     root/init.zygote64.rc
