@@ -72,8 +72,6 @@ $(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
 
 # CTS-specific config.
 -include cts/build/config.mk
-# VTS-specific config.
--include test/vts/tools/vts-tradefed/build/config.mk
 # device-tests-specific-config.
 -include tools/tradefederation/build/suites/device-tests/config.mk
 # general-tests-specific-config.
