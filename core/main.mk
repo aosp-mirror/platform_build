@@ -762,6 +762,9 @@ ifneq (,$(_nonexistent_required))
     $(info $(word 1,$(r)) module $(word 2,$(r)) requires non-existent $(word 3,$(r)) module: $(word 4,$(r))) \
   )
   $(warning Set BUILD_BROKEN_MISSING_REQUIRED_MODULES := true to bypass this check if this is intentional)
+  ifneq (,$(PRODUCT_SOURCE_ROOT_DIRS))
+    $(warning PRODUCT_SOURCE_ROOT_DIRS is non-empty. Some necessary modules may have been skipped by Soong)
+  endif
   $(error Build failed)
 endif # _nonexistent_required != empty
 endif # check_missing_required_modules == true
