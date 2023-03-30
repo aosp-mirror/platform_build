@@ -50,12 +50,12 @@ ifneq ($(filter-out true false,$(my_modules_strict)),)
   $(error done)
 endif
 
-my_missing_files = $(shell $(call echo-warning,$(my_makefile),$(my_package_name): Unknown installed file for module '$(1)'))
+my_missing_files = $(shell $(call echo-warning,$(my_makefile),$(my_package_name): Unknown installed file for module '$(1)'))$(shell$(call echo-warning,$(my_makefile),$(my_package_name): Some necessary modules may have been skipped by Soong. Check if PRODUCT_SOURCE_ROOT_DIRS is pruning necessary Android.bp files.))
 ifeq ($(ALLOW_MISSING_DEPENDENCIES),true)
   # Ignore unknown installed files on partial builds
   my_missing_files =
 else ifneq ($(my_modules_strict),false)
-  my_missing_files = $(shell $(call echo-error,$(my_makefile),$(my_package_name): Unknown installed file for module '$(1)'))$(eval my_missing_error := true)
+  my_missing_files = $(shell $(call echo-error,$(my_makefile),$(my_package_name): Unknown installed file for module '$(1)'))$(shell$(call echo-warning,$(my_makefile),$(my_package_name): Some necessary modules may have been skipped by Soong. Check if PRODUCT_SOURCE_ROOT_DIRS is pruning necessary Android.bp files.))$(eval my_missing_error := true)
 endif
 
 # Iterate over modules' built files and installed files;
