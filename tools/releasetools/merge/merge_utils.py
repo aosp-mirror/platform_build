@@ -49,28 +49,80 @@ def ExtractItems(input_zip, output_dir, extract_item_list):
   common.UnzipToDir(input_zip, output_dir, filtered_extract_item_list)
 
 
-def CopyItems(from_dir, to_dir, patterns):
-  """Similar to ExtractItems() except uses an input dir instead of zip."""
-  file_paths = []
-  for dirpath, _, filenames in os.walk(from_dir):
-    file_paths.extend(
-        os.path.relpath(path=os.path.join(dirpath, filename), start=from_dir)
-        for filename in filenames)
+def CopyItems(from_dir, to_dir, copy_item_list):
+  """Copies the items in copy_item_list from source to destination directory.
 
-  filtered_file_paths = set()
-  for pattern in patterns:
-    filtered_file_paths.update(fnmatch.filter(file_paths, pattern))
+  copy_item_list may include files and directories. Will copy the matched
+  files and create the matched directories.
 
-  for file_path in filtered_file_paths:
-    original_file_path = os.path.join(from_dir, file_path)
-    copied_file_path = os.path.join(to_dir, file_path)
-    copied_file_dir = os.path.dirname(copied_file_path)
-    if not os.path.exists(copied_file_dir):
-      os.makedirs(copied_file_dir)
-    if os.path.islink(original_file_path):
-      os.symlink(os.readlink(original_file_path), copied_file_path)
+  Args:
+    from_dir: The source directory.
+    to_dir: The destination directory.
+    copy_item_list: Items to be copied.
+  """
+  item_paths = []
+  for root, dirs, files in os.walk(from_dir):
+    item_paths.extend(
+        os.path.relpath(path=os.path.join(root, item_name), start=from_dir)
+        for item_name in files + dirs)
+
+  filtered = set()
+  for pattern in copy_item_list:
+    filtered.update(fnmatch.filter(item_paths, pattern))
+
+  for item in filtered:
+    original_path = os.path.join(from_dir, item)
+    copied_path = os.path.join(to_dir, item)
+    copied_parent_path = os.path.dirname(copied_path)
+    if not os.path.exists(copied_parent_path):
+      os.makedirs(copied_parent_path)
+    if os.path.islink(original_path):
+      os.symlink(os.readlink(original_path), copied_path)
+    elif os.path.isdir(original_path):
+      if not os.path.exists(copied_path):
+        os.makedirs(copied_path)
     else:
-      shutil.copyfile(original_file_path, copied_file_path)
+      shutil.copyfile(original_path, copied_path)
+
+
+def GetTargetFilesItems(target_files_zipfile_or_dir):
+  """Gets a list of target files items."""
+  if zipfile.is_zipfile(target_files_zipfile_or_dir):
+    with zipfile.ZipFile(target_files_zipfile_or_dir, allowZip64=True) as fz:
+      return fz.namelist()
+  elif os.path.isdir(target_files_zipfile_or_dir):
+    item_list = []
+    for root, dirs, files in os.walk(target_files_zipfile_or_dir):
+      item_list.extend(
+          os.path.relpath(path=os.path.join(root, item),
+                          start=target_files_zipfile_or_dir)
+          for item in dirs + files)
+    return item_list
+  else:
+    raise ValueError('Target files should be either zipfile or directory.')
+
+
+def CollectTargetFiles(input_zipfile_or_dir, output_dir, item_list=None):
+  """Extracts input zipfile or copy input directory to output directory.
+
+  Extracts the input zipfile if `input_zipfile_or_dir` is a zip archive, or
+  copies the items if `input_zipfile_or_dir` is a directory.
+
+  Args:
+    input_zipfile_or_dir: The input target files, could be either a zipfile to
+      extract or a directory to copy.
+    output_dir: The output directory that the input files are either extracted
+      or copied.
+    item_list: Files to be extracted or copied. Will extract or copy all files
+      if omitted.
+  """
+  patterns = item_list if item_list else ('*',)
+  if zipfile.is_zipfile(input_zipfile_or_dir):
+    ExtractItems(input_zipfile_or_dir, output_dir, patterns)
+  elif os.path.isdir(input_zipfile_or_dir):
+    CopyItems(input_zipfile_or_dir, output_dir, patterns)
+  else:
+    raise ValueError('Target files should be either zipfile or directory.')
 
 
 def WriteSortedData(data, path):
