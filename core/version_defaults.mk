@@ -43,7 +43,7 @@ endif
 DEFAULT_PLATFORM_VERSION := UP1A
 .KATI_READONLY := DEFAULT_PLATFORM_VERSION
 MIN_PLATFORM_VERSION := UP1A
-MAX_PLATFORM_VERSION := UP1A
+MAX_PLATFORM_VERSION := VP1A
 
 # The last stable version name of the platform that was released.  During
 # development, this stays at that previous version, while the codename indicates
@@ -54,6 +54,7 @@ PLATFORM_VERSION_LAST_STABLE := 13
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
 PLATFORM_VERSION_CODENAME.UP1A := UpsideDownCake
+PLATFORM_VERSION_CODENAME.VP1A := VanillaIceCream
 
 # This is the user-visible version.  In a final release build it should
 # be empty to use PLATFORM_VERSION as the user-visible version.  For
