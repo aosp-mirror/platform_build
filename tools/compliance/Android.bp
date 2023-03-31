@@ -138,6 +138,10 @@ blueprint_go_binary {
         "compliance-module",
         "blueprint-deptools",
         "soong-response",
+        "spdx-tools-spdxv2_2",
+        "spdx-tools-builder2v2",
+        "spdx-tools-spdxcommon",
+        "spdx-tools-spdx-json",
     ],
     testSrcs: ["cmd/sbom/sbom_test.go"],
 }
