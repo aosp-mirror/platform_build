@@ -31,20 +31,12 @@ import (
 	"android/soong/tools/compliance/projectmetadata"
 
 	"github.com/google/blueprint/deptools"
-
-	"github.com/spdx/tools-golang/builder/builder2v2"
-	"github.com/spdx/tools-golang/json"
-	"github.com/spdx/tools-golang/spdx/common"
-	spdx "github.com/spdx/tools-golang/spdx/v2_2"
 )
 
 var (
 	failNoneRequested = fmt.Errorf("\nNo license metadata files requested")
 	failNoLicenses    = fmt.Errorf("No licenses found")
-	mainPkgName       = flag.String("main_package_name", "", "The name of the first target node in the licensegraph")
 )
-
-const NOASSERTION = "NOASSERTION"
 
 type context struct {
 	stdout       io.Writer
@@ -162,18 +154,12 @@ Options:
 
 	ctx := &context{ofile, os.Stderr, compliance.FS, *product, *stripPrefix, actualTime}
 
-	spdxDoc, deps, err := sbomGenerator(ctx, flags.Args()...)
-
+	deps, err := sbomGenerator(ctx, flags.Args()...)
 	if err != nil {
 		if err == failNoneRequested {
 			flags.Usage()
 		}
 		fmt.Fprintf(os.Stderr, "%s\n", err.Error())
-		os.Exit(1)
-	}
-
-	if err := spdx_json.Save2_2(spdxDoc, ofile); err != nil {
-		fmt.Fprintf(os.Stderr, "failed to write document to %v: %v", *outputFile, err)
 		os.Exit(1)
 	}
 
@@ -232,17 +218,17 @@ func getDocumentName(ctx *context, tn *compliance.TargetNode, pm *projectmetadat
 // or NOASSERTION if not available, none determined or ambiguous
 func getDownloadUrl(_ *context, pm *projectmetadata.ProjectMetadata) string {
 	if pm == nil {
-		return NOASSERTION
+		return "NOASSERTION"
 	}
 
 	urlsByTypeName := pm.UrlsByTypeName()
 	if urlsByTypeName == nil {
-		return NOASSERTION
+		return "NOASSERTION"
 	}
 
 	url := urlsByTypeName.DownloadUrl()
 	if url == "" {
-		return NOASSERTION
+		return "NOASSERTION"
 	}
 	return url
 }
@@ -288,7 +274,7 @@ func getProjectMetadata(_ *context, pmix *projectmetadata.Index,
 // inputFiles returns the complete list of files read
 func inputFiles(lg *compliance.LicenseGraph, pmix *projectmetadata.Index, licenseTexts []string) []string {
 	projectMeta := pmix.AllMetadataFiles()
-	targets := lg.TargetNames()
+	targets :=  lg.TargetNames()
 	files := make([]string, 0, len(licenseTexts)+len(targets)+len(projectMeta))
 	files = append(files, licenseTexts...)
 	files = append(files, targets...)
@@ -303,10 +289,10 @@ func inputFiles(lg *compliance.LicenseGraph, pmix *projectmetadata.Index, licens
 
 // sbomGenerator uses the SPDX standard, see the SPDX specification (https://spdx.github.io/spdx-spec/)
 // sbomGenerator is also following the internal google SBOM styleguide (http://goto.google.com/spdx-style-guide)
-func sbomGenerator(ctx *context, files ...string) (*spdx.Document, []string, error) {
+func sbomGenerator(ctx *context, files ...string) ([]string, error) {
 	// Must be at least one root file.
 	if len(files) < 1 {
-		return nil, nil, failNoneRequested
+		return nil, failNoneRequested
 	}
 
 	pmix := projectmetadata.NewIndex(ctx.rootFS)
@@ -314,17 +300,8 @@ func sbomGenerator(ctx *context, files ...string) (*spdx.Document, []string, err
 	lg, err := compliance.ReadLicenseGraph(ctx.rootFS, ctx.stderr, files)
 
 	if err != nil {
-		return nil, nil, fmt.Errorf("Unable to read license text file(s) for %q: %v\n", files, err)
+		return nil, fmt.Errorf("Unable to read license text file(s) for %q: %v\n", files, err)
 	}
-
-	// creating the packages section
-	pkgs := []*spdx.Package{}
-
-	// creating the relationship section
-	relationships := []*spdx.Relationship{}
-
-	// creating the license section
-	otherLicenses := []*spdx.OtherLicense{}
 
 	// implementing the licenses references for the packages
 	licenses := make(map[string]string)
@@ -348,6 +325,7 @@ func sbomGenerator(ctx *context, files ...string) (*spdx.Document, []string, err
 	}
 
 	isMainPackage := true
+	var mainPackage string
 	visitedNodes := make(map[*compliance.TargetNode]struct{})
 
 	// performing a Breadth-first top down walk of licensegraph and building package information
@@ -363,50 +341,45 @@ func sbomGenerator(ctx *context, files ...string) (*spdx.Document, []string, err
 			}
 
 			if isMainPackage {
-				*mainPkgName = replaceSlashes(getPackageName(ctx, tn))
+				mainPackage = getDocumentName(ctx, tn, pm)
+				fmt.Fprintf(ctx.stdout, "SPDXVersion: SPDX-2.2\n")
+				fmt.Fprintf(ctx.stdout, "DataLicense: CC0-1.0\n")
+				fmt.Fprintf(ctx.stdout, "DocumentName: %s\n", mainPackage)
+				fmt.Fprintf(ctx.stdout, "SPDXID: SPDXRef-DOCUMENT\n")
+				fmt.Fprintf(ctx.stdout, "DocumentNamespace: Android\n")
+				fmt.Fprintf(ctx.stdout, "Creator: Organization: Google LLC\n")
+				fmt.Fprintf(ctx.stdout, "Created: %s\n", ctx.creationTime().Format("2006-01-02T15:04:05Z"))
 				isMainPackage = false
 			}
 
-			if len(path) == 0 {
-				// Add the describe relationship for the main package
-				rln := &spdx.Relationship{
-					RefA:         common.MakeDocElementID("" /* this document */, "DOCUMENT"),
-					RefB:         common.MakeDocElementID("", *mainPkgName),
-					Relationship: "DESCRIBES",
+			relationships := make([]string, 0, 1)
+			defer func() {
+				if r := recover(); r != nil {
+					panic(r)
 				}
-				relationships = append(relationships, rln)
-
+				for _, relationship := range relationships {
+					fmt.Fprintln(ctx.stdout, relationship)
+				}
+			}()
+			if len(path) == 0 {
+				relationships = append(relationships,
+					fmt.Sprintf("Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-%s",
+						getPackageName(ctx, tn)))
 			} else {
 				// Check parent and identify annotation
 				parent := path[len(path)-1]
 				targetEdge := parent.Edge()
 				if targetEdge.IsRuntimeDependency() {
 					// Adding the dynamic link annotation RUNTIME_DEPENDENCY_OF relationship
-					rln := &spdx.Relationship{
-						RefA:         common.MakeDocElementID("", replaceSlashes(getPackageName(ctx, tn))),
-						RefB:         common.MakeDocElementID("", replaceSlashes(getPackageName(ctx, targetEdge.Target()))),
-						Relationship: "RUNTIME_DEPENDENCY_OF",
-					}
-					relationships = append(relationships, rln)
+					relationships = append(relationships, fmt.Sprintf("Relationship: SPDXRef-Package-%s RUNTIME_DEPENDENCY_OF SPDXRef-Package-%s", getPackageName(ctx, tn), getPackageName(ctx, targetEdge.Target())))
 
 				} else if targetEdge.IsDerivation() {
 					// Adding the  derivation annotation as a CONTAINS relationship
-					rln := &spdx.Relationship{
-						RefA:         common.MakeDocElementID("", replaceSlashes(getPackageName(ctx, targetEdge.Target()))),
-						RefB:         common.MakeDocElementID("", replaceSlashes(getPackageName(ctx, tn))),
-						Relationship: "CONTAINS",
-					}
-					relationships = append(relationships, rln)
+					relationships = append(relationships, fmt.Sprintf("Relationship: SPDXRef-Package-%s CONTAINS SPDXRef-Package-%s", getPackageName(ctx, targetEdge.Target()), getPackageName(ctx, tn)))
 
 				} else if targetEdge.IsBuildTool() {
 					// Adding the toolchain annotation as a BUILD_TOOL_OF relationship
-					rln := &spdx.Relationship{
-						RefA:         common.MakeDocElementID("", replaceSlashes(getPackageName(ctx, tn))),
-						RefB:         common.MakeDocElementID("", replaceSlashes(getPackageName(ctx, targetEdge.Target()))),
-						Relationship: "BUILD_TOOL_OF",
-					}
-					relationships = append(relationships, rln)
-
+					relationships = append(relationships, fmt.Sprintf("Relationship: SPDXRef-Package-%s BUILD_TOOL_OF SPDXRef-Package-%s", getPackageName(ctx, tn), getPackageName(ctx, targetEdge.Target())))
 				} else {
 					panic(fmt.Errorf("Unknown dependency type: %v", targetEdge.Annotations()))
 				}
@@ -417,27 +390,18 @@ func sbomGenerator(ctx *context, files ...string) (*spdx.Document, []string, err
 			}
 			visitedNodes[tn] = struct{}{}
 			pkgName := getPackageName(ctx, tn)
-
-			// Making an spdx package and adding it to pkgs
-			pkg := &spdx.Package{
-				PackageName:             replaceSlashes(pkgName),
-				PackageDownloadLocation: getDownloadUrl(ctx, pm),
-				PackageSPDXIdentifier:   common.ElementID(replaceSlashes(pkgName)),
-				PackageLicenseConcluded: concludedLicenses(tn.LicenseTexts()),
-			}
-
+			fmt.Fprintf(ctx.stdout, "##### Package: %s\n", strings.Replace(pkgName, "-", "/", -2))
+			fmt.Fprintf(ctx.stdout, "PackageName: %s\n", pkgName)
 			if pm != nil && pm.Version() != "" {
-				pkg.PackageVersion = pm.Version()
-			} else {
-				pkg.PackageVersion = NOASSERTION
+				fmt.Fprintf(ctx.stdout, "PackageVersion: %s\n", pm.Version())
 			}
-
-			pkgs = append(pkgs, pkg)
-
+			fmt.Fprintf(ctx.stdout, "SPDXID: SPDXRef-Package-%s\n", pkgName)
+			fmt.Fprintf(ctx.stdout, "PackageDownloadLocation: %s\n", getDownloadUrl(ctx, pm))
+			fmt.Fprintf(ctx.stdout, "PackageLicenseConcluded: %s\n", concludedLicenses(tn.LicenseTexts()))
 			return true
 		})
 
-	// Adding Non-standard licenses
+	fmt.Fprintf(ctx.stdout, "##### Non-standard license:\n")
 
 	licenseTexts := make([]string, 0, len(licenses))
 
@@ -448,39 +412,23 @@ func sbomGenerator(ctx *context, files ...string) (*spdx.Document, []string, err
 	sort.Strings(licenseTexts)
 
 	for _, licenseText := range licenseTexts {
+		fmt.Fprintf(ctx.stdout, "LicenseID: %s\n", licenses[licenseText])
 		// open the file
 		f, err := ctx.rootFS.Open(filepath.Clean(licenseText))
 		if err != nil {
-			return nil, nil, fmt.Errorf("error opening license text file %q: %w", licenseText, err)
+			return nil, fmt.Errorf("error opening license text file %q: %w", licenseText, err)
 		}
 
 		// read the file
 		text, err := io.ReadAll(f)
 		if err != nil {
-			return nil, nil, fmt.Errorf("error reading license text file %q: %w", licenseText, err)
+			return nil, fmt.Errorf("error reading license text file %q: %w", licenseText, err)
 		}
-		// Making an spdx License and adding it to otherLicenses
-		otherLicenses = append(otherLicenses, &spdx.OtherLicense{
-			LicenseName:       strings.Replace(licenses[licenseText], "LicenseRef-", "", -1),
-			LicenseIdentifier: string(licenses[licenseText]),
-			ExtractedText:     string(text),
-		})
+		// adding the extracted license text
+		fmt.Fprintf(ctx.stdout, "ExtractedText: <text>%v</text>\n", string(text))
 	}
 
 	deps := inputFiles(lg, pmix, licenseTexts)
 	sort.Strings(deps)
-
-	// Making the SPDX doc
-	ci, err := builder2v2.BuildCreationInfoSection2_2("Organization", "Google LLC", nil)
-	if err != nil {
-		return nil, nil, fmt.Errorf("Unable to build creation info section for SPDX doc: %v\n", err)
-	}
-
-	return &spdx.Document{
-		SPDXIdentifier: "DOCUMENT",
-		CreationInfo:   ci,
-		Packages:       pkgs,
-		Relationships:  relationships,
-		OtherLicenses:  otherLicenses,
-	}, deps, nil
+	return deps, nil
 }
