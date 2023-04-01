@@ -6,6 +6,13 @@ function finalize_locally_mainline_sdk() {
     local top="$(dirname "$0")"/../../../..
     source $top/build/make/tools/finalization/environment.sh
 
+    # default target to modify tree and build SDK
+    local m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug DIST_DIR=out/dist"
+
+    # adb keys
+    $m adb
+    LOGNAME=android-eng HOSTNAME=google.com "$top/out/host/linux-x86/bin/adb" keygen "$top/vendor/google/security/adb/${FINAL_PLATFORM_VERSION}.adb_key"
+
     # Build Platform SDKs.
     $top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=sdk TARGET_BUILD_VARIANT=userdebug sdk dist sdk_repo DIST_DIR=out/dist
 
