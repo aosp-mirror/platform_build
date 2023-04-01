@@ -309,6 +309,8 @@ $(call add_json_bool, IgnorePrefer32OnDevice, $(filter true,$(IGNORE_PREFER32_ON
 $(call add_json_list, IncludeTags,                $(PRODUCT_INCLUDE_TAGS))
 $(call add_json_list, SourceRootDirs,             $(PRODUCT_SOURCE_ROOT_DIRS))
 
+$(call add_json_list, AfdoProfiles,                $(PRODUCT_AFDO_PROFILES))
+
 $(call json_end)
 
 $(file >$(SOONG_VARIABLES).tmp,$(json_contents))
