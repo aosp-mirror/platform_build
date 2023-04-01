@@ -18,18 +18,11 @@ function finalize_sdk_rel() {
     local top="$(dirname "$0")"/../../../..
     source $top/build/make/tools/finalization/environment.sh
 
-    # default target to modify tree and build SDK
-    local m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug DIST_DIR=out/dist"
-
     # revert droidstubs hack now we are switching to REL
     revert_droidstubs_hack
 
     # let the apps built with pre-release SDK parse
     apply_prerelease_sdk_hack
-
-    # adb keys
-    $m adb
-    LOGNAME=android-eng HOSTNAME=google.com "$top/out/host/linux-x86/bin/adb" keygen "$top/vendor/google/security/adb/${FINAL_PLATFORM_VERSION}.adb_key"
 
     # build/make/core/version_defaults.mk
     sed -i -e "s/PLATFORM_VERSION_CODENAME.${FINAL_BUILD_PREFIX} := .*/PLATFORM_VERSION_CODENAME.${FINAL_BUILD_PREFIX} := REL/g" "$top/build/make/core/version_defaults.mk"
