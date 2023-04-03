@@ -65,12 +65,9 @@ ifeq ($(HOST_OS),linux)
   # Non eng linux builds must have preopt enabled so that system server doesn't run as interpreter
   # only. b/74209329
   ifeq (,$(filter eng, $(TARGET_BUILD_VARIANT)))
-    # TODO(riscv64) add compiler support and enable dexpreopt on RISC-V.
-    ifeq (,$(filter riscv64, $(TARGET_ARCH)))
-      ifneq (true,$(WITH_DEXPREOPT))
-        ifneq (true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY))
-          $(call pretty-error, DEXPREOPT must be enabled for user and userdebug builds)
-        endif
+    ifneq (true,$(WITH_DEXPREOPT))
+      ifneq (true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY))
+        $(call pretty-error, DEXPREOPT must be enabled for user and userdebug builds)
       endif
     endif
   endif

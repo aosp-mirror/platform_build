@@ -204,10 +204,7 @@ _board_strip_readonly_list += $(_build_broken_var_list) \
 
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
-  # TODO(riscv64) add compiler support and enable dexpreopt on RISC-V.
-  ifneq ($(TARGET_ARCH),riscv64)
-    WITH_DEXPREOPT := true
-  endif
+  WITH_DEXPREOPT := true
 endif
 
 # ###############################################################
