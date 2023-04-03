@@ -40,6 +40,7 @@ _product_list_vars += PRODUCT_PACKAGES_DEBUG_ASAN
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE
 _product_list_vars += PRODUCT_PACKAGES_ENG
 _product_list_vars += PRODUCT_PACKAGES_TESTS
+_product_list_vars += PRODUCT_AFDO_PROFILES
 
 # The device that this product maps to.
 _product_single_value_vars += PRODUCT_DEVICE
