@@ -85,3 +85,11 @@ python_binary_host {
         "libprotobuf-python",
     ],
 }
+
+python_binary_host {
+    name: "list_files",
+    main: "list_files.py",
+    srcs: [
+        "list_files.py",
+    ],
+}
