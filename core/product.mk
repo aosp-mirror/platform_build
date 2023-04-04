@@ -40,6 +40,7 @@ _product_list_vars += PRODUCT_PACKAGES_DEBUG_ASAN
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE
 _product_list_vars += PRODUCT_PACKAGES_ENG
 _product_list_vars += PRODUCT_PACKAGES_TESTS
+_product_list_vars += PRODUCT_AFDO_PROFILES
 
 # The device that this product maps to.
 _product_single_value_vars += PRODUCT_DEVICE
@@ -268,6 +269,9 @@ _product_single_value_vars += PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
 
 # List of tags that will be used to gate blueprint modules from the build graph
 _product_list_vars += PRODUCT_INCLUDE_TAGS
+
+# List of directories that will be used to gate blueprint modules from the build graph
+_product_list_vars += PRODUCT_SOURCE_ROOT_DIRS
 
 # When this is true, various build time as well as runtime debugfs restrictions are enabled.
 _product_single_value_vars += PRODUCT_SET_DEBUGFS_RESTRICTIONS

@@ -919,12 +919,6 @@ ifeq ($(PRODUCT_BUILD_PVMFW_IMAGE),true)
 endif
 .KATI_READONLY := BOARD_USES_PVMFWIMAGE
 
-BUILDING_PVMFW_IMAGE :=
-ifeq ($(PRODUCT_BUILD_PVMFW_IMAGE),true)
-  BUILDING_PVMFW_IMAGE := true
-endif
-.KATI_READONLY := BUILDING_PVMFW_IMAGE
-
 ###########################################
 # Ensure consistency among TARGET_RECOVERY_UPDATER_LIBS, AB_OTA_UPDATER, and PRODUCT_OTA_FORCE_NON_AB_PACKAGE.
 TARGET_RECOVERY_UPDATER_LIBS ?=
@@ -996,19 +990,13 @@ ifeq ($(PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY),true)
 endif
 
 ###########################################
-# APEXes are by default flattened, i.e. non-updatable, if not building unbundled
-# apps. It can be unflattened (and updatable) by inheriting from
-# updatable_apex.mk
+# APEXes are by default not flattened, i.e. updatable.
 #
 # APEX flattening can also be forcibly enabled (resp. disabled) by
 # setting OVERRIDE_TARGET_FLATTEN_APEX to true (resp. false), e.g. by
 # setting the OVERRIDE_TARGET_FLATTEN_APEX environment variable.
 ifdef OVERRIDE_TARGET_FLATTEN_APEX
   TARGET_FLATTEN_APEX := $(OVERRIDE_TARGET_FLATTEN_APEX)
-else
-  ifeq (,$(TARGET_BUILD_APPS)$(TARGET_FLATTEN_APEX))
-    TARGET_FLATTEN_APEX := true
-  endif
 endif
 
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
