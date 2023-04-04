@@ -2032,10 +2032,107 @@ product_copy_files_without_owner := $(foreach pcf,$(PRODUCT_COPY_FILES),$(call w
 ifeq ($(TARGET_BUILD_APPS),)
 dest_files_without_source := $(sort $(foreach pcf,$(product_copy_files_without_owner),$(if $(wildcard $(call word-colon,1,$(pcf))),,$(call word-colon,2,$(pcf)))))
 dest_files_without_source := $(addprefix $(PRODUCT_OUT)/,$(dest_files_without_source))
-installed_files := $(sort $(filter-out $(PRODUCT_OUT)/apex/% $(PRODUCT_OUT)/fake_packages/% $(PRODUCT_OUT)/testcases/% $(dest_files_without_source),$(filter $(PRODUCT_OUT)/%,$(modules_to_install))))
+filter_out_files := \
+  $(PRODUCT_OUT)/apex/% \
+  $(PRODUCT_OUT)/fake_packages/% \
+  $(PRODUCT_OUT)/testcases/% \
+  $(dest_files_without_source)
+# Check if each partition image is built, if not filter out all its installed files
+# Also check if a partition uses prebuilt image file, save the info if prebuilt image is used.
+PREBUILT_PARTITION_COPY_FILES :=
+# product.img
+ifndef BUILDING_PRODUCT_IMAGE
+filter_out_files += $(PRODUCT_OUT)/product/%
+ifdef BOARD_PREBUILT_PRODUCTIMAGE
+PREBUILT_PARTITION_COPY_FILES += $(BOARD_PREBUILT_PRODUCTIMAGE):$(INSTALLED_PRODUCTIMAGE_TARGET)
+endif
+endif
+
+# system.img
+ifndef BUILDING_SYSTEM_IMAGE
+filter_out_files += $(PRODUCT_OUT)/system/%
+endif
+# system_dlkm.img
+ifndef BUILDING_SYSTEM_DLKM_IMAGE
+filter_out_files += $(PRODUCT_OUT)/system_dlkm/%
+ifdef BOARD_PREBUILT_SYSTEM_DLKMIMAGE
+PREBUILT_PARTITION_COPY_FILES += $(BOARD_PREBUILT_SYSTEM_DLKMIMAGE):$(INSTALLED_SYSTEM_DLKMIMAGE_TARGET)
+endif
+endif
+# system_ext.img
+ifndef BUILDING_SYSTEM_EXT_IMAGE
+filter_out_files += $(PRODUCT_OUT)/system_ext/%
+ifdef BOARD_PREBUILT_SYSTEM_EXTIMAGE
+PREBUILT_PARTITION_COPY_FILES += $(BOARD_PREBUILT_SYSTEM_EXTIMAGE):$(INSTALLED_SYSTEM_EXTIMAGE_TARGET)
+endif
+endif
+# system_other.img
+ifndef BUILDING_SYSTEM_OTHER_IMAGE
+filter_out_files += $(PRODUCT_OUT)/system_other/%
+endif
+
+# odm.img
+ifndef BUILDING_ODM_IMAGE
+filter_out_files += $(PRODUCT_OUT)/odm/%
+ifdef BOARD_PREBUILT_ODMIMAGE
+PREBUILT_PARTITION_COPY_FILES += $(BOARD_PREBUILT_ODMIMAGE):$(INSTALLED_ODMIMAGE_TARGET)
+endif
+endif
+# odm_dlkm.img
+ifndef BUILDING_ODM_DLKM_IMAGE
+filter_out_files += $(PRODUCT_OUT)/odm_dlkm/%
+ifdef BOARD_PREBUILT_ODM_DLKMIMAGE
+PREBUILT_PARTITION_COPY_FILES += $(BOARD_PREBUILT_ODM_DLKMIMAGE):$(INSTALLED_ODM_DLKMIMAGE_TARGET)
+endif
+endif
+
+# vendor.img
+ifndef BUILDING_VENDOR_IMAGE
+filter_out_files += $(PRODUCT_OUT)/vendor/%
+ifdef BOARD_PREBUILT_VENDORIMAGE
+PREBUILT_PARTITION_COPY_FILES += $(BOARD_PREBUILT_VENDORIMAGE):$(INSTALLED_VENDORIMAGE_TARGET)
+endif
+endif
+# vendor_dlkm.img
+ifndef BUILDING_VENDOR_DLKM_IMAGE
+filter_out_files += $(PRODUCT_OUT)/vendor_dlkm/%
+ifdef BOARD_PREBUILT_VENDOR_DLKMIMAGE
+PREBUILT_PARTITION_COPY_FILES += $(BOARD_PREBUILT_VENDOR_DLKMIMAGE):$(INSTALLED_VENDOR_DLKMIMAGE_TARGET)
+endif
+endif
+
+# cache.img
+ifndef BUILDING_CACHE_IMAGE
+filter_out_files += $(PRODUCT_OUT)/cache/%
+endif
+
+# boot.img
+ifndef BUILDING_BOOT_IMAGE
+ifdef BOARD_PREBUILT_BOOTIMAGE
+PREBUILT_PARTITION_COPY_FILES += $(BOARD_PREBUILT_BOOTIMAGE):$(INSTALLED_BOOTIMAGE_TARGET)
+endif
+endif
+# init_boot.img
+ifndef BUILDING_INIT_BOOT_IMAGE
+ifdef BOARD_PREBUILT_INIT_BOOT_IMAGE
+PREBUILT_PARTITION_COPY_FILES += $(BOARD_PREBUILT_INIT_BOOT_IMAGE):$(INSTALLED_INIT_BOOT_IMAGE_TARGET)
+endif
+endif
+
+# ramdisk.img
+ifndef BUILDING_RAMDISK_IMAGE
+filter_out_files += $(PRODUCT_OUT)/ramdisk/%
+endif
+
+# recovery.img
+ifndef INSTALLED_RECOVERYIMAGE_TARGET
+filter_out_files += $(PRODUCT_OUT)/recovery/%
+endif
+
+installed_files := $(sort $(filter-out $(filter_out_files),$(filter $(PRODUCT_OUT)/%,$(modules_to_install))))
 else
 installed_files := $(apps_only_installed_files)
-endif
+endif  # TARGET_BUILD_APPS
 
 # sbom-metadata.csv contains all raw data collected in Make for generating SBOM in generate-sbom.py.
 # There are multiple columns and each identifies the source of an installed file for a specific case.
