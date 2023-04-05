@@ -55,8 +55,12 @@ func Test(t *testing.T) {
 			name:      "apex",
 			roots:     []string{"highest.apex.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-firstparty-highest.apex",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-firstparty-highest.apex.meta_lic",
@@ -179,8 +183,12 @@ func Test(t *testing.T) {
 			name:      "application",
 			roots:     []string{"application.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-firstparty-application",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-firstparty-application.meta_lic",
@@ -254,8 +262,12 @@ func Test(t *testing.T) {
 			name:      "container",
 			roots:     []string{"container.zip.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-firstparty-container.zip",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-firstparty-container.zip.meta_lic",
@@ -378,8 +390,12 @@ func Test(t *testing.T) {
 			name:      "binary",
 			roots:     []string{"bin/bin1.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-firstparty-bin-bin1",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-firstparty-bin-bin1.meta_lic",
@@ -440,8 +456,12 @@ func Test(t *testing.T) {
 			name:      "library",
 			roots:     []string{"lib/libd.so.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-firstparty-lib-libd.so",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-firstparty-lib-libd.so.meta_lic",
@@ -476,8 +496,12 @@ func Test(t *testing.T) {
 			name:      "apex",
 			roots:     []string{"highest.apex.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-notice-highest.apex",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-notice-highest.apex.meta_lic",
@@ -606,8 +630,12 @@ func Test(t *testing.T) {
 			name:      "container",
 			roots:     []string{"container.zip.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-notice-container.zip",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-notice-container.zip.meta_lic",
@@ -736,8 +764,12 @@ func Test(t *testing.T) {
 			name:      "application",
 			roots:     []string{"application.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-notice-application",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-notice-application.meta_lic",
@@ -817,8 +849,12 @@ func Test(t *testing.T) {
 			name:      "binary",
 			roots:     []string{"bin/bin1.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-notice-bin-bin1",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-notice-bin-bin1.meta_lic",
@@ -885,8 +921,12 @@ func Test(t *testing.T) {
 			name:      "library",
 			roots:     []string{"lib/libd.so.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-notice-lib-libd.so",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-notice-lib-libd.so.meta_lic",
@@ -921,8 +961,12 @@ func Test(t *testing.T) {
 			name:      "apex",
 			roots:     []string{"highest.apex.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-reciprocal-highest.apex",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-reciprocal-highest.apex.meta_lic",
@@ -1057,8 +1101,12 @@ func Test(t *testing.T) {
 			name:      "application",
 			roots:     []string{"application.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-reciprocal-application",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-reciprocal-application.meta_lic",
@@ -1144,8 +1192,12 @@ func Test(t *testing.T) {
 			name:      "binary",
 			roots:     []string{"bin/bin1.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-reciprocal-bin-bin1",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-reciprocal-bin-bin1.meta_lic",
@@ -1212,8 +1264,12 @@ func Test(t *testing.T) {
 			name:      "library",
 			roots:     []string{"lib/libd.so.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-reciprocal-lib-libd.so",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-reciprocal-lib-libd.so.meta_lic",
@@ -1248,8 +1304,12 @@ func Test(t *testing.T) {
 			name:      "apex",
 			roots:     []string{"highest.apex.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-restricted-highest.apex",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-restricted-highest.apex.meta_lic",
@@ -1390,8 +1450,12 @@ func Test(t *testing.T) {
 			name:      "container",
 			roots:     []string{"container.zip.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-restricted-container.zip",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-restricted-container.zip.meta_lic",
@@ -1532,8 +1596,12 @@ func Test(t *testing.T) {
 			name:      "binary",
 			roots:     []string{"bin/bin1.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-restricted-bin-bin1",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-restricted-bin-bin1.meta_lic",
@@ -1606,8 +1674,12 @@ func Test(t *testing.T) {
 			name:      "library",
 			roots:     []string{"lib/libd.so.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-restricted-lib-libd.so",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-restricted-lib-libd.so.meta_lic",
@@ -1642,8 +1714,12 @@ func Test(t *testing.T) {
 			name:      "apex",
 			roots:     []string{"highest.apex.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-proprietary-highest.apex",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-proprietary-highest.apex.meta_lic",
@@ -1784,8 +1860,12 @@ func Test(t *testing.T) {
 			name:      "container",
 			roots:     []string{"container.zip.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-proprietary-container.zip",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-proprietary-container.zip.meta_lic",
@@ -1926,8 +2006,12 @@ func Test(t *testing.T) {
 			name:      "application",
 			roots:     []string{"application.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-proprietary-application",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-proprietary-application.meta_lic",
@@ -2013,8 +2097,12 @@ func Test(t *testing.T) {
 			name:      "binary",
 			roots:     []string{"bin/bin1.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-proprietary-bin-bin1",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-proprietary-bin-bin1.meta_lic",
@@ -2081,8 +2169,12 @@ func Test(t *testing.T) {
 			name:      "library",
 			roots:     []string{"lib/libd.so.meta_lic"},
 			expectedOut: &spdx.Document{
-				SPDXIdentifier: "DOCUMENT",
-				CreationInfo:   getCreationInfo(t),
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-proprietary-lib-libd.so",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
 						PackageName:             "testdata-proprietary-lib-libd.so.meta_lic",
@@ -2123,7 +2215,7 @@ func Test(t *testing.T) {
 				rootFiles = append(rootFiles, "testdata/"+tt.condition+"/"+r)
 			}
 
-			ctx := context{stdout, stderr, compliance.GetFS(tt.outDir), "Android", []string{tt.stripPrefix}, fakeTime}
+			ctx := context{stdout, stderr, compliance.GetFS(tt.outDir), "", []string{tt.stripPrefix}, fakeTime}
 
 			spdxDoc, deps, err := sbomGenerator(&ctx, rootFiles...)
 			if err != nil {
@@ -2181,6 +2273,27 @@ func compareSpdxDocs(t *testing.T, actual, expected *spdx.Document) {
 	if actual == nil || expected == nil {
 		t.Errorf("SBOM: SPDX Doc is nil! Got %v: Expected %v", actual, expected)
 	}
+
+	if actual.DocumentName != expected.DocumentName {
+		t.Errorf("sbom: unexpected SPDX Document Name got %q, want %q", actual.DocumentName, expected.DocumentName)
+	}
+
+	if actual.SPDXVersion != expected.SPDXVersion {
+		t.Errorf("sbom: unexpected SPDX Version got %s, want %s", actual.SPDXVersion, expected.SPDXVersion)
+	}
+
+	if actual.DataLicense != expected.DataLicense {
+		t.Errorf("sbom: unexpected SPDX DataLicense got %s, want %s", actual.DataLicense, expected.DataLicense)
+	}
+
+	if actual.SPDXIdentifier != expected.SPDXIdentifier {
+		t.Errorf("sbom: unexpected SPDX Identified got %s, want %s", actual.SPDXIdentifier, expected.SPDXIdentifier)
+	}
+
+	if actual.DocumentNamespace != expected.DocumentNamespace {
+		t.Errorf("sbom: unexpected SPDX Document Namespace got %s, want %s", actual.DocumentNamespace, expected.DocumentNamespace)
+	}
+
 	// compare creation info
 	compareSpdxCreationInfo(t, actual.CreationInfo, expected.CreationInfo)
 
@@ -2314,6 +2427,7 @@ func compareLicenses(t *testing.T, i int, actual, expected *spdx.OtherLicense) b
 	return true
 }
 
-func fakeTime() time.Time {
-	return time.UnixMicro(0).UTC()
+func fakeTime() string {
+	t := time.UnixMicro(0)
+	return t.UTC().Format("2006-01-02T15:04:05Z")
 }
