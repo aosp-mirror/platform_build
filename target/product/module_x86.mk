@@ -17,5 +17,4 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/module_common.mk)
 
 PRODUCT_NAME := module_x86
-PRODUCT_BRAND := Android
 PRODUCT_DEVICE := module_x86
