@@ -3615,11 +3615,13 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
 
   else:
     system_root_image = info_dict.get("system_root_image") == "true"
+    include_recovery_dtbo = info_dict.get("include_recovery_dtbo") == "true"
+    include_recovery_acpio = info_dict.get("include_recovery_acpio") == "true"
     path = os.path.join(input_dir, recovery_resource_dat_path)
     # With system-root-image, boot and recovery images will have mismatching
     # entries (only recovery has the ramdisk entry) (Bug: 72731506). Use bsdiff
     # to handle such a case.
-    if system_root_image:
+    if system_root_image or include_recovery_dtbo or include_recovery_acpio:
       diff_program = ["bsdiff"]
       bonus_args = ""
       assert not os.path.exists(path)
