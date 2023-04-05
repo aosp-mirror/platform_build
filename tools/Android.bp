@@ -92,4 +92,9 @@ python_binary_host {
     srcs: [
         "list_files.py",
     ],
+    version: {
+      py3: {
+        embedded_launcher: true,
+      }
+    }
 }
