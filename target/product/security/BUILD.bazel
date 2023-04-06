@@ -4,4 +4,5 @@ filegroup(
         "*.pk8",
         "*.pem",
     ]),
+    visibility = ["//visibility:public"],
 )
