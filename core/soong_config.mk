@@ -12,6 +12,8 @@ endif
 include $(BUILD_SYSTEM)/art_config.mk
 include $(BUILD_SYSTEM)/dex_preopt_config.mk
 
+-include vendor/google_data/pgo_profile/sampling/afdo_profiles.mk
+
 ifeq ($(WRITE_SOONG_VARIABLES),true)
 
 # Create soong.variables with copies of makefile settings.  Runs every build,
