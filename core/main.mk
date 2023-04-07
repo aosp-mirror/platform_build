@@ -2191,13 +2191,13 @@ sbom: $(PRODUCT_OUT)/sbom.spdx.json
 $(PRODUCT_OUT)/sbom.spdx.json: $(PRODUCT_OUT)/sbom.spdx
 $(PRODUCT_OUT)/sbom.spdx: $(PRODUCT_OUT)/sbom-metadata.csv $(GEN_SBOM)
 	rm -rf $@
-	$(GEN_SBOM) --output_file $@ --metadata $(PRODUCT_OUT)/sbom-metadata.csv --product_out_dir=$(PRODUCT_OUT) --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr=$(PRODUCT_MANUFACTURER) --json
+	$(GEN_SBOM) --output_file $@ --metadata $(PRODUCT_OUT)/sbom-metadata.csv --product_out_dir=$(PRODUCT_OUT) --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr="$(PRODUCT_MANUFACTURER)" --json
 
 else
 apps_only_sbom_files := $(sort $(patsubst %,%.spdx,$(apps_only_installed_files)))
 $(apps_only_sbom_files): $(PRODUCT_OUT)/sbom-metadata.csv $(GEN_SBOM)
 	rm -rf $@
-	$(GEN_SBOM) --output_file $@ --metadata $(PRODUCT_OUT)/sbom-metadata.csv --product_out_dir=$(PRODUCT_OUT) --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr=$(PRODUCT_MANUFACTURER) --unbundled
+	$(GEN_SBOM) --output_file $@ --metadata $(PRODUCT_OUT)/sbom-metadata.csv --product_out_dir=$(PRODUCT_OUT) --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr="$(PRODUCT_MANUFACTURER)" --unbundled
 
 sbom: $(apps_only_sbom_files)
 endif
