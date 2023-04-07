@@ -87,6 +87,7 @@ ISSUE_NO_METADATA = 'No metadata generated in Make for installed files:'
 ISSUE_NO_METADATA_FILE = 'No METADATA file found for installed file:'
 ISSUE_METADATA_FILE_INCOMPLETE = 'METADATA file incomplete:'
 ISSUE_UNKNOWN_SECURITY_TAG_TYPE = 'Unknown security tag type:'
+ISSUE_INSTALLED_FILE_NOT_EXIST = 'Non-exist installed files:'
 INFO_METADATA_FOUND_FOR_PACKAGE = 'METADATA file found for packages:'
 
 
@@ -597,11 +598,12 @@ def main():
 
   # Report on some issues and information
   report = {
-      ISSUE_NO_METADATA: [],
-      ISSUE_NO_METADATA_FILE: [],
-      ISSUE_METADATA_FILE_INCOMPLETE: [],
-      ISSUE_UNKNOWN_SECURITY_TAG_TYPE: [],
-      INFO_METADATA_FOUND_FOR_PACKAGE: []
+    ISSUE_NO_METADATA: [],
+    ISSUE_NO_METADATA_FILE: [],
+    ISSUE_METADATA_FILE_INCOMPLETE: [],
+    ISSUE_UNKNOWN_SECURITY_TAG_TYPE: [],
+    ISSUE_INSTALLED_FILE_NOT_EXIST: [],
+    INFO_METADATA_FOUND_FOR_PACKAGE: [],
   }
 
   # Scan the metadata in CSV file and create the corresponding package and file records in SPDX
@@ -618,6 +620,9 @@ def main():
       kernel_module_copy_files = installed_file_metadata['kernel_module_copy_files']
 
       if not installed_file_has_metadata(installed_file_metadata, report):
+        continue
+      if not os.path.isfile(installed_file):
+        report[ISSUE_INSTALLED_FILE_NOT_EXIST].append(installed_file)
         continue
 
       file_id = new_file_id(installed_file)
