@@ -2981,7 +2981,7 @@ endif # BUILDING_DEBUG_VENDOR_BOOT_IMAGE
 
 endif # BUILDING_DEBUG_BOOT_IMAGE || BUILDING_DEBUG_VENDOR_BOOT_IMAGE
 
-
+PARTITION_COMPAT_SYMLINKS :=
 # Creates a compatibility symlink between two partitions, e.g. /system/vendor to /vendor
 # $1: from location (e.g $(TARGET_OUT)/vendor)
 # $2: destination location (e.g. /vendor)
@@ -2999,6 +2999,7 @@ $1:
 	ln -sfn $2 $1
 $1: .KATI_SYMLINK_OUTPUTS := $1
 )
+$(eval PARTITION_COMPAT_SYMLINKS += $1)
 $1
 endef
 
@@ -3109,17 +3110,23 @@ INTERNAL_SYSTEMIMAGE_FILES := $(sort $(filter $(TARGET_OUT)/%, \
 
 # Create symlink /system/vendor to /vendor if necessary.
 ifdef BOARD_USES_VENDORIMAGE
-  INTERNAL_SYSTEMIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT)/vendor,/vendor,vendor.img)
+  _vendor_symlink := $(call create-partition-compat-symlink,$(TARGET_OUT)/vendor,/vendor,vendor.img)
+  INTERNAL_SYSTEMIMAGE_FILES += $(_vendor_symlink)
+  ALL_DEFAULT_INSTALLED_MODULES += $(_vendor_symlink)
 endif
 
 # Create symlink /system/product to /product if necessary.
 ifdef BOARD_USES_PRODUCTIMAGE
-  INTERNAL_SYSTEMIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT)/product,/product,product.img)
+  _product_symlink := $(call create-partition-compat-symlink,$(TARGET_OUT)/product,/product,product.img)
+  INTERNAL_SYSTEMIMAGE_FILES += $(_product_symlink)
+  ALL_DEFAULT_INSTALLED_MODULES += $(_product_symlink)
 endif
 
 # Create symlink /system/system_ext to /system_ext if necessary.
 ifdef BOARD_USES_SYSTEM_EXTIMAGE
-  INTERNAL_SYSTEMIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT)/system_ext,/system_ext,system_ext.img)
+  _systemext_symlink := $(call create-partition-compat-symlink,$(TARGET_OUT)/system_ext,/system_ext,system_ext.img)
+  INTERNAL_SYSTEMIMAGE_FILES += $(_systemext_symlink)
+  ALL_DEFAULT_INSTALLED_MODULES += $(_systemext_symlink)
 endif
 
 # -----------------------------------------------------------------
@@ -3132,7 +3139,9 @@ endif
 # - /system/lib/modules is a symlink to a directory that stores system DLKMs.
 # - The system_dlkm partition is mounted at /system_dlkm at runtime.
 ifdef BOARD_USES_SYSTEM_DLKMIMAGE
-  INTERNAL_SYSTEMIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT)/lib/modules,/system_dlkm/lib/modules,system_dlkm.img)
+  _system_dlkm_lib_modules_symlink := $(call create-partition-compat-symlink,$(TARGET_OUT)/lib/modules,/system_dlkm/lib/modules,system_dlkm.img)
+  INTERNAL_SYSTEMIMAGE_FILES += $(_system_dlkm_lib_modules_symlink)
+  ALL_DEFAULT_INSTALLED_MODULES += $(_system_dlkm_lib_modules_symlink)
 endif
 
 FULL_SYSTEMIMAGE_DEPS := $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_USERIMAGES_DEPS)
@@ -3521,7 +3530,9 @@ INTERNAL_VENDORIMAGE_FILES := \
 
 # Create symlink /vendor/odm to /odm if necessary.
 ifdef BOARD_USES_ODMIMAGE
-  INTERNAL_VENDORIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT_VENDOR)/odm,/odm,odm.img)
+  _odm_symlink := $(call create-partition-compat-symlink,$(TARGET_OUT_VENDOR)/odm,/odm,odm.img)
+  INTERNAL_VENDORIMAGE_FILES += $(_odm_symlink)
+  ALL_DEFAULT_INSTALLED_MODULES += $(_odm_symlink)
 endif
 
 # Create symlinks for vendor_dlkm on devices with a vendor_dlkm partition:
@@ -3539,7 +3550,9 @@ endif
 # The vendor DLKMs and other vendor_dlkm files must not be accessed using other paths because they
 # are not guaranteed to exist on all devices.
 ifdef BOARD_USES_VENDOR_DLKMIMAGE
-  INTERNAL_VENDORIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT_VENDOR)/lib/modules,/vendor_dlkm/lib/modules,vendor_dlkm.img)
+  _vendor_dlkm_lib_modules_symlink := $(call create-partition-compat-symlink,$(TARGET_OUT_VENDOR)/lib/modules,/vendor_dlkm/lib/modules,vendor_dlkm.img)
+  INTERNAL_VENDORIMAGE_FILES += $(_vendor_dlkm_lib_modules_symlink)
+  ALL_DEFAULT_INSTALLED_MODULES += $(_vendor_dlkm_lib_modules_symlink)
 endif
 
 # Install vendor/etc/linker.config.pb with PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS and STUB_LIBRARIES
@@ -3760,7 +3773,9 @@ INTERNAL_ODMIMAGE_FILES := \
 # The odm DLKMs and other odm_dlkm files must not be accessed using other paths because they
 # are not guaranteed to exist on all devices.
 ifdef BOARD_USES_ODM_DLKMIMAGE
-  INTERNAL_ODMIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT_ODM)/lib/modules,/odm_dlkm/lib/modules,odm_dlkm.img)
+  _odm_dlkm_lib_modules_symlink := $(call create-partition-compat-symlink,$(TARGET_OUT_ODM)/lib/modules,/odm_dlkm/lib/modules,odm_dlkm.img)
+  INTERNAL_ODMIMAGE_FILES += $(_odm_dlkm_lib_modules_symlink)
+  ALL_DEFAULT_INSTALLED_MODULES += $(_odm_dlkm_lib_modules_symlink)
 endif
 
 INSTALLED_FILES_FILE_ODM := $(PRODUCT_OUT)/installed-files-odm.txt
