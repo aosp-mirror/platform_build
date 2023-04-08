@@ -144,7 +144,6 @@ endif
 #
 include $(BUILD_SYSTEM)/node_fns.mk
 include $(BUILD_SYSTEM)/product.mk
-include $(BUILD_SYSTEM)/device.mk
 
 # Read all product definitions.
 #
