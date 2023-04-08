@@ -25,7 +25,13 @@ _product_list_vars :=
 _product_single_value_vars += PRODUCT_NAME
 _product_single_value_vars += PRODUCT_MODEL
 
-# The resoure configuration options to use for this product.
+# Defines the ELF segment alignment for binaries (executables and shared libraries).
+# The ELF segment alignment has to be a PAGE_SIZE multiple. For example, if
+# PRODUCT_MAX_PAGE_SIZE_SUPPORTED=65536, the possible values for PAGE_SIZE could be
+# 4096, 16384 and 65536.
+_product_single_value_vars += PRODUCT_MAX_PAGE_SIZE_SUPPORTED
+
+# The resource configuration options to use for this product.
 _product_list_vars += PRODUCT_LOCALES
 _product_list_vars += PRODUCT_AAPT_CONFIG
 _product_single_value_vars += PRODUCT_AAPT_PREF_CONFIG
