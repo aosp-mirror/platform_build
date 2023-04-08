@@ -423,6 +423,13 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
   slot will be used. This is to ensure that we always have valid boot, vbmeta,
   bootloader images in the inactive slot.
 
+  After writing system_other to inactive slot's system partiiton,
+  PackageManagerService will read `ro.cp_system_other_odex`, and set
+  `sys.cppreopt` to "requested". Then, according to
+  system/extras/cppreopts/cppreopts.rc , init will mount system_other at
+  /postinstall, and execute `cppreopts` to copy optimized APKs from
+  /postinstall to /data .
+
   Args:
     input_file: The input target-files.zip file.
     skip_postinstall: Whether to skip copying the postinstall config file.
