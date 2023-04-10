@@ -46,6 +46,10 @@ define generate-common-build-props
         echo "ro.product.$(1).manufacturer=$(PRODUCT_MANUFACTURER)" >> $(2);\
         echo "ro.product.$(1).model=$(PRODUCT_MODEL)" >> $(2);\
         echo "ro.product.$(1).name=$(TARGET_PRODUCT)" >> $(2);\
+        # Attestation specific properties for AOSP/GSI build running on device.
+        echo "ro.product.model_for_attestation=$(PRODUCT_MODEL_FOR_ATTESTATION)" >> $(2);\
+        echo "ro.product.brand_for_attestation=$(PRODUCT_BRAND_FOR_ATTESTATION)" >> $(2);\
+        echo "ro.product.name_for_attestation=$(PRODUCT_NAME_FOR_ATTESTATION)" >> $(2);\
     )\
     $(if $(filter true,$(ZYGOTE_FORCE_64)),\
         $(if $(filter vendor,$(1)),\
@@ -137,7 +141,7 @@ endif
 	    fi;)
 	$(hide) echo "# end of file" >> $$@
 
-$(call declare-0p-target,$(2))
+$(call declare-1p-target,$(2))
 endef
 
 # -----------------------------------------------------------------
@@ -539,3 +543,19 @@ $(eval $(call build-properties,\
     $(empty)))
 
 $(eval $(call declare-1p-target,$(INSTALLED_RAMDISK_BUILD_PROP_TARGET)))
+
+ALL_INSTALLED_BUILD_PROP_FILES := \
+  $(INSTALLED_BUILD_PROP_TARGET) \
+  $(INSTALLED_VENDOR_BUILD_PROP_TARGET) \
+  $(INSTALLED_PRODUCT_BUILD_PROP_TARGET) \
+  $(INSTALLED_ODM_BUILD_PROP_TARGET) \
+  $(INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET) \
+  $(INSTALLED_ODM_DLKM_BUILD_PROP_TARGET) \
+  $(INSTALLED_SYSTEM_DLKM_BUILD_PROP_TARGET) \
+  $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET) \
+  $(INSTALLED_RAMDISK_BUILD_PROP_TARGET)
+
+# $1 installed file path, e.g. out/target/product/vsoc_x86_64/system/build.prop
+define is-build-prop
+$(if $(findstring $1,$(ALL_INSTALLED_BUILD_PROP_FILES)),Y)
+endef

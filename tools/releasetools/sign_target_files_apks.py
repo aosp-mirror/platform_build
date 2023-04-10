@@ -532,11 +532,13 @@ def IsBuildPropFile(filename):
       # as a symlink in the current code. So it's a no-op here. Keeping the
       # path here for clarity.
       # Some build props might be stored under path
-      # VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/default.prop
-      # so overwrite all files that ends with build.prop or default.prop
+      # VENDOR_BOOT/RAMDISK_FRAGMENTS/recovery/RAMDISK/default.prop, and
+      # default.prop can be a symbolic link to prop.default, so overwrite all
+      # files that ends with build.prop, default.prop or prop.default
       "RECOVERY/RAMDISK/default.prop") or \
         filename.endswith("build.prop") or \
-        filename.endswith("/default.prop")
+        filename.endswith("/default.prop") or \
+        filename.endswith("/prop.default")
 
 
 def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,

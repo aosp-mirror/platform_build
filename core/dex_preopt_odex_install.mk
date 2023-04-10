@@ -272,12 +272,13 @@ my_dexpreopt_images :=
 my_dexpreopt_images_deps :=
 my_dexpreopt_image_locations_on_host :=
 my_dexpreopt_image_locations_on_device :=
-# Infix can be 'boot' or 'art'. Soong creates a set of variables for Make, one
-# for each boot image (primary and the framework extension). The only reason why
-# the primary image is exposed to Make is testing (art gtests) and benchmarking
-# (art golem benchmarks). Install rules that use those variables are in
-# dex_preopt_libart.mk. Here for dexpreopt purposes the infix is always 'boot'.
-my_dexpreopt_infix := boot
+# Infix can be 'art', 'boot', or 'mainline'. Soong creates a set of variables
+# for Make, one or each boot image (primary, the framework extension, and the
+# mainline extension). The only reason why the primary image is exposed to Make
+# is testing (art gtests) and benchmarking (art golem benchmarks). Install rules
+# that use those variables are in dex_preopt_libart.mk. Here for dexpreopt
+# purposes the infix is always 'boot' or 'mainline'.
+my_dexpreopt_infix := $(if $(filter true,$(DEX_PREOPT_WITH_UPDATABLE_BCP)),mainline,boot)
 my_create_dexpreopt_config :=
 
 ifdef LOCAL_DEX_PREOPT
@@ -447,6 +448,7 @@ ifdef LOCAL_DEX_PREOPT
 
   my_dexpreopt_script := $(intermediates)/dexpreopt.sh
   my_dexpreopt_zip := $(intermediates)/dexpreopt.zip
+  DEXPREOPT.$(LOCAL_MODULE).POST_INSTALLED_DEXPREOPT_ZIP := $(my_dexpreopt_zip)
   .KATI_RESTAT: $(my_dexpreopt_script)
   $(my_dexpreopt_script): PRIVATE_MODULE := $(LOCAL_MODULE)
   $(my_dexpreopt_script): PRIVATE_GLOBAL_SOONG_CONFIG := $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE)

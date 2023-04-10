@@ -302,6 +302,8 @@ def RunAndCheckOutput(args, verbose=None, **kwargs):
   Raises:
     ExternalError: On non-zero exit from the command.
   """
+  if verbose is None:
+    verbose = OPTIONS.verbose
   proc = Run(args, verbose=verbose, **kwargs)
   output, _ = proc.communicate()
   if output is None:
@@ -1545,14 +1547,20 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
 
 
 def _MakeRamdisk(sourcedir, fs_config_file=None,
+                 dev_node_file=None,
                  ramdisk_format=RamdiskFormat.GZ):
   ramdisk_img = tempfile.NamedTemporaryFile()
 
-  if fs_config_file is not None and os.access(fs_config_file, os.F_OK):
-    cmd = ["mkbootfs", "-f", fs_config_file,
-           os.path.join(sourcedir, "RAMDISK")]
-  else:
-    cmd = ["mkbootfs", os.path.join(sourcedir, "RAMDISK")]
+  cmd = ["mkbootfs"]
+
+  if fs_config_file and os.access(fs_config_file, os.F_OK):
+    cmd.extend(["-f", fs_config_file])
+
+  if dev_node_file and os.access(dev_node_file, os.F_OK):
+    cmd.extend(["-n", dev_node_file])
+
+  cmd.append(os.path.join(sourcedir, "RAMDISK"))
+
   p1 = Run(cmd, stdout=subprocess.PIPE)
   if ramdisk_format == RamdiskFormat.LZ4:
     p2 = Run(["lz4", "-l", "-12", "--favor-decSpeed"], stdin=p1.stdout,
@@ -1570,7 +1578,8 @@ def _MakeRamdisk(sourcedir, fs_config_file=None,
   return ramdisk_img
 
 
-def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
+def _BuildBootableImage(image_name, sourcedir, fs_config_file,
+                        dev_node_file=None, info_dict=None,
                         has_ramdisk=False, two_step_image=False):
   """Build a bootable image from the specified sourcedir.
 
@@ -1612,7 +1621,7 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file, info_dict=None,
 
   if has_ramdisk:
     ramdisk_format = GetRamdiskFormat(info_dict)
-    ramdisk_img = _MakeRamdisk(sourcedir, fs_config_file,
+    ramdisk_img = _MakeRamdisk(sourcedir, fs_config_file, dev_node_file,
                                ramdisk_format=ramdisk_format)
 
   # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
@@ -1820,7 +1829,8 @@ def HasRamdisk(partition_name, info_dict=None):
 
 
 def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
-                     info_dict=None, two_step_image=False):
+                     info_dict=None, two_step_image=False,
+                     dev_nodes=False):
   """Return a File object with the desired bootable image.
 
   Look for it in 'unpack_dir'/BOOTABLE_IMAGES under the name 'prebuilt_name',
@@ -1856,6 +1866,8 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
   fs_config = "META/" + tree_subdir.lower() + "_filesystem_config.txt"
   data = _BuildBootableImage(prebuilt_name, os.path.join(unpack_dir, tree_subdir),
                              os.path.join(unpack_dir, fs_config),
+                             os.path.join(unpack_dir, 'META/ramdisk_node_list')
+                                if dev_nodes else None,
                              info_dict, has_ramdisk, two_step_image)
   if data:
     return File(name, data)
@@ -2109,9 +2121,7 @@ def GetUserImage(which, tmpdir, input_zip,
   if info_dict is None:
     info_dict = LoadInfoDict(input_zip)
 
-  is_sparse = info_dict.get("extfs_sparse_flag")
-  if info_dict.get(which + "_disable_sparse"):
-    is_sparse = False
+  is_sparse = IsSparseImage(os.path.join(tmpdir, "IMAGES", which + ".img"))
 
   # When target uses 'BOARD_EXT4_SHARE_DUP_BLOCKS := true', images may contain
   # shared blocks (i.e. some blocks will show up in multiple files' block
@@ -2320,12 +2330,22 @@ def GetMinSdkVersionInt(apk_name, codename_to_api_level_map):
   try:
     return int(version)
   except ValueError:
-    # Not a decimal number. Codename?
-    if version in codename_to_api_level_map:
-      return codename_to_api_level_map[version]
+    # Not a decimal number.
+    #
+    # It could be either a straight codename, e.g.
+    #     UpsideDownCake
+    #
+    # Or a codename with API fingerprint SHA, e.g.
+    #     UpsideDownCake.e7d3947f14eb9dc4fec25ff6c5f8563e
+    #
+    # Extract the codename and try and map it to a version number.
+    split = version.split(".")
+    codename = split[0]
+    if codename in codename_to_api_level_map:
+      return codename_to_api_level_map[codename]
     raise ExternalError(
-        "Unknown minSdkVersion: '{}'. Known codenames: {}".format(
-            version, codename_to_api_level_map))
+        "Unknown codename: '{}' from minSdkVersion: '{}'. Known codenames: {}".format(
+            codename, version, codename_to_api_level_map))
 
 
 def SignFile(input_name, output_name, key, password, min_api_level=None,
@@ -2893,13 +2913,12 @@ def ZipDelete(zip_filename, entries, force=False):
 
     fd, new_zipfile = tempfile.mkstemp(dir=os.path.dirname(zip_filename))
     os.close(fd)
+    cmd = ["zip2zip", "-i", zip_filename, "-o", new_zipfile]
+    for entry in entries:
+      cmd.append("-x")
+      cmd.append(entry)
+    RunAndCheckOutput(cmd)
 
-    with zipfile.ZipFile(new_zipfile, 'w') as zout:
-      for item in zin.infolist():
-        if item.filename in entries:
-          continue
-        buffer = zin.read(item.filename)
-        zout.writestr(item, buffer)
 
   os.replace(new_zipfile, zip_filename)
 
@@ -3596,11 +3615,13 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
 
   else:
     system_root_image = info_dict.get("system_root_image") == "true"
+    include_recovery_dtbo = info_dict.get("include_recovery_dtbo") == "true"
+    include_recovery_acpio = info_dict.get("include_recovery_acpio") == "true"
     path = os.path.join(input_dir, recovery_resource_dat_path)
     # With system-root-image, boot and recovery images will have mismatching
     # entries (only recovery has the ramdisk entry) (Bug: 72731506). Use bsdiff
     # to handle such a case.
-    if system_root_image:
+    if system_root_image or include_recovery_dtbo or include_recovery_acpio:
       diff_program = ["bsdiff"]
       bonus_args = ""
       assert not os.path.exists(path)

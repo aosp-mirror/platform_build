@@ -58,7 +58,7 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.configinfrastructure:framework-configinfrastructure \
     com.android.conscrypt:conscrypt \
     com.android.devicelock:framework-devicelock \
-    com.android.healthconnect:framework-healthconnect \
+    com.android.healthfitness:framework-healthfitness \
     com.android.i18n:core-icu4j \
     com.android.ipsec:android.net.ipsec.ike \
     com.android.media:updatable-media \
@@ -85,8 +85,9 @@ PRODUCT_APEX_SYSTEM_SERVER_JARS := \
     com.android.appsearch:service-appsearch \
     com.android.art:service-art \
     com.android.configinfrastructure:service-configinfrastructure \
-    com.android.healthconnect:service-healthconnect \
+    com.android.healthfitness:service-healthfitness \
     com.android.media:service-media-s \
+    com.android.ondevicepersonalization:service-ondevicepersonalization \
     com.android.permission:service-permission \
     com.android.rkpd:service-rkp \
 
