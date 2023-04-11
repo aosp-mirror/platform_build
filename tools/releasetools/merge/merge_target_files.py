@@ -26,9 +26,9 @@ This script produces a complete, merged target files package:
 
 Usage: merge_target_files [args]
 
-  --framework-target-files framework-target-files-zip-archive
+  --framework-target-files framework-target-files-package
       The input target files package containing framework bits. This is a zip
-      archive.
+      archive or a directory.
 
   --framework-item-list framework-item-list-file
       The optional path to a newline-separated config file of items that
@@ -38,9 +38,9 @@ Usage: merge_target_files [args]
       The optional path to a newline-separated config file of keys to
       extract from the framework META/misc_info.txt file.
 
-  --vendor-target-files vendor-target-files-zip-archive
+  --vendor-target-files vendor-target-files-package
       The input target files package containing vendor bits. This is a zip
-      archive.
+      archive or a directory.
 
   --vendor-item-list vendor-item-list-file
       The optional path to a newline-separated config file of items that
@@ -172,18 +172,18 @@ def create_merged_package(temp_dir):
     Path to merged package under temp directory.
   """
   # Extract "as is" items from the input framework and vendor partial target
-  # files packages directly into the output temporary directory, since these items
-  # do not need special case processing.
+  # files packages directly into the output temporary directory, since these
+  # items do not need special case processing.
 
   output_target_files_temp_dir = os.path.join(temp_dir, 'output')
-  merge_utils.ExtractItems(
-      input_zip=OPTIONS.framework_target_files,
+  merge_utils.CollectTargetFiles(
+      input_zipfile_or_dir=OPTIONS.framework_target_files,
       output_dir=output_target_files_temp_dir,
-      extract_item_list=OPTIONS.framework_item_list)
-  merge_utils.ExtractItems(
-      input_zip=OPTIONS.vendor_target_files,
+      item_list=OPTIONS.framework_item_list)
+  merge_utils.CollectTargetFiles(
+      input_zipfile_or_dir=OPTIONS.vendor_target_files,
       output_dir=output_target_files_temp_dir,
-      extract_item_list=OPTIONS.vendor_item_list)
+      item_list=OPTIONS.vendor_item_list)
 
   # Perform special case processing on META/* items.
   # After this function completes successfully, all the files we need to create
@@ -231,7 +231,8 @@ def rebuild_image_with_sepolicy(target_files_dir):
   def copy_selinux_file(input_path, output_filename):
     input_filename = os.path.join(target_files_dir, input_path)
     if not os.path.exists(input_filename):
-      input_filename = input_filename.replace('SYSTEM_EXT/', 'SYSTEM/system_ext/') \
+      input_filename = input_filename.replace('SYSTEM_EXT/',
+                                              'SYSTEM/system_ext/') \
           .replace('PRODUCT/', 'SYSTEM/product/')
       if not os.path.exists(input_filename):
         logger.info('Skipping copy_selinux_file for %s', input_filename)
@@ -272,7 +273,10 @@ def rebuild_image_with_sepolicy(target_files_dir):
   vendor_target_files_dir = common.MakeTempDir(
       prefix='merge_target_files_vendor_target_files_')
   common.UnzipToDir(OPTIONS.vendor_otatools, vendor_otatools_dir)
-  common.UnzipToDir(OPTIONS.vendor_target_files, vendor_target_files_dir)
+  merge_utils.CollectTargetFiles(
+      input_zipfile_or_dir=OPTIONS.vendor_target_files,
+      output_dir=vendor_target_files_dir,
+      item_list=OPTIONS.vendor_item_list)
 
   # Copy the partition contents from the merged target-files archive to the
   # vendor target-files archive.
@@ -303,8 +307,9 @@ def rebuild_image_with_sepolicy(target_files_dir):
   shutil.move(
       os.path.join(vendor_target_files_dir, 'IMAGES', partition_img),
       os.path.join(target_files_dir, 'IMAGES', partition_img))
-  move_only_exists(os.path.join(vendor_target_files_dir, 'IMAGES', partition_map),
-        os.path.join(target_files_dir, 'IMAGES', partition_map))
+  move_only_exists(
+      os.path.join(vendor_target_files_dir, 'IMAGES', partition_map),
+      os.path.join(target_files_dir, 'IMAGES', partition_map))
 
   def copy_recovery_file(filename):
     for subdir in ('VENDOR', 'SYSTEM/vendor'):
@@ -578,10 +583,10 @@ def main():
     common.Usage(__doc__)
     sys.exit(1)
 
-  with zipfile.ZipFile(OPTIONS.framework_target_files, allowZip64=True) as fz:
-    framework_namelist = fz.namelist()
-  with zipfile.ZipFile(OPTIONS.vendor_target_files, allowZip64=True) as vz:
-    vendor_namelist = vz.namelist()
+  framework_namelist = merge_utils.GetTargetFilesItems(
+      OPTIONS.framework_target_files)
+  vendor_namelist = merge_utils.GetTargetFilesItems(
+      OPTIONS.vendor_target_files)
 
   if OPTIONS.framework_item_list:
     OPTIONS.framework_item_list = common.LoadListFromFile(
