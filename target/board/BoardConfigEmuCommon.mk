@@ -26,46 +26,34 @@ USE_OPENGL_RENDERER := true
 # Emulator doesn't support sparse image format.
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 
-ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
-  # emulator is Non-A/B device
-  AB_OTA_UPDATER := false
+# emulator is Non-A/B device
+AB_OTA_UPDATER := false
 
-  # emulator needs super.img
-  BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT := true
+# emulator needs super.img
+BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT := true
 
-  # 8G + 8M
-  BOARD_SUPER_PARTITION_SIZE ?= 8598323200
-  BOARD_SUPER_PARTITION_GROUPS := emulator_dynamic_partitions
+# 8G + 8M
+BOARD_SUPER_PARTITION_SIZE ?= 8598323200
+BOARD_SUPER_PARTITION_GROUPS := emulator_dynamic_partitions
 
-  ifeq ($(QEMU_USE_SYSTEM_EXT_PARTITIONS),true)
-    BOARD_EMULATOR_DYNAMIC_PARTITIONS_PARTITION_LIST := \
-        system \
-        system_ext \
-        product \
-        vendor
+BOARD_EMULATOR_DYNAMIC_PARTITIONS_PARTITION_LIST := \
+  system \
+  system_dlkm \
+  system_ext \
+  product \
+  vendor
 
-    TARGET_COPY_OUT_PRODUCT := product
-    BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
-    TARGET_COPY_OUT_SYSTEM_EXT := system_ext
-    BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
-  else
-    TARGET_COPY_OUT_PRODUCT := system/product
-    TARGET_COPY_OUT_SYSTEM_EXT := system/system_ext
-    BOARD_EMULATOR_DYNAMIC_PARTITIONS_PARTITION_LIST := \
-        system \
-        vendor
-  endif
+TARGET_COPY_OUT_PRODUCT := product
+BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
+TARGET_COPY_OUT_SYSTEM_EXT := system_ext
+BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
 
-  # 8G
-  BOARD_EMULATOR_DYNAMIC_PARTITIONS_SIZE ?= 8589934592
-else ifeq ($(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),true)
-  # Enable dynamic system image size and reserved 64MB in it.
-  BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 67108864
-  BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE := 67108864
-else
-  BOARD_SYSTEMIMAGE_PARTITION_SIZE := 3221225472
-  BOARD_VENDORIMAGE_PARTITION_SIZE := 146800640
-endif
+BOARD_USES_SYSTEM_DLKMIMAGE := true
+BOARD_SYSTEM_DLKMIMAGE_FILE_SYSTEM_TYPE := erofs
+TARGET_COPY_OUT_SYSTEM_DLKM := system_dlkm
+
+# 8G
+BOARD_EMULATOR_DYNAMIC_PARTITIONS_SIZE ?= 8589934592
 
 #vendor boot
 BOARD_INCLUDE_DTB_IN_BOOTIMG := false

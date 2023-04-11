@@ -15,37 +15,19 @@
 package main
 
 import (
-	"bufio"
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"os"
 	"reflect"
-	"regexp"
 	"strings"
 	"testing"
 	"time"
 
 	"android/soong/tools/compliance"
-)
-
-var (
-	spdxVersionTag              = regexp.MustCompile(`^\s*SPDXVersion: SPDX-2.2\s*$`)
-	spdxDataLicenseTag          = regexp.MustCompile(`^\s*DataLicense: CC0-1.0\s*$`)
-	spdxDocumentNameTag         = regexp.MustCompile(`^\s*DocumentName:\s*Android*\s*$`)
-	spdxIDTag                   = regexp.MustCompile(`^\s*SPDXID:\s*SPDXRef-DOCUMENT\s*$`)
-	spdxDocumentNameSpaceTag    = regexp.MustCompile(`^\s*DocumentNamespace:\s*Android\s*$`)
-	spdxCreatorOrganizationTag  = regexp.MustCompile(`^\s*Creator:\s*Organization:\s*Google LLC\s*$`)
-	spdxCreatedTimeTag          = regexp.MustCompile(`^\s*Created: 1970-01-01T00:00:00Z\s*$`)
-	spdxPackageTag              = regexp.MustCompile(`^\s*#####\s*Package:\s*(.*)\s*$`)
-	spdxPackageNameTag          = regexp.MustCompile(`^\s*PackageName:\s*(.*)\s*$`)
-	spdxPkgIDTag                = regexp.MustCompile(`^\s*SPDXID:\s*SPDXRef-Package-(.*)\s*$`)
-	spdxPkgDownloadLocationTag  = regexp.MustCompile(`^\s*PackageDownloadLocation:\s*NOASSERTION\s*$`)
-	spdxPkgLicenseDeclaredTag   = regexp.MustCompile(`^\s*PackageLicenseConcluded:\s*LicenseRef-(.*)\s*$`)
-	spdxRelationshipTag         = regexp.MustCompile(`^\s*Relationship:\s*SPDXRef-(.*)\s*(DESCRIBES|CONTAINS|BUILD_TOOL_OF|RUNTIME_DEPENDENCY_OF)\s*SPDXRef-Package-(.*)\s*$`)
-	spdxLicenseTag              = regexp.MustCompile(`^\s*##### Non-standard license:\s*$`)
-	spdxLicenseIDTag            = regexp.MustCompile(`^\s*LicenseID: LicenseRef-(.*)\s*$`)
-	spdxExtractedTextTag        = regexp.MustCompile(`^\s*ExtractedText:\s*<text>(.*)\s*$`)
-	spdxExtractedClosingTextTag = regexp.MustCompile(`^\s*</text>\s*$`)
+	"github.com/spdx/tools-golang/builder/builder2v2"
+	"github.com/spdx/tools-golang/spdx/common"
+	spdx "github.com/spdx/tools-golang/spdx/v2_2"
 )
 
 func TestMain(m *testing.M) {
@@ -65,69 +47,125 @@ func Test(t *testing.T) {
 		outDir       string
 		roots        []string
 		stripPrefix  string
-		expectedOut  []matcher
+		expectedOut  *spdx.Document
 		expectedDeps []string
 	}{
 		{
 			condition: "firstparty",
 			name:      "apex",
 			roots:     []string{"highest.apex.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/firstparty/highest.apex.meta_lic"},
-				packageName{"testdata/firstparty/highest.apex.meta_lic"},
-				spdxPkgID{"testdata/firstparty/highest.apex.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata-firstparty-highest.apex.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/firstparty/bin/bin1.meta_lic"},
-				packageName{"testdata/firstparty/bin/bin1.meta_lic"},
-				spdxPkgID{"testdata/firstparty/bin/bin1.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/firstparty/highest.apex.meta_lic ", "testdata/firstparty/bin/bin1.meta_lic", "CONTAINS"},
-				packageTag{"testdata/firstparty/bin/bin2.meta_lic"},
-				packageName{"testdata/firstparty/bin/bin2.meta_lic"},
-				spdxPkgID{"testdata/firstparty/bin/bin2.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/firstparty/highest.apex.meta_lic ", "testdata-firstparty-bin-bin2.meta_lic", "CONTAINS"},
-				packageTag{"testdata/firstparty/lib/liba.so.meta_lic"},
-				packageName{"testdata/firstparty/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/firstparty/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/firstparty/highest.apex.meta_lic ", "testdata/firstparty/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/firstparty/lib/libb.so.meta_lic"},
-				packageName{"testdata/firstparty/lib/libb.so.meta_lic"},
-				spdxPkgID{"testdata/firstparty/lib/libb.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/firstparty/highest.apex.meta_lic ", "testdata/firstparty/lib/libb.so.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata/firstparty/bin/bin1.meta_lic ", "testdata/firstparty/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/firstparty/lib/libc.a.meta_lic"},
-				packageName{"testdata/firstparty/lib/libc.a.meta_lic"},
-				spdxPkgID{"testdata/firstparty/lib/libc.a.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata-firstparty-bin-bin1.meta_lic ", "testdata/firstparty/lib/libc.a.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata/firstparty/lib/libb.so.meta_lic ", "testdata/firstparty/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				packageTag{"testdata/firstparty/lib/libd.so.meta_lic"},
-				packageName{"testdata/firstparty/lib/libd.so.meta_lic"},
-				spdxPkgID{"testdata/firstparty/lib/libd.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/firstparty/lib/libd.so.meta_lic ", "testdata/firstparty/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-firstparty-highest.apex",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-firstparty-highest.apex.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-highest.apex.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-firstparty-bin-bin1.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-bin-bin1.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-firstparty-bin-bin2.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-bin-bin2.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-firstparty-lib-liba.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-lib-liba.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-firstparty-lib-libb.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-lib-libb.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-firstparty-lib-libc.a.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-lib-libc.a.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-firstparty-lib-libd.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-lib-libd.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-highest.apex.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-bin-bin1.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-bin-bin2.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-lib-libb.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-lib-libc.a.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-lib-libb.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-bin-bin2.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-lib-libd.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-bin-bin2.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -144,42 +182,72 @@ func Test(t *testing.T) {
 			condition: "firstparty",
 			name:      "application",
 			roots:     []string{"application.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/firstparty/application.meta_lic"},
-				packageName{"testdata/firstparty/application.meta_lic"},
-				spdxPkgID{"testdata/firstparty/application.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/firstparty/application.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/firstparty/bin/bin3.meta_lic"},
-				packageName{"testdata/firstparty/bin/bin3.meta_lic"},
-				spdxPkgID{"testdata/firstparty/bin/bin3.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/firstparty/bin/bin3.meta_lic ", "testdata-firstparty-application.meta_lic", "BUILD_TOOL_OF"},
-				packageTag{"testdata/firstparty/lib/liba.so.meta_lic"},
-				packageName{"testdata/firstparty/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/firstparty/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/firstparty/application.meta_lic ", "testdata/firstparty/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/firstparty/lib/libb.so.meta_lic"},
-				packageName{"testdata/firstparty/lib/libb.so.meta_lic"},
-				spdxPkgID{"testdata/firstparty/lib/libb.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/firstparty/lib/libb.so.meta_lic ", "testdata-firstparty-application.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-firstparty-application",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-firstparty-application.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-application.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-firstparty-bin-bin3.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-bin-bin3.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-firstparty-lib-liba.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-lib-liba.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-firstparty-lib-libb.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-lib-libb.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-application.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-bin-bin3.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-application.meta_lic"),
+						Relationship: "BUILD_TOOL_OF",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-application.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-lib-libb.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-application.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -193,62 +261,118 @@ func Test(t *testing.T) {
 			condition: "firstparty",
 			name:      "container",
 			roots:     []string{"container.zip.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/firstparty/container.zip.meta_lic"},
-				packageName{"testdata/firstparty/container.zip.meta_lic"},
-				spdxPkgID{"testdata/firstparty/container.zip.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/firstparty/container.zip.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/firstparty/bin/bin1.meta_lic"},
-				packageName{"testdata/firstparty/bin/bin1.meta_lic"},
-				spdxPkgID{"testdata/firstparty/bin/bin1.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/firstparty/container.zip.meta_lic ", "testdata/firstparty/bin/bin1.meta_lic", "CONTAINS"},
-				packageTag{"testdata/firstparty/bin/bin2.meta_lic"},
-				packageName{"testdata/firstparty/bin/bin2.meta_lic"},
-				spdxPkgID{"testdata/firstparty/bin/bin2.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/firstparty/container.zip.meta_lic ", "testdata/firstparty/bin/bin2.meta_lic", "CONTAINS"},
-				packageTag{"testdata/firstparty/lib/liba.so.meta_lic"},
-				packageName{"testdata/firstparty/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/firstparty/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/firstparty/container.zip.meta_lic ", "testdata/firstparty/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/firstparty/lib/libb.so.meta_lic"},
-				packageName{"testdata/firstparty/lib/libb.so.meta_lic"},
-				spdxPkgID{"testdata/firstparty/lib/libb.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/firstparty/container.zip.meta_lic ", "testdata/firstparty/lib/libb.so.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata/firstparty/bin/bin1.meta_lic ", "testdata/firstparty/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/firstparty/lib/libc.a.meta_lic"},
-				packageName{"testdata/firstparty/lib/libc.a.meta_lic"},
-				spdxPkgID{"testdata/firstparty/lib/libc.a.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/firstparty/bin/bin1.meta_lic ", "testdata/firstparty/lib/libc.a.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata/firstparty/lib/libb.so.meta_lic ", "testdata/firstparty/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				packageTag{"testdata/firstparty/lib/libd.so.meta_lic"},
-				packageName{"testdata/firstparty/lib/libd.so.meta_lic"},
-				spdxPkgID{"testdata/firstparty/lib/libd.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/firstparty/lib/libd.so.meta_lic ", "testdata/firstparty/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-firstparty-container.zip",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-firstparty-container.zip.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-container.zip.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-firstparty-bin-bin1.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-bin-bin1.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-firstparty-bin-bin2.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-bin-bin2.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-firstparty-lib-liba.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-lib-liba.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-firstparty-lib-libb.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-lib-libb.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-firstparty-lib-libc.a.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-lib-libc.a.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-firstparty-lib-libd.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-lib-libd.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-container.zip.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-container.zip.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-bin-bin1.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-container.zip.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-bin-bin2.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-container.zip.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-container.zip.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-lib-libb.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-lib-libc.a.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-lib-libb.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-bin-bin2.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-lib-libd.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-bin-bin2.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -265,36 +389,60 @@ func Test(t *testing.T) {
 			condition: "firstparty",
 			name:      "binary",
 			roots:     []string{"bin/bin1.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/firstparty/bin/bin1.meta_lic"},
-				packageName{"testdata/firstparty/bin/bin1.meta_lic"},
-				spdxPkgID{"testdata/firstparty/bin/bin1.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/firstparty/bin/bin1.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/firstparty/lib/liba.so.meta_lic"},
-				packageName{"testdata/firstparty/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/firstparty/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/firstparty/bin/bin1.meta_lic ", "testdata/firstparty/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/firstparty/lib/libc.a.meta_lic"},
-				packageName{"testdata/firstparty/lib/libc.a.meta_lic"},
-				spdxPkgID{"testdata/firstparty/lib/libc.a.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/firstparty/bin/bin1.meta_lic ", "testdata/firstparty/lib/libc.a.meta_lic", "CONTAINS"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-firstparty-bin-bin1",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-firstparty-bin-bin1.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-bin-bin1.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-firstparty-lib-liba.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-lib-liba.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-firstparty-lib-libc.a.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-lib-libc.a.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-bin-bin1.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-firstparty-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-lib-libc.a.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -307,24 +455,36 @@ func Test(t *testing.T) {
 			condition: "firstparty",
 			name:      "library",
 			roots:     []string{"lib/libd.so.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/firstparty/lib/libd.so.meta_lic"},
-				packageName{"testdata/firstparty/lib/libd.so.meta_lic"},
-				spdxPkgID{"testdata/firstparty/lib/libd.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/firstparty/lib/libd.so.meta_lic", "DESCRIBES"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-firstparty-lib-libd.so",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-firstparty-lib-libd.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-firstparty-lib-libd.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-firstparty-lib-libd.so.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -335,65 +495,123 @@ func Test(t *testing.T) {
 			condition: "notice",
 			name:      "apex",
 			roots:     []string{"highest.apex.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/notice/highest.apex.meta_lic"},
-				packageName{"testdata/notice/highest.apex.meta_lic"},
-				spdxPkgID{"testdata/notice/highest.apex.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/notice/highest.apex.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/notice/bin/bin1.meta_lic"},
-				packageName{"testdata/notice/bin/bin1.meta_lic"},
-				spdxPkgID{"testdata/notice/bin/bin1.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/notice/highest.apex.meta_lic ", "testdata/notice/bin/bin1.meta_lic", "CONTAINS"},
-				packageTag{"testdata/notice/bin/bin2.meta_lic"},
-				packageName{"testdata/notice/bin/bin2.meta_lic"},
-				spdxPkgID{"testdata/notice/bin/bin2.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/notice/highest.apex.meta_lic ", "testdata/notice/bin/bin2.meta_lic", "CONTAINS"},
-				packageTag{"testdata/notice/lib/liba.so.meta_lic"},
-				packageName{"testdata/notice/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/notice/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"Package-testdata/notice/highest.apex.meta_lic ", "testdata/notice/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/notice/lib/libb.so.meta_lic"},
-				packageName{"testdata/notice/lib/libb.so.meta_lic"},
-				spdxPkgID{"testdata/notice/lib/libb.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/notice/highest.apex.meta_lic ", "testdata/notice/lib/libb.so.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata/notice/bin/bin1.meta_lic ", "testdata/notice/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/notice/lib/libc.a.meta_lic"},
-				packageName{"testdata/notice/lib/libc.a.meta_lic"},
-				spdxPkgID{"testdata/notice/lib/libc.a.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"Package-testdata/notice/bin/bin1.meta_lic ", "testdata/notice/lib/libc.a.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata/notice/lib/libb.so.meta_lic ", "testdata/notice/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				packageTag{"testdata/notice/lib/libd.so.meta_lic"},
-				packageName{"testdata/notice/lib/libd.so.meta_lic"},
-				spdxPkgID{"testdata/notice/lib/libd.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"Package-testdata/notice/lib/libd.so.meta_lic ", "testdata/notice/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-notice-NOTICE_LICENSE"},
-				spdxExtractedText{"%%%Notice License%%%"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-notice-highest.apex",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-notice-highest.apex.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-highest.apex.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-notice-bin-bin1.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-bin-bin1.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-notice-bin-bin2.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-bin-bin2.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-notice-lib-liba.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-lib-liba.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+					{
+						PackageName:             "testdata-notice-lib-libb.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-lib-libb.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-notice-lib-libc.a.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-lib-libc.a.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+					{
+						PackageName:             "testdata-notice-lib-libd.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-lib-libd.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-highest.apex.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-bin-bin1.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-bin-bin2.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-lib-libb.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-lib-libc.a.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-lib-libb.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-bin-bin2.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-lib-libd.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-bin-bin2.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+						ExtractedText:     "%%%Notice License%%%\n",
+						LicenseName:       "testdata-notice-NOTICE_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -411,65 +629,123 @@ func Test(t *testing.T) {
 			condition: "notice",
 			name:      "container",
 			roots:     []string{"container.zip.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/notice/container.zip.meta_lic"},
-				packageName{"testdata/notice/container.zip.meta_lic"},
-				spdxPkgID{"testdata/notice/container.zip.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/notice/container.zip.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/notice/bin/bin1.meta_lic"},
-				packageName{"testdata/notice/bin/bin1.meta_lic"},
-				spdxPkgID{"testdata/notice/bin/bin1.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/notice/container.zip.meta_lic ", "testdata/notice/bin/bin1.meta_lic", "CONTAINS"},
-				packageTag{"testdata/notice/bin/bin2.meta_lic"},
-				packageName{"testdata/notice/bin/bin2.meta_lic"},
-				spdxPkgID{"testdata/notice/bin/bin2.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/notice/container.zip.meta_lic ", "testdata/notice/bin/bin2.meta_lic", "CONTAINS"},
-				packageTag{"testdata/notice/lib/liba.so.meta_lic"},
-				packageName{"testdata/notice/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/notice/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"Package-testdata/notice/container.zip.meta_lic ", "testdata/notice/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/notice/lib/libb.so.meta_lic"},
-				packageName{"testdata/notice/lib/libb.so.meta_lic"},
-				spdxPkgID{"testdata/notice/lib/libb.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/notice/container.zip.meta_lic ", "testdata/notice/lib/libb.so.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata/notice/bin/bin1.meta_lic ", "testdata/notice/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/notice/lib/libc.a.meta_lic"},
-				packageName{"testdata/notice/lib/libc.a.meta_lic"},
-				spdxPkgID{"testdata/notice/lib/libc.a.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"Package-testdata/notice/bin/bin1.meta_lic ", "testdata/notice/lib/libc.a.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata/notice/lib/libb.so.meta_lic ", "testdata/notice/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				packageTag{"testdata/notice/lib/libd.so.meta_lic"},
-				packageName{"testdata/notice/lib/libd.so.meta_lic"},
-				spdxPkgID{"testdata/notice/lib/libd.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"Package-testdata/notice/lib/libd.so.meta_lic ", "testdata/notice/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-notice-NOTICE_LICENSE"},
-				spdxExtractedText{"%%%Notice License%%%"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-notice-container.zip",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-notice-container.zip.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-container.zip.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-notice-bin-bin1.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-bin-bin1.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-notice-bin-bin2.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-bin-bin2.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-notice-lib-liba.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-lib-liba.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+					{
+						PackageName:             "testdata-notice-lib-libb.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-lib-libb.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-notice-lib-libc.a.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-lib-libc.a.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+					{
+						PackageName:             "testdata-notice-lib-libd.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-lib-libd.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-container.zip.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-container.zip.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-bin-bin1.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-container.zip.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-bin-bin2.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-container.zip.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-container.zip.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-lib-libb.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-lib-libc.a.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-lib-libb.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-bin-bin2.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-lib-libd.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-bin-bin2.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+						ExtractedText:     "%%%Notice License%%%\n",
+						LicenseName:       "testdata-notice-NOTICE_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -487,45 +763,77 @@ func Test(t *testing.T) {
 			condition: "notice",
 			name:      "application",
 			roots:     []string{"application.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/notice/application.meta_lic"},
-				packageName{"testdata/notice/application.meta_lic"},
-				spdxPkgID{"testdata/notice/application.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata-notice-application.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/notice/bin/bin3.meta_lic"},
-				packageName{"testdata/notice/bin/bin3.meta_lic"},
-				spdxPkgID{"testdata/notice/bin/bin3.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"Package-testdata-notice-bin-bin3.meta_lic ", "testdata/notice/application.meta_lic", "BUILD_TOOL_OF"},
-				packageTag{"testdata/notice/lib/liba.so.meta_lic"},
-				packageName{"testdata/notice/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/notice/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"Package-testdata/notice/application.meta_lic ", "testdata-notice-lib-liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/notice/lib/libb.so.meta_lic"},
-				packageName{"testdata/notice/lib/libb.so.meta_lic"},
-				spdxPkgID{"testdata/notice/lib/libb.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata-notice-lib-libb.so.meta_lic ", "testdata/notice/application.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-notice-NOTICE_LICENSE"},
-				spdxExtractedText{"%%%Notice License%%%"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-notice-application",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-notice-application.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-application.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-notice-bin-bin3.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-bin-bin3.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+					{
+						PackageName:             "testdata-notice-lib-liba.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-lib-liba.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+					{
+						PackageName:             "testdata-notice-lib-libb.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-lib-libb.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-application.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-bin-bin3.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-application.meta_lic"),
+						Relationship: "BUILD_TOOL_OF",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-application.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-lib-libb.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-application.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+						ExtractedText:     "%%%Notice License%%%\n",
+						LicenseName:       "testdata-notice-NOTICE_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -540,39 +848,65 @@ func Test(t *testing.T) {
 			condition: "notice",
 			name:      "binary",
 			roots:     []string{"bin/bin1.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/notice/bin/bin1.meta_lic"},
-				packageName{"testdata/notice/bin/bin1.meta_lic"},
-				spdxPkgID{"testdata/notice/bin/bin1.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/notice/bin/bin1.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/notice/lib/liba.so.meta_lic"},
-				packageName{"testdata/notice/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/notice/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"Package-testdata/notice/bin/bin1.meta_lic ", "testdata/notice/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/notice/lib/libc.a.meta_lic"},
-				packageName{"testdata/notice/lib/libc.a.meta_lic"},
-				spdxPkgID{"testdata/notice/lib/libc.a.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"Package-testdata/notice/bin/bin1.meta_lic ", "testdata/notice/lib/libc.a.meta_lic", "CONTAINS"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-notice-NOTICE_LICENSE"},
-				spdxExtractedText{"%%%Notice License%%%"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-notice-bin-bin1",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-notice-bin-bin1.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-bin-bin1.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-notice-lib-liba.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-lib-liba.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+					{
+						PackageName:             "testdata-notice-lib-libc.a.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-lib-libc.a.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-bin-bin1.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-notice-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-lib-libc.a.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+						ExtractedText:     "%%%Notice License%%%\n",
+						LicenseName:       "testdata-notice-NOTICE_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -586,24 +920,36 @@ func Test(t *testing.T) {
 			condition: "notice",
 			name:      "library",
 			roots:     []string{"lib/libd.so.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/notice/lib/libd.so.meta_lic"},
-				packageName{"testdata/notice/lib/libd.so.meta_lic"},
-				spdxPkgID{"testdata/notice/lib/libd.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/notice/lib/libd.so.meta_lic", "DESCRIBES"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-notice-NOTICE_LICENSE"},
-				spdxExtractedText{"%%%Notice License%%%"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-notice-lib-libd.so",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-notice-lib-libd.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-notice-lib-libd.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-notice-lib-libd.so.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+						ExtractedText:     "%%%Notice License%%%\n",
+						LicenseName:       "testdata-notice-NOTICE_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/notice/NOTICE_LICENSE",
@@ -614,68 +960,128 @@ func Test(t *testing.T) {
 			condition: "reciprocal",
 			name:      "apex",
 			roots:     []string{"highest.apex.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/reciprocal/highest.apex.meta_lic"},
-				packageName{"testdata/reciprocal/highest.apex.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/highest.apex.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/reciprocal/highest.apex.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/reciprocal/bin/bin1.meta_lic"},
-				packageName{"testdata/reciprocal/bin/bin1.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/bin/bin1.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/reciprocal/highest.apex.meta_lic ", "testdata-reciprocal-bin-bin1.meta_lic", "CONTAINS"},
-				packageTag{"testdata/reciprocal/bin/bin2.meta_lic"},
-				packageName{"testdata/reciprocal/bin/bin2.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/bin/bin2.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/reciprocal/highest.apex.meta_lic ", "testdata-reciprocal-bin-bin2.meta_lic", "CONTAINS"},
-				packageTag{"testdata/reciprocal/lib/liba.so.meta_lic"},
-				packageName{"testdata/reciprocal/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-reciprocal-RECIPROCAL_LICENSE"},
-				spdxRelationship{"Package-testdata/reciprocal/highest.apex.meta_lic ", "testdata/reciprocal/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/reciprocal/lib/libb.so.meta_lic"},
-				packageName{"testdata/reciprocal/lib/libb.so.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/lib/libb.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/reciprocal/highest.apex.meta_lic ", "testdata/reciprocal/lib/libb.so.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata/reciprocal/bin/bin1.meta_lic ", "testdata/reciprocal/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/reciprocal/lib/libc.a.meta_lic"},
-				packageName{"testdata/reciprocal/lib/libc.a.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/lib/libc.a.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-reciprocal-RECIPROCAL_LICENSE"},
-				spdxRelationship{"Package-testdata/reciprocal/bin/bin1.meta_lic ", "testdata/reciprocal/lib/libc.a.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata/reciprocal/lib/libb.so.meta_lic ", "testdata/reciprocal/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				packageTag{"testdata/reciprocal/lib/libd.so.meta_lic"},
-				packageName{"testdata/reciprocal/lib/libd.so.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/lib/libd.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"Package-testdata/reciprocal/lib/libd.so.meta_lic ", "testdata/reciprocal/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-notice-NOTICE_LICENSE"},
-				spdxExtractedText{"%%%Notice License%%%"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-reciprocal-RECIPROCAL_LICENSE"},
-				spdxExtractedText{"$$$Reciprocal License$$$"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-reciprocal-highest.apex",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-reciprocal-highest.apex.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-reciprocal-highest.apex.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-reciprocal-bin-bin1.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-reciprocal-bin-bin1.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-reciprocal-bin-bin2.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-reciprocal-bin-bin2.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-reciprocal-lib-liba.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-reciprocal-lib-liba.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-reciprocal-RECIPROCAL_LICENSE",
+					},
+					{
+						PackageName:             "testdata-reciprocal-lib-libb.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-reciprocal-lib-libb.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-reciprocal-lib-libc.a.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-reciprocal-lib-libc.a.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-reciprocal-RECIPROCAL_LICENSE",
+					},
+					{
+						PackageName:             "testdata-reciprocal-lib-libd.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-reciprocal-lib-libd.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-reciprocal-highest.apex.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-reciprocal-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-reciprocal-bin-bin1.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-reciprocal-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-reciprocal-bin-bin2.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-reciprocal-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-reciprocal-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-reciprocal-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-reciprocal-lib-libb.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-reciprocal-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-reciprocal-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-reciprocal-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-reciprocal-lib-libc.a.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-reciprocal-lib-libb.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-reciprocal-bin-bin2.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-reciprocal-lib-libd.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-reciprocal-bin-bin2.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+						ExtractedText:     "%%%Notice License%%%\n",
+						LicenseName:       "testdata-notice-NOTICE_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-reciprocal-RECIPROCAL_LICENSE",
+						ExtractedText:     "$$$Reciprocal License$$$\n",
+						LicenseName:       "testdata-reciprocal-RECIPROCAL_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -692,130 +1098,84 @@ func Test(t *testing.T) {
 		},
 		{
 			condition: "reciprocal",
-			name:      "container",
-			roots:     []string{"container.zip.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/reciprocal/container.zip.meta_lic"},
-				packageName{"testdata/reciprocal/container.zip.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/container.zip.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/reciprocal/container.zip.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/reciprocal/bin/bin1.meta_lic"},
-				packageName{"testdata/reciprocal/bin/bin1.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/bin/bin1.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/reciprocal/container.zip.meta_lic ", "testdata-reciprocal-bin-bin1.meta_lic", "CONTAINS"},
-				packageTag{"testdata/reciprocal/bin/bin2.meta_lic"},
-				packageName{"testdata/reciprocal/bin/bin2.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/bin/bin2.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/reciprocal/container.zip.meta_lic ", "testdata-reciprocal-bin-bin2.meta_lic", "CONTAINS"},
-				packageTag{"testdata/reciprocal/lib/liba.so.meta_lic"},
-				packageName{"testdata/reciprocal/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-reciprocal-RECIPROCAL_LICENSE"},
-				spdxRelationship{"Package-testdata/reciprocal/container.zip.meta_lic ", "testdata/reciprocal/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/reciprocal/lib/libb.so.meta_lic"},
-				packageName{"testdata/reciprocal/lib/libb.so.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/lib/libb.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/reciprocal/container.zip.meta_lic ", "testdata/reciprocal/lib/libb.so.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata/reciprocal/bin/bin1.meta_lic ", "testdata/reciprocal/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/reciprocal/lib/libc.a.meta_lic"},
-				packageName{"testdata/reciprocal/lib/libc.a.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/lib/libc.a.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-reciprocal-RECIPROCAL_LICENSE"},
-				spdxRelationship{"Package-testdata/reciprocal/bin/bin1.meta_lic ", "testdata/reciprocal/lib/libc.a.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata/reciprocal/lib/libb.so.meta_lic ", "testdata/reciprocal/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				packageTag{"testdata/reciprocal/lib/libd.so.meta_lic"},
-				packageName{"testdata/reciprocal/lib/libd.so.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/lib/libd.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"Package-testdata/reciprocal/lib/libd.so.meta_lic ", "testdata/reciprocal/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-notice-NOTICE_LICENSE"},
-				spdxExtractedText{"%%%Notice License%%%"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-reciprocal-RECIPROCAL_LICENSE"},
-				spdxExtractedText{"$$$Reciprocal License$$$"},
-				spdxExtractedClosingText{},
-			},
-			expectedDeps: []string{
-				"testdata/firstparty/FIRST_PARTY_LICENSE",
-				"testdata/notice/NOTICE_LICENSE",
-				"testdata/reciprocal/RECIPROCAL_LICENSE",
-				"testdata/reciprocal/bin/bin1.meta_lic",
-				"testdata/reciprocal/bin/bin2.meta_lic",
-				"testdata/reciprocal/container.zip.meta_lic",
-				"testdata/reciprocal/lib/liba.so.meta_lic",
-				"testdata/reciprocal/lib/libb.so.meta_lic",
-				"testdata/reciprocal/lib/libc.a.meta_lic",
-				"testdata/reciprocal/lib/libd.so.meta_lic",
-			},
-		},
-		{
-			condition: "reciprocal",
 			name:      "application",
 			roots:     []string{"application.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/reciprocal/application.meta_lic"},
-				packageName{"testdata/reciprocal/application.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/application.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/reciprocal/application.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/reciprocal/bin/bin3.meta_lic"},
-				packageName{"testdata/reciprocal/bin/bin3.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/bin/bin3.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"Package-testdata-reciprocal-bin-bin3.meta_lic ", "testdata/reciprocal/application.meta_lic", "BUILD_TOOL_OF"},
-				packageTag{"testdata/reciprocal/lib/liba.so.meta_lic"},
-				packageName{"testdata/reciprocal/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-reciprocal-RECIPROCAL_LICENSE"},
-				spdxRelationship{"Package-testdata/reciprocal/application.meta_lic ", "testdata/reciprocal/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/reciprocal/lib/libb.so.meta_lic"},
-				packageName{"testdata/reciprocal/lib/libb.so.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/lib/libb.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/reciprocal/lib/libb.so.meta_lic ", "testdata/reciprocal/application.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-notice-NOTICE_LICENSE"},
-				spdxExtractedText{"%%%Notice License%%%"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-reciprocal-RECIPROCAL_LICENSE"},
-				spdxExtractedText{"$$$Reciprocal License$$$"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-reciprocal-application",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-reciprocal-application.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-reciprocal-application.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-reciprocal-bin-bin3.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-reciprocal-bin-bin3.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+					{
+						PackageName:             "testdata-reciprocal-lib-liba.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-reciprocal-lib-liba.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-reciprocal-RECIPROCAL_LICENSE",
+					},
+					{
+						PackageName:             "testdata-reciprocal-lib-libb.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-reciprocal-lib-libb.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-reciprocal-application.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-reciprocal-bin-bin3.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-reciprocal-application.meta_lic"),
+						Relationship: "BUILD_TOOL_OF",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-reciprocal-application.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-reciprocal-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-reciprocal-lib-libb.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-reciprocal-application.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+						ExtractedText:     "%%%Notice License%%%\n",
+						LicenseName:       "testdata-notice-NOTICE_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-reciprocal-RECIPROCAL_LICENSE",
+						ExtractedText:     "$$$Reciprocal License$$$\n",
+						LicenseName:       "testdata-reciprocal-RECIPROCAL_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -831,39 +1191,65 @@ func Test(t *testing.T) {
 			condition: "reciprocal",
 			name:      "binary",
 			roots:     []string{"bin/bin1.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/reciprocal/bin/bin1.meta_lic"},
-				packageName{"testdata/reciprocal/bin/bin1.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/bin/bin1.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/reciprocal/bin/bin1.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/reciprocal/lib/liba.so.meta_lic"},
-				packageName{"testdata/reciprocal/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-reciprocal-RECIPROCAL_LICENSE"},
-				spdxRelationship{"Package-testdata/reciprocal/bin/bin1.meta_lic ", "testdata/reciprocal/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/reciprocal/lib/libc.a.meta_lic"},
-				packageName{"testdata/reciprocal/lib/libc.a.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/lib/libc.a.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-reciprocal-RECIPROCAL_LICENSE"},
-				spdxRelationship{"Package-testdata/reciprocal/bin/bin1.meta_lic ", "testdata/reciprocal/lib/libc.a.meta_lic", "CONTAINS"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-reciprocal-RECIPROCAL_LICENSE"},
-				spdxExtractedText{"$$$Reciprocal License$$$"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-reciprocal-bin-bin1",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-reciprocal-bin-bin1.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-reciprocal-bin-bin1.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-reciprocal-lib-liba.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-reciprocal-lib-liba.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-reciprocal-RECIPROCAL_LICENSE",
+					},
+					{
+						PackageName:             "testdata-reciprocal-lib-libc.a.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-reciprocal-lib-libc.a.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-reciprocal-RECIPROCAL_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-reciprocal-bin-bin1.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-reciprocal-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-reciprocal-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-reciprocal-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-reciprocal-lib-libc.a.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-reciprocal-RECIPROCAL_LICENSE",
+						ExtractedText:     "$$$Reciprocal License$$$\n",
+						LicenseName:       "testdata-reciprocal-RECIPROCAL_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -877,24 +1263,36 @@ func Test(t *testing.T) {
 			condition: "reciprocal",
 			name:      "library",
 			roots:     []string{"lib/libd.so.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/reciprocal/lib/libd.so.meta_lic"},
-				packageName{"testdata/reciprocal/lib/libd.so.meta_lic"},
-				spdxPkgID{"testdata/reciprocal/lib/libd.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/reciprocal/lib/libd.so.meta_lic", "DESCRIBES"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-notice-NOTICE_LICENSE"},
-				spdxExtractedText{"%%%Notice License%%%"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-reciprocal-lib-libd.so",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-reciprocal-lib-libd.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-reciprocal-lib-libd.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-reciprocal-lib-libd.so.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+						ExtractedText:     "%%%Notice License%%%\n",
+						LicenseName:       "testdata-notice-NOTICE_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/notice/NOTICE_LICENSE",
@@ -902,75 +1300,136 @@ func Test(t *testing.T) {
 			},
 		},
 		{
-			condition:   "restricted",
-			name:        "apex",
-			roots:       []string{"highest.apex.meta_lic"},
-			stripPrefix: "out/target/product/fictional/system/apex/",
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/restricted/highest.apex.meta_lic"},
-				packageName{"testdata/restricted/highest.apex.meta_lic"},
-				spdxPkgID{"testdata/restricted/highest.apex.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/restricted/highest.apex.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/restricted/bin/bin1.meta_lic"},
-				packageName{"testdata/restricted/bin/bin1.meta_lic"},
-				spdxPkgID{"testdata/restricted/bin/bin1.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/restricted/highest.apex.meta_lic ", "testdata/restricted/bin/bin1.meta_lic", "CONTAINS"},
-				packageTag{"testdata/restricted/bin/bin2.meta_lic"},
-				packageName{"testdata/restricted/bin/bin2.meta_lic"},
-				spdxPkgID{"testdata/restricted/bin/bin2.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/restricted/highest.apex.meta_lic ", "testdata/restricted/bin/bin2.meta_lic", "CONTAINS"},
-				packageTag{"testdata/restricted/lib/liba.so.meta_lic"},
-				packageName{"testdata/restricted/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/restricted/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-restricted-RESTRICTED_LICENSE"},
-				spdxRelationship{"Package-testdata/restricted/highest.apex.meta_lic ", "testdata/restricted/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/restricted/lib/libb.so.meta_lic"},
-				packageName{"testdata/restricted/lib/libb.so.meta_lic"},
-				spdxPkgID{"testdata/restricted/lib/libb.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-restricted-RESTRICTED_LICENSE"},
-				spdxRelationship{"Package-testdata/restricted/highest.apex.meta_lic ", "testdata/restricted/lib/libb.so.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata/restricted/bin/bin1.meta_lic ", "testdata/restricted/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/restricted/lib/libc.a.meta_lic"},
-				packageName{"testdata/restricted/lib/libc.a.meta_lic"},
-				spdxPkgID{"testdata/restricted/lib/libc.a.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-reciprocal-RECIPROCAL_LICENSE"},
-				spdxRelationship{"Package-testdata/restricted/bin/bin1.meta_lic ", "testdata/restricted/lib/libc.a.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata/restricted/lib/libb.so.meta_lic ", "testdata/restricted/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				packageTag{"testdata/restricted/lib/libd.so.meta_lic"},
-				packageName{"testdata/restricted/lib/libd.so.meta_lic"},
-				spdxPkgID{"testdata/restricted/lib/libd.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"Package-testdata/restricted/lib/libd.so.meta_lic ", "testdata/restricted/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-notice-NOTICE_LICENSE"},
-				spdxExtractedText{"%%%Notice License%%%"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-reciprocal-RECIPROCAL_LICENSE"},
-				spdxExtractedText{"$$$Reciprocal License$$$"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-restricted-RESTRICTED_LICENSE"},
-				spdxExtractedText{"###Restricted License###"},
-				spdxExtractedClosingText{},
+			condition: "restricted",
+			name:      "apex",
+			roots:     []string{"highest.apex.meta_lic"},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-restricted-highest.apex",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-restricted-highest.apex.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-restricted-highest.apex.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-restricted-bin-bin1.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-restricted-bin-bin1.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-restricted-bin-bin2.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-restricted-bin-bin2.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-restricted-lib-liba.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-restricted-lib-liba.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-restricted-RESTRICTED_LICENSE",
+					},
+					{
+						PackageName:             "testdata-restricted-lib-libb.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-restricted-lib-libb.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-restricted-RESTRICTED_LICENSE",
+					},
+					{
+						PackageName:             "testdata-restricted-lib-libc.a.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-restricted-lib-libc.a.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-reciprocal-RECIPROCAL_LICENSE",
+					},
+					{
+						PackageName:             "testdata-restricted-lib-libd.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-restricted-lib-libd.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-highest.apex.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-restricted-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-bin-bin1.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-restricted-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-bin-bin2.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-restricted-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-restricted-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-lib-libb.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-restricted-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-restricted-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-lib-libc.a.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-restricted-lib-libb.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-bin-bin2.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-restricted-lib-libd.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-bin-bin2.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+						ExtractedText:     "%%%Notice License%%%\n",
+						LicenseName:       "testdata-notice-NOTICE_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-reciprocal-RECIPROCAL_LICENSE",
+						ExtractedText:     "$$$Reciprocal License$$$\n",
+						LicenseName:       "testdata-reciprocal-RECIPROCAL_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-restricted-RESTRICTED_LICENSE",
+						ExtractedText:     "###Restricted License###\n",
+						LicenseName:       "testdata-restricted-RESTRICTED_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -987,75 +1446,136 @@ func Test(t *testing.T) {
 			},
 		},
 		{
-			condition:   "restricted",
-			name:        "container",
-			roots:       []string{"container.zip.meta_lic"},
-			stripPrefix: "out/target/product/fictional/system/apex/",
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/restricted/container.zip.meta_lic"},
-				packageName{"testdata/restricted/container.zip.meta_lic"},
-				spdxPkgID{"testdata/restricted/container.zip.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/restricted/container.zip.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/restricted/bin/bin1.meta_lic"},
-				packageName{"testdata/restricted/bin/bin1.meta_lic"},
-				spdxPkgID{"testdata/restricted/bin/bin1.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/restricted/container.zip.meta_lic ", "testdata/restricted/bin/bin1.meta_lic", "CONTAINS"},
-				packageTag{"testdata/restricted/bin/bin2.meta_lic"},
-				packageName{"testdata/restricted/bin/bin2.meta_lic"},
-				spdxPkgID{"testdata/restricted/bin/bin2.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/restricted/container.zip.meta_lic ", "testdata/restricted/bin/bin2.meta_lic", "CONTAINS"},
-				packageTag{"testdata/restricted/lib/liba.so.meta_lic"},
-				packageName{"testdata/restricted/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/restricted/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-restricted-RESTRICTED_LICENSE"},
-				spdxRelationship{"Package-testdata/restricted/container.zip.meta_lic ", "testdata/restricted/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/restricted/lib/libb.so.meta_lic"},
-				packageName{"testdata/restricted/lib/libb.so.meta_lic"},
-				spdxPkgID{"testdata/restricted/lib/libb.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-restricted-RESTRICTED_LICENSE"},
-				spdxRelationship{"Package-testdata/restricted/container.zip.meta_lic ", "testdata/restricted/lib/libb.so.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata/restricted/bin/bin1.meta_lic ", "testdata/restricted/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/restricted/lib/libc.a.meta_lic"},
-				packageName{"testdata/restricted/lib/libc.a.meta_lic"},
-				spdxPkgID{"testdata/restricted/lib/libc.a.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-reciprocal-RECIPROCAL_LICENSE"},
-				spdxRelationship{"Package-testdata/restricted/bin/bin1.meta_lic ", "testdata/restricted/lib/libc.a.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata/restricted/lib/libb.so.meta_lic ", "testdata/restricted/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				packageTag{"testdata/restricted/lib/libd.so.meta_lic"},
-				packageName{"testdata/restricted/lib/libd.so.meta_lic"},
-				spdxPkgID{"testdata/restricted/lib/libd.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"Package-testdata/restricted/lib/libd.so.meta_lic ", "testdata/restricted/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-notice-NOTICE_LICENSE"},
-				spdxExtractedText{"%%%Notice License%%%"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-reciprocal-RECIPROCAL_LICENSE"},
-				spdxExtractedText{"$$$Reciprocal License$$$"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-restricted-RESTRICTED_LICENSE"},
-				spdxExtractedText{"###Restricted License###"},
-				spdxExtractedClosingText{},
+			condition: "restricted",
+			name:      "container",
+			roots:     []string{"container.zip.meta_lic"},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-restricted-container.zip",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-restricted-container.zip.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-restricted-container.zip.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-restricted-bin-bin1.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-restricted-bin-bin1.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-restricted-bin-bin2.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-restricted-bin-bin2.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-restricted-lib-liba.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-restricted-lib-liba.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-restricted-RESTRICTED_LICENSE",
+					},
+					{
+						PackageName:             "testdata-restricted-lib-libb.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-restricted-lib-libb.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-restricted-RESTRICTED_LICENSE",
+					},
+					{
+						PackageName:             "testdata-restricted-lib-libc.a.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-restricted-lib-libc.a.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-reciprocal-RECIPROCAL_LICENSE",
+					},
+					{
+						PackageName:             "testdata-restricted-lib-libd.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-restricted-lib-libd.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-container.zip.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-restricted-container.zip.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-bin-bin1.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-restricted-container.zip.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-bin-bin2.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-restricted-container.zip.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-restricted-container.zip.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-lib-libb.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-restricted-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-restricted-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-lib-libc.a.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-restricted-lib-libb.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-bin-bin2.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-restricted-lib-libd.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-bin-bin2.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+						ExtractedText:     "%%%Notice License%%%\n",
+						LicenseName:       "testdata-notice-NOTICE_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-reciprocal-RECIPROCAL_LICENSE",
+						ExtractedText:     "$$$Reciprocal License$$$\n",
+						LicenseName:       "testdata-reciprocal-RECIPROCAL_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-restricted-RESTRICTED_LICENSE",
+						ExtractedText:     "###Restricted License###\n",
+						LicenseName:       "testdata-restricted-RESTRICTED_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -1075,42 +1595,70 @@ func Test(t *testing.T) {
 			condition: "restricted",
 			name:      "binary",
 			roots:     []string{"bin/bin1.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/restricted/bin/bin1.meta_lic"},
-				packageName{"testdata/restricted/bin/bin1.meta_lic"},
-				spdxPkgID{"testdata/restricted/bin/bin1.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/restricted/bin/bin1.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/restricted/lib/liba.so.meta_lic"},
-				packageName{"testdata/restricted/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/restricted/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-restricted-RESTRICTED_LICENSE"},
-				spdxRelationship{"Package-testdata/restricted/bin/bin1.meta_lic ", "testdata/restricted/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/restricted/lib/libc.a.meta_lic"},
-				packageName{"testdata/restricted/lib/libc.a.meta_lic"},
-				spdxPkgID{"testdata/restricted/lib/libc.a.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-reciprocal-RECIPROCAL_LICENSE"},
-				spdxRelationship{"Package-testdata/restricted/bin/bin1.meta_lic ", "testdata/restricted/lib/libc.a.meta_lic", "CONTAINS"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-reciprocal-RECIPROCAL_LICENSE"},
-				spdxExtractedText{"$$$Reciprocal License$$$"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-restricted-RESTRICTED_LICENSE"},
-				spdxExtractedText{"###Restricted License###"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-restricted-bin-bin1",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-restricted-bin-bin1.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-restricted-bin-bin1.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-restricted-lib-liba.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-restricted-lib-liba.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-restricted-RESTRICTED_LICENSE",
+					},
+					{
+						PackageName:             "testdata-restricted-lib-libc.a.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-restricted-lib-libc.a.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-reciprocal-RECIPROCAL_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-bin-bin1.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-restricted-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-restricted-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-lib-libc.a.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-reciprocal-RECIPROCAL_LICENSE",
+						ExtractedText:     "$$$Reciprocal License$$$\n",
+						LicenseName:       "testdata-reciprocal-RECIPROCAL_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-restricted-RESTRICTED_LICENSE",
+						ExtractedText:     "###Restricted License###\n",
+						LicenseName:       "testdata-restricted-RESTRICTED_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -1125,24 +1673,36 @@ func Test(t *testing.T) {
 			condition: "restricted",
 			name:      "library",
 			roots:     []string{"lib/libd.so.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/restricted/lib/libd.so.meta_lic"},
-				packageName{"testdata/restricted/lib/libd.so.meta_lic"},
-				spdxPkgID{"testdata/restricted/lib/libd.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/restricted/lib/libd.so.meta_lic", "DESCRIBES"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-notice-NOTICE_LICENSE"},
-				spdxExtractedText{"%%%Notice License%%%"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-restricted-lib-libd.so",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-restricted-lib-libd.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-restricted-lib-libd.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-restricted-lib-libd.so.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+						ExtractedText:     "%%%Notice License%%%\n",
+						LicenseName:       "testdata-notice-NOTICE_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/notice/NOTICE_LICENSE",
@@ -1153,71 +1713,133 @@ func Test(t *testing.T) {
 			condition: "proprietary",
 			name:      "apex",
 			roots:     []string{"highest.apex.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/proprietary/highest.apex.meta_lic"},
-				packageName{"testdata/proprietary/highest.apex.meta_lic"},
-				spdxPkgID{"testdata/proprietary/highest.apex.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/proprietary/highest.apex.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/proprietary/bin/bin1.meta_lic"},
-				packageName{"testdata/proprietary/bin/bin1.meta_lic"},
-				spdxPkgID{"testdata/proprietary/bin/bin1.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/proprietary/highest.apex.meta_lic ", "testdata/proprietary/bin/bin1.meta_lic", "CONTAINS"},
-				packageTag{"testdata/proprietary/bin/bin2.meta_lic"},
-				packageName{"testdata/proprietary/bin/bin2.meta_lic"},
-				spdxPkgID{"testdata/proprietary/bin/bin2.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-proprietary-PROPRIETARY_LICENSE"},
-				spdxRelationship{"Package-testdata/proprietary/highest.apex.meta_lic ", "testdata/proprietary/bin/bin2.meta_lic", "CONTAINS"},
-				packageTag{"testdata/proprietary/lib/liba.so.meta_lic"},
-				packageName{"testdata/proprietary/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/proprietary/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-proprietary-PROPRIETARY_LICENSE"},
-				spdxRelationship{"Package-testdata/proprietary/highest.apex.meta_lic ", "testdata/proprietary/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/proprietary/lib/libb.so.meta_lic"},
-				packageName{"testdata/proprietary/lib/libb.so.meta_lic"},
-				spdxPkgID{"testdata/proprietary/lib/libb.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-restricted-RESTRICTED_LICENSE"},
-				spdxRelationship{"Package-testdata/proprietary/highest.apex.meta_lic ", "testdata/proprietary/lib/libb.so.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata/proprietary/bin/bin1.meta_lic ", "testdata/proprietary/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/proprietary/lib/libc.a.meta_lic"},
-				packageName{"testdata/proprietary/lib/libc.a.meta_lic"},
-				spdxPkgID{"testdata/proprietary/lib/libc.a.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-proprietary-PROPRIETARY_LICENSE"},
-				spdxRelationship{"Package-testdata/proprietary/bin/bin1.meta_lic ", "testdata/proprietary/lib/libc.a.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata-proprietary-lib-libb.so.meta_lic ", "testdata/proprietary/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				packageTag{"testdata/proprietary/lib/libd.so.meta_lic"},
-				packageName{"testdata/proprietary/lib/libd.so.meta_lic"},
-				spdxPkgID{"testdata/proprietary/lib/libd.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"Package-testdata-proprietary-lib-libd.so.meta_lic ", "testdata/proprietary/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-notice-NOTICE_LICENSE"},
-				spdxExtractedText{"%%%Notice License%%%"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-proprietary-PROPRIETARY_LICENSE"},
-				spdxExtractedText{"@@@Proprietary License@@@"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-restricted-RESTRICTED_LICENSE"},
-				spdxExtractedText{"###Restricted License###"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-proprietary-highest.apex",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-proprietary-highest.apex.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-highest.apex.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-proprietary-bin-bin1.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-bin-bin1.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-proprietary-bin-bin2.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-bin-bin2.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-proprietary-PROPRIETARY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-proprietary-lib-liba.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-lib-liba.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-proprietary-PROPRIETARY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-proprietary-lib-libb.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-lib-libb.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-restricted-RESTRICTED_LICENSE",
+					},
+					{
+						PackageName:             "testdata-proprietary-lib-libc.a.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-lib-libc.a.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-proprietary-PROPRIETARY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-proprietary-lib-libd.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-lib-libd.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-highest.apex.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-bin-bin1.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-bin-bin2.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-highest.apex.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-lib-libb.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-lib-libc.a.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-lib-libb.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-bin-bin2.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-lib-libd.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-bin-bin2.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+						ExtractedText:     "%%%Notice License%%%\n",
+						LicenseName:       "testdata-notice-NOTICE_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-proprietary-PROPRIETARY_LICENSE",
+						ExtractedText:     "@@@Proprietary License@@@\n",
+						LicenseName:       "testdata-proprietary-PROPRIETARY_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-restricted-RESTRICTED_LICENSE",
+						ExtractedText:     "###Restricted License###\n",
+						LicenseName:       "testdata-restricted-RESTRICTED_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -1237,71 +1859,133 @@ func Test(t *testing.T) {
 			condition: "proprietary",
 			name:      "container",
 			roots:     []string{"container.zip.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/proprietary/container.zip.meta_lic"},
-				packageName{"testdata/proprietary/container.zip.meta_lic"},
-				spdxPkgID{"testdata/proprietary/container.zip.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/proprietary/container.zip.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/proprietary/bin/bin1.meta_lic"},
-				packageName{"testdata/proprietary/bin/bin1.meta_lic"},
-				spdxPkgID{"testdata/proprietary/bin/bin1.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"Package-testdata/proprietary/container.zip.meta_lic ", "testdata/proprietary/bin/bin1.meta_lic", "CONTAINS"},
-				packageTag{"testdata/proprietary/bin/bin2.meta_lic"},
-				packageName{"testdata/proprietary/bin/bin2.meta_lic"},
-				spdxPkgID{"testdata/proprietary/bin/bin2.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-proprietary-PROPRIETARY_LICENSE"},
-				spdxRelationship{"Package-testdata/proprietary/container.zip.meta_lic ", "testdata/proprietary/bin/bin2.meta_lic", "CONTAINS"},
-				packageTag{"testdata/proprietary/lib/liba.so.meta_lic"},
-				packageName{"testdata/proprietary/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/proprietary/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-proprietary-PROPRIETARY_LICENSE"},
-				spdxRelationship{"Package-testdata/proprietary/container.zip.meta_lic ", "testdata/proprietary/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/proprietary/lib/libb.so.meta_lic"},
-				packageName{"testdata/proprietary/lib/libb.so.meta_lic"},
-				spdxPkgID{"testdata/proprietary/lib/libb.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-restricted-RESTRICTED_LICENSE"},
-				spdxRelationship{"Package-testdata/proprietary/container.zip.meta_lic ", "testdata/proprietary/lib/libb.so.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata/proprietary/bin/bin1.meta_lic ", "testdata/proprietary/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/proprietary/lib/libc.a.meta_lic"},
-				packageName{"testdata/proprietary/lib/libc.a.meta_lic"},
-				spdxPkgID{"testdata/proprietary/lib/libc.a.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-proprietary-PROPRIETARY_LICENSE"},
-				spdxRelationship{"Package-testdata/proprietary/bin/bin1.meta_lic ", "testdata/proprietary/lib/libc.a.meta_lic", "CONTAINS"},
-				spdxRelationship{"Package-testdata-proprietary-lib-libb.so.meta_lic ", "testdata/proprietary/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				packageTag{"testdata/proprietary/lib/libd.so.meta_lic"},
-				packageName{"testdata/proprietary/lib/libd.so.meta_lic"},
-				spdxPkgID{"testdata/proprietary/lib/libd.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"Package-testdata-proprietary-lib-libd.so.meta_lic ", "testdata/proprietary/bin/bin2.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-notice-NOTICE_LICENSE"},
-				spdxExtractedText{"%%%Notice License%%%"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-proprietary-PROPRIETARY_LICENSE"},
-				spdxExtractedText{"@@@Proprietary License@@@"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-restricted-RESTRICTED_LICENSE"},
-				spdxExtractedText{"###Restricted License###"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-proprietary-container.zip",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-proprietary-container.zip.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-container.zip.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-proprietary-bin-bin1.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-bin-bin1.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-proprietary-bin-bin2.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-bin-bin2.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-proprietary-PROPRIETARY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-proprietary-lib-liba.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-lib-liba.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-proprietary-PROPRIETARY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-proprietary-lib-libb.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-lib-libb.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-restricted-RESTRICTED_LICENSE",
+					},
+					{
+						PackageName:             "testdata-proprietary-lib-libc.a.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-lib-libc.a.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-proprietary-PROPRIETARY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-proprietary-lib-libd.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-lib-libd.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-container.zip.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-container.zip.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-bin-bin1.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-container.zip.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-bin-bin2.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-container.zip.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-container.zip.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-lib-libb.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-lib-libc.a.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-lib-libb.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-bin-bin2.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-lib-libd.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-bin-bin2.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+						ExtractedText:     "%%%Notice License%%%\n",
+						LicenseName:       "testdata-notice-NOTICE_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-proprietary-PROPRIETARY_LICENSE",
+						ExtractedText:     "@@@Proprietary License@@@\n",
+						LicenseName:       "testdata-proprietary-PROPRIETARY_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-restricted-RESTRICTED_LICENSE",
+						ExtractedText:     "###Restricted License###\n",
+						LicenseName:       "testdata-restricted-RESTRICTED_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -1321,48 +2005,82 @@ func Test(t *testing.T) {
 			condition: "proprietary",
 			name:      "application",
 			roots:     []string{"application.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/proprietary/application.meta_lic"},
-				packageName{"testdata/proprietary/application.meta_lic"},
-				spdxPkgID{"testdata/proprietary/application.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/proprietary/application.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/proprietary/bin/bin3.meta_lic"},
-				packageName{"testdata/proprietary/bin/bin3.meta_lic"},
-				spdxPkgID{"testdata/proprietary/bin/bin3.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-restricted-RESTRICTED_LICENSE"},
-				spdxRelationship{"Package-testdata/proprietary/bin/bin3.meta_lic ", "testdata/proprietary/application.meta_lic", "BUILD_TOOL_OF"},
-				packageTag{"testdata/proprietary/lib/liba.so.meta_lic"},
-				packageName{"testdata/proprietary/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/proprietary/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-proprietary-PROPRIETARY_LICENSE"},
-				spdxRelationship{"Package-testdata/proprietary/application.meta_lic ", "testdata/proprietary/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/proprietary/lib/libb.so.meta_lic"},
-				packageName{"testdata/proprietary/lib/libb.so.meta_lic"},
-				spdxPkgID{"testdata/proprietary/lib/libb.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-restricted-RESTRICTED_LICENSE"},
-				spdxRelationship{"Package-testdata/proprietary/lib/libb.so.meta_lic ", "testdata/proprietary/application.meta_lic", "RUNTIME_DEPENDENCY_OF"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-proprietary-PROPRIETARY_LICENSE"},
-				spdxExtractedText{"@@@Proprietary License@@@"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-restricted-RESTRICTED_LICENSE"},
-				spdxExtractedText{"###Restricted License###"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-proprietary-application",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-proprietary-application.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-application.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-proprietary-bin-bin3.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-bin-bin3.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-restricted-RESTRICTED_LICENSE",
+					},
+					{
+						PackageName:             "testdata-proprietary-lib-liba.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-lib-liba.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-proprietary-PROPRIETARY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-proprietary-lib-libb.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-lib-libb.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-restricted-RESTRICTED_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-application.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-bin-bin3.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-application.meta_lic"),
+						Relationship: "BUILD_TOOL_OF",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-application.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-lib-libb.so.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-application.meta_lic"),
+						Relationship: "RUNTIME_DEPENDENCY_OF",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-proprietary-PROPRIETARY_LICENSE",
+						ExtractedText:     "@@@Proprietary License@@@\n",
+						LicenseName:       "testdata-proprietary-PROPRIETARY_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-restricted-RESTRICTED_LICENSE",
+						ExtractedText:     "###Restricted License###\n",
+						LicenseName:       "testdata-restricted-RESTRICTED_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -1378,39 +2096,65 @@ func Test(t *testing.T) {
 			condition: "proprietary",
 			name:      "binary",
 			roots:     []string{"bin/bin1.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/proprietary/bin/bin1.meta_lic"},
-				packageName{"testdata/proprietary/bin/bin1.meta_lic"},
-				spdxPkgID{"testdata/proprietary/bin/bin1.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/proprietary/bin/bin1.meta_lic", "DESCRIBES"},
-				packageTag{"testdata/proprietary/lib/liba.so.meta_lic"},
-				packageName{"testdata/proprietary/lib/liba.so.meta_lic"},
-				spdxPkgID{"testdata/proprietary/lib/liba.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-proprietary-PROPRIETARY_LICENSE"},
-				spdxRelationship{"Package-testdata/proprietary/bin/bin1.meta_lic ", "testdata/proprietary/lib/liba.so.meta_lic", "CONTAINS"},
-				packageTag{"testdata/proprietary/lib/libc.a.meta_lic"},
-				packageName{"testdata/proprietary/lib/libc.a.meta_lic"},
-				spdxPkgID{"testdata/proprietary/lib/libc.a.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-proprietary-PROPRIETARY_LICENSE"},
-				spdxRelationship{"Package-testdata/proprietary/bin/bin1.meta_lic ", "testdata/proprietary/lib/libc.a.meta_lic", "CONTAINS"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-firstparty-FIRST_PARTY_LICENSE"},
-				spdxExtractedText{"&&&First Party License&&&"},
-				spdxExtractedClosingText{},
-				spdxLicenseID{"testdata-proprietary-PROPRIETARY_LICENSE"},
-				spdxExtractedText{"@@@Proprietary License@@@"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-proprietary-bin-bin1",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-proprietary-bin-bin1.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-bin-bin1.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-proprietary-lib-liba.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-lib-liba.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-proprietary-PROPRIETARY_LICENSE",
+					},
+					{
+						PackageName:             "testdata-proprietary-lib-libc.a.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-lib-libc.a.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-proprietary-PROPRIETARY_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-bin-bin1.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-lib-liba.so.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+					{
+						RefA:         common.MakeDocElementID("", "testdata-proprietary-bin-bin1.meta_lic"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-lib-libc.a.meta_lic"),
+						Relationship: "CONTAINS",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-firstparty-FIRST_PARTY_LICENSE",
+						ExtractedText:     "&&&First Party License&&&\n",
+						LicenseName:       "testdata-firstparty-FIRST_PARTY_LICENSE",
+					},
+					{
+						LicenseIdentifier: "LicenseRef-testdata-proprietary-PROPRIETARY_LICENSE",
+						ExtractedText:     "@@@Proprietary License@@@\n",
+						LicenseName:       "testdata-proprietary-PROPRIETARY_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
@@ -1424,24 +2168,36 @@ func Test(t *testing.T) {
 			condition: "proprietary",
 			name:      "library",
 			roots:     []string{"lib/libd.so.meta_lic"},
-			expectedOut: []matcher{
-				spdxVersion{},
-				spdxDataLicense{},
-				spdxDocumentName{"Android"},
-				spdxID{},
-				spdxDocumentNameSpace{},
-				spdxCreatorOrganization{},
-				spdxCreatedTime{},
-				packageTag{"testdata/proprietary/lib/libd.so.meta_lic"},
-				packageName{"testdata/proprietary/lib/libd.so.meta_lic"},
-				spdxPkgID{"testdata/proprietary/lib/libd.so.meta_lic"},
-				spdxPkgDownloadLocation{"NOASSERTION"},
-				spdxPkgLicenseDeclared{"testdata-notice-NOTICE_LICENSE"},
-				spdxRelationship{"DOCUMENT ", "testdata/proprietary/lib/libd.so.meta_lic", "DESCRIBES"},
-				spdxLicense{},
-				spdxLicenseID{"testdata-notice-NOTICE_LICENSE"},
-				spdxExtractedText{"%%%Notice License%%%"},
-				spdxExtractedClosingText{},
+			expectedOut: &spdx.Document{
+				SPDXVersion:       "SPDX-2.2",
+				DataLicense:       "CC0-1.0",
+				SPDXIdentifier:    "DOCUMENT",
+				DocumentName:      "testdata-proprietary-lib-libd.so",
+				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				CreationInfo:      getCreationInfo(t),
+				Packages: []*spdx.Package{
+					{
+						PackageName:             "testdata-proprietary-lib-libd.so.meta_lic",
+						PackageVersion:          "NOASSERTION",
+						PackageDownloadLocation: "NOASSERTION",
+						PackageSPDXIdentifier:   common.ElementID("testdata-proprietary-lib-libd.so.meta_lic"),
+						PackageLicenseConcluded: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+					},
+				},
+				Relationships: []*spdx.Relationship{
+					{
+						RefA:         common.MakeDocElementID("", "DOCUMENT"),
+						RefB:         common.MakeDocElementID("", "testdata-proprietary-lib-libd.so.meta_lic"),
+						Relationship: "DESCRIBES",
+					},
+				},
+				OtherLicenses: []*spdx.OtherLicense{
+					{
+						LicenseIdentifier: "LicenseRef-testdata-notice-NOTICE_LICENSE",
+						ExtractedText:     "%%%Notice License%%%\n",
+						LicenseName:       "testdata-notice-NOTICE_LICENSE",
+					},
+				},
 			},
 			expectedDeps: []string{
 				"testdata/notice/NOTICE_LICENSE",
@@ -1459,9 +2215,9 @@ func Test(t *testing.T) {
 				rootFiles = append(rootFiles, "testdata/"+tt.condition+"/"+r)
 			}
 
-			ctx := context{stdout, stderr, compliance.GetFS(tt.outDir), "Android", []string{tt.stripPrefix}, fakeTime}
+			ctx := context{stdout, stderr, compliance.GetFS(tt.outDir), "", []string{tt.stripPrefix}, fakeTime}
 
-			deps, err := sbomGenerator(&ctx, rootFiles...)
+			spdxDoc, deps, err := sbomGenerator(&ctx, rootFiles...)
 			if err != nil {
 				t.Fatalf("sbom: error = %v, stderr = %v", err, stderr)
 				return
@@ -1470,28 +2226,26 @@ func Test(t *testing.T) {
 				t.Errorf("sbom: gotStderr = %v, want none", stderr)
 			}
 
-			t.Logf("got stdout: %s", stdout.String())
-
-			t.Logf("want stdout: %s", matcherList(tt.expectedOut).String())
-
-			out := bufio.NewScanner(stdout)
-			lineno := 0
-			for out.Scan() {
-				line := out.Text()
-				if strings.TrimLeft(line, " ") == "" {
-					continue
-				}
-				if len(tt.expectedOut) <= lineno {
-					t.Errorf("sbom: unexpected output at line %d: got %q, want nothing (wanted %d lines)", lineno+1, line, len(tt.expectedOut))
-				} else if !tt.expectedOut[lineno].isMatch(line) {
-					t.Errorf("sbom: unexpected output at line %d: got %q, want %q", lineno+1, line, tt.expectedOut[lineno])
-				}
-				lineno++
-			}
-			for ; lineno < len(tt.expectedOut); lineno++ {
-				t.Errorf("bom: missing output line %d: ended early, want %q", lineno+1, tt.expectedOut[lineno])
+			gotData, err := json.Marshal(spdxDoc)
+			if err != nil {
+				t.Fatalf("sbom: failed to marshal spdx doc: %v", err)
+				return
 			}
 
+			t.Logf("Got SPDX Doc: %s", string(gotData))
+
+			expectedData, err := json.Marshal(tt.expectedOut)
+			if err != nil {
+				t.Fatalf("sbom: failed to marshal spdx doc: %v", err)
+				return
+			}
+
+			t.Logf("Want SPDX Doc: %s", string(expectedData))
+
+			// compare the spdx Docs
+			compareSpdxDocs(t, spdxDoc, tt.expectedOut)
+
+			// compare deps
 			t.Logf("got deps: %q", deps)
 
 			t.Logf("want deps: %q", tt.expectedDeps)
@@ -1504,242 +2258,176 @@ func Test(t *testing.T) {
 	}
 }
 
-type matcher interface {
-	isMatch(line string) bool
-	String() string
+func getCreationInfo(t *testing.T) *spdx.CreationInfo {
+	ci, err := builder2v2.BuildCreationInfoSection2_2("Organization", "Google LLC", nil)
+	if err != nil {
+		t.Errorf("Unable to get creation info: %v", err)
+		return nil
+	}
+	return ci
 }
 
-type packageTag struct {
-	name string
+// compareSpdxDocs deep-compares two spdx docs by going through the info section, packages, relationships and licenses
+func compareSpdxDocs(t *testing.T, actual, expected *spdx.Document) {
+
+	if actual == nil || expected == nil {
+		t.Errorf("SBOM: SPDX Doc is nil! Got %v: Expected %v", actual, expected)
+	}
+
+	if actual.DocumentName != expected.DocumentName {
+		t.Errorf("sbom: unexpected SPDX Document Name got %q, want %q", actual.DocumentName, expected.DocumentName)
+	}
+
+	if actual.SPDXVersion != expected.SPDXVersion {
+		t.Errorf("sbom: unexpected SPDX Version got %s, want %s", actual.SPDXVersion, expected.SPDXVersion)
+	}
+
+	if actual.DataLicense != expected.DataLicense {
+		t.Errorf("sbom: unexpected SPDX DataLicense got %s, want %s", actual.DataLicense, expected.DataLicense)
+	}
+
+	if actual.SPDXIdentifier != expected.SPDXIdentifier {
+		t.Errorf("sbom: unexpected SPDX Identified got %s, want %s", actual.SPDXIdentifier, expected.SPDXIdentifier)
+	}
+
+	if actual.DocumentNamespace != expected.DocumentNamespace {
+		t.Errorf("sbom: unexpected SPDX Document Namespace got %s, want %s", actual.DocumentNamespace, expected.DocumentNamespace)
+	}
+
+	// compare creation info
+	compareSpdxCreationInfo(t, actual.CreationInfo, expected.CreationInfo)
+
+	// compare packages
+	if len(actual.Packages) != len(expected.Packages) {
+		t.Errorf("SBOM: Number of Packages is different! Got %d: Expected %d", len(actual.Packages), len(expected.Packages))
+	}
+
+	for i, pkg := range actual.Packages {
+		if !compareSpdxPackages(t, i, pkg, expected.Packages[i]) {
+			break
+		}
+	}
+
+	// compare licenses
+	if len(actual.OtherLicenses) != len(expected.OtherLicenses) {
+		t.Errorf("SBOM: Number of Licenses in actual is different! Got %d: Expected %d", len(actual.OtherLicenses), len(expected.OtherLicenses))
+	}
+	for i, license := range actual.OtherLicenses {
+		if !compareLicenses(t, i, license, expected.OtherLicenses[i]) {
+			break
+		}
+	}
+
+	//compare Relationships
+	if len(actual.Relationships) != len(expected.Relationships) {
+		t.Errorf("SBOM: Number of Licenses in actual is different! Got %d: Expected %d", len(actual.Relationships), len(expected.Relationships))
+	}
+	for i, rl := range actual.Relationships {
+		if !compareRelationShips(t, i, rl, expected.Relationships[i]) {
+			break
+		}
+	}
 }
 
-func (m packageTag) isMatch(line string) bool {
-	groups := spdxPackageTag.FindStringSubmatch(line)
-	if len(groups) != 2 {
+func compareSpdxCreationInfo(t *testing.T, actual, expected *spdx.CreationInfo) {
+	if actual == nil || expected == nil {
+		t.Errorf("SBOM: Creation info is nil! Got %q: Expected %q", actual, expected)
+	}
+
+	if actual.LicenseListVersion != expected.LicenseListVersion {
+		t.Errorf("SBOM: Creation info license version Error! Got %s: Expected %s", actual.LicenseListVersion, expected.LicenseListVersion)
+	}
+
+	if len(actual.Creators) != len(expected.Creators) {
+		t.Errorf("SBOM: Creation info creators Error! Got %d: Expected %d", len(actual.Creators), len(expected.Creators))
+	}
+
+	for i, info := range actual.Creators {
+		if info != expected.Creators[i] {
+			t.Errorf("SBOM: Creation info creators Error! Got %q: Expected %q", info, expected.Creators[i])
+		}
+	}
+}
+
+func compareSpdxPackages(t *testing.T, i int, actual, expected *spdx.Package) bool {
+	if actual == nil || expected == nil {
+		t.Errorf("SBOM: Packages are nil at index %d! Got %v: Expected %v", i, actual, expected)
 		return false
 	}
-	return groups[1] == m.name
-}
-
-func (m packageTag) String() string {
-	return "##### Package: " + m.name
-}
-
-type packageName struct {
-	name string
-}
-
-func (m packageName) isMatch(line string) bool {
-	groups := spdxPackageNameTag.FindStringSubmatch(line)
-	if len(groups) != 2 {
+	if actual.PackageName != expected.PackageName {
+		t.Errorf("SBOM: Package name Error at index %d! Got %s: Expected %s", i, actual.PackageName, expected.PackageName)
 		return false
 	}
-	return groups[1] == replaceSlashes(m.name)
-}
 
-func (m packageName) String() string {
-	return "PackageName: " + replaceSlashes(m.name)
-}
-
-type spdxID struct {}
-
-func (m spdxID) isMatch(line string) bool {
-	return spdxIDTag.MatchString(line)
-}
-
-func (m spdxID) String() string {
-	return "SPDXID: SPDXRef-DOCUMENT"
-}
-
-type spdxPkgID struct {
-	name string
-}
-
-func (m spdxPkgID) isMatch(line string) bool {
-	groups := spdxPkgIDTag.FindStringSubmatch(line)
-	if len(groups) != 2 {
+	if actual.PackageVersion != expected.PackageVersion {
+		t.Errorf("SBOM: Package version Error at index %d! Got %s: Expected %s", i, actual.PackageVersion, expected.PackageVersion)
 		return false
 	}
-	return groups[1] == replaceSlashes(m.name)
-}
 
-func (m spdxPkgID) String() string {
-	return "SPDXID: SPDXRef-Package-" + replaceSlashes(m.name)
-}
-
-type spdxVersion struct{}
-
-func (m spdxVersion) isMatch(line string) bool {
-	return spdxVersionTag.MatchString(line)
-}
-
-func (m spdxVersion) String() string {
-	return "SPDXVersion: SPDX-2.2"
-}
-
-type spdxDataLicense struct{}
-
-func (m spdxDataLicense) isMatch(line string) bool {
-	return spdxDataLicenseTag.MatchString(line)
-}
-
-func (m spdxDataLicense) String() string {
-	return "DataLicense: CC0-1.0"
-}
-
-type spdxDocumentName struct {
-	name string
-}
-
-func (m spdxDocumentName) isMatch(line string) bool {
-	return spdxDocumentNameTag.MatchString(line)
-}
-
-func (m spdxDocumentName) String() string {
-	return "DocumentName: " + m.name
-}
-
-type spdxDocumentNameSpace struct {
-	name string
-}
-
-func (m spdxDocumentNameSpace) isMatch(line string) bool {
-	return spdxDocumentNameSpaceTag.MatchString(line)
-}
-
-func (m spdxDocumentNameSpace) String() string {
-	return "DocumentNameSpace: Android"
-}
-
-type spdxCreatorOrganization struct{}
-
-func (m spdxCreatorOrganization) isMatch(line string) bool {
-	return spdxCreatorOrganizationTag.MatchString(line)
-}
-
-func (m spdxCreatorOrganization) String() string {
-	return "Creator: Organization: Google LLC"
-}
-
-func fakeTime() time.Time {
-	return time.UnixMicro(0).UTC()
-}
-
-type spdxCreatedTime struct{}
-
-func (m spdxCreatedTime) isMatch(line string) bool {
-	return spdxCreatedTimeTag.MatchString(line)
-}
-
-func (m spdxCreatedTime) String() string {
-	return "Created: 1970-01-01T00:00:00Z"
-}
-
-type spdxPkgDownloadLocation struct {
-	name string
-}
-
-func (m spdxPkgDownloadLocation) isMatch(line string) bool {
-	return spdxPkgDownloadLocationTag.MatchString(line)
-}
-
-func (m spdxPkgDownloadLocation) String() string {
-	return "PackageDownloadLocation: " + m.name
-}
-
-type spdxPkgLicenseDeclared struct {
-	name string
-}
-
-func (m spdxPkgLicenseDeclared) isMatch(line string) bool {
-	groups := spdxPkgLicenseDeclaredTag.FindStringSubmatch(line)
-	if len(groups) != 2 {
+	if actual.PackageSPDXIdentifier != expected.PackageSPDXIdentifier {
+		t.Errorf("SBOM: Package identifier Error at index %d! Got %s: Expected %s", i, actual.PackageSPDXIdentifier, expected.PackageSPDXIdentifier)
 		return false
 	}
-	return groups[1] == replaceSlashes(m.name)
-}
 
-func (m spdxPkgLicenseDeclared) String() string {
-	return "PackageLicenseConcluded: LicenseRef-" + m.name
-}
-
-type spdxRelationship struct {
-	pkg1     string
-	pkg2     string
-	relation string
-}
-
-func (m spdxRelationship) isMatch(line string) bool {
-	groups := spdxRelationshipTag.FindStringSubmatch(line)
-	if len(groups) != 4 {
+	if actual.PackageDownloadLocation != expected.PackageDownloadLocation {
+		t.Errorf("SBOM: Package download location Error at index %d! Got %s: Expected %s", i, actual.PackageDownloadLocation, expected.PackageDownloadLocation)
 		return false
 	}
-	return groups[1] == replaceSlashes(m.pkg1) && groups[2] == m.relation && groups[3] == replaceSlashes(m.pkg2)
-}
 
-func (m spdxRelationship) String() string {
-	return "Relationship: SPDXRef-" + replaceSlashes(m.pkg1) + " " + m.relation + " SPDXRef-Package-" + replaceSlashes(m.pkg2)
-}
-
-type spdxLicense struct{}
-
-func (m spdxLicense) isMatch(line string) bool {
-	return spdxLicenseTag.MatchString(line)
-}
-
-func (m spdxLicense) String() string {
-	return "##### Non-standard license:"
-}
-
-type spdxLicenseID struct {
-	name string
-}
-
-func (m spdxLicenseID) isMatch(line string) bool {
-	groups := spdxLicenseIDTag.FindStringSubmatch(line)
-	if len(groups) != 2 {
+	if actual.PackageLicenseConcluded != expected.PackageLicenseConcluded {
+		t.Errorf("SBOM: Package license concluded Error at index %d! Got %s: Expected %s", i, actual.PackageLicenseConcluded, expected.PackageLicenseConcluded)
 		return false
 	}
-	return groups[1] == replaceSlashes(m.name)
+	return true
 }
 
-func (m spdxLicenseID) String() string {
-	return "LicenseID: LicenseRef-" + m.name
-}
-
-type spdxExtractedText struct {
-	name string
-}
-
-func (m spdxExtractedText) isMatch(line string) bool {
-	groups := spdxExtractedTextTag.FindStringSubmatch(line)
-	if len(groups) != 2 {
+func compareRelationShips(t *testing.T, i int, actual, expected *spdx.Relationship) bool {
+	if actual == nil || expected == nil {
+		t.Errorf("SBOM: Relationships is nil at index %d! Got %v: Expected %v", i, actual, expected)
 		return false
 	}
-	return groups[1] == replaceSlashes(m.name)
-}
 
-func (m spdxExtractedText) String() string {
-	return "ExtractedText: <text>" + m.name
-}
-
-type spdxExtractedClosingText struct{}
-
-func (m spdxExtractedClosingText) isMatch(line string) bool {
-	return spdxExtractedClosingTextTag.MatchString(line)
-}
-
-func (m spdxExtractedClosingText) String() string {
-	return "</text>"
-}
-
-type matcherList []matcher
-
-func (l matcherList) String() string {
-	var sb strings.Builder
-	for _, m := range l {
-		s := m.String()
-		fmt.Fprintf(&sb, "%s\n", s)
+	if actual.RefA != expected.RefA {
+		t.Errorf("SBOM: Relationship RefA Error at index %d! Got %s: Expected %s", i, actual.RefA, expected.RefA)
+		return false
 	}
-	return sb.String()
+
+	if actual.RefB != expected.RefB {
+		t.Errorf("SBOM: Relationship RefB Error at index %d! Got %s: Expected %s", i, actual.RefB, expected.RefB)
+		return false
+	}
+
+	if actual.Relationship != expected.Relationship {
+		t.Errorf("SBOM: Relationship type Error at index %d! Got %s: Expected %s", i, actual.Relationship, expected.Relationship)
+		return false
+	}
+	return true
+}
+
+func compareLicenses(t *testing.T, i int, actual, expected *spdx.OtherLicense) bool {
+	if actual == nil || expected == nil {
+		t.Errorf("SBOM: Licenses is nil at index %d! Got %v: Expected %v", i, actual, expected)
+		return false
+	}
+
+	if actual.LicenseName != expected.LicenseName {
+		t.Errorf("SBOM: License Name Error at index %d! Got %s: Expected %s", i, actual.LicenseName, expected.LicenseName)
+		return false
+	}
+
+	if actual.LicenseIdentifier != expected.LicenseIdentifier {
+		t.Errorf("SBOM: License Identifier Error at index %d! Got %s: Expected %s", i, actual.LicenseIdentifier, expected.LicenseIdentifier)
+		return false
+	}
+
+	if actual.ExtractedText != expected.ExtractedText {
+		t.Errorf("SBOM: License Extracted Text Error at index %d! Got: %q want: %q", i, actual.ExtractedText, expected.ExtractedText)
+		return false
+	}
+	return true
+}
+
+func fakeTime() string {
+	t := time.UnixMicro(0)
+	return t.UTC().Format("2006-01-02T15:04:05Z")
 }

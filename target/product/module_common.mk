@@ -30,3 +30,5 @@ PRODUCT_MODULE_BUILD_FROM_SOURCE := true
 ifneq (,$(strip $(wildcard frameworks/base/Android.bp)))
   UNBUNDLED_BUILD_SDKS_FROM_SOURCE := true
 endif
+
+PRODUCT_BRAND := Android
