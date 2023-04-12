@@ -141,11 +141,7 @@ class VerifiedBootVersion2VerityImageBuilder(VerityImageBuilder):
     self.footer_type = footer_type
     self.avbtool = avbtool
     self.algorithm = algorithm
-    self.key_path = key_path
-    if key_path and not os.path.exists(key_path) and OPTIONS.search_path:
-      new_key_path = os.path.join(OPTIONS.search_path, key_path)
-      if os.path.exists(new_key_path):
-        self.key_path = new_key_path
+    self.key_path = common.ResolveAVBSigningPathArgs(key_path)
 
     self.salt = salt
     self.signing_args = signing_args
