@@ -29,6 +29,7 @@ import common
 import merge_utils
 import sparse_img
 import verity_utils
+from ota_utils import ParseUpdateEngineConfig
 
 from common import ExternalError
 
@@ -52,28 +53,6 @@ PARTITION_TAG_PATTERN = re.compile(r'partition="(.*?)"')
 MODULE_KEY_PATTERN = re.compile(r'name="(.+)\.(apex|apk)"')
 
 
-def ParseUpdateEngineConfig(path: str):
-  """Parse the update_engine config stored in file `path`
-  Args
-    path: Path to update_engine_config.txt file in target_files
-
-  Returns
-    A tuple of (major, minor) version number . E.g. (2, 8)
-  """
-  with open(path, "r") as fp:
-    # update_engine_config.txt is only supposed to contain two lines,
-    # PAYLOAD_MAJOR_VERSION and PAYLOAD_MINOR_VERSION. 1024 should be more than
-    # sufficient. If the length is more than that, something is wrong.
-    data = fp.read(1024)
-    major = re.search(r"PAYLOAD_MAJOR_VERSION=(\d+)", data)
-    if not major:
-      raise ValueError(
-          f"{path} is an invalid update_engine config, missing PAYLOAD_MAJOR_VERSION {data}")
-    minor = re.search(r"PAYLOAD_MINOR_VERSION=(\d+)", data)
-    if not minor:
-      raise ValueError(
-          f"{path} is an invalid update_engine config, missing PAYLOAD_MINOR_VERSION {data}")
-    return (int(major.group(1)), int(minor.group(1)))
 
 
 def MergeUpdateEngineConfig(input_metadir1, input_metadir2, merged_meta_dir):
