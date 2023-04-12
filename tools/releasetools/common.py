@@ -4011,3 +4011,26 @@ def IsSparseImage(filepath):
     # Magic for android sparse image format
     # https://source.android.com/devices/bootloader/images
     return fp.read(4) == b'\x3A\xFF\x26\xED'
+
+def ParseUpdateEngineConfig(path: str):
+  """Parse the update_engine config stored in file `path`
+  Args
+    path: Path to update_engine_config.txt file in target_files
+
+  Returns
+    A tuple of (major, minor) version number . E.g. (2, 8)
+  """
+  with open(path, "r") as fp:
+    # update_engine_config.txt is only supposed to contain two lines,
+    # PAYLOAD_MAJOR_VERSION and PAYLOAD_MINOR_VERSION. 1024 should be more than
+    # sufficient. If the length is more than that, something is wrong.
+    data = fp.read(1024)
+    major = re.search(r"PAYLOAD_MAJOR_VERSION=(\d+)", data)
+    if not major:
+      raise ValueError(
+          f"{path} is an invalid update_engine config, missing PAYLOAD_MAJOR_VERSION {data}")
+    minor = re.search(r"PAYLOAD_MINOR_VERSION=(\d+)", data)
+    if not minor:
+      raise ValueError(
+          f"{path} is an invalid update_engine config, missing PAYLOAD_MINOR_VERSION {data}")
+    return (int(major.group(1)), int(minor.group(1)))
