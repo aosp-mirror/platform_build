@@ -1,6 +1,11 @@
 #!/bin/bash
 # Script to perform a 2nd step of Android Finalization: REL finalization, create CLs and upload to Gerrit.
 
+# WIP, does not work yet
+exit 10
+
+set -ex
+
 function update_step_2_changes() {
     set +e
     repo forall -c '\
