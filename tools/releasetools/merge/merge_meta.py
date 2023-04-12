@@ -99,16 +99,16 @@ def MergeMetaFiles(temp_dir, merged_dir):
   """Merges various files in META/*."""
 
   framework_meta_dir = os.path.join(temp_dir, 'framework_meta', 'META')
-  merge_utils.ExtractItems(
-      input_zip=OPTIONS.framework_target_files,
+  merge_utils.CollectTargetFiles(
+      input_zipfile_or_dir=OPTIONS.framework_target_files,
       output_dir=os.path.dirname(framework_meta_dir),
-      extract_item_list=('META/*',))
+      item_list=('META/*',))
 
   vendor_meta_dir = os.path.join(temp_dir, 'vendor_meta', 'META')
-  merge_utils.ExtractItems(
-      input_zip=OPTIONS.vendor_target_files,
+  merge_utils.CollectTargetFiles(
+      input_zipfile_or_dir=OPTIONS.vendor_target_files,
       output_dir=os.path.dirname(vendor_meta_dir),
-      extract_item_list=('META/*',))
+      item_list=('META/*',))
 
   merged_meta_dir = os.path.join(merged_dir, 'META')
 
