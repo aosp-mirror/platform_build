@@ -452,12 +452,14 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
         test_file.write(bytes(data))
       test_file.close()
 
-      expected_stat = os.stat(test_file_name)
       expected_mode = extra_zipwrite_args.get("perms", 0o644)
       expected_compress_type = extra_zipwrite_args.get("compress_type",
                                                        zipfile.ZIP_STORED)
-      time.sleep(5)  # Make sure the atime/mtime will change measurably.
 
+      # Arbitrary timestamp, just to make sure common.ZipWrite() restores
+      # the timestamp after writing.
+      os.utime(test_file_name, (1234567, 1234567))
+      expected_stat = os.stat(test_file_name)
       common.ZipWrite(zip_file, test_file_name, **extra_zipwrite_args)
       zip_file.close()
 
@@ -480,8 +482,6 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     try:
       expected_compress_type = extra_args.get("compress_type",
                                               zipfile.ZIP_STORED)
-      time.sleep(5)  # Make sure the atime/mtime will change measurably.
-
       if not isinstance(zinfo_or_arcname, zipfile.ZipInfo):
         arcname = zinfo_or_arcname
         expected_mode = extra_args.get("perms", 0o644)
@@ -528,11 +528,13 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
         test_file.write(data)
       test_file.close()
 
+      # Arbitrary timestamp, just to make sure common.ZipWrite() restores
+      # the timestamp after writing.
+      os.utime(test_file_name, (1234567, 1234567))
       expected_stat = os.stat(test_file_name)
       expected_mode = 0o644
       expected_compress_type = extra_args.get("compress_type",
                                               zipfile.ZIP_STORED)
-      time.sleep(5)  # Make sure the atime/mtime will change measurably.
 
       common.ZipWrite(zip_file, test_file_name, **extra_args)
       common.ZipWriteStr(zip_file, arcname_small, small, **extra_args)
