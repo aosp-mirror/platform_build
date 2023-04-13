@@ -839,6 +839,9 @@ class PayloadGenerator(object):
 
     major_version, minor_version = ParseUpdateEngineConfig(
         os.path.join(target_dir, "META", "update_engine_config.txt"))
+    if source_file:
+      major_version, minor_version = ParseUpdateEngineConfig(
+          os.path.join(source_dir, "META", "update_engine_config.txt"))
     if self.minor_version:
       minor_version = self.minor_version
     cmd.extend(["--major_version", str(major_version)])
