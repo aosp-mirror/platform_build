@@ -86,7 +86,7 @@ class TagValueWriter:
 
   @staticmethod
   def marshal_package(package):
-    download_location = 'NONE'
+    download_location = sbom_data.VALUE_NOASSERTION
     if package.download_location:
       download_location = package.download_location
     tagvalues = [
@@ -296,7 +296,7 @@ class JSONWriter:
       package = {
         PropNames.NAME: p.name,
         PropNames.SPDXID: p.id,
-        PropNames.PACKAGE_DOWNLOAD_LOCATION: p.download_location if p.download_location else 'NONE',
+        PropNames.PACKAGE_DOWNLOAD_LOCATION: p.download_location if p.download_location else sbom_data.VALUE_NOASSERTION,
         PropNames.FILES_ANALYZED: p.files_analyzed
       }
       if p.version:

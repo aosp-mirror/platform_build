@@ -53,7 +53,7 @@ ExternalRef: SECURITY cpe22Type cpe:/a:jsoncpp_project:jsoncpp:1.9.4
 
 PackageName: Upstream package1
 SPDXID: SPDXRef-UPSTREAM-package1
-PackageDownloadLocation: NONE
+PackageDownloadLocation: NOASSERTION
 FilesAnalyzed: false
 PackageVersion: 1.1
 PackageSupplier: Organization: upstream

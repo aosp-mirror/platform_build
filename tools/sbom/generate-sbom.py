@@ -279,12 +279,13 @@ def get_sbom_fragments(installed_file_metadata, metadata_file_path):
     name, external_refs = get_source_package_info(installed_file_metadata, metadata_file_path)
     source_package_id = new_package_id(name, PKG_SOURCE)
     source_package = sbom_data.Package(id=source_package_id, name=name, version=args.build_version,
+                                       download_location=sbom_data.VALUE_NONE,
                                        supplier='Organization: ' + args.product_mfr,
                                        external_refs=external_refs)
 
     upstream_package_id = new_package_id(name, PKG_UPSTREAM)
     upstream_package = sbom_data.Package(id=upstream_package_id, name=name, version=version,
-                                         supplier='Organization: ' + homepage if homepage else None,
+                                         supplier=('Organization: ' + homepage) if homepage else sbom_data.VALUE_NOASSERTION,
                                          download_location=download_location)
     packages += [source_package, upstream_package]
     relationships.append(sbom_data.Relationship(id1=source_package_id,
@@ -296,6 +297,7 @@ def get_sbom_fragments(installed_file_metadata, metadata_file_path):
     prebuilt_package_id = new_package_id(name, PKG_PREBUILT)
     prebuilt_package = sbom_data.Package(id=prebuilt_package_id,
                                          name=name,
+                                         download_location=sbom_data.VALUE_NONE,
                                          version=args.build_version,
                                          supplier='Organization: ' + args.product_mfr)
     packages.append(prebuilt_package)
@@ -438,6 +440,7 @@ def main():
 
   product_package = sbom_data.Package(id=sbom_data.SPDXID_PRODUCT,
                                       name=sbom_data.PACKAGE_NAME_PRODUCT,
+                                      download_location=sbom_data.VALUE_NONE,
                                       version=args.build_version,
                                       supplier='Organization: ' + args.product_mfr,
                                       files_analyzed=True)
@@ -445,6 +448,7 @@ def main():
 
   doc.packages.append(sbom_data.Package(id=sbom_data.SPDXID_PLATFORM,
                                         name=sbom_data.PACKAGE_NAME_PLATFORM,
+                                        download_location=sbom_data.VALUE_NONE,
                                         version=args.build_version,
                                         supplier='Organization: ' + args.product_mfr))
 
