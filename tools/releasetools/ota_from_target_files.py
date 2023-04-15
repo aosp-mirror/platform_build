@@ -495,7 +495,7 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
       else:
         common.ZipWrite(target_zip, unzipped_file, arcname=info.filename)
 
-  target_zip.close()
+  common.ZipClose(target_zip)
 
   return target_file
 
@@ -632,7 +632,7 @@ def GetTargetFilesZipForPartialUpdates(input_file, ab_partitions):
 
     # TODO(xunchang) handle META/postinstall_config.txt'
 
-  partial_target_zip.close()
+  common.ZipClose(partial_target_zip)
 
   return partial_target_file
 
@@ -717,7 +717,7 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   # Write new ab_partitions.txt file
   common.ZipWrite(target_zip, new_ab_partitions, arcname=AB_PARTITIONS)
 
-  target_zip.close()
+  common.ZipClose(target_zip)
 
   return target_file
 
@@ -909,6 +909,19 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     logger.info(
         "VABC Compression algorithm is set to 'none', disabling VABC xor")
     OPTIONS.enable_vabc_xor = False
+
+  if OPTIONS.enable_vabc_xor:
+    api_level = -1
+    if source_info is not None:
+      api_level = source_info.vendor_api_level
+    if api_level == -1:
+      api_level = target_info.vendor_api_level
+
+    # XOR is only supported on T and higher.
+    if api_level < 33:
+      logger.error("VABC XOR not supported on this vendor, disabling")
+      OPTIONS.enable_vabc_xor = False
+
   additional_args = []
 
   # Prepare custom images.
@@ -1052,11 +1065,11 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     common.ZipWriteStr(output_zip, "apex_info.pb", ota_apex_info,
                        compress_type=zipfile.ZIP_STORED)
 
-  target_zip.close()
+  common.ZipClose(target_zip)
 
   # We haven't written the metadata entry yet, which will be handled in
   # FinalizeMetadata().
-  output_zip.close()
+  common.ZipClose(output_zip)
 
   FinalizeMetadata(metadata, staging_file, output_file,
                    package_key=OPTIONS.package_key)
