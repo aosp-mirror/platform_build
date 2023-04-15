@@ -909,6 +909,19 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     logger.info(
         "VABC Compression algorithm is set to 'none', disabling VABC xor")
     OPTIONS.enable_vabc_xor = False
+
+  if OPTIONS.enable_vabc_xor:
+    api_level = -1
+    if source_info is not None:
+      api_level = source_info.vendor_api_level
+    if api_level == -1:
+      api_level = target_info.vendor_api_level
+
+    # XOR is only supported on T and higher.
+    if api_level < 33:
+      logger.error("VABC XOR not supported on this vendor, disabling")
+      OPTIONS.enable_vabc_xor = False
+
   additional_args = []
 
   # Prepare custom images.

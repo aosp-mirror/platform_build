@@ -461,6 +461,25 @@ class BuildInfo(object):
     return system_prop and system_prop.GetProp("ro.build.version.release") == "11"
 
   @property
+  def vendor_api_level(self):
+    vendor_prop = self.info_dict.get("vendor.build.prop")
+    if not vendor_prop:
+      return -1
+
+    props = [
+        "ro.board.api_level",
+        "ro.board.first_api_level",
+        "ro.product.first_api_level",
+    ]
+    for prop in props:
+      value = vendor_prop.GetProp(prop)
+      try:
+          return int(value)
+      except:
+          pass
+    return -1
+
+  @property
   def is_vabc_xor(self):
     vendor_prop = self.info_dict.get("vendor.build.prop")
     vabc_xor_enabled = vendor_prop and \
