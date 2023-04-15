@@ -38,6 +38,7 @@ import (
 	"github.com/spdx/tools-golang/json"
 	"github.com/spdx/tools-golang/spdx/common"
 	spdx "github.com/spdx/tools-golang/spdx/v2_2"
+	"github.com/spdx/tools-golang/spdxlib"
 )
 
 var (
@@ -173,6 +174,7 @@ Options:
 		os.Exit(1)
 	}
 
+	// writing the spdx Doc created
 	if err := spdx_json.Save2_2(spdxDoc, ofile); err != nil {
 		fmt.Fprintf(os.Stderr, "failed to write document to %v: %v", *outputFile, err)
 		os.Exit(1)
@@ -516,7 +518,7 @@ func sbomGenerator(ctx *context, files ...string) (*spdx.Document, []string, err
 
 	ci.Created = ctx.creationTime()
 
-	return &spdx.Document{
+	doc := &spdx.Document{
 		SPDXVersion:       "SPDX-2.2",
 		DataLicense:       "CC0-1.0",
 		SPDXIdentifier:    "DOCUMENT",
@@ -526,5 +528,11 @@ func sbomGenerator(ctx *context, files ...string) (*spdx.Document, []string, err
 		Packages:          pkgs,
 		Relationships:     relationships,
 		OtherLicenses:     otherLicenses,
-	}, deps, nil
+	}
+
+	if err := spdxlib.ValidateDocument2_2(doc); err != nil {
+		return nil, nil, fmt.Errorf("Unable to validate the SPDX doc: %v\n", err)
+	}
+
+	return doc, deps, nil
 }
