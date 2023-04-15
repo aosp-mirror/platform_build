@@ -74,7 +74,7 @@
         {
             "name": "Upstream package1",
             "SPDXID": "SPDXRef-UPSTREAM-package1",
-            "downloadLocation": "NONE",
+            "downloadLocation": "NOASSERTION",
             "filesAnalyzed": false,
             "versionInfo": "1.1",
             "supplier": "Organization: upstream"

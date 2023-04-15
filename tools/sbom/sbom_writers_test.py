@@ -49,6 +49,7 @@ class SBOMWritersTest(unittest.TestCase):
     self.sbom_doc.add_package(
       sbom_data.Package(id=sbom_data.SPDXID_PRODUCT,
                         name=sbom_data.PACKAGE_NAME_PRODUCT,
+                        download_location=sbom_data.VALUE_NONE,
                         supplier=SUPPLIER_GOOGLE,
                         version=BUILD_FINGER_PRINT,
                         files_analyzed=True,
@@ -58,6 +59,7 @@ class SBOMWritersTest(unittest.TestCase):
     self.sbom_doc.add_package(
       sbom_data.Package(id=sbom_data.SPDXID_PLATFORM,
                         name=sbom_data.PACKAGE_NAME_PLATFORM,
+                        download_location=sbom_data.VALUE_NONE,
                         supplier=SUPPLIER_GOOGLE,
                         version=BUILD_FINGER_PRINT,
                         ))
@@ -65,6 +67,7 @@ class SBOMWritersTest(unittest.TestCase):
     self.sbom_doc.add_package(
       sbom_data.Package(id=SPDXID_PREBUILT_PACKAGE1,
                         name='Prebuilt package1',
+                        download_location=sbom_data.VALUE_NONE,
                         supplier=SUPPLIER_GOOGLE,
                         version=BUILD_FINGER_PRINT,
                         ))
@@ -72,6 +75,7 @@ class SBOMWritersTest(unittest.TestCase):
     self.sbom_doc.add_package(
       sbom_data.Package(id=SPDXID_SOURCE_PACKAGE1,
                         name='Source package1',
+                        download_location=sbom_data.VALUE_NONE,
                         supplier=SUPPLIER_GOOGLE,
                         version=BUILD_FINGER_PRINT,
                         external_refs=[sbom_data.PackageExternalRef(
@@ -121,6 +125,7 @@ class SBOMWritersTest(unittest.TestCase):
     self.unbundled_sbom_doc.add_package(
       sbom_data.Package(id=SPDXID_SOURCE_PACKAGE1,
                         name='Unbundled apk package',
+                        download_location=sbom_data.VALUE_NONE,
                         supplier=SUPPLIER_GOOGLE,
                         version=BUILD_FINGER_PRINT))
     self.unbundled_sbom_doc.add_relationship(sbom_data.Relationship(id1=SPDXID_FILE1,
