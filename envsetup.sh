@@ -1096,12 +1096,12 @@ function qpid() {
 #
 # Easy way to make system.img/etc writable
 function syswrite() {
-  adb wait-for-device && adb root || return 1
+  adb wait-for-device && adb root && adb wait-for-device || return 1
   if [[ $(adb disable-verity | grep -i "reboot") ]]; then
       echo "rebooting"
-      adb reboot && adb wait-for-device && adb root || return 1
+      adb reboot && adb wait-for-device && adb root && adb wait-for-device || return 1
   fi
-  adb wait-for-device && adb remount || return 1
+  adb remount || return 1
 }
 
 # coredump_setup - enable core dumps globally for any process
