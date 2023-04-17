@@ -818,6 +818,9 @@ def AddSuperEmpty(output_zip):
   """Create a super_empty.img and store it in output_zip."""
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "super_empty.img")
+  if os.path.exists(img.name):
+    logger.info("super_empty.img already exists; no need to rebuild...")
+    return
   build_super_image.BuildSuperImage(OPTIONS.info_dict, img.name)
   img.Write()
 
