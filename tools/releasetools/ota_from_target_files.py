@@ -267,8 +267,8 @@ import care_map_pb2
 import common
 import ota_utils
 from ota_utils import (UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata,
-                       PayloadGenerator, SECURITY_PATCH_LEVEL_PROP_NAME)
-from common import IsSparseImage
+                       PayloadGenerator, SECURITY_PATCH_LEVEL_PROP_NAME, CopyTargetFilesDir)
+from common import DoesInputFileContain, IsSparseImage
 import target_files_diff
 from check_target_files_vintf import CheckVintfIfTrebleEnabled
 from non_ab_ota import GenerateNonAbOtaPackage
@@ -830,6 +830,12 @@ def SupportsMainlineGkiUpdates(target_file):
 
 def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   """Generates an Android OTA package that has A/B update payload."""
+  # If input target_files are directories, create a copy so that we can modify
+  # them directly
+  if os.path.isdir(target_file):
+    target_file = CopyTargetFilesDir(target_file)
+  if source_file is not None and os.path.isdir(source_file):
+    source_file = CopyTargetFilesDir(source_file)
   # Stage the output zip package for package signing.
   if not OPTIONS.no_signing:
     staging_file = common.MakeTempFile(suffix='.zip')
@@ -840,6 +846,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
                                allowZip64=True)
 
   if source_file is not None:
+    source_file = ota_utils.ExtractTargetFiles(source_file)
     assert "ab_partitions" in OPTIONS.source_info_dict, \
         "META/ab_partitions.txt is required for ab_update."
     assert "ab_partitions" in OPTIONS.target_info_dict, \
@@ -942,9 +949,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   elif OPTIONS.skip_postinstall:
     target_file = GetTargetFilesZipWithoutPostinstallConfig(target_file)
   # Target_file may have been modified, reparse ab_partitions
-  with zipfile.ZipFile(target_file, allowZip64=True) as zfp:
-    target_info.info_dict['ab_partitions'] = zfp.read(
-        AB_PARTITIONS).decode().strip().split("\n")
+  target_info.info_dict['ab_partitions'] = common.ReadFromInputFile(target_file,
+                                                                    AB_PARTITIONS).strip().split("\n")
 
   CheckVintfIfTrebleEnabled(target_file, target_info)
 
@@ -1042,15 +1048,13 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
 
   # If dm-verity is supported for the device, copy contents of care_map
   # into A/B OTA package.
-  target_zip = zipfile.ZipFile(target_file, "r", allowZip64=True)
   if target_info.get("avb_enable") == "true":
-    care_map_list = [x for x in ["care_map.pb", "care_map.txt"] if
-                     "META/" + x in target_zip.namelist()]
-
     # Adds care_map if either the protobuf format or the plain text one exists.
-    if care_map_list:
-      care_map_name = care_map_list[0]
-      care_map_data = target_zip.read("META/" + care_map_name)
+    for care_map_name in ["care_map.pb", "care_map.txt"]:
+      if not DoesInputFileContain(target_file, "META/" + care_map_name):
+        continue
+      care_map_data = common.ReadBytesFromInputFile(
+          target_file, "META/" + care_map_name)
       # In order to support streaming, care_map needs to be packed as
       # ZIP_STORED.
       common.ZipWriteStr(output_zip, care_map_name, care_map_data,
@@ -1060,12 +1064,10 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
 
   # Add the source apex version for incremental ota updates, and write the
   # result apex info to the ota package.
-  ota_apex_info = ota_utils.ConstructOtaApexInfo(target_zip, source_file)
+  ota_apex_info = ota_utils.ConstructOtaApexInfo(target_file, source_file)
   if ota_apex_info is not None:
     common.ZipWriteStr(output_zip, "apex_info.pb", ota_apex_info,
                        compress_type=zipfile.ZIP_STORED)
-
-  common.ZipClose(target_zip)
 
   # We haven't written the metadata entry yet, which will be handled in
   # FinalizeMetadata().
@@ -1257,7 +1259,7 @@ def main(argv):
   if OPTIONS.extracted_input is not None:
     OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.extracted_input)
   else:
-    OPTIONS.info_dict = ParseInfoDict(args[0])
+    OPTIONS.info_dict = common.LoadInfoDict(args[0])
 
   if OPTIONS.wipe_user_data:
     if not OPTIONS.vabc_downgrade:
