@@ -18,4 +18,4 @@ export FINAL_MAINLINE_EXTENSION='7'
 # 'unfinalized' - branch is in development state,
 # 'sdk' - SDK/API is finalized
 # 'rel' - branch is finalized, switched to REL
-export FINAL_STATE='unfinalized'
+export FINAL_STATE='sdk'
