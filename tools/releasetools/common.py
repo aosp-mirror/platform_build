@@ -1376,11 +1376,7 @@ def RunHostInitVerifier(product_out, partition_map):
 def AppendAVBSigningArgs(cmd, partition):
   """Append signing arguments for avbtool."""
   # e.g., "--key path/to/signing_key --algorithm SHA256_RSA4096"
-  key_path = OPTIONS.info_dict.get("avb_" + partition + "_key_path")
-  if key_path and not os.path.exists(key_path) and OPTIONS.search_path:
-    new_key_path = os.path.join(OPTIONS.search_path, key_path)
-    if os.path.exists(new_key_path):
-      key_path = new_key_path
+  key_path = ResolveAVBSigningPathArgs(OPTIONS.info_dict.get("avb_" + partition + "_key_path"))
   algorithm = OPTIONS.info_dict.get("avb_" + partition + "_algorithm")
   if key_path and algorithm:
     cmd.extend(["--key", key_path, "--algorithm", algorithm])
@@ -1388,6 +1384,32 @@ def AppendAVBSigningArgs(cmd, partition):
   # make_vbmeta_image doesn't like "--salt" (and it's not needed).
   if avb_salt and not partition.startswith("vbmeta"):
     cmd.extend(["--salt", avb_salt])
+
+
+def ResolveAVBSigningPathArgs(split_args):
+
+  def ResolveBinaryPath(path):
+    if os.path.exists(path):
+      return path
+    new_path = os.path.join(OPTIONS.search_path, path)
+    if os.path.exists(new_path):
+      return new_path
+    raise ExternalError(
+      "Failed to find {}".format(new_path))
+
+  if not split_args:
+    return split_args
+
+  if isinstance(split_args, list):
+    for index, arg in enumerate(split_args[:-1]):
+      if arg == '--signing_helper':
+        signing_helper_path = split_args[index + 1]
+        split_args[index + 1] = ResolveBinaryPath(signing_helper_path)
+        break
+  elif isinstance(split_args, str):
+    split_args = ResolveBinaryPath(split_args)
+
+  return split_args
 
 
 def GetAvbPartitionArg(partition, image, info_dict=None):
@@ -1442,10 +1464,7 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   """
   if key is None:
     key = info_dict["avb_" + partition + "_key_path"]
-  if key and not os.path.exists(key) and OPTIONS.search_path:
-    new_key_path = os.path.join(OPTIONS.search_path, key)
-    if os.path.exists(new_key_path):
-      key = new_key_path
+  key = ResolveAVBSigningPathArgs(key)
   pubkey_path = ExtractAvbPublicKey(info_dict["avb_avbtool"], key)
   rollback_index_location = info_dict[
       "avb_" + partition + "_rollback_index_location"]
@@ -1461,10 +1480,7 @@ def _GenerateGkiCertificate(image, image_name):
   key_path = OPTIONS.info_dict.get("gki_signing_key_path")
   algorithm = OPTIONS.info_dict.get("gki_signing_algorithm")
 
-  if not os.path.exists(key_path) and OPTIONS.search_path:
-    new_key_path = os.path.join(OPTIONS.search_path, key_path)
-    if os.path.exists(new_key_path):
-      key_path = new_key_path
+  key_path = ResolveAVBSigningPathArgs(key_path)
 
   # Checks key_path exists, before processing --gki_signing_* args.
   if not os.path.exists(key_path):
@@ -1560,6 +1576,8 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
             found = True
             break
         assert found, 'Failed to find {}'.format(chained_image)
+
+    split_args = ResolveAVBSigningPathArgs(split_args)
     cmd.extend(split_args)
 
   RunAndCheckOutput(cmd)
@@ -1770,7 +1788,8 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file,
     AppendAVBSigningArgs(cmd, partition_name)
     args = info_dict.get("avb_" + partition_name + "_add_hash_footer_args")
     if args and args.strip():
-      cmd.extend(shlex.split(args))
+      split_args = ResolveAVBSigningPathArgs(shlex.split(args))
+      cmd.extend(split_args)
     RunAndCheckOutput(cmd)
 
   img.seek(os.SEEK_SET, 0)
@@ -1811,7 +1830,8 @@ def _SignBootableImage(image_path, prebuilt_name, partition_name,
     AppendAVBSigningArgs(cmd, partition_name)
     args = info_dict.get("avb_" + partition_name + "_add_hash_footer_args")
     if args and args.strip():
-      cmd.extend(shlex.split(args))
+      split_args = ResolveAVBSigningPathArgs(shlex.split(args))
+      cmd.extend(split_args)
     RunAndCheckOutput(cmd)
 
 
@@ -1991,7 +2011,8 @@ def _BuildVendorBootImage(sourcedir, partition_name, info_dict=None):
     AppendAVBSigningArgs(cmd, partition_name)
     args = info_dict.get(f'avb_{partition_name}_add_hash_footer_args')
     if args and args.strip():
-      cmd.extend(shlex.split(args))
+      split_args = ResolveAVBSigningPathArgs(shlex.split(args))
+      cmd.extend(split_args)
     RunAndCheckOutput(cmd)
 
   img.seek(os.SEEK_SET, 0)
