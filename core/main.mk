@@ -1252,6 +1252,7 @@ define product-installed-files
     $(if $(filter tests,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_TESTS)) \
     $(if $(filter asan,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_ASAN)) \
     $(if $(filter java_coverage,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE)) \
+    $(if $(filter arm64,$(TARGET_ARCH) $(TARGET_2ND_ARCH)),$(call get-product-var,$(1),PRODUCT_PACKAGES_ARM64)) \
     $(call auto-included-modules) \
   ) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \
@@ -2194,6 +2195,7 @@ $(PRODUCT_OUT)/sbom.spdx: $(PRODUCT_OUT)/sbom-metadata.csv $(GEN_SBOM)
 	rm -rf $@
 	$(GEN_SBOM) --output_file $@ --metadata $(PRODUCT_OUT)/sbom-metadata.csv --product_out_dir=$(PRODUCT_OUT) --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr="$(PRODUCT_MANUFACTURER)" --json
 
+$(call dist-for-goals,droid,$(PRODUCT_OUT)/sbom.spdx.json:sbom/sbom.spdx.json)
 else
 apps_only_sbom_files := $(sort $(patsubst %,%.spdx,$(apps_only_installed_files)))
 $(apps_only_sbom_files): $(PRODUCT_OUT)/sbom-metadata.csv $(GEN_SBOM)
