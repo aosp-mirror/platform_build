@@ -13,3 +13,9 @@ export FINAL_PLATFORM_VERSION='14'
 export FINAL_BUILD_PREFIX='UP1A'
 
 export FINAL_MAINLINE_EXTENSION='7'
+
+# Options:
+# 'unfinalized' - branch is in development state,
+# 'sdk' - SDK/API is finalized
+# 'rel' - branch is finalized, switched to REL
+export FINAL_STATE='unfinalized'

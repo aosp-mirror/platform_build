@@ -2226,6 +2226,10 @@ func Test(t *testing.T) {
 				t.Errorf("sbom: gotStderr = %v, want none", stderr)
 			}
 
+			if err := validate(spdxDoc); err != nil {
+				t.Fatalf("sbom: document fails to validate: %v", err)
+			}
+
 			gotData, err := json.Marshal(spdxDoc)
 			if err != nil {
 				t.Fatalf("sbom: failed to marshal spdx doc: %v", err)
@@ -2265,6 +2269,36 @@ func getCreationInfo(t *testing.T) *spdx.CreationInfo {
 		return nil
 	}
 	return ci
+}
+
+// validate returns an error if the Document is found to be invalid
+func validate(doc *spdx.Document) error {
+	if doc.SPDXVersion == "" {
+		return fmt.Errorf("SPDXVersion: got nothing, want spdx version")
+	}
+	if doc.DataLicense == "" {
+		return fmt.Errorf("DataLicense: got nothing, want Data License")
+	}
+	if doc.SPDXIdentifier == "" {
+		return fmt.Errorf("SPDXIdentifier: got nothing, want SPDX Identifier")
+	}
+	if doc.DocumentName == "" {
+		return fmt.Errorf("DocumentName: got nothing, want Document Name")
+	}
+	if fmt.Sprintf("%v", doc.CreationInfo.Creators[1].Creator) != "Google LLC" {
+		return fmt.Errorf("Creator: got %v, want  'Google LLC'")
+	}
+	_, err := time.Parse(time.RFC3339, doc.CreationInfo.Created)
+	if err != nil {
+		return fmt.Errorf("Invalid time spec: %q: got error %q, want no error", doc.CreationInfo.Created, err)
+	}
+
+	for _, license := range doc.OtherLicenses {
+		if license.ExtractedText == "" {
+			return fmt.Errorf("License file: %q: got nothing, want license text", license.LicenseName)
+		}
+	}
+	return nil
 }
 
 // compareSpdxDocs deep-compares two spdx docs by going through the info section, packages, relationships and licenses

@@ -35,22 +35,27 @@ class MergeUtilsTest(test_utils.ReleaseToolsTestCase):
       open(path, 'a').close()
       return path
 
+    def createEmptyFolder(path):
+      os.makedirs(path)
+      return path
+
     def createSymLink(source, dest):
       os.symlink(source, dest)
       return dest
 
     def getRelPaths(start, filepaths):
       return set(
-          os.path.relpath(path=filepath, start=start) for filepath in filepaths)
+          os.path.relpath(path=filepath, start=start)
+          for filepath in filepaths)
 
     input_dir = common.MakeTempDir()
     output_dir = common.MakeTempDir()
     expected_copied_items = []
     actual_copied_items = []
-    patterns = ['*.cpp', 'subdir/*.txt']
+    patterns = ['*.cpp', 'subdir/*.txt', 'subdir/empty_dir']
 
-    # Create various files that we expect to get copied because they
-    # match one of the patterns.
+    # Create various files and empty directories that we expect to get copied
+    # because they match one of the patterns.
     expected_copied_items.extend([
         createEmptyFile(os.path.join(input_dir, 'a.cpp')),
         createEmptyFile(os.path.join(input_dir, 'b.cpp')),
@@ -58,6 +63,7 @@ class MergeUtilsTest(test_utils.ReleaseToolsTestCase):
         createEmptyFile(os.path.join(input_dir, 'subdir', 'd.txt')),
         createEmptyFile(
             os.path.join(input_dir, 'subdir', 'subsubdir', 'e.txt')),
+        createEmptyFolder(os.path.join(input_dir, 'subdir', 'empty_dir')),
         createSymLink('a.cpp', os.path.join(input_dir, 'a_link.cpp')),
     ])
     # Create some more files that we expect to not get copied.
@@ -70,9 +76,13 @@ class MergeUtilsTest(test_utils.ReleaseToolsTestCase):
     merge_utils.CopyItems(input_dir, output_dir, patterns)
 
     # Assert the actual copied items match the ones we expected.
-    for dirpath, _, filenames in os.walk(output_dir):
+    for root_dir, dirs, files in os.walk(output_dir):
       actual_copied_items.extend(
-          os.path.join(dirpath, filename) for filename in filenames)
+          os.path.join(root_dir, filename) for filename in files)
+      for dirname in dirs:
+        dir_path = os.path.join(root_dir, dirname)
+        if not os.listdir(dir_path):
+          actual_copied_items.append(dir_path)
     self.assertEqual(
         getRelPaths(output_dir, actual_copied_items),
         getRelPaths(input_dir, expected_copied_items))
