@@ -1,6 +1,9 @@
 #!/bin/bash
 # Script to perform a 1st step of Android Finalization: API/SDK finalization, update CLs and upload to Gerrit.
 
+# WIP, does not work yet
+exit 10
+
 set -ex
 
 function update_step_1_changes() {

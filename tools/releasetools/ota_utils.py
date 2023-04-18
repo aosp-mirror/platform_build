@@ -22,10 +22,10 @@ import zipfile
 
 import ota_metadata_pb2
 import common
-from common import (ZipDelete, OPTIONS, MakeTempFile,
+from common import (ZipDelete, ZipClose, OPTIONS, MakeTempFile,
                     ZipWriteStr, BuildInfo, LoadDictionaryFromFile,
                     SignFile, PARTITIONS_WITH_BUILD_PROP, PartitionBuildProps,
-                    GetRamdiskFormat)
+                    GetRamdiskFormat, ParseUpdateEngineConfig)
 from payload_signer import PayloadSigner
 
 
@@ -135,7 +135,8 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files=No
     logger.info(f"Signing disabled for output file {output_file}")
     shutil.copy(prelim_signing, output_file)
   else:
-    logger.info(f"Signing the output file {output_file} with key {package_key}")
+    logger.info(
+        f"Signing the output file {output_file} with key {package_key}")
     SignOutput(prelim_signing, output_file, package_key, pw)
 
   # Reopen the final signed zip to double check the streaming metadata.
@@ -721,6 +722,45 @@ def IsZucchiniCompatible(source_file: str, target_file: str):
   return sourceEntry and targetEntry and sourceEntry == targetEntry
 
 
+def ExtractTargetFiles(path: str):
+  if os.path.isdir(path):
+    logger.info("target files %s is already extracted", path)
+    return path
+  extracted_dir = common.MakeTempDir("target_files")
+  common.UnzipToDir(path, extracted_dir, UNZIP_PATTERN)
+  return extracted_dir
+
+
+def LocatePartitionPath(target_files_dir: str, partition: str, allow_empty):
+  path = os.path.join(target_files_dir, "RADIO", partition + ".img")
+  if os.path.exists(path):
+    return path
+  path = os.path.join(target_files_dir, "IMAGES", partition + ".img")
+  if os.path.exists(path):
+    return path
+  if allow_empty:
+    return ""
+  raise common.ExternalError(
+      "Partition {} not found in target files {}".format(partition, target_files_dir))
+
+
+def GetPartitionImages(target_files_dir: str, ab_partitions, allow_empty=True):
+  assert os.path.isdir(target_files_dir)
+  return ":".join([LocatePartitionPath(target_files_dir, partition, allow_empty) for partition in ab_partitions])
+
+
+def LocatePartitionMap(target_files_dir: str, partition: str):
+  path = os.path.join(target_files_dir, "RADIO", partition + ".map")
+  if os.path.exists(path):
+    return path
+  return ""
+
+
+def GetPartitionMaps(target_files_dir: str, ab_partitions):
+  assert os.path.isdir(target_files_dir)
+  return ":".join([LocatePartitionMap(target_files_dir, partition) for partition in ab_partitions])
+
+
 class PayloadGenerator(object):
   """Manages the creation and the signing of an A/B OTA Payload."""
 
@@ -729,7 +769,7 @@ class PayloadGenerator(object):
   SECONDARY_PAYLOAD_BIN = 'secondary/payload.bin'
   SECONDARY_PAYLOAD_PROPERTIES_TXT = 'secondary/payload_properties.txt'
 
-  def __init__(self, secondary=False, wipe_user_data=False):
+  def __init__(self, secondary=False, wipe_user_data=False, minor_version=None, is_partial_update=False):
     """Initializes a Payload instance.
 
     Args:
@@ -739,6 +779,8 @@ class PayloadGenerator(object):
     self.payload_properties = None
     self.secondary = secondary
     self.wipe_user_data = wipe_user_data
+    self.minor_version = minor_version
+    self.is_partial_update = is_partial_update
 
   def _Run(self, cmd):  # pylint: disable=no-self-use
     # Don't pipe (buffer) the output if verbose is set. Let
@@ -757,21 +799,56 @@ class PayloadGenerator(object):
       source_file: The filename of the source build target-files zip; or None if
           generating a full OTA.
       additional_args: A list of additional args that should be passed to
-          brillo_update_payload script; or None.
+          delta_generator binary; or None.
     """
     if additional_args is None:
       additional_args = []
 
     payload_file = common.MakeTempFile(prefix="payload-", suffix=".bin")
-    cmd = ["brillo_update_payload", "generate",
-           "--payload", payload_file,
-           "--target_image", target_file]
+    target_dir = ExtractTargetFiles(target_file)
+    cmd = ["delta_generator",
+           "--out_file", payload_file]
+    with open(os.path.join(target_dir, "META", "ab_partitions.txt")) as fp:
+      ab_partitions = fp.read().strip().split("\n")
+    cmd.extend(["--partition_names", ":".join(ab_partitions)])
+    cmd.extend(
+        ["--new_partitions", GetPartitionImages(target_dir, ab_partitions, False)])
+    cmd.extend(
+        ["--new_mapfiles", GetPartitionMaps(target_dir, ab_partitions)])
     if source_file is not None:
-      cmd.extend(["--source_image", source_file])
+      source_dir = ExtractTargetFiles(source_file)
+      cmd.extend(
+          ["--old_partitions", GetPartitionImages(source_dir, ab_partitions, True)])
+      cmd.extend(
+          ["--old_mapfiles", GetPartitionMaps(source_dir, ab_partitions)])
+
       if OPTIONS.disable_fec_computation:
-        cmd.extend(["--disable_fec_computation", "true"])
+        cmd.extend(["--disable_fec_computation=true"])
       if OPTIONS.disable_verity_computation:
-        cmd.extend(["--disable_verity_computation", "true"])
+        cmd.extend(["--disable_verity_computation=true"])
+    postinstall_config = os.path.join(
+        target_dir, "META", "postinstall_config.txt")
+
+    if os.path.exists(postinstall_config):
+      cmd.extend(["--new_postinstall_config_file", postinstall_config])
+    dynamic_partition_info = os.path.join(
+        target_dir, "META", "dynamic_partitions_info.txt")
+
+    if os.path.exists(dynamic_partition_info):
+      cmd.extend(["--dynamic_partition_info_file", dynamic_partition_info])
+
+    major_version, minor_version = ParseUpdateEngineConfig(
+        os.path.join(target_dir, "META", "update_engine_config.txt"))
+    if source_file:
+      major_version, minor_version = ParseUpdateEngineConfig(
+          os.path.join(source_dir, "META", "update_engine_config.txt"))
+    if self.minor_version:
+      minor_version = self.minor_version
+    cmd.extend(["--major_version", str(major_version)])
+    if source_file is not None or self.is_partial_update:
+      cmd.extend(["--minor_version", str(minor_version)])
+    if self.is_partial_update:
+      cmd.extend(["--is_partial_update=true"])
     cmd.extend(additional_args)
     self._Run(cmd)
 
