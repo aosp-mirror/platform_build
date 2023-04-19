@@ -1386,29 +1386,6 @@ modules_to_install := $(sort \
     $(CUSTOM_MODULES) \
   )
 
-ifdef FULL_BUILD
-#
-# Used by the cleanup logic in soong_ui to remove files that should no longer
-# be installed.
-#
-
-# Include all tests, so that we remove them from the test suites / testcase
-# folders when they are removed.
-test_files := $(foreach ts,$(ALL_COMPATIBILITY_SUITES),$(COMPATIBILITY.$(ts).FILES))
-
-$(shell mkdir -p $(PRODUCT_OUT) $(HOST_OUT))
-
-$(file >$(PRODUCT_OUT)/.installable_files$(if $(filter address,$(SANITIZE_TARGET)),_asan), \
-  $(sort $(patsubst $(PRODUCT_OUT)/%,%,$(filter $(PRODUCT_OUT)/%, \
-    $(modules_to_install) $(test_files)))))
-
-$(file >$(HOST_OUT)/.installable_test_files,$(sort \
-  $(patsubst $(HOST_OUT)/%,%,$(filter $(HOST_OUT)/%, \
-    $(test_files)))))
-
-test_files :=
-endif
-
 # Dedpulicate compatibility suite dist files across modules and packages before
 # copying them to their requested locations. Assign the eval result to an unused
 # var to prevent Make from trying to make a sense of it.
@@ -1467,6 +1444,28 @@ endif
 modules_to_install := $(sort $(ALL_DEFAULT_INSTALLED_MODULES))
 ALL_DEFAULT_INSTALLED_MODULES :=
 
+ifdef FULL_BUILD
+#
+# Used by the cleanup logic in soong_ui to remove files that should no longer
+# be installed.
+#
+
+# Include all tests, so that we remove them from the test suites / testcase
+# folders when they are removed.
+test_files := $(foreach ts,$(ALL_COMPATIBILITY_SUITES),$(COMPATIBILITY.$(ts).FILES))
+
+$(shell mkdir -p $(PRODUCT_OUT) $(HOST_OUT))
+
+$(file >$(PRODUCT_OUT)/.installable_files$(if $(filter address,$(SANITIZE_TARGET)),_asan), \
+  $(sort $(patsubst $(PRODUCT_OUT)/%,%,$(filter $(PRODUCT_OUT)/%, \
+    $(modules_to_install) $(test_files)))))
+
+$(file >$(HOST_OUT)/.installable_test_files,$(sort \
+  $(patsubst $(HOST_OUT)/%,%,$(filter $(HOST_OUT)/%, \
+    $(test_files)))))
+
+test_files :=
+endif
 
 # Some notice deps refer to module names without prefix or arch suffix where
 # only the variants with them get built.
@@ -2197,12 +2196,19 @@ $(PRODUCT_OUT)/sbom.spdx: $(PRODUCT_OUT)/sbom-metadata.csv $(GEN_SBOM)
 
 $(call dist-for-goals,droid,$(PRODUCT_OUT)/sbom.spdx.json:sbom/sbom.spdx.json)
 else
-apps_only_sbom_files := $(sort $(patsubst %,%.spdx,$(apps_only_installed_files)))
+apps_only_sbom_files := $(sort $(patsubst %,%.spdx.json,$(filter %.apk,$(apps_only_installed_files))))
 $(apps_only_sbom_files): $(PRODUCT_OUT)/sbom-metadata.csv $(GEN_SBOM)
 	rm -rf $@
 	$(GEN_SBOM) --output_file $@ --metadata $(PRODUCT_OUT)/sbom-metadata.csv --product_out_dir=$(PRODUCT_OUT) --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr="$(PRODUCT_MANUFACTURER)" --unbundled
 
 sbom: $(apps_only_sbom_files)
+
+$(foreach f,$(apps_only_sbom_files),$(eval $(patsubst %.spdx.json,%-fragment.spdx,$f): $f))
+apps_only_fragment_files := $(patsubst %.spdx.json,%-fragment.spdx,$(apps_only_sbom_files))
+$(foreach f,$(apps_only_fragment_files),$(eval apps_only_fragment_dist_files += :sbom/$(notdir $f)))
+
+$(foreach f,$(apps_only_sbom_files),$(eval apps_only_sbom_dist_files += :sbom/$(notdir $f)))
+$(call dist-for-goals,apps_only,$(join $(apps_only_sbom_files),$(apps_only_sbom_dist_files)) $(join $(apps_only_fragment_files),$(apps_only_fragment_dist_files)))
 endif
 
 $(call dist-write-file,$(KATI_PACKAGE_MK_DIR)/dist.mk)
