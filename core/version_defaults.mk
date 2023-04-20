@@ -43,7 +43,7 @@ endif
 DEFAULT_PLATFORM_VERSION := UP1A
 .KATI_READONLY := DEFAULT_PLATFORM_VERSION
 MIN_PLATFORM_VERSION := UP1A
-MAX_PLATFORM_VERSION := UP1A
+MAX_PLATFORM_VERSION := VP1A
 
 # The last stable version name of the platform that was released.  During
 # development, this stays at that previous version, while the codename indicates
@@ -54,6 +54,7 @@ PLATFORM_VERSION_LAST_STABLE := 13
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
 PLATFORM_VERSION_CODENAME.UP1A := UpsideDownCake
+PLATFORM_VERSION_CODENAME.VP1A := VanillaIceCream
 
 # This is the user-visible version.  In a final release build it should
 # be empty to use PLATFORM_VERSION as the user-visible version.  For
@@ -103,7 +104,7 @@ ifndef PLATFORM_SECURITY_PATCH
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-    PLATFORM_SECURITY_PATCH := 2023-02-05
+    PLATFORM_SECURITY_PATCH := 2023-04-05
 endif
 
 include $(BUILD_SYSTEM)/version_util.mk

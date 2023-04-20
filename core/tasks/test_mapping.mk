@@ -21,17 +21,17 @@
 intermediates := $(call intermediates-dir-for,PACKAGING,test_mapping)
 test_mappings_zip := $(intermediates)/test_mappings.zip
 test_mapping_list := $(OUT_DIR)/.module_paths/TEST_MAPPING.list
-test_mappings := $(file <$(test_mapping_list))
-$(test_mappings_zip) : PRIVATE_test_mappings := $(subst $(newline),\n,$(test_mappings))
 $(test_mappings_zip) : PRIVATE_all_disabled_presubmit_tests := $(ALL_DISABLED_PRESUBMIT_TESTS)
+$(test_mappings_zip) : PRIVATE_test_mapping_list := $(test_mapping_list)
 
-$(test_mappings_zip) : $(test_mappings) $(SOONG_ZIP)
+$(test_mappings_zip) : .KATI_DEPFILE := $(test_mappings_zip).d
+$(test_mappings_zip) : $(test_mapping_list) $(SOONG_ZIP)
 	@echo "Building artifact to include TEST_MAPPING files and tests to skip in presubmit check."
 	rm -rf $@ $(dir $@)/disabled-presubmit-tests
 	echo $(sort $(PRIVATE_all_disabled_presubmit_tests)) | tr " " "\n" > $(dir $@)/disabled-presubmit-tests
-	echo -e "$(PRIVATE_test_mappings)" > $@.list
-	$(SOONG_ZIP) -o $@ -C . -l $@.list -C $(dir $@) -f $(dir $@)/disabled-presubmit-tests
-	rm -f $@.list $(dir $@)/disabled-presubmit-tests
+	$(SOONG_ZIP) -o $@ -C . -l $(PRIVATE_test_mapping_list) -C $(dir $@) -f $(dir $@)/disabled-presubmit-tests
+	echo "$@ : " $$(cat $(PRIVATE_test_mapping_list)) > $@.d
+	rm -f $(dir $@)/disabled-presubmit-tests
 
 test_mapping : $(test_mappings_zip)
 

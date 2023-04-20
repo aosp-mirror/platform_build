@@ -474,7 +474,10 @@ $(if $(strip $(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver))$(BOARD_$(1)_KERNEL_MODU
     $(eval BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver) := $(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)))) \
   $(if $(filter false,$(BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver))),\
     $(eval BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver) :=),) \
-  $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)),$(2),$(3),$(call intermediates-dir-for,PACKAGING,depmod_$(1)$(_sep)$(_kver)),$(BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver)),$(4),$(BOARD_$(1)_KERNEL_MODULES_ARCHIVE$(_sep)$(_kver)),$(_stripped_staging_dir),$(_kver),$(7),$(8)))) \
+  $(eval _files := $(call build-image-kernel-modules,$(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)),$(2),$(3),$(call intermediates-dir-for,PACKAGING,depmod_$(1)$(_sep)$(_kver)),$(BOARD_$(1)_KERNEL_MODULES_LOAD$(_sep)$(_kver)),$(4),$(BOARD_$(1)_KERNEL_MODULES_ARCHIVE$(_sep)$(_kver)),$(_stripped_staging_dir),$(_kver),$(7),$(8))) \
+  $(call copy-many-files,$(_files)) \
+  $(eval _modules := $(BOARD_$(1)_KERNEL_MODULES$(_sep)$(_kver)) ANDROID-GEN ANDROID-GEN ANDROID-GEN ANDROID-GEN) \
+  $(eval KERNEL_MODULE_COPY_FILES += $(join $(addsuffix :,$(_modules)),$(_files)))) \
 $(if $(_kver), \
   $(eval _dir := $(_kver)/), \
   $(eval _dir :=)) \
@@ -487,6 +490,7 @@ $(if $(BOARD_$(1)_KERNEL_MODULES_BLOCKLIST_FILE$(_sep)$(_kver)), \
   $(eval $(call build-image-kernel-modules-blocklist-file, \
     $(BOARD_$(1)_KERNEL_MODULES_BLOCKLIST_FILE$(_sep)$(_kver)), \
     $(2)/lib/modules/$(_dir)modules.blocklist)) \
+  $(eval ALL_KERNEL_MODULES_BLOCKLIST += $(2)/lib/modules/$(_dir)modules.blocklist) \
   $(2)/lib/modules/$(_dir)modules.blocklist)
 endef
 
@@ -1218,6 +1222,7 @@ INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
 ifeq ($(BOARD_AVB_ENABLE),true)
 $(INSTALLED_BOOTIMAGE_TARGET): $(INTERNAL_PREBUILT_BOOTIMAGE) $(AVBTOOL) $(BOARD_AVB_BOOT_KEY_PATH)
 	cp $(INTERNAL_PREBUILT_BOOTIMAGE) $@
+	chmod +w $@
 	$(AVBTOOL) add_hash_footer \
 	    --image $@ \
 	    $(call get-partition-size-argument,$(BOARD_BOOTIMAGE_PARTITION_SIZE)) \
@@ -1286,6 +1291,7 @@ INSTALLED_INIT_BOOT_IMAGE_TARGET := $(PRODUCT_OUT)/init_boot.img
 ifeq ($(BOARD_AVB_ENABLE),true)
 $(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(INTERNAL_PREBUILT_INIT_BOOT_IMAGE) $(AVBTOOL) $(BOARD_AVB_INIT_BOOT_KEY_PATH)
 	cp $(INTERNAL_PREBUILT_INIT_BOOT_IMAGE) $@
+	chmod +w $@
 	$(AVBTOOL) add_hash_footer \
 	    --image $@ \
 	    $(call get-partition-size-argument,$(BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE)) \
@@ -1634,6 +1640,21 @@ installed_odm_dlkm_notice_xml_gz := $(TARGET_OUT_ODM_DLKM)/etc/NOTICE.xml.gz
 target_system_dlkm_notice_file_txt := $(TARGET_OUT_INTERMEDIATES)/NOTICE_SYSTEM_DLKM.txt
 target_system_dlkm_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE_SYSTEM_DLKM.xml.gz
 installed_system_dlkm_notice_xml_gz := $(TARGET_OUT_SYSTEM_DLKM)/etc/NOTICE.xml.gz
+
+ALL_INSTALLED_NOTICE_FILES := \
+  $(installed_notice_html_or_xml_gz) \
+  $(installed_vendor_notice_xml_gz) \
+  $(installed_product_notice_xml_gz) \
+  $(installed_system_ext_notice_xml_gz) \
+  $(installed_odm_notice_xml_gz) \
+  $(installed_vendor_dlkm_notice_xml_gz) \
+  $(installed_odm_dlkm_notice_xml_gz) \
+  $(installed_system_dlkm_notice_xml_gz) \
+
+# $1 installed file path, e.g. out/target/product/vsoc_x86_64/system_ext/etc/NOTICE.xml.gz
+define is-notice-file
+$(if $(findstring $1,$(ALL_INSTALLED_NOTICE_FILES)),Y)
+endef
 
 # Notice files are copied to TARGET_OUT_NOTICE_FILES as a side-effect of their module
 # being built. A notice xml file must depend on all modules that could potentially
@@ -2960,7 +2981,7 @@ endif # BUILDING_DEBUG_VENDOR_BOOT_IMAGE
 
 endif # BUILDING_DEBUG_BOOT_IMAGE || BUILDING_DEBUG_VENDOR_BOOT_IMAGE
 
-
+PARTITION_COMPAT_SYMLINKS :=
 # Creates a compatibility symlink between two partitions, e.g. /system/vendor to /vendor
 # $1: from location (e.g $(TARGET_OUT)/vendor)
 # $2: destination location (e.g. /vendor)
@@ -2978,6 +2999,7 @@ $1:
 	ln -sfn $2 $1
 $1: .KATI_SYMLINK_OUTPUTS := $1
 )
+$(eval PARTITION_COMPAT_SYMLINKS += $1)
 $1
 endef
 
@@ -3061,15 +3083,19 @@ $(1): $(HOST_OUT_EXECUTABLES)/fsverity_manifest_generator \
 	    --cert $$(PRIVATE_KEY).x509.pem \
 	    --key $$(PRIVATE_KEY).pk8
 
-ALL_DEFAULT_INSTALLED_MODULES += $(1)
+$(1).idsig: $(1)
+
+ALL_DEFAULT_INSTALLED_MODULES += $(1) $(1).idsig
 
 endef  # fsverity-generate-and-install-manifest-apk
 
 $(eval $(call fsverity-generate-and-install-manifest-apk, \
   $(TARGET_OUT)/etc/security/fsverity/BuildManifest.apk,system))
+ALL_FSVERITY_BUILD_MANIFEST_APK += $(TARGET_OUT)/etc/security/fsverity/BuildManifest.apk $(TARGET_OUT)/etc/security/fsverity/BuildManifest.apk.idsig
 ifdef BUILDING_SYSTEM_EXT_IMAGE
   $(eval $(call fsverity-generate-and-install-manifest-apk, \
     $(TARGET_OUT_SYSTEM_EXT)/etc/security/fsverity/BuildManifestSystemExt.apk,system_ext))
+  ALL_FSVERITY_BUILD_MANIFEST_APK += $(TARGET_OUT_SYSTEM_EXT)/etc/security/fsverity/BuildManifestSystemExt.apk $(TARGET_OUT_SYSTEM_EXT)/etc/security/fsverity/BuildManifestSystemExt.apk.idsig
 endif
 
 endif  # PRODUCT_FSVERITY_GENERATE_METADATA
@@ -3084,17 +3110,23 @@ INTERNAL_SYSTEMIMAGE_FILES := $(sort $(filter $(TARGET_OUT)/%, \
 
 # Create symlink /system/vendor to /vendor if necessary.
 ifdef BOARD_USES_VENDORIMAGE
-  INTERNAL_SYSTEMIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT)/vendor,/vendor,vendor.img)
+  _vendor_symlink := $(call create-partition-compat-symlink,$(TARGET_OUT)/vendor,/vendor,vendor.img)
+  INTERNAL_SYSTEMIMAGE_FILES += $(_vendor_symlink)
+  ALL_DEFAULT_INSTALLED_MODULES += $(_vendor_symlink)
 endif
 
 # Create symlink /system/product to /product if necessary.
 ifdef BOARD_USES_PRODUCTIMAGE
-  INTERNAL_SYSTEMIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT)/product,/product,product.img)
+  _product_symlink := $(call create-partition-compat-symlink,$(TARGET_OUT)/product,/product,product.img)
+  INTERNAL_SYSTEMIMAGE_FILES += $(_product_symlink)
+  ALL_DEFAULT_INSTALLED_MODULES += $(_product_symlink)
 endif
 
 # Create symlink /system/system_ext to /system_ext if necessary.
 ifdef BOARD_USES_SYSTEM_EXTIMAGE
-  INTERNAL_SYSTEMIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT)/system_ext,/system_ext,system_ext.img)
+  _systemext_symlink := $(call create-partition-compat-symlink,$(TARGET_OUT)/system_ext,/system_ext,system_ext.img)
+  INTERNAL_SYSTEMIMAGE_FILES += $(_systemext_symlink)
+  ALL_DEFAULT_INSTALLED_MODULES += $(_systemext_symlink)
 endif
 
 # -----------------------------------------------------------------
@@ -3107,7 +3139,9 @@ endif
 # - /system/lib/modules is a symlink to a directory that stores system DLKMs.
 # - The system_dlkm partition is mounted at /system_dlkm at runtime.
 ifdef BOARD_USES_SYSTEM_DLKMIMAGE
-  INTERNAL_SYSTEMIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT)/lib/modules,/system_dlkm/lib/modules,system_dlkm.img)
+  _system_dlkm_lib_modules_symlink := $(call create-partition-compat-symlink,$(TARGET_OUT)/lib/modules,/system_dlkm/lib/modules,system_dlkm.img)
+  INTERNAL_SYSTEMIMAGE_FILES += $(_system_dlkm_lib_modules_symlink)
+  ALL_DEFAULT_INSTALLED_MODULES += $(_system_dlkm_lib_modules_symlink)
 endif
 
 FULL_SYSTEMIMAGE_DEPS := $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_USERIMAGES_DEPS)
@@ -3131,16 +3165,20 @@ ifdef BUILDING_SYSTEM_IMAGE
 SYSTEM_LINKER_CONFIG := $(TARGET_OUT)/etc/linker.config.pb
 SYSTEM_LINKER_CONFIG_SOURCE := $(call intermediates-dir-for,ETC,system_linker_config)/system_linker_config
 $(SYSTEM_LINKER_CONFIG): PRIVATE_SYSTEM_LINKER_CONFIG_SOURCE := $(SYSTEM_LINKER_CONFIG_SOURCE)
-$(SYSTEM_LINKER_CONFIG) : $(INTERNAL_SYSTEMIMAGE_FILES) $(SYSTEM_LINKER_CONFIG_SOURCE) | conv_linker_config
+$(SYSTEM_LINKER_CONFIG): $(INTERNAL_SYSTEMIMAGE_FILES) $(SYSTEM_LINKER_CONFIG_SOURCE) | conv_linker_config
+	@echo Creating linker config: $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config systemprovide --source $(PRIVATE_SYSTEM_LINKER_CONFIG_SOURCE) \
-	  --output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT)"
+		--output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT)"
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config append --source $@ --output $@ --key requireLibs \
-	 --value "$(foreach lib,$(LLNDK_MOVED_TO_APEX_LIBRARIES), $(lib).so)"
+		--value "$(foreach lib,$(LLNDK_MOVED_TO_APEX_LIBRARIES), $(lib).so)"
 
 $(call declare-1p-target,$(SYSTEM_LINKER_CONFIG),)
 $(call declare-license-deps,$(SYSTEM_LINKER_CONFIG),$(INTERNAL_SYSTEMIMAGE_FILES) $(SYSTEM_LINKER_CONFIG_SOURCE))
 
 FULL_SYSTEMIMAGE_DEPS += $(SYSTEM_LINKER_CONFIG)
+ALL_DEFAULT_INSTALLED_MODULES += $(SYSTEM_LINKER_CONFIG)
 
 # installed file list
 # Depending on anything that $(BUILT_SYSTEMIMAGE) depends on.
@@ -3492,7 +3530,9 @@ INTERNAL_VENDORIMAGE_FILES := \
 
 # Create symlink /vendor/odm to /odm if necessary.
 ifdef BOARD_USES_ODMIMAGE
-  INTERNAL_VENDORIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT_VENDOR)/odm,/odm,odm.img)
+  _odm_symlink := $(call create-partition-compat-symlink,$(TARGET_OUT_VENDOR)/odm,/odm,odm.img)
+  INTERNAL_VENDORIMAGE_FILES += $(_odm_symlink)
+  ALL_DEFAULT_INSTALLED_MODULES += $(_odm_symlink)
 endif
 
 # Create symlinks for vendor_dlkm on devices with a vendor_dlkm partition:
@@ -3510,20 +3550,26 @@ endif
 # The vendor DLKMs and other vendor_dlkm files must not be accessed using other paths because they
 # are not guaranteed to exist on all devices.
 ifdef BOARD_USES_VENDOR_DLKMIMAGE
-  INTERNAL_VENDORIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT_VENDOR)/lib/modules,/vendor_dlkm/lib/modules,vendor_dlkm.img)
+  _vendor_dlkm_lib_modules_symlink := $(call create-partition-compat-symlink,$(TARGET_OUT_VENDOR)/lib/modules,/vendor_dlkm/lib/modules,vendor_dlkm.img)
+  INTERNAL_VENDORIMAGE_FILES += $(_vendor_dlkm_lib_modules_symlink)
+  ALL_DEFAULT_INSTALLED_MODULES += $(_vendor_dlkm_lib_modules_symlink)
 endif
 
-# Install vendor/etc/linker.config.pb when PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS is set
-ifneq ($(strip $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS)),)
+# Install vendor/etc/linker.config.pb with PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS and STUB_LIBRARIES
 vendor_linker_config_file := $(TARGET_OUT_VENDOR)/etc/linker.config.pb
 $(vendor_linker_config_file): private_linker_config_fragments := $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS)
-$(vendor_linker_config_file): $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS) | $(HOST_OUT_EXECUTABLES)/conv_linker_config
+$(vendor_linker_config_file): $(INTERNAL_VENDORIMAGE_FILES) $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS) | $(HOST_OUT_EXECUTABLES)/conv_linker_config
+	@echo Creating linker config: $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config proto \
 		--source $(call normalize-path-list,$(private_linker_config_fragments)) \
 		--output $@
+	$(HOST_OUT_EXECUTABLES)/conv_linker_config systemprovide --source $@ \
+		--output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT_VENDOR)"
 $(call define declare-0p-target,$(vendor_linker_config_file),)
 INTERNAL_VENDORIMAGE_FILES += $(vendor_linker_config_file)
-endif
+ALL_DEFAULT_INSTALLED_MODULES += $(vendor_linker_config_file)
 
 INSTALLED_FILES_FILE_VENDOR := $(PRODUCT_OUT)/installed-files-vendor.txt
 INSTALLED_FILES_JSON_VENDOR := $(INSTALLED_FILES_FILE_VENDOR:.txt=.json)
@@ -3727,7 +3773,9 @@ INTERNAL_ODMIMAGE_FILES := \
 # The odm DLKMs and other odm_dlkm files must not be accessed using other paths because they
 # are not guaranteed to exist on all devices.
 ifdef BOARD_USES_ODM_DLKMIMAGE
-  INTERNAL_ODMIMAGE_FILES += $(call create-partition-compat-symlink,$(TARGET_OUT_ODM)/lib/modules,/odm_dlkm/lib/modules,odm_dlkm.img)
+  _odm_dlkm_lib_modules_symlink := $(call create-partition-compat-symlink,$(TARGET_OUT_ODM)/lib/modules,/odm_dlkm/lib/modules,odm_dlkm.img)
+  INTERNAL_ODMIMAGE_FILES += $(_odm_dlkm_lib_modules_symlink)
+  ALL_DEFAULT_INSTALLED_MODULES += $(_odm_dlkm_lib_modules_symlink)
 endif
 
 INSTALLED_FILES_FILE_ODM := $(PRODUCT_OUT)/installed-files-odm.txt
@@ -3976,6 +4024,7 @@ INSTALLED_DTBOIMAGE_TARGET := $(PRODUCT_OUT)/dtbo.img
 ifeq ($(BOARD_AVB_ENABLE),true)
 $(INSTALLED_DTBOIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE) $(AVBTOOL) $(BOARD_AVB_DTBO_KEY_PATH)
 	cp $(BOARD_PREBUILT_DTBOIMAGE) $@
+	chmod +w $@
 	$(AVBTOOL) add_hash_footer \
 	    --image $@ \
 	    $(call get-partition-size-argument,$(BOARD_DTBOIMG_PARTITION_SIZE)) \
@@ -5073,6 +5122,7 @@ INTERNAL_OTATOOLS_MODULES := \
   check_target_files_signatures \
   check_target_files_vintf \
   checkvintf \
+  create_brick_ota \
   delta_generator \
   e2fsck \
   e2fsdroid \
@@ -5140,6 +5190,7 @@ INTERNAL_OTATOOLS_MODULES += \
   debugfs_static \
   dump_apex_info \
   fsck.erofs \
+  make_erofs \
   merge_zips \
   resize2fs \
   soong_zip \
@@ -5213,6 +5264,10 @@ $(call declare-container-license-deps,$(INTERNAL_OTATOOLS_PACKAGE_FILES) $(INTER
 
 .PHONY: otatools-package
 otatools-package: $(BUILT_OTATOOLS_PACKAGE)
+
+$(call dist-for-goals, otatools-package, \
+  $(BUILT_OTATOOLS_PACKAGE) \
+)
 
 endif # build_otatools_package
 
