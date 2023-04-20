@@ -256,6 +256,7 @@ class PropListTestcase(unittest.TestCase):
     with contextlib.redirect_stderr(stderr_redirect):
       props = PropList("hello")
       props.put("ro.board.first_api_level","25")
+      props.put("ro.build.version.codename", "REL")
 
       # ro.board.first_api_level must be less than or equal to the sdk version
       self.assertFalse(validate_grf_props(props, 20))
@@ -272,6 +273,11 @@ class PropListTestcase(unittest.TestCase):
       self.assertTrue(validate_grf_props(props, 26))
       # ro.board.api_level must be less than or equal to the sdk version
       self.assertFalse(validate_grf_props(props, 25))
+
+      # allow setting future api_level before release
+      props.get_all_props()[-2].make_as_comment()
+      props.put("ro.build.version.codename", "NonRel")
+      self.assertTrue(validate_grf_props(props, 24))
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

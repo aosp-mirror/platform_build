@@ -31,6 +31,7 @@ $(call add_json_bool, Platform_sdk_final,                $(filter REL,$(PLATFORM
 $(call add_json_val,  Platform_sdk_extension_version,    $(PLATFORM_SDK_EXTENSION_VERSION))
 $(call add_json_val,  Platform_base_sdk_extension_version, $(PLATFORM_BASE_SDK_EXTENSION_VERSION))
 $(call add_json_csv,  Platform_version_active_codenames, $(PLATFORM_VERSION_ALL_CODENAMES))
+$(call add_json_csv,  Platform_version_all_preview_codenames, $(PLATFORM_VERSION_ALL_PREVIEW_CODENAMES))
 $(call add_json_str,  Platform_security_patch,           $(PLATFORM_SECURITY_PATCH))
 $(call add_json_str,  Platform_preview_sdk_version,      $(PLATFORM_PREVIEW_SDK_VERSION))
 $(call add_json_str,  Platform_base_os,                  $(PLATFORM_BASE_OS))
@@ -306,6 +307,9 @@ $(call add_json_bool, GenerateAidlNdkPlatformBackend, $(filter true,$(NEED_AIDL_
 $(call add_json_bool, IgnorePrefer32OnDevice, $(filter true,$(IGNORE_PREFER32_ON_DEVICE)))
 
 $(call add_json_list, IncludeTags,                $(PRODUCT_INCLUDE_TAGS))
+$(call add_json_list, SourceRootDirs,             $(PRODUCT_SOURCE_ROOT_DIRS))
+
+$(call add_json_list, AfdoProfiles,                $(PRODUCT_AFDO_PROFILES))
 
 $(call json_end)
 

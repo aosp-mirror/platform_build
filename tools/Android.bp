@@ -71,17 +71,14 @@ python_binary_host {
 }
 
 python_binary_host {
-    name: "generate-sbom",
+    name: "list_files",
+    main: "list_files.py",
     srcs: [
-        "generate-sbom.py",
+        "list_files.py",
     ],
     version: {
-        py3: {
-            embedded_launcher: true,
-        },
-    },
-    libs: [
-        "metadata_file_proto_py",
-        "libprotobuf-python",
-    ],
+      py3: {
+        embedded_launcher: true,
+      }
+    }
 }

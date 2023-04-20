@@ -168,7 +168,6 @@ my_allow_undefined_symbols := true
 endif
 endif
 
-my_ndk_sysroot :=
 my_ndk_sysroot_include :=
 my_ndk_sysroot_lib :=
 my_api_level := 10000
@@ -183,11 +182,7 @@ ifneq ($(LOCAL_SDK_VERSION),)
   # Make sure we've built the NDK.
   my_additional_dependencies += $(SOONG_OUT_DIR)/ndk_base.timestamp
 
-  ifneq (,$(filter arm64 x86_64,$(my_arch)))
-    my_min_sdk_version := 21
-  else
-    my_min_sdk_version := $(MIN_SUPPORTED_SDK_VERSION)
-  endif
+  my_min_sdk_version := $(MIN_SUPPORTED_SDK_VERSION)
 
   # Historically we've just set up a bunch of symlinks in prebuilts/ndk to map
   # missing API levels to existing ones where necessary, but we're not doing
@@ -200,38 +195,19 @@ ifneq ($(LOCAL_SDK_VERSION),)
 
   my_ndk_crt_version := $(my_ndk_api)
 
-  my_ndk_hist_api := $(my_ndk_api)
-  ifeq ($(my_ndk_api),current)
-    # The last API level supported by the old prebuilt NDKs.
-    my_ndk_hist_api := 24
-  else
+  ifneq ($(my_ndk_api),current)
     my_api_level := $(my_ndk_api)
   endif
 
   my_ndk_source_root := \
       $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/sources
-  my_ndk_sysroot := \
-    $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/platforms/android-$(my_ndk_hist_api)/arch-$(my_arch)
   my_built_ndk := $(SOONG_OUT_DIR)/ndk
   my_ndk_triple := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NDK_TRIPLE)
   my_ndk_sysroot_include := \
       $(my_built_ndk)/sysroot/usr/include \
       $(my_built_ndk)/sysroot/usr/include/$(my_ndk_triple) \
-      $(my_ndk_sysroot)/usr/include \
 
-  # x86_64 is a multilib toolchain, so their libraries are
-  # installed in /usr/lib64. Aarch64, on the other hand, is not a multilib
-  # compiler, so its libraries are in /usr/lib.
-  ifneq (,$(filter x86_64,$(my_arch)))
-    my_ndk_libdir_name := lib64
-  else
-    my_ndk_libdir_name := lib
-  endif
-
-  my_ndk_platform_dir := \
-      $(my_built_ndk)/platforms/android-$(my_ndk_api)/arch-$(my_arch)
-  my_built_ndk_libs := $(my_ndk_platform_dir)/usr/$(my_ndk_libdir_name)
-  my_ndk_sysroot_lib := $(my_ndk_sysroot)/usr/$(my_ndk_libdir_name)
+  my_ndk_sysroot_lib := $(my_built_ndk)/sysroot/usr/lib/$(my_ndk_triple)/$(my_ndk_api)
 
   # The bionic linker now has support for packed relocations and gnu style
   # hashes (which are much faster!), but shipping to older devices requires
@@ -1428,7 +1404,6 @@ my_system_shared_libraries_fullpath := \
 my_ndk_shared_libraries_fullpath := \
     $(foreach _lib,$(my_ndk_shared_libraries),\
         $(if $(filter $(NDK_KNOWN_LIBS),$(_lib)),\
-            $(my_built_ndk_libs)/$(_lib)$(so_suffix),\
             $(my_ndk_sysroot_lib)/$(_lib)$(so_suffix)))
 
 built_shared_libraries += \
