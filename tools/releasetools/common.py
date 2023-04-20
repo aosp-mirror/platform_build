@@ -717,24 +717,44 @@ class BuildInfo(object):
       script.AssertOemProperty(prop, values, oem_no_mount)
 
 
-def ReadFromInputFile(input_file, fn):
-  """Reads the contents of fn from input zipfile or directory."""
+def DoesInputFileContain(input_file, fn):
+  """Check whether the input target_files.zip contain an entry `fn`"""
   if isinstance(input_file, zipfile.ZipFile):
-    return input_file.read(fn).decode()
+    return fn in input_file.namelist()
   elif zipfile.is_zipfile(input_file):
     with zipfile.ZipFile(input_file, "r", allowZip64=True) as zfp:
-      return zfp.read(fn).decode()
+      return fn in zfp.namelist()
+  else:
+    if not os.path.isdir(input_file):
+      raise ValueError(
+          "Invalid input_file, accepted inputs are ZipFile object, path to .zip file on disk, or path to extracted directory. Actual: " + input_file)
+    path = os.path.join(input_file, *fn.split("/"))
+    return os.path.exists(path)
+
+
+def ReadBytesFromInputFile(input_file, fn):
+  """Reads the bytes of fn from input zipfile or directory."""
+  if isinstance(input_file, zipfile.ZipFile):
+    return input_file.read(fn)
+  elif zipfile.is_zipfile(input_file):
+    with zipfile.ZipFile(input_file, "r", allowZip64=True) as zfp:
+      return zfp.read(fn)
   else:
     if not os.path.isdir(input_file):
       raise ValueError(
           "Invalid input_file, accepted inputs are ZipFile object, path to .zip file on disk, or path to extracted directory. Actual: " + input_file)
     path = os.path.join(input_file, *fn.split("/"))
     try:
-      with open(path) as f:
+      with open(path, "rb") as f:
         return f.read()
     except IOError as e:
       if e.errno == errno.ENOENT:
         raise KeyError(fn)
+
+
+def ReadFromInputFile(input_file, fn):
+  """Reads the str contents of fn from input zipfile or directory."""
+  return ReadBytesFromInputFile(input_file, fn).decode()
 
 
 def ExtractFromInputFile(input_file, fn):
@@ -1540,7 +1560,8 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
 
   custom_partitions = OPTIONS.info_dict.get(
       "avb_custom_images_partition_list", "").strip().split()
-  custom_avb_partitions = ["vbmeta_" + part for part in OPTIONS.info_dict.get("avb_custom_vbmeta_images_partition_list", "").strip().split()]
+  custom_avb_partitions = ["vbmeta_" + part for part in OPTIONS.info_dict.get(
+      "avb_custom_vbmeta_images_partition_list", "").strip().split()]
 
   for partition, path in partitions.items():
     if partition not in needed_partitions:
@@ -1906,7 +1927,7 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
   data = _BuildBootableImage(prebuilt_name, os.path.join(unpack_dir, tree_subdir),
                              os.path.join(unpack_dir, fs_config),
                              os.path.join(unpack_dir, 'META/ramdisk_node_list')
-                                if dev_nodes else None,
+                             if dev_nodes else None,
                              info_dict, has_ramdisk, two_step_image)
   if data:
     return File(name, data)
@@ -2975,7 +2996,6 @@ def ZipDelete(zip_filename, entries, force=False):
       cmd.append("-x")
       cmd.append(entry)
     RunAndCheckOutput(cmd)
-
 
   os.replace(new_zipfile, zip_filename)
 
@@ -4080,6 +4100,7 @@ def IsSparseImage(filepath):
     # Magic for android sparse image format
     # https://source.android.com/devices/bootloader/images
     return fp.read(4) == b'\x3A\xFF\x26\xED'
+
 
 def ParseUpdateEngineConfig(path: str):
   """Parse the update_engine config stored in file `path`
