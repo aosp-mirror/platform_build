@@ -80,13 +80,28 @@ $(foreach version,$(_versions_in_target),\
   $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_CODENAMES)),,\
     $(eval PLATFORM_VERSION_ALL_CODENAMES += $(_codename))))
 
+# And the list of actually all the codenames that are in preview. The
+# ALL_CODENAMES variable is sort of a lie for historical reasons and only
+# includes codenames up to and including the currently active codename, whereas
+# this variable also includes future codenames. For example, while AOSP is still
+# merging into U, but V development has started, ALL_CODENAMES will only be U,
+# but ALL_PREVIEW_CODENAMES will be U and V.
+PLATFORM_VERSION_ALL_PREVIEW_CODENAMES :=
+$(foreach version,$(ALL_VERSIONS),\
+  $(eval _codename := $(PLATFORM_VERSION_CODENAME.$(version)))\
+  $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_PREVIEW_CODENAMES)),,\
+    $(eval PLATFORM_VERSION_ALL_PREVIEW_CODENAMES += $(_codename))))
+
 # And convert from space separated to comma separated.
 PLATFORM_VERSION_ALL_CODENAMES := \
   $(subst $(space),$(comma),$(strip $(PLATFORM_VERSION_ALL_CODENAMES)))
+PLATFORM_VERSION_ALL_PREVIEW_CODENAMES := \
+  $(subst $(space),$(comma),$(strip $(PLATFORM_VERSION_ALL_PREVIEW_CODENAMES)))
 
 .KATI_READONLY := \
   PLATFORM_VERSION_CODENAME \
-  PLATFORM_VERSION_ALL_CODENAMES
+  PLATFORM_VERSION_ALL_CODENAMES \
+  PLATFORM_VERSION_ALL_PREVIEW_CODENAMES \
 
 ifneq (REL,$(PLATFORM_VERSION_CODENAME))
   codenames := \
