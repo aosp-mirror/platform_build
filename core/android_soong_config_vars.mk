@@ -41,6 +41,37 @@ $(call add_soong_config_var,ANDROID,PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT)
 # MODULE_BUILD_FROM_SOURCE.
 BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
 
+ifneq ($(SANITIZE_TARGET)$(EMMA_INSTRUMENT_FRAMEWORK),)
+  # Always use sources when building the framework with Java coverage or
+  # sanitized builds as they both require purpose built prebuilts which we do
+  # not provide.
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
+
+# ART does not provide linux_bionic variants needed for products that
+# set HOST_CROSS_OS=linux_bionic.
+ifeq (linux_bionic,${HOST_CROSS_OS})
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
+
+# ART does not provide host side arm64 variants needed for products that
+# set HOST_CROSS_ARCH=arm64.
+ifeq (arm64,${HOST_CROSS_ARCH})
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
+
+# TV based devices do not seem to work with prebuilts, so build from source
+# for now and fix in a follow up.
+ifneq (,$(filter tv,$(subst $(comma),$(space),${PRODUCT_CHARACTERISTICS})))
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
+
+# ATV based devices do not seem to work with prebuilts, so build from source
+# for now and fix in a follow up.
+ifneq (,${PRODUCT_IS_ATV})
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
+
 ifneq (,$(MODULE_BUILD_FROM_SOURCE))
   # Keep an explicit setting.
 else ifeq (,$(filter docs sdk win_sdk sdk_addon,$(MAKECMDGOALS))$(findstring com.google.android.conscrypt,$(PRODUCT_PACKAGES)))
@@ -71,12 +102,17 @@ endif
 
 $(call soong_config_set,art_module,source_build,$(ART_MODULE_BUILD_FROM_SOURCE))
 
+ifdef TARGET_BOARD_AUTO
+  $(call add_soong_config_var_value, ANDROID, target_board_auto, $(TARGET_BOARD_AUTO))
+endif
+
 # Ensure that those mainline modules who have individually toggleable prebuilts
 # are controlled by the MODULE_BUILD_FROM_SOURCE environment variable by
 # default.
 INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
   bluetooth \
   permission \
+  rkpd \
   uwb \
   wifi \
 
@@ -105,6 +141,10 @@ endif
 # Enable SystemUI optimizations by default unless explicitly set.
 SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
+
+# Disable Compose in SystemUI by default.
+SYSTEMUI_USE_COMPOSE ?= false
+$(call add_soong_config_var,ANDROID,SYSTEMUI_USE_COMPOSE)
 
 ifdef PRODUCT_AVF_ENABLED
 $(call add_soong_config_var_value,ANDROID,avf_enabled,$(PRODUCT_AVF_ENABLED))
