@@ -397,7 +397,7 @@ def generate_sbom_for_unbundled():
                              creators=['Organization: ' + args.product_mfr])
     for installed_file_metadata in reader:
       installed_file = installed_file_metadata['installed_file']
-      if args.output_file != args.product_out_dir + installed_file + ".spdx":
+      if args.output_file != args.product_out_dir + installed_file + '.spdx.json':
         continue
 
       module_path = installed_file_metadata['module_path']
@@ -418,7 +418,10 @@ def generate_sbom_for_unbundled():
       doc.created = datetime.datetime.now(tz=datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
       break
 
-  with open(args.output_file, 'w', encoding="utf-8") as file:
+  with open(args.output_file, 'w', encoding='utf-8') as file:
+    sbom_writers.JSONWriter.write(doc, file)
+  fragment_file = args.output_file.removesuffix('.spdx.json') + '-fragment.spdx'
+  with open(fragment_file, 'w', encoding='utf-8') as file:
     sbom_writers.TagValueWriter.write(doc, file, fragment=True)
 
 
