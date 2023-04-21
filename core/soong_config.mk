@@ -12,6 +12,16 @@ endif
 include $(BUILD_SYSTEM)/art_config.mk
 include $(BUILD_SYSTEM)/dex_preopt_config.mk
 
+ifndef AFDO_PROFILES
+# Set AFDO_PROFILES
+-include vendor/google_data/pgo_profile/sampling/afdo_profiles.mk
+else
+$(error AFDO_PROFILES can only be set from soong_config.mk. For product-specific fdo_profiles, please use PRODUCT_AFDO_PROFILES)
+endif
+
+# PRODUCT_AFDO_PROFILES takes precedence over product-agnostic profiles in AFDO_PROFILES
+ALL_AFDO_PROFILES := $(PRODUCT_AFDO_PROFILES) $(AFDO_PROFILES)
+
 ifeq ($(WRITE_SOONG_VARIABLES),true)
 
 # Create soong.variables with copies of makefile settings.  Runs every build,
@@ -309,7 +319,7 @@ $(call add_json_bool, IgnorePrefer32OnDevice, $(filter true,$(IGNORE_PREFER32_ON
 $(call add_json_list, IncludeTags,                $(PRODUCT_INCLUDE_TAGS))
 $(call add_json_list, SourceRootDirs,             $(PRODUCT_SOURCE_ROOT_DIRS))
 
-$(call add_json_list, AfdoProfiles,                $(PRODUCT_AFDO_PROFILES))
+$(call add_json_list, AfdoProfiles,                $(ALL_AFDO_PROFILES))
 
 $(call json_end)
 

@@ -41,7 +41,6 @@ _product_list_vars += PRODUCT_PACKAGES_ARM64
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE
 _product_list_vars += PRODUCT_PACKAGES_ENG
 _product_list_vars += PRODUCT_PACKAGES_TESTS
-_product_list_vars += PRODUCT_AFDO_PROFILES
 
 # The device that this product maps to.
 _product_single_value_vars += PRODUCT_DEVICE
@@ -395,6 +394,8 @@ _product_list_vars += PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS
 # - "false": disallows the build system and the runtime to use userfaultfd GC even if the device
 #   supports it
 _product_single_value_vars += PRODUCT_ENABLE_UFFD_GC
+
+_product_list_vars += PRODUCT_AFDO_PROFILES
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
