@@ -56,7 +56,7 @@ function finalize_sdk_rel() {
     mkdir -p "$top/prebuilts/abi-dumps/platform/$FINAL_PLATFORM_SDK_VERSION"
     cp -r "$top/prebuilts/abi-dumps/platform/current/64/" "$top/prebuilts/abi-dumps/platform/$FINAL_PLATFORM_SDK_VERSION/"
 
-    if [ "$FINAL_STATE" != "sdk" ] ; then
+    if [ "$FINAL_STATE" != "sdk" || "$FINAL_PLATFORM_CODENAME" == "$CURRENT_PLATFORM_CODENAME" ] ; then
         # prebuilts/abi-dumps/vndk
         mv "$top/prebuilts/abi-dumps/vndk/$CURRENT_PLATFORM_CODENAME" "$top/prebuilts/abi-dumps/vndk/$FINAL_PLATFORM_SDK_VERSION"
     fi;
