@@ -2960,7 +2960,7 @@ $(hide) \
   $(extract-package) \
   echo "Module name in Android tree: $(PRIVATE_MODULE)" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
   echo "Local path in Android tree: $(PRIVATE_PATH)" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
-  echo "Install path on $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT): $(PRIVATE_INSTALLED_MODULE)" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
+  echo "Install path: $(patsubst $(PRODUCT_OUT)/%,%,$(PRIVATE_INSTALLED_MODULE))" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
   echo >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log
 endef
 ART_VERIDEX_APPCOMPAT_SCRIPT:=$(HOST_OUT)/bin/appcompat.sh
