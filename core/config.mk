@@ -166,6 +166,7 @@ $(KATI_obsolete_var PRODUCT_SUPPORTS_VERITY_FEC,VB 1.0 and related variables are
 $(KATI_obsolete_var PRODUCT_SUPPORTS_BOOT_SIGNER,VB 1.0 and related variables are no longer supported)
 $(KATI_obsolete_var PRODUCT_VERITY_SIGNING_KEY,VB 1.0 and related variables are no longer supported)
 $(KATI_obsolete_var BOARD_PREBUILT_PVMFWIMAGE,pvmfw.bin is now built in AOSP and custom versions are no longer supported)
+$(KATI_obsolete_var BUILDING_PVMFW_IMAGE,BUILDING_PVMFW_IMAGE is no longer used)
 $(KATI_obsolete_var BOARD_BUILD_SYSTEM_ROOT_IMAGE)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
@@ -232,6 +233,7 @@ BUILD_NATIVE_TEST :=$= $(BUILD_SYSTEM)/native_test.mk
 BUILD_FUZZ_TEST :=$= $(BUILD_SYSTEM)/fuzz_test.mk
 
 BUILD_NOTICE_FILE :=$= $(BUILD_SYSTEM)/notice_files.mk
+BUILD_SBOM_GEN :=$= $(BUILD_SYSTEM)/sbom.mk
 
 include $(BUILD_SYSTEM)/deprecation.mk
 
@@ -581,7 +583,6 @@ BREAKPAD_GENERATE_SYMBOLS := false
 endif
 PROTOC := $(HOST_OUT_EXECUTABLES)/aprotoc$(HOST_EXECUTABLE_SUFFIX)
 NANOPB_SRCS := $(HOST_OUT_EXECUTABLES)/protoc-gen-nanopb
-VTSC := $(HOST_OUT_EXECUTABLES)/vtsc$(HOST_EXECUTABLE_SUFFIX)
 MKBOOTFS := $(HOST_OUT_EXECUTABLES)/mkbootfs$(HOST_EXECUTABLE_SUFFIX)
 MINIGZIP := $(HOST_OUT_EXECUTABLES)/minigzip$(HOST_EXECUTABLE_SUFFIX)
 LZ4 := $(HOST_OUT_EXECUTABLES)/lz4$(HOST_EXECUTABLE_SUFFIX)
@@ -618,7 +619,11 @@ CHECK_ELF_FILE := $(HOST_OUT_EXECUTABLES)/check_elf_file$(HOST_EXECUTABLE_SUFFIX
 LPMAKE := $(HOST_OUT_EXECUTABLES)/lpmake$(HOST_EXECUTABLE_SUFFIX)
 ADD_IMG_TO_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/add_img_to_target_files$(HOST_EXECUTABLE_SUFFIX)
 BUILD_IMAGE := $(HOST_OUT_EXECUTABLES)/build_image$(HOST_EXECUTABLE_SUFFIX)
+ifeq (,$(strip $(BOARD_CUSTOM_BUILD_SUPER_IMAGE)))
 BUILD_SUPER_IMAGE := $(HOST_OUT_EXECUTABLES)/build_super_image$(HOST_EXECUTABLE_SUFFIX)
+else
+BUILD_SUPER_IMAGE := $(BOARD_CUSTOM_BUILD_SUPER_IMAGE)
+endif
 IMG_FROM_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/img_from_target_files$(HOST_EXECUTABLE_SUFFIX)
 MAKE_RECOVERY_PATCH := $(HOST_OUT_EXECUTABLES)/make_recovery_patch$(HOST_EXECUTABLE_SUFFIX)
 OTA_FROM_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/ota_from_target_files$(HOST_EXECUTABLE_SUFFIX)
@@ -640,6 +645,8 @@ VBOOT_SIGNER := $(HOST_OUT_EXECUTABLES)/vboot_signer
 
 DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump$(BUILD_EXECUTABLE_SUFFIX)
 PROFMAN := $(HOST_OUT_EXECUTABLES)/profman
+
+GEN_SBOM := $(HOST_OUT_EXECUTABLES)/generate-sbom
 
 FINDBUGS_DIR := external/owasp/sanitizer/tools/findbugs/bin
 FINDBUGS := $(FINDBUGS_DIR)/findbugs
@@ -821,7 +828,7 @@ BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
 # is made which breaks compatibility with the previous platform sepolicy version,
 # not just on every increase in PLATFORM_SDK_VERSION.  The minor version should
 # be reset to 0 on every bump of the PLATFORM_SDK_VERSION.
-sepolicy_major_vers := 33
+sepolicy_major_vers := 34
 sepolicy_minor_vers := 0
 
 ifneq ($(sepolicy_major_vers), $(PLATFORM_SDK_VERSION))
@@ -856,7 +863,6 @@ endif
 
 # A list of SEPolicy versions, besides PLATFORM_SEPOLICY_VERSION, that the framework supports.
 PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
-    28.0 \
     29.0 \
     30.0 \
     31.0 \

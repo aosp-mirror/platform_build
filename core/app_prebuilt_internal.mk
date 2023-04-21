@@ -302,3 +302,7 @@ $(my_all_targets): $(installed_apk_splits)
 
 endif # LOCAL_PACKAGE_SPLITS
 
+###########################################################
+## SBOM generation
+###########################################################
+include $(BUILD_SBOM_GEN)
