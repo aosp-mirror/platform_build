@@ -51,6 +51,38 @@ ISSUE_UNKNOWN_SECURITY_TAG_TYPE = 'Unknown security tag type:'
 ISSUE_INSTALLED_FILE_NOT_EXIST = 'Non-exist installed files:'
 INFO_METADATA_FOUND_FOR_PACKAGE = 'METADATA file found for packages:'
 
+SOONG_PREBUILT_MODULE_TYPES = [
+  'android_app_import',
+  'android_library_import',
+  'cc_prebuilt_binary',
+  'cc_prebuilt_library',
+  'cc_prebuilt_library_headers',
+  'cc_prebuilt_library_shared',
+  'cc_prebuilt_library_static',
+  'cc_prebuilt_object',
+  'dex_import',
+  'java_import',
+  'java_sdk_library_import',
+  'java_system_modules_import',
+  'libclang_rt_prebuilt_library_static',
+  'libclang_rt_prebuilt_library_shared',
+  'llvm_prebuilt_library_static',
+  'ndk_prebuilt_object',
+  'ndk_prebuilt_shared_stl',
+  'nkd_prebuilt_static_stl',
+  'prebuilt_apex',
+  'prebuilt_bootclasspath_fragment',
+  'prebuilt_dsp',
+  'prebuilt_firmware',
+  'prebuilt_kernel_modules',
+  'prebuilt_rfsa',
+  'prebuilt_root',
+  'rust_prebuilt_dylib',
+  'rust_prebuilt_library',
+  'rust_prebuilt_rlib',
+  'vndk_prebuilt_shared',
+]
+
 
 def get_args():
   parser = argparse.ArgumentParser()
@@ -106,35 +138,8 @@ def checksum(file_path):
 
 
 def is_soong_prebuilt_module(file_metadata):
-  return file_metadata['soong_module_type'] and file_metadata['soong_module_type'] in [
-      'android_app_import', 'android_library_import', 'cc_prebuilt_binary', 'cc_prebuilt_library',
-      'cc_prebuilt_library_headers', 'cc_prebuilt_library_shared', 'cc_prebuilt_library_static', 'cc_prebuilt_object',
-      'dex_import', 'java_import', 'java_sdk_library_import', 'java_system_modules_import',
-      'libclang_rt_prebuilt_library_static', 'libclang_rt_prebuilt_library_shared', 'llvm_prebuilt_library_static',
-      'ndk_prebuilt_object', 'ndk_prebuilt_shared_stl', 'nkd_prebuilt_static_stl', 'prebuilt_apex',
-      'prebuilt_bootclasspath_fragment', 'prebuilt_dsp', 'prebuilt_firmware', 'prebuilt_kernel_modules',
-      'prebuilt_rfsa', 'prebuilt_root', 'rust_prebuilt_dylib', 'rust_prebuilt_library', 'rust_prebuilt_rlib',
-      'vndk_prebuilt_shared',
-
-      # 'android_test_import',
-      # 'cc_prebuilt_test_library_shared',
-      # 'java_import_host',
-      # 'java_test_import',
-      # 'llvm_host_prebuilt_library_shared',
-      # 'prebuilt_apis',
-      # 'prebuilt_build_tool',
-      # 'prebuilt_defaults',
-      # 'prebuilt_etc',
-      # 'prebuilt_etc_host',
-      # 'prebuilt_etc_xml',
-      # 'prebuilt_font',
-      # 'prebuilt_hidl_interfaces',
-      # 'prebuilt_platform_compat_config',
-      # 'prebuilt_stubs_sources',
-      # 'prebuilt_usr_share',
-      # 'prebuilt_usr_share_host',
-      # 'soong_config_module_type_import',
-  ]
+  return (file_metadata['soong_module_type'] and
+          file_metadata['soong_module_type'] in SOONG_PREBUILT_MODULE_TYPES)
 
 
 def is_source_package(file_metadata):
