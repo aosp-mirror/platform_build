@@ -2,13 +2,6 @@ SOONG_MAKEVARS_MK := $(SOONG_OUT_DIR)/make_vars-$(TARGET_PRODUCT).mk
 SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.variables
 SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android-$(TARGET_PRODUCT).mk
 
-BINDER32BIT :=
-ifneq ($(TARGET_USES_64_BIT_BINDER),true)
-ifneq ($(TARGET_IS_64_BIT),true)
-BINDER32BIT := true
-endif
-endif
-
 include $(BUILD_SYSTEM)/art_config.mk
 include $(BUILD_SYSTEM)/dex_preopt_config.mk
 
@@ -142,7 +135,6 @@ $(call add_json_list, NativeCoverageExcludePaths,        $(NATIVE_COVERAGE_EXCLU
 $(call add_json_bool, SamplingPGO,                       $(filter true,$(SAMPLING_PGO)))
 
 $(call add_json_bool, ArtUseReadBarrier,                 $(call invert_bool,$(filter false,$(PRODUCT_ART_USE_READ_BARRIER))))
-$(call add_json_bool, Binder32bit,                       $(BINDER32BIT))
 $(call add_json_str,  BtConfigIncludeDir,                $(BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR))
 $(call add_json_list, DeviceKernelHeaders,               $(TARGET_DEVICE_KERNEL_HEADERS) $(TARGET_BOARD_KERNEL_HEADERS) $(TARGET_PRODUCT_KERNEL_HEADERS))
 $(call add_json_str,  DeviceVndkVersion,                 $(BOARD_VNDK_VERSION))
