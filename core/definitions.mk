@@ -597,7 +597,7 @@ endef
 define declare-copy-target-license-metadata
 $(strip $(if $(filter $(OUT_DIR)%,$(2)),\
   $(eval _tgt:=$(strip $(1)))\
-  $(eval ALL_COPIED_TARGETS.$(_tgt).SOURCES := $(ALL_COPIED_TARGETS.$(_tgt).SOURCES) $(filter $(OUT_DIR)%,$(2)))\
+  $(eval ALL_COPIED_TARGETS.$(_tgt).SOURCES := $(sort $(ALL_COPIED_TARGETS.$(_tgt).SOURCES) $(filter $(OUT_DIR)%,$(2))))\
   $(eval ALL_COPIED_TARGETS += $(_tgt))))
 endef
 
