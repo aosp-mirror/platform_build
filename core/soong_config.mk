@@ -1,5 +1,5 @@
 SOONG_MAKEVARS_MK := $(SOONG_OUT_DIR)/make_vars-$(TARGET_PRODUCT).mk
-SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.variables
+SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.$(TARGET_PRODUCT).variables
 SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android-$(TARGET_PRODUCT).mk
 
 include $(BUILD_SYSTEM)/art_config.mk
