@@ -181,6 +181,7 @@ def ValidateConfigLists():
 
 _PARTITION_ITEM_PATTERN = re.compile(r'^([A-Z_]+)/.*$')
 _IMAGE_PARTITION_PATTERN = re.compile(r'^IMAGES/(.*)\.img$')
+_PREBUILT_IMAGE_PARTITION_PATTERN = re.compile(r'^PREBUILT_IMAGES/(.*)\.img$')
 
 
 def ItemListToPartitionSet(item_list):
@@ -203,12 +204,12 @@ def ItemListToPartitionSet(item_list):
   partition_set = set()
 
   for item in item_list:
-    for pattern in (_PARTITION_ITEM_PATTERN, _IMAGE_PARTITION_PATTERN):
+    for pattern in (_PARTITION_ITEM_PATTERN, _IMAGE_PARTITION_PATTERN, _PREBUILT_IMAGE_PARTITION_PATTERN):
       partition_match = pattern.search(item.strip())
       if partition_match:
         partition = partition_match.group(1).lower()
         # These directories in target-files are not actual partitions.
-        if partition not in ('meta', 'images'):
+        if partition not in ('meta', 'images', 'prebuilt_images'):
           partition_set.add(partition)
 
   return partition_set
@@ -217,7 +218,7 @@ def ItemListToPartitionSet(item_list):
 # Partitions that are grabbed from the framework partial build by default.
 _FRAMEWORK_PARTITIONS = {
     'system', 'product', 'system_ext', 'system_other', 'root', 'system_dlkm',
-    'vbmeta_system'
+    'vbmeta_system', 'pvmfw'
 }
 
 
@@ -253,7 +254,7 @@ def InferItemList(input_namelist, framework):
     if partition == 'meta':
       continue
 
-    if partition == 'images':
+    if partition in ('images', 'prebuilt_images'):
       image_partition, extension = os.path.splitext(os.path.basename(namelist))
       if image_partition == 'vbmeta':
         # Always regenerate vbmeta.img since it depends on hash information
