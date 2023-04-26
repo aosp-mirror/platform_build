@@ -18,6 +18,7 @@ rust_defaults {
     srcs: ["src/main.rs"],
     rustlibs: [
         "libaconfig_protos",
+        "libanyhow",
         "libprotobuf",
     ],
 }

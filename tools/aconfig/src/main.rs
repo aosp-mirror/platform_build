@@ -16,40 +16,23 @@
 
 //! `aconfig` is a build time tool to manage build time configurations, such as feature flags.
 
-use protobuf::text_format::{parse_from_str, ParseError};
+use anyhow::Result;
 
+mod aconfig;
 mod protos;
-use protos::Placeholder;
 
-fn foo() -> Result<String, ParseError> {
-    let placeholder = parse_from_str::<Placeholder>(r#"name: "aconfig""#)?;
-    Ok(placeholder.name)
-}
+use aconfig::{Flag, Override};
 
-fn main() {
-    println!("{:?}", foo());
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_foo() {
-        assert_eq!("aconfig", foo().unwrap());
-    }
-
-    #[test]
-    fn test_binary_protobuf() {
-        use protobuf::Message;
-        let mut buffer = Vec::new();
-
-        let mut original = Placeholder::new();
-        original.name = "test".to_owned();
-        original.write_to_writer(&mut buffer).unwrap();
-
-        let copy = Placeholder::parse_from_reader(&mut buffer.as_slice()).unwrap();
-
-        assert_eq!(original, copy);
-    }
+fn main() -> Result<()> {
+    let flag = Flag::try_from_text_proto(r#"id: "a" description: "description of a" value: true"#)?;
+    println!("{:?}", flag);
+    let flags = Flag::try_from_text_proto_list(
+        r#"flag { id: "a" description: "description of a" value: true }"#,
+    )?;
+    println!("{:?}", flags);
+    let override_ = Override::try_from_text_proto(r#"id: "foo" value: true"#)?;
+    println!("{:?}", override_);
+    let overrides = Override::try_from_text_proto_list(r#"override { id: "foo" value: true }"#)?;
+    println!("{:?}", overrides);
+    Ok(())
 }

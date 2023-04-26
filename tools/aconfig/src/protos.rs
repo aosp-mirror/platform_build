@@ -26,13 +26,42 @@
 //
 // This module hides these differences from the rest of aconfig.
 
-// When building with the Android tool-chain:
+// ---- When building with the Android tool-chain ----
 #[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Placeholder;
+pub use aconfig_protos::aconfig::Android_config as ProtoAndroidConfig;
 
-// When building with cargo:
+#[cfg(not(feature = "cargo"))]
+pub use aconfig_protos::aconfig::Flag as ProtoFlag;
+
+#[cfg(not(feature = "cargo"))]
+pub use aconfig_protos::aconfig::Override_config as ProtoOverrideConfig;
+
+#[cfg(not(feature = "cargo"))]
+pub use aconfig_protos::aconfig::Override as ProtoOverride;
+
+// ---- When building with cargo ----
 #[cfg(feature = "cargo")]
 include!(concat!(env!("OUT_DIR"), "/aconfig_proto/mod.rs"));
 
 #[cfg(feature = "cargo")]
-pub use aconfig::Placeholder;
+pub use aconfig::Android_config as ProtoAndroidConfig;
+
+#[cfg(feature = "cargo")]
+pub use aconfig::Flag as ProtoFlag;
+
+#[cfg(feature = "cargo")]
+pub use aconfig::Override_config as ProtoOverrideConfig;
+
+#[cfg(feature = "cargo")]
+pub use aconfig::Override as ProtoOverride;
+
+// ---- Common for both the Android tool-chain and cargo ----
+use anyhow::Result;
+
+pub fn try_from_text_proto<T>(s: &str) -> Result<T>
+where
+    T: protobuf::MessageFull,
+{
+    // warning: parse_from_str does not check if required fields are set
+    protobuf::text_format::parse_from_str(s).map_err(|e| e.into())
+}
