@@ -1,0 +1,15 @@
+[package]
+name = "aconfig"
+version = "0.1.0"
+edition = "2021"
+build = "build.rs"
+
+[features]
+default = ["cargo"]
+cargo = []
+
+[dependencies]
+protobuf = "3.2.0"
+
+[build-dependencies]
+protobuf-codegen = "3.2.0"

@@ -16,8 +16,10 @@
 
 //! `aconfig` is a build time tool to manage build time configurations, such as feature flags.
 
-use aconfig_protos::aconfig::Placeholder;
 use protobuf::text_format::{parse_from_str, ParseError};
+
+mod protos;
+use protos::Placeholder;
 
 fn foo() -> Result<String, ParseError> {
     let placeholder = parse_from_str::<Placeholder>(r#"name: "aconfig""#)?;
