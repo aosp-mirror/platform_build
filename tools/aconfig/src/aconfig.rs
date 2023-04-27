@@ -26,6 +26,7 @@ pub struct Flag {
 }
 
 impl Flag {
+    #[allow(dead_code)] // only used in unit tests
     pub fn try_from_text_proto(text_proto: &str) -> Result<Flag> {
         let proto: ProtoFlag = crate::protos::try_from_text_proto(text_proto)
             .with_context(|| text_proto.to_owned())?;
@@ -63,6 +64,7 @@ pub struct Override {
 }
 
 impl Override {
+    #[allow(dead_code)] // only used in unit tests
     pub fn try_from_text_proto(text_proto: &str) -> Result<Override> {
         let proto: ProtoOverride = crate::protos::try_from_text_proto(text_proto)?;
         proto.try_into()

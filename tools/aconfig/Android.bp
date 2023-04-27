@@ -19,7 +19,10 @@ rust_defaults {
     rustlibs: [
         "libaconfig_protos",
         "libanyhow",
+        "libclap",
         "libprotobuf",
+        "libserde",
+        "libserde_json",
     ],
 }
 
