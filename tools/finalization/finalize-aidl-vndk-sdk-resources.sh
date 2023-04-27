@@ -105,6 +105,12 @@ function finalize_aidl_vndk_sdk_resources() {
     # frameworks/libs/modules-utils
     finalize_modules_utils
 
+    # development/sdk
+    local platform_source="$top/development/sdk/platform_source.prop_template"
+    sed -i -e 's/Pkg\.Revision.*/Pkg\.Revision=1/g' $platform_source
+    local build_tools_source="$top/development/sdk/build_tools_source.prop_template"
+    sed -i -e 's/Pkg\.Revision.*/Pkg\.Revision=${PLATFORM_SDK_VERSION}.0.0/g' $build_tools_source
+
     # build/make
     local version_defaults="$top/build/make/core/version_defaults.mk"
     sed -i -e "s/PLATFORM_SDK_VERSION := .*/PLATFORM_SDK_VERSION := ${FINAL_PLATFORM_SDK_VERSION}/g" $version_defaults
