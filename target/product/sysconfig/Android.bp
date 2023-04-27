@@ -55,3 +55,9 @@ prebuilt_etc {
     src: "preinstalled-packages-platform-telephony-product.xml",
 }
 
+prebuilt_etc {
+    name: "initial-package-stopped-states-aosp.xml",
+    product_specific: true,
+    sub_dir: "sysconfig",
+    src: "initial-package-stopped-states-aosp.xml",
+}
