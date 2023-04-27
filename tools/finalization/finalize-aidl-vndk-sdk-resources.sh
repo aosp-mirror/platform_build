@@ -92,9 +92,7 @@ function finalize_aidl_vndk_sdk_resources() {
     AIDL_TRANSITIVE_FREEZE=true $m aidl-freeze-api create_reference_dumps
 
     # Generate ABI dumps
-    ANDROID_BUILD_TOP="$top" \
-        out/host/linux-x86/bin/create_reference_dumps \
-        -p aosp_arm64 --build-variant user
+    ANDROID_BUILD_TOP="$top" out/host/linux-x86/bin/create_reference_dumps
 
     echo "NOTE: THIS INTENTIONALLY MAY FAIL AND REPAIR ITSELF (until 'DONE')"
     # Update new versions of files. See update-vndk-list.sh (which requires envsetup.sh)
