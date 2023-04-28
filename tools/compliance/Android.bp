@@ -142,6 +142,7 @@ blueprint_go_binary {
         "spdx-tools-builder2v2",
         "spdx-tools-spdxcommon",
         "spdx-tools-spdx-json",
+        "spdx-tools-spdxlib",
     ],
     testSrcs: ["cmd/sbom/sbom_test.go"],
 }

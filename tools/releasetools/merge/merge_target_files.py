@@ -165,6 +165,19 @@ def remove_file_if_exists(file_name):
     pass
 
 
+def include_meta_in_list(item_list):
+  """Include all `META/*` files in the item list.
+
+  To ensure that `AddImagesToTargetFiles` can still be used with vendor item
+  list that do not specify all of the required META/ files, those files should
+  be included by default. This preserves the backward compatibility of
+  `rebuild_image_with_sepolicy`.
+  """
+  if not item_list:
+    return None
+  return list(item_list) + ['META/*']
+
+
 def create_merged_package(temp_dir):
   """Merges two target files packages into one target files structure.
 
@@ -276,7 +289,7 @@ def rebuild_image_with_sepolicy(target_files_dir):
   merge_utils.CollectTargetFiles(
       input_zipfile_or_dir=OPTIONS.vendor_target_files,
       output_dir=vendor_target_files_dir,
-      item_list=OPTIONS.vendor_item_list)
+      item_list=include_meta_in_list(OPTIONS.vendor_item_list))
 
   # Copy the partition contents from the merged target-files archive to the
   # vendor target-files archive.

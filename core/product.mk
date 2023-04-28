@@ -36,6 +36,7 @@ _product_list_vars += PRODUCT_HOST_PACKAGES
 _product_list_vars += PRODUCT_PACKAGES
 _product_list_vars += PRODUCT_PACKAGES_DEBUG
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_ASAN
+_product_list_vars += PRODUCT_PACKAGES_ARM64
 # Packages included only for eng/userdebug builds, when building with EMMA_INSTRUMENT=true
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE
 _product_list_vars += PRODUCT_PACKAGES_ENG
@@ -393,6 +394,8 @@ _product_list_vars += PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS
 # - "false": disallows the build system and the runtime to use userfaultfd GC even if the device
 #   supports it
 _product_single_value_vars += PRODUCT_ENABLE_UFFD_GC
+
+_product_list_vars += PRODUCT_AFDO_PROFILES
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
