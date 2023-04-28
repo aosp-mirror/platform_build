@@ -320,10 +320,6 @@ ADDITIONAL_VENDOR_PROPERTIES += \
     ro.board.platform=$(TARGET_BOARD_PLATFORM) \
     ro.hwui.use_vulkan=$(TARGET_USES_VULKAN)
 
-# Set ro.gfx.angle.supported based on if ANGLE is installed in vendor partition
-ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.gfx.angle.supported=$(USE_ANGLE)
-
 ifdef TARGET_SCREEN_DENSITY
 ADDITIONAL_VENDOR_PROPERTIES += \
     ro.sf.lcd_density=$(TARGET_SCREEN_DENSITY)
