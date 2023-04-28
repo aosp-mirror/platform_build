@@ -78,7 +78,7 @@ endif
 .KATI_READONLY := PLATFORM_SDK_VERSION
 
 # This is the sdk extension version of this tree.
-PLATFORM_SDK_EXTENSION_VERSION := 5
+PLATFORM_SDK_EXTENSION_VERSION := 6
 .KATI_READONLY := PLATFORM_SDK_EXTENSION_VERSION
 
 # This is the sdk extension version that PLATFORM_SDK_VERSION ships with.
@@ -103,7 +103,7 @@ ifndef PLATFORM_SECURITY_PATCH
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-    PLATFORM_SECURITY_PATCH := 2023-05-01
+    PLATFORM_SECURITY_PATCH := 2023-06-01
 endif
 
 include $(BUILD_SYSTEM)/version_util.mk
