@@ -5272,6 +5272,62 @@ $(call dist-for-goals, otatools-package, \
 endif # build_otatools_package
 
 # -----------------------------------------------------------------
+#  fastboot-info.txt
+FASTBOOT_INFO_VERSION = 1.0
+
+INSTALLED_FASTBOOT_INFO_TARGET := $(PRODUCT_OUT)/fastboot-info.txt
+
+$(INSTALLED_FASTBOOT_INFO_TARGET):
+	rm -f $@
+	$(call pretty,"Target fastboot-info.txt: $@")
+	$(hide) echo "# fastboot-info for $(TARGET_PRODUCT)" >> $@
+	$(hide) echo "version $(FASTBOOT_INFO_VERSION)" >> $@
+ifneq ($(INSTALLED_BOOTIMAGE_TARGET),)
+	$(hide) echo "flash boot" >> $@
+endif
+ifneq ($(INSTALLED_INIT_BOOT_IMAGE_TARGET),)
+	$(hide) echo "flash init_boot" >> $@
+endif
+ifdef BOARD_PREBUILT_DTBOIMAGE
+	$(hide) echo "flash dtbo" >> $@
+endif
+ifeq ($(BOARD_USES_PVMFWIMAGE),true)
+	$(hide) echo "flash pvmfw" >> $@
+endif
+ifeq ($(BOARD_AVB_ENABLE),true)
+ifeq ($(BUILDING_VBMETA_IMAGE),true)
+	$(hide) echo "flash --apply-vbmeta vbmeta" >> $@
+endif
+ifneq (,$(strip $(BOARD_AVB_VBMETA_SYSTEM)))
+	$(hide) echo "flash --apply-vbmeta vbmeta_system" >> $@
+endif
+ifneq (,$(strip $(BOARD_AVB_VBMETA_VENDOR)))
+	$(hide) echo "flash --apply-vbmeta vbmeta_vendor" >> $@
+endif
+ifneq ($(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
+	$(hide) echo "flash vendor_boot" >> $@
+endif
+ifneq (,$(strip $(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)))
+	$(hide) $(foreach partition,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS),\
+	  $(hide) echo "flash --apply-vbmeta vbmeta_$(partition)" >> $@;)
+endif
+endif # BOARD_AVB_ENABLE
+	$(hide) echo "reboot fastboot" >> $@
+	$(hide) echo "update-super" >> $@
+	$(foreach partition,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
+	  echo "flash $(partition)" >> $@;)
+ifdef BUILDING_SYSTEM_OTHER_IMAGE
+	$(hide) echo "flash --slot-other system system_other.img" >> $@
+endif
+ifdef BUILDING_CACHE_IMAGE
+	$(hide) echo "if-wipe erase cache" >> $@
+endif
+	$(hide) echo "if-wipe erase userdata" >> $@
+ifeq ($(BOARD_USES_METADATA_PARTITION),true)
+	$(hide) echo "if-wipe erase metadata" >> $@
+endif
+
+# -----------------------------------------------------------------
 #  misc_info.txt
 
 INSTALLED_MISC_INFO_TARGET := $(PRODUCT_OUT)/misc_info.txt
@@ -5523,6 +5579,11 @@ endif
 ifeq ($(TARGET_FLATTEN_APEX),false)
 	$(hide) echo "target_flatten_apex=false" >> $@
 endif
+
+$(call declare-0p-target,$(INSTALLED_FASTBOOT_INFO_TARGET))
+
+.PHONY: fastboot_info
+fastboot_info: $(INSTALLED_FASTBOOT_INFO_TARGET)
 
 $(call declare-0p-target,$(INSTALLED_MISC_INFO_TARGET))
 
@@ -6295,6 +6356,7 @@ $(call declare-container-license-deps,$(BUILT_TARGET_FILES_PACKAGE), $(INSTALLED
             $(LPMAKE) \
             $(SELINUX_FC) \
             $(INSTALLED_MISC_INFO_TARGET) \
+            $(INSTALLED_FASTBOOT_INFO_TARGET) \
             $(APKCERTS_FILE) \
             $(SOONG_APEX_KEYS_FILE) \
             $(HOST_OUT_EXECUTABLES)/fs_config \
