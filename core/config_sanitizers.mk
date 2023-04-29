@@ -155,6 +155,17 @@ ifeq ($(filter memtag_heap, $(my_sanitize)),)
   endif
 endif
 
+# Enable HWASan in included paths.
+ifeq ($(filter hwaddress, $(my_sanitize)),)
+  combined_include_paths := $(HWASAN_INCLUDE_PATHS) \
+                            $(PRODUCT_HWASAN_INCLUDE_PATHS)
+
+  ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_include_paths)),\
+         $(filter $(dir)%,$(LOCAL_PATH)))),)
+    my_sanitize := hwaddress $(my_sanitize)
+  endif
+endif
+
 # If CFI is disabled globally, remove it from my_sanitize.
 ifeq ($(strip $(ENABLE_CFI)),false)
   my_sanitize := $(filter-out cfi,$(my_sanitize))
