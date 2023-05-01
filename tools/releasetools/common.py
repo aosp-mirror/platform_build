@@ -450,10 +450,7 @@ class BuildInfo(object):
 
   @property
   def is_vabc(self):
-    vendor_prop = self.info_dict.get("vendor.build.prop")
-    vabc_enabled = vendor_prop and \
-        vendor_prop.GetProp("ro.virtual_ab.compression.enabled") == "true"
-    return vabc_enabled
+    return self.info_dict.get("virtual_ab_compression") == "true"
 
   @property
   def is_android_r(self):
@@ -474,9 +471,9 @@ class BuildInfo(object):
     for prop in props:
       value = vendor_prop.GetProp(prop)
       try:
-          return int(value)
+        return int(value)
       except:
-          pass
+        pass
     return -1
 
   @property
@@ -1396,7 +1393,8 @@ def RunHostInitVerifier(product_out, partition_map):
 def AppendAVBSigningArgs(cmd, partition):
   """Append signing arguments for avbtool."""
   # e.g., "--key path/to/signing_key --algorithm SHA256_RSA4096"
-  key_path = ResolveAVBSigningPathArgs(OPTIONS.info_dict.get("avb_" + partition + "_key_path"))
+  key_path = ResolveAVBSigningPathArgs(
+      OPTIONS.info_dict.get("avb_" + partition + "_key_path"))
   algorithm = OPTIONS.info_dict.get("avb_" + partition + "_algorithm")
   if key_path and algorithm:
     cmd.extend(["--key", key_path, "--algorithm", algorithm])
@@ -1415,7 +1413,7 @@ def ResolveAVBSigningPathArgs(split_args):
     if os.path.exists(new_path):
       return new_path
     raise ExternalError(
-      "Failed to find {}".format(new_path))
+        "Failed to find {}".format(new_path))
 
   if not split_args:
     return split_args
