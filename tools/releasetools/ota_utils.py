@@ -1047,10 +1047,15 @@ def Fnmatch(filename, pattersn):
 
 def CopyTargetFilesDir(input_dir):
   output_dir = common.MakeTempDir("target_files")
-  shutil.copytree(os.path.join(input_dir, "IMAGES"), os.path.join(
-      output_dir, "IMAGES"), dirs_exist_ok=True)
+  IMAGES_DIR = ["IMAGES", "PREBUILT_IMAGES", "RADIO"]
+  for subdir in IMAGES_DIR:
+    if not os.path.exists(os.path.join(input_dir, subdir)):
+      continue
+    shutil.copytree(os.path.join(input_dir, subdir), os.path.join(
+        output_dir, subdir), dirs_exist_ok=True, copy_function=os.link)
   shutil.copytree(os.path.join(input_dir, "META"), os.path.join(
       output_dir, "META"), dirs_exist_ok=True)
+
   for (dirpath, _, filenames) in os.walk(input_dir):
     for filename in filenames:
       path = os.path.join(dirpath, filename)
