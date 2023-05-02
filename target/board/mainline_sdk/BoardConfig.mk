@@ -18,6 +18,3 @@ TARGET_ARCH_SUITE := mainline_sdk
 HOST_CROSS_OS := linux_bionic
 HOST_CROSS_ARCH := x86_64
 HOST_CROSS_2ND_ARCH :=
-
-# Required flag for non-64 bit devices from P.
-TARGET_USES_64_BIT_BINDER := true
