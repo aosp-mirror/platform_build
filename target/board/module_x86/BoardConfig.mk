@@ -13,8 +13,6 @@
 # limitations under the License.
 #
 
-include build/make/target/board/BoardConfigModuleCommon.mk
-
 TARGET_CPU_ABI := x86
 TARGET_ARCH := x86
 TARGET_ARCH_VARIANT := x86

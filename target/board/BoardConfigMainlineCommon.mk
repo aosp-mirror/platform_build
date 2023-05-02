@@ -24,9 +24,6 @@ BOARD_USES_METADATA_PARTITION := true
 # Default is current, but allow devices to override vndk version if needed.
 BOARD_VNDK_VERSION ?= current
 
-# Required flag for non-64 bit devices from P.
-TARGET_USES_64_BIT_BINDER := true
-
 # 64 bit mediadrmserver
 TARGET_ENABLE_MEDIADRM_64 := true
 
