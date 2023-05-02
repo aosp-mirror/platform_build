@@ -401,6 +401,10 @@ _product_list_vars += PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS
 #   supports it
 _product_single_value_vars += PRODUCT_ENABLE_UFFD_GC
 
+# Specifies COW version to be used by update_engine and libsnapshot. If this value is not
+# specified we default to COW version 2 in update_engine for backwards compatibility
+_product_single_value_vars += PRODUCT_VIRTUAL_AB_COW_VERSION
+
 _product_list_vars += PRODUCT_AFDO_PROFILES
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
