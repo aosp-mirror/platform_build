@@ -16,38 +16,75 @@
 
 //! `aconfig` is a build time tool to manage build time configurations, such as feature flags.
 
-use aconfig_protos::aconfig::Placeholder;
-use protobuf::text_format::{parse_from_str, ParseError};
+use anyhow::Result;
+use clap::{builder::ArgAction, builder::EnumValueParser, Arg, Command};
+use std::fs;
 
-fn foo() -> Result<String, ParseError> {
-    let placeholder = parse_from_str::<Placeholder>(r#"name: "aconfig""#)?;
-    Ok(placeholder.name)
+mod aconfig;
+mod cache;
+mod commands;
+mod protos;
+
+use crate::cache::Cache;
+use commands::{Input, Source};
+
+fn cli() -> Command {
+    Command::new("aconfig")
+        .subcommand_required(true)
+        .subcommand(
+            Command::new("create-cache")
+                .arg(
+                    Arg::new("build-id")
+                        .long("build-id")
+                        .value_parser(clap::value_parser!(u32))
+                        .required(true),
+                )
+                .arg(Arg::new("aconfig").long("aconfig").action(ArgAction::Append))
+                .arg(Arg::new("override").long("override").action(ArgAction::Append))
+                .arg(Arg::new("cache").long("cache").required(true)),
+        )
+        .subcommand(
+            Command::new("dump").arg(Arg::new("cache").long("cache").required(true)).arg(
+                Arg::new("format")
+                    .long("format")
+                    .value_parser(EnumValueParser::<commands::Format>::new())
+                    .default_value("text"),
+            ),
+        )
 }
 
-fn main() {
-    println!("{:?}", foo());
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_foo() {
-        assert_eq!("aconfig", foo().unwrap());
+fn main() -> Result<()> {
+    let matches = cli().get_matches();
+    match matches.subcommand() {
+        Some(("create-cache", sub_matches)) => {
+            let mut aconfigs = vec![];
+            let build_id = *sub_matches.get_one::<u32>("build-id").unwrap();
+            for path in
+                sub_matches.get_many::<String>("aconfig").unwrap_or_default().collect::<Vec<_>>()
+            {
+                let file = Box::new(fs::File::open(path)?);
+                aconfigs.push(Input { source: Source::File(path.to_string()), reader: file });
+            }
+            let mut overrides = vec![];
+            for path in
+                sub_matches.get_many::<String>("override").unwrap_or_default().collect::<Vec<_>>()
+            {
+                let file = Box::new(fs::File::open(path)?);
+                overrides.push(Input { source: Source::File(path.to_string()), reader: file });
+            }
+            let cache = commands::create_cache(build_id, aconfigs, overrides)?;
+            let path = sub_matches.get_one::<String>("cache").unwrap();
+            let file = fs::File::create(path)?;
+            cache.write_to_writer(file)?;
+        }
+        Some(("dump", sub_matches)) => {
+            let path = sub_matches.get_one::<String>("cache").unwrap();
+            let file = fs::File::open(path)?;
+            let cache = Cache::read_from_reader(file)?;
+            let format = sub_matches.get_one("format").unwrap();
+            commands::dump_cache(cache, *format)?;
+        }
+        _ => unreachable!(),
     }
-
-    #[test]
-    fn test_binary_protobuf() {
-        use protobuf::Message;
-        let mut buffer = Vec::new();
-
-        let mut original = Placeholder::new();
-        original.name = "test".to_owned();
-        original.write_to_writer(&mut buffer).unwrap();
-
-        let copy = Placeholder::parse_from_reader(&mut buffer.as_slice()).unwrap();
-
-        assert_eq!(original, copy);
-    }
+    Ok(())
 }
