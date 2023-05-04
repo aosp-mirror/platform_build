@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2009 The Android Open Source Project
+# Copyright 2023 The Android Open-Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
 # limitations under the License.
 #
 
-PRODUCT_SOONG_NAMESPACES += device/generic/goldfish # for libwifi-hal-emu
-PRODUCT_SOONG_NAMESPACES += device/generic/goldfish-opengl # for goldfish deps.
+# To include ANGLE into the image build, add
+# $(call inherit-product, $(SRC_TARGET_DIR)/product/angle_supported.mk) to the Makefile.
+# By default, this will allow ANGLE binaries to coexist with native GLES drivers.
 
-ifdef NET_ETH0_STARTONBOOT
-  PRODUCT_VENDOR_PROPERTIES += net.eth0.startonboot=1
-endif
+PRODUCT_PACKAGES += \
+    libEGL_angle \
+    libGLESv1_CM_angle \
+    libGLESv2_angle
 
-# Ensure we package the BIOS files too.
-PRODUCT_HOST_PACKAGES += \
-	bios.bin \
-	vgabios-cirrus.bin \
+# Set ro.gfx.angle.supported based on if ANGLE is installed in vendor partition
+PRODUCT_VENDOR_PROPERTIES += ro.gfx.angle.supported=true
