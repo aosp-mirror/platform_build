@@ -5273,7 +5273,7 @@ endif # build_otatools_package
 
 # -----------------------------------------------------------------
 #  fastboot-info.txt
-FASTBOOT_INFO_VERSION = 1.0
+FASTBOOT_INFO_VERSION = 1
 
 INSTALLED_FASTBOOT_INFO_TARGET := $(PRODUCT_OUT)/fastboot-info.txt
 
