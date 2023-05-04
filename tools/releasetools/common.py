@@ -754,6 +754,33 @@ def ReadFromInputFile(input_file, fn):
   return ReadBytesFromInputFile(input_file, fn).decode()
 
 
+def WriteBytesToInputFile(input_file, fn, data):
+  """Write bytes |data| contents to fn of input zipfile or directory."""
+  if isinstance(input_file, zipfile.ZipFile):
+    with input_file.open(fn, "w") as entry_fp:
+      return entry_fp.write(data)
+  elif zipfile.is_zipfile(input_file):
+    with zipfile.ZipFile(input_file, "r", allowZip64=True) as zfp:
+      with zfp.open(fn, "w") as entry_fp:
+        return entry_fp.write(data)
+  else:
+    if not os.path.isdir(input_file):
+      raise ValueError(
+          "Invalid input_file, accepted inputs are ZipFile object, path to .zip file on disk, or path to extracted directory. Actual: " + input_file)
+    path = os.path.join(input_file, *fn.split("/"))
+    try:
+      with open(path, "wb") as f:
+        return f.write(data)
+    except IOError as e:
+      if e.errno == errno.ENOENT:
+        raise KeyError(fn)
+
+
+def WriteToInputFile(input_file, fn, str: str):
+  """Write str content to fn of input file or directory"""
+  return WriteBytesToInputFile(input_file, fn, str.encode())
+
+
 def ExtractFromInputFile(input_file, fn):
   """Extracts the contents of fn from input zipfile or directory into a file."""
   if isinstance(input_file, zipfile.ZipFile):
