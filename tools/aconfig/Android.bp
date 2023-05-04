@@ -18,7 +18,11 @@ rust_defaults {
     srcs: ["src/main.rs"],
     rustlibs: [
         "libaconfig_protos",
+        "libanyhow",
+        "libclap",
         "libprotobuf",
+        "libserde",
+        "libserde_json",
     ],
 }
 
