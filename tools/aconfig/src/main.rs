@@ -33,6 +33,12 @@ fn cli() -> Command {
         .subcommand_required(true)
         .subcommand(
             Command::new("create-cache")
+                .arg(
+                    Arg::new("build-id")
+                        .long("build-id")
+                        .value_parser(clap::value_parser!(u32))
+                        .required(true),
+                )
                 .arg(Arg::new("aconfig").long("aconfig").action(ArgAction::Append))
                 .arg(Arg::new("override").long("override").action(ArgAction::Append))
                 .arg(Arg::new("cache").long("cache").required(true)),
@@ -52,6 +58,7 @@ fn main() -> Result<()> {
     match matches.subcommand() {
         Some(("create-cache", sub_matches)) => {
             let mut aconfigs = vec![];
+            let build_id = *sub_matches.get_one::<u32>("build-id").unwrap();
             for path in
                 sub_matches.get_many::<String>("aconfig").unwrap_or_default().collect::<Vec<_>>()
             {
@@ -65,7 +72,7 @@ fn main() -> Result<()> {
                 let file = Box::new(fs::File::open(path)?);
                 overrides.push(Input { source: Source::File(path.to_string()), reader: file });
             }
-            let cache = commands::create_cache(aconfigs, overrides)?;
+            let cache = commands::create_cache(build_id, aconfigs, overrides)?;
             let path = sub_matches.get_one::<String>("cache").unwrap();
             let file = fs::File::create(path)?;
             cache.write_to_writer(file)?;

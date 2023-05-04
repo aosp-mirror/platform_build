@@ -31,6 +31,9 @@
 pub use aconfig_protos::aconfig::Android_config as ProtoAndroidConfig;
 
 #[cfg(not(feature = "cargo"))]
+pub use aconfig_protos::aconfig::Value as ProtoValue;
+
+#[cfg(not(feature = "cargo"))]
 pub use aconfig_protos::aconfig::Flag as ProtoFlag;
 
 #[cfg(not(feature = "cargo"))]
@@ -45,6 +48,9 @@ include!(concat!(env!("OUT_DIR"), "/aconfig_proto/mod.rs"));
 
 #[cfg(feature = "cargo")]
 pub use aconfig::Android_config as ProtoAndroidConfig;
+
+#[cfg(feature = "cargo")]
+pub use aconfig::Value as ProtoValue;
 
 #[cfg(feature = "cargo")]
 pub use aconfig::Flag as ProtoFlag;

@@ -44,8 +44,8 @@ pub struct Input {
     pub reader: Box<dyn Read>,
 }
 
-pub fn create_cache(aconfigs: Vec<Input>, overrides: Vec<Input>) -> Result<Cache> {
-    let mut cache = Cache::new();
+pub fn create_cache(build_id: u32, aconfigs: Vec<Input>, overrides: Vec<Input>) -> Result<Cache> {
+    let mut cache = Cache::new(build_id);
 
     for mut input in aconfigs {
         let mut contents = String::new();
@@ -80,15 +80,12 @@ pub fn dump_cache(cache: Cache, format: Format) -> Result<()> {
     match format {
         Format::Text => {
             for item in cache.iter() {
-                println!("{}: {}", item.id, item.value());
+                println!("{}: {}", item.id, item.value);
             }
         }
         Format::Debug => {
             for item in cache.iter() {
-                println!("{}: {}", item.id, item.value());
-                for value in &item.values {
-                    println!("    {}: {}", value.source, value.value);
-                }
+                println!("{}: {} ({:?})", item.id, item.value, item.debug);
             }
         }
     }
@@ -105,7 +102,9 @@ mod tests {
         flag {
             id: "a"
             description: "Description of a"
-            value: true
+            value {
+                value: true
+            }
         }
         "#;
         let aconfigs = vec![Input { source: Source::Memory, reader: Box::new(s.as_bytes()) }];
@@ -116,8 +115,8 @@ mod tests {
         }
         "#;
         let overrides = vec![Input { source: Source::Memory, reader: Box::new(o.as_bytes()) }];
-        let cache = create_cache(aconfigs, overrides).unwrap();
-        let value = cache.iter().find(|&item| item.id == "a").unwrap().value();
+        let cache = create_cache(1, aconfigs, overrides).unwrap();
+        let value = cache.iter().find(|&item| item.id == "a").unwrap().value;
         assert!(!value);
     }
 }

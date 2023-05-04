@@ -20,10 +20,15 @@ syntax = "proto2";
 
 package android.aconfig;
 
+message value {
+  required bool value = 1;
+  optional uint32 since = 2;
+}
+
 message flag {
   required string id = 1;
   required string description = 2;
-  required bool value = 3;
+  repeated value value = 3;
 };
 
 message android_config {

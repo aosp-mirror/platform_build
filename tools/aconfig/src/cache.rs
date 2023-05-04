@@ -22,26 +22,22 @@ use crate::aconfig::{Flag, Override};
 use crate::commands::Source;
 
 #[derive(Serialize, Deserialize)]
-pub struct Value {
-    pub value: bool,
-    pub source: Source,
-}
-
-#[derive(Serialize, Deserialize)]
 pub struct Item {
     pub id: String,
     pub description: String,
-    pub values: Vec<Value>,
+    pub value: bool,
+    pub debug: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Cache {
+    build_id: u32,
     items: Vec<Item>,
 }
 
 impl Cache {
-    pub fn new() -> Cache {
-        Cache { items: vec![] }
+    pub fn new(build_id: u32) -> Cache {
+        Cache { build_id, items: vec![] }
     }
 
     pub fn read_from_reader(reader: impl Read) -> Result<Cache> {
@@ -53,18 +49,19 @@ impl Cache {
     }
 
     pub fn add_flag(&mut self, source: Source, flag: Flag) -> Result<()> {
-        if let Some(existing_item) = self.items.iter().find(|&item| item.id == flag.id) {
+        if self.items.iter().any(|item| item.id == flag.id) {
             return Err(anyhow!(
-                "failed to add flag {} from {}: already added from {}",
+                "failed to add flag {} from {}: flag already defined",
                 flag.id,
                 source,
-                existing_item.values.first().unwrap().source
             ));
         }
+        let value = flag.resolve_value(self.build_id);
         self.items.push(Item {
             id: flag.id.clone(),
-            description: flag.description.clone(),
-            values: vec![Value { value: flag.value, source }],
+            description: flag.description,
+            value,
+            debug: vec![format!("{}:{}", source, value)],
         });
         Ok(())
     }
@@ -73,7 +70,8 @@ impl Cache {
         let Some(existing_item) = self.items.iter_mut().find(|item| item.id == override_.id) else {
             return Err(anyhow!("failed to override flag {}: unknown flag", override_.id));
         };
-        existing_item.values.push(Value { value: override_.value, source });
+        existing_item.value = override_.value;
+        existing_item.debug.push(format!("{}:{}", source, override_.value));
         Ok(())
     }
 
@@ -82,65 +80,74 @@ impl Cache {
     }
 }
 
-impl Item {
-    pub fn value(&self) -> bool {
-        self.values.last().unwrap().value
-    }
-}
+impl Item {}
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::aconfig::Value;
 
     #[test]
     fn test_add_flag() {
-        let mut cache = Cache::new();
+        let mut cache = Cache::new(1);
         cache
             .add_flag(
                 Source::File("first.txt".to_string()),
-                Flag { id: "foo".to_string(), description: "desc".to_string(), value: true },
+                Flag {
+                    id: "foo".to_string(),
+                    description: "desc".to_string(),
+                    values: vec![Value::default(true)],
+                },
             )
             .unwrap();
         let error = cache
             .add_flag(
                 Source::File("second.txt".to_string()),
-                Flag { id: "foo".to_string(), description: "desc".to_string(), value: false },
+                Flag {
+                    id: "foo".to_string(),
+                    description: "desc".to_string(),
+                    values: vec![Value::default(false)],
+                },
             )
             .unwrap_err();
         assert_eq!(
             &format!("{:?}", error),
-            "failed to add flag foo from second.txt: already added from first.txt"
+            "failed to add flag foo from second.txt: flag already defined"
         );
     }
 
     #[test]
     fn test_add_override() {
-        fn get_value(cache: &Cache, id: &str) -> bool {
-            cache.iter().find(|&item| item.id == id).unwrap().value()
+        fn check_value(cache: &Cache, id: &str, expected: bool) -> bool {
+            cache.iter().find(|&item| item.id == id).unwrap().value == expected
         }
 
-        let mut cache = Cache::new();
+        let mut cache = Cache::new(1);
         let error = cache
-            .add_override(Source::Memory, Override { id: "foo".to_string(), value: false })
+            .add_override(Source::Memory, Override { id: "foo".to_string(), value: true })
             .unwrap_err();
         assert_eq!(&format!("{:?}", error), "failed to override flag foo: unknown flag");
 
         cache
             .add_flag(
                 Source::File("first.txt".to_string()),
-                Flag { id: "foo".to_string(), description: "desc".to_string(), value: true },
+                Flag {
+                    id: "foo".to_string(),
+                    description: "desc".to_string(),
+                    values: vec![Value::default(true)],
+                },
             )
             .unwrap();
-        assert!(get_value(&cache, "foo"));
+        assert!(check_value(&cache, "foo", true));
 
         cache
             .add_override(Source::Memory, Override { id: "foo".to_string(), value: false })
             .unwrap();
-        assert!(!get_value(&cache, "foo"));
+        assert!(check_value(&cache, "foo", false));
 
         cache
             .add_override(Source::Memory, Override { id: "foo".to_string(), value: true })
             .unwrap();
-        assert!(get_value(&cache, "foo"));
+        assert!(check_value(&cache, "foo", true));
     }
 }
