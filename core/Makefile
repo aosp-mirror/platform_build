@@ -3288,8 +3288,8 @@ endif
 
 endif # BUILDING_SYSTEM_IMAGE
 
-.PHONY: sync syncsys
-sync syncsys: $(INTERNAL_SYSTEMIMAGE_FILES)
+.PHONY: sync syncsys sync_system
+sync syncsys sync_system: $(INTERNAL_SYSTEMIMAGE_FILES)
 
 # -----------------------------------------------------------------
 # Old PDK fusion targets
@@ -3617,7 +3617,8 @@ $(call declare-container-license-deps,$(INSTALLED_VENDORIMAGE_TARGET),$(INTERNAL
 vendorimage-nodeps vnod: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-vendorimage-target)
 
-sync: $(INTERNAL_VENDORIMAGE_FILES)
+.PHONY: sync_vendor
+sync sync_vendor: $(INTERNAL_VENDORIMAGE_FILES)
 
 else ifdef BOARD_PREBUILT_VENDORIMAGE
 INSTALLED_VENDORIMAGE_TARGET := $(PRODUCT_OUT)/vendor.img
@@ -3681,7 +3682,8 @@ $(call declare-container-license-deps,$(INSTALLED_PRODUCTIMAGE_TARGET),$(INTERNA
 productimage-nodeps pnod: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-productimage-target)
 
-sync: $(INTERNAL_PRODUCTIMAGE_FILES)
+.PHONY: sync_product
+sync sync_product: $(INTERNAL_PRODUCTIMAGE_FILES)
 
 else ifdef BOARD_PREBUILT_PRODUCTIMAGE
 INSTALLED_PRODUCTIMAGE_TARGET := $(PRODUCT_OUT)/product.img
@@ -3743,7 +3745,8 @@ $(call declare-container-license-deps,$(INSTALLED_SYSTEM_EXTIMAGE_TARGET),$(INTE
 systemextimage-nodeps senod: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-system_extimage-target)
 
-sync: $(INTERNAL_SYSTEM_EXTIMAGE_FILES)
+.PHONY: sync_system_ext
+sync sync_system_ext: $(INTERNAL_SYSTEM_EXTIMAGE_FILES)
 
 else ifdef BOARD_PREBUILT_SYSTEM_EXTIMAGE
 INSTALLED_SYSTEM_EXTIMAGE_TARGET := $(PRODUCT_OUT)/system_ext.img
@@ -3824,7 +3827,8 @@ $(call declare-container-license-deps,$(INSTALLED_ODMIMAGE_TARGET),$(INTERNAL_US
 odmimage-nodeps onod: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-odmimage-target)
 
-sync: $(INTERNAL_ODMIMAGE_FILES)
+.PHONY: sync_odm
+sync sync_odm: $(INTERNAL_ODMIMAGE_FILES)
 
 else ifdef BOARD_PREBUILT_ODMIMAGE
 INSTALLED_ODMIMAGE_TARGET := $(PRODUCT_OUT)/odm.img
@@ -3885,7 +3889,8 @@ $(call declare-container-license-deps,$(INSTALLED_VENDOR_DLKMIMAGE_TARGET),$(INT
 vendor_dlkmimage-nodeps vdnod: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-vendor_dlkmimage-target)
 
-sync: $(INTERNAL_VENDOR_DLKMIMAGE_FILES)
+.PHONY: sync_vendor_dlkm
+sync sync_vendor_dlkm: $(INTERNAL_VENDOR_DLKMIMAGE_FILES)
 
 else ifdef BOARD_PREBUILT_VENDOR_DLKMIMAGE
 INSTALLED_VENDOR_DLKMIMAGE_TARGET := $(PRODUCT_OUT)/vendor_dlkm.img
@@ -3946,7 +3951,8 @@ $(call declare-container-license-deps,$(INSTALLED_ODM_DLKMIMAGE_TARGET),$(INTERN
 odm_dlkmimage-nodeps odnod: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-odm_dlkmimage-target)
 
-sync: $(INTERNAL_ODM_DLKMIMAGE_FILES)
+.PHONY: sync_odm_dlkm
+sync sync_odm_dlkm: $(INTERNAL_ODM_DLKMIMAGE_FILES)
 
 else ifdef BOARD_PREBUILT_ODM_DLKMIMAGE
 INSTALLED_ODM_DLKMIMAGE_TARGET := $(PRODUCT_OUT)/odm_dlkm.img
@@ -4009,7 +4015,8 @@ $(call declare-container-license-deps,$(INSTALLED_SYSTEM_DLKMIMAGE_TARGET),$(INT
 system_dlkmimage-nodeps sdnod: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-system_dlkmimage-target)
 
-sync: $(INTERNAL_SYSTEM_DLKMIMAGE_FILES)
+.PHONY: sync_system_dlkm
+sync sync_system_dlkm: $(INTERNAL_SYSTEM_DLKMIMAGE_FILES)
 
 else ifdef BOARD_PREBUILT_SYSTEM_DLKMIMAGE
 INSTALLED_SYSTEM_DLKMIMAGE_TARGET := $(PRODUCT_OUT)/system_dlkm.img
