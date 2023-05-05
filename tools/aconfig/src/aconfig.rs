@@ -19,8 +19,27 @@ use protobuf::{Enum, EnumOrUnknown};
 use serde::{Deserialize, Serialize};
 
 use crate::protos::{
-    ProtoAndroidConfig, ProtoFlag, ProtoOverride, ProtoOverrideConfig, ProtoPermission, ProtoValue,
+    ProtoAndroidConfig, ProtoFlag, ProtoFlagState, ProtoOverride, ProtoOverrideConfig,
+    ProtoPermission, ProtoValue,
 };
+
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone, Copy)]
+pub enum FlagState {
+    Enabled,
+    Disabled,
+}
+
+impl TryFrom<EnumOrUnknown<ProtoFlagState>> for FlagState {
+    type Error = Error;
+
+    fn try_from(proto: EnumOrUnknown<ProtoFlagState>) -> Result<Self, Self::Error> {
+        match ProtoFlagState::from_i32(proto.value()) {
+            Some(ProtoFlagState::ENABLED) => Ok(FlagState::Enabled),
+            Some(ProtoFlagState::DISABLED) => Ok(FlagState::Disabled),
+            None => Err(anyhow!("unknown flag state enum value {}", proto.value())),
+        }
+    }
+}
 
 #[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone, Copy)]
 pub enum Permission {
@@ -42,19 +61,19 @@ impl TryFrom<EnumOrUnknown<ProtoPermission>> for Permission {
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Value {
-    value: bool,
+    state: FlagState,
     permission: Permission,
     since: Option<u32>,
 }
 
 #[allow(dead_code)] // only used in unit tests
 impl Value {
-    pub fn new(value: bool, permission: Permission, since: u32) -> Value {
-        Value { value, permission, since: Some(since) }
+    pub fn new(state: FlagState, permission: Permission, since: u32) -> Value {
+        Value { state, permission, since: Some(since) }
     }
 
-    pub fn default(value: bool, permission: Permission) -> Value {
-        Value { value, permission, since: None }
+    pub fn default(state: FlagState, permission: Permission) -> Value {
+        Value { state, permission, since: None }
     }
 }
 
@@ -62,14 +81,15 @@ impl TryFrom<ProtoValue> for Value {
     type Error = Error;
 
     fn try_from(proto: ProtoValue) -> Result<Self, Self::Error> {
-        let Some(value) = proto.value else {
-            return Err(anyhow!("missing 'value' field"));
+        let Some(proto_state) = proto.state else {
+            return Err(anyhow!("missing 'state' field"));
         };
+        let state = proto_state.try_into()?;
         let Some(proto_permission) = proto.permission else {
             return Err(anyhow!("missing 'permission' field"));
         };
         let permission = proto_permission.try_into()?;
-        Ok(Value { value, permission, since: proto.since })
+        Ok(Value { state, permission, since: proto.since })
     }
 }
 
@@ -97,17 +117,17 @@ impl Flag {
         proto.flag.into_iter().map(|proto_flag| proto_flag.try_into()).collect()
     }
 
-    pub fn resolve(&self, build_id: u32) -> (bool, Permission) {
-        let mut value = self.values[0].value;
+    pub fn resolve(&self, build_id: u32) -> (FlagState, Permission) {
+        let mut state = self.values[0].state;
         let mut permission = self.values[0].permission;
         for candidate in self.values.iter().skip(1) {
             let since = candidate.since.expect("invariant: non-defaults values have Some(since)");
             if since <= build_id {
-                value = candidate.value;
+                state = candidate.state;
                 permission = candidate.permission;
             }
         }
-        (value, permission)
+        (state, permission)
     }
 }
 
@@ -146,7 +166,7 @@ impl TryFrom<ProtoFlag> for Flag {
 #[derive(Debug, PartialEq, Eq)]
 pub struct Override {
     pub id: String,
-    pub value: bool,
+    pub state: FlagState,
     pub permission: Permission,
 }
 
@@ -170,14 +190,15 @@ impl TryFrom<ProtoOverride> for Override {
         let Some(id) = proto.id else {
             return Err(anyhow!("missing 'id' field"));
         };
-        let Some(value) = proto.value else {
-            return Err(anyhow!("missing 'value' field"));
+        let Some(proto_state) = proto.state else {
+            return Err(anyhow!("missing 'state' field"));
         };
+        let state = proto_state.try_into()?;
         let Some(proto_permission) = proto.permission else {
             return Err(anyhow!("missing 'permission' field"));
         };
         let permission = proto_permission.try_into()?;
-        Ok(Override { id, value, permission })
+        Ok(Override { id, state, permission })
     }
 }
 
@@ -191,8 +212,8 @@ mod tests {
             id: "1234".to_owned(),
             description: "Description of the flag".to_owned(),
             values: vec![
-                Value::default(false, Permission::ReadOnly),
-                Value::new(true, Permission::ReadWrite, 8),
+                Value::default(FlagState::Disabled, Permission::ReadOnly),
+                Value::new(FlagState::Enabled, Permission::ReadWrite, 8),
             ],
         };
 
@@ -200,11 +221,11 @@ mod tests {
         id: "1234"
         description: "Description of the flag"
         value {
-            value: false
+            state: DISABLED
             permission: READ_ONLY
         }
         value {
-            value: true
+            state: ENABLED
             permission: READ_WRITE
             since: 8
         }
@@ -226,7 +247,7 @@ mod tests {
         let s = r#"
         description: "Description of the flag"
         value {
-            value: true
+            state: ENABLED
             permission: READ_ONLY
         }
         "#;
@@ -237,11 +258,11 @@ mod tests {
         id: "a"
         description: "Description of the flag"
         value {
-            value: true
+            state: ENABLED
             permission: READ_ONLY
         }
         value {
-            value: true
+            state: ENABLED
             permission: READ_ONLY
         }
         "#;
@@ -255,12 +276,12 @@ mod tests {
             Flag {
                 id: "a".to_owned(),
                 description: "A".to_owned(),
-                values: vec![Value::default(true, Permission::ReadOnly)],
+                values: vec![Value::default(FlagState::Enabled, Permission::ReadOnly)],
             },
             Flag {
                 id: "b".to_owned(),
                 description: "B".to_owned(),
-                values: vec![Value::default(false, Permission::ReadWrite)],
+                values: vec![Value::default(FlagState::Disabled, Permission::ReadWrite)],
             },
         ];
 
@@ -269,7 +290,7 @@ mod tests {
             id: "a"
             description: "A"
             value {
-                value: true
+                state: ENABLED
                 permission: READ_ONLY
             }
         }
@@ -277,7 +298,7 @@ mod tests {
             id: "b"
             description: "B"
             value {
-                value: false
+                state: DISABLED
                 permission: READ_WRITE
             }
         }
@@ -289,12 +310,15 @@ mod tests {
 
     #[test]
     fn test_override_try_from_text_proto_list() {
-        let expected =
-            Override { id: "1234".to_owned(), value: true, permission: Permission::ReadOnly };
+        let expected = Override {
+            id: "1234".to_owned(),
+            state: FlagState::Enabled,
+            permission: Permission::ReadOnly,
+        };
 
         let s = r#"
         id: "1234"
-        value: true
+        state: ENABLED
         permission: READ_ONLY
         "#;
         let actual = Override::try_from_text_proto(s).unwrap();
@@ -308,21 +332,21 @@ mod tests {
             id: "a".to_owned(),
             description: "A".to_owned(),
             values: vec![
-                Value::default(false, Permission::ReadOnly),
-                Value::new(false, Permission::ReadWrite, 10),
-                Value::new(true, Permission::ReadOnly, 20),
-                Value::new(true, Permission::ReadWrite, 30),
+                Value::default(FlagState::Disabled, Permission::ReadOnly),
+                Value::new(FlagState::Disabled, Permission::ReadWrite, 10),
+                Value::new(FlagState::Enabled, Permission::ReadOnly, 20),
+                Value::new(FlagState::Enabled, Permission::ReadWrite, 30),
             ],
         };
-        assert_eq!((false, Permission::ReadOnly), flag.resolve(0));
-        assert_eq!((false, Permission::ReadOnly), flag.resolve(9));
-        assert_eq!((false, Permission::ReadWrite), flag.resolve(10));
-        assert_eq!((false, Permission::ReadWrite), flag.resolve(11));
-        assert_eq!((false, Permission::ReadWrite), flag.resolve(19));
-        assert_eq!((true, Permission::ReadOnly), flag.resolve(20));
-        assert_eq!((true, Permission::ReadOnly), flag.resolve(21));
-        assert_eq!((true, Permission::ReadOnly), flag.resolve(29));
-        assert_eq!((true, Permission::ReadWrite), flag.resolve(30));
-        assert_eq!((true, Permission::ReadWrite), flag.resolve(10_000));
+        assert_eq!((FlagState::Disabled, Permission::ReadOnly), flag.resolve(0));
+        assert_eq!((FlagState::Disabled, Permission::ReadOnly), flag.resolve(9));
+        assert_eq!((FlagState::Disabled, Permission::ReadWrite), flag.resolve(10));
+        assert_eq!((FlagState::Disabled, Permission::ReadWrite), flag.resolve(11));
+        assert_eq!((FlagState::Disabled, Permission::ReadWrite), flag.resolve(19));
+        assert_eq!((FlagState::Enabled, Permission::ReadOnly), flag.resolve(20));
+        assert_eq!((FlagState::Enabled, Permission::ReadOnly), flag.resolve(21));
+        assert_eq!((FlagState::Enabled, Permission::ReadOnly), flag.resolve(29));
+        assert_eq!((FlagState::Enabled, Permission::ReadWrite), flag.resolve(30));
+        assert_eq!((FlagState::Enabled, Permission::ReadWrite), flag.resolve(10_000));
     }
 }
