@@ -39,13 +39,9 @@ Example usage
 	<initial-package-state package="com.android.calendar" stopped="false"/>
 	<initial-package-state package="com.android.camera2" stopped="false"/>
 	<initial-package-state package="com.android.contacts" stopped="false"/>
-	<initial-package-state package="com.android.deskclock" stopped="false"/>
-	<initial-package-state package="com.android.dialer" stopped="false"/>
 	<initial-package-state package="com.android.documentsui" stopped="false"/>
-	<initial-package-state package="com.android.gallery3d" stopped="false"/>
 	<initial-package-state package="com.android.messaging" stopped="false"/>
 	<initial-package-state package="com.android.quicksearchbox" stopped="false"/>
 	<initial-package-state package="com.android.settings" stopped="false"/>
 	<initial-package-state package="com.android.stk" stopped="false"/>
-	<initial-package-state package="org.chromium.webview_shell" stopped="false"/>
 </config>
