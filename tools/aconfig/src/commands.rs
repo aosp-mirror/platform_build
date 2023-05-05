@@ -103,6 +103,7 @@ mod tests {
             description: "Description of a"
             value {
                 value: true
+                permission: READ_ONLY
             }
         }
         "#;
@@ -111,6 +112,7 @@ mod tests {
         override {
             id: "a"
             value: false
+            permission: READ_ONLY
         }
         "#;
         let overrides = vec![Input { source: Source::Memory, reader: Box::new(o.as_bytes()) }];
