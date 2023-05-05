@@ -5308,13 +5308,13 @@ ifneq ($(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
 	$(hide) echo "flash vendor_boot" >> $@
 endif
 ifneq (,$(strip $(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)))
-	$(hide) $(foreach partition,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS),\
-	  $(hide) echo "flash --apply-vbmeta vbmeta_$(partition)" >> $@;)
+	$(hide) $(foreach partition,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS), \
+	  echo "flash --apply-vbmeta vbmeta_$(partition)" >> $@;)
 endif
 endif # BOARD_AVB_ENABLE
 	$(hide) echo "reboot fastboot" >> $@
 	$(hide) echo "update-super" >> $@
-	$(foreach partition,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
+	$(hide) $(foreach partition,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
 	  echo "flash $(partition)" >> $@;)
 ifdef BUILDING_SYSTEM_OTHER_IMAGE
 	$(hide) echo "flash --slot-other system system_other.img" >> $@
