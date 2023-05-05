@@ -16,14 +16,13 @@
 
 use anyhow::{Context, Result};
 use clap::ValueEnum;
-use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::io::Read;
 
 use crate::aconfig::{Flag, Override};
 use crate::cache::Cache;
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone)]
 pub enum Source {
     #[allow(dead_code)] // only used in unit tests
     Memory,
