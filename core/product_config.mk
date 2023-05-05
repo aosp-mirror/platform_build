@@ -236,14 +236,22 @@ else
   $(shell mkdir -p $(OUT_DIR)/rbc)
   $(call dump-variables-rbc, $(OUT_DIR)/rbc/make_vars_pre_product_config.mk)
 
-  $(shell build/soong/scripts/update_out \
-    $(OUT_DIR)/rbc/rbc_product_config_results.mk \
-    build/soong/scripts/rbc-run \
-    $(current_product_makefile) \
-    $(OUT_DIR)/rbc/make_vars_pre_product_config.mk)
+  $(shell $(OUT_DIR)/mk2rbc \
+    --mode=write -r --outdir $(OUT_DIR)/rbc \
+    --launcher=$(OUT_DIR)/rbc/launcher.rbc \
+    --input_variables=$(OUT_DIR)/rbc/make_vars_pre_product_config.mk \
+    --makefile_list=$(OUT_DIR)/.module_paths/configuration.list \
+    $(current_product_makefile))
   ifneq ($(.SHELLSTATUS),0)
     $(error product configuration converter failed: $(.SHELLSTATUS))
   endif
+
+  $(shell build/soong/scripts/update_out $(OUT_DIR)/rbc/rbc_product_config_results.mk \
+    $(OUT_DIR)/rbcrun RBC_OUT="make,global" $(OUT_DIR)/rbc/launcher.rbc)
+  ifneq ($(.SHELLSTATUS),0)
+    $(error product configuration runner failed: $(.SHELLSTATUS))
+  endif
+
   include $(OUT_DIR)/rbc/rbc_product_config_results.mk
 endif
 
