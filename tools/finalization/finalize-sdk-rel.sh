@@ -34,7 +34,8 @@ function finalize_sdk_rel() {
     revert_resources_sdk_int_fix
 
     # build/make/core/version_defaults.mk
-    sed -i -e "s/PLATFORM_VERSION_CODENAME.${FINAL_BUILD_PREFIX} := .*/PLATFORM_VERSION_CODENAME.${FINAL_BUILD_PREFIX} := REL/g" "$top/build/make/core/version_defaults.mk"
+    # Mark all versions "released".
+    sed -i 's/\(PLATFORM_VERSION_CODENAME\.[^[:space:]]*\) := [^[:space:]]*/\1 := REL/g' "$top/build/make/core/version_defaults.mk"
 
     # cts
     echo "$FINAL_PLATFORM_VERSION" > "$top/cts/tests/tests/os/assets/platform_versions.txt"
