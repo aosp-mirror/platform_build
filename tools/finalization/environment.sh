@@ -7,7 +7,6 @@ export FINAL_BUG_ID='0' # CI only
 export FINAL_PLATFORM_CODENAME='VanillaIceCream'
 export CURRENT_PLATFORM_CODENAME='VanillaIceCream'
 export FINAL_PLATFORM_CODENAME_JAVA='VANILLA_ICE_CREAM'
-export FINAL_BUILD_PREFIX='VP1A'
 export FINAL_PLATFORM_VERSION='15'
 
 # Set arbitrary large values for CI.
