@@ -42,6 +42,12 @@ pub use aconfig_protos::aconfig::Override_config as ProtoOverrideConfig;
 #[cfg(not(feature = "cargo"))]
 pub use aconfig_protos::aconfig::Override as ProtoOverride;
 
+#[cfg(not(feature = "cargo"))]
+pub use aconfig_protos::aconfig::Permission as ProtoPermission;
+
+#[cfg(not(feature = "cargo"))]
+pub use aconfig_protos::aconfig::Flag_state as ProtoFlagState;
+
 // ---- When building with cargo ----
 #[cfg(feature = "cargo")]
 include!(concat!(env!("OUT_DIR"), "/aconfig_proto/mod.rs"));
@@ -60,6 +66,12 @@ pub use aconfig::Override_config as ProtoOverrideConfig;
 
 #[cfg(feature = "cargo")]
 pub use aconfig::Override as ProtoOverride;
+
+#[cfg(feature = "cargo")]
+pub use aconfig::Permission as ProtoPermission;
+
+#[cfg(feature = "cargo")]
+pub use aconfig::Flag_state as ProtoFlagState;
 
 // ---- Common for both the Android tool-chain and cargo ----
 use anyhow::Result;
