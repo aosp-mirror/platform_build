@@ -22,7 +22,8 @@ import zipfile
 
 import ota_metadata_pb2
 import common
-from common import (ZipDelete, ZipClose, OPTIONS, MakeTempFile,
+import fnmatch
+from common import (ZipDelete, DoesInputFileContain, ReadBytesFromInputFile, OPTIONS, MakeTempFile,
                     ZipWriteStr, BuildInfo, LoadDictionaryFromFile,
                     SignFile, PARTITIONS_WITH_BUILD_PROP, PartitionBuildProps,
                     GetRamdiskFormat, ParseUpdateEngineConfig)
@@ -44,7 +45,8 @@ OPTIONS.boot_variable_file = None
 
 METADATA_NAME = 'META-INF/com/android/metadata'
 METADATA_PROTO_NAME = 'META-INF/com/android/metadata.pb'
-UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'OTA/*', 'RADIO/*']
+UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'OTA/*',
+                 'RADIO/*', '*/build.prop', '*/default.prop', '*/build.default', "*/etc/vintf/*"]
 SECURITY_PATCH_LEVEL_PROP_NAME = "ro.build.version.security_patch"
 
 
@@ -626,12 +628,10 @@ def ConstructOtaApexInfo(target_zip, source_file=None):
   """If applicable, add the source version to the apex info."""
 
   def _ReadApexInfo(input_zip):
-    if "META/apex_info.pb" not in input_zip.namelist():
+    if not DoesInputFileContain(input_zip, "META/apex_info.pb"):
       logger.warning("target_file doesn't contain apex_info.pb %s", input_zip)
       return None
-
-    with input_zip.open("META/apex_info.pb", "r") as zfp:
-      return zfp.read()
+    return ReadBytesFromInputFile(input_zip, "META/apex_info.pb")
 
   target_apex_string = _ReadApexInfo(target_zip)
   # Return early if the target apex info doesn't exist or is empty.
@@ -642,8 +642,7 @@ def ConstructOtaApexInfo(target_zip, source_file=None):
   if not source_file:
     return target_apex_string
 
-  with zipfile.ZipFile(source_file, "r", allowZip64=True) as source_zip:
-    source_apex_string = _ReadApexInfo(source_zip)
+  source_apex_string = _ReadApexInfo(source_file)
   if not source_apex_string:
     return target_apex_string
 
@@ -727,7 +726,7 @@ def ExtractTargetFiles(path: str):
     logger.info("target files %s is already extracted", path)
     return path
   extracted_dir = common.MakeTempDir("target_files")
-  common.UnzipToDir(path, extracted_dir, UNZIP_PATTERN)
+  common.UnzipToDir(path, extracted_dir, UNZIP_PATTERN + [""])
   return extracted_dir
 
 
@@ -1040,3 +1039,32 @@ class AbOtaPropertyFiles(StreamingPropertyFiles):
     assert metadata_total <= payload_size
 
     return (payload_offset, metadata_total)
+
+
+def Fnmatch(filename, pattersn):
+  return any([fnmatch.fnmatch(filename, pat) for pat in pattersn])
+
+
+def CopyTargetFilesDir(input_dir):
+  output_dir = common.MakeTempDir("target_files")
+  IMAGES_DIR = ["IMAGES", "PREBUILT_IMAGES", "RADIO"]
+  for subdir in IMAGES_DIR:
+    if not os.path.exists(os.path.join(input_dir, subdir)):
+      continue
+    shutil.copytree(os.path.join(input_dir, subdir), os.path.join(
+        output_dir, subdir), dirs_exist_ok=True, copy_function=os.link)
+  shutil.copytree(os.path.join(input_dir, "META"), os.path.join(
+      output_dir, "META"), dirs_exist_ok=True)
+
+  for (dirpath, _, filenames) in os.walk(input_dir):
+    for filename in filenames:
+      path = os.path.join(dirpath, filename)
+      relative_path = path.removeprefix(input_dir).removeprefix("/")
+      if not Fnmatch(relative_path, UNZIP_PATTERN):
+        continue
+      if filename.endswith(".prop") or filename == "prop.default" or "/etc/vintf/" in relative_path:
+        target_path = os.path.join(
+            output_dir, relative_path)
+        os.makedirs(os.path.dirname(target_path), exist_ok=True)
+        shutil.copy(path, target_path)
+  return output_dir

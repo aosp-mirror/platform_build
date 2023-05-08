@@ -59,7 +59,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-firstparty-highest.apex",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/firstparty/highest.apex.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -187,7 +187,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-firstparty-application",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/firstparty/application.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -266,7 +266,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-firstparty-container.zip",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/firstparty/container.zip.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -394,7 +394,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-firstparty-bin-bin1",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/firstparty/bin/bin1.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -460,7 +460,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-firstparty-lib-libd.so",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/firstparty/lib/libd.so.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -500,7 +500,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-notice-highest.apex",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/notice/highest.apex.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -634,7 +634,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-notice-container.zip",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/notice/container.zip.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -768,7 +768,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-notice-application",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/notice/application.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -853,7 +853,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-notice-bin-bin1",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/notice/bin/bin1.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -925,7 +925,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-notice-lib-libd.so",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/notice/lib/libd.so.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -965,7 +965,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-reciprocal-highest.apex",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/reciprocal/highest.apex.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -1105,7 +1105,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-reciprocal-application",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/reciprocal/application.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -1196,7 +1196,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-reciprocal-bin-bin1",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/reciprocal/bin/bin1.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -1268,7 +1268,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-reciprocal-lib-libd.so",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/reciprocal/lib/libd.so.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -1308,7 +1308,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-restricted-highest.apex",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/restricted/highest.apex.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -1454,7 +1454,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-restricted-container.zip",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/restricted/container.zip.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -1600,7 +1600,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-restricted-bin-bin1",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/restricted/bin/bin1.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -1678,7 +1678,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-restricted-lib-libd.so",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/restricted/lib/libd.so.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -1718,7 +1718,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-proprietary-highest.apex",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/proprietary/highest.apex.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -1864,7 +1864,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-proprietary-container.zip",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/proprietary/container.zip.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -2010,7 +2010,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-proprietary-application",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/proprietary/application.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -2101,7 +2101,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-proprietary-bin-bin1",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/proprietary/bin/bin1.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -2173,7 +2173,7 @@ func Test(t *testing.T) {
 				DataLicense:       "CC0-1.0",
 				SPDXIdentifier:    "DOCUMENT",
 				DocumentName:      "testdata-proprietary-lib-libd.so",
-				DocumentNamespace: generateSPDXNamespace("1970-01-01T00:00:00Z"),
+				DocumentNamespace: generateSPDXNamespace("", "1970-01-01T00:00:00Z", "testdata/proprietary/lib/libd.so.meta_lic"),
 				CreationInfo:      getCreationInfo(t),
 				Packages: []*spdx.Package{
 					{
@@ -2215,7 +2215,7 @@ func Test(t *testing.T) {
 				rootFiles = append(rootFiles, "testdata/"+tt.condition+"/"+r)
 			}
 
-			ctx := context{stdout, stderr, compliance.GetFS(tt.outDir), "", []string{tt.stripPrefix}, fakeTime}
+			ctx := context{stdout, stderr, compliance.GetFS(tt.outDir), "", []string{tt.stripPrefix}, fakeTime, ""}
 
 			spdxDoc, deps, err := sbomGenerator(&ctx, rootFiles...)
 			if err != nil {
@@ -2259,6 +2259,96 @@ func Test(t *testing.T) {
 					strings.Join(w, "\n"), strings.Join(g, "\n"))
 			}
 		})
+	}
+}
+
+func TestGenerateSPDXNamespace(t *testing.T) {
+
+	buildID1 := "example-1"
+	buildID2 := "example-2"
+	files1 := "file1"
+	timestamp1 := "2022-05-01"
+	timestamp2 := "2022-05-02"
+	files2 := "file2"
+
+	// Test case 1: different timestamps, same files
+	nsh1 := generateSPDXNamespace("", timestamp1, files1)
+	nsh2 := generateSPDXNamespace("", timestamp2, files1)
+
+	if nsh1 == "" {
+		t.Errorf("generateSPDXNamespace(%s, %s, %s): expected non-empty string, but got empty string", "", timestamp1, files1)
+	}
+
+	if nsh2 == "" {
+		t.Errorf("generateSPDXNamespace(%s, %s, %s): expected non-empty string, but got empty string", "", timestamp2, files1)
+	}
+
+	if nsh1 == nsh2 {
+		t.Errorf("generateSPDXNamespace(%s, %s, %s) and generateSPDXNamespace(%s, %s, %s): expected different namespace hashes, but got the same", "", timestamp1, files1, "", timestamp2, files1)
+	}
+
+	// Test case 2: different build ids, same timestamps and files
+	nsh1 = generateSPDXNamespace(buildID1, timestamp1, files1)
+	nsh2 = generateSPDXNamespace(buildID2, timestamp1, files1)
+
+	if nsh1 == "" {
+		t.Errorf("generateSPDXNamespace(%s, %s, %s): expected non-empty string, but got empty string", buildID1, timestamp1, files1)
+	}
+
+	if nsh2 == "" {
+		t.Errorf("generateSPDXNamespace(%s, %s, %s): expected non-empty string, but got empty string", buildID2, timestamp1, files1)
+	}
+
+	if nsh1 == nsh2 {
+		t.Errorf("generateSPDXNamespace(%s, %s, %s) and generateSPDXNamespace(%s, %s, %s): expected different namespace hashes, but got the same", buildID1, timestamp1, files1, buildID2, timestamp1, files1)
+	}
+
+	// Test case 3: same build ids and files, different timestamps
+	nsh1 = generateSPDXNamespace(buildID1, timestamp1, files1)
+	nsh2 = generateSPDXNamespace(buildID1, timestamp2, files1)
+
+	if nsh1 == "" {
+		t.Errorf("generateSPDXNamespace(%s, %s, %s): expected non-empty string, but got empty string", buildID1, timestamp1, files1)
+	}
+
+	if nsh2 == "" {
+		t.Errorf("generateSPDXNamespace(%s, %s, %s): expected non-empty string, but got empty string", buildID1, timestamp2, files1)
+	}
+
+	if nsh1 != nsh2 {
+		t.Errorf("generateSPDXNamespace(%s, %s, %s) and generateSPDXNamespace(%s, %s, %s): expected same namespace hashes, but got different: %s and %s", buildID1, timestamp1, files1, buildID2, timestamp1, files1, nsh1, nsh2)
+	}
+
+	// Test case 4: same build ids and timestamps, different files
+	nsh1 = generateSPDXNamespace(buildID1, timestamp1, files1)
+	nsh2 = generateSPDXNamespace(buildID1, timestamp1, files2)
+
+	if nsh1 == "" {
+		t.Errorf("generateSPDXNamespace(%s, %s, %s): expected non-empty string, but got empty string", buildID1, timestamp1, files1)
+	}
+
+	if nsh2 == "" {
+		t.Errorf("generateSPDXNamespace(%s, %s, %s): expected non-empty string, but got empty string", buildID1, timestamp1, files2)
+	}
+
+	if nsh1 == nsh2 {
+		t.Errorf("generateSPDXNamespace(%s, %s, %s) and generateSPDXNamespace(%s, %s, %s): expected different namespace hashes, but got the same", buildID1, timestamp1, files1, buildID1, timestamp1, files2)
+	}
+
+	// Test case 5: empty build ids, same timestamps and different files
+	nsh1 = generateSPDXNamespace("", timestamp1, files1)
+	nsh2 = generateSPDXNamespace("", timestamp1, files2)
+
+	if nsh1 == "" {
+		t.Errorf("generateSPDXNamespace(%s, %s, %s): expected non-empty string, but got empty string", "", timestamp1, files1)
+	}
+
+	if nsh2 == "" {
+		t.Errorf("generateSPDXNamespace(%s, %s, %s): expected non-empty string, but got empty string", "", timestamp1, files2)
+	}
+
+	if nsh1 == nsh2 {
+		t.Errorf("generateSPDXNamespace(%s, %s, %s) and generateSPDXNamespace(%s, %s, %s): expected different namespace hashes, but got the same", "", timestamp1, files1, "", timestamp1, files2)
 	}
 }
 

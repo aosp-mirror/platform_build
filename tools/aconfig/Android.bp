@@ -1,0 +1,37 @@
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+rust_protobuf_host {
+    name: "libaconfig_protos",
+    protos: ["protos/aconfig.proto"],
+    crate_name: "aconfig_protos",
+    source_stem: "aconfig_protos",
+    use_protobuf3: true,
+}
+
+rust_defaults {
+    name: "aconfig.defaults",
+    edition: "2021",
+    clippy_lints: "android",
+    lints: "android",
+    srcs: ["src/main.rs"],
+    rustlibs: [
+        "libaconfig_protos",
+        "libanyhow",
+        "libclap",
+        "libprotobuf",
+        "libserde",
+        "libserde_json",
+    ],
+}
+
+rust_binary_host {
+    name: "aconfig",
+    defaults: ["aconfig.defaults"],
+}
+
+rust_test_host {
+    name: "aconfig.test",
+    defaults: ["aconfig.defaults"],
+}

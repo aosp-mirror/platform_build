@@ -27,7 +27,13 @@ _product_single_value_vars += PRODUCT_MODEL
 _product_single_value_vars += PRODUCT_NAME_FOR_ATTESTATION
 _product_single_value_vars += PRODUCT_MODEL_FOR_ATTESTATION
 
-# The resoure configuration options to use for this product.
+# Defines the ELF segment alignment for binaries (executables and shared libraries).
+# The ELF segment alignment has to be a PAGE_SIZE multiple. For example, if
+# PRODUCT_MAX_PAGE_SIZE_SUPPORTED=65536, the possible values for PAGE_SIZE could be
+# 4096, 16384 and 65536.
+_product_single_value_vars += PRODUCT_MAX_PAGE_SIZE_SUPPORTED
+
+# The resource configuration options to use for this product.
 _product_list_vars += PRODUCT_LOCALES
 _product_list_vars += PRODUCT_AAPT_CONFIG
 _product_single_value_vars += PRODUCT_AAPT_PREF_CONFIG
@@ -41,7 +47,6 @@ _product_list_vars += PRODUCT_PACKAGES_ARM64
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE
 _product_list_vars += PRODUCT_PACKAGES_ENG
 _product_list_vars += PRODUCT_PACKAGES_TESTS
-_product_list_vars += PRODUCT_AFDO_PROFILES
 
 # The device that this product maps to.
 _product_single_value_vars += PRODUCT_DEVICE
@@ -239,6 +244,9 @@ _product_list_vars += PRODUCT_CFI_INCLUDE_PATHS
 # Whether any paths are excluded from sanitization when SANITIZE_TARGET=cfi
 _product_list_vars += PRODUCT_CFI_EXCLUDE_PATHS
 
+# Whether any paths should have HWASan enabled for components
+_product_list_vars += PRODUCT_HWASAN_INCLUDE_PATHS
+
 # Whether the Scudo hardened allocator is disabled platform-wide
 _product_single_value_vars += PRODUCT_DISABLE_SCUDO
 
@@ -395,6 +403,12 @@ _product_list_vars += PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS
 # - "false": disallows the build system and the runtime to use userfaultfd GC even if the device
 #   supports it
 _product_single_value_vars += PRODUCT_ENABLE_UFFD_GC
+
+# Specifies COW version to be used by update_engine and libsnapshot. If this value is not
+# specified we default to COW version 2 in update_engine for backwards compatibility
+_product_single_value_vars += PRODUCT_VIRTUAL_AB_COW_VERSION
+
+_product_list_vars += PRODUCT_AFDO_PROFILES
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
