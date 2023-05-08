@@ -20,9 +20,20 @@ syntax = "proto2";
 
 package android.aconfig;
 
+enum flag_state {
+  ENABLED = 1;
+  DISABLED = 2;
+}
+
+enum permission {
+  READ_ONLY = 1;
+  READ_WRITE = 2;
+}
+
 message value {
-  required bool value = 1;
-  optional uint32 since = 2;
+  required flag_state state = 1;
+  required permission permission = 2;
+  optional uint32 since = 3;
 }
 
 message flag {
@@ -37,7 +48,8 @@ message android_config {
 
 message override {
   required string id = 1;
-  required bool value = 2;
+  required flag_state state = 2;
+  required permission permission = 3;
 };
 
 message override_config {
