@@ -16,14 +16,13 @@
 
 use anyhow::{Context, Result};
 use clap::ValueEnum;
-use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::io::Read;
 
 use crate::aconfig::{Flag, Override};
 use crate::cache::Cache;
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone)]
 pub enum Source {
     #[allow(dead_code)] // only used in unit tests
     Memory,
@@ -80,12 +79,12 @@ pub fn dump_cache(cache: Cache, format: Format) -> Result<()> {
     match format {
         Format::Text => {
             for item in cache.iter() {
-                println!("{}: {}", item.id, item.value);
+                println!("{}: {:?}", item.id, item.state);
             }
         }
         Format::Debug => {
             for item in cache.iter() {
-                println!("{}: {} ({:?})", item.id, item.value, item.debug);
+                println!("{:?}", item);
             }
         }
     }
@@ -95,6 +94,7 @@ pub fn dump_cache(cache: Cache, format: Format) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::aconfig::{FlagState, Permission};
 
     #[test]
     fn test_create_cache() {
@@ -103,7 +103,8 @@ mod tests {
             id: "a"
             description: "Description of a"
             value {
-                value: true
+                state: ENABLED
+                permission: READ_WRITE
             }
         }
         "#;
@@ -111,12 +112,14 @@ mod tests {
         let o = r#"
         override {
             id: "a"
-            value: false
+            state: DISABLED
+            permission: READ_ONLY
         }
         "#;
         let overrides = vec![Input { source: Source::Memory, reader: Box::new(o.as_bytes()) }];
         let cache = create_cache(1, aconfigs, overrides).unwrap();
-        let value = cache.iter().find(|&item| item.id == "a").unwrap().value;
-        assert!(!value);
+        let item = cache.iter().find(|&item| item.id == "a").unwrap();
+        assert_eq!(FlagState::Disabled, item.state);
+        assert_eq!(Permission::ReadOnly, item.permission);
     }
 }

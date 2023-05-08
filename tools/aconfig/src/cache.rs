@@ -18,18 +18,19 @@ use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 
-use crate::aconfig::{Flag, Override};
+use crate::aconfig::{Flag, FlagState, Override, Permission};
 use crate::commands::Source;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Item {
     pub id: String,
     pub description: String,
-    pub value: bool,
+    pub state: FlagState,
+    pub permission: Permission,
     pub debug: Vec<String>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Cache {
     build_id: u32,
     items: Vec<Item>,
@@ -56,12 +57,13 @@ impl Cache {
                 source,
             ));
         }
-        let value = flag.resolve_value(self.build_id);
+        let (state, permission) = flag.resolve(self.build_id);
         self.items.push(Item {
             id: flag.id.clone(),
             description: flag.description,
-            value,
-            debug: vec![format!("{}:{}", source, value)],
+            state,
+            permission,
+            debug: vec![format!("{}:{:?} {:?}", source, state, permission)],
         });
         Ok(())
     }
@@ -70,8 +72,11 @@ impl Cache {
         let Some(existing_item) = self.items.iter_mut().find(|item| item.id == override_.id) else {
             return Err(anyhow!("failed to override flag {}: unknown flag", override_.id));
         };
-        existing_item.value = override_.value;
-        existing_item.debug.push(format!("{}:{}", source, override_.value));
+        existing_item.state = override_.state;
+        existing_item.permission = override_.permission;
+        existing_item
+            .debug
+            .push(format!("{}:{:?} {:?}", source, override_.state, override_.permission));
         Ok(())
     }
 
@@ -85,7 +90,7 @@ impl Item {}
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::aconfig::Value;
+    use crate::aconfig::{FlagState, Permission, Value};
 
     #[test]
     fn test_add_flag() {
@@ -96,7 +101,7 @@ mod tests {
                 Flag {
                     id: "foo".to_string(),
                     description: "desc".to_string(),
-                    values: vec![Value::default(true)],
+                    values: vec![Value::default(FlagState::Enabled, Permission::ReadOnly)],
                 },
             )
             .unwrap();
@@ -106,7 +111,7 @@ mod tests {
                 Flag {
                     id: "foo".to_string(),
                     description: "desc".to_string(),
-                    values: vec![Value::default(false)],
+                    values: vec![Value::default(FlagState::Disabled, Permission::ReadOnly)],
                 },
             )
             .unwrap_err();
@@ -118,13 +123,21 @@ mod tests {
 
     #[test]
     fn test_add_override() {
-        fn check_value(cache: &Cache, id: &str, expected: bool) -> bool {
-            cache.iter().find(|&item| item.id == id).unwrap().value == expected
+        fn check(cache: &Cache, id: &str, expected: (FlagState, Permission)) -> bool {
+            let item = cache.iter().find(|&item| item.id == id).unwrap();
+            item.state == expected.0 && item.permission == expected.1
         }
 
         let mut cache = Cache::new(1);
         let error = cache
-            .add_override(Source::Memory, Override { id: "foo".to_string(), value: true })
+            .add_override(
+                Source::Memory,
+                Override {
+                    id: "foo".to_string(),
+                    state: FlagState::Enabled,
+                    permission: Permission::ReadOnly,
+                },
+            )
             .unwrap_err();
         assert_eq!(&format!("{:?}", error), "failed to override flag foo: unknown flag");
 
@@ -134,20 +147,36 @@ mod tests {
                 Flag {
                     id: "foo".to_string(),
                     description: "desc".to_string(),
-                    values: vec![Value::default(true)],
+                    values: vec![Value::default(FlagState::Enabled, Permission::ReadOnly)],
                 },
             )
             .unwrap();
-        assert!(check_value(&cache, "foo", true));
+        dbg!(&cache);
+        assert!(check(&cache, "foo", (FlagState::Enabled, Permission::ReadOnly)));
 
         cache
-            .add_override(Source::Memory, Override { id: "foo".to_string(), value: false })
+            .add_override(
+                Source::Memory,
+                Override {
+                    id: "foo".to_string(),
+                    state: FlagState::Disabled,
+                    permission: Permission::ReadWrite,
+                },
+            )
             .unwrap();
-        assert!(check_value(&cache, "foo", false));
+        dbg!(&cache);
+        assert!(check(&cache, "foo", (FlagState::Disabled, Permission::ReadWrite)));
 
         cache
-            .add_override(Source::Memory, Override { id: "foo".to_string(), value: true })
+            .add_override(
+                Source::Memory,
+                Override {
+                    id: "foo".to_string(),
+                    state: FlagState::Enabled,
+                    permission: Permission::ReadWrite,
+                },
+            )
             .unwrap();
-        assert!(check_value(&cache, "foo", true));
+        assert!(check(&cache, "foo", (FlagState::Enabled, Permission::ReadWrite)));
     }
 }
