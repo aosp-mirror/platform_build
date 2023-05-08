@@ -14,6 +14,8 @@ TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_COPY_OUT_SYSTEM_EXT := system_ext
 TARGET_COPY_OUT_VENDOR := vendor
 TARGET_COPY_OUT_PRODUCT := product
+BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
 
 # Creates metadata partition mount point under root for
 # the devices with metadata parition
@@ -21,9 +23,6 @@ BOARD_USES_METADATA_PARTITION := true
 
 # Default is current, but allow devices to override vndk version if needed.
 BOARD_VNDK_VERSION ?= current
-
-# Required flag for non-64 bit devices from P.
-TARGET_USES_64_BIT_BINDER := true
 
 # 64 bit mediadrmserver
 TARGET_ENABLE_MEDIADRM_64 := true

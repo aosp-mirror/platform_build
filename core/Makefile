@@ -3288,8 +3288,8 @@ endif
 
 endif # BUILDING_SYSTEM_IMAGE
 
-.PHONY: sync syncsys
-sync syncsys: $(INTERNAL_SYSTEMIMAGE_FILES)
+.PHONY: sync syncsys sync_system
+sync syncsys sync_system: $(INTERNAL_SYSTEMIMAGE_FILES)
 
 # -----------------------------------------------------------------
 # Old PDK fusion targets
@@ -3617,7 +3617,8 @@ $(call declare-container-license-deps,$(INSTALLED_VENDORIMAGE_TARGET),$(INTERNAL
 vendorimage-nodeps vnod: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-vendorimage-target)
 
-sync: $(INTERNAL_VENDORIMAGE_FILES)
+.PHONY: sync_vendor
+sync sync_vendor: $(INTERNAL_VENDORIMAGE_FILES)
 
 else ifdef BOARD_PREBUILT_VENDORIMAGE
 INSTALLED_VENDORIMAGE_TARGET := $(PRODUCT_OUT)/vendor.img
@@ -3681,7 +3682,8 @@ $(call declare-container-license-deps,$(INSTALLED_PRODUCTIMAGE_TARGET),$(INTERNA
 productimage-nodeps pnod: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-productimage-target)
 
-sync: $(INTERNAL_PRODUCTIMAGE_FILES)
+.PHONY: sync_product
+sync sync_product: $(INTERNAL_PRODUCTIMAGE_FILES)
 
 else ifdef BOARD_PREBUILT_PRODUCTIMAGE
 INSTALLED_PRODUCTIMAGE_TARGET := $(PRODUCT_OUT)/product.img
@@ -3743,7 +3745,8 @@ $(call declare-container-license-deps,$(INSTALLED_SYSTEM_EXTIMAGE_TARGET),$(INTE
 systemextimage-nodeps senod: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-system_extimage-target)
 
-sync: $(INTERNAL_SYSTEM_EXTIMAGE_FILES)
+.PHONY: sync_system_ext
+sync sync_system_ext: $(INTERNAL_SYSTEM_EXTIMAGE_FILES)
 
 else ifdef BOARD_PREBUILT_SYSTEM_EXTIMAGE
 INSTALLED_SYSTEM_EXTIMAGE_TARGET := $(PRODUCT_OUT)/system_ext.img
@@ -3824,7 +3827,8 @@ $(call declare-container-license-deps,$(INSTALLED_ODMIMAGE_TARGET),$(INTERNAL_US
 odmimage-nodeps onod: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-odmimage-target)
 
-sync: $(INTERNAL_ODMIMAGE_FILES)
+.PHONY: sync_odm
+sync sync_odm: $(INTERNAL_ODMIMAGE_FILES)
 
 else ifdef BOARD_PREBUILT_ODMIMAGE
 INSTALLED_ODMIMAGE_TARGET := $(PRODUCT_OUT)/odm.img
@@ -3885,7 +3889,8 @@ $(call declare-container-license-deps,$(INSTALLED_VENDOR_DLKMIMAGE_TARGET),$(INT
 vendor_dlkmimage-nodeps vdnod: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-vendor_dlkmimage-target)
 
-sync: $(INTERNAL_VENDOR_DLKMIMAGE_FILES)
+.PHONY: sync_vendor_dlkm
+sync sync_vendor_dlkm: $(INTERNAL_VENDOR_DLKMIMAGE_FILES)
 
 else ifdef BOARD_PREBUILT_VENDOR_DLKMIMAGE
 INSTALLED_VENDOR_DLKMIMAGE_TARGET := $(PRODUCT_OUT)/vendor_dlkm.img
@@ -3946,7 +3951,8 @@ $(call declare-container-license-deps,$(INSTALLED_ODM_DLKMIMAGE_TARGET),$(INTERN
 odm_dlkmimage-nodeps odnod: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-odm_dlkmimage-target)
 
-sync: $(INTERNAL_ODM_DLKMIMAGE_FILES)
+.PHONY: sync_odm_dlkm
+sync sync_odm_dlkm: $(INTERNAL_ODM_DLKMIMAGE_FILES)
 
 else ifdef BOARD_PREBUILT_ODM_DLKMIMAGE
 INSTALLED_ODM_DLKMIMAGE_TARGET := $(PRODUCT_OUT)/odm_dlkm.img
@@ -4009,7 +4015,8 @@ $(call declare-container-license-deps,$(INSTALLED_SYSTEM_DLKMIMAGE_TARGET),$(INT
 system_dlkmimage-nodeps sdnod: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-system_dlkmimage-target)
 
-sync: $(INTERNAL_SYSTEM_DLKMIMAGE_FILES)
+.PHONY: sync_system_dlkm
+sync sync_system_dlkm: $(INTERNAL_SYSTEM_DLKMIMAGE_FILES)
 
 else ifdef BOARD_PREBUILT_SYSTEM_DLKMIMAGE
 INSTALLED_SYSTEM_DLKMIMAGE_TARGET := $(PRODUCT_OUT)/system_dlkm.img
@@ -5122,6 +5129,7 @@ INTERNAL_OTATOOLS_MODULES := \
   check_target_files_signatures \
   check_target_files_vintf \
   checkvintf \
+  create_brick_ota \
   delta_generator \
   e2fsck \
   e2fsdroid \
@@ -5269,6 +5277,62 @@ $(call dist-for-goals, otatools-package, \
 )
 
 endif # build_otatools_package
+
+# -----------------------------------------------------------------
+#  fastboot-info.txt
+FASTBOOT_INFO_VERSION = 1
+
+INSTALLED_FASTBOOT_INFO_TARGET := $(PRODUCT_OUT)/fastboot-info.txt
+
+$(INSTALLED_FASTBOOT_INFO_TARGET):
+	rm -f $@
+	$(call pretty,"Target fastboot-info.txt: $@")
+	$(hide) echo "# fastboot-info for $(TARGET_PRODUCT)" >> $@
+	$(hide) echo "version $(FASTBOOT_INFO_VERSION)" >> $@
+ifneq ($(INSTALLED_BOOTIMAGE_TARGET),)
+	$(hide) echo "flash boot" >> $@
+endif
+ifneq ($(INSTALLED_INIT_BOOT_IMAGE_TARGET),)
+	$(hide) echo "flash init_boot" >> $@
+endif
+ifdef BOARD_PREBUILT_DTBOIMAGE
+	$(hide) echo "flash dtbo" >> $@
+endif
+ifeq ($(BOARD_USES_PVMFWIMAGE),true)
+	$(hide) echo "flash pvmfw" >> $@
+endif
+ifeq ($(BOARD_AVB_ENABLE),true)
+ifeq ($(BUILDING_VBMETA_IMAGE),true)
+	$(hide) echo "flash --apply-vbmeta vbmeta" >> $@
+endif
+ifneq (,$(strip $(BOARD_AVB_VBMETA_SYSTEM)))
+	$(hide) echo "flash --apply-vbmeta vbmeta_system" >> $@
+endif
+ifneq (,$(strip $(BOARD_AVB_VBMETA_VENDOR)))
+	$(hide) echo "flash --apply-vbmeta vbmeta_vendor" >> $@
+endif
+ifneq ($(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
+	$(hide) echo "flash vendor_boot" >> $@
+endif
+ifneq (,$(strip $(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)))
+	$(hide) $(foreach partition,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS),\
+	  $(hide) echo "flash --apply-vbmeta vbmeta_$(partition)" >> $@;)
+endif
+endif # BOARD_AVB_ENABLE
+	$(hide) echo "reboot fastboot" >> $@
+	$(hide) echo "update-super" >> $@
+	$(foreach partition,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
+	  echo "flash $(partition)" >> $@;)
+ifdef BUILDING_SYSTEM_OTHER_IMAGE
+	$(hide) echo "flash --slot-other system system_other.img" >> $@
+endif
+ifdef BUILDING_CACHE_IMAGE
+	$(hide) echo "if-wipe erase cache" >> $@
+endif
+	$(hide) echo "if-wipe erase userdata" >> $@
+ifeq ($(BOARD_USES_METADATA_PARTITION),true)
+	$(hide) echo "if-wipe erase metadata" >> $@
+endif
 
 # -----------------------------------------------------------------
 #  misc_info.txt
@@ -5520,6 +5584,11 @@ ifeq ($(TARGET_FLATTEN_APEX),false)
 	$(hide) echo "target_flatten_apex=false" >> $@
 endif
 
+$(call declare-0p-target,$(INSTALLED_FASTBOOT_INFO_TARGET))
+
+.PHONY: fastboot_info
+fastboot_info: $(INSTALLED_FASTBOOT_INFO_TARGET)
+
 $(call declare-0p-target,$(INSTALLED_MISC_INFO_TARGET))
 
 .PHONY: misc_info
@@ -5539,10 +5608,12 @@ endif
 name := $(name)-target_files-$(FILE_NAME_TAG)
 
 intermediates := $(call intermediates-dir-for,PACKAGING,target_files)
+BUILT_TARGET_FILES_DIR := $(intermediates)/$(name).zip.list
 BUILT_TARGET_FILES_PACKAGE := $(intermediates)/$(name).zip
-$(BUILT_TARGET_FILES_PACKAGE): intermediates := $(intermediates)
-$(BUILT_TARGET_FILES_PACKAGE): \
-	    zip_root := $(intermediates)/$(name)
+$(BUILT_TARGET_FILES_PACKAGE): zip_root := $(intermediates)/$(name)
+$(BUILT_TARGET_FILES_DIR): zip_root := $(intermediates)/$(name)
+$(BUILT_TARGET_FILES_DIR): intermediates := $(intermediates)
+
 
 # $(1): Directory to copy
 # $(2): Location to copy it to
@@ -5562,10 +5633,10 @@ built_ota_tools += \
     $(call intermediates-dir-for,EXECUTABLES,updater)/updater
 endif
 
-$(BUILT_TARGET_FILES_PACKAGE): PRIVATE_OTA_TOOLS := $(built_ota_tools)
+$(BUILT_TARGET_FILES_DIR): PRIVATE_OTA_TOOLS := $(built_ota_tools)
 
 tool_extension := $(wildcard $(tool_extensions)/releasetools.py)
-$(BUILT_TARGET_FILES_PACKAGE): PRIVATE_TOOL_EXTENSION := $(tool_extension)
+$(BUILT_TARGET_FILES_DIR): PRIVATE_TOOL_EXTENSION := $(tool_extension)
 
 updater_dep :=
 ifeq ($(AB_OTA_UPDATER),true)
@@ -5581,23 +5652,23 @@ ifeq ($(TARGET_OTA_ALLOW_NON_AB),true)
 updater_dep += $(built_ota_tools)
 endif
 
-$(BUILT_TARGET_FILES_PACKAGE): $(updater_dep)
+$(BUILT_TARGET_FILES_DIR): $(updater_dep)
 
 # If we are using recovery as boot, output recovery files to BOOT/.
 # If we are moving recovery resources to vendor_boot, output recovery files to VENDOR_BOOT/.
 ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
-$(BUILT_TARGET_FILES_PACKAGE): PRIVATE_RECOVERY_OUT := BOOT
+$(BUILT_TARGET_FILES_DIR): PRIVATE_RECOVERY_OUT := BOOT
 else ifeq ($(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT),true)
-$(BUILT_TARGET_FILES_PACKAGE): PRIVATE_RECOVERY_OUT := VENDOR_BOOT
+$(BUILT_TARGET_FILES_DIR): PRIVATE_RECOVERY_OUT := VENDOR_BOOT
 else
-$(BUILT_TARGET_FILES_PACKAGE): PRIVATE_RECOVERY_OUT := RECOVERY
+$(BUILT_TARGET_FILES_DIR): PRIVATE_RECOVERY_OUT := RECOVERY
 endif
 
 ifeq ($(AB_OTA_UPDATER),true)
   ifdef OSRELEASED_DIRECTORY
-    $(BUILT_TARGET_FILES_PACKAGE): $(TARGET_OUT_OEM)/$(OSRELEASED_DIRECTORY)/product_id
-    $(BUILT_TARGET_FILES_PACKAGE): $(TARGET_OUT_OEM)/$(OSRELEASED_DIRECTORY)/product_version
-    $(BUILT_TARGET_FILES_PACKAGE): $(TARGET_OUT_ETC)/$(OSRELEASED_DIRECTORY)/system_version
+    $(BUILT_TARGET_FILES_DIR): $(TARGET_OUT_OEM)/$(OSRELEASED_DIRECTORY)/product_id
+    $(BUILT_TARGET_FILES_DIR): $(TARGET_OUT_OEM)/$(OSRELEASED_DIRECTORY)/product_version
+    $(BUILT_TARGET_FILES_DIR): $(TARGET_OUT_ETC)/$(OSRELEASED_DIRECTORY)/system_version
   endif
 
   # Not checking in board_config.mk, since AB_OTA_PARTITIONS may be updated in Android.mk (e.g. to
@@ -5699,34 +5770,36 @@ define dump-dynamic-partitions-info
     echo "virtual_ab_compression_method=$(PRODUCT_VIRTUAL_AB_COMPRESSION_METHOD)" >> $(1))
   $(if $(filter true,$(PRODUCT_VIRTUAL_AB_OTA_RETROFIT)), \
     echo "virtual_ab_retrofit=true" >> $(1))
+  $(if $(PRODUCT_VIRTUAL_AB_COW_VERSION), \
+    echo "virtual_ab_cow_version=$(PRODUCT_VIRTUAL_AB_COW_VERSION)" >> $(1))
 endef
 
 # By conditionally including the dependency of the target files package on the
 # full system image deps, we speed up builds that do not build the system
 # image.
 ifdef BUILDING_SYSTEM_IMAGE
-  $(BUILT_TARGET_FILES_PACKAGE): $(FULL_SYSTEMIMAGE_DEPS)
+  $(BUILT_TARGET_FILES_DIR): $(FULL_SYSTEMIMAGE_DEPS)
 else
   # releasetools may need the system build.prop even when building a
   # system-image-less product.
-  $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_BUILD_PROP_TARGET)
+  $(BUILT_TARGET_FILES_DIR): $(INSTALLED_BUILD_PROP_TARGET)
 endif
 
 ifdef BUILDING_USERDATA_IMAGE
-  $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_USERDATAIMAGE_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(INTERNAL_USERDATAIMAGE_FILES)
 endif
 
 ifdef BUILDING_SYSTEM_OTHER_IMAGE
-  $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_SYSTEMOTHERIMAGE_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(INTERNAL_SYSTEMOTHERIMAGE_FILES)
 endif
 
 ifdef BUILDING_VENDOR_BOOT_IMAGE
-  $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_VENDOR_RAMDISK_FILES)
-  $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_VENDOR_RAMDISK_FRAGMENT_TARGETS)
-  $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_VENDOR_BOOTCONFIG_TARGET)
+  $(BUILT_TARGET_FILES_DIR): $(INTERNAL_VENDOR_RAMDISK_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(INTERNAL_VENDOR_RAMDISK_FRAGMENT_TARGETS)
+  $(BUILT_TARGET_FILES_DIR): $(INTERNAL_VENDOR_BOOTCONFIG_TARGET)
   # The vendor ramdisk may be built from the recovery ramdisk.
   ifeq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
-    $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP)
+    $(BUILT_TARGET_FILES_DIR): $(INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP)
   endif
 endif
 
@@ -5736,11 +5809,11 @@ ifdef BUILDING_RECOVERY_IMAGE
   # commands in build-recoveryimage-target, which would touch the files under
   # TARGET_RECOVERY_OUT and race with packaging target-files.zip.
   ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
-    $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_BOOTIMAGE_TARGET)
+    $(BUILT_TARGET_FILES_DIR): $(INSTALLED_BOOTIMAGE_TARGET)
   else
-    $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_RECOVERYIMAGE_TARGET)
+    $(BUILT_TARGET_FILES_DIR): $(INSTALLED_RECOVERYIMAGE_TARGET)
   endif
-  $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_RECOVERYIMAGE_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(INTERNAL_RECOVERYIMAGE_FILES)
 endif
 
 # Conditionally depend on the image files if the image is being built so the
@@ -5748,68 +5821,68 @@ endif
 # if it is coming from a prebuilt.
 
 ifdef BUILDING_VENDOR_IMAGE
-  $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_VENDORIMAGE_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(INTERNAL_VENDORIMAGE_FILES)
 else ifdef BOARD_PREBUILT_VENDORIMAGE
-  $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_VENDORIMAGE_TARGET)
+  $(BUILT_TARGET_FILES_DIR): $(INSTALLED_VENDORIMAGE_TARGET)
 endif
 
 ifdef BUILDING_PRODUCT_IMAGE
-  $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_PRODUCTIMAGE_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(INTERNAL_PRODUCTIMAGE_FILES)
 else ifdef BOARD_PREBUILT_PRODUCTIMAGE
-  $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_PRODUCTIMAGE_TARGET)
+  $(BUILT_TARGET_FILES_DIR): $(INSTALLED_PRODUCTIMAGE_TARGET)
 endif
 
 ifdef BUILDING_SYSTEM_EXT_IMAGE
-  $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_SYSTEM_EXTIMAGE_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(INTERNAL_SYSTEM_EXTIMAGE_FILES)
 else ifdef BOARD_PREBUILT_SYSTEM_EXTIMAGE
-  $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_SYSTEM_EXTIMAGE_TARGET)
+  $(BUILT_TARGET_FILES_DIR): $(INSTALLED_SYSTEM_EXTIMAGE_TARGET)
 endif
 
 ifneq (,$(BUILDING_BOOT_IMAGE)$(BUILDING_INIT_BOOT_IMAGE))
-  $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_RAMDISK_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(INTERNAL_RAMDISK_FILES)
 endif  # BUILDING_BOOT_IMAGE != "" || BUILDING_INIT_BOOT_IMAGE != ""
 
 ifneq (,$(INTERNAL_PREBUILT_BOOTIMAGE) $(filter true,$(BOARD_COPY_BOOT_IMAGE_TO_TARGET_FILES)))
-  $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_BOOTIMAGE_TARGET)
+  $(BUILT_TARGET_FILES_DIR): $(INSTALLED_BOOTIMAGE_TARGET)
 endif
 
 ifdef BUILDING_ODM_IMAGE
-  $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_ODMIMAGE_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(INTERNAL_ODMIMAGE_FILES)
 else ifdef BOARD_PREBUILT_ODMIMAGE
-  $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_ODMIMAGE_TARGET)
+  $(BUILT_TARGET_FILES_DIR): $(INSTALLED_ODMIMAGE_TARGET)
 endif
 
 ifdef BUILDING_VENDOR_DLKM_IMAGE
-  $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_VENDOR_DLKMIMAGE_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(INTERNAL_VENDOR_DLKMIMAGE_FILES)
 else ifdef BOARD_PREBUILT_VENDOR_DLKMIMAGE
-  $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_VENDOR_DLKMIMAGE_TARGET)
+  $(BUILT_TARGET_FILES_DIR): $(INSTALLED_VENDOR_DLKMIMAGE_TARGET)
 endif
 
 ifdef BUILDING_ODM_DLKM_IMAGE
-  $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_ODM_DLKMIMAGE_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(INTERNAL_ODM_DLKMIMAGE_FILES)
 else ifdef BOARD_PREBUILT_ODM_DLKMIMAGE
-  $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_ODM_DLKMIMAGE_TARGET)
+  $(BUILT_TARGET_FILES_DIR): $(INSTALLED_ODM_DLKMIMAGE_TARGET)
 endif
 
 ifdef BUILDING_SYSTEM_DLKM_IMAGE
-  $(BUILT_TARGET_FILES_PACKAGE): $(INTERNAL_SYSTEM_DLKMIMAGE_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(INTERNAL_SYSTEM_DLKMIMAGE_FILES)
 else ifdef BOARD_PREBUILT_SYSTEM_DLKMIMAGE
-  $(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET)
+  $(BUILT_TARGET_FILES_DIR): $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET)
 endif
 
 ifeq ($(BUILD_QEMU_IMAGES),true)
   MK_VBMETA_BOOT_KERNEL_CMDLINE_SH := device/generic/goldfish/tools/mk_vbmeta_boot_params.sh
-  $(BUILT_TARGET_FILES_PACKAGE): $(MK_VBMETA_BOOT_KERNEL_CMDLINE_SH)
+  $(BUILT_TARGET_FILES_DIR): $(MK_VBMETA_BOOT_KERNEL_CMDLINE_SH)
 endif
 
 ifdef BOARD_PREBUILT_BOOTLOADER
-$(BUILT_TARGET_FILES_PACKAGE): $(INSTALLED_BOOTLOADER_MODULE)
+$(BUILT_TARGET_FILES_DIR): $(INSTALLED_BOOTLOADER_MODULE)
 droidcore-unbundled: $(INSTALLED_BOOTLOADER_MODULE)
 endif
 
 # Depending on the various images guarantees that the underlying
 # directories are up-to-date.
-$(BUILT_TARGET_FILES_PACKAGE): \
+$(BUILT_TARGET_FILES_DIR): \
 	    $(INSTALLED_RADIOIMAGE_TARGET) \
 	    $(INSTALLED_RECOVERYIMAGE_TARGET) \
 	    $(INSTALLED_CACHEIMAGE_TARGET) \
@@ -5846,7 +5919,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(BUILT_KERNEL_CONFIGS_FILE) \
 	    $(BUILT_KERNEL_VERSION_FILE) \
 	    | $(ACP)
-	@echo "Package target files: $@"
+	@echo "Building target files: $@"
 	$(hide) rm -rf $@ $@.list $(zip_root)
 	$(hide) mkdir -p $(dir $@) $(zip_root)
 ifneq (,$(INSTALLED_RECOVERYIMAGE_TARGET)$(filter true,$(BOARD_USES_RECOVERY_AS_BOOT))$(filter true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT)))
@@ -6249,12 +6322,18 @@ ifeq ($(BUILD_QEMU_IMAGES),true)
 endif
 	@# Zip everything up, preserving symlinks and placing META/ files first to
 	@# help early validation of the .zip file while uploading it.
-	$(hide) find $(zip_root)/META | sort >$@.list
-	$(hide) find $(zip_root) -path $(zip_root)/META -prune -o -print | sort >>$@.list
+	$(hide) find $(zip_root)/META | sort >$@
+	$(hide) find $(zip_root) -path $(zip_root)/META -prune -o -print | sort >>$@
+
+$(BUILT_TARGET_FILES_PACKAGE): $(BUILT_TARGET_FILES_DIR)
+	@echo "Packaging target files: $@"
 	$(hide) $(SOONG_ZIP) -d -o $@ -C $(zip_root) -r $@.list
 
 .PHONY: target-files-package
 target-files-package: $(BUILT_TARGET_FILES_PACKAGE)
+
+.PHONY: target-files-dir
+target-files-dir: $(BUILT_TARGET_FILES_DIR)
 
 $(call declare-1p-container,$(BUILT_TARGET_FILES_PACKAGE),)
 $(call declare-container-license-deps,$(BUILT_TARGET_FILES_PACKAGE), $(INSTALLED_RADIOIMAGE_TARGET) \
@@ -6283,6 +6362,7 @@ $(call declare-container-license-deps,$(BUILT_TARGET_FILES_PACKAGE), $(INSTALLED
             $(LPMAKE) \
             $(SELINUX_FC) \
             $(INSTALLED_MISC_INFO_TARGET) \
+            $(INSTALLED_FASTBOOT_INFO_TARGET) \
             $(APKCERTS_FILE) \
             $(SOONG_APEX_KEYS_FILE) \
             $(HOST_OUT_EXECUTABLES)/fs_config \

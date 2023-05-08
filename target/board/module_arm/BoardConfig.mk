@@ -13,8 +13,6 @@
 # limitations under the License.
 #
 
-include build/make/target/board/BoardConfigModuleCommon.mk
-
 TARGET_ARCH := arm
 TARGET_ARCH_VARIANT := armv7-a-neon
 TARGET_CPU_VARIANT := generic

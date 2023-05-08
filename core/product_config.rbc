@@ -394,6 +394,10 @@ def _soong_config_namespace(g, nsname):
 def _soong_config_set(g, nsname, var, value):
     """Assigns the value to the variable in the namespace."""
     _soong_config_namespace(g, nsname)
+    if type(value) == "string":
+        # Trim right spaces, because in make the variable is set in an $(eval),
+        # which will ignore trailing spaces.
+        value = value.rstrip(" ")
     g[_soong_config_namespaces_key][nsname][var]=value
 
 def _soong_config_append(g, nsname, var, value):

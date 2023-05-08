@@ -51,13 +51,15 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_product.mk)
 #
 # All components inherited here go to vendor image
 #
-$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86_64/device.mk)
 
 #
 # Special settings for GSI releasing
 #
 ifeq (aosp_64bitonly_x86_64,$(TARGET_PRODUCT))
+# Build modules from source if this has not been pre-configured
+MODULE_BUILD_FROM_SOURCE ?= true
+
 $(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_release.mk)
 endif
 
