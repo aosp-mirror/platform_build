@@ -17,7 +17,7 @@
 //! `aconfig` is a build time tool to manage build time configurations, such as feature flags.
 
 use anyhow::Result;
-use clap::{builder::ArgAction, builder::EnumValueParser, Arg, Command};
+use clap::{builder::ArgAction, builder::EnumValueParser, Arg, ArgMatches, Command};
 use std::fs;
 
 mod aconfig;
@@ -53,25 +53,22 @@ fn cli() -> Command {
         )
 }
 
+fn open_zero_or_more_files(matches: &ArgMatches, arg_name: &str) -> Result<Vec<Input>> {
+    let mut opened_files = vec![];
+    for path in matches.get_many::<String>(arg_name).unwrap_or_default() {
+        let file = Box::new(fs::File::open(path)?);
+        opened_files.push(Input { source: Source::File(path.to_string()), reader: file });
+    }
+    Ok(opened_files)
+}
+
 fn main() -> Result<()> {
     let matches = cli().get_matches();
     match matches.subcommand() {
         Some(("create-cache", sub_matches)) => {
-            let mut aconfigs = vec![];
             let build_id = *sub_matches.get_one::<u32>("build-id").unwrap();
-            for path in
-                sub_matches.get_many::<String>("aconfig").unwrap_or_default().collect::<Vec<_>>()
-            {
-                let file = Box::new(fs::File::open(path)?);
-                aconfigs.push(Input { source: Source::File(path.to_string()), reader: file });
-            }
-            let mut overrides = vec![];
-            for path in
-                sub_matches.get_many::<String>("override").unwrap_or_default().collect::<Vec<_>>()
-            {
-                let file = Box::new(fs::File::open(path)?);
-                overrides.push(Input { source: Source::File(path.to_string()), reader: file });
-            }
+            let aconfigs = open_zero_or_more_files(sub_matches, "aconfig")?;
+            let overrides = open_zero_or_more_files(sub_matches, "override")?;
             let cache = commands::create_cache(build_id, aconfigs, overrides)?;
             let path = sub_matches.get_one::<String>("cache").unwrap();
             let file = fs::File::create(path)?;
