@@ -55,3 +55,21 @@ message override {
 message override_config {
   repeated override override = 1;
 };
+
+message dump {
+  repeated dump_item item = 1;
+}
+
+message dump_trace {
+  required string source = 1;
+  required flag_state state = 2;
+  required permission permission = 3;
+}
+
+message dump_item {
+  required string id = 1;
+  required string description = 2;
+  required flag_state state = 3;
+  required permission permission = 4;
+  repeated dump_trace trace = 5;
+}

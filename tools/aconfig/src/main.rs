@@ -19,6 +19,8 @@
 use anyhow::Result;
 use clap::{builder::ArgAction, builder::EnumValueParser, Arg, ArgMatches, Command};
 use std::fs;
+use std::io;
+use std::io::Write;
 
 mod aconfig;
 mod cache;
@@ -44,12 +46,15 @@ fn cli() -> Command {
                 .arg(Arg::new("cache").long("cache").required(true)),
         )
         .subcommand(
-            Command::new("dump").arg(Arg::new("cache").long("cache").required(true)).arg(
-                Arg::new("format")
-                    .long("format")
-                    .value_parser(EnumValueParser::<commands::Format>::new())
-                    .default_value("text"),
-            ),
+            Command::new("dump")
+                .arg(Arg::new("cache").long("cache").required(true))
+                .arg(
+                    Arg::new("format")
+                        .long("format")
+                        .value_parser(EnumValueParser::<commands::Format>::new())
+                        .default_value("text"),
+                )
+                .arg(Arg::new("out").long("out").default_value("-")),
         )
 }
 
@@ -79,7 +84,14 @@ fn main() -> Result<()> {
             let file = fs::File::open(path)?;
             let cache = Cache::read_from_reader(file)?;
             let format = sub_matches.get_one("format").unwrap();
-            commands::dump_cache(cache, *format)?;
+            let output = commands::dump_cache(cache, *format)?;
+            let path = sub_matches.get_one::<String>("out").unwrap();
+            let mut file: Box<dyn Write> = if path == "-" {
+                Box::new(io::stdout())
+            } else {
+                Box::new(fs::File::create(path)?)
+            };
+            file.write_all(&output)?;
         }
         _ => unreachable!(),
     }

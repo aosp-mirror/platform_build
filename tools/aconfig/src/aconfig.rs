@@ -18,9 +18,10 @@ use anyhow::{anyhow, Context, Error, Result};
 use protobuf::{Enum, EnumOrUnknown};
 use serde::{Deserialize, Serialize};
 
+use crate::cache::{Cache, Item, TracePoint};
 use crate::protos::{
-    ProtoAndroidConfig, ProtoFlag, ProtoFlagState, ProtoOverride, ProtoOverrideConfig,
-    ProtoPermission, ProtoValue,
+    ProtoAndroidConfig, ProtoDump, ProtoDumpItem, ProtoDumpTracePoint, ProtoFlag, ProtoFlagState,
+    ProtoOverride, ProtoOverrideConfig, ProtoPermission, ProtoValue,
 };
 
 #[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone, Copy)]
@@ -41,6 +42,15 @@ impl TryFrom<EnumOrUnknown<ProtoFlagState>> for FlagState {
     }
 }
 
+impl From<FlagState> for ProtoFlagState {
+    fn from(state: FlagState) -> Self {
+        match state {
+            FlagState::Enabled => ProtoFlagState::ENABLED,
+            FlagState::Disabled => ProtoFlagState::DISABLED,
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone, Copy)]
 pub enum Permission {
     ReadOnly,
@@ -55,6 +65,15 @@ impl TryFrom<EnumOrUnknown<ProtoPermission>> for Permission {
             Some(ProtoPermission::READ_ONLY) => Ok(Permission::ReadOnly),
             Some(ProtoPermission::READ_WRITE) => Ok(Permission::ReadWrite),
             None => Err(anyhow!("unknown permission enum value {}", proto.value())),
+        }
+    }
+}
+
+impl From<Permission> for ProtoPermission {
+    fn from(permission: Permission) -> Self {
+        match permission {
+            Permission::ReadOnly => ProtoPermission::READ_ONLY,
+            Permission::ReadWrite => ProtoPermission::READ_WRITE,
         }
     }
 }
@@ -199,6 +218,40 @@ impl TryFrom<ProtoOverride> for Override {
         };
         let permission = proto_permission.try_into()?;
         Ok(Override { id, state, permission })
+    }
+}
+
+impl From<Cache> for ProtoDump {
+    fn from(cache: Cache) -> Self {
+        let mut dump = ProtoDump::new();
+        for item in cache.into_iter() {
+            dump.item.push(item.into());
+        }
+        dump
+    }
+}
+
+impl From<Item> for ProtoDumpItem {
+    fn from(item: Item) -> Self {
+        let mut dump_item = crate::protos::ProtoDumpItem::new();
+        dump_item.set_id(item.id.clone());
+        dump_item.set_description(item.description.clone());
+        dump_item.set_state(item.state.into());
+        dump_item.set_permission(item.permission.into());
+        for trace in item.trace.into_iter() {
+            dump_item.trace.push(trace.into());
+        }
+        dump_item
+    }
+}
+
+impl From<TracePoint> for ProtoDumpTracePoint {
+    fn from(tracepoint: TracePoint) -> Self {
+        let mut dump_tracepoint = ProtoDumpTracePoint::new();
+        dump_tracepoint.set_source(format!("{}", tracepoint.source));
+        dump_tracepoint.set_state(tracepoint.state.into());
+        dump_tracepoint.set_permission(tracepoint.permission.into());
+        dump_tracepoint
     }
 }
 

@@ -92,9 +92,11 @@ impl Cache {
     pub fn iter(&self) -> impl Iterator<Item = &Item> {
         self.items.iter()
     }
-}
 
-impl Item {}
+    pub fn into_iter(self) -> impl Iterator<Item = Item> {
+        self.items.into_iter()
+    }
+}
 
 #[cfg(test)]
 mod tests {

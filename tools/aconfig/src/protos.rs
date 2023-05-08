@@ -48,6 +48,15 @@ pub use aconfig_protos::aconfig::Permission as ProtoPermission;
 #[cfg(not(feature = "cargo"))]
 pub use aconfig_protos::aconfig::Flag_state as ProtoFlagState;
 
+#[cfg(not(feature = "cargo"))]
+pub use aconfig_protos::aconfig::Dump as ProtoDump;
+
+#[cfg(not(feature = "cargo"))]
+pub use aconfig_protos::aconfig::Dump_item as ProtoDumpItem;
+
+#[cfg(not(feature = "cargo"))]
+pub use aconfig_protos::aconfig::Dump_trace as ProtoDumpTracePoint;
+
 // ---- When building with cargo ----
 #[cfg(feature = "cargo")]
 include!(concat!(env!("OUT_DIR"), "/aconfig_proto/mod.rs"));
@@ -72,6 +81,15 @@ pub use aconfig::Permission as ProtoPermission;
 
 #[cfg(feature = "cargo")]
 pub use aconfig::Flag_state as ProtoFlagState;
+
+#[cfg(feature = "cargo")]
+pub use aconfig::Dump as ProtoDump;
+
+#[cfg(feature = "cargo")]
+pub use aconfig::Dump_item as ProtoDumpItem;
+
+#[cfg(feature = "cargo")]
+pub use aconfig::Dump_trace as ProtoDumpTracePoint;
 
 // ---- Common for both the Android tool-chain and cargo ----
 use anyhow::Result;

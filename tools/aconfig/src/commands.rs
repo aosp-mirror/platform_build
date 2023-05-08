@@ -16,12 +16,14 @@
 
 use anyhow::{Context, Result};
 use clap::ValueEnum;
+use protobuf::Message;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::io::Read;
 
 use crate::aconfig::{Flag, Override};
 use crate::cache::Cache;
+use crate::protos::ProtoDump;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Source {
@@ -74,22 +76,32 @@ pub fn create_cache(build_id: u32, aconfigs: Vec<Input>, overrides: Vec<Input>) 
 pub enum Format {
     Text,
     Debug,
+    Protobuf,
 }
 
-pub fn dump_cache(cache: Cache, format: Format) -> Result<()> {
+pub fn dump_cache(cache: Cache, format: Format) -> Result<Vec<u8>> {
     match format {
         Format::Text => {
+            let mut lines = vec![];
             for item in cache.iter() {
-                println!("{}: {:?}", item.id, item.state);
+                lines.push(format!("{}: {:?}\n", item.id, item.state));
             }
+            Ok(lines.concat().into())
         }
         Format::Debug => {
+            let mut lines = vec![];
             for item in cache.iter() {
-                println!("{:?}", item);
+                lines.push(format!("{:?}\n", item));
             }
+            Ok(lines.concat().into())
+        }
+        Format::Protobuf => {
+            let dump: ProtoDump = cache.into();
+            let mut output = vec![];
+            dump.write_to_vec(&mut output)?;
+            Ok(output)
         }
     }
-    Ok(())
 }
 
 #[cfg(test)]
@@ -97,8 +109,7 @@ mod tests {
     use super::*;
     use crate::aconfig::{FlagState, Permission};
 
-    #[test]
-    fn test_create_cache() {
+    fn create_test_cache() -> Cache {
         let s = r#"
         flag {
             id: "a"
@@ -106,6 +117,14 @@ mod tests {
             value {
                 state: ENABLED
                 permission: READ_WRITE
+            }
+        }
+        flag {
+            id: "b"
+            description: "Description of b"
+            value {
+                state: ENABLED
+                permission: READ_ONLY
             }
         }
         "#;
@@ -118,9 +137,36 @@ mod tests {
         }
         "#;
         let overrides = vec![Input { source: Source::Memory, reader: Box::new(o.as_bytes()) }];
-        let cache = create_cache(1, aconfigs, overrides).unwrap();
+        create_cache(1, aconfigs, overrides).unwrap()
+    }
+
+    #[test]
+    fn test_create_cache() {
+        let cache = create_test_cache(); // calls create_cache
         let item = cache.iter().find(|&item| item.id == "a").unwrap();
         assert_eq!(FlagState::Disabled, item.state);
         assert_eq!(Permission::ReadOnly, item.permission);
+    }
+
+    #[test]
+    fn test_dump_text_format() {
+        let cache = create_test_cache();
+        let bytes = dump_cache(cache, Format::Text).unwrap();
+        let text = std::str::from_utf8(&bytes).unwrap();
+        assert!(text.contains("a: Disabled"));
+    }
+
+    #[test]
+    fn test_dump_protobuf_format() {
+        use protobuf::Message;
+
+        let cache = create_test_cache();
+        let bytes = dump_cache(cache, Format::Protobuf).unwrap();
+        let actual = ProtoDump::parse_from_bytes(&bytes).unwrap();
+
+        assert_eq!(
+            vec!["a".to_string(), "b".to_string()],
+            actual.item.iter().map(|item| item.id.clone().unwrap()).collect::<Vec<_>>()
+        );
     }
 }
