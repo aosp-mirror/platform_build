@@ -223,16 +223,6 @@ func makeStringList(items []string) *starlark.List {
 	return starlark.NewList(elems)
 }
 
-// propsetFromEnv constructs a propset from the array of KEY=value strings
-func structFromEnv(env []string) *starlarkstruct.Struct {
-	sd := make(map[string]starlark.Value, len(env))
-	for _, x := range env {
-		kv := strings.SplitN(x, "=", 2)
-		sd[kv[0]] = starlark.String(kv[1])
-	}
-	return starlarkstruct.FromStringDict(starlarkstruct.Default, sd)
-}
-
 func log(thread *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
 	sep := " "
 	if err := starlark.UnpackArgs("print", nil, kwargs, "sep?", &sep); err != nil {
@@ -255,12 +245,10 @@ func log(thread *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwa
 	return starlark.None, nil
 }
 
-func setup(env []string) {
+func setup() {
 	// Create the symbols that aid makefile conversion. See README.md
 	builtins = starlark.StringDict{
 		"struct":   starlark.NewBuiltin("struct", starlarkstruct.Make),
-		"rblf_cli": structFromEnv(env),
-		"rblf_env": structFromEnv(os.Environ()),
 		// To convert find-copy-subdir and product-copy-files-by pattern
 		"rblf_find_files": starlark.NewBuiltin("rblf_find_files", find),
 		// To convert makefile's $(shell cmd)
@@ -285,11 +273,8 @@ func setup(env []string) {
 //   and the name that appears in error messages;
 // * src is an optional source of bytes to use instead of filename
 //   (it can be a string, or a byte array, or an io.Reader instance)
-// * commandVars is an array of "VAR=value" items. They are accessible from
-//   the starlark script as members of the `rblf_cli` propset.
-func Run(filename string, src interface{}, commandVars []string) error {
-	setup(commandVars)
-
+func Run(filename string, src interface{}) error {
+	setup()
 	mainThread := &starlark.Thread{
 		Name:  "main",
 		Print: func(_ *starlark.Thread, msg string) { fmt.Println(msg) },
