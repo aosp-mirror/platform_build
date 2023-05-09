@@ -28,68 +28,68 @@
 
 // ---- When building with the Android tool-chain ----
 #[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Android_config as ProtoAndroidConfig;
+pub use aconfig_protos::aconfig::Namespace as ProtoNamespace;
 
 #[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Value as ProtoValue;
+pub use aconfig_protos::aconfig::Flag_value as ProtoFlagDefinitionValue;
 
 #[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Flag as ProtoFlag;
+pub use aconfig_protos::aconfig::Flag_definition as ProtoFlagDefinition;
 
 #[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Override_config as ProtoOverrideConfig;
+pub use aconfig_protos::aconfig::Flag_overrides as ProtoFlagOverrides;
 
 #[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Override as ProtoOverride;
+pub use aconfig_protos::aconfig::Flag_override as ProtoFlagOverride;
 
 #[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Permission as ProtoPermission;
+pub use aconfig_protos::aconfig::Flag_permission as ProtoFlagPermission;
 
 #[cfg(not(feature = "cargo"))]
 pub use aconfig_protos::aconfig::Flag_state as ProtoFlagState;
 
 #[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Dump as ProtoDump;
+pub use aconfig_protos::aconfig::Parsed_flags as ProtoParsedFlags;
 
 #[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Dump_item as ProtoDumpItem;
+pub use aconfig_protos::aconfig::Parsed_flag as ProtoParsedFlag;
 
 #[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Dump_trace as ProtoDumpTracePoint;
+pub use aconfig_protos::aconfig::Tracepoint as ProtoTracepoint;
 
 // ---- When building with cargo ----
 #[cfg(feature = "cargo")]
 include!(concat!(env!("OUT_DIR"), "/aconfig_proto/mod.rs"));
 
 #[cfg(feature = "cargo")]
-pub use aconfig::Android_config as ProtoAndroidConfig;
+pub use aconfig::Namespace as ProtoNamespace;
 
 #[cfg(feature = "cargo")]
-pub use aconfig::Value as ProtoValue;
+pub use aconfig::Flag_value as ProtoFlagDefinitionValue;
 
 #[cfg(feature = "cargo")]
-pub use aconfig::Flag as ProtoFlag;
+pub use aconfig::Flag_definition as ProtoFlagDefinition;
 
 #[cfg(feature = "cargo")]
-pub use aconfig::Override_config as ProtoOverrideConfig;
+pub use aconfig::Flag_overrides as ProtoFlagOverrides;
 
 #[cfg(feature = "cargo")]
-pub use aconfig::Override as ProtoOverride;
+pub use aconfig::Flag_override as ProtoFlagOverride;
 
 #[cfg(feature = "cargo")]
-pub use aconfig::Permission as ProtoPermission;
+pub use aconfig::Flag_permission as ProtoFlagPermission;
 
 #[cfg(feature = "cargo")]
 pub use aconfig::Flag_state as ProtoFlagState;
 
 #[cfg(feature = "cargo")]
-pub use aconfig::Dump as ProtoDump;
+pub use aconfig::Parsed_flags as ProtoParsedFlags;
 
 #[cfg(feature = "cargo")]
-pub use aconfig::Dump_item as ProtoDumpItem;
+pub use aconfig::Parsed_flag as ProtoParsedFlag;
 
 #[cfg(feature = "cargo")]
-pub use aconfig::Dump_trace as ProtoDumpTracePoint;
+pub use aconfig::Tracepoint as ProtoTracepoint;
 
 // ---- Common for both the Android tool-chain and cargo ----
 use anyhow::Result;

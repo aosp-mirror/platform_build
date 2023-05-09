@@ -41,6 +41,7 @@ fn cli() -> Command {
                         .value_parser(clap::value_parser!(u32))
                         .required(true),
                 )
+                .arg(Arg::new("namespace").long("namespace").required(true))
                 .arg(Arg::new("aconfig").long("aconfig").action(ArgAction::Append))
                 .arg(Arg::new("override").long("override").action(ArgAction::Append))
                 .arg(Arg::new("cache").long("cache").required(true)),
@@ -72,9 +73,10 @@ fn main() -> Result<()> {
     match matches.subcommand() {
         Some(("create-cache", sub_matches)) => {
             let build_id = *sub_matches.get_one::<u32>("build-id").unwrap();
+            let namespace = sub_matches.get_one::<String>("namespace").unwrap();
             let aconfigs = open_zero_or_more_files(sub_matches, "aconfig")?;
             let overrides = open_zero_or_more_files(sub_matches, "override")?;
-            let cache = commands::create_cache(build_id, aconfigs, overrides)?;
+            let cache = commands::create_cache(build_id, namespace, aconfigs, overrides)?;
             let path = sub_matches.get_one::<String>("cache").unwrap();
             let file = fs::File::create(path)?;
             cache.write_to_writer(file)?;
