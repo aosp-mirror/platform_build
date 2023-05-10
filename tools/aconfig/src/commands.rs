@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-use anyhow::{Context, Result};
+use anyhow::{ensure, Context, Result};
 use clap::ValueEnum;
+use protobuf::Message;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::io::Read;
 
-use crate::aconfig::{Flag, Override};
+use crate::aconfig::{Namespace, Override};
 use crate::cache::Cache;
+use crate::protos::ProtoParsedFlags;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Source {
@@ -44,15 +46,27 @@ pub struct Input {
     pub reader: Box<dyn Read>,
 }
 
-pub fn create_cache(build_id: u32, aconfigs: Vec<Input>, overrides: Vec<Input>) -> Result<Cache> {
-    let mut cache = Cache::new(build_id);
+pub fn create_cache(
+    build_id: u32,
+    namespace: &str,
+    aconfigs: Vec<Input>,
+    overrides: Vec<Input>,
+) -> Result<Cache> {
+    let mut cache = Cache::new(build_id, namespace.to_owned());
 
     for mut input in aconfigs {
         let mut contents = String::new();
         input.reader.read_to_string(&mut contents)?;
-        let flags = Flag::try_from_text_proto_list(&contents)
+        let ns = Namespace::try_from_text_proto(&contents)
             .with_context(|| format!("Failed to parse {}", input.source))?;
-        for flag in flags {
+        ensure!(
+            namespace == ns.namespace,
+            "Failed to parse {}: expected namespace {}, got {}",
+            input.source,
+            namespace,
+            ns.namespace
+        );
+        for flag in ns.flags.into_iter() {
             cache.add_flag(input.source.clone(), flag)?;
         }
     }
@@ -74,22 +88,32 @@ pub fn create_cache(build_id: u32, aconfigs: Vec<Input>, overrides: Vec<Input>) 
 pub enum Format {
     Text,
     Debug,
+    Protobuf,
 }
 
-pub fn dump_cache(cache: Cache, format: Format) -> Result<()> {
+pub fn dump_cache(cache: Cache, format: Format) -> Result<Vec<u8>> {
     match format {
         Format::Text => {
+            let mut lines = vec![];
             for item in cache.iter() {
-                println!("{}: {:?}", item.id, item.state);
+                lines.push(format!("{}: {:?}\n", item.name, item.state));
             }
+            Ok(lines.concat().into())
         }
         Format::Debug => {
+            let mut lines = vec![];
             for item in cache.iter() {
-                println!("{:?}", item);
+                lines.push(format!("{:?}\n", item));
             }
+            Ok(lines.concat().into())
+        }
+        Format::Protobuf => {
+            let parsed_flags: ProtoParsedFlags = cache.into();
+            let mut output = vec![];
+            parsed_flags.write_to_vec(&mut output)?;
+            Ok(output)
         }
     }
-    Ok(())
 }
 
 #[cfg(test)]
@@ -97,30 +121,80 @@ mod tests {
     use super::*;
     use crate::aconfig::{FlagState, Permission};
 
-    #[test]
-    fn test_create_cache() {
+    fn create_test_cache() -> Cache {
         let s = r#"
+        namespace: "ns"
         flag {
-            id: "a"
+            name: "a"
             description: "Description of a"
             value {
                 state: ENABLED
                 permission: READ_WRITE
             }
         }
+        flag {
+            name: "b"
+            description: "Description of b"
+            value {
+                state: ENABLED
+                permission: READ_ONLY
+            }
+        }
         "#;
         let aconfigs = vec![Input { source: Source::Memory, reader: Box::new(s.as_bytes()) }];
         let o = r#"
-        override {
-            id: "a"
+        flag_override {
+            namespace: "ns"
+            name: "a"
             state: DISABLED
             permission: READ_ONLY
         }
         "#;
         let overrides = vec![Input { source: Source::Memory, reader: Box::new(o.as_bytes()) }];
-        let cache = create_cache(1, aconfigs, overrides).unwrap();
-        let item = cache.iter().find(|&item| item.id == "a").unwrap();
+        create_cache(1, "ns", aconfigs, overrides).unwrap()
+    }
+
+    #[test]
+    fn test_create_cache() {
+        let cache = create_test_cache(); // calls create_cache
+        let item = cache.iter().find(|&item| item.name == "a").unwrap();
         assert_eq!(FlagState::Disabled, item.state);
         assert_eq!(Permission::ReadOnly, item.permission);
+    }
+
+    #[test]
+    fn test_dump_text_format() {
+        let cache = create_test_cache();
+        let bytes = dump_cache(cache, Format::Text).unwrap();
+        let text = std::str::from_utf8(&bytes).unwrap();
+        assert!(text.contains("a: Disabled"));
+    }
+
+    #[test]
+    fn test_dump_protobuf_format() {
+        use crate::protos::{ProtoFlagPermission, ProtoFlagState, ProtoTracepoint};
+        use protobuf::Message;
+
+        let cache = create_test_cache();
+        let bytes = dump_cache(cache, Format::Protobuf).unwrap();
+        let actual = ProtoParsedFlags::parse_from_bytes(&bytes).unwrap();
+
+        assert_eq!(
+            vec!["a".to_string(), "b".to_string()],
+            actual.parsed_flag.iter().map(|item| item.name.clone().unwrap()).collect::<Vec<_>>()
+        );
+
+        let item =
+            actual.parsed_flag.iter().find(|item| item.name == Some("b".to_string())).unwrap();
+        assert_eq!(item.namespace(), "ns");
+        assert_eq!(item.name(), "b");
+        assert_eq!(item.description(), "Description of b");
+        assert_eq!(item.state(), ProtoFlagState::ENABLED);
+        assert_eq!(item.permission(), ProtoFlagPermission::READ_ONLY);
+        let mut tp = ProtoTracepoint::new();
+        tp.set_source("<memory>".to_string());
+        tp.set_state(ProtoFlagState::ENABLED);
+        tp.set_permission(ProtoFlagPermission::READ_ONLY);
+        assert_eq!(item.trace, vec![tp]);
     }
 }
