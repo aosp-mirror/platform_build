@@ -30,13 +30,14 @@ endef
 # In order to avoid running starlark every time the stamp file is checked, we use
 # $(KATI_shell_no_rerun). Then, to make sure that we actually do rerun kati when
 # modifying the starlark files, we add the starlark files to the kati stamp file with
-# $(KATI_extra_file_deps).
+# $(KATI_extra_file_deps). This behavior can be modified by passing a list of starlark files
+# to exclude from the dependency list as $(2)
 define run-starlark
 $(eval _starlark_results := $(OUT_DIR)/starlark_results/$(subst /,_,$(1)).mk)
 $(KATI_shell_no_rerun mkdir -p $(OUT_DIR)/starlark_results && $(OUT_DIR)/rbcrun --mode=make $(1) >$(_starlark_results) && touch -t 200001010000 $(_starlark_results))
 $(if $(filter-out 0,$(.SHELLSTATUS)),$(error Starlark failed to run))
 $(eval include $(_starlark_results))
-$(KATI_extra_file_deps $(LOADED_STARLARK_FILES))
+$(KATI_extra_file_deps $(filter-out $(2),$(LOADED_STARLARK_FILES)))
 $(eval LOADED_STARLARK_FILES :=)
 $(eval _starlark_results :=)
 endef
