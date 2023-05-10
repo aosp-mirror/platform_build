@@ -546,8 +546,10 @@ endif
 
 TARGET_BUILD_USE_PREBUILT_SDKS :=
 DISABLE_PREOPT :=
+DISABLE_PREOPT_BOOT_IMAGES :=
 ifneq (,$(TARGET_BUILD_APPS)$(TARGET_BUILD_UNBUNDLED_IMAGE))
   DISABLE_PREOPT := true
+  DISABLE_PREOPT_BOOT_IMAGES := true
 endif
 ifeq (true,$(TARGET_BUILD_UNBUNDLED))
   ifneq (true,$(UNBUNDLED_BUILD_SDKS_FROM_SOURCE))
@@ -558,6 +560,7 @@ endif
 .KATI_READONLY := \
   TARGET_BUILD_USE_PREBUILT_SDKS \
   DISABLE_PREOPT \
+  DISABLE_PREOPT_BOOT_IMAGES \
 
 prebuilt_sdk_tools := prebuilts/sdk/tools
 prebuilt_sdk_tools_bin := $(prebuilt_sdk_tools)/$(HOST_OS)/bin
