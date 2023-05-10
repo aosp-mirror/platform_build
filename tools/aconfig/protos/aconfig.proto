@@ -20,38 +20,66 @@ syntax = "proto2";
 
 package android.aconfig;
 
+// messages used in both aconfig input and output
+
 enum flag_state {
   ENABLED = 1;
   DISABLED = 2;
 }
 
-enum permission {
+enum flag_permission {
   READ_ONLY = 1;
   READ_WRITE = 2;
 }
 
-message value {
+// aconfig input messages: configuration and override data
+
+message flag_value {
   required flag_state state = 1;
-  required permission permission = 2;
+  required flag_permission permission = 2;
   optional uint32 since = 3;
 }
 
-message flag {
-  required string id = 1;
+message flag_definition {
+  required string name = 1;
   required string description = 2;
-  repeated value value = 3;
+  repeated flag_value value = 3;
 };
 
-message android_config {
-  repeated flag flag = 1;
+message namespace {
+  required string namespace = 1;
+  repeated flag_definition flag = 2;
 };
 
-message override {
-  required string id = 1;
+message flag_override {
+  required string namespace = 1;
+  required string name = 2;
+  required flag_state state = 3;
+  required flag_permission permission = 4;
+};
+
+message flag_overrides {
+  repeated flag_override flag_override = 1;
+};
+
+// aconfig output messages: parsed and verified configuration and override data
+
+message tracepoint {
+  // path to config or override file releative to $TOP
+  required string source = 1;
   required flag_state state = 2;
-  required permission permission = 3;
-};
+  required flag_permission permission = 3;
+}
 
-message override_config {
-  repeated override override = 1;
-};
+message parsed_flag {
+  required string namespace = 1;
+  required string name = 2;
+  required string description = 3;
+  required flag_state state = 4;
+  required flag_permission permission = 5;
+  repeated tracepoint trace = 6;
+}
+
+message parsed_flags {
+  repeated parsed_flag parsed_flag = 1;
+}
