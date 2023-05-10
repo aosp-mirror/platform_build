@@ -23,6 +23,7 @@ import verity_utils
 from check_target_files_vintf import CheckVintfIfTrebleEnabled, HasPartition
 from common import OPTIONS
 from ota_utils import UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata, PropertyFiles
+import subprocess
 
 logger = logging.getLogger(__name__)
 
@@ -277,7 +278,8 @@ endif;
   needed_property_files = (
       NonAbOtaPropertyFiles(),
   )
-  FinalizeMetadata(metadata, staging_file, output_file, needed_property_files, package_key=OPTIONS.package_key)
+  FinalizeMetadata(metadata, staging_file, output_file,
+                   needed_property_files, package_key=OPTIONS.package_key)
 
 
 def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_file):
@@ -532,7 +534,8 @@ endif;
   needed_property_files = (
       NonAbOtaPropertyFiles(),
   )
-  FinalizeMetadata(metadata, staging_file, output_file, needed_property_files, package_key=OPTIONS.package_key)
+  FinalizeMetadata(metadata, staging_file, output_file,
+                   needed_property_files, package_key=OPTIONS.package_key)
 
 
 def GenerateNonAbOtaPackage(target_file, output_file, source_file=None):
@@ -555,8 +558,18 @@ def GenerateNonAbOtaPackage(target_file, output_file, source_file=None):
   if OPTIONS.extracted_input is not None:
     OPTIONS.input_tmp = OPTIONS.extracted_input
   else:
-    logger.info("unzipping target target-files...")
-    OPTIONS.input_tmp = common.UnzipTemp(target_file, UNZIP_PATTERN)
+    if not os.path.isdir(target_file):
+      logger.info("unzipping target target-files...")
+      OPTIONS.input_tmp = common.UnzipTemp(target_file, UNZIP_PATTERN)
+    else:
+      OPTIONS.input_tmp = target_file
+      tmpfile = common.MakeTempFile(suffix=".zip")
+      os.unlink(tmpfile)
+      common.RunAndCheckOutput(
+          ["zip", tmpfile, "-r", ".", "-0"], cwd=target_file)
+      assert zipfile.is_zipfile(tmpfile)
+      target_file = tmpfile
+
   OPTIONS.target_tmp = OPTIONS.input_tmp
 
   # If the caller explicitly specified the device-specific extensions path via
