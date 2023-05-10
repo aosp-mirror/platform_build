@@ -166,6 +166,7 @@ $(KATI_obsolete_var PRODUCT_SUPPORTS_VERITY_FEC,VB 1.0 and related variables are
 $(KATI_obsolete_var PRODUCT_SUPPORTS_BOOT_SIGNER,VB 1.0 and related variables are no longer supported)
 $(KATI_obsolete_var PRODUCT_VERITY_SIGNING_KEY,VB 1.0 and related variables are no longer supported)
 $(KATI_obsolete_var BOARD_PREBUILT_PVMFWIMAGE,pvmfw.bin is now built in AOSP and custom versions are no longer supported)
+$(KATI_obsolete_var BUILDING_PVMFW_IMAGE,BUILDING_PVMFW_IMAGE is no longer used)
 $(KATI_obsolete_var BOARD_BUILD_SYSTEM_ROOT_IMAGE)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
@@ -232,6 +233,7 @@ BUILD_NATIVE_TEST :=$= $(BUILD_SYSTEM)/native_test.mk
 BUILD_FUZZ_TEST :=$= $(BUILD_SYSTEM)/fuzz_test.mk
 
 BUILD_NOTICE_FILE :=$= $(BUILD_SYSTEM)/notice_files.mk
+BUILD_SBOM_GEN :=$= $(BUILD_SYSTEM)/sbom.mk
 
 include $(BUILD_SYSTEM)/deprecation.mk
 
@@ -355,6 +357,51 @@ endif
 # Define most of the global variables.  These are the ones that
 # are specific to the user's build configuration.
 include $(BUILD_SYSTEM)/envsetup.mk
+
+# Returns true if it is a low memory device, otherwise it returns false.
+define is-low-mem-device
+$(if $(findstring ro.config.low_ram=true,$(PRODUCT_PROPERTY_OVERRIDES)),true,\
+$(if $(findstring ro.config.low_ram=true,$(PRODUCT_DEFAULT_PROPERTY_OVERRIDES)),true,\
+$(if $(findstring ro.config.low_ram=true,$(PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE)),true,\
+$(if $(findstring ro.config.low_ram=true,$(PRODUCT_COMPATIBLE_PROPERTY)),true,\
+$(if $(findstring ro.config.low_ram=true,$(PRODUCT_SYSTEM_DEFAULT_PROPERTIES)),true,\
+$(if $(findstring ro.config.low_ram=true,$(PRODUCT_SYSTEM_EXT_PROPERTIES)),true,\
+$(if $(findstring ro.config.low_ram=true,$(PRODUCT_PRODUCT_PROPERTIES)),true,\
+$(if $(findstring ro.config.low_ram=true,$(PRODUCT_VENDOR_PROPERTIES)),true,\
+$(if $(findstring ro.config.low_ram=true,$(PRODUCT_ODM_PROPERTIES)),true,false)))))))))
+endef
+
+# Get the board API level.
+board_api_level := $(PLATFORM_SDK_VERSION)
+ifdef BOARD_API_LEVEL
+  board_api_level := $(BOARD_API_LEVEL)
+else ifdef BOARD_SHIPPING_API_LEVEL
+  # Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
+  board_api_level := $(BOARD_SHIPPING_API_LEVEL)
+endif
+
+# Calculate the VSR vendor API level.
+vsr_vendor_api_level := $(board_api_level)
+
+ifdef PRODUCT_SHIPPING_API_LEVEL
+  vsr_vendor_api_level := $(call math_min,$(PRODUCT_SHIPPING_API_LEVEL),$(board_api_level))
+endif
+
+# Set TARGET_MAX_PAGE_SIZE_SUPPORTED.
+ifdef PRODUCT_MAX_PAGE_SIZE_SUPPORTED
+  TARGET_MAX_PAGE_SIZE_SUPPORTED := $(PRODUCT_MAX_PAGE_SIZE_SUPPORTED)
+else ifeq ($(strip $(call is-low-mem-device)),true)
+  # Low memory device will have 4096 binary alignment.
+  TARGET_MAX_PAGE_SIZE_SUPPORTED := 4096
+else
+  # The default binary alignment for userspace is 4096.
+  TARGET_MAX_PAGE_SIZE_SUPPORTED := 4096
+  # When VSR vendor API level >= 34, binary alignment will be 65536.
+  ifeq ($(call math_gt_or_eq,$(vsr_vendor_api_level),34),true)
+      TARGET_MAX_PAGE_SIZE_SUPPORTED := 65536
+  endif
+endif
+.KATI_READONLY := TARGET_MAX_PAGE_SIZE_SUPPORTED
 
 # Pruned directory options used when using findleaves.py
 # See envsetup.mk for a description of SCAN_EXCLUDE_DIRS
@@ -581,7 +628,6 @@ BREAKPAD_GENERATE_SYMBOLS := false
 endif
 PROTOC := $(HOST_OUT_EXECUTABLES)/aprotoc$(HOST_EXECUTABLE_SUFFIX)
 NANOPB_SRCS := $(HOST_OUT_EXECUTABLES)/protoc-gen-nanopb
-VTSC := $(HOST_OUT_EXECUTABLES)/vtsc$(HOST_EXECUTABLE_SUFFIX)
 MKBOOTFS := $(HOST_OUT_EXECUTABLES)/mkbootfs$(HOST_EXECUTABLE_SUFFIX)
 MINIGZIP := $(HOST_OUT_EXECUTABLES)/minigzip$(HOST_EXECUTABLE_SUFFIX)
 LZ4 := $(HOST_OUT_EXECUTABLES)/lz4$(HOST_EXECUTABLE_SUFFIX)
@@ -618,7 +664,11 @@ CHECK_ELF_FILE := $(HOST_OUT_EXECUTABLES)/check_elf_file$(HOST_EXECUTABLE_SUFFIX
 LPMAKE := $(HOST_OUT_EXECUTABLES)/lpmake$(HOST_EXECUTABLE_SUFFIX)
 ADD_IMG_TO_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/add_img_to_target_files$(HOST_EXECUTABLE_SUFFIX)
 BUILD_IMAGE := $(HOST_OUT_EXECUTABLES)/build_image$(HOST_EXECUTABLE_SUFFIX)
+ifeq (,$(strip $(BOARD_CUSTOM_BUILD_SUPER_IMAGE)))
 BUILD_SUPER_IMAGE := $(HOST_OUT_EXECUTABLES)/build_super_image$(HOST_EXECUTABLE_SUFFIX)
+else
+BUILD_SUPER_IMAGE := $(BOARD_CUSTOM_BUILD_SUPER_IMAGE)
+endif
 IMG_FROM_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/img_from_target_files$(HOST_EXECUTABLE_SUFFIX)
 MAKE_RECOVERY_PATCH := $(HOST_OUT_EXECUTABLES)/make_recovery_patch$(HOST_EXECUTABLE_SUFFIX)
 OTA_FROM_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/ota_from_target_files$(HOST_EXECUTABLE_SUFFIX)
@@ -640,6 +690,8 @@ VBOOT_SIGNER := $(HOST_OUT_EXECUTABLES)/vboot_signer
 
 DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump$(BUILD_EXECUTABLE_SUFFIX)
 PROFMAN := $(HOST_OUT_EXECUTABLES)/profman
+
+GEN_SBOM := $(HOST_OUT_EXECUTABLES)/generate-sbom
 
 FINDBUGS_DIR := external/owasp/sanitizer/tools/findbugs/bin
 FINDBUGS := $(FINDBUGS_DIR)/findbugs
@@ -821,7 +873,7 @@ BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
 # is made which breaks compatibility with the previous platform sepolicy version,
 # not just on every increase in PLATFORM_SDK_VERSION.  The minor version should
 # be reset to 0 on every bump of the PLATFORM_SDK_VERSION.
-sepolicy_major_vers := 33
+sepolicy_major_vers := 34
 sepolicy_minor_vers := 0
 
 ifneq ($(sepolicy_major_vers), $(PLATFORM_SDK_VERSION))
@@ -856,7 +908,6 @@ endif
 
 # A list of SEPolicy versions, besides PLATFORM_SEPOLICY_VERSION, that the framework supports.
 PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
-    28.0 \
     29.0 \
     30.0 \
     31.0 \

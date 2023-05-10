@@ -175,3 +175,6 @@ ifeq (false,$(ART_MODULE_BUILD_FROM_SOURCE))
       system/framework/%.odex \
       system/framework/%.vdex
 endif
+
+PRODUCT_SYSTEM_PROPERTIES += \
+    dalvik.vm.useartservice=true

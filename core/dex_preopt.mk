@@ -93,6 +93,7 @@ $(boot_zip): $(bootclasspath_jars) $(system_server_jars) $(SOONG_ZIP) $(MERGE_ZI
 
 $(call dist-for-goals, droidcore, $(boot_zip))
 
+ifneq (,$(filter true,$(ART_MODULE_BUILD_FROM_SOURCE) $(MODULE_BUILD_FROM_SOURCE)))
 # Build the system_server.zip which contains the Apex system server jars and standalone system server jars
 system_server_zip := $(PRODUCT_OUT)/system_server.zip
 apex_system_server_jars := \
@@ -122,5 +123,6 @@ $(system_server_zip): $(system_server_jars) $(apex_system_server_jars) $(apex_st
 
 $(call dist-for-goals, droidcore, $(system_server_zip))
 
+endif  #ART_MODULE_BUILD_FROM_SOURCE || MODULE_BUILD_FROM_SOURCE
 endif  #PRODUCT_USES_DEFAULT_ART_CONFIG
 endif  #WITH_DEXPREOPT

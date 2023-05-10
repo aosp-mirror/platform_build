@@ -51,6 +51,7 @@ PRODUCT_PACKAGES += \
     dumpsys_vendor \
     fs_config_files_nonsystem \
     fs_config_dirs_nonsystem \
+    gpu_counter_producer \
     gralloc.default \
     group_odm \
     group_vendor \

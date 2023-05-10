@@ -12,6 +12,16 @@ endif
 include $(BUILD_SYSTEM)/art_config.mk
 include $(BUILD_SYSTEM)/dex_preopt_config.mk
 
+ifndef AFDO_PROFILES
+# Set AFDO_PROFILES
+-include vendor/google_data/pgo_profile/sampling/afdo_profiles.mk
+else
+$(error AFDO_PROFILES can only be set from soong_config.mk. For product-specific fdo_profiles, please use PRODUCT_AFDO_PROFILES)
+endif
+
+# PRODUCT_AFDO_PROFILES takes precedence over product-agnostic profiles in AFDO_PROFILES
+ALL_AFDO_PROFILES := $(PRODUCT_AFDO_PROFILES) $(AFDO_PROFILES)
+
 ifeq ($(WRITE_SOONG_VARIABLES),true)
 
 # Create soong.variables with copies of makefile settings.  Runs every build,
@@ -31,6 +41,7 @@ $(call add_json_bool, Platform_sdk_final,                $(filter REL,$(PLATFORM
 $(call add_json_val,  Platform_sdk_extension_version,    $(PLATFORM_SDK_EXTENSION_VERSION))
 $(call add_json_val,  Platform_base_sdk_extension_version, $(PLATFORM_BASE_SDK_EXTENSION_VERSION))
 $(call add_json_csv,  Platform_version_active_codenames, $(PLATFORM_VERSION_ALL_CODENAMES))
+$(call add_json_csv,  Platform_version_all_preview_codenames, $(PLATFORM_VERSION_ALL_PREVIEW_CODENAMES))
 $(call add_json_str,  Platform_security_patch,           $(PLATFORM_SECURITY_PATCH))
 $(call add_json_str,  Platform_preview_sdk_version,      $(PLATFORM_PREVIEW_SDK_VERSION))
 $(call add_json_str,  Platform_base_os,                  $(PLATFORM_BASE_OS))
@@ -109,6 +120,7 @@ $(call add_json_bool, EnableCFI,                         $(call invert_bool,$(fi
 $(call add_json_list, CFIExcludePaths,                   $(CFI_EXCLUDE_PATHS) $(PRODUCT_CFI_EXCLUDE_PATHS))
 $(call add_json_list, CFIIncludePaths,                   $(CFI_INCLUDE_PATHS) $(PRODUCT_CFI_INCLUDE_PATHS))
 $(call add_json_list, IntegerOverflowExcludePaths,       $(INTEGER_OVERFLOW_EXCLUDE_PATHS) $(PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS))
+$(call add_json_list, HWASanIncludePaths,                $(HWASAN_INCLUDE_PATHS) $(PRODUCT_HWASAN_INCLUDE_PATHS))
 
 $(call add_json_list, MemtagHeapExcludePaths,            $(MEMTAG_HEAP_EXCLUDE_PATHS) $(PRODUCT_MEMTAG_HEAP_EXCLUDE_PATHS))
 $(call add_json_list, MemtagHeapAsyncIncludePaths,       $(MEMTAG_HEAP_ASYNC_INCLUDE_PATHS) $(PRODUCT_MEMTAG_HEAP_ASYNC_INCLUDE_PATHS))
@@ -145,6 +157,7 @@ $(call add_json_bool, Malloc_not_svelte,                 $(call invert_bool,$(fi
 $(call add_json_bool, Malloc_zero_contents,              $(call invert_bool,$(filter false,$(MALLOC_ZERO_CONTENTS))))
 $(call add_json_bool, Malloc_pattern_fill_contents,      $(MALLOC_PATTERN_FILL_CONTENTS))
 $(call add_json_str,  Override_rs_driver,                $(OVERRIDE_RS_DRIVER))
+$(call add_json_str,  DeviceMaxPageSizeSupported,        $(TARGET_MAX_PAGE_SIZE_SUPPORTED))
 
 $(call add_json_bool, UncompressPrivAppDex,              $(call invert_bool,$(filter true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS))))
 $(call add_json_list, ModulesLoadedByPrivilegedModules,  $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES))
@@ -286,6 +299,7 @@ $(call add_json_bool, BuildBrokenClangCFlags,             $(filter true,$(BUILD_
 $(call add_json_bool, BuildBrokenDepfile,                 $(filter true,$(BUILD_BROKEN_DEPFILE)))
 $(call add_json_bool, BuildBrokenEnforceSyspropOwner,     $(filter true,$(BUILD_BROKEN_ENFORCE_SYSPROP_OWNER)))
 $(call add_json_bool, BuildBrokenTrebleSyspropNeverallow, $(filter true,$(BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW)))
+$(call add_json_bool, BuildBrokenUsesSoongPython2Modules, $(filter true,$(BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES)))
 $(call add_json_bool, BuildBrokenVendorPropertyNamespace, $(filter true,$(BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE)))
 $(call add_json_list, BuildBrokenInputDirModules, $(BUILD_BROKEN_INPUT_DIR_MODULES))
 
@@ -305,6 +319,9 @@ $(call add_json_bool, GenerateAidlNdkPlatformBackend, $(filter true,$(NEED_AIDL_
 $(call add_json_bool, IgnorePrefer32OnDevice, $(filter true,$(IGNORE_PREFER32_ON_DEVICE)))
 
 $(call add_json_list, IncludeTags,                $(PRODUCT_INCLUDE_TAGS))
+$(call add_json_list, SourceRootDirs,             $(PRODUCT_SOURCE_ROOT_DIRS))
+
+$(call add_json_list, AfdoProfiles,                $(ALL_AFDO_PROFILES))
 
 $(call json_end)
 

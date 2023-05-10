@@ -461,6 +461,25 @@ class BuildInfo(object):
     return system_prop and system_prop.GetProp("ro.build.version.release") == "11"
 
   @property
+  def vendor_api_level(self):
+    vendor_prop = self.info_dict.get("vendor.build.prop")
+    if not vendor_prop:
+      return -1
+
+    props = [
+        "ro.board.api_level",
+        "ro.board.first_api_level",
+        "ro.product.first_api_level",
+    ]
+    for prop in props:
+      value = vendor_prop.GetProp(prop)
+      try:
+          return int(value)
+      except:
+          pass
+    return -1
+
+  @property
   def is_vabc_xor(self):
     vendor_prop = self.info_dict.get("vendor.build.prop")
     vabc_xor_enabled = vendor_prop and \
@@ -698,24 +717,44 @@ class BuildInfo(object):
       script.AssertOemProperty(prop, values, oem_no_mount)
 
 
-def ReadFromInputFile(input_file, fn):
-  """Reads the contents of fn from input zipfile or directory."""
+def DoesInputFileContain(input_file, fn):
+  """Check whether the input target_files.zip contain an entry `fn`"""
   if isinstance(input_file, zipfile.ZipFile):
-    return input_file.read(fn).decode()
+    return fn in input_file.namelist()
   elif zipfile.is_zipfile(input_file):
     with zipfile.ZipFile(input_file, "r", allowZip64=True) as zfp:
-      return zfp.read(fn).decode()
+      return fn in zfp.namelist()
+  else:
+    if not os.path.isdir(input_file):
+      raise ValueError(
+          "Invalid input_file, accepted inputs are ZipFile object, path to .zip file on disk, or path to extracted directory. Actual: " + input_file)
+    path = os.path.join(input_file, *fn.split("/"))
+    return os.path.exists(path)
+
+
+def ReadBytesFromInputFile(input_file, fn):
+  """Reads the bytes of fn from input zipfile or directory."""
+  if isinstance(input_file, zipfile.ZipFile):
+    return input_file.read(fn)
+  elif zipfile.is_zipfile(input_file):
+    with zipfile.ZipFile(input_file, "r", allowZip64=True) as zfp:
+      return zfp.read(fn)
   else:
     if not os.path.isdir(input_file):
       raise ValueError(
           "Invalid input_file, accepted inputs are ZipFile object, path to .zip file on disk, or path to extracted directory. Actual: " + input_file)
     path = os.path.join(input_file, *fn.split("/"))
     try:
-      with open(path) as f:
+      with open(path, "rb") as f:
         return f.read()
     except IOError as e:
       if e.errno == errno.ENOENT:
         raise KeyError(fn)
+
+
+def ReadFromInputFile(input_file, fn):
+  """Reads the str contents of fn from input zipfile or directory."""
+  return ReadBytesFromInputFile(input_file, fn).decode()
 
 
 def ExtractFromInputFile(input_file, fn):
@@ -1357,11 +1396,7 @@ def RunHostInitVerifier(product_out, partition_map):
 def AppendAVBSigningArgs(cmd, partition):
   """Append signing arguments for avbtool."""
   # e.g., "--key path/to/signing_key --algorithm SHA256_RSA4096"
-  key_path = OPTIONS.info_dict.get("avb_" + partition + "_key_path")
-  if key_path and not os.path.exists(key_path) and OPTIONS.search_path:
-    new_key_path = os.path.join(OPTIONS.search_path, key_path)
-    if os.path.exists(new_key_path):
-      key_path = new_key_path
+  key_path = ResolveAVBSigningPathArgs(OPTIONS.info_dict.get("avb_" + partition + "_key_path"))
   algorithm = OPTIONS.info_dict.get("avb_" + partition + "_algorithm")
   if key_path and algorithm:
     cmd.extend(["--key", key_path, "--algorithm", algorithm])
@@ -1369,6 +1404,32 @@ def AppendAVBSigningArgs(cmd, partition):
   # make_vbmeta_image doesn't like "--salt" (and it's not needed).
   if avb_salt and not partition.startswith("vbmeta"):
     cmd.extend(["--salt", avb_salt])
+
+
+def ResolveAVBSigningPathArgs(split_args):
+
+  def ResolveBinaryPath(path):
+    if os.path.exists(path):
+      return path
+    new_path = os.path.join(OPTIONS.search_path, path)
+    if os.path.exists(new_path):
+      return new_path
+    raise ExternalError(
+      "Failed to find {}".format(new_path))
+
+  if not split_args:
+    return split_args
+
+  if isinstance(split_args, list):
+    for index, arg in enumerate(split_args[:-1]):
+      if arg == '--signing_helper':
+        signing_helper_path = split_args[index + 1]
+        split_args[index + 1] = ResolveBinaryPath(signing_helper_path)
+        break
+  elif isinstance(split_args, str):
+    split_args = ResolveBinaryPath(split_args)
+
+  return split_args
 
 
 def GetAvbPartitionArg(partition, image, info_dict=None):
@@ -1423,10 +1484,7 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   """
   if key is None:
     key = info_dict["avb_" + partition + "_key_path"]
-  if key and not os.path.exists(key) and OPTIONS.search_path:
-    new_key_path = os.path.join(OPTIONS.search_path, key)
-    if os.path.exists(new_key_path):
-      key = new_key_path
+  key = ResolveAVBSigningPathArgs(key)
   pubkey_path = ExtractAvbPublicKey(info_dict["avb_avbtool"], key)
   rollback_index_location = info_dict[
       "avb_" + partition + "_rollback_index_location"]
@@ -1442,10 +1500,7 @@ def _GenerateGkiCertificate(image, image_name):
   key_path = OPTIONS.info_dict.get("gki_signing_key_path")
   algorithm = OPTIONS.info_dict.get("gki_signing_algorithm")
 
-  if not os.path.exists(key_path) and OPTIONS.search_path:
-    new_key_path = os.path.join(OPTIONS.search_path, key_path)
-    if os.path.exists(new_key_path):
-      key_path = new_key_path
+  key_path = ResolveAVBSigningPathArgs(key_path)
 
   # Checks key_path exists, before processing --gki_signing_* args.
   if not os.path.exists(key_path):
@@ -1505,7 +1560,8 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
 
   custom_partitions = OPTIONS.info_dict.get(
       "avb_custom_images_partition_list", "").strip().split()
-  custom_avb_partitions = ["vbmeta_" + part for part in OPTIONS.info_dict.get("avb_custom_vbmeta_images_partition_list", "").strip().split()]
+  custom_avb_partitions = ["vbmeta_" + part for part in OPTIONS.info_dict.get(
+      "avb_custom_vbmeta_images_partition_list", "").strip().split()]
 
   for partition, path in partitions.items():
     if partition not in needed_partitions:
@@ -1541,6 +1597,8 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
             found = True
             break
         assert found, 'Failed to find {}'.format(chained_image)
+
+    split_args = ResolveAVBSigningPathArgs(split_args)
     cmd.extend(split_args)
 
   RunAndCheckOutput(cmd)
@@ -1751,7 +1809,8 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file,
     AppendAVBSigningArgs(cmd, partition_name)
     args = info_dict.get("avb_" + partition_name + "_add_hash_footer_args")
     if args and args.strip():
-      cmd.extend(shlex.split(args))
+      split_args = ResolveAVBSigningPathArgs(shlex.split(args))
+      cmd.extend(split_args)
     RunAndCheckOutput(cmd)
 
   img.seek(os.SEEK_SET, 0)
@@ -1792,7 +1851,8 @@ def _SignBootableImage(image_path, prebuilt_name, partition_name,
     AppendAVBSigningArgs(cmd, partition_name)
     args = info_dict.get("avb_" + partition_name + "_add_hash_footer_args")
     if args and args.strip():
-      cmd.extend(shlex.split(args))
+      split_args = ResolveAVBSigningPathArgs(shlex.split(args))
+      cmd.extend(split_args)
     RunAndCheckOutput(cmd)
 
 
@@ -1867,7 +1927,7 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
   data = _BuildBootableImage(prebuilt_name, os.path.join(unpack_dir, tree_subdir),
                              os.path.join(unpack_dir, fs_config),
                              os.path.join(unpack_dir, 'META/ramdisk_node_list')
-                                if dev_nodes else None,
+                             if dev_nodes else None,
                              info_dict, has_ramdisk, two_step_image)
   if data:
     return File(name, data)
@@ -1972,7 +2032,8 @@ def _BuildVendorBootImage(sourcedir, partition_name, info_dict=None):
     AppendAVBSigningArgs(cmd, partition_name)
     args = info_dict.get(f'avb_{partition_name}_add_hash_footer_args')
     if args and args.strip():
-      cmd.extend(shlex.split(args))
+      split_args = ResolveAVBSigningPathArgs(shlex.split(args))
+      cmd.extend(split_args)
     RunAndCheckOutput(cmd)
 
   img.seek(os.SEEK_SET, 0)
@@ -2819,6 +2880,18 @@ class PasswordManager(object):
 def ZipWrite(zip_file, filename, arcname=None, perms=0o644,
              compress_type=None):
 
+  # http://b/18015246
+  # Python 2.7's zipfile implementation wrongly thinks that zip64 is required
+  # for files larger than 2GiB. We can work around this by adjusting their
+  # limit. Note that `zipfile.writestr()` will not work for strings larger than
+  # 2GiB. The Python interpreter sometimes rejects strings that large (though
+  # it isn't clear to me exactly what circumstances cause this).
+  # `zipfile.write()` must be used directly to work around this.
+  #
+  # This mess can be avoided if we port to python3.
+  saved_zip64_limit = zipfile.ZIP64_LIMIT
+  zipfile.ZIP64_LIMIT = (1 << 32) - 1
+
   if compress_type is None:
     compress_type = zip_file.compression
   if arcname is None:
@@ -2844,13 +2917,14 @@ def ZipWrite(zip_file, filename, arcname=None, perms=0o644,
   finally:
     os.chmod(filename, saved_stat.st_mode)
     os.utime(filename, (saved_stat.st_atime, saved_stat.st_mtime))
+    zipfile.ZIP64_LIMIT = saved_zip64_limit
 
 
 def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=None,
                 compress_type=None):
   """Wrap zipfile.writestr() function to work around the zip64 limit.
 
-  Python's zip implementation won't allow writing a string
+  Even with the ZIP64_LIMIT workaround, it won't allow writing a string
   longer than 2GiB. It gives 'OverflowError: size does not fit in an int'
   when calling crc32(bytes).
 
@@ -2858,6 +2932,9 @@ def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=None,
   We should use ZipWrite() whenever possible, and only use ZipWriteStr()
   when we know the string won't be too long.
   """
+
+  saved_zip64_limit = zipfile.ZIP64_LIMIT
+  zipfile.ZIP64_LIMIT = (1 << 32) - 1
 
   if not isinstance(zinfo_or_arcname, zipfile.ZipInfo):
     zinfo = zipfile.ZipInfo(filename=zinfo_or_arcname)
@@ -2891,6 +2968,7 @@ def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=None,
   zinfo.date_time = (2009, 1, 1, 0, 0, 0)
 
   zip_file.writestr(zinfo, data)
+  zipfile.ZIP64_LIMIT = saved_zip64_limit
 
 
 def ZipDelete(zip_filename, entries, force=False):
@@ -2919,8 +2997,19 @@ def ZipDelete(zip_filename, entries, force=False):
       cmd.append(entry)
     RunAndCheckOutput(cmd)
 
-
   os.replace(new_zipfile, zip_filename)
+
+
+def ZipClose(zip_file):
+  # http://b/18015246
+  # zipfile also refers to ZIP64_LIMIT during close() when it writes out the
+  # central directory.
+  saved_zip64_limit = zipfile.ZIP64_LIMIT
+  zipfile.ZIP64_LIMIT = (1 << 32) - 1
+
+  zip_file.close()
+
+  zipfile.ZIP64_LIMIT = saved_zip64_limit
 
 
 class DeviceSpecificParams(object):
@@ -3615,11 +3704,13 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
 
   else:
     system_root_image = info_dict.get("system_root_image") == "true"
+    include_recovery_dtbo = info_dict.get("include_recovery_dtbo") == "true"
+    include_recovery_acpio = info_dict.get("include_recovery_acpio") == "true"
     path = os.path.join(input_dir, recovery_resource_dat_path)
     # With system-root-image, boot and recovery images will have mismatching
     # entries (only recovery has the ramdisk entry) (Bug: 72731506). Use bsdiff
     # to handle such a case.
-    if system_root_image:
+    if system_root_image or include_recovery_dtbo or include_recovery_acpio:
       diff_program = ["bsdiff"]
       bonus_args = ""
       assert not os.path.exists(path)
@@ -4009,3 +4100,27 @@ def IsSparseImage(filepath):
     # Magic for android sparse image format
     # https://source.android.com/devices/bootloader/images
     return fp.read(4) == b'\x3A\xFF\x26\xED'
+
+
+def ParseUpdateEngineConfig(path: str):
+  """Parse the update_engine config stored in file `path`
+  Args
+    path: Path to update_engine_config.txt file in target_files
+
+  Returns
+    A tuple of (major, minor) version number . E.g. (2, 8)
+  """
+  with open(path, "r") as fp:
+    # update_engine_config.txt is only supposed to contain two lines,
+    # PAYLOAD_MAJOR_VERSION and PAYLOAD_MINOR_VERSION. 1024 should be more than
+    # sufficient. If the length is more than that, something is wrong.
+    data = fp.read(1024)
+    major = re.search(r"PAYLOAD_MAJOR_VERSION=(\d+)", data)
+    if not major:
+      raise ValueError(
+          f"{path} is an invalid update_engine config, missing PAYLOAD_MAJOR_VERSION {data}")
+    minor = re.search(r"PAYLOAD_MINOR_VERSION=(\d+)", data)
+    if not minor:
+      raise ValueError(
+          f"{path} is an invalid update_engine config, missing PAYLOAD_MINOR_VERSION {data}")
+    return (int(major.group(1)), int(minor.group(1)))

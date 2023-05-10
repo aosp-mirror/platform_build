@@ -1,5 +1,21 @@
 # Build System Changes for Android.mk Writers
 
+## Python 2 to 3 migration
+
+The path set when running builds now makes the `python` executable point to python 3,
+whereas on previous versions it pointed to python 2. If you still have python 2 scripts,
+you can change the shebang line to use `python2` explicitly. This only applies for
+scripts run directly from makefiles, or from soong genrules. This behavior can be
+temporarily overridden by setting the `BUILD_BROKEN_PYTHON_IS_PYTHON2` environment
+variable to `true`. It's only an environment variable and not a product config variable
+because product config sometimes calls python code.
+
+In addition, `python_*` soong modules no longer allow python 2. This can be temporarily
+overridden by setting the `BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES` product configuration
+variable to `true`.
+
+Python 2 is slated for complete removal in V.
+
 ## Stop referencing sysprop_library directly from cc modules
 
 For the migration to Bazel, we are no longer mapping sysprop_library targets
@@ -818,7 +834,7 @@ for this option to exist.
 
 ### Stop using clang property
 
-Clang has been deleted from Soong. To fix any build errors, remove the clang
+The clang property has been deleted from Soong. To fix any build errors, remove the clang
 property from affected Android.bp files using bpmodify.
 
 
