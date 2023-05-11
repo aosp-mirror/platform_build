@@ -23,6 +23,7 @@ rust_defaults {
         "libprotobuf",
         "libserde",
         "libserde_json",
+        "libtinytemplate",
     ],
 }
 
