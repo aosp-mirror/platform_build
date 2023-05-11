@@ -54,7 +54,6 @@ func starlarktestSetup() {
 
 // Common setup for the tests: create thread, change to the test directory
 func testSetup(t *testing.T) *starlark.Thread {
-	setup()
 	thread := &starlark.Thread{
 		Load: func(thread *starlark.Thread, module string) (starlark.StringDict, error) {
 			if module == "assert.star" {
@@ -78,7 +77,6 @@ func exerciseStarlarkTestFile(t *testing.T, starFile string) {
 	// In order to use "assert.star" from go/starlark.net/starlarktest in the tests, provide:
 	//  * load function that handles "assert.star"
 	//  * starlarktest.DataFile function that finds its location
-	setup()
 	if err := os.Chdir(dataDir()); err != nil {
 		t.Fatal(err)
 	}
@@ -92,7 +90,9 @@ func exerciseStarlarkTestFile(t *testing.T, starFile string) {
 	starlarktest.SetReporter(thread, t)
 	_, thisSrcFile, _, _ := runtime.Caller(0)
 	filename := filepath.Join(filepath.Dir(thisSrcFile), starFile)
-	if _, err := starlark.ExecFile(thread, filename, nil, builtins); err != nil {
+	thread.SetLocal(executionModeKey, ExecutionModeRbc)
+	thread.SetLocal(shellKey, "/bin/sh")
+	if _, err := starlark.ExecFile(thread, filename, nil, rbcBuiltins); err != nil {
 		if err, ok := err.(*starlark.EvalError); ok {
 			t.Fatal(err.Backtrace())
 		}
@@ -103,7 +103,7 @@ func exerciseStarlarkTestFile(t *testing.T, starFile string) {
 func TestFileOps(t *testing.T) {
 	// TODO(asmundak): convert this to use exerciseStarlarkTestFile
 	thread := testSetup(t)
-	if _, err := starlark.ExecFile(thread, "file_ops.star", nil, builtins); err != nil {
+	if _, err := starlark.ExecFile(thread, "file_ops.star", nil, rbcBuiltins); err != nil {
 		if err, ok := err.(*starlark.EvalError); ok {
 			t.Fatal(err.Backtrace())
 		}
@@ -122,9 +122,12 @@ func TestLoad(t *testing.T) {
 		}
 	}
 	dir := dataDir()
+	if err := os.Chdir(filepath.Dir(dir)); err != nil {
+		t.Fatal(err)
+	}
 	thread.SetLocal(callerDirKey, dir)
-	LoadPathRoot = filepath.Dir(dir)
-	if _, err := starlark.ExecFile(thread, "load.star", nil, builtins); err != nil {
+	thread.SetLocal(executionModeKey, ExecutionModeRbc)
+	if _, err := starlark.ExecFile(thread, "testdata/load.star", nil, rbcBuiltins); err != nil {
 		if err, ok := err.(*starlark.EvalError); ok {
 			t.Fatal(err.Backtrace())
 		}
