@@ -5915,6 +5915,7 @@ $(BUILT_TARGET_FILES_DIR): \
 	    $(LPMAKE) \
 	    $(SELINUX_FC) \
 	    $(INSTALLED_MISC_INFO_TARGET) \
+	    $(INSTALLED_FASTBOOT_INFO_TARGET) \
 	    $(APKCERTS_FILE) \
 	    $(SOONG_APEX_KEYS_FILE) \
 	    $(SOONG_ZIP) \
@@ -6133,6 +6134,9 @@ endif
 	$(hide) echo "$(PRODUCT_OTA_PUBLIC_KEYS)" > $(zip_root)/META/otakeys.txt
 	$(hide) cp $(SELINUX_FC) $(zip_root)/META/file_contexts.bin
 	$(hide) cp $(INSTALLED_MISC_INFO_TARGET) $(zip_root)/META/misc_info.txt
+ifneq ($(INSTALLED_FASTBOOT_INFO_TARGET),)
+	$(hide) cp $(INSTALLED_FASTBOOT_INFO_TARGET) $(zip_root)/META/fastboot-info.txt
+endif
 ifneq ($(PRODUCT_SYSTEM_BASE_FS_PATH),)
 	$(hide) cp $(PRODUCT_SYSTEM_BASE_FS_PATH) \
 	  $(zip_root)/META/$(notdir $(PRODUCT_SYSTEM_BASE_FS_PATH))
