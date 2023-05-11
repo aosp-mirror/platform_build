@@ -2,7 +2,7 @@
 
 set -ex
 
-function finalize_locally_mainline_sdk() {
+function finalize_locally() {
     local top="$(dirname "$0")"/../../../..
     source $top/build/make/tools/finalization/environment.sh
 
@@ -23,5 +23,4 @@ function finalize_locally_mainline_sdk() {
     "$top/prebuilts/build-tools/path/linux-x86/python3" -W ignore::DeprecationWarning "$top/prebuilts/sdk/update_prebuilts.py" --local_mode -f ${FINAL_PLATFORM_SDK_VERSION} -e ${FINAL_MAINLINE_EXTENSION} --bug 1 1
 }
 
-finalize_locally_mainline_sdk
-
+finalize_locally

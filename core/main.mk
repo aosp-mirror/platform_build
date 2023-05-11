@@ -347,6 +347,10 @@ ifeq ($(AB_OTA_UPDATER),true)
 ADDITIONAL_PRODUCT_PROPERTIES += ro.product.ab_ota_partitions=$(subst $(space),$(comma),$(sort $(AB_OTA_PARTITIONS)))
 endif
 
+# Set this property for VTS to skip large page size tests on unsupported devices.
+ADDITIONAL_PRODUCT_PROPERTIES += \
+    ro.product.cpu.pagesize.max=$(TARGET_MAX_PAGE_SIZE_SUPPORTED)
+
 # -----------------------------------------------------------------
 ###
 ### In this section we set up the things that are different
@@ -1252,6 +1256,7 @@ define product-installed-files
     $(if $(filter tests,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_TESTS)) \
     $(if $(filter asan,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_ASAN)) \
     $(if $(filter java_coverage,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE)) \
+    $(if $(filter arm64,$(TARGET_ARCH) $(TARGET_2ND_ARCH)),$(call get-product-var,$(1),PRODUCT_PACKAGES_ARM64)) \
     $(call auto-included-modules) \
   ) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \
@@ -1385,29 +1390,6 @@ modules_to_install := $(sort \
     $(CUSTOM_MODULES) \
   )
 
-ifdef FULL_BUILD
-#
-# Used by the cleanup logic in soong_ui to remove files that should no longer
-# be installed.
-#
-
-# Include all tests, so that we remove them from the test suites / testcase
-# folders when they are removed.
-test_files := $(foreach ts,$(ALL_COMPATIBILITY_SUITES),$(COMPATIBILITY.$(ts).FILES))
-
-$(shell mkdir -p $(PRODUCT_OUT) $(HOST_OUT))
-
-$(file >$(PRODUCT_OUT)/.installable_files$(if $(filter address,$(SANITIZE_TARGET)),_asan), \
-  $(sort $(patsubst $(PRODUCT_OUT)/%,%,$(filter $(PRODUCT_OUT)/%, \
-    $(modules_to_install) $(test_files)))))
-
-$(file >$(HOST_OUT)/.installable_test_files,$(sort \
-  $(patsubst $(HOST_OUT)/%,%,$(filter $(HOST_OUT)/%, \
-    $(test_files)))))
-
-test_files :=
-endif
-
 # Dedpulicate compatibility suite dist files across modules and packages before
 # copying them to their requested locations. Assign the eval result to an unused
 # var to prevent Make from trying to make a sense of it.
@@ -1466,6 +1448,28 @@ endif
 modules_to_install := $(sort $(ALL_DEFAULT_INSTALLED_MODULES))
 ALL_DEFAULT_INSTALLED_MODULES :=
 
+ifdef FULL_BUILD
+#
+# Used by the cleanup logic in soong_ui to remove files that should no longer
+# be installed.
+#
+
+# Include all tests, so that we remove them from the test suites / testcase
+# folders when they are removed.
+test_files := $(foreach ts,$(ALL_COMPATIBILITY_SUITES),$(COMPATIBILITY.$(ts).FILES))
+
+$(shell mkdir -p $(PRODUCT_OUT) $(HOST_OUT))
+
+$(file >$(PRODUCT_OUT)/.installable_files$(if $(filter address,$(SANITIZE_TARGET)),_asan), \
+  $(sort $(patsubst $(PRODUCT_OUT)/%,%,$(filter $(PRODUCT_OUT)/%, \
+    $(modules_to_install) $(test_files)))))
+
+$(file >$(HOST_OUT)/.installable_test_files,$(sort \
+  $(patsubst $(HOST_OUT)/%,%,$(filter $(HOST_OUT)/%, \
+    $(test_files)))))
+
+test_files :=
+endif
 
 # Some notice deps refer to module names without prefix or arch suffix where
 # only the variants with them get built.
@@ -2178,7 +2182,8 @@ $(PRODUCT_OUT)/sbom-metadata.csv: $(installed_files)
 	  $(eval _is_kernel_modules_blocklist := $(if $(findstring $f,$(ALL_KERNEL_MODULES_BLOCKLIST)),Y)) \
 	  $(eval _is_fsverity_build_manifest_apk := $(if $(findstring $f,$(ALL_FSVERITY_BUILD_MANIFEST_APK)),Y)) \
 	  $(eval _is_linker_config := $(if $(findstring $f,$(SYSTEM_LINKER_CONFIG) $(vendor_linker_config_file)),Y)) \
-	  $(eval _is_platform_generated := $(_is_build_prop)$(_is_notice_file)$(_is_dexpreopt_image_profile)$(_is_product_system_other_avbkey)$(_is_event_log_tags_file)$(_is_system_other_odex_marker)$(_is_kernel_modules_blocklist)$(_is_fsverity_build_manifest_apk)$(_is_linker_config)) \
+	  $(eval _is_partition_compat_symlink := $(if $(findstring $f,$(PARTITION_COMPAT_SYMLINKS)),Y)) \
+	  $(eval _is_platform_generated := $(_is_build_prop)$(_is_notice_file)$(_is_dexpreopt_image_profile)$(_is_product_system_other_avbkey)$(_is_event_log_tags_file)$(_is_system_other_odex_marker)$(_is_kernel_modules_blocklist)$(_is_fsverity_build_manifest_apk)$(_is_linker_config)$(_is_partition_compat_symlink)) \
 	  @echo /$(_path_on_device)$(comma)$(_module_path)$(comma)$(_soong_module_type)$(comma)$(_is_prebuilt_make_module)$(comma)$(_product_copy_files)$(comma)$(_kernel_module_copy_files)$(comma)$(_is_platform_generated) >> $@ $(newline) \
 	  $(if $(_post_installed_dexpreopt_zip), \
 	  for i in $$(zipinfo -1 $(_post_installed_dexpreopt_zip)); do echo /$$i$(comma)$(_module_path)$(comma)$(_soong_module_type)$(comma)$(_is_prebuilt_make_module)$(comma)$(_product_copy_files)$(comma)$(_kernel_module_copy_files)$(comma)$(_is_platform_generated) >> $@ ; done $(newline) \
@@ -2193,13 +2198,21 @@ $(PRODUCT_OUT)/sbom.spdx: $(PRODUCT_OUT)/sbom-metadata.csv $(GEN_SBOM)
 	rm -rf $@
 	$(GEN_SBOM) --output_file $@ --metadata $(PRODUCT_OUT)/sbom-metadata.csv --product_out_dir=$(PRODUCT_OUT) --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr="$(PRODUCT_MANUFACTURER)" --json
 
+$(call dist-for-goals,droid,$(PRODUCT_OUT)/sbom.spdx.json:sbom/sbom.spdx.json)
 else
-apps_only_sbom_files := $(sort $(patsubst %,%.spdx,$(apps_only_installed_files)))
+apps_only_sbom_files := $(sort $(patsubst %,%.spdx.json,$(filter %.apk,$(apps_only_installed_files))))
 $(apps_only_sbom_files): $(PRODUCT_OUT)/sbom-metadata.csv $(GEN_SBOM)
 	rm -rf $@
 	$(GEN_SBOM) --output_file $@ --metadata $(PRODUCT_OUT)/sbom-metadata.csv --product_out_dir=$(PRODUCT_OUT) --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr="$(PRODUCT_MANUFACTURER)" --unbundled
 
 sbom: $(apps_only_sbom_files)
+
+$(foreach f,$(apps_only_sbom_files),$(eval $(patsubst %.spdx.json,%-fragment.spdx,$f): $f))
+apps_only_fragment_files := $(patsubst %.spdx.json,%-fragment.spdx,$(apps_only_sbom_files))
+$(foreach f,$(apps_only_fragment_files),$(eval apps_only_fragment_dist_files += :sbom/$(notdir $f)))
+
+$(foreach f,$(apps_only_sbom_files),$(eval apps_only_sbom_dist_files += :sbom/$(notdir $f)))
+$(call dist-for-goals,apps_only,$(join $(apps_only_sbom_files),$(apps_only_sbom_dist_files)) $(join $(apps_only_fragment_files),$(apps_only_fragment_dist_files)))
 endif
 
 $(call dist-write-file,$(KATI_PACKAGE_MK_DIR)/dist.mk)

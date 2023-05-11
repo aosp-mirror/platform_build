@@ -267,8 +267,8 @@ import care_map_pb2
 import common
 import ota_utils
 from ota_utils import (UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata,
-                       PayloadGenerator, SECURITY_PATCH_LEVEL_PROP_NAME)
-from common import IsSparseImage
+                       PayloadGenerator, SECURITY_PATCH_LEVEL_PROP_NAME, CopyTargetFilesDir)
+from common import DoesInputFileContain, IsSparseImage
 import target_files_diff
 from check_target_files_vintf import CheckVintfIfTrebleEnabled
 from non_ab_ota import GenerateNonAbOtaPackage
@@ -423,6 +423,13 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
   slot will be used. This is to ensure that we always have valid boot, vbmeta,
   bootloader images in the inactive slot.
 
+  After writing system_other to inactive slot's system partiiton,
+  PackageManagerService will read `ro.cp_system_other_odex`, and set
+  `sys.cppreopt` to "requested". Then, according to
+  system/extras/cppreopts/cppreopts.rc , init will mount system_other at
+  /postinstall, and execute `cppreopts` to copy optimized APKs from
+  /postinstall to /data .
+
   Args:
     input_file: The input target-files.zip file.
     skip_postinstall: Whether to skip copying the postinstall config file.
@@ -488,7 +495,7 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
       else:
         common.ZipWrite(target_zip, unzipped_file, arcname=info.filename)
 
-  target_zip.close()
+  common.ZipClose(target_zip)
 
   return target_file
 
@@ -625,7 +632,7 @@ def GetTargetFilesZipForPartialUpdates(input_file, ab_partitions):
 
     # TODO(xunchang) handle META/postinstall_config.txt'
 
-  partial_target_zip.close()
+  common.ZipClose(partial_target_zip)
 
   return partial_target_file
 
@@ -710,7 +717,7 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   # Write new ab_partitions.txt file
   common.ZipWrite(target_zip, new_ab_partitions, arcname=AB_PARTITIONS)
 
-  target_zip.close()
+  common.ZipClose(target_zip)
 
   return target_file
 
@@ -823,6 +830,12 @@ def SupportsMainlineGkiUpdates(target_file):
 
 def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   """Generates an Android OTA package that has A/B update payload."""
+  # If input target_files are directories, create a copy so that we can modify
+  # them directly
+  if os.path.isdir(target_file):
+    target_file = CopyTargetFilesDir(target_file)
+  if source_file is not None and os.path.isdir(source_file):
+    source_file = CopyTargetFilesDir(source_file)
   # Stage the output zip package for package signing.
   if not OPTIONS.no_signing:
     staging_file = common.MakeTempFile(suffix='.zip')
@@ -833,6 +846,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
                                allowZip64=True)
 
   if source_file is not None:
+    source_file = ota_utils.ExtractTargetFiles(source_file)
     assert "ab_partitions" in OPTIONS.source_info_dict, \
         "META/ab_partitions.txt is required for ab_update."
     assert "ab_partitions" in OPTIONS.target_info_dict, \
@@ -899,8 +913,22 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     OPTIONS.enable_vabc_xor = False
 
   if OPTIONS.vabc_compression_param == "none":
-    logger.info("VABC Compression algorithm is set to 'none', disabling VABC xor")
+    logger.info(
+        "VABC Compression algorithm is set to 'none', disabling VABC xor")
     OPTIONS.enable_vabc_xor = False
+
+  if OPTIONS.enable_vabc_xor:
+    api_level = -1
+    if source_info is not None:
+      api_level = source_info.vendor_api_level
+    if api_level == -1:
+      api_level = target_info.vendor_api_level
+
+    # XOR is only supported on T and higher.
+    if api_level < 33:
+      logger.error("VABC XOR not supported on this vendor, disabling")
+      OPTIONS.enable_vabc_xor = False
+
   additional_args = []
 
   # Prepare custom images.
@@ -915,23 +943,22 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   elif OPTIONS.partial:
     target_file = GetTargetFilesZipForPartialUpdates(target_file,
                                                      OPTIONS.partial)
-    additional_args += ["--is_partial_update", "true"]
   elif OPTIONS.vabc_compression_param:
     target_file = GetTargetFilesZipForCustomVABCCompression(
         target_file, OPTIONS.vabc_compression_param)
   elif OPTIONS.skip_postinstall:
     target_file = GetTargetFilesZipWithoutPostinstallConfig(target_file)
   # Target_file may have been modified, reparse ab_partitions
-  with zipfile.ZipFile(target_file, allowZip64=True) as zfp:
-    target_info.info_dict['ab_partitions'] = zfp.read(
-        AB_PARTITIONS).decode().strip().split("\n")
+  target_info.info_dict['ab_partitions'] = common.ReadFromInputFile(target_file,
+                                                                    AB_PARTITIONS).strip().split("\n")
 
   CheckVintfIfTrebleEnabled(target_file, target_info)
 
   # Metadata to comply with Android OTA package format.
   metadata = GetPackageMetadata(target_info, source_info)
   # Generate payload.
-  payload = PayloadGenerator(wipe_user_data=OPTIONS.wipe_user_data)
+  payload = PayloadGenerator(
+      wipe_user_data=OPTIONS.wipe_user_data, minor_version=OPTIONS.force_minor_version, is_partial_update=OPTIONS.partial)
 
   partition_timestamps_flags = []
   # Enforce a max timestamp this payload can be applied on top of.
@@ -958,7 +985,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
 
   additional_args += ["--security_patch_level", security_patch_level]
 
-  additional_args += ["--enable_zucchini",
+  additional_args += ["--enable_zucchini=" +
                       str(OPTIONS.enable_zucchini).lower()]
 
   if not ota_utils.IsLz4diffCompatible(source_file, target_file):
@@ -966,7 +993,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
         "Source build doesn't support lz4diff, or source/target don't have compatible lz4diff versions. Disabling lz4diff.")
     OPTIONS.enable_lz4diff = False
 
-  additional_args += ["--enable_lz4diff",
+  additional_args += ["--enable_lz4diff=" +
                       str(OPTIONS.enable_lz4diff).lower()]
 
   if source_file and OPTIONS.enable_lz4diff:
@@ -982,19 +1009,12 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     additional_args += ["--erofs_compression_param", erofs_compression_param]
 
   if OPTIONS.disable_vabc:
-    additional_args += ["--disable_vabc", "true"]
+    additional_args += ["--disable_vabc=true"]
   if OPTIONS.enable_vabc_xor:
-    additional_args += ["--enable_vabc_xor", "true"]
-  if OPTIONS.force_minor_version:
-    additional_args += ["--force_minor_version", OPTIONS.force_minor_version]
+    additional_args += ["--enable_vabc_xor=true"]
   if OPTIONS.compressor_types:
     additional_args += ["--compressor_types", OPTIONS.compressor_types]
   additional_args += ["--max_timestamp", max_timestamp]
-
-  if SupportsMainlineGkiUpdates(source_file):
-    logger.warning(
-        "Detected build with mainline GKI, include full boot image.")
-    additional_args.extend(["--full_boot", "true"])
 
   payload.Generate(
       target_file,
@@ -1028,15 +1048,13 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
 
   # If dm-verity is supported for the device, copy contents of care_map
   # into A/B OTA package.
-  target_zip = zipfile.ZipFile(target_file, "r", allowZip64=True)
   if target_info.get("avb_enable") == "true":
-    care_map_list = [x for x in ["care_map.pb", "care_map.txt"] if
-                     "META/" + x in target_zip.namelist()]
-
     # Adds care_map if either the protobuf format or the plain text one exists.
-    if care_map_list:
-      care_map_name = care_map_list[0]
-      care_map_data = target_zip.read("META/" + care_map_name)
+    for care_map_name in ["care_map.pb", "care_map.txt"]:
+      if not DoesInputFileContain(target_file, "META/" + care_map_name):
+        continue
+      care_map_data = common.ReadBytesFromInputFile(
+          target_file, "META/" + care_map_name)
       # In order to support streaming, care_map needs to be packed as
       # ZIP_STORED.
       common.ZipWriteStr(output_zip, care_map_name, care_map_data,
@@ -1046,16 +1064,14 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
 
   # Add the source apex version for incremental ota updates, and write the
   # result apex info to the ota package.
-  ota_apex_info = ota_utils.ConstructOtaApexInfo(target_zip, source_file)
+  ota_apex_info = ota_utils.ConstructOtaApexInfo(target_file, source_file)
   if ota_apex_info is not None:
     common.ZipWriteStr(output_zip, "apex_info.pb", ota_apex_info,
                        compress_type=zipfile.ZIP_STORED)
 
-  target_zip.close()
-
   # We haven't written the metadata entry yet, which will be handled in
   # FinalizeMetadata().
-  output_zip.close()
+  common.ZipClose(output_zip)
 
   FinalizeMetadata(metadata, staging_file, output_file,
                    package_key=OPTIONS.package_key)
@@ -1243,7 +1259,7 @@ def main(argv):
   if OPTIONS.extracted_input is not None:
     OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.extracted_input)
   else:
-    OPTIONS.info_dict = ParseInfoDict(args[0])
+    OPTIONS.info_dict = common.LoadInfoDict(args[0])
 
   if OPTIONS.wipe_user_data:
     if not OPTIONS.vabc_downgrade:
@@ -1356,7 +1372,8 @@ def main(argv):
           "what(even if data wipe is done), so SPL downgrade on any "
           "release-keys build is not allowed.".format(target_spl, source_spl))
 
-    logger.info("SPL downgrade on %s", target_build_prop.GetProp("ro.build.tags"))
+    logger.info("SPL downgrade on %s",
+                target_build_prop.GetProp("ro.build.tags"))
     if is_spl_downgrade and not OPTIONS.spl_downgrade and not OPTIONS.downgrade:
       raise common.ExternalError(
           "Target security patch level {} is older than source SPL {} applying "
