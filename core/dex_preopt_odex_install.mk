@@ -84,12 +84,13 @@ endif
 ifndef LOCAL_DEX_PREOPT_GENERATE_PROFILE
   # If LOCAL_DEX_PREOPT_GENERATE_PROFILE is not defined, default it based on the existence of the
   # profile class listing. TODO: Use product specific directory here.
-  my_classes_directory := $(PRODUCT_DEX_PREOPT_PROFILE_DIR)
-  LOCAL_DEX_PREOPT_PROFILE := $(my_classes_directory)/$(LOCAL_MODULE).prof
+  ifdef PRODUCT_DEX_PREOPT_PROFILE_DIR
+    LOCAL_DEX_PREOPT_PROFILE := $(PRODUCT_DEX_PREOPT_PROFILE_DIR)/$(LOCAL_MODULE).prof
 
-  ifneq (,$(wildcard $(LOCAL_DEX_PREOPT_PROFILE)))
-    my_process_profile := true
-    my_profile_is_text_listing :=
+    ifneq (,$(wildcard $(LOCAL_DEX_PREOPT_PROFILE)))
+      my_process_profile := true
+      my_profile_is_text_listing :=
+    endif
   endif
 else
   my_process_profile := $(LOCAL_DEX_PREOPT_GENERATE_PROFILE)
