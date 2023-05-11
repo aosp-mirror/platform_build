@@ -5589,6 +5589,8 @@ $(call declare-0p-target,$(INSTALLED_FASTBOOT_INFO_TARGET))
 .PHONY: fastboot_info
 fastboot_info: $(INSTALLED_FASTBOOT_INFO_TARGET)
 
+droidcore-unbundled: $(INSTALLED_FASTBOOT_INFO_TARGET)
+
 $(call declare-0p-target,$(INSTALLED_MISC_INFO_TARGET))
 
 .PHONY: misc_info
