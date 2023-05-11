@@ -247,7 +247,7 @@ else
   endif
 
   $(shell build/soong/scripts/update_out $(OUT_DIR)/rbc/rbc_product_config_results.mk \
-    $(OUT_DIR)/rbcrun $(OUT_DIR)/rbc/launcher.rbc)
+    $(OUT_DIR)/rbcrun --mode=rbc $(OUT_DIR)/rbc/launcher.rbc)
   ifneq ($(.SHELLSTATUS),0)
     $(error product configuration runner failed: $(.SHELLSTATUS))
   endif
