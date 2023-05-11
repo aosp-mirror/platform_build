@@ -256,7 +256,7 @@ else
   endif
 
   $(shell build/soong/scripts/update_out $(OUT_DIR)/rbc/rbc_board_config_results.mk \
-    $(OUT_DIR)/rbcrun $(OUT_DIR)/rbc/boardlauncher.rbc)
+    $(OUT_DIR)/rbcrun --mode=rbc $(OUT_DIR)/rbc/boardlauncher.rbc)
   ifneq ($(.SHELLSTATUS),0)
     $(error board configuration runner failed: $(.SHELLSTATUS))
   endif

@@ -24,14 +24,25 @@ endef
 #$(warning $(call find_and_earlier,A B C,C))
 #$(warning $(call find_and_earlier,A B C,D))
 
-define version-list
-$(1)P1A $(1)P1B $(1)P2A $(1)P2B $(1)D1A $(1)D1B $(1)D2A $(1)D2B $(1)Q1A $(1)Q1B $(1)Q2A $(1)Q2B $(1)Q3A $(1)Q3B
+# Runs the starlark file given in $(1), and sets all the variables in its top-level
+# variables_to_export_to_make variable as make variables.
+#
+# In order to avoid running starlark every time the stamp file is checked, we use
+# $(KATI_shell_no_rerun). Then, to make sure that we actually do rerun kati when
+# modifying the starlark files, we add the starlark files to the kati stamp file with
+# $(KATI_extra_file_deps).
+define run-starlark
+$(eval _starlark_results := $(OUT_DIR)/starlark_results/$(subst /,_,$(1)).mk)
+$(KATI_shell_no_rerun mkdir -p $(OUT_DIR)/starlark_results && $(OUT_DIR)/rbcrun --mode=make $(1) >$(_starlark_results) && touch -t 200001010000 $(_starlark_results))
+$(if $(filter-out 0,$(.SHELLSTATUS)),$(error Starlark failed to run))
+$(eval include $(_starlark_results))
+$(KATI_extra_file_deps $(LOADED_STARLARK_FILES))
+$(eval LOADED_STARLARK_FILES :=)
+$(eval _starlark_results :=)
 endef
 
-PREV_VERSIONS := OPR1 OPD1 OPD2 OPM1 OPM2 PPR1 PPD1 PPD2 PPM1 PPM2 QPR1
-ALL_VERSIONS := Q R S T U V W X Y Z
-ALL_VERSIONS := $(PREV_VERSIONS) $(foreach v,$(ALL_VERSIONS),$(call version-list,$(v)))
-PREV_VERSIONS :=
+# defines ALL_VERSIONS
+$(call run-starlark,build/make/core/all_versions.bzl)
 
 # Filters ALL_VERSIONS down to the range [$1, $2], and errors if $1 > $2 or $3 is
 # not in [$1, $2]
