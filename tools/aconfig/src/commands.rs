@@ -21,7 +21,7 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::io::Read;
 
-use crate::aconfig::{Namespace, Override};
+use crate::aconfig::{FlagDeclarations, FlagValue};
 use crate::cache::Cache;
 use crate::codegen_java::{generate_java_code, GeneratedFile};
 use crate::protos::ProtoParsedFlags;
@@ -48,37 +48,37 @@ pub struct Input {
 }
 
 pub fn create_cache(
-    build_id: u32,
     namespace: &str,
-    aconfigs: Vec<Input>,
-    overrides: Vec<Input>,
+    declarations: Vec<Input>,
+    values: Vec<Input>,
 ) -> Result<Cache> {
-    let mut cache = Cache::new(build_id, namespace.to_owned());
+    let mut cache = Cache::new(namespace.to_owned());
 
-    for mut input in aconfigs {
+    for mut input in declarations {
         let mut contents = String::new();
         input.reader.read_to_string(&mut contents)?;
-        let ns = Namespace::try_from_text_proto(&contents)
+        let dec_list = FlagDeclarations::try_from_text_proto(&contents)
             .with_context(|| format!("Failed to parse {}", input.source))?;
         ensure!(
-            namespace == ns.namespace,
+            namespace == dec_list.namespace,
             "Failed to parse {}: expected namespace {}, got {}",
             input.source,
             namespace,
-            ns.namespace
+            dec_list.namespace
         );
-        for flag in ns.flags.into_iter() {
-            cache.add_flag(input.source.clone(), flag)?;
+        for d in dec_list.flags.into_iter() {
+            cache.add_flag_declaration(input.source.clone(), d)?;
         }
     }
 
-    for mut input in overrides {
+    for mut input in values {
         let mut contents = String::new();
         input.reader.read_to_string(&mut contents)?;
-        let overrides = Override::try_from_text_proto_list(&contents)
+        let values_list = FlagValue::try_from_text_proto_list(&contents)
             .with_context(|| format!("Failed to parse {}", input.source))?;
-        for override_ in overrides {
-            cache.add_override(input.source.clone(), override_)?;
+        for v in values_list {
+            // TODO: warn about flag values that do not take effect?
+            let _ = cache.add_flag_value(input.source.clone(), v);
         }
     }
 
@@ -132,31 +132,23 @@ mod tests {
         flag {
             name: "a"
             description: "Description of a"
-            value {
-                state: ENABLED
-                permission: READ_WRITE
-            }
         }
         flag {
             name: "b"
             description: "Description of b"
-            value {
-                state: ENABLED
-                permission: READ_ONLY
-            }
         }
         "#;
-        let aconfigs = vec![Input { source: Source::Memory, reader: Box::new(s.as_bytes()) }];
+        let declarations = vec![Input { source: Source::Memory, reader: Box::new(s.as_bytes()) }];
         let o = r#"
-        flag_override {
+        flag_value {
             namespace: "ns"
             name: "a"
             state: DISABLED
             permission: READ_ONLY
         }
         "#;
-        let overrides = vec![Input { source: Source::Memory, reader: Box::new(o.as_bytes()) }];
-        create_cache(1, "ns", aconfigs, overrides).unwrap()
+        let values = vec![Input { source: Source::Memory, reader: Box::new(o.as_bytes()) }];
+        create_cache("ns", declarations, values).unwrap()
     }
 
     #[test]
@@ -194,12 +186,12 @@ mod tests {
         assert_eq!(item.namespace(), "ns");
         assert_eq!(item.name(), "b");
         assert_eq!(item.description(), "Description of b");
-        assert_eq!(item.state(), ProtoFlagState::ENABLED);
-        assert_eq!(item.permission(), ProtoFlagPermission::READ_ONLY);
+        assert_eq!(item.state(), ProtoFlagState::DISABLED);
+        assert_eq!(item.permission(), ProtoFlagPermission::READ_WRITE);
         let mut tp = ProtoTracepoint::new();
         tp.set_source("<memory>".to_string());
-        tp.set_state(ProtoFlagState::ENABLED);
-        tp.set_permission(ProtoFlagPermission::READ_ONLY);
+        tp.set_state(ProtoFlagState::DISABLED);
+        tp.set_permission(ProtoFlagPermission::READ_WRITE);
         assert_eq!(item.trace, vec![tp]);
     }
 }

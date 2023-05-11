@@ -87,30 +87,39 @@ fn uppercase_first_letter(s: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::aconfig::{Flag, Value};
+    use crate::aconfig::{FlagDeclaration, FlagValue};
     use crate::commands::Source;
 
     #[test]
     fn test_generate_java_code() {
         let namespace = "TeSTFlaG";
-        let mut cache = Cache::new(1, namespace.to_string());
+        let mut cache = Cache::new(namespace.to_string());
         cache
-            .add_flag(
+            .add_flag_declaration(
                 Source::File("test.txt".to_string()),
-                Flag {
+                FlagDeclaration {
                     name: "test".to_string(),
                     description: "buildtime enable".to_string(),
-                    values: vec![Value::default(FlagState::Enabled, Permission::ReadOnly)],
                 },
             )
             .unwrap();
         cache
-            .add_flag(
+            .add_flag_declaration(
                 Source::File("test2.txt".to_string()),
-                Flag {
+                FlagDeclaration {
                     name: "test2".to_string(),
                     description: "runtime disable".to_string(),
-                    values: vec![Value::default(FlagState::Disabled, Permission::ReadWrite)],
+                },
+            )
+            .unwrap();
+        cache
+            .add_flag_value(
+                Source::Memory,
+                FlagValue {
+                    namespace: namespace.to_string(),
+                    name: "test".to_string(),
+                    state: FlagState::Disabled,
+                    permission: Permission::ReadOnly,
                 },
             )
             .unwrap();
@@ -121,7 +130,7 @@ mod tests {
         public final class Testflag {
 
             public static boolean test() {
-                return true;
+                return false;
             }
 
             public static boolean test2() {
