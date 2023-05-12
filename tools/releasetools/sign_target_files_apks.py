@@ -1032,7 +1032,7 @@ def ReplaceVerityKeyId(input_zip, output_zip, key_path):
     keyid, stderr = p.communicate()
     assert p.returncode == 0, "Failed to dump certificate: {}".format(stderr)
     keyid = re.search(
-        r'keyid:([0-9a-fA-F:]*)', keyid).group(1).replace(':', '').lower()
+            r'Authority Key Identifier:\s*(?:keyid:)?([0-9a-fA-F:]*)', keyid).group(1).replace(':', '').lower()
     print("Replacing verity keyid with {}".format(keyid))
     out_buffer.append("veritykeyid=id:%s" % (keyid,))
 
