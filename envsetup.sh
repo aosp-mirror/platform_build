@@ -842,7 +842,7 @@ function lunch()
     export TARGET_PRODUCT=$(get_build_var TARGET_PRODUCT)
     export TARGET_BUILD_VARIANT=$(get_build_var TARGET_BUILD_VARIANT)
     if [ -n "$release" ]; then
-      export TARGET_RELEASE=$(get_build_var TARGET_RELEASE)
+      export TARGET_RELEASE=$release
     else
       unset TARGET_RELEASE
     fi
