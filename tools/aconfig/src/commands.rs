@@ -20,10 +20,11 @@ use protobuf::Message;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::io::Read;
+use std::path::PathBuf;
 
 use crate::aconfig::{FlagDeclarations, FlagValue};
 use crate::cache::Cache;
-use crate::codegen_java::{generate_java_code, GeneratedFile};
+use crate::codegen_java::generate_java_code;
 use crate::protos::ProtoParsedFlags;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -45,6 +46,11 @@ impl fmt::Display for Source {
 pub struct Input {
     pub source: Source,
     pub reader: Box<dyn Read>,
+}
+
+pub struct OutputFile {
+    pub path: PathBuf, // relative to some root directory only main knows about
+    pub contents: Vec<u8>,
 }
 
 pub fn create_cache(
@@ -85,7 +91,7 @@ pub fn create_cache(
     Ok(cache)
 }
 
-pub fn generate_code(cache: &Cache) -> Result<GeneratedFile> {
+pub fn generate_code(cache: &Cache) -> Result<OutputFile> {
     generate_java_code(cache)
 }
 
