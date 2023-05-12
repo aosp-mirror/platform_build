@@ -17,6 +17,52 @@ ODM_DLKM_NOTICE_DEPS :=
 SYSTEM_DLKM_NOTICE_DEPS :=
 
 # -----------------------------------------------------------------
+# Release Config Flags
+
+# Create a summary file of build flags for each partition
+# $(1): build flags json file
+# $(2): flag names
+define generate-partition-build-flag-file
+$(eval $(strip $(1)): PRIVATE_OUT := $(strip $(1)))
+$(eval $(strip $(1)): PRIVATE_FLAG_NAMES := $(strip $(2)))
+$(strip $(1)):
+	mkdir -p $$(dir $$(PRIVATE_OUT))
+	( \
+		echo '{' ; \
+		echo 'flags: [' ; \
+		$$(foreach flag, $$(PRIVATE_FLAG_NAMES), \
+			printf '  { "name": "%s", "value": "%s", ' \
+					'$$(flag)' \
+					'$$(_ALL_RELEASE_FLAGS.$$(flag).VALUE)' \
+					; \
+			printf '"set": "%s", "default": "%s", "declared": "%s", }' \
+					'$$(_ALL_RELEASE_FLAGS.$$(flag).SET_IN)' \
+					'$$(_ALL_RELEASE_FLAGS.$$(flag).DEFAULT)' \
+					'$$(_ALL_RELEASE_FLAGS.$$(flag).DECLARED_IN)' \
+					; \
+			printf '$$(if $$(filter $$(lastword $$(PRIVATE_FLAG_NAMES)),$$(flag)),,$$(comma))\n' ; \
+		) \
+		echo "]" ; \
+		echo "}" \
+	) >> $$(PRIVATE_OUT)
+endef
+
+$(foreach partition, $(_FLAG_PARTITIONS), \
+	$(eval BUILD_FLAG_SUMMARIES.$(partition) \
+			:= $(TARGET_OUT_FLAGS)/$(partition)/etc/build_flags.json) \
+	$(eval $(call generate-partition-build-flag-file, \
+				$(BUILD_FLAG_SUMMARIES.$(partition)), \
+				$(_ALL_RELEASE_FLAGS.PARTITIONS.$(partition)) \
+            ) \
+    ) \
+)
+
+# TODO: Remove
+.PHONY: flag-files
+flag-files: $(foreach partition, $(_FLAG_PARTITIONS), \
+		$(TARGET_OUT_FLAGS)/$(partition)/etc/build_flags.json)
+
+# -----------------------------------------------------------------
 # Define rules to copy PRODUCT_COPY_FILES defined by the product.
 # PRODUCT_COPY_FILES contains words like <source file>:<dest file>[:<owner>].
 # <dest file> is relative to $(PRODUCT_OUT), so it should look like,
