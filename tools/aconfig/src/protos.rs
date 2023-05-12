@@ -28,19 +28,16 @@
 
 // ---- When building with the Android tool-chain ----
 #[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Namespace as ProtoNamespace;
+pub use aconfig_protos::aconfig::Flag_declaration as ProtoFlagDeclaration;
 
 #[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Flag_value as ProtoFlagDefinitionValue;
+pub use aconfig_protos::aconfig::Flag_declarations as ProtoFlagDeclarations;
 
 #[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Flag_definition as ProtoFlagDefinition;
+pub use aconfig_protos::aconfig::Flag_value as ProtoFlagValue;
 
 #[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Flag_overrides as ProtoFlagOverrides;
-
-#[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Flag_override as ProtoFlagOverride;
+pub use aconfig_protos::aconfig::Flag_values as ProtoFlagValues;
 
 #[cfg(not(feature = "cargo"))]
 pub use aconfig_protos::aconfig::Flag_permission as ProtoFlagPermission;
@@ -62,19 +59,16 @@ pub use aconfig_protos::aconfig::Tracepoint as ProtoTracepoint;
 include!(concat!(env!("OUT_DIR"), "/aconfig_proto/mod.rs"));
 
 #[cfg(feature = "cargo")]
-pub use aconfig::Namespace as ProtoNamespace;
+pub use aconfig::Flag_declaration as ProtoFlagDeclaration;
 
 #[cfg(feature = "cargo")]
-pub use aconfig::Flag_value as ProtoFlagDefinitionValue;
+pub use aconfig::Flag_declarations as ProtoFlagDeclarations;
 
 #[cfg(feature = "cargo")]
-pub use aconfig::Flag_definition as ProtoFlagDefinition;
+pub use aconfig::Flag_value as ProtoFlagValue;
 
 #[cfg(feature = "cargo")]
-pub use aconfig::Flag_overrides as ProtoFlagOverrides;
-
-#[cfg(feature = "cargo")]
-pub use aconfig::Flag_override as ProtoFlagOverride;
+pub use aconfig::Flag_values as ProtoFlagValues;
 
 #[cfg(feature = "cargo")]
 pub use aconfig::Flag_permission as ProtoFlagPermission;

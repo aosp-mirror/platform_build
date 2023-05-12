@@ -1,4 +1,4 @@
-package com.android.aconfig;
+package com.android.internal.aconfig;
 {{ if readwrite }}
 import android.provider.DeviceConfig;
 {{ endif }}
