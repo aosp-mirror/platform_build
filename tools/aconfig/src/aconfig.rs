@@ -20,9 +20,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::cache::{Cache, Item, Tracepoint};
 use crate::protos::{
-    ProtoFlagDefinition, ProtoFlagDefinitionValue, ProtoFlagOverride, ProtoFlagOverrides,
-    ProtoFlagPermission, ProtoFlagState, ProtoNamespace, ProtoParsedFlag, ProtoParsedFlags,
-    ProtoTracepoint,
+    ProtoFlagDeclaration, ProtoFlagDeclarations, ProtoFlagPermission, ProtoFlagState,
+    ProtoFlagValue, ProtoFlagValues, ProtoParsedFlag, ProtoParsedFlags, ProtoTracepoint,
 };
 
 #[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone, Copy)]
@@ -80,112 +79,43 @@ impl From<Permission> for ProtoFlagPermission {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct Value {
-    state: FlagState,
-    permission: Permission,
-    since: Option<u32>,
-}
-
-#[allow(dead_code)] // only used in unit tests
-impl Value {
-    pub fn new(state: FlagState, permission: Permission, since: u32) -> Value {
-        Value { state, permission, since: Some(since) }
-    }
-
-    pub fn default(state: FlagState, permission: Permission) -> Value {
-        Value { state, permission, since: None }
-    }
-}
-
-impl TryFrom<ProtoFlagDefinitionValue> for Value {
-    type Error = Error;
-
-    fn try_from(proto: ProtoFlagDefinitionValue) -> Result<Self, Self::Error> {
-        let Some(proto_state) = proto.state else {
-            return Err(anyhow!("missing 'state' field"));
-        };
-        let state = proto_state.try_into()?;
-        let Some(proto_permission) = proto.permission else {
-            return Err(anyhow!("missing 'permission' field"));
-        };
-        let permission = proto_permission.try_into()?;
-        Ok(Value { state, permission, since: proto.since })
-    }
-}
-
-#[derive(Debug, PartialEq, Eq)]
-pub struct Flag {
+pub struct FlagDeclaration {
     pub name: String,
     pub description: String,
-
-    // ordered by Value.since; guaranteed to contain at least one item (the default value, with
-    // since == None)
-    pub values: Vec<Value>,
 }
 
-impl Flag {
+impl FlagDeclaration {
     #[allow(dead_code)] // only used in unit tests
-    pub fn try_from_text_proto(text_proto: &str) -> Result<Flag> {
-        let proto: ProtoFlagDefinition = crate::protos::try_from_text_proto(text_proto)
+    pub fn try_from_text_proto(text_proto: &str) -> Result<FlagDeclaration> {
+        let proto: ProtoFlagDeclaration = crate::protos::try_from_text_proto(text_proto)
             .with_context(|| text_proto.to_owned())?;
         proto.try_into()
     }
-
-    pub fn resolve(&self, build_id: u32) -> (FlagState, Permission) {
-        let mut state = self.values[0].state;
-        let mut permission = self.values[0].permission;
-        for candidate in self.values.iter().skip(1) {
-            let since = candidate.since.expect("invariant: non-defaults values have Some(since)");
-            if since <= build_id {
-                state = candidate.state;
-                permission = candidate.permission;
-            }
-        }
-        (state, permission)
-    }
 }
 
-impl TryFrom<ProtoFlagDefinition> for Flag {
+impl TryFrom<ProtoFlagDeclaration> for FlagDeclaration {
     type Error = Error;
 
-    fn try_from(proto: ProtoFlagDefinition) -> Result<Self, Self::Error> {
+    fn try_from(proto: ProtoFlagDeclaration) -> Result<Self, Self::Error> {
         let Some(name) = proto.name else {
             return Err(anyhow!("missing 'name' field"));
         };
         let Some(description) = proto.description else {
             return Err(anyhow!("missing 'description' field"));
         };
-        if proto.value.is_empty() {
-            return Err(anyhow!("missing 'value' field"));
-        }
-
-        let mut values: Vec<Value> = vec![];
-        for proto_value in proto.value.into_iter() {
-            let v: Value = proto_value.try_into()?;
-            if values.iter().any(|w| v.since == w.since) {
-                let msg = match v.since {
-                    None => format!("flag {}: multiple default values", name),
-                    Some(x) => format!("flag {}: multiple values for since={}", name, x),
-                };
-                return Err(anyhow!(msg));
-            }
-            values.push(v);
-        }
-        values.sort_by_key(|v| v.since);
-
-        Ok(Flag { name, description, values })
+        Ok(FlagDeclaration { name, description })
     }
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct Namespace {
+pub struct FlagDeclarations {
     pub namespace: String,
-    pub flags: Vec<Flag>,
+    pub flags: Vec<FlagDeclaration>,
 }
 
-impl Namespace {
-    pub fn try_from_text_proto(text_proto: &str) -> Result<Namespace> {
-        let proto: ProtoNamespace = crate::protos::try_from_text_proto(text_proto)
+impl FlagDeclarations {
+    pub fn try_from_text_proto(text_proto: &str) -> Result<FlagDeclarations> {
+        let proto: ProtoFlagDeclarations = crate::protos::try_from_text_proto(text_proto)
             .with_context(|| text_proto.to_owned())?;
         let Some(namespace) = proto.namespace else {
             return Err(anyhow!("missing 'namespace' field"));
@@ -194,35 +124,35 @@ impl Namespace {
         for proto_flag in proto.flag.into_iter() {
             flags.push(proto_flag.try_into()?);
         }
-        Ok(Namespace { namespace, flags })
+        Ok(FlagDeclarations { namespace, flags })
     }
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct Override {
+pub struct FlagValue {
     pub namespace: String,
     pub name: String,
     pub state: FlagState,
     pub permission: Permission,
 }
 
-impl Override {
+impl FlagValue {
     #[allow(dead_code)] // only used in unit tests
-    pub fn try_from_text_proto(text_proto: &str) -> Result<Override> {
-        let proto: ProtoFlagOverride = crate::protos::try_from_text_proto(text_proto)?;
+    pub fn try_from_text_proto(text_proto: &str) -> Result<FlagValue> {
+        let proto: ProtoFlagValue = crate::protos::try_from_text_proto(text_proto)?;
         proto.try_into()
     }
 
-    pub fn try_from_text_proto_list(text_proto: &str) -> Result<Vec<Override>> {
-        let proto: ProtoFlagOverrides = crate::protos::try_from_text_proto(text_proto)?;
-        proto.flag_override.into_iter().map(|proto_flag| proto_flag.try_into()).collect()
+    pub fn try_from_text_proto_list(text_proto: &str) -> Result<Vec<FlagValue>> {
+        let proto: ProtoFlagValues = crate::protos::try_from_text_proto(text_proto)?;
+        proto.flag_value.into_iter().map(|proto_flag| proto_flag.try_into()).collect()
     }
 }
 
-impl TryFrom<ProtoFlagOverride> for Override {
+impl TryFrom<ProtoFlagValue> for FlagValue {
     type Error = Error;
 
-    fn try_from(proto: ProtoFlagOverride) -> Result<Self, Self::Error> {
+    fn try_from(proto: ProtoFlagValue) -> Result<Self, Self::Error> {
         let Some(namespace) = proto.namespace else {
             return Err(anyhow!("missing 'namespace' field"));
         };
@@ -237,7 +167,7 @@ impl TryFrom<ProtoFlagOverride> for Override {
             return Err(anyhow!("missing 'permission' field"));
         };
         let permission = proto_permission.try_into()?;
-        Ok(Override { namespace, name, state, permission })
+        Ok(FlagValue { namespace, name, state, permission })
     }
 }
 
@@ -282,29 +212,16 @@ mod tests {
 
     #[test]
     fn test_flag_try_from_text_proto() {
-        let expected = Flag {
+        let expected = FlagDeclaration {
             name: "1234".to_owned(),
             description: "Description of the flag".to_owned(),
-            values: vec![
-                Value::default(FlagState::Disabled, Permission::ReadOnly),
-                Value::new(FlagState::Enabled, Permission::ReadWrite, 8),
-            ],
         };
 
         let s = r#"
         name: "1234"
         description: "Description of the flag"
-        value {
-            state: DISABLED
-            permission: READ_ONLY
-        }
-        value {
-            state: ENABLED
-            permission: READ_WRITE
-            since: 8
-        }
         "#;
-        let actual = Flag::try_from_text_proto(s).unwrap();
+        let actual = FlagDeclaration::try_from_text_proto(s).unwrap();
 
         assert_eq!(expected, actual);
     }
@@ -313,52 +230,24 @@ mod tests {
     fn test_flag_try_from_text_proto_bad_input() {
         let s = r#"
         name: "a"
-        description: "Description of the flag"
         "#;
-        let error = Flag::try_from_text_proto(s).unwrap_err();
-        assert_eq!(format!("{:?}", error), "missing 'value' field");
-
-        let s = r#"
-        description: "Description of the flag"
-        value {
-            state: ENABLED
-            permission: READ_ONLY
-        }
-        "#;
-        let error = Flag::try_from_text_proto(s).unwrap_err();
+        let error = FlagDeclaration::try_from_text_proto(s).unwrap_err();
         assert!(format!("{:?}", error).contains("Message not initialized"));
 
         let s = r#"
-        name: "a"
         description: "Description of the flag"
-        value {
-            state: ENABLED
-            permission: READ_ONLY
-        }
-        value {
-            state: ENABLED
-            permission: READ_ONLY
-        }
         "#;
-        let error = Flag::try_from_text_proto(s).unwrap_err();
-        assert_eq!(format!("{:?}", error), "flag a: multiple default values");
+        let error = FlagDeclaration::try_from_text_proto(s).unwrap_err();
+        assert!(format!("{:?}", error).contains("Message not initialized"));
     }
 
     #[test]
     fn test_namespace_try_from_text_proto() {
-        let expected = Namespace {
+        let expected = FlagDeclarations {
             namespace: "ns".to_owned(),
             flags: vec![
-                Flag {
-                    name: "a".to_owned(),
-                    description: "A".to_owned(),
-                    values: vec![Value::default(FlagState::Enabled, Permission::ReadOnly)],
-                },
-                Flag {
-                    name: "b".to_owned(),
-                    description: "B".to_owned(),
-                    values: vec![Value::default(FlagState::Disabled, Permission::ReadWrite)],
-                },
+                FlagDeclaration { name: "a".to_owned(), description: "A".to_owned() },
+                FlagDeclaration { name: "b".to_owned(), description: "B".to_owned() },
             ],
         };
 
@@ -367,28 +256,20 @@ mod tests {
         flag {
             name: "a"
             description: "A"
-            value {
-                state: ENABLED
-                permission: READ_ONLY
-            }
         }
         flag {
             name: "b"
             description: "B"
-            value {
-                state: DISABLED
-                permission: READ_WRITE
-            }
         }
         "#;
-        let actual = Namespace::try_from_text_proto(s).unwrap();
+        let actual = FlagDeclarations::try_from_text_proto(s).unwrap();
 
         assert_eq!(expected, actual);
     }
 
     #[test]
-    fn test_override_try_from_text_proto_list() {
-        let expected = Override {
+    fn test_flag_declaration_try_from_text_proto_list() {
+        let expected = FlagValue {
             namespace: "ns".to_owned(),
             name: "1234".to_owned(),
             state: FlagState::Enabled,
@@ -401,32 +282,8 @@ mod tests {
         state: ENABLED
         permission: READ_ONLY
         "#;
-        let actual = Override::try_from_text_proto(s).unwrap();
+        let actual = FlagValue::try_from_text_proto(s).unwrap();
 
         assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn test_flag_resolve() {
-        let flag = Flag {
-            name: "a".to_owned(),
-            description: "A".to_owned(),
-            values: vec![
-                Value::default(FlagState::Disabled, Permission::ReadOnly),
-                Value::new(FlagState::Disabled, Permission::ReadWrite, 10),
-                Value::new(FlagState::Enabled, Permission::ReadOnly, 20),
-                Value::new(FlagState::Enabled, Permission::ReadWrite, 30),
-            ],
-        };
-        assert_eq!((FlagState::Disabled, Permission::ReadOnly), flag.resolve(0));
-        assert_eq!((FlagState::Disabled, Permission::ReadOnly), flag.resolve(9));
-        assert_eq!((FlagState::Disabled, Permission::ReadWrite), flag.resolve(10));
-        assert_eq!((FlagState::Disabled, Permission::ReadWrite), flag.resolve(11));
-        assert_eq!((FlagState::Disabled, Permission::ReadWrite), flag.resolve(19));
-        assert_eq!((FlagState::Enabled, Permission::ReadOnly), flag.resolve(20));
-        assert_eq!((FlagState::Enabled, Permission::ReadOnly), flag.resolve(21));
-        assert_eq!((FlagState::Enabled, Permission::ReadOnly), flag.resolve(29));
-        assert_eq!((FlagState::Enabled, Permission::ReadWrite), flag.resolve(30));
-        assert_eq!((FlagState::Enabled, Permission::ReadWrite), flag.resolve(10_000));
     }
 }

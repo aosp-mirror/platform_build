@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, bail, ensure, Result};
 use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 
-use crate::aconfig::{Flag, FlagState, Override, Permission};
+use crate::aconfig::{FlagDeclaration, FlagState, FlagValue, Permission};
 use crate::commands::Source;
+
+const DEFAULT_FLAG_STATE: FlagState = FlagState::Disabled;
+const DEFAULT_FLAG_PERMISSION: Permission = Permission::ReadWrite;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Tracepoint {
@@ -44,14 +47,13 @@ pub struct Item {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Cache {
-    build_id: u32,
     namespace: String,
     items: Vec<Item>,
 }
 
 impl Cache {
-    pub fn new(build_id: u32, namespace: String) -> Cache {
-        Cache { build_id, namespace, items: vec![] }
+    pub fn new(namespace: String) -> Cache {
+        Cache { namespace, items: vec![] }
     }
 
     pub fn read_from_reader(reader: impl Read) -> Result<Cache> {
@@ -62,40 +64,51 @@ impl Cache {
         serde_json::to_writer(writer, self).map_err(|e| e.into())
     }
 
-    pub fn add_flag(&mut self, source: Source, flag: Flag) -> Result<()> {
-        if self.items.iter().any(|item| item.name == flag.name) {
+    pub fn add_flag_declaration(
+        &mut self,
+        source: Source,
+        declaration: FlagDeclaration,
+    ) -> Result<()> {
+        if self.items.iter().any(|item| item.name == declaration.name) {
             return Err(anyhow!(
-                "failed to add flag {} from {}: flag already defined",
-                flag.name,
+                "failed to declare flag {} from {}: flag already declared",
+                declaration.name,
                 source,
             ));
         }
-        let (state, permission) = flag.resolve(self.build_id);
         self.items.push(Item {
             namespace: self.namespace.clone(),
-            name: flag.name.clone(),
-            description: flag.description,
-            state,
-            permission,
-            trace: vec![Tracepoint { source, state, permission }],
+            name: declaration.name.clone(),
+            description: declaration.description,
+            state: DEFAULT_FLAG_STATE,
+            permission: DEFAULT_FLAG_PERMISSION,
+            trace: vec![Tracepoint {
+                source,
+                state: DEFAULT_FLAG_STATE,
+                permission: DEFAULT_FLAG_PERMISSION,
+            }],
         });
         Ok(())
     }
 
-    pub fn add_override(&mut self, source: Source, override_: Override) -> Result<()> {
-        if override_.namespace != self.namespace {
-            // TODO: print warning?
-            return Ok(());
-        }
-        let Some(existing_item) = self.items.iter_mut().find(|item| item.name == override_.name) else {
-            return Err(anyhow!("failed to override flag {}: unknown flag", override_.name));
+    pub fn add_flag_value(&mut self, source: Source, value: FlagValue) -> Result<()> {
+        ensure!(
+            value.namespace == self.namespace,
+            "failed to set values for flag {}/{} from {}: expected namespace {}",
+            value.namespace,
+            value.name,
+            source,
+            self.namespace
+        );
+        let Some(existing_item) = self.items.iter_mut().find(|item| item.name == value.name) else {
+            bail!("failed to set values for flag {}/{} from {}: flag not declared", value.namespace, value.name, source);
         };
-        existing_item.state = override_.state;
-        existing_item.permission = override_.permission;
+        existing_item.state = value.state;
+        existing_item.permission = value.permission;
         existing_item.trace.push(Tracepoint {
             source,
-            state: override_.state,
-            permission: override_.permission,
+            state: value.state,
+            permission: value.permission,
         });
         Ok(())
     }
@@ -112,49 +125,41 @@ impl Cache {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::aconfig::{FlagState, Permission, Value};
+    use crate::aconfig::{FlagState, Permission};
 
     #[test]
-    fn test_add_flag() {
-        let mut cache = Cache::new(1, "ns".to_string());
+    fn test_add_flag_declaration() {
+        let mut cache = Cache::new("ns".to_string());
         cache
-            .add_flag(
+            .add_flag_declaration(
                 Source::File("first.txt".to_string()),
-                Flag {
-                    name: "foo".to_string(),
-                    description: "desc".to_string(),
-                    values: vec![Value::default(FlagState::Enabled, Permission::ReadOnly)],
-                },
+                FlagDeclaration { name: "foo".to_string(), description: "desc".to_string() },
             )
             .unwrap();
         let error = cache
-            .add_flag(
+            .add_flag_declaration(
                 Source::File("second.txt".to_string()),
-                Flag {
-                    name: "foo".to_string(),
-                    description: "desc".to_string(),
-                    values: vec![Value::default(FlagState::Disabled, Permission::ReadOnly)],
-                },
+                FlagDeclaration { name: "foo".to_string(), description: "desc".to_string() },
             )
             .unwrap_err();
         assert_eq!(
             &format!("{:?}", error),
-            "failed to add flag foo from second.txt: flag already defined"
+            "failed to declare flag foo from second.txt: flag already declared"
         );
     }
 
     #[test]
-    fn test_add_override() {
+    fn test_add_flag_value() {
         fn check(cache: &Cache, name: &str, expected: (FlagState, Permission)) -> bool {
             let item = cache.iter().find(|&item| item.name == name).unwrap();
             item.state == expected.0 && item.permission == expected.1
         }
 
-        let mut cache = Cache::new(1, "ns".to_string());
+        let mut cache = Cache::new("ns".to_string());
         let error = cache
-            .add_override(
+            .add_flag_value(
                 Source::Memory,
-                Override {
+                FlagValue {
                     namespace: "ns".to_string(),
                     name: "foo".to_string(),
                     state: FlagState::Enabled,
@@ -162,39 +167,36 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert_eq!(&format!("{:?}", error), "failed to override flag foo: unknown flag");
+        assert_eq!(
+            &format!("{:?}", error),
+            "failed to set values for flag ns/foo from <memory>: flag not declared"
+        );
 
         cache
-            .add_flag(
+            .add_flag_declaration(
                 Source::File("first.txt".to_string()),
-                Flag {
-                    name: "foo".to_string(),
-                    description: "desc".to_string(),
-                    values: vec![Value::default(FlagState::Enabled, Permission::ReadOnly)],
-                },
+                FlagDeclaration { name: "foo".to_string(), description: "desc".to_string() },
             )
             .unwrap();
-        dbg!(&cache);
-        assert!(check(&cache, "foo", (FlagState::Enabled, Permission::ReadOnly)));
+        assert!(check(&cache, "foo", (DEFAULT_FLAG_STATE, DEFAULT_FLAG_PERMISSION)));
 
         cache
-            .add_override(
+            .add_flag_value(
                 Source::Memory,
-                Override {
+                FlagValue {
                     namespace: "ns".to_string(),
                     name: "foo".to_string(),
                     state: FlagState::Disabled,
-                    permission: Permission::ReadWrite,
+                    permission: Permission::ReadOnly,
                 },
             )
             .unwrap();
-        dbg!(&cache);
-        assert!(check(&cache, "foo", (FlagState::Disabled, Permission::ReadWrite)));
+        assert!(check(&cache, "foo", (FlagState::Disabled, Permission::ReadOnly)));
 
         cache
-            .add_override(
+            .add_flag_value(
                 Source::Memory,
-                Override {
+                FlagValue {
                     namespace: "ns".to_string(),
                     name: "foo".to_string(),
                     state: FlagState::Enabled,
@@ -205,17 +207,18 @@ mod tests {
         assert!(check(&cache, "foo", (FlagState::Enabled, Permission::ReadWrite)));
 
         // different namespace -> no-op
-        cache
-            .add_override(
+        let error = cache
+            .add_flag_value(
                 Source::Memory,
-                Override {
+                FlagValue {
                     namespace: "some-other-namespace".to_string(),
                     name: "foo".to_string(),
                     state: FlagState::Enabled,
                     permission: Permission::ReadOnly,
                 },
             )
-            .unwrap();
+            .unwrap_err();
+        assert_eq!(&format!("{:?}", error), "failed to set values for flag some-other-namespace/foo from <memory>: expected namespace ns");
         assert!(check(&cache, "foo", (FlagState::Enabled, Permission::ReadWrite)));
     }
 }
