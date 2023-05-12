@@ -41,6 +41,11 @@ $(eval LOADED_STARLARK_FILES :=)
 $(eval _starlark_results :=)
 endef
 
+# ---------------------------------------------------------------
+# Release config
+include $(BUILD_SYSTEM)/release_config.mk
+
+# ---------------------------------------------------------------
 # defines ALL_VERSIONS
 $(call run-starlark,build/make/core/all_versions.bzl)
 
@@ -350,6 +355,7 @@ $(eval _dump_variables_rbc_excluded := \
   RBC_PRODUCT_CONFIG \
   RBC_BOARD_CONFIG \
   SOONG_% \
+  TARGET_RELEASE \
   TOPDIR \
   TRACE_BEGIN_SOONG \
   USER)
@@ -564,6 +570,8 @@ TARGET_OUT_ETC := $(TARGET_OUT)/etc
 TARGET_OUT_NOTICE_FILES := $(TARGET_OUT_INTERMEDIATES)/NOTICE_FILES
 TARGET_OUT_FAKE := $(PRODUCT_OUT)/fake_packages
 TARGET_OUT_TESTCASES := $(PRODUCT_OUT)/testcases
+TARGET_OUT_FLAGS := $(TARGET_OUT_INTERMEDIATES)/FLAGS
+
 .KATI_READONLY := \
   TARGET_OUT_EXECUTABLES \
   TARGET_OUT_OPTIONAL_EXECUTABLES \
@@ -577,7 +585,8 @@ TARGET_OUT_TESTCASES := $(PRODUCT_OUT)/testcases
   TARGET_OUT_ETC \
   TARGET_OUT_NOTICE_FILES \
   TARGET_OUT_FAKE \
-  TARGET_OUT_TESTCASES
+  TARGET_OUT_TESTCASES \
+  TARGET_OUT_FLAGS
 
 ifeq ($(SANITIZE_LITE),true)
 # When using SANITIZE_LITE, APKs must not be packaged with sanitized libraries, as they will not
