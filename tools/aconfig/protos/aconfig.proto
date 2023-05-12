@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License
 
-// This is the schema definition for of Aconfig files. Modifications need to be
-// either backwards compatible, or include updates to all Aconfig files in the
+// This is the schema definition for aconfig files. Modifications need to be
+// either backwards compatible, or include updates to all aconfig files in the
 // Android tree.
 
 syntax = "proto2";
@@ -32,40 +32,33 @@ enum flag_permission {
   READ_WRITE = 2;
 }
 
-// aconfig input messages: configuration and override data
+// aconfig input messages: flag declarations and values
 
-message flag_value {
-  required flag_state state = 1;
-  required flag_permission permission = 2;
-  optional uint32 since = 3;
-}
-
-message flag_definition {
+message flag_declaration {
   required string name = 1;
   required string description = 2;
-  repeated flag_value value = 3;
 };
 
-message namespace {
+message flag_declarations {
   required string namespace = 1;
-  repeated flag_definition flag = 2;
+  repeated flag_declaration flag = 2;
 };
 
-message flag_override {
+message flag_value {
   required string namespace = 1;
   required string name = 2;
   required flag_state state = 3;
   required flag_permission permission = 4;
 };
 
-message flag_overrides {
-  repeated flag_override flag_override = 1;
+message flag_values {
+  repeated flag_value flag_value = 1;
 };
 
-// aconfig output messages: parsed and verified configuration and override data
+// aconfig output messages: parsed and verified flag declarations and values
 
 message tracepoint {
-  // path to config or override file releative to $TOP
+  // path to declaration or value file relative to $TOP
   required string source = 1;
   required flag_state state = 2;
   required flag_permission permission = 3;
