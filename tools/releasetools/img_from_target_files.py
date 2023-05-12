@@ -118,6 +118,7 @@ def EntriesForUserImages(input_file):
 
   entries = [
       'OTA/android-info.txt:android-info.txt',
+      'META/fastboot-info.txt:fastboot-info.txt',
   ]
   with zipfile.ZipFile(input_file) as input_zip:
     namelist = input_zip.namelist()
