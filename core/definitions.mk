@@ -75,9 +75,6 @@ INTERNAL_DALVIK_MODULES:=
 # All findbugs xml files
 ALL_FINDBUGS_FILES:=
 
-# GPL module license files
-ALL_GPL_MODULE_LICENSE_FILES:=
-
 # Packages with certificate violation
 CERTIFICATE_VIOLATION_MODULES :=
 
