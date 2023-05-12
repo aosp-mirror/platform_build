@@ -16,11 +16,12 @@
 
 //! `aconfig` is a build time tool to manage build time configurations, such as feature flags.
 
-use anyhow::Result;
+use anyhow::{anyhow, ensure, Result};
 use clap::{builder::ArgAction, builder::EnumValueParser, Arg, ArgMatches, Command};
 use std::fs;
 use std::io;
 use std::io::Write;
+use std::path::{Path, PathBuf};
 
 mod aconfig;
 mod cache;
@@ -29,22 +30,16 @@ mod commands;
 mod protos;
 
 use crate::cache::Cache;
-use commands::{Input, Source};
+use commands::{Input, OutputFile, Source};
 
 fn cli() -> Command {
     Command::new("aconfig")
         .subcommand_required(true)
         .subcommand(
             Command::new("create-cache")
-                .arg(
-                    Arg::new("build-id")
-                        .long("build-id")
-                        .value_parser(clap::value_parser!(u32))
-                        .required(true),
-                )
                 .arg(Arg::new("namespace").long("namespace").required(true))
-                .arg(Arg::new("aconfig").long("aconfig").action(ArgAction::Append))
-                .arg(Arg::new("override").long("override").action(ArgAction::Append))
+                .arg(Arg::new("declarations").long("declarations").action(ArgAction::Append))
+                .arg(Arg::new("values").long("values").action(ArgAction::Append))
                 .arg(Arg::new("cache").long("cache").required(true)),
         )
         .subcommand(
@@ -74,15 +69,30 @@ fn open_zero_or_more_files(matches: &ArgMatches, arg_name: &str) -> Result<Vec<I
     Ok(opened_files)
 }
 
+fn write_output_file_realtive_to_dir(root: &Path, output_file: &OutputFile) -> Result<()> {
+    ensure!(
+        root.is_dir(),
+        "output directory {} does not exist or is not a directory",
+        root.display()
+    );
+    let path = root.join(output_file.path.clone());
+    let parent = path
+        .parent()
+        .ok_or(anyhow!("unable to locate parent of output file {}", path.display()))?;
+    fs::create_dir_all(parent)?;
+    let mut file = fs::File::create(path)?;
+    file.write_all(&output_file.contents)?;
+    Ok(())
+}
+
 fn main() -> Result<()> {
     let matches = cli().get_matches();
     match matches.subcommand() {
         Some(("create-cache", sub_matches)) => {
-            let build_id = *sub_matches.get_one::<u32>("build-id").unwrap();
             let namespace = sub_matches.get_one::<String>("namespace").unwrap();
-            let aconfigs = open_zero_or_more_files(sub_matches, "aconfig")?;
-            let overrides = open_zero_or_more_files(sub_matches, "override")?;
-            let cache = commands::create_cache(build_id, namespace, aconfigs, overrides)?;
+            let declarations = open_zero_or_more_files(sub_matches, "declarations")?;
+            let values = open_zero_or_more_files(sub_matches, "values")?;
+            let cache = commands::create_cache(namespace, declarations, values)?;
             let path = sub_matches.get_one::<String>("cache").unwrap();
             let file = fs::File::create(path)?;
             cache.write_to_writer(file)?;
@@ -91,12 +101,9 @@ fn main() -> Result<()> {
             let path = sub_matches.get_one::<String>("cache").unwrap();
             let file = fs::File::open(path)?;
             let cache = Cache::read_from_reader(file)?;
-            let out = sub_matches.get_one::<String>("out").unwrap();
+            let dir = PathBuf::from(sub_matches.get_one::<String>("out").unwrap());
             let generated_file = commands::generate_code(&cache).unwrap();
-            fs::write(
-                format!("{}/{}", out, generated_file.file_name),
-                generated_file.file_content,
-            )?;
+            write_output_file_realtive_to_dir(&dir, &generated_file)?;
         }
         Some(("dump", sub_matches)) => {
             let path = sub_matches.get_one::<String>("cache").unwrap();
