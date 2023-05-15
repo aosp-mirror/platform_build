@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-use anyhow::{anyhow, Context, Error, Result};
+use anyhow::{anyhow, bail, Context, Error, Result};
 use protobuf::{Enum, EnumOrUnknown};
 use serde::{Deserialize, Serialize};
 
@@ -98,10 +98,10 @@ impl TryFrom<ProtoFlagDeclaration> for FlagDeclaration {
 
     fn try_from(proto: ProtoFlagDeclaration) -> Result<Self, Self::Error> {
         let Some(name) = proto.name else {
-            return Err(anyhow!("missing 'name' field"));
+            bail!("missing 'name' field");
         };
         let Some(description) = proto.description else {
-            return Err(anyhow!("missing 'description' field"));
+            bail!("missing 'description' field");
         };
         Ok(FlagDeclaration { name, description })
     }
@@ -118,7 +118,7 @@ impl FlagDeclarations {
         let proto: ProtoFlagDeclarations = crate::protos::try_from_text_proto(text_proto)
             .with_context(|| text_proto.to_owned())?;
         let Some(namespace) = proto.namespace else {
-            return Err(anyhow!("missing 'namespace' field"));
+            bail!("missing 'namespace' field");
         };
         let mut flags = vec![];
         for proto_flag in proto.flag.into_iter() {
@@ -154,17 +154,17 @@ impl TryFrom<ProtoFlagValue> for FlagValue {
 
     fn try_from(proto: ProtoFlagValue) -> Result<Self, Self::Error> {
         let Some(namespace) = proto.namespace else {
-            return Err(anyhow!("missing 'namespace' field"));
+            bail!("missing 'namespace' field");
         };
         let Some(name) = proto.name else {
-            return Err(anyhow!("missing 'name' field"));
+            bail!("missing 'name' field");
         };
         let Some(proto_state) = proto.state else {
-            return Err(anyhow!("missing 'state' field"));
+            bail!("missing 'state' field");
         };
         let state = proto_state.try_into()?;
         let Some(proto_permission) = proto.permission else {
-            return Err(anyhow!("missing 'permission' field"));
+            bail!("missing 'permission' field");
         };
         let permission = proto_permission.try_into()?;
         Ok(FlagValue { namespace, name, state, permission })
