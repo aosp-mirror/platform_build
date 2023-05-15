@@ -5217,6 +5217,7 @@ INTERNAL_OTATOOLS_MODULES := \
   lz4 \
   make_f2fs \
   make_f2fs_casefold \
+  merge_ota \
   merge_target_files \
   minigzip \
   mk_combined_img \
