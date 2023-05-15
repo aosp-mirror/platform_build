@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-use anyhow::{anyhow, bail, ensure, Result};
+use anyhow::{bail, ensure, Result};
 use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 
@@ -69,13 +69,12 @@ impl Cache {
         source: Source,
         declaration: FlagDeclaration,
     ) -> Result<()> {
-        if self.items.iter().any(|item| item.name == declaration.name) {
-            return Err(anyhow!(
-                "failed to declare flag {} from {}: flag already declared",
-                declaration.name,
-                source,
-            ));
-        }
+        ensure!(
+            self.items.iter().all(|item| item.name != declaration.name),
+            "failed to declare flag {} from {}: flag already declared",
+            declaration.name,
+            source
+        );
         self.items.push(Item {
             namespace: self.namespace.clone(),
             name: declaration.name.clone(),
