@@ -15,7 +15,7 @@
 # Partitions that get build system flag summaries
 _FLAG_PARTITIONS := system vendor system_ext product
 
-# All possible release flags. Defined in the flags.mk files
+# All possible release flags. Defined in the build_flags.mk files
 # throughout the tree
 _ALL_RELEASE_FLAGS :=
 
@@ -26,7 +26,9 @@ _ALL_RELEASE_FLAGS :=
 
 # If this is a google source tree, restrict it to only the one file
 # which has OWNERS control.  If it isn't let others define their own.
-config_map_files := build/make/release/release_config_map.mk \
+# TODO: Remove wildcard for build/release one when all branch manifests
+# have updated.
+config_map_files := $(wildcard build/release/release_config_map.mk) \
     $(if $(wildcard vendor/google/release/release_config_map.mk), \
         vendor/google/release/release_config_map.mk, \
         $(sort \
@@ -64,7 +66,7 @@ $(foreach f, $(config_map_files), \
 # will get their default values.
 ifneq ($(TARGET_RELEASE),)
 ifeq ($(filter $(_all_release_configs), $(TARGET_RELEASE)),)
-    $(error No release config found for TARGET_RELEASE: $(TARGET_RELEASE))
+    $(error No release config found for TARGET_RELEASE: $(TARGET_RELEASE). Available releases are: $(_all_release_configs))
 else
     # Choose flag files
     # Don't sort this, use it in the order they gave us.
@@ -135,14 +137,14 @@ endef
 # Choose the files
 # If this is a google source tree, restrict it to only the one file
 # which has OWNERS control.  If it isn't let others define their own.
-flag_declaration_files := build/make/release/flags.mk \
-    $(if $(wildcard vendor/google/release/flags.mk), \
-        vendor/google/release/flags.mk, \
+flag_declaration_files := $(wildcard build/release/build_flags.mk) \
+    $(if $(wildcard vendor/google/release/build_flags.mk), \
+        vendor/google/release/build_flags.mk, \
         $(sort \
-            $(wildcard device/*/release/flags.mk) \
-            $(wildcard device/*/*/release/flags.mk) \
-            $(wildcard vendor/*/release/flags.mk) \
-            $(wildcard vendor/*/*/release/flags.mk) \
+            $(wildcard device/*/release/build_flags.mk) \
+            $(wildcard device/*/*/release/build_flags.mk) \
+            $(wildcard vendor/*/release/build_flags.mk) \
+            $(wildcard vendor/*/*/release/build_flags.mk) \
         ) \
     )
 
@@ -173,15 +175,36 @@ define set-build-flag
     $(eval _ALL_RELEASE_FLAGS.$(strip $(1)).SET_IN := $(_included))
 endef
 
+# This writes directly to a file so that the version never exists in make for
+# people to write conditionals upon.
+define set-release-version
+    $(eval _RELEASE_VERSION := $(strip $(1)))
+endef
+
 # Include the files (if there are any)
-$(foreach f, $(_release_config_files), \
-    $(eval _included := $(f)) \
-    $(eval include $(f)) \
-)
+ifneq ($(strip $(_release_config_files)),)
+    $(foreach f, $(_release_config_files), \
+        $(eval _included := $(f)) \
+        $(eval include $(f)) \
+    )
+else
+    # No TARGET_RELEASE means release version 0
+    $(call set-release-version, 0)
+endif
+
+
+ifeq ($(_RELEASE_VERSION)),)
+    $(error No release config file called set-release-version. Included files were: $(_release_config_files))
+endif
 
 # Don't let anyone declare build flags after here
 define set-build-flag
 $(error set-build-flag can only be called from inside release config files.)
+endef
+
+# Don't let anyone set the release version after here
+define set-release-version
+$(error set-release-version can only be called from inside release config files.)
 endef
 
 # Set the flag values, and don't allow any one to modify them.
@@ -189,6 +212,7 @@ $(foreach flag, $(_ALL_RELEASE_FLAGS), \
     $(eval $(flag) := $(_ALL_RELEASE_FLAGS.$(flag).VALUE)) \
     $(eval .KATI_READONLY := $(flag)) \
 )
+
 
 # -----------------------------------------------------------------
 # Clear out vars
