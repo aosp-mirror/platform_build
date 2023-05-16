@@ -58,7 +58,7 @@ pub fn create_cache(
     declarations: Vec<Input>,
     values: Vec<Input>,
 ) -> Result<Cache> {
-    let mut cache = Cache::new(namespace.to_owned());
+    let mut cache = Cache::new(namespace.to_owned())?;
 
     for mut input in declarations {
         let mut contents = String::new();
@@ -96,29 +96,29 @@ pub fn generate_code(cache: &Cache) -> Result<OutputFile> {
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
-pub enum Format {
+pub enum DumpFormat {
     Text,
     Debug,
     Protobuf,
 }
 
-pub fn dump_cache(cache: Cache, format: Format) -> Result<Vec<u8>> {
+pub fn dump_cache(cache: Cache, format: DumpFormat) -> Result<Vec<u8>> {
     match format {
-        Format::Text => {
+        DumpFormat::Text => {
             let mut lines = vec![];
             for item in cache.iter() {
                 lines.push(format!("{}: {:?}\n", item.name, item.state));
             }
             Ok(lines.concat().into())
         }
-        Format::Debug => {
+        DumpFormat::Debug => {
             let mut lines = vec![];
             for item in cache.iter() {
                 lines.push(format!("{:?}\n", item));
             }
             Ok(lines.concat().into())
         }
-        Format::Protobuf => {
+        DumpFormat::Protobuf => {
             let parsed_flags: ProtoParsedFlags = cache.into();
             let mut output = vec![];
             parsed_flags.write_to_vec(&mut output)?;
@@ -168,7 +168,7 @@ mod tests {
     #[test]
     fn test_dump_text_format() {
         let cache = create_test_cache();
-        let bytes = dump_cache(cache, Format::Text).unwrap();
+        let bytes = dump_cache(cache, DumpFormat::Text).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
         assert!(text.contains("a: Disabled"));
     }
@@ -179,7 +179,7 @@ mod tests {
         use protobuf::Message;
 
         let cache = create_test_cache();
-        let bytes = dump_cache(cache, Format::Protobuf).unwrap();
+        let bytes = dump_cache(cache, DumpFormat::Protobuf).unwrap();
         let actual = ProtoParsedFlags::parse_from_bytes(&bytes).unwrap();
 
         assert_eq!(

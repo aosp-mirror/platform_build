@@ -18,6 +18,7 @@
 
 use anyhow::{anyhow, ensure, Result};
 use clap::{builder::ArgAction, builder::EnumValueParser, Arg, ArgMatches, Command};
+use core::any::Any;
 use std::fs;
 use std::io;
 use std::io::Write;
@@ -30,7 +31,7 @@ mod commands;
 mod protos;
 
 use crate::cache::Cache;
-use commands::{Input, OutputFile, Source};
+use commands::{DumpFormat, Input, OutputFile, Source};
 
 fn cli() -> Command {
     Command::new("aconfig")
@@ -53,11 +54,20 @@ fn cli() -> Command {
                 .arg(
                     Arg::new("format")
                         .long("format")
-                        .value_parser(EnumValueParser::<commands::Format>::new())
+                        .value_parser(EnumValueParser::<commands::DumpFormat>::new())
                         .default_value("text"),
                 )
                 .arg(Arg::new("out").long("out").default_value("-")),
         )
+}
+
+fn get_required_arg<'a, T>(matches: &'a ArgMatches, arg_name: &str) -> Result<&'a T>
+where
+    T: Any + Clone + Send + Sync + 'static,
+{
+    matches
+        .get_one::<T>(arg_name)
+        .ok_or(anyhow!("internal error: required argument '{}' not found", arg_name))
 }
 
 fn open_zero_or_more_files(matches: &ArgMatches, arg_name: &str) -> Result<Vec<Input>> {
@@ -89,30 +99,30 @@ fn main() -> Result<()> {
     let matches = cli().get_matches();
     match matches.subcommand() {
         Some(("create-cache", sub_matches)) => {
-            let namespace = sub_matches.get_one::<String>("namespace").unwrap();
+            let namespace = get_required_arg::<String>(sub_matches, "namespace")?;
             let declarations = open_zero_or_more_files(sub_matches, "declarations")?;
             let values = open_zero_or_more_files(sub_matches, "values")?;
             let cache = commands::create_cache(namespace, declarations, values)?;
-            let path = sub_matches.get_one::<String>("cache").unwrap();
+            let path = get_required_arg::<String>(sub_matches, "cache")?;
             let file = fs::File::create(path)?;
             cache.write_to_writer(file)?;
         }
         Some(("create-java-lib", sub_matches)) => {
-            let path = sub_matches.get_one::<String>("cache").unwrap();
+            let path = get_required_arg::<String>(sub_matches, "cache")?;
             let file = fs::File::open(path)?;
             let cache = Cache::read_from_reader(file)?;
-            let dir = PathBuf::from(sub_matches.get_one::<String>("out").unwrap());
-            let generated_file = commands::generate_code(&cache).unwrap();
+            let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
+            let generated_file = commands::generate_code(&cache)?;
             write_output_file_realtive_to_dir(&dir, &generated_file)?;
         }
         Some(("dump", sub_matches)) => {
-            let path = sub_matches.get_one::<String>("cache").unwrap();
+            let path = get_required_arg::<String>(sub_matches, "cache")?;
             let file = fs::File::open(path)?;
             let cache = Cache::read_from_reader(file)?;
-            let format = sub_matches.get_one("format").unwrap();
+            let format = get_required_arg::<DumpFormat>(sub_matches, "format")?;
             let output = commands::dump_cache(cache, *format)?;
-            let path = sub_matches.get_one::<String>("out").unwrap();
-            let mut file: Box<dyn Write> = if path == "-" {
+            let path = get_required_arg::<String>(sub_matches, "out")?;
+            let mut file: Box<dyn Write> = if *path == "-" {
                 Box::new(io::stdout())
             } else {
                 Box::new(fs::File::create(path)?)
