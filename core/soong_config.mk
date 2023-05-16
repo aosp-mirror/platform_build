@@ -319,6 +319,9 @@ $(call add_json_str,  ProductManufacturer, $(PRODUCT_MANUFACTURER))
 $(call add_json_str,  ProductBrand,        $(PRODUCT_BRAND))
 $(call add_json_list, BuildVersionTags,    $(BUILD_VERSION_TAGS))
 
+$(call add_json_str, ReleaseVersion,    $(_RELEASE_VERSION))
+$(call add_json_list, ReleaseDeviceConfigValueSets,    $(RELEASE_DEVICE_CONFIG_VALUE_SETS))
+
 $(call json_end)
 
 $(file >$(SOONG_VARIABLES).tmp,$(json_contents))
