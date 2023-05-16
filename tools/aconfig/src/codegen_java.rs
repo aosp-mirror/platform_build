@@ -16,6 +16,7 @@
 
 use anyhow::Result;
 use serde::Serialize;
+use std::path::PathBuf;
 use tinytemplate::TinyTemplate;
 
 use crate::aconfig::{FlagState, Permission};
@@ -25,12 +26,14 @@ use crate::commands::OutputFile;
 pub fn generate_java_code(cache: &Cache) -> Result<OutputFile> {
     let class_elements: Vec<ClassElement> = cache.iter().map(create_class_element).collect();
     let readwrite = class_elements.iter().any(|item| item.readwrite);
-    let namespace = uppercase_first_letter(cache.namespace());
-    let context = Context { namespace: namespace.clone(), readwrite, class_elements };
+    let namespace = cache.namespace();
+    let context = Context { namespace: namespace.to_string(), readwrite, class_elements };
     let mut template = TinyTemplate::new();
     template.add_template("java_code_gen", include_str!("../templates/java.template"))?;
     let contents = template.render("java_code_gen", &context)?;
-    let path = ["com", "android", "internal", "aconfig", &(namespace + ".java")].iter().collect();
+    let mut path: PathBuf = namespace.split('.').collect();
+    // TODO: Allow customization of the java class name
+    path.push("Flags.java");
     Ok(OutputFile { contents: contents.into(), path })
 }
 
@@ -64,21 +67,6 @@ fn create_class_element(item: &Item) -> ClassElement {
     }
 }
 
-fn uppercase_first_letter(s: &str) -> String {
-    s.chars()
-        .enumerate()
-        .map(
-            |(index, ch)| {
-                if index == 0 {
-                    ch.to_ascii_uppercase()
-                } else {
-                    ch.to_ascii_lowercase()
-                }
-            },
-        )
-        .collect()
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -87,7 +75,7 @@ mod tests {
 
     #[test]
     fn test_generate_java_code() {
-        let namespace = "TeSTFlaG";
+        let namespace = "com.example";
         let mut cache = Cache::new(namespace.to_string()).unwrap();
         cache
             .add_flag_declaration(
@@ -118,11 +106,11 @@ mod tests {
                 },
             )
             .unwrap();
-        let expect_content = r#"package com.android.internal.aconfig;
+        let expect_content = r#"package com.example;
 
         import android.provider.DeviceConfig;
 
-        public final class Testflag {
+        public final class Flags {
 
             public static boolean test() {
                 return false;
@@ -130,7 +118,7 @@ mod tests {
 
             public static boolean test2() {
                 return DeviceConfig.getBoolean(
-                    "Testflag",
+                    "com.example",
                     "test2__test2",
                     false
                 );
@@ -139,7 +127,7 @@ mod tests {
         }
         "#;
         let file = generate_java_code(&cache).unwrap();
-        assert_eq!("com/android/internal/aconfig/Testflag.java", file.path.to_str().unwrap());
+        assert_eq!("com/example/Flags.java", file.path.to_str().unwrap());
         assert_eq!(
             expect_content.replace(' ', ""),
             String::from_utf8(file.contents).unwrap().replace(' ', "")
