@@ -271,7 +271,7 @@ SOONG_CONFIG_NAMESPACES :=
 # Ex: $(call add_soong_config_namespace,acme)
 
 define add_soong_config_namespace
-$(eval SOONG_CONFIG_NAMESPACES += $1) \
+$(eval SOONG_CONFIG_NAMESPACES += $(strip $1)) \
 $(eval SOONG_CONFIG_$(strip $1) :=)
 endef
 
@@ -281,8 +281,8 @@ endef
 # $1 is the namespace. $2 is the list of variables.
 # Ex: $(call add_soong_config_var,acme,COOL_FEATURE_A COOL_FEATURE_B)
 define add_soong_config_var
-$(eval SOONG_CONFIG_$(strip $1) += $2) \
-$(foreach v,$(strip $2),$(eval SOONG_CONFIG_$(strip $1)_$v := $($v)))
+$(eval SOONG_CONFIG_$(strip $1) += $(strip $2)) \
+$(foreach v,$(strip $2),$(eval SOONG_CONFIG_$(strip $1)_$v := $(strip $($v))))
 endef
 
 # The add_soong_config_var_value function defines a make variable and also adds
@@ -291,7 +291,7 @@ endef
 # Ex: $(call add_soong_config_var_value,acme,COOL_FEATURE,true)
 
 define add_soong_config_var_value
-$(eval $2 := $3) \
+$(eval $(strip $2) := $(strip $3)) \
 $(call add_soong_config_var,$1,$2)
 endef
 
@@ -299,8 +299,8 @@ endef
 #
 # internal utility to define a namespace and a variable in it.
 define soong_config_define_internal
-$(if $(filter $1,$(SOONG_CONFIG_NAMESPACES)),,$(eval SOONG_CONFIG_NAMESPACES:=$(SOONG_CONFIG_NAMESPACES) $1)) \
-$(if $(filter $2,$(SOONG_CONFIG_$(strip $1))),,$(eval SOONG_CONFIG_$(strip $1):=$(SOONG_CONFIG_$(strip $1)) $2))
+$(if $(filter $1,$(SOONG_CONFIG_NAMESPACES)),,$(eval SOONG_CONFIG_NAMESPACES:=$(SOONG_CONFIG_NAMESPACES) $(strip $1))) \
+$(if $(filter $2,$(SOONG_CONFIG_$(strip $1))),,$(eval SOONG_CONFIG_$(strip $1):=$(SOONG_CONFIG_$(strip $1)) $(strip $2)))
 endef
 
 # soong_config_set defines the variable in the given Soong config namespace
@@ -309,7 +309,7 @@ endef
 # Ex: $(call soong_config_set,acme,COOL_FEATURE,true)
 define soong_config_set
 $(call soong_config_define_internal,$1,$2) \
-$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$3)
+$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(strip $3))
 endef
 
 # soong_config_append appends to the value of the variable in the given Soong
@@ -318,7 +318,7 @@ endef
 # $1 is the namespace, $2 is the variable name, $3 is the value
 define soong_config_append
 $(call soong_config_define_internal,$1,$2) \
-$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(SOONG_CONFIG_$(strip $1)_$(strip $2)) $3)
+$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(SOONG_CONFIG_$(strip $1)_$(strip $2)) $(strip $3))
 endef
 
 # soong_config_append gets to the value of the variable in the given Soong
