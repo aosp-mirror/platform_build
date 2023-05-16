@@ -25,9 +25,7 @@ use crate::commands::OutputFile;
 pub fn generate_java_code(cache: &Cache) -> Result<OutputFile> {
     let class_elements: Vec<ClassElement> = cache.iter().map(create_class_element).collect();
     let readwrite = class_elements.iter().any(|item| item.readwrite);
-    let namespace = uppercase_first_letter(
-        cache.iter().find(|item| !item.namespace.is_empty()).unwrap().namespace.as_str(),
-    );
+    let namespace = uppercase_first_letter(cache.namespace());
     let context = Context { namespace: namespace.clone(), readwrite, class_elements };
     let mut template = TinyTemplate::new();
     template.add_template("java_code_gen", include_str!("../templates/java.template"))?;
@@ -90,7 +88,7 @@ mod tests {
     #[test]
     fn test_generate_java_code() {
         let namespace = "TeSTFlaG";
-        let mut cache = Cache::new(namespace.to_string());
+        let mut cache = Cache::new(namespace.to_string()).unwrap();
         cache
             .add_flag_declaration(
                 Source::File("test.txt".to_string()),
