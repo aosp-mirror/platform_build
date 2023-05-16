@@ -53,7 +53,7 @@ fn cli() -> Command {
                 .arg(
                     Arg::new("format")
                         .long("format")
-                        .value_parser(EnumValueParser::<commands::Format>::new())
+                        .value_parser(EnumValueParser::<commands::DumpFormat>::new())
                         .default_value("text"),
                 )
                 .arg(Arg::new("out").long("out").default_value("-")),
