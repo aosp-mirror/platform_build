@@ -119,6 +119,10 @@ impl Cache {
     pub fn into_iter(self) -> impl Iterator<Item = Item> {
         self.items.into_iter()
     }
+
+    pub fn namespace(&self) -> &str {
+        &self.namespace
+    }
 }
 
 #[cfg(test)]
