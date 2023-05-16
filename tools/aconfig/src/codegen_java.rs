@@ -88,7 +88,7 @@ mod tests {
     #[test]
     fn test_generate_java_code() {
         let namespace = "TeSTFlaG";
-        let mut cache = Cache::new(namespace.to_string());
+        let mut cache = Cache::new(namespace.to_string()).unwrap();
         cache
             .add_flag_declaration(
                 Source::File("test.txt".to_string()),

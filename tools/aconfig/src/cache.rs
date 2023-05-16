@@ -52,8 +52,9 @@ pub struct Cache {
 }
 
 impl Cache {
-    pub fn new(namespace: String) -> Cache {
-        Cache { namespace, items: vec![] }
+    pub fn new(namespace: String) -> Result<Cache> {
+        ensure!(!namespace.is_empty(), "empty namespace");
+        Ok(Cache { namespace, items: vec![] })
     }
 
     pub fn read_from_reader(reader: impl Read) -> Result<Cache> {
@@ -69,6 +70,8 @@ impl Cache {
         source: Source,
         declaration: FlagDeclaration,
     ) -> Result<()> {
+        ensure!(!declaration.name.is_empty(), "empty flag name");
+        ensure!(!declaration.description.is_empty(), "empty flag description");
         ensure!(
             self.items.iter().all(|item| item.name != declaration.name),
             "failed to declare flag {} from {}: flag already declared",
@@ -91,6 +94,8 @@ impl Cache {
     }
 
     pub fn add_flag_value(&mut self, source: Source, value: FlagValue) -> Result<()> {
+        ensure!(!value.namespace.is_empty(), "empty flag namespace");
+        ensure!(!value.name.is_empty(), "empty flag name");
         ensure!(
             value.namespace == self.namespace,
             "failed to set values for flag {}/{} from {}: expected namespace {}",
@@ -121,6 +126,7 @@ impl Cache {
     }
 
     pub fn namespace(&self) -> &str {
+        debug_assert!(!self.namespace.is_empty());
         &self.namespace
     }
 }
@@ -132,7 +138,7 @@ mod tests {
 
     #[test]
     fn test_add_flag_declaration() {
-        let mut cache = Cache::new("ns".to_string());
+        let mut cache = Cache::new("ns".to_string()).unwrap();
         cache
             .add_flag_declaration(
                 Source::File("first.txt".to_string()),
@@ -158,7 +164,7 @@ mod tests {
             item.state == expected.0 && item.permission == expected.1
         }
 
-        let mut cache = Cache::new("ns".to_string());
+        let mut cache = Cache::new("ns".to_string()).unwrap();
         let error = cache
             .add_flag_value(
                 Source::Memory,
@@ -223,5 +229,68 @@ mod tests {
             .unwrap_err();
         assert_eq!(&format!("{:?}", error), "failed to set values for flag some-other-namespace/foo from <memory>: expected namespace ns");
         assert!(check(&cache, "foo", (FlagState::Enabled, Permission::ReadWrite)));
+    }
+
+    #[test]
+    fn test_reject_empty_cache_namespace() {
+        Cache::new("".to_string()).unwrap_err();
+    }
+
+    #[test]
+    fn test_reject_empty_flag_declaration_fields() {
+        let mut cache = Cache::new("ns".to_string()).unwrap();
+
+        let error = cache
+            .add_flag_declaration(
+                Source::Memory,
+                FlagDeclaration { name: "".to_string(), description: "Description".to_string() },
+            )
+            .unwrap_err();
+        assert_eq!(&format!("{:?}", error), "empty flag name");
+
+        let error = cache
+            .add_flag_declaration(
+                Source::Memory,
+                FlagDeclaration { name: "foo".to_string(), description: "".to_string() },
+            )
+            .unwrap_err();
+        assert_eq!(&format!("{:?}", error), "empty flag description");
+    }
+
+    #[test]
+    fn test_reject_empty_flag_value_files() {
+        let mut cache = Cache::new("ns".to_string()).unwrap();
+        cache
+            .add_flag_declaration(
+                Source::Memory,
+                FlagDeclaration { name: "foo".to_string(), description: "desc".to_string() },
+            )
+            .unwrap();
+
+        let error = cache
+            .add_flag_value(
+                Source::Memory,
+                FlagValue {
+                    namespace: "".to_string(),
+                    name: "foo".to_string(),
+                    state: FlagState::Enabled,
+                    permission: Permission::ReadOnly,
+                },
+            )
+            .unwrap_err();
+        assert_eq!(&format!("{:?}", error), "empty flag namespace");
+
+        let error = cache
+            .add_flag_value(
+                Source::Memory,
+                FlagValue {
+                    namespace: "ns".to_string(),
+                    name: "".to_string(),
+                    state: FlagState::Enabled,
+                    permission: Permission::ReadOnly,
+                },
+            )
+            .unwrap_err();
+        assert_eq!(&format!("{:?}", error), "empty flag name");
     }
 }

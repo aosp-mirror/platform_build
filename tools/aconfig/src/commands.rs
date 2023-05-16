@@ -58,7 +58,7 @@ pub fn create_cache(
     declarations: Vec<Input>,
     values: Vec<Input>,
 ) -> Result<Cache> {
-    let mut cache = Cache::new(namespace.to_owned());
+    let mut cache = Cache::new(namespace.to_owned())?;
 
     for mut input in declarations {
         let mut contents = String::new();
