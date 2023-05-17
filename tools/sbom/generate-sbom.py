@@ -19,7 +19,6 @@ Generate the SBOM of the current target product in SPDX format.
 Usage example:
   generate-sbom.py --output_file out/target/product/vsoc_x86_64/sbom.spdx \
                    --metadata out/target/product/vsoc_x86_64/sbom-metadata.csv \
-                   --product_out_dir=out/target/product/vsoc_x86_64 \
                    --build_version $(cat out/target/product/vsoc_x86_64/build_fingerprint.txt) \
                    --product_mfr=Google
 """
@@ -89,11 +88,11 @@ def get_args():
   parser.add_argument('-v', '--verbose', action='store_true', default=False, help='Print more information.')
   parser.add_argument('--output_file', required=True, help='The generated SBOM file in SPDX format.')
   parser.add_argument('--metadata', required=True, help='The SBOM metadata file path.')
-  parser.add_argument('--product_out_dir', required=True, help='The parent directory of all the installed files.')
   parser.add_argument('--build_version', required=True, help='The build version.')
   parser.add_argument('--product_mfr', required=True, help='The product manufacturer.')
   parser.add_argument('--json', action='store_true', default=False, help='Generated SBOM file in SPDX JSON format')
-  parser.add_argument('--unbundled', action='store_true', default=False, help='Generate SBOM file for unbundled module')
+  parser.add_argument('--unbundled_apk', action='store_true', default=False, help='Generate SBOM for unbundled APKs')
+  parser.add_argument('--unbundled_apex', action='store_true', default=False, help='Generate SBOM for unbundled APEXs')
 
   return parser.parse_args()
 
@@ -127,7 +126,6 @@ def new_file_id(file_path):
 
 
 def checksum(file_path):
-  file_path = args.product_out_dir + '/' + file_path
   h = hashlib.sha1()
   if os.path.islink(file_path):
     h.update(os.readlink(file_path).encode('utf-8'))
@@ -342,9 +340,8 @@ def generate_package_verification_code(files):
   return h.hexdigest()
 
 
-def save_report(report):
-  prefix, _ = os.path.splitext(args.output_file)
-  with open(prefix + '-gen-report.txt', 'w', encoding='utf-8') as report_file:
+def save_report(report_file_path, report):
+  with open(report_file_path, 'w', encoding='utf-8') as report_file:
     for type, issues in report.items():
       report_file.write(type + '\n')
       for issue in issues:
@@ -402,7 +399,7 @@ def report_metadata_file(metadata_file_path, installed_file_metadata, report):
             installed_file_metadata['installed_file'], installed_file_metadata['module_path']))
 
 
-def generate_sbom_for_unbundled():
+def generate_sbom_for_unbundled_apk():
   with open(args.metadata, newline='') as sbom_metadata_file:
     reader = csv.DictReader(sbom_metadata_file)
     doc = sbom_data.Document(name=args.build_version,
@@ -410,7 +407,7 @@ def generate_sbom_for_unbundled():
                              creators=['Organization: ' + args.product_mfr])
     for installed_file_metadata in reader:
       installed_file = installed_file_metadata['installed_file']
-      if args.output_file != args.product_out_dir + installed_file + '.spdx.json':
+      if args.output_file != installed_file_metadata['build_output_path'] + '.spdx.json':
         continue
 
       module_path = installed_file_metadata['module_path']
@@ -420,7 +417,9 @@ def generate_sbom_for_unbundled():
                                   version=args.build_version,
                                   supplier='Organization: ' + args.product_mfr)
       file_id = new_file_id(installed_file)
-      file = sbom_data.File(id=file_id, name=installed_file, checksum=checksum(installed_file))
+      file = sbom_data.File(id=file_id,
+                            name=installed_file,
+                            checksum=checksum(installed_file_metadata['build_output_path']))
       relationship = sbom_data.Relationship(id1=file_id,
                                             relationship=sbom_data.RelationshipType.GENERATED_FROM,
                                             id2=package_id)
@@ -443,16 +442,12 @@ def main():
   args = get_args()
   log('Args:', vars(args))
 
-  if args.unbundled:
-    generate_sbom_for_unbundled()
+  if args.unbundled_apk:
+    generate_sbom_for_unbundled_apk()
     return
 
   global metadata_file_protos
   metadata_file_protos = {}
-
-  doc = sbom_data.Document(name=args.build_version,
-                           namespace=f'https://www.google.com/sbom/spdx/android/{args.build_version}',
-                           creators=['Organization: ' + args.product_mfr])
 
   product_package = sbom_data.Package(id=sbom_data.SPDXID_PRODUCT,
                                       name=sbom_data.PACKAGE_NAME_PRODUCT,
@@ -460,7 +455,12 @@ def main():
                                       version=args.build_version,
                                       supplier='Organization: ' + args.product_mfr,
                                       files_analyzed=True)
-  doc.packages.append(product_package)
+
+  doc = sbom_data.Document(name=args.build_version,
+                           namespace=f'https://www.google.com/sbom/spdx/android/{args.build_version}',
+                           creators=['Organization: ' + args.product_mfr])
+  if not args.unbundled_apex:
+    doc.packages.append(product_package)
 
   doc.packages.append(sbom_data.Package(id=sbom_data.SPDXID_PLATFORM,
                                         name=sbom_data.PACKAGE_NAME_PLATFORM,
@@ -486,18 +486,21 @@ def main():
       module_path = installed_file_metadata['module_path']
       product_copy_files = installed_file_metadata['product_copy_files']
       kernel_module_copy_files = installed_file_metadata['kernel_module_copy_files']
+      build_output_path = installed_file_metadata['build_output_path']
 
       if not installed_file_has_metadata(installed_file_metadata, report):
         continue
-      file_path = args.product_out_dir + '/' + installed_file
-      if not (os.path.islink(file_path) or os.path.isfile(file_path)):
+      if not (os.path.islink(build_output_path) or os.path.isfile(build_output_path)):
         report[ISSUE_INSTALLED_FILE_NOT_EXIST].append(installed_file)
         continue
 
       file_id = new_file_id(installed_file)
       doc.files.append(
-        sbom_data.File(id=file_id, name=installed_file, checksum=checksum(installed_file)))
-      product_package.file_ids.append(file_id)
+        sbom_data.File(id=file_id, name=installed_file, checksum=checksum(build_output_path)))
+      if not args.unbundled_apex:
+        product_package.file_ids.append(file_id)
+      elif len(doc.files) > 1:
+          doc.add_relationship(sbom_data.Relationship(doc.files[0].id, sbom_data.RelationshipType.CONTAINS, file_id))
 
       if is_source_package(installed_file_metadata) or is_prebuilt_package(installed_file_metadata):
         metadata_file_path = get_metadata_file_path(installed_file_metadata)
@@ -541,15 +544,30 @@ def main():
                                                     relationship=sbom_data.RelationshipType.GENERATED_FROM,
                                                     id2=sbom_data.SPDXID_PLATFORM))
 
-  product_package.verification_code = generate_package_verification_code(doc.files)
+  if not args.unbundled_apex:
+    product_package.verification_code = generate_package_verification_code(doc.files)
+
+  if args.unbundled_apex:
+    doc.describes = doc.files[0].id
 
   # Save SBOM records to output file
   doc.created = datetime.datetime.now(tz=datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
-  with open(args.output_file, 'w', encoding="utf-8") as file:
-    sbom_writers.TagValueWriter.write(doc, file)
+  prefix = args.output_file
+  if prefix.endswith('.spdx'):
+    prefix = prefix.removesuffix('.spdx')
+  elif prefix.endswith('.spdx.json'):
+    prefix = prefix.removesuffix('.spdx.json')
+
+  output_file = prefix + '.spdx'
+  if args.unbundled_apex:
+    output_file = prefix + '-fragment.spdx'
+  with open(output_file, 'w', encoding="utf-8") as file:
+    sbom_writers.TagValueWriter.write(doc, file, fragment=args.unbundled_apex)
   if args.json:
-    with open(args.output_file+'.json', 'w', encoding="utf-8") as file:
+    with open(prefix + '.spdx.json', 'w', encoding="utf-8") as file:
       sbom_writers.JSONWriter.write(doc, file)
+
+  save_report(prefix + '-gen-report.txt', report)
 
 
 if __name__ == '__main__':
