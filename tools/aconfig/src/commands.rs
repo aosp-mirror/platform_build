@@ -107,29 +107,35 @@ pub enum DumpFormat {
     Protobuf,
 }
 
-pub fn dump_cache(cache: Cache, format: DumpFormat) -> Result<Vec<u8>> {
-    match format {
-        DumpFormat::Text => {
-            let mut lines = vec![];
-            for item in cache.iter() {
-                lines.push(format!("{}: {:?}\n", item.name, item.state));
+pub fn dump_cache(mut caches: Vec<Cache>, format: DumpFormat) -> Result<Vec<u8>> {
+    let mut output = Vec::new();
+    caches.sort_by_cached_key(|cache| cache.namespace().to_string());
+    for cache in caches.into_iter() {
+        match format {
+            DumpFormat::Text => {
+                let mut lines = vec![];
+                for item in cache.iter() {
+                    lines.push(format!(
+                        "{}/{}: {:?} {:?}\n",
+                        item.namespace, item.name, item.state, item.permission
+                    ));
+                }
+                output.append(&mut lines.concat().into());
             }
-            Ok(lines.concat().into())
-        }
-        DumpFormat::Debug => {
-            let mut lines = vec![];
-            for item in cache.iter() {
-                lines.push(format!("{:?}\n", item));
+            DumpFormat::Debug => {
+                let mut lines = vec![];
+                for item in cache.iter() {
+                    lines.push(format!("{:?}\n", item));
+                }
+                output.append(&mut lines.concat().into());
             }
-            Ok(lines.concat().into())
-        }
-        DumpFormat::Protobuf => {
-            let parsed_flags: ProtoParsedFlags = cache.into();
-            let mut output = vec![];
-            parsed_flags.write_to_vec(&mut output)?;
-            Ok(output)
+            DumpFormat::Protobuf => {
+                let parsed_flags: ProtoParsedFlags = cache.into();
+                parsed_flags.write_to_vec(&mut output)?;
+            }
         }
     }
+    Ok(output)
 }
 
 #[cfg(test)]
@@ -137,9 +143,9 @@ mod tests {
     use super::*;
     use crate::aconfig::{FlagState, Permission};
 
-    fn create_test_cache() -> Cache {
+    fn create_test_cache_ns1() -> Cache {
         let s = r#"
-        namespace: "ns"
+        namespace: "ns1"
         flag {
             name: "a"
             description: "Description of a"
@@ -152,28 +158,49 @@ mod tests {
         let declarations = vec![Input { source: Source::Memory, reader: Box::new(s.as_bytes()) }];
         let o = r#"
         flag_value {
-            namespace: "ns"
+            namespace: "ns1"
             name: "a"
             state: DISABLED
             permission: READ_ONLY
         }
         "#;
         let values = vec![Input { source: Source::Memory, reader: Box::new(o.as_bytes()) }];
-        create_cache("ns", declarations, values).unwrap()
+        create_cache("ns1", declarations, values).unwrap()
+    }
+
+    fn create_test_cache_ns2() -> Cache {
+        let s = r#"
+        namespace: "ns2"
+        flag {
+            name: "c"
+            description: "Description of c"
+        }
+        "#;
+        let declarations = vec![Input { source: Source::Memory, reader: Box::new(s.as_bytes()) }];
+        let o = r#"
+        flag_value {
+            namespace: "ns2"
+            name: "c"
+            state: DISABLED
+            permission: READ_ONLY
+        }
+        "#;
+        let values = vec![Input { source: Source::Memory, reader: Box::new(o.as_bytes()) }];
+        create_cache("ns2", declarations, values).unwrap()
     }
 
     #[test]
     fn test_create_cache() {
-        let cache = create_test_cache(); // calls create_cache
-        let item = cache.iter().find(|&item| item.name == "a").unwrap();
+        let caches = create_test_cache_ns1(); // calls create_cache
+        let item = caches.iter().find(|&item| item.name == "a").unwrap();
         assert_eq!(FlagState::Disabled, item.state);
         assert_eq!(Permission::ReadOnly, item.permission);
     }
 
     #[test]
     fn test_dump_text_format() {
-        let cache = create_test_cache();
-        let bytes = dump_cache(cache, DumpFormat::Text).unwrap();
+        let caches = vec![create_test_cache_ns1()];
+        let bytes = dump_cache(caches, DumpFormat::Text).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
         assert!(text.contains("a: Disabled"));
     }
@@ -183,8 +210,8 @@ mod tests {
         use crate::protos::{ProtoFlagPermission, ProtoFlagState, ProtoTracepoint};
         use protobuf::Message;
 
-        let cache = create_test_cache();
-        let bytes = dump_cache(cache, DumpFormat::Protobuf).unwrap();
+        let caches = vec![create_test_cache_ns1()];
+        let bytes = dump_cache(caches, DumpFormat::Protobuf).unwrap();
         let actual = ProtoParsedFlags::parse_from_bytes(&bytes).unwrap();
 
         assert_eq!(
@@ -194,7 +221,7 @@ mod tests {
 
         let item =
             actual.parsed_flag.iter().find(|item| item.name == Some("b".to_string())).unwrap();
-        assert_eq!(item.namespace(), "ns");
+        assert_eq!(item.namespace(), "ns1");
         assert_eq!(item.name(), "b");
         assert_eq!(item.description(), "Description of b");
         assert_eq!(item.state(), ProtoFlagState::DISABLED);
@@ -204,5 +231,24 @@ mod tests {
         tp.set_state(ProtoFlagState::DISABLED);
         tp.set_permission(ProtoFlagPermission::READ_WRITE);
         assert_eq!(item.trace, vec![tp]);
+    }
+
+    #[test]
+    fn test_dump_multiple_caches() {
+        let caches = vec![create_test_cache_ns1(), create_test_cache_ns2()];
+        let bytes = dump_cache(caches, DumpFormat::Protobuf).unwrap();
+        let dump = ProtoParsedFlags::parse_from_bytes(&bytes).unwrap();
+        assert_eq!(
+            dump.parsed_flag
+                .iter()
+                .map(|parsed_flag| format!("{}/{}", parsed_flag.namespace(), parsed_flag.name()))
+                .collect::<Vec<_>>(),
+            vec!["ns1/a".to_string(), "ns1/b".to_string(), "ns2/c".to_string()]
+        );
+
+        let caches = vec![create_test_cache_ns2(), create_test_cache_ns1()];
+        let bytes = dump_cache(caches, DumpFormat::Protobuf).unwrap();
+        let dump_reversed_input = ProtoParsedFlags::parse_from_bytes(&bytes).unwrap();
+        assert_eq!(dump, dump_reversed_input);
     }
 }
