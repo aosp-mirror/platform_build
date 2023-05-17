@@ -23,7 +23,7 @@ use std::io::Read;
 use std::path::PathBuf;
 
 use crate::aconfig::{FlagDeclarations, FlagValue};
-use crate::cache::Cache;
+use crate::cache::{Cache, CacheBuilder};
 use crate::codegen_cpp::generate_cpp_code;
 use crate::codegen_java::generate_java_code;
 use crate::protos::ProtoParsedFlags;
@@ -59,7 +59,7 @@ pub fn create_cache(
     declarations: Vec<Input>,
     values: Vec<Input>,
 ) -> Result<Cache> {
-    let mut cache = Cache::new(namespace.to_owned())?;
+    let mut builder = CacheBuilder::new(namespace.to_owned())?;
 
     for mut input in declarations {
         let mut contents = String::new();
@@ -74,7 +74,7 @@ pub fn create_cache(
             dec_list.namespace
         );
         for d in dec_list.flags.into_iter() {
-            cache.add_flag_declaration(input.source.clone(), d)?;
+            builder.add_flag_declaration(input.source.clone(), d)?;
         }
     }
 
@@ -85,11 +85,11 @@ pub fn create_cache(
             .with_context(|| format!("Failed to parse {}", input.source))?;
         for v in values_list {
             // TODO: warn about flag values that do not take effect?
-            let _ = cache.add_flag_value(input.source.clone(), v);
+            let _ = builder.add_flag_value(input.source.clone(), v);
         }
     }
 
-    Ok(cache)
+    Ok(builder.build())
 }
 
 pub fn create_java_lib(cache: &Cache) -> Result<OutputFile> {
