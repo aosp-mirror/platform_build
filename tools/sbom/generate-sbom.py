@@ -265,8 +265,8 @@ def get_package_download_location(metadata_file_path):
 
 def get_sbom_fragments(installed_file_metadata, metadata_file_path):
   """Return SPDX fragment of source/prebuilt packages, which usually contains a SOURCE/PREBUILT
-  package, a UPSTREAM package if it's a source package and a external SBOM document reference if
-  it's a prebuilt package with sbom_ref defined in its METADATA file.
+  package, a UPSTREAM package and an external SBOM document reference if sbom_ref defined in its
+  METADATA file.
 
   See go/android-spdx and go/android-sbom-gen for more details.
   """
@@ -303,25 +303,33 @@ def get_sbom_fragments(installed_file_metadata, metadata_file_path):
     prebuilt_package = sbom_data.Package(id=prebuilt_package_id,
                                          name=name,
                                          download_location=sbom_data.VALUE_NONE,
-                                         version=args.build_version,
+                                         version=version if version else args.build_version,
                                          supplier='Organization: ' + args.product_mfr)
-    packages.append(prebuilt_package)
 
-    if metadata_file_path:
-      metadata_proto = metadata_file_protos[metadata_file_path]
-      if metadata_proto.third_party.WhichOneof('sbom') == 'sbom_ref':
-        sbom_url = metadata_proto.third_party.sbom_ref.url
-        sbom_checksum = metadata_proto.third_party.sbom_ref.checksum
-        upstream_element_id = metadata_proto.third_party.sbom_ref.element_id
-        if sbom_url and sbom_checksum and upstream_element_id:
-          doc_ref_id = f'DocumentRef-{PKG_UPSTREAM}-{encode_for_spdxid(name)}'
-          external_doc_ref = sbom_data.DocumentExternalReference(id=doc_ref_id,
-                                                                 uri=sbom_url,
-                                                                 checksum=sbom_checksum)
-          relationships.append(
-            sbom_data.Relationship(id1=prebuilt_package_id,
-                                   relationship=sbom_data.RelationshipType.VARIANT_OF,
-                                   id2=doc_ref_id + ':' + upstream_element_id))
+    upstream_package_id = new_package_id(name, PKG_UPSTREAM)
+    upstream_package = sbom_data.Package(id=upstream_package_id, name=name, version = version,
+                                         supplier=('Organization: ' + homepage) if homepage else sbom_data.VALUE_NOASSERTION,
+                                         download_location=download_location)
+    packages += [prebuilt_package, upstream_package]
+    relationships.append(sbom_data.Relationship(id1=prebuilt_package_id,
+                                                relationship=sbom_data.RelationshipType.VARIANT_OF,
+                                                id2=upstream_package_id))
+
+  if metadata_file_path:
+    metadata_proto = metadata_file_protos[metadata_file_path]
+    if metadata_proto.third_party.WhichOneof('sbom') == 'sbom_ref':
+      sbom_url = metadata_proto.third_party.sbom_ref.url
+      sbom_checksum = metadata_proto.third_party.sbom_ref.checksum
+      upstream_element_id = metadata_proto.third_party.sbom_ref.element_id
+      if sbom_url and sbom_checksum and upstream_element_id:
+        doc_ref_id = f'DocumentRef-{PKG_UPSTREAM}-{encode_for_spdxid(name)}'
+        external_doc_ref = sbom_data.DocumentExternalReference(id=doc_ref_id,
+                                                               uri=sbom_url,
+                                                               checksum=sbom_checksum)
+        relationships.append(
+          sbom_data.Relationship(id1=upstream_package_id,
+                                 relationship=sbom_data.RelationshipType.VARIANT_OF,
+                                 id2=doc_ref_id + ':' + upstream_element_id))
 
   return external_doc_ref, packages, relationships
 
