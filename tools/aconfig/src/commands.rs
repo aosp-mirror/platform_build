@@ -24,6 +24,7 @@ use std::path::PathBuf;
 
 use crate::aconfig::{FlagDeclarations, FlagValue};
 use crate::cache::Cache;
+use crate::codegen_cpp::generate_cpp_code;
 use crate::codegen_java::generate_java_code;
 use crate::protos::ProtoParsedFlags;
 
@@ -91,8 +92,12 @@ pub fn create_cache(
     Ok(cache)
 }
 
-pub fn generate_code(cache: &Cache) -> Result<OutputFile> {
+pub fn create_java_lib(cache: &Cache) -> Result<OutputFile> {
     generate_java_code(cache)
+}
+
+pub fn create_cpp_lib(cache: &Cache) -> Result<OutputFile> {
+    generate_cpp_code(cache)
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
