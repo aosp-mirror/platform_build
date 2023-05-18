@@ -312,7 +312,7 @@ function set_lunch_paths()
     # would prevent exporting type info from those packages.
     #
     # http://b/266688086
-    export ANDROID_PYTHONPATH=$T/development/python-packages/adb:$T/development/python-packages:
+    export ANDROID_PYTHONPATH=$T/development/python-packages/adb:$T/development/python-packages/gdbrunner:$T/development/python-packages:
     if [ -n $VENDOR_PYTHONPATH ]; then
         ANDROID_PYTHONPATH=$ANDROID_PYTHONPATH$VENDOR_PYTHONPATH
     fi
