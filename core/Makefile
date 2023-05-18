@@ -7303,17 +7303,9 @@ FUZZ_SHARED_DEPS := $(call copy-many-files,$(strip $(FUZZ_TARGET_SHARED_DEPS_INS
 haiku: $(SOONG_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_FUZZ_TARGETS)
 $(call dist-for-goals,haiku,$(SOONG_FUZZ_PACKAGING_ARCH_MODULES))
 $(call dist-for-goals,haiku,$(PRODUCT_OUT)/module-info.json)
-
-.PHONY: haiku-java-device
-haiku-java-device: $(SOONG_JAVA_FUZZ_DEVICE_PACKAGING_ARCH_MODULES) $(ALL_JAVA_FUZZ_DEVICE_TARGETS)
-$(call dist-for-goals,haiku-java-device,$(SOONG_JAVA_FUZZ_DEVICE_PACKAGING_ARCH_MODULES))
-$(call dist-for-goals,haiku-java-device,$(PRODUCT_OUT)/module-info.json)
-
-.PHONY: haiku-java-host
-haiku-java-host: $(SOONG_JAVA_FUZZ_HOST_PACKAGING_ARCH_MODULES) $(ALL_JAVA_FUZZ_HOST_TARGETS)
-$(call dist-for-goals,haiku-java-host,$(SOONG_JAVA_FUZZ_HOST_PACKAGING_ARCH_MODULES))
-$(call dist-for-goals,haiku-java-host,$(PRODUCT_OUT)/module-info.json)
-
+.PHONY: haiku-java
+haiku-java: $(SOONG_JAVA_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_JAVA_FUZZ_TARGETS)
+$(call dist-for-goals,haiku-java,$(SOONG_JAVA_FUZZ_PACKAGING_ARCH_MODULES))
 .PHONY: haiku-rust
 haiku-rust: $(SOONG_RUST_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_RUST_FUZZ_TARGETS)
 $(call dist-for-goals,haiku-rust,$(SOONG_RUST_FUZZ_PACKAGING_ARCH_MODULES))
