@@ -1001,6 +1001,42 @@ $(eval $(call declare-0p-target,$(INSTALLED_FILES_JSON_RAMDISK)))
 
 BUILT_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
 
+
+ifneq ($(BOARD_KERNEL_MODULES_16K),)
+
+TARGET_OUT_RAMDISK_16K := $(PRODUCT_OUT)/ramdisk_16k
+BUILT_RAMDISK_16K_TARGET := $(PRODUCT_OUT)/ramdisk_16k.img
+RAMDISK_16K_STAGING_DIR := $(call intermediates-dir-for,PACKAGING,depmod_ramdisk_16k)
+
+$(BUILT_RAMDISK_16K_TARGET): $(DEPMOD)
+$(BUILT_RAMDISK_16K_TARGET): $(call copy-many-files,$(foreach file,$(BOARD_KERNEL_MODULES_16K),$(file):$(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0/$(notdir $(file))))
+	$(DEPMOD) -b $(RAMDISK_16K_STAGING_DIR) 0.0
+	for MODULE in $(BOARD_KERNEL_MODULES_16K); do \
+		basename $$MODULE >> $(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0/modules.load ; \
+	done;
+	mkdir -p $(TARGET_OUT_RAMDISK_16K)/lib
+	rm -rf $(TARGET_OUT_RAMDISK_16K)/lib/modules
+	cp -r $(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0 $(TARGET_OUT_RAMDISK_16K)/lib/modules
+	$(MKBOOTFS) $(TARGET_OUT_RAMDISK_16K) > $@
+
+# Builds a ramdisk using modules defined in BOARD_KERNEL_MODULES_16K
+ramdisk_16k: $(BUILT_RAMDISK_16K_TARGET)
+.PHONY: ramdisk_16k
+
+endif
+
+ifneq ($(BOARD_KERNEL_PATH_16K),)
+BUILT_KERNEL_16K_TARGET := $(PRODUCT_OUT)/kernel_16k
+
+$(eval $(call copy-one-file,$(BOARD_KERNEL_PATH_16K),$(BUILT_KERNEL_16K_TARGET)))
+
+# Copies BOARD_KERNEL_PATH_16K to output directory as is
+kernel_16k: $(BUILT_KERNEL_16K_TARGET)
+.PHONY: kernel_16k
+
+endif
+
+
 ifeq ($(BOARD_RAMDISK_USE_LZ4),true)
 # -l enables the legacy format used by the Linux kernel
 COMPRESSION_COMMAND_DEPS := $(LZ4)
