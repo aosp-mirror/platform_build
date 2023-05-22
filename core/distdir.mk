@@ -45,6 +45,18 @@ $(foreach file,$(2), \
     $(eval _all_dist_goal_output_pairs += $$(goal):$$(dst))))
 endef
 
+define add_file_name_tag_suffix
+$(basename $(notdir $1))-FILE_NAME_TAG_PLACEHOLDER$(suffix $1)
+endef
+
+# This function appends suffix FILE_NAME_TAG_PLACEHOLDER from the input file
+# $(1): a list of goals  (e.g. droid, sdk, ndk). These must be PHONY
+# $(2): the dist files to add to those goals.
+define dist-for-goals-with-filenametag
+$(if $(strip $(2)), \
+  $(foreach file,$(2), \
+    $(call dist-for-goals,$(1),$(file):$(call add_file_name_tag_suffix,$(file)))))
+endef
 .PHONY: shareprojects
 
 define __share-projects-rule
@@ -209,4 +221,4 @@ $(strip \
           fi))
 endef
 
-.KATI_READONLY := dist-for-goals dist-write-file
+.KATI_READONLY := dist-for-goals dist-write-file dist-for-goals-with-filenametag
