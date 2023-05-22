@@ -56,7 +56,7 @@ fn cli() -> Command {
         )
         .subcommand(
             Command::new("dump")
-                .arg(Arg::new("cache").long("cache").required(true))
+                .arg(Arg::new("cache").long("cache").action(ArgAction::Append).required(true))
                 .arg(
                     Arg::new("format")
                         .long("format")
@@ -130,11 +130,14 @@ fn main() -> Result<()> {
             write_output_file_realtive_to_dir(&dir, &generated_file)?;
         }
         Some(("dump", sub_matches)) => {
-            let path = get_required_arg::<String>(sub_matches, "cache")?;
-            let file = fs::File::open(path)?;
-            let cache = Cache::read_from_reader(file)?;
+            let mut caches = Vec::new();
+            for path in sub_matches.get_many::<String>("cache").unwrap_or_default() {
+                let file = fs::File::open(path)?;
+                let cache = Cache::read_from_reader(file)?;
+                caches.push(cache);
+            }
             let format = get_required_arg::<DumpFormat>(sub_matches, "format")?;
-            let output = commands::dump_cache(cache, *format)?;
+            let output = commands::dump_cache(caches, *format)?;
             let path = get_required_arg::<String>(sub_matches, "out")?;
             let mut file: Box<dyn Write> = if *path == "-" {
                 Box::new(io::stdout())
