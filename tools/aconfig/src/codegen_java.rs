@@ -71,13 +71,14 @@ fn create_class_element(item: &Item) -> ClassElement {
 mod tests {
     use super::*;
     use crate::aconfig::{FlagDeclaration, FlagValue};
+    use crate::cache::CacheBuilder;
     use crate::commands::Source;
 
     #[test]
     fn test_generate_java_code() {
         let namespace = "com.example";
-        let mut cache = Cache::new(namespace.to_string()).unwrap();
-        cache
+        let mut builder = CacheBuilder::new(namespace.to_string()).unwrap();
+        builder
             .add_flag_declaration(
                 Source::File("test.txt".to_string()),
                 FlagDeclaration {
@@ -85,8 +86,7 @@ mod tests {
                     description: "buildtime enable".to_string(),
                 },
             )
-            .unwrap();
-        cache
+            .unwrap()
             .add_flag_declaration(
                 Source::File("test2.txt".to_string()),
                 FlagDeclaration {
@@ -94,8 +94,7 @@ mod tests {
                     description: "runtime disable".to_string(),
                 },
             )
-            .unwrap();
-        cache
+            .unwrap()
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
@@ -106,6 +105,7 @@ mod tests {
                 },
             )
             .unwrap();
+        let cache = builder.build();
         let expect_content = r#"package com.example;
 
         import android.provider.DeviceConfig;

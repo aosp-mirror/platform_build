@@ -64,13 +64,14 @@ fn create_class_element(item: &Item) -> ClassElement {
 mod tests {
     use super::*;
     use crate::aconfig::{FlagDeclaration, FlagState, FlagValue, Permission};
+    use crate::cache::CacheBuilder;
     use crate::commands::Source;
 
     #[test]
     fn test_cpp_codegen_build_time_flag_only() {
         let namespace = "my_namespace";
-        let mut cache = Cache::new(namespace.to_string()).unwrap();
-        cache
+        let mut builder = CacheBuilder::new(namespace.to_string()).unwrap();
+        builder
             .add_flag_declaration(
                 Source::File("aconfig_one.txt".to_string()),
                 FlagDeclaration {
@@ -78,8 +79,7 @@ mod tests {
                     description: "buildtime disable".to_string(),
                 },
             )
-            .unwrap();
-        cache
+            .unwrap()
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
@@ -89,8 +89,7 @@ mod tests {
                     permission: Permission::ReadOnly,
                 },
             )
-            .unwrap();
-        cache
+            .unwrap()
             .add_flag_declaration(
                 Source::File("aconfig_two.txt".to_string()),
                 FlagDeclaration {
@@ -98,8 +97,7 @@ mod tests {
                     description: "buildtime enable".to_string(),
                 },
             )
-            .unwrap();
-        cache
+            .unwrap()
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
@@ -110,6 +108,7 @@ mod tests {
                 },
             )
             .unwrap();
+        let cache = builder.build();
         let expect_content = r#"#ifndef my_namespace_HEADER_H
         #define my_namespace_HEADER_H
         #include "my_namespace.h"
@@ -144,8 +143,8 @@ mod tests {
     #[test]
     fn test_cpp_codegen_runtime_flag() {
         let namespace = "my_namespace";
-        let mut cache = Cache::new(namespace.to_string()).unwrap();
-        cache
+        let mut builder = CacheBuilder::new(namespace.to_string()).unwrap();
+        builder
             .add_flag_declaration(
                 Source::File("aconfig_one.txt".to_string()),
                 FlagDeclaration {
@@ -153,8 +152,7 @@ mod tests {
                     description: "buildtime disable".to_string(),
                 },
             )
-            .unwrap();
-        cache
+            .unwrap()
             .add_flag_declaration(
                 Source::File("aconfig_two.txt".to_string()),
                 FlagDeclaration {
@@ -162,8 +160,7 @@ mod tests {
                     description: "runtime enable".to_string(),
                 },
             )
-            .unwrap();
-        cache
+            .unwrap()
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
@@ -174,6 +171,7 @@ mod tests {
                 },
             )
             .unwrap();
+        let cache = builder.build();
         let expect_content = r#"#ifndef my_namespace_HEADER_H
         #define my_namespace_HEADER_H
         #include "my_namespace.h"
