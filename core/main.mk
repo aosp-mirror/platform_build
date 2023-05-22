@@ -47,9 +47,9 @@ $(KATI_obsolete_var BUILD_HOSTNAME,Use BUILD_HOSTNAME_FROM_FILE instead)
 $(KATI_obsolete_var FILE_NAME_TAG,https://android.googlesource.com/platform/build/+/master/Changes.md#FILE_NAME_TAG)
 
 $(BUILD_NUMBER_FILE):
-	touch -a $@
+	# empty rule to prevent dangling rule error for a file that is written by soong_ui
 $(BUILD_HOSTNAME_FILE):
-	touch -a $@
+	# empty rule to prevent dangling rule error for a file that is written by soong_ui
 
 .KATI_RESTAT: $(BUILD_NUMBER_FILE)
 .KATI_RESTAT: $(BUILD_HOSTNAME_FILE)
