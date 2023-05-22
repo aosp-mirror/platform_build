@@ -1382,7 +1382,7 @@ modules_to_install := $(sort \
     $(CUSTOM_MODULES) \
   )
 
-# Dedpulicate compatibility suite dist files across modules and packages before
+# Deduplicate compatibility suite dist files across modules and packages before
 # copying them to their requested locations. Assign the eval result to an unused
 # var to prevent Make from trying to make a sense of it.
 _unused := $(call copy-many-files, $(sort $(ALL_COMPATIBILITY_DIST_FILES)))
