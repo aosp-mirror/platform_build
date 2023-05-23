@@ -75,9 +75,6 @@ INTERNAL_DALVIK_MODULES:=
 # All findbugs xml files
 ALL_FINDBUGS_FILES:=
 
-# GPL module license files
-ALL_GPL_MODULE_LICENSE_FILES:=
-
 # Packages with certificate violation
 CERTIFICATE_VIOLATION_MODULES :=
 
@@ -897,7 +894,8 @@ $(call declare-container-license-metadata,$(1),SPDX-license-identifier-Apache-2.
 endef
 
 ###########################################################
-## Declare license dependencies $(2) for non-module target $(1)
+## Declare license dependencies $(2) with optional colon-separated
+## annotations for non-module target $(1)
 ###########################################################
 define declare-license-deps
 $(strip \
@@ -909,7 +907,8 @@ $(strip \
 endef
 
 ###########################################################
-## Declare license dependencies $(2) for non-module container-type target $(1)
+## Declare license dependencies $(2) with optional colon-separated
+## annotations for non-module container-type target $(1)
 ##
 ## Container-type targets are targets like .zip files that
 ## merely aggregate other files.

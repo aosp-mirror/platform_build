@@ -44,10 +44,16 @@ test_tools += $(test_suite_tools)
 
 # The JDK to package into the test suite zip file.  Always package the linux JDK.
 test_suite_jdk_dir := $(ANDROID_JAVA_HOME)/../linux-x86
+ifndef test_suite_jdk_files
+  # This file gets included many times, so make sure we only run the $(shell) once.
+  # Otherwise it will slow down every build due to all copies of it being rerun when kati
+  # checks the stamp file.
+  test_suite_jdk_files :=$= $(shell find $(test_suite_jdk_dir) -type f | sort)
+endif
 test_suite_jdk := $(call intermediates-dir-for,PACKAGING,$(test_suite_name)_jdk,HOST)/jdk.zip
 $(test_suite_jdk): PRIVATE_JDK_DIR := $(test_suite_jdk_dir)
 $(test_suite_jdk): PRIVATE_SUBDIR := $(test_suite_subdir)
-$(test_suite_jdk): $(shell find $(test_suite_jdk_dir) -type f | sort)
+$(test_suite_jdk): $(test_suite_jdk_files)
 $(test_suite_jdk): $(SOONG_ZIP)
 	$(SOONG_ZIP) -o $@ -P $(PRIVATE_SUBDIR)/jdk -C $(PRIVATE_JDK_DIR) -D $(PRIVATE_JDK_DIR) -sha256
 

@@ -273,7 +273,6 @@ from ota_utils import (UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata,
                        PayloadGenerator, SECURITY_PATCH_LEVEL_PROP_NAME, ExtractTargetFiles, CopyTargetFilesDir)
 from common import DoesInputFileContain, IsSparseImage
 import target_files_diff
-from check_target_files_vintf import CheckVintfIfTrebleEnabled
 from non_ab_ota import GenerateNonAbOtaPackage
 from payload_signer import PayloadSigner
 
@@ -526,8 +525,7 @@ def GetTargetFilesZipWithoutPostinstallConfig(input_file):
 
 
 def ParseInfoDict(target_file_path):
-  with zipfile.ZipFile(target_file_path, 'r', allowZip64=True) as zfp:
-    return common.LoadInfoDict(zfp)
+  return common.LoadInfoDict(target_file_path)
 
 
 def GetTargetFilesZipForCustomVABCCompression(input_file, vabc_compression_param):
@@ -954,6 +952,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   target_info.info_dict['ab_partitions'] = common.ReadFromInputFile(target_file,
                                                                     AB_PARTITIONS).strip().split("\n")
 
+  from check_target_files_vintf import CheckVintfIfTrebleEnabled
   CheckVintfIfTrebleEnabled(target_file, target_info)
 
   # Metadata to comply with Android OTA package format.

@@ -53,8 +53,7 @@ func starlarktestSetup() {
 }
 
 // Common setup for the tests: create thread, change to the test directory
-func testSetup(t *testing.T, env []string) *starlark.Thread {
-	setup(env)
+func testSetup(t *testing.T) *starlark.Thread {
 	thread := &starlark.Thread{
 		Load: func(thread *starlark.Thread, module string) (starlark.StringDict, error) {
 			if module == "assert.star" {
@@ -72,14 +71,15 @@ func testSetup(t *testing.T, env []string) *starlark.Thread {
 func dataDir() string {
 	_, thisSrcFile, _, _ := runtime.Caller(0)
 	return filepath.Join(filepath.Dir(thisSrcFile), "testdata")
-
 }
 
 func exerciseStarlarkTestFile(t *testing.T, starFile string) {
 	// In order to use "assert.star" from go/starlark.net/starlarktest in the tests, provide:
 	//  * load function that handles "assert.star"
 	//  * starlarktest.DataFile function that finds its location
-	setup(nil)
+	if err := os.Chdir(dataDir()); err != nil {
+		t.Fatal(err)
+	}
 	thread := &starlark.Thread{
 		Load: func(thread *starlark.Thread, module string) (starlark.StringDict, error) {
 			if module == "assert.star" {
@@ -90,21 +90,9 @@ func exerciseStarlarkTestFile(t *testing.T, starFile string) {
 	starlarktest.SetReporter(thread, t)
 	_, thisSrcFile, _, _ := runtime.Caller(0)
 	filename := filepath.Join(filepath.Dir(thisSrcFile), starFile)
-	if _, err := starlark.ExecFile(thread, filename, nil, builtins); err != nil {
-		if err, ok := err.(*starlark.EvalError); ok {
-			t.Fatal(err.Backtrace())
-		}
-		t.Fatal(err)
-	}
-}
-
-func TestCliAndEnv(t *testing.T) {
-	// TODO(asmundak): convert this to use exerciseStarlarkTestFile
-	if err := os.Setenv("TEST_ENVIRONMENT_FOO", "test_environment_foo"); err != nil {
-		t.Fatal(err)
-	}
-	thread := testSetup(t, []string{"CLI_FOO=foo"})
-	if _, err := starlark.ExecFile(thread, "cli_and_env.star", nil, builtins); err != nil {
+	thread.SetLocal(executionModeKey, ExecutionModeRbc)
+	thread.SetLocal(shellKey, "/bin/sh")
+	if _, err := starlark.ExecFile(thread, filename, nil, rbcBuiltins); err != nil {
 		if err, ok := err.(*starlark.EvalError); ok {
 			t.Fatal(err.Backtrace())
 		}
@@ -114,11 +102,8 @@ func TestCliAndEnv(t *testing.T) {
 
 func TestFileOps(t *testing.T) {
 	// TODO(asmundak): convert this to use exerciseStarlarkTestFile
-	if err := os.Setenv("TEST_DATA_DIR", dataDir()); err != nil {
-		t.Fatal(err)
-	}
-	thread := testSetup(t, nil)
-	if _, err := starlark.ExecFile(thread, "file_ops.star", nil, builtins); err != nil {
+	thread := testSetup(t)
+	if _, err := starlark.ExecFile(thread, "file_ops.star", nil, rbcBuiltins); err != nil {
 		if err, ok := err.(*starlark.EvalError); ok {
 			t.Fatal(err.Backtrace())
 		}
@@ -128,7 +113,7 @@ func TestFileOps(t *testing.T) {
 
 func TestLoad(t *testing.T) {
 	// TODO(asmundak): convert this to use exerciseStarlarkTestFile
-	thread := testSetup(t, nil)
+	thread := testSetup(t)
 	thread.Load = func(thread *starlark.Thread, module string) (starlark.StringDict, error) {
 		if module == "assert.star" {
 			return starlarktest.LoadAssertModule()
@@ -137,9 +122,12 @@ func TestLoad(t *testing.T) {
 		}
 	}
 	dir := dataDir()
+	if err := os.Chdir(filepath.Dir(dir)); err != nil {
+		t.Fatal(err)
+	}
 	thread.SetLocal(callerDirKey, dir)
-	LoadPathRoot = filepath.Dir(dir)
-	if _, err := starlark.ExecFile(thread, "load.star", nil, builtins); err != nil {
+	thread.SetLocal(executionModeKey, ExecutionModeRbc)
+	if _, err := starlark.ExecFile(thread, "testdata/load.star", nil, rbcBuiltins); err != nil {
 		if err, ok := err.(*starlark.EvalError); ok {
 			t.Fatal(err.Backtrace())
 		}
@@ -148,8 +136,5 @@ func TestLoad(t *testing.T) {
 }
 
 func TestShell(t *testing.T) {
-	if err := os.Setenv("TEST_DATA_DIR", dataDir()); err != nil {
-		t.Fatal(err)
-	}
 	exerciseStarlarkTestFile(t, "testdata/shell.star")
 }
