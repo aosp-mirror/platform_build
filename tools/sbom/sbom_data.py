@@ -80,6 +80,7 @@ class RelationshipType:
   DESCRIBES = 'DESCRIBES'
   VARIANT_OF = 'VARIANT_OF'
   GENERATED_FROM = 'GENERATED_FROM'
+  CONTAINS = 'CONTAINS'
 
 
 @dataclass

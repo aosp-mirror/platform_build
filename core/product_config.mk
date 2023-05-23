@@ -223,7 +223,7 @@ _product_config_saved_KATI_ALLOW_RULES := $(.KATI_ALLOW_RULES)
 endif
 
 ifeq (,$(current_product_makefile))
-  $(error Can not locate config makefile for product "$(TARGET_PRODUCT)")
+  $(error Cannot locate config makefile for product "$(TARGET_PRODUCT)")
 endif
 
 ifneq (,$(filter $(TARGET_PRODUCT),$(products_using_starlark_config)))
@@ -247,7 +247,7 @@ else
   endif
 
   $(shell build/soong/scripts/update_out $(OUT_DIR)/rbc/rbc_product_config_results.mk \
-    $(OUT_DIR)/rbcrun RBC_OUT="make,global" $(OUT_DIR)/rbc/launcher.rbc)
+    $(OUT_DIR)/rbcrun --mode=rbc $(OUT_DIR)/rbc/launcher.rbc)
   ifneq ($(.SHELLSTATUS),0)
     $(error product configuration runner failed: $(.SHELLSTATUS))
   endif

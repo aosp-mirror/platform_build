@@ -312,7 +312,7 @@ function set_lunch_paths()
     # would prevent exporting type info from those packages.
     #
     # http://b/266688086
-    export ANDROID_PYTHONPATH=$T/development/python-packages/adb:$T/development/python-packages:
+    export ANDROID_PYTHONPATH=$T/development/python-packages/adb:$T/development/python-packages/gdbrunner:$T/development/python-packages:
     if [ -n $VENDOR_PYTHONPATH ]; then
         ANDROID_PYTHONPATH=$ANDROID_PYTHONPATH$VENDOR_PYTHONPATH
     fi
@@ -804,13 +804,19 @@ function lunch()
 
     export TARGET_BUILD_APPS=
 
-    local product variant_and_version variant version
+    # Support either <product>-<variant> or <product>-<release>-<variant>
+    local product release_and_variant release variant
     product=${selection%%-*} # Trim everything after first dash
-    variant_and_version=${selection#*-} # Trim everything up to first dash
-    if [ "$variant_and_version" != "$selection" ]; then
-        variant=${variant_and_version%%-*}
-        if [ "$variant" != "$variant_and_version" ]; then
-            version=${variant_and_version#*-}
+    release_and_variant=${selection#*-} # Trim everything up to first dash
+    if [ "$release_and_variant" != "$selection" ]; then
+        local first=${release_and_variant%%-*} # Trim everything after first dash
+        if [ "$first" != "$release_and_variant" ]; then
+            # There is a 2nd dash, split into release-variant
+            release=$first # Everything up to the dash
+            variant=${release_and_variant#*-} # Trim everything up to dash
+        else
+            # There is not a 2nd dash, default to variant as the second param
+            variant=$first
         fi
     fi
 
@@ -823,7 +829,7 @@ function lunch()
 
     TARGET_PRODUCT=$product \
     TARGET_BUILD_VARIANT=$variant \
-    TARGET_PLATFORM_VERSION=$version \
+    TARGET_RELEASE=$release \
     build_build_var_cache
     if [ $? -ne 0 ]
     then
@@ -835,10 +841,10 @@ function lunch()
     fi
     export TARGET_PRODUCT=$(get_build_var TARGET_PRODUCT)
     export TARGET_BUILD_VARIANT=$(get_build_var TARGET_BUILD_VARIANT)
-    if [ -n "$version" ]; then
-      export TARGET_PLATFORM_VERSION=$(get_build_var TARGET_PLATFORM_VERSION)
+    if [ -n "$release" ]; then
+      export TARGET_RELEASE=$release
     else
-      unset TARGET_PLATFORM_VERSION
+      unset TARGET_RELEASE
     fi
     export TARGET_BUILD_TYPE=release
 
