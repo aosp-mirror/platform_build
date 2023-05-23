@@ -493,6 +493,24 @@ $(call dist-for-goals,foo,bar/baz)
 
 will copy `bar/baz` into `$DIST_DIR/baz` when `m foo dist` is run.
 
+#### FILE_NAME_TAG  {#FILE_NAME_TAG}
+
+To embed the `BUILD_NUMBER` (or for local builds, `eng.${USER}`), include
+`FILE_NAME_TAG_PLACEHOLDER` in the destination:
+
+``` make
+# you can use dist-for-goals-with-filenametag function
+$(call dist-for-goals-with-filenametag,foo,bar.zip)
+# or use FILE_NAME_TAG_PLACEHOLDER manually
+$(call dist-for-goals,foo,bar.zip:baz-FILE_NAME_TAG_PLACEHOLDER.zip)
+```
+
+Which will produce `$DIST_DIR/baz-1234567.zip` on build servers which set
+`BUILD_NUMBER=1234567`, or `$DIST_DIR/baz-eng.builder.zip` for local builds.
+
+If you just want to append `BUILD_NUMBER` at the end of basename, use
+`dist-for-goals-with-filenametag` instead of `dist-for-goals`.
+
 #### Renames during copy
 
 Instead of specifying just a file, a destination name can be specified,
