@@ -40,31 +40,23 @@ include $(BUILD_SYSTEM)/clang/config.mk
 # Write the build number to a file so it can be read back in
 # without changing the command line every time.  Avoids rebuilds
 # when using ninja.
-$(shell mkdir -p $(SOONG_OUT_DIR) && \
-    echo -n $(BUILD_NUMBER) > $(SOONG_OUT_DIR)/build_number.tmp; \
-    if ! cmp -s $(SOONG_OUT_DIR)/build_number.tmp $(SOONG_OUT_DIR)/build_number.txt; then \
-        mv $(SOONG_OUT_DIR)/build_number.tmp $(SOONG_OUT_DIR)/build_number.txt; \
-    else \
-        rm $(SOONG_OUT_DIR)/build_number.tmp; \
-    fi)
 BUILD_NUMBER_FILE := $(SOONG_OUT_DIR)/build_number.txt
-.KATI_READONLY := BUILD_NUMBER_FILE
 $(KATI_obsolete_var BUILD_NUMBER,See https://android.googlesource.com/platform/build/+/master/Changes.md#BUILD_NUMBER)
+BUILD_HOSTNAME_FILE := $(SOONG_OUT_DIR)/build_hostname.txt
+$(KATI_obsolete_var BUILD_HOSTNAME,Use BUILD_HOSTNAME_FROM_FILE instead)
+$(KATI_obsolete_var FILE_NAME_TAG,https://android.googlesource.com/platform/build/+/master/Changes.md#FILE_NAME_TAG)
+
 $(BUILD_NUMBER_FILE):
-	touch $@
+	touch -a $@
+$(BUILD_HOSTNAME_FILE):
+	touch -a $@
+
+.KATI_RESTAT: $(BUILD_NUMBER_FILE)
+.KATI_RESTAT: $(BUILD_HOSTNAME_FILE)
 
 DATE_FROM_FILE := date -d @$(BUILD_DATETIME_FROM_FILE)
 .KATI_READONLY := DATE_FROM_FILE
 
-# Pick a reasonable string to use to identify files.
-ifeq ($(strip $(HAS_BUILD_NUMBER)),false)
-  # BUILD_NUMBER has a timestamp in it, which means that
-  # it will change every time.  Pick a stable value.
-  FILE_NAME_TAG := eng.$(BUILD_USERNAME)
-else
-  FILE_NAME_TAG := $(file <$(BUILD_NUMBER_FILE))
-endif
-.KATI_READONLY := FILE_NAME_TAG
 
 # Make an empty directory, which can be used to make empty jars
 EMPTY_DIRECTORY := $(OUT_DIR)/empty
@@ -1751,15 +1743,15 @@ else ifneq ($(TARGET_BUILD_APPS),)
   endif
 
   $(PROGUARD_DICT_ZIP) : $(apps_only_installed_files)
-  $(call dist-for-goals,apps_only, $(PROGUARD_DICT_ZIP) $(PROGUARD_DICT_MAPPING))
+  $(call dist-for-goals-with-filenametag,apps_only, $(PROGUARD_DICT_ZIP) $(PROGUARD_DICT_ZIP) $(PROGUARD_DICT_MAPPING))
   $(call declare-container-license-deps,$(PROGUARD_DICT_ZIP),$(apps_only_installed_files),$(PRODUCT_OUT)/:/)
 
   $(PROGUARD_USAGE_ZIP) : $(apps_only_installed_files)
-  $(call dist-for-goals,apps_only, $(PROGUARD_USAGE_ZIP))
+  $(call dist-for-goals-with-filenametag,apps_only, $(PROGUARD_USAGE_ZIP))
   $(call declare-container-license-deps,$(PROGUARD_USAGE_ZIP),$(apps_only_installed_files),$(PRODUCT_OUT)/:/)
 
   $(SYMBOLS_ZIP) : $(apps_only_installed_files)
-  $(call dist-for-goals,apps_only, $(SYMBOLS_ZIP) $(SYMBOLS_MAPPING))
+  $(call dist-for-goals-with-filenametag,apps_only, $(SYMBOLS_ZIP) $(SYMBOLS_MAPPING))
   $(call declare-container-license-deps,$(SYMBOLS_ZIP),$(apps_only_installed_files),$(PRODUCT_OUT)/:/)
 
   $(COVERAGE_ZIP) : $(apps_only_installed_files)
@@ -1805,10 +1797,9 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
   # avoid disting targets that would cause building framework java sources,
   # which we want to avoid in an unbundled build.
 
-  $(call dist-for-goals, droidcore-unbundled, \
+  $(call dist-for-goals-with-filenametag, droidcore-unbundled, \
     $(INTERNAL_UPDATE_PACKAGE_TARGET) \
     $(INTERNAL_OTA_PACKAGE_TARGET) \
-    $(INTERNAL_OTA_METADATA) \
     $(INTERNAL_OTA_PARTIAL_PACKAGE_TARGET) \
     $(BUILT_RAMDISK_16K_TARGET) \
     $(BUILT_KERNEL_16K_TARGET) \
@@ -1818,6 +1809,11 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
     $(PROGUARD_DICT_ZIP) \
     $(PROGUARD_DICT_MAPPING) \
     $(PROGUARD_USAGE_ZIP) \
+    $(BUILT_TARGET_FILES_PACKAGE) \
+  )
+
+  $(call dist-for-goals, droidcore-unbundled, \
+    $(INTERNAL_OTA_METADATA) \
     $(COVERAGE_ZIP) \
     $(INSTALLED_FILES_FILE) \
     $(INSTALLED_FILES_JSON) \
@@ -1845,7 +1841,6 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
     $(INSTALLED_ODM_BUILD_PROP_TARGET):build.prop-odm \
     $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET):build.prop-system_ext \
     $(INSTALLED_RAMDISK_BUILD_PROP_TARGET):build.prop-ramdisk \
-    $(BUILT_TARGET_FILES_PACKAGE) \
     $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
     $(INSTALLED_MISC_INFO_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
@@ -1857,7 +1852,7 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
     $(call dist-for-goals, droidcore-unbundled, $(f)))
 
   ifneq ($(ANDROID_BUILD_EMBEDDED),true)
-    $(call dist-for-goals, droidcore, \
+    $(call dist-for-goals-with-filenametag, droidcore, \
       $(APPS_ZIP) \
       $(INTERNAL_EMULATOR_PACKAGE_TARGET) \
     )
@@ -1957,10 +1952,8 @@ docs: $(ALL_DOCS)
 ifeq ($(HOST_OS),linux)
 ALL_SDK_TARGETS := $(INTERNAL_SDK_TARGET)
 sdk: $(ALL_SDK_TARGETS)
-$(call dist-for-goals,sdk, \
-    $(ALL_SDK_TARGETS) \
-    $(INSTALLED_BUILD_PROP_TARGET) \
-)
+$(call dist-for-goals-with-filenametag,sdk,$(ALL_SDK_TARGETS))
+$(call dist-for-goals,sdk,$(INSTALLED_BUILD_PROP_TARGET))
 endif
 
 # umbrella targets to assit engineers in verifying builds
