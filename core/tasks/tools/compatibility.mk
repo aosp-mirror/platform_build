@@ -118,6 +118,9 @@ $(compatibility_zip): PRIVATE_RESOURCES := $(compatibility_zip_resources)
 $(compatibility_zip): PRIVATE_JDK := $(test_suite_jdk)
 $(compatibility_zip): PRIVATE_tests_list := $(out_dir)-tests_list
 $(compatibility_zip): PRIVATE_tests_list_zip := $(compatibility_tests_list_zip)
+ifeq ($(strip $(HAS_BUILD_NUMBER)),true)
+$(compatibility_zip): $(BUILD_NUMBER_FILE)
+endif
 $(compatibility_zip): $(compatibility_zip_deps) | $(ADB) $(ACP)
 # Make dir structure
 	mkdir -p $(PRIVATE_OUT_DIR)/tools $(PRIVATE_OUT_DIR)/testcases
