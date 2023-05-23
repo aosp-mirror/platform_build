@@ -18,14 +18,12 @@ Checks and generates a report for gts modules that should be open-sourced.
 
 Usage:
   generate_gts_open_source_report.py
-    --gtsv-metalic [gts-verifier meta_lic]
     --gts-test-metalic [android-gts meta_lic]
     --checkshare [COMPLIANCE_CHECKSHARE]
     --gts-test-dir [directory of android-gts]
     --output [output file]
 
 Output example:
-  GTS-Verifier: PASS/FAIL
   GTS-Modules: PASS/FAIL
     GtsIncrementalInstallTestCases_BackgroundProcess
     GtsUnsignedNetworkStackTestCases
@@ -39,9 +37,6 @@ def _get_args():
     """Parses input arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--gtsv-metalic', required=True,
-        help='license meta_lic file path of gts-verifier.zip')
-    parser.add_argument(
         '--gts-test-metalic', required=True,
         help='license meta_lic file path of android-gts.zip')
     parser.add_argument(
@@ -54,23 +49,6 @@ def _get_args():
         '-o', '--output', required=True,
         help='file path of the output report')
     return parser.parse_args()
-
-def _check_gtsv(checkshare: str, gtsv_metalic: str) -> str:
-    """Checks gts-verifier license.
-
-    Args:
-      checkshare: path of the COMPLIANCE_CHECKSHARE tool
-      gtsv_metalic: license meta_lic file path of gts-verifier.zip
-
-    Returns:
-      PASS when gts-verifier.zip doesn't need to be shared, and FAIL
-      when gts-verifier.zip need to be shared.
-    """
-    cmd = f'{checkshare} {gtsv_metalic}'
-    proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
-    proc.communicate()
-    return 'PASS' if proc.returncode == 0 else 'FAIL'
 
 def _check_gts_test(checkshare: str, gts_test_metalic: str,
                     gts_test_dir: str) -> tuple[str, set[str]]:
@@ -109,15 +87,12 @@ def _check_gts_test(checkshare: str, gts_test_metalic: str,
 def main(argv):
     args = _get_args()
 
-    gtsv_metalic = args.gtsv_metalic
     gts_test_metalic = args.gts_test_metalic
     output_file = args.output
     checkshare = args.checkshare
     gts_test_dir = args.gts_test_dir
 
     with open(output_file, 'w') as file:
-        result = _check_gtsv(checkshare, gtsv_metalic)
-        file.write(f'GTS-Verifier: {result}\n')
         result, open_source_modules = _check_gts_test(
             checkshare, gts_test_metalic, gts_test_dir)
         file.write(f'GTS-Modules: {result}\n')
