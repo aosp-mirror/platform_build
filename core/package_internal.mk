@@ -111,24 +111,26 @@ include $(BUILD_SYSTEM)/support_libraries.mk
 
 # Determine whether auto-RRO is enabled for this package.
 enforce_rro_enabled :=
-ifneq (,$(filter *, $(PRODUCT_ENFORCE_RRO_TARGETS)))
-  # * means all system and system_ext APKs, so enable conditionally based on module path.
+ifeq (,$(filter tests,$(LOCAL_MODULE_TAGS)))
+  ifneq (,$(filter *, $(PRODUCT_ENFORCE_RRO_TARGETS)))
+    # * means all system and system_ext APKs, so enable conditionally based on module path.
 
-  # Note that base_rules.mk has not yet been included, so it's likely that only
-  # one of LOCAL_MODULE_PATH and the LOCAL_X_MODULE flags has been set.
-  ifeq (,$(LOCAL_MODULE_PATH))
-    non_rro_target_module := $(filter true,\
-        $(LOCAL_ODM_MODULE) \
-        $(LOCAL_OEM_MODULE) \
-        $(LOCAL_PRODUCT_MODULE) \
-        $(LOCAL_PROPRIETARY_MODULE) \
-        $(LOCAL_VENDOR_MODULE))
-    enforce_rro_enabled := $(if $(non_rro_target_module),,true)
-  else ifneq ($(filter $(TARGET_OUT)/%,$(LOCAL_MODULE_PATH)),)
+    # Note that base_rules.mk has not yet been included, so it's likely that only
+    # one of LOCAL_MODULE_PATH and the LOCAL_X_MODULE flags has been set.
+    ifeq (,$(LOCAL_MODULE_PATH))
+      non_rro_target_module := $(filter true,\
+          $(LOCAL_ODM_MODULE) \
+          $(LOCAL_OEM_MODULE) \
+          $(LOCAL_PRODUCT_MODULE) \
+          $(LOCAL_PROPRIETARY_MODULE) \
+          $(LOCAL_VENDOR_MODULE))
+      enforce_rro_enabled := $(if $(non_rro_target_module),,true)
+    else ifneq ($(filter $(TARGET_OUT)/%,$(LOCAL_MODULE_PATH)),)
+      enforce_rro_enabled := true
+    endif
+  else ifneq (,$(filter $(LOCAL_PACKAGE_NAME), $(PRODUCT_ENFORCE_RRO_TARGETS)))
     enforce_rro_enabled := true
   endif
-else ifneq (,$(filter $(LOCAL_PACKAGE_NAME), $(PRODUCT_ENFORCE_RRO_TARGETS)))
-  enforce_rro_enabled := true
 endif
 
 product_package_overlays := $(strip \
