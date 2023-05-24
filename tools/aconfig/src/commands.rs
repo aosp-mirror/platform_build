@@ -125,7 +125,7 @@ pub fn dump_cache(mut caches: Vec<Cache>, format: DumpFormat) -> Result<Vec<u8>>
             DumpFormat::Debug => {
                 let mut lines = vec![];
                 for item in cache.iter() {
-                    lines.push(format!("{:?}\n", item));
+                    lines.push(format!("{:#?}\n", item));
                 }
                 output.append(&mut lines.concat().into());
             }
