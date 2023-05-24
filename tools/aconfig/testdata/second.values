@@ -1,0 +1,6 @@
+flag_value {
+    namespace: "test"
+    name: "enabled-ro"
+    state: ENABLED
+    permission: READ_ONLY
+}
