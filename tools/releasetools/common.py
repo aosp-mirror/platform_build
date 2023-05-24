@@ -2792,6 +2792,8 @@ def MakeTempDir(prefix='tmp', suffix=''):
 
 def Cleanup():
   for i in OPTIONS.tempfiles:
+    if not os.path.exists(i):
+      continue
     if os.path.isdir(i):
       shutil.rmtree(i, ignore_errors=True)
     else:
@@ -4125,6 +4127,17 @@ def IsSparseImage(filepath):
     # Magic for android sparse image format
     # https://source.android.com/devices/bootloader/images
     return fp.read(4) == b'\x3A\xFF\x26\xED'
+
+
+def UnsparseImage(filepath, target_path=None):
+  if not IsSparseImage(filepath):
+    return
+  if target_path is None:
+    tmp_img = MakeTempFile(suffix=".img")
+    RunAndCheckOutput(["simg2img", filepath, tmp_img])
+    os.rename(tmp_img, filepath)
+  else:
+    RunAndCheckOutput(["simg2img", filepath, target_path])
 
 
 def ParseUpdateEngineConfig(path: str):
