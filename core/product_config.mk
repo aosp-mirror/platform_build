@@ -287,6 +287,15 @@ BLUEPRINT_INCLUDE_TAGS_ALLOWLIST := com.android.mainline_go com.android.mainline
 $(foreach include_tag,$(PRODUCT_INCLUDE_TAGS), \
 	$(if $(filter $(include_tag),$(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST)),,\
 	$(call pretty-error, $(include_tag) is not in BLUEPRINT_INCLUDE_TAGS_ALLOWLIST: $(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST))))
+# Create default PRODUCT_INCLUDE_TAGS
+ifeq (, $(PRODUCT_INCLUDE_TAGS))
+# Soong analysis is global: even though a module might not be relevant to a specific product (e.g. build_tools for aosp_arm),
+# we still analyse it.
+# This means that in setups where we two have two prebuilts of module_sdk, we need a "default" to use in analysis
+# This should be a no-op in aosp and internal since no Android.bp file contains blueprint_package_includes
+PRODUCT_INCLUDE_TAGS += com.android.mainline # Use the big android one by default
+endif
+
 #############################################################################
 
 # Quick check and assign default values
