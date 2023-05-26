@@ -28,6 +28,7 @@ mod aconfig;
 mod cache;
 mod codegen_cpp;
 mod codegen_java;
+mod codegen_rust;
 mod commands;
 mod protos;
 
@@ -51,6 +52,11 @@ fn cli() -> Command {
         )
         .subcommand(
             Command::new("create-cpp-lib")
+                .arg(Arg::new("cache").long("cache").required(true))
+                .arg(Arg::new("out").long("out").required(true)),
+        )
+        .subcommand(
+            Command::new("create-rust-lib")
                 .arg(Arg::new("cache").long("cache").required(true))
                 .arg(Arg::new("out").long("out").required(true)),
         )
@@ -127,6 +133,14 @@ fn main() -> Result<()> {
             let cache = Cache::read_from_reader(file)?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
             let generated_file = commands::create_cpp_lib(&cache)?;
+            write_output_file_realtive_to_dir(&dir, &generated_file)?;
+        }
+        Some(("create-rust-lib", sub_matches)) => {
+            let path = get_required_arg::<String>(sub_matches, "cache")?;
+            let file = fs::File::open(path)?;
+            let cache = Cache::read_from_reader(file)?;
+            let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
+            let generated_file = commands::create_rust_lib(&cache)?;
             write_output_file_realtive_to_dir(&dir, &generated_file)?;
         }
         Some(("dump", sub_matches)) => {
