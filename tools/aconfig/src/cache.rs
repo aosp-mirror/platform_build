@@ -19,6 +19,7 @@ use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
 
 use crate::aconfig::{FlagDeclaration, FlagState, FlagValue, Permission};
+use crate::codegen;
 use crate::commands::Source;
 
 const DEFAULT_FLAG_STATE: FlagState = FlagState::Disabled;
@@ -108,7 +109,7 @@ pub struct CacheBuilder {
 
 impl CacheBuilder {
     pub fn new(namespace: String) -> Result<CacheBuilder> {
-        ensure!(!namespace.is_empty(), "empty namespace");
+        ensure!(codegen::is_valid_identifier(&namespace), "bad namespace");
         let cache = Cache { namespace, items: vec![] };
         Ok(CacheBuilder { cache })
     }
@@ -118,7 +119,7 @@ impl CacheBuilder {
         source: Source,
         declaration: FlagDeclaration,
     ) -> Result<&mut CacheBuilder> {
-        ensure!(!declaration.name.is_empty(), "empty flag name");
+        ensure!(codegen::is_valid_identifier(&declaration.name), "bad flag name");
         ensure!(!declaration.description.is_empty(), "empty flag description");
         ensure!(
             self.cache.items.iter().all(|item| item.name != declaration.name),
@@ -146,8 +147,8 @@ impl CacheBuilder {
         source: Source,
         value: FlagValue,
     ) -> Result<&mut CacheBuilder> {
-        ensure!(!value.namespace.is_empty(), "empty flag namespace");
-        ensure!(!value.name.is_empty(), "empty flag name");
+        ensure!(codegen::is_valid_identifier(&value.namespace), "bad flag namespace");
+        ensure!(codegen::is_valid_identifier(&value.name), "bad flag name");
         ensure!(
             value.namespace == self.cache.namespace,
             "failed to set values for flag {}/{} from {}: expected namespace {}",
@@ -270,14 +271,14 @@ mod tests {
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
-                    namespace: "some-other-namespace".to_string(),
+                    namespace: "some_other_namespace".to_string(),
                     name: "foo".to_string(),
                     state: FlagState::Enabled,
                     permission: Permission::ReadOnly,
                 },
             )
             .unwrap_err();
-        assert_eq!(&format!("{:?}", error), "failed to set values for flag some-other-namespace/foo from <memory>: expected namespace ns");
+        assert_eq!(&format!("{:?}", error), "failed to set values for flag some_other_namespace/foo from <memory>: expected namespace ns");
 
         let cache = builder.build();
         let item = cache.iter().find(|&item| item.name == "foo").unwrap();
@@ -300,7 +301,7 @@ mod tests {
                 FlagDeclaration { name: "".to_string(), description: "Description".to_string() },
             )
             .unwrap_err();
-        assert_eq!(&format!("{:?}", error), "empty flag name");
+        assert_eq!(&format!("{:?}", error), "bad flag name");
 
         let error = builder
             .add_flag_declaration(
@@ -332,7 +333,7 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert_eq!(&format!("{:?}", error), "empty flag namespace");
+        assert_eq!(&format!("{:?}", error), "bad flag namespace");
 
         let error = builder
             .add_flag_value(
@@ -345,7 +346,7 @@ mod tests {
                 },
             )
             .unwrap_err();
-        assert_eq!(&format!("{:?}", error), "empty flag name");
+        assert_eq!(&format!("{:?}", error), "bad flag name");
     }
 
     #[test]
