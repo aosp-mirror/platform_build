@@ -26,6 +26,7 @@ use crate::aconfig::{FlagDeclarations, FlagValue};
 use crate::cache::{Cache, CacheBuilder};
 use crate::codegen_cpp::generate_cpp_code;
 use crate::codegen_java::generate_java_code;
+use crate::codegen_rust::generate_rust_code;
 use crate::protos::ProtoParsedFlags;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -100,6 +101,10 @@ pub fn create_cpp_lib(cache: &Cache) -> Result<OutputFile> {
     generate_cpp_code(cache)
 }
 
+pub fn create_rust_lib(cache: &Cache) -> Result<OutputFile> {
+    generate_rust_code(cache)
+}
+
 #[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
 pub enum DumpFormat {
     Text,
@@ -125,7 +130,7 @@ pub fn dump_cache(mut caches: Vec<Cache>, format: DumpFormat) -> Result<Vec<u8>>
             DumpFormat::Debug => {
                 let mut lines = vec![];
                 for item in cache.iter() {
-                    lines.push(format!("{:?}\n", item));
+                    lines.push(format!("{:#?}\n", item));
                 }
                 output.append(&mut lines.concat().into());
             }
