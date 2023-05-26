@@ -1,0 +1,18 @@
+flag_value {
+    namespace: "test"
+    name: "disabled-ro"
+    state: DISABLED
+    permission: READ_ONLY
+}
+flag_value {
+    namespace: "test"
+    name: "enabled-ro"
+    state: DISABLED
+    permission: READ_WRITE
+}
+flag_value {
+    namespace: "test"
+    name: "enabled-rw"
+    state: ENABLED
+    permission: READ_WRITE
+}
