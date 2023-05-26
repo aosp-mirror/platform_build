@@ -84,12 +84,13 @@ endif
 ifndef LOCAL_DEX_PREOPT_GENERATE_PROFILE
   # If LOCAL_DEX_PREOPT_GENERATE_PROFILE is not defined, default it based on the existence of the
   # profile class listing. TODO: Use product specific directory here.
-  my_classes_directory := $(PRODUCT_DEX_PREOPT_PROFILE_DIR)
-  LOCAL_DEX_PREOPT_PROFILE := $(my_classes_directory)/$(LOCAL_MODULE).prof
+  ifdef PRODUCT_DEX_PREOPT_PROFILE_DIR
+    LOCAL_DEX_PREOPT_PROFILE := $(PRODUCT_DEX_PREOPT_PROFILE_DIR)/$(LOCAL_MODULE).prof
 
-  ifneq (,$(wildcard $(LOCAL_DEX_PREOPT_PROFILE)))
-    my_process_profile := true
-    my_profile_is_text_listing :=
+    ifneq (,$(wildcard $(LOCAL_DEX_PREOPT_PROFILE)))
+      my_process_profile := true
+      my_profile_is_text_listing :=
+    endif
   endif
 else
   my_process_profile := $(LOCAL_DEX_PREOPT_GENERATE_PROFILE)
@@ -240,7 +241,7 @@ ifeq (true,$(LOCAL_ENFORCE_USES_LIBRARIES))
     --enforce-uses-libraries-relax,)
   my_dexpreopt_config_args := $(patsubst %,--dexpreopt-config %,$(my_dexpreopt_dep_configs))
 
-  my_enforced_uses_libraries := $(intermediates.COMMON)/enforce_uses_libraries.status
+  my_enforced_uses_libraries := $(intermediates)/enforce_uses_libraries.status
   $(my_enforced_uses_libraries): PRIVATE_USES_LIBRARIES := $(my_uses_libs_args)
   $(my_enforced_uses_libraries): PRIVATE_OPTIONAL_USES_LIBRARIES := $(my_optional_uses_libs_args)
   $(my_enforced_uses_libraries): PRIVATE_DEXPREOPT_CONFIGS := $(my_dexpreopt_config_args)
@@ -473,7 +474,7 @@ ifdef LOCAL_DEX_PREOPT
   my_dexpreopt_deps += $(my_dexpreopt_images_deps)
   my_dexpreopt_deps += $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES)
   ifeq ($(LOCAL_ENFORCE_USES_LIBRARIES),true)
-    my_dexpreopt_deps += $(intermediates.COMMON)/enforce_uses_libraries.status
+    my_dexpreopt_deps += $(intermediates)/enforce_uses_libraries.status
   endif
 
   $(my_dexpreopt_zip): PRIVATE_MODULE := $(LOCAL_MODULE)

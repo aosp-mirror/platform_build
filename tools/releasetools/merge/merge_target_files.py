@@ -165,17 +165,24 @@ def remove_file_if_exists(file_name):
     pass
 
 
-def include_meta_in_list(item_list):
-  """Include all `META/*` files in the item list.
+def include_extra_in_list(item_list):
+  """
+  1. Include all `META/*` files in the item list.
 
   To ensure that `AddImagesToTargetFiles` can still be used with vendor item
   list that do not specify all of the required META/ files, those files should
   be included by default. This preserves the backward compatibility of
   `rebuild_image_with_sepolicy`.
+
+  2. Include `SYSTEM/build.prop` file in the item list.
+
+  To ensure that `AddImagesToTargetFiles` for GRF vendor images, can still
+  access SYSTEM/build.prop to pass GetPartitionFingerprint check in BuildInfo
+  constructor.
   """
   if not item_list:
     return None
-  return list(item_list) + ['META/*']
+  return list(item_list) + ['META/*'] + ['SYSTEM/build.prop']
 
 
 def create_merged_package(temp_dir):
@@ -289,7 +296,7 @@ def rebuild_image_with_sepolicy(target_files_dir):
   merge_utils.CollectTargetFiles(
       input_zipfile_or_dir=OPTIONS.vendor_target_files,
       output_dir=vendor_target_files_dir,
-      item_list=include_meta_in_list(OPTIONS.vendor_item_list))
+      item_list=include_extra_in_list(OPTIONS.vendor_item_list))
 
   # Copy the partition contents from the merged target-files archive to the
   # vendor target-files archive.
