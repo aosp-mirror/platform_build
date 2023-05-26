@@ -1,0 +1,33 @@
+namespace: "test"
+
+# This flag's final value is calculated from:
+# - test.aconfig: DISABLED + READ_WRITE (default)
+# - first.values: DISABLED + READ_ONLY
+flag {
+    name: "disabled-ro"
+    description: "This flag is DISABLED + READ_ONLY"
+}
+
+# This flag's final value is calculated from:
+# - test.aconfig: DISABLED + READ_WRITE (default)
+flag {
+    name: "disabled-rw"
+    description: "This flag is DISABLED + READ_WRITE"
+}
+
+# This flag's final value is calculated from:
+# - test.aconfig: DISABLED + READ_WRITE (default)
+# - first.values: DISABLED + READ_WRITE
+# - second.values: ENABLED + READ_ONLY
+flag {
+    name: "enabled-ro"
+    description: "This flag is ENABLED + READ_ONLY"
+}
+
+# This flag's final value is calculated from:
+# - test.aconfig: DISABLED + READ_WRITE (default)
+# - first.values: ENABLED + READ_WRITE
+flag {
+    name: "enabled-rw"
+    description: "This flag is ENABLED + READ_WRITE"
+}
