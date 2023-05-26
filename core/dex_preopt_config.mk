@@ -12,9 +12,15 @@ else ifneq (true,$(filter true,$(PRODUCT_USES_DEFAULT_ART_CONFIG)))
   # would result in passing bad arguments to dex2oat and failing the build.
   ENABLE_PREOPT :=
   ENABLE_PREOPT_BOOT_IMAGES :=
-else ifeq (true,$(DISABLE_PREOPT))
-  # Disable dexpreopt for libraries/apps, but do compile boot images.
-  ENABLE_PREOPT :=
+else
+  ifeq (true,$(DISABLE_PREOPT))
+    # Disable dexpreopt for libraries/apps, but may compile boot images.
+    ENABLE_PREOPT :=
+  endif
+  ifeq (true,$(DISABLE_PREOPT_BOOT_IMAGES))
+    # Disable dexpreopt for boot images, but may compile libraries/apps.
+    ENABLE_PREOPT_BOOT_IMAGES :=
+  endif
 endif
 
 # The default value for LOCAL_DEX_PREOPT
@@ -65,12 +71,9 @@ ifeq ($(HOST_OS),linux)
   # Non eng linux builds must have preopt enabled so that system server doesn't run as interpreter
   # only. b/74209329
   ifeq (,$(filter eng, $(TARGET_BUILD_VARIANT)))
-    # TODO(riscv64) add compiler support and enable dexpreopt on RISC-V.
-    ifeq (,$(filter riscv64, $(TARGET_ARCH)))
-      ifneq (true,$(WITH_DEXPREOPT))
-        ifneq (true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY))
-          $(call pretty-error, DEXPREOPT must be enabled for user and userdebug builds)
-        endif
+    ifneq (true,$(WITH_DEXPREOPT))
+      ifneq (true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY))
+        $(call pretty-error, DEXPREOPT must be enabled for user and userdebug builds)
       endif
     endif
   endif

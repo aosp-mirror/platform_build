@@ -36,11 +36,16 @@ class PayloadSigner(object):
   (OPTIONS.package_key) and calls openssl for the signing works.
   """
 
-  def __init__(self, package_key=None, private_key_suffix=None, pw=None, payload_signer=None):
+  def __init__(self, package_key=None, private_key_suffix=None, pw=None, payload_signer=None,
+               payload_signer_args=None, payload_signer_maximum_signature_size=None):
     if package_key is None:
       package_key = OPTIONS.package_key
     if private_key_suffix is None:
       private_key_suffix = OPTIONS.private_key_suffix
+    if payload_signer_args is None:
+      payload_signer_args = OPTIONS.payload_signer_args
+    if payload_signer_maximum_signature_size is None:
+      payload_signer_maximum_signature_size = OPTIONS.payload_signer_maximum_signature_size
 
     if payload_signer is None:
       # Prepare the payload signing key.
@@ -59,10 +64,10 @@ class PayloadSigner(object):
           signing_key)
     else:
       self.signer = payload_signer
-      self.signer_args = OPTIONS.payload_signer_args
-      if OPTIONS.payload_signer_maximum_signature_size:
+      self.signer_args = payload_signer_args
+      if payload_signer_maximum_signature_size:
         self.maximum_signature_size = int(
-            OPTIONS.payload_signer_maximum_signature_size)
+            payload_signer_maximum_signature_size)
       else:
         # The legacy config uses RSA2048 keys.
         logger.warning("The maximum signature size for payload signer is not"

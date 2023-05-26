@@ -1,6 +1,3 @@
-per-file *dex_preopt*.* = jiakaiz@google.com,ngeoffray@google.com,skvadrik@google.com
-per-file art_*.* = jiakaiz@google.com,ngeoffray@google.com,skvadrik@google.com
-per-file verify_uses_libraries.sh = ngeoffray@google.com,skvadrik@google.com
 
 # For global Proguard rules
 per-file proguard*.flags = jdduke@google.com

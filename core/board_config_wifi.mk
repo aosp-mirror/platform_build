@@ -75,3 +75,9 @@ endif
 ifdef WIFI_AVOID_IFACE_RESET_MAC_CHANGE
     $(call soong_config_set,wifi,avoid_iface_reset_mac_change,true)
 endif
+ifdef WIFI_SKIP_STATE_TOGGLE_OFF_ON_FOR_NAN
+    $(call soong_config_set,wifi,wifi_skip_state_toggle_off_on_for_nan,true)
+endif
+ifeq ($(strip $(TARGET_USES_AOSP_FOR_WLAN)),true)
+    $(call soong_config_set,wifi,target_uses_aosp_for_wlan,true)
+endif

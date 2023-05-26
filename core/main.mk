@@ -72,8 +72,6 @@ $(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
 
 # CTS-specific config.
 -include cts/build/config.mk
-# VTS-specific config.
--include test/vts/tools/vts-tradefed/build/config.mk
 # device-tests-specific-config.
 -include tools/tradefederation/build/suites/device-tests/config.mk
 # general-tests-specific-config.
@@ -348,6 +346,10 @@ ADDITIONAL_PRODUCT_PROPERTIES += ro.build.characteristics=$(TARGET_AAPT_CHARACTE
 ifeq ($(AB_OTA_UPDATER),true)
 ADDITIONAL_PRODUCT_PROPERTIES += ro.product.ab_ota_partitions=$(subst $(space),$(comma),$(sort $(AB_OTA_PARTITIONS)))
 endif
+
+# Set this property for VTS to skip large page size tests on unsupported devices.
+ADDITIONAL_PRODUCT_PROPERTIES += \
+    ro.product.cpu.pagesize.max=$(TARGET_MAX_PAGE_SIZE_SUPPORTED)
 
 # -----------------------------------------------------------------
 ###
@@ -764,6 +766,9 @@ ifneq (,$(_nonexistent_required))
     $(info $(word 1,$(r)) module $(word 2,$(r)) requires non-existent $(word 3,$(r)) module: $(word 4,$(r))) \
   )
   $(warning Set BUILD_BROKEN_MISSING_REQUIRED_MODULES := true to bypass this check if this is intentional)
+  ifneq (,$(PRODUCT_SOURCE_ROOT_DIRS))
+    $(warning PRODUCT_SOURCE_ROOT_DIRS is non-empty. Some necessary modules may have been skipped by Soong)
+  endif
   $(error Build failed)
 endif # _nonexistent_required != empty
 endif # check_missing_required_modules == true
@@ -1251,6 +1256,7 @@ define product-installed-files
     $(if $(filter tests,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_TESTS)) \
     $(if $(filter asan,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_ASAN)) \
     $(if $(filter java_coverage,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE)) \
+    $(if $(filter arm64,$(TARGET_ARCH) $(TARGET_2ND_ARCH)),$(call get-product-var,$(1),PRODUCT_PACKAGES_ARM64)) \
     $(call auto-included-modules) \
   ) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \
@@ -1345,6 +1351,13 @@ else ifdef FULL_BUILD
                   $(if $(ALL_MODULES.$(m).INSTALLED),\
                     $(if $(filter-out $(HOST_OUT_ROOT)/%,$(ALL_MODULES.$(m).INSTALLED)),,\
                       $(m))))
+    ifeq ($(TARGET_ARCH),riscv64)
+      # HACK: riscv64 can't build the device version of bcc and ld.mc due to a
+      # dependency on an old version of LLVM, but they are listed in
+      # base_system.mk which can't add them conditionally based on the target
+      # architecture.
+      _host_modules := $(filter-out bcc ld.mc,$(_host_modules))
+    endif
     $(call maybe-print-list-and-error,$(sort $(_host_modules)),\
       Host modules should be in PRODUCT_HOST_PACKAGES$(comma) not PRODUCT_PACKAGES)
   endif
@@ -1376,29 +1389,6 @@ modules_to_install := $(sort \
     $(product_host_FILES) \
     $(CUSTOM_MODULES) \
   )
-
-ifdef FULL_BUILD
-#
-# Used by the cleanup logic in soong_ui to remove files that should no longer
-# be installed.
-#
-
-# Include all tests, so that we remove them from the test suites / testcase
-# folders when they are removed.
-test_files := $(foreach ts,$(ALL_COMPATIBILITY_SUITES),$(COMPATIBILITY.$(ts).FILES))
-
-$(shell mkdir -p $(PRODUCT_OUT) $(HOST_OUT))
-
-$(file >$(PRODUCT_OUT)/.installable_files$(if $(filter address,$(SANITIZE_TARGET)),_asan), \
-  $(sort $(patsubst $(PRODUCT_OUT)/%,%,$(filter $(PRODUCT_OUT)/%, \
-    $(modules_to_install) $(test_files)))))
-
-$(file >$(HOST_OUT)/.installable_test_files,$(sort \
-  $(patsubst $(HOST_OUT)/%,%,$(filter $(HOST_OUT)/%, \
-    $(test_files)))))
-
-test_files :=
-endif
 
 # Dedpulicate compatibility suite dist files across modules and packages before
 # copying them to their requested locations. Assign the eval result to an unused
@@ -1458,6 +1448,28 @@ endif
 modules_to_install := $(sort $(ALL_DEFAULT_INSTALLED_MODULES))
 ALL_DEFAULT_INSTALLED_MODULES :=
 
+ifdef FULL_BUILD
+#
+# Used by the cleanup logic in soong_ui to remove files that should no longer
+# be installed.
+#
+
+# Include all tests, so that we remove them from the test suites / testcase
+# folders when they are removed.
+test_files := $(foreach ts,$(ALL_COMPATIBILITY_SUITES),$(COMPATIBILITY.$(ts).FILES))
+
+$(shell mkdir -p $(PRODUCT_OUT) $(HOST_OUT))
+
+$(file >$(PRODUCT_OUT)/.installable_files$(if $(filter address,$(SANITIZE_TARGET)),_asan), \
+  $(sort $(patsubst $(PRODUCT_OUT)/%,%,$(filter $(PRODUCT_OUT)/%, \
+    $(modules_to_install) $(test_files)))))
+
+$(file >$(HOST_OUT)/.installable_test_files,$(sort \
+  $(patsubst $(HOST_OUT)/%,%,$(filter $(HOST_OUT)/%, \
+    $(test_files)))))
+
+test_files :=
+endif
 
 # Some notice deps refer to module names without prefix or arch suffix where
 # only the variants with them get built.
@@ -1892,11 +1904,11 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
   endif
 
   # Put XML formatted API files in the dist dir.
-  $(TARGET_OUT_COMMON_INTERMEDIATES)/api.xml: $(call java-lib-files,android_stubs_current) $(APICHECK)
-  $(TARGET_OUT_COMMON_INTERMEDIATES)/system-api.xml: $(call java-lib-files,android_system_stubs_current) $(APICHECK)
-  $(TARGET_OUT_COMMON_INTERMEDIATES)/module-lib-api.xml: $(call java-lib-files,android_module_lib_stubs_current) $(APICHECK)
-  $(TARGET_OUT_COMMON_INTERMEDIATES)/system-server-api.xml: $(call java-lib-files,android_system_server_stubs_current) $(APICHECK)
-  $(TARGET_OUT_COMMON_INTERMEDIATES)/test-api.xml: $(call java-lib-files,android_test_stubs_current) $(APICHECK)
+  $(TARGET_OUT_COMMON_INTERMEDIATES)/api.xml: $(call java-lib-files,$(ANDROID_PUBLIC_STUBS)) $(APICHECK)
+  $(TARGET_OUT_COMMON_INTERMEDIATES)/system-api.xml: $(call java-lib-files,$(ANDROID_SYSTEM_STUBS)) $(APICHECK)
+  $(TARGET_OUT_COMMON_INTERMEDIATES)/module-lib-api.xml: $(call java-lib-files,$(ANDROID_MODULE_LIB_STUBS)) $(APICHECK)
+  $(TARGET_OUT_COMMON_INTERMEDIATES)/system-server-api.xml: $(call java-lib-files,$(ANDROID_SYSTEM_SERVER_STUBS)) $(APICHECK)
+  $(TARGET_OUT_COMMON_INTERMEDIATES)/test-api.xml: $(call java-lib-files,$(ANDROID_TEST_STUBS)) $(APICHECK)
 
   api_xmls := $(addprefix $(TARGET_OUT_COMMON_INTERMEDIATES)/,api.xml system-api.xml module-lib-api.xml system-server-api.xml test-api.xml)
   $(api_xmls):
@@ -2018,6 +2030,191 @@ endif
 # notice_files.mk; except, it has to happen after fix-notice-deps to avoid
 # missing dependency errors.
 $(call build-license-metadata)
+
+# Generate SBOM in SPDX format
+product_copy_files_without_owner := $(foreach pcf,$(PRODUCT_COPY_FILES),$(call word-colon,1,$(pcf)):$(call word-colon,2,$(pcf)))
+ifeq ($(TARGET_BUILD_APPS),)
+dest_files_without_source := $(sort $(foreach pcf,$(product_copy_files_without_owner),$(if $(wildcard $(call word-colon,1,$(pcf))),,$(call word-colon,2,$(pcf)))))
+dest_files_without_source := $(addprefix $(PRODUCT_OUT)/,$(dest_files_without_source))
+filter_out_files := \
+  $(PRODUCT_OUT)/apex/% \
+  $(PRODUCT_OUT)/fake_packages/% \
+  $(PRODUCT_OUT)/testcases/% \
+  $(dest_files_without_source)
+# Check if each partition image is built, if not filter out all its installed files
+# Also check if a partition uses prebuilt image file, save the info if prebuilt image is used.
+PREBUILT_PARTITION_COPY_FILES :=
+# product.img
+ifndef BUILDING_PRODUCT_IMAGE
+filter_out_files += $(PRODUCT_OUT)/product/%
+ifdef BOARD_PREBUILT_PRODUCTIMAGE
+PREBUILT_PARTITION_COPY_FILES += $(BOARD_PREBUILT_PRODUCTIMAGE):$(INSTALLED_PRODUCTIMAGE_TARGET)
+endif
+endif
+
+# system.img
+ifndef BUILDING_SYSTEM_IMAGE
+filter_out_files += $(PRODUCT_OUT)/system/%
+endif
+# system_dlkm.img
+ifndef BUILDING_SYSTEM_DLKM_IMAGE
+filter_out_files += $(PRODUCT_OUT)/system_dlkm/%
+ifdef BOARD_PREBUILT_SYSTEM_DLKMIMAGE
+PREBUILT_PARTITION_COPY_FILES += $(BOARD_PREBUILT_SYSTEM_DLKMIMAGE):$(INSTALLED_SYSTEM_DLKMIMAGE_TARGET)
+endif
+endif
+# system_ext.img
+ifndef BUILDING_SYSTEM_EXT_IMAGE
+filter_out_files += $(PRODUCT_OUT)/system_ext/%
+ifdef BOARD_PREBUILT_SYSTEM_EXTIMAGE
+PREBUILT_PARTITION_COPY_FILES += $(BOARD_PREBUILT_SYSTEM_EXTIMAGE):$(INSTALLED_SYSTEM_EXTIMAGE_TARGET)
+endif
+endif
+# system_other.img
+ifndef BUILDING_SYSTEM_OTHER_IMAGE
+filter_out_files += $(PRODUCT_OUT)/system_other/%
+endif
+
+# odm.img
+ifndef BUILDING_ODM_IMAGE
+filter_out_files += $(PRODUCT_OUT)/odm/%
+ifdef BOARD_PREBUILT_ODMIMAGE
+PREBUILT_PARTITION_COPY_FILES += $(BOARD_PREBUILT_ODMIMAGE):$(INSTALLED_ODMIMAGE_TARGET)
+endif
+endif
+# odm_dlkm.img
+ifndef BUILDING_ODM_DLKM_IMAGE
+filter_out_files += $(PRODUCT_OUT)/odm_dlkm/%
+ifdef BOARD_PREBUILT_ODM_DLKMIMAGE
+PREBUILT_PARTITION_COPY_FILES += $(BOARD_PREBUILT_ODM_DLKMIMAGE):$(INSTALLED_ODM_DLKMIMAGE_TARGET)
+endif
+endif
+
+# vendor.img
+ifndef BUILDING_VENDOR_IMAGE
+filter_out_files += $(PRODUCT_OUT)/vendor/%
+ifdef BOARD_PREBUILT_VENDORIMAGE
+PREBUILT_PARTITION_COPY_FILES += $(BOARD_PREBUILT_VENDORIMAGE):$(INSTALLED_VENDORIMAGE_TARGET)
+endif
+endif
+# vendor_dlkm.img
+ifndef BUILDING_VENDOR_DLKM_IMAGE
+filter_out_files += $(PRODUCT_OUT)/vendor_dlkm/%
+ifdef BOARD_PREBUILT_VENDOR_DLKMIMAGE
+PREBUILT_PARTITION_COPY_FILES += $(BOARD_PREBUILT_VENDOR_DLKMIMAGE):$(INSTALLED_VENDOR_DLKMIMAGE_TARGET)
+endif
+endif
+
+# cache.img
+ifndef BUILDING_CACHE_IMAGE
+filter_out_files += $(PRODUCT_OUT)/cache/%
+endif
+
+# boot.img
+ifndef BUILDING_BOOT_IMAGE
+ifdef BOARD_PREBUILT_BOOTIMAGE
+PREBUILT_PARTITION_COPY_FILES += $(BOARD_PREBUILT_BOOTIMAGE):$(INSTALLED_BOOTIMAGE_TARGET)
+endif
+endif
+# init_boot.img
+ifndef BUILDING_INIT_BOOT_IMAGE
+ifdef BOARD_PREBUILT_INIT_BOOT_IMAGE
+PREBUILT_PARTITION_COPY_FILES += $(BOARD_PREBUILT_INIT_BOOT_IMAGE):$(INSTALLED_INIT_BOOT_IMAGE_TARGET)
+endif
+endif
+
+# ramdisk.img
+ifndef BUILDING_RAMDISK_IMAGE
+filter_out_files += $(PRODUCT_OUT)/ramdisk/%
+endif
+
+# recovery.img
+ifndef INSTALLED_RECOVERYIMAGE_TARGET
+filter_out_files += $(PRODUCT_OUT)/recovery/%
+endif
+
+installed_files := $(sort $(filter-out $(filter_out_files),$(filter $(PRODUCT_OUT)/%,$(modules_to_install))))
+else
+installed_files := $(apps_only_installed_files)
+endif  # TARGET_BUILD_APPS
+
+# sbom-metadata.csv contains all raw data collected in Make for generating SBOM in generate-sbom.py.
+# There are multiple columns and each identifies the source of an installed file for a specific case.
+# The columns and their uses are described as below:
+#   installed_file: the file path on device, e.g. /product/app/Browser2/Browser2.apk
+#   module_path: the path of the module that generates the installed file, e.g. packages/apps/Browser2
+#   soong_module_type: Soong module type, e.g. android_app, cc_binary
+#   is_prebuilt_make_module: Y, if the installed file is from a prebuilt Make module, see prebuilt_internal.mk
+#   product_copy_files: the installed file is from variable PRODUCT_COPY_FILES, e.g. device/google/cuttlefish/shared/config/init.product.rc:product/etc/init/init.rc
+#   kernel_module_copy_files: the installed file is from variable KERNEL_MODULE_COPY_FILES, similar to product_copy_files
+#   is_platform_generated: this is an aggregated value including some small cases instead of adding more columns. It is set to Y if any case is Y
+#       is_build_prop: build.prop in each partition, see sysprop.mk.
+#       is_notice_file: NOTICE.xml.gz in each partition, see Makefile.
+#       is_dexpreopt_image_profile: see the usage of DEXPREOPT_IMAGE_PROFILE_BUILT_INSTALLED in Soong and Make
+#       is_product_system_other_avbkey: see INSTALLED_PRODUCT_SYSTEM_OTHER_AVBKEY_TARGET
+#       is_system_other_odex_marker: see INSTALLED_SYSTEM_OTHER_ODEX_MARKER
+#       is_event_log_tags_file: see variable event_log_tags_file in Makefile
+#       is_kernel_modules_blocklist: modules.blocklist created for _dlkm partitions, see macro build-image-kernel-modules-dir in Makefile.
+#       is_fsverity_build_manifest_apk: BuildManifest<part>.apk files for system and system_ext partition, see ALL_FSVERITY_BUILD_MANIFEST_APK in Makefile.
+#       is_linker_config: see SYSTEM_LINKER_CONFIG and vendor_linker_config_file in Makefile.
+
+# (TODO: b/272358583 find another way of always rebuilding this target)
+# Remove the sbom-metadata.csv whenever makefile is evaluated
+$(shell rm $(PRODUCT_OUT)/sbom-metadata.csv >/dev/null 2>&1)
+$(PRODUCT_OUT)/sbom-metadata.csv: $(installed_files)
+	rm -f $@
+	@echo installed_file$(comma)module_path$(comma)soong_module_type$(comma)is_prebuilt_make_module$(comma)product_copy_files$(comma)kernel_module_copy_files$(comma)is_platform_generated,build_output_path >> $@
+	$(foreach f,$(installed_files),\
+	  $(eval _module_name := $(ALL_INSTALLED_FILES.$f)) \
+	  $(eval _path_on_device := $(patsubst $(PRODUCT_OUT)/%,%,$f)) \
+	  $(eval _build_output_path := $(PRODUCT_OUT)/$(_path_on_device)) \
+	  $(eval _module_path := $(strip $(sort $(ALL_MODULES.$(_module_name).PATH)))) \
+	  $(eval _soong_module_type := $(strip $(sort $(ALL_MODULES.$(_module_name).SOONG_MODULE_TYPE)))) \
+	  $(eval _is_prebuilt_make_module := $(ALL_MODULES.$(_module_name).IS_PREBUILT_MAKE_MODULE)) \
+	  $(eval _post_installed_dexpreopt_zip := $(DEXPREOPT.$(_module_name).POST_INSTALLED_DEXPREOPT_ZIP)) \
+	  $(eval _product_copy_files := $(sort $(filter %:$(_path_on_device),$(product_copy_files_without_owner)))) \
+	  $(eval _kernel_module_copy_files := $(sort $(filter %$(_path_on_device),$(KERNEL_MODULE_COPY_FILES)))) \
+	  $(eval _is_build_prop := $(call is-build-prop,$f)) \
+	  $(eval _is_notice_file := $(call is-notice-file,$f)) \
+	  $(eval _is_dexpreopt_image_profile := $(if $(filter %:/$(_path_on_device),$(DEXPREOPT_IMAGE_PROFILE_BUILT_INSTALLED)),Y)) \
+	  $(eval _is_product_system_other_avbkey := $(if $(findstring $f,$(INSTALLED_PRODUCT_SYSTEM_OTHER_AVBKEY_TARGET)),Y)) \
+	  $(eval _is_event_log_tags_file := $(if $(findstring $f,$(event_log_tags_file)),Y)) \
+	  $(eval _is_system_other_odex_marker := $(if $(findstring $f,$(INSTALLED_SYSTEM_OTHER_ODEX_MARKER)),Y)) \
+	  $(eval _is_kernel_modules_blocklist := $(if $(findstring $f,$(ALL_KERNEL_MODULES_BLOCKLIST)),Y)) \
+	  $(eval _is_fsverity_build_manifest_apk := $(if $(findstring $f,$(ALL_FSVERITY_BUILD_MANIFEST_APK)),Y)) \
+	  $(eval _is_linker_config := $(if $(findstring $f,$(SYSTEM_LINKER_CONFIG) $(vendor_linker_config_file)),Y)) \
+	  $(eval _is_partition_compat_symlink := $(if $(findstring $f,$(PARTITION_COMPAT_SYMLINKS)),Y)) \
+	  $(eval _is_platform_generated := $(_is_build_prop)$(_is_notice_file)$(_is_dexpreopt_image_profile)$(_is_product_system_other_avbkey)$(_is_event_log_tags_file)$(_is_system_other_odex_marker)$(_is_kernel_modules_blocklist)$(_is_fsverity_build_manifest_apk)$(_is_linker_config)$(_is_partition_compat_symlink)) \
+	  @echo /$(_path_on_device)$(comma)$(_module_path)$(comma)$(_soong_module_type)$(comma)$(_is_prebuilt_make_module)$(comma)$(_product_copy_files)$(comma)$(_kernel_module_copy_files)$(comma)$(_is_platform_generated)$(comma)$(_build_output_path) >> $@ $(newline) \
+	  $(if $(_post_installed_dexpreopt_zip), \
+	  for i in $$(zipinfo -1 $(_post_installed_dexpreopt_zip)); do echo /$$i$(comma)$(_module_path)$(comma)$(_soong_module_type)$(comma)$(_is_prebuilt_make_module)$(comma)$(_product_copy_files)$(comma)$(_kernel_module_copy_files)$(comma)$(_is_platform_generated)$(comma)$(PRODUCT_OUT)/$$i >> $@ ; done $(newline) \
+	  ) \
+	)
+
+.PHONY: sbom
+ifeq ($(TARGET_BUILD_APPS),)
+sbom: $(PRODUCT_OUT)/sbom.spdx.json
+$(PRODUCT_OUT)/sbom.spdx.json: $(PRODUCT_OUT)/sbom.spdx
+$(PRODUCT_OUT)/sbom.spdx: $(PRODUCT_OUT)/sbom-metadata.csv $(GEN_SBOM)
+	rm -rf $@
+	$(GEN_SBOM) --output_file $@ --metadata $(PRODUCT_OUT)/sbom-metadata.csv --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr "$(PRODUCT_MANUFACTURER)" --json
+
+$(call dist-for-goals,droid,$(PRODUCT_OUT)/sbom.spdx.json:sbom/sbom.spdx.json)
+else
+apps_only_sbom_files := $(sort $(patsubst %,%.spdx.json,$(filter %.apk,$(apps_only_installed_files))))
+$(apps_only_sbom_files): $(PRODUCT_OUT)/sbom-metadata.csv $(GEN_SBOM)
+	rm -rf $@
+	$(GEN_SBOM) --output_file $@ --metadata $(PRODUCT_OUT)/sbom-metadata.csv --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr "$(PRODUCT_MANUFACTURER)" --unbundled_apk
+
+sbom: $(apps_only_sbom_files)
+
+$(foreach f,$(apps_only_sbom_files),$(eval $(patsubst %.spdx.json,%-fragment.spdx,$f): $f))
+apps_only_fragment_files := $(patsubst %.spdx.json,%-fragment.spdx,$(apps_only_sbom_files))
+$(foreach f,$(apps_only_fragment_files),$(eval apps_only_fragment_dist_files += :sbom/$(notdir $f)))
+
+$(foreach f,$(apps_only_sbom_files),$(eval apps_only_sbom_dist_files += :sbom/$(notdir $f)))
+$(call dist-for-goals,apps_only,$(join $(apps_only_sbom_files),$(apps_only_sbom_dist_files)) $(join $(apps_only_fragment_files),$(apps_only_fragment_dist_files)))
+endif
 
 $(call dist-write-file,$(KATI_PACKAGE_MK_DIR)/dist.mk)
 
