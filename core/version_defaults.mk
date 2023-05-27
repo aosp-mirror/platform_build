@@ -40,7 +40,7 @@ ifdef INTERNAL_BUILD_ID_MAKEFILE
   include $(INTERNAL_BUILD_ID_MAKEFILE)
 endif
 
-DEFAULT_PLATFORM_VERSION := UP1A
+DEFAULT_PLATFORM_VERSION := VP1A
 .KATI_READONLY := DEFAULT_PLATFORM_VERSION
 MIN_PLATFORM_VERSION := UP1A
 MAX_PLATFORM_VERSION := VP1A
@@ -91,7 +91,7 @@ PLATFORM_VERSION_KNOWN_CODENAMES := \
 Base Base11 Cupcake Donut Eclair Eclair01 EclairMr1 Froyo Gingerbread GingerbreadMr1 \
 Honeycomb HoneycombMr1 HoneycombMr2 IceCreamSandwich IceCreamSandwichMr1 \
 JellyBean JellyBeanMr1 JellyBeanMr2 Kitkat KitkatWatch Lollipop LollipopMr1 M N NMr1 O OMr1 P \
-Q R S Sv2 Tiramisu UpsideDownCake
+Q R S Sv2 Tiramisu UpsideDownCake VanillaIceCream
 
 # Convert from space separated list to comma separated
 PLATFORM_VERSION_KNOWN_CODENAMES := \
@@ -104,7 +104,7 @@ ifndef PLATFORM_SECURITY_PATCH
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-    PLATFORM_SECURITY_PATCH := 2023-04-05
+    PLATFORM_SECURITY_PATCH := 2023-05-05
 endif
 
 include $(BUILD_SYSTEM)/version_util.mk

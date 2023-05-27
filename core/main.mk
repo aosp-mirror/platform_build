@@ -40,31 +40,23 @@ include $(BUILD_SYSTEM)/clang/config.mk
 # Write the build number to a file so it can be read back in
 # without changing the command line every time.  Avoids rebuilds
 # when using ninja.
-$(shell mkdir -p $(SOONG_OUT_DIR) && \
-    echo -n $(BUILD_NUMBER) > $(SOONG_OUT_DIR)/build_number.tmp; \
-    if ! cmp -s $(SOONG_OUT_DIR)/build_number.tmp $(SOONG_OUT_DIR)/build_number.txt; then \
-        mv $(SOONG_OUT_DIR)/build_number.tmp $(SOONG_OUT_DIR)/build_number.txt; \
-    else \
-        rm $(SOONG_OUT_DIR)/build_number.tmp; \
-    fi)
 BUILD_NUMBER_FILE := $(SOONG_OUT_DIR)/build_number.txt
-.KATI_READONLY := BUILD_NUMBER_FILE
 $(KATI_obsolete_var BUILD_NUMBER,See https://android.googlesource.com/platform/build/+/master/Changes.md#BUILD_NUMBER)
+BUILD_HOSTNAME_FILE := $(SOONG_OUT_DIR)/build_hostname.txt
+$(KATI_obsolete_var BUILD_HOSTNAME,Use BUILD_HOSTNAME_FROM_FILE instead)
+$(KATI_obsolete_var FILE_NAME_TAG,https://android.googlesource.com/platform/build/+/master/Changes.md#FILE_NAME_TAG)
+
 $(BUILD_NUMBER_FILE):
-	touch $@
+	# empty rule to prevent dangling rule error for a file that is written by soong_ui
+$(BUILD_HOSTNAME_FILE):
+	# empty rule to prevent dangling rule error for a file that is written by soong_ui
+
+.KATI_RESTAT: $(BUILD_NUMBER_FILE)
+.KATI_RESTAT: $(BUILD_HOSTNAME_FILE)
 
 DATE_FROM_FILE := date -d @$(BUILD_DATETIME_FROM_FILE)
 .KATI_READONLY := DATE_FROM_FILE
 
-# Pick a reasonable string to use to identify files.
-ifeq ($(strip $(HAS_BUILD_NUMBER)),false)
-  # BUILD_NUMBER has a timestamp in it, which means that
-  # it will change every time.  Pick a stable value.
-  FILE_NAME_TAG := eng.$(BUILD_USERNAME)
-else
-  FILE_NAME_TAG := $(file <$(BUILD_NUMBER_FILE))
-endif
-.KATI_READONLY := FILE_NAME_TAG
 
 # Make an empty directory, which can be used to make empty jars
 EMPTY_DIRECTORY := $(OUT_DIR)/empty
@@ -345,7 +337,12 @@ ADDITIONAL_PRODUCT_PROPERTIES += ro.build.characteristics=$(TARGET_AAPT_CHARACTE
 
 ifeq ($(AB_OTA_UPDATER),true)
 ADDITIONAL_PRODUCT_PROPERTIES += ro.product.ab_ota_partitions=$(subst $(space),$(comma),$(sort $(AB_OTA_PARTITIONS)))
+ADDITIONAL_VENDOR_PROPERTIES += ro.vendor.build.ab_ota_partitions=$(subst $(space),$(comma),$(sort $(AB_OTA_PARTITIONS)))
 endif
+
+# Set this property for VTS to skip large page size tests on unsupported devices.
+ADDITIONAL_PRODUCT_PROPERTIES += \
+    ro.product.cpu.pagesize.max=$(TARGET_MAX_PAGE_SIZE_SUPPORTED)
 
 # -----------------------------------------------------------------
 ###
@@ -1386,7 +1383,7 @@ modules_to_install := $(sort \
     $(CUSTOM_MODULES) \
   )
 
-# Dedpulicate compatibility suite dist files across modules and packages before
+# Deduplicate compatibility suite dist files across modules and packages before
 # copying them to their requested locations. Assign the eval result to an unused
 # var to prevent Make from trying to make a sense of it.
 _unused := $(call copy-many-files, $(sort $(ALL_COMPATIBILITY_DIST_FILES)))
@@ -1747,15 +1744,15 @@ else ifneq ($(TARGET_BUILD_APPS),)
   endif
 
   $(PROGUARD_DICT_ZIP) : $(apps_only_installed_files)
-  $(call dist-for-goals,apps_only, $(PROGUARD_DICT_ZIP) $(PROGUARD_DICT_MAPPING))
+  $(call dist-for-goals-with-filenametag,apps_only, $(PROGUARD_DICT_ZIP) $(PROGUARD_DICT_ZIP) $(PROGUARD_DICT_MAPPING))
   $(call declare-container-license-deps,$(PROGUARD_DICT_ZIP),$(apps_only_installed_files),$(PRODUCT_OUT)/:/)
 
   $(PROGUARD_USAGE_ZIP) : $(apps_only_installed_files)
-  $(call dist-for-goals,apps_only, $(PROGUARD_USAGE_ZIP))
+  $(call dist-for-goals-with-filenametag,apps_only, $(PROGUARD_USAGE_ZIP))
   $(call declare-container-license-deps,$(PROGUARD_USAGE_ZIP),$(apps_only_installed_files),$(PRODUCT_OUT)/:/)
 
   $(SYMBOLS_ZIP) : $(apps_only_installed_files)
-  $(call dist-for-goals,apps_only, $(SYMBOLS_ZIP) $(SYMBOLS_MAPPING))
+  $(call dist-for-goals-with-filenametag,apps_only, $(SYMBOLS_ZIP) $(SYMBOLS_MAPPING))
   $(call declare-container-license-deps,$(SYMBOLS_ZIP),$(apps_only_installed_files),$(PRODUCT_OUT)/:/)
 
   $(COVERAGE_ZIP) : $(apps_only_installed_files)
@@ -1801,17 +1798,23 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
   # avoid disting targets that would cause building framework java sources,
   # which we want to avoid in an unbundled build.
 
-  $(call dist-for-goals, droidcore-unbundled, \
+  $(call dist-for-goals-with-filenametag, droidcore-unbundled, \
     $(INTERNAL_UPDATE_PACKAGE_TARGET) \
     $(INTERNAL_OTA_PACKAGE_TARGET) \
-    $(INTERNAL_OTA_METADATA) \
     $(INTERNAL_OTA_PARTIAL_PACKAGE_TARGET) \
+    $(BUILT_RAMDISK_16K_TARGET) \
+    $(BUILT_KERNEL_16K_TARGET) \
     $(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET) \
     $(SYMBOLS_ZIP) \
     $(SYMBOLS_MAPPING) \
     $(PROGUARD_DICT_ZIP) \
     $(PROGUARD_DICT_MAPPING) \
     $(PROGUARD_USAGE_ZIP) \
+    $(BUILT_TARGET_FILES_PACKAGE) \
+  )
+
+  $(call dist-for-goals, droidcore-unbundled, \
+    $(INTERNAL_OTA_METADATA) \
     $(COVERAGE_ZIP) \
     $(INSTALLED_FILES_FILE) \
     $(INSTALLED_FILES_JSON) \
@@ -1839,7 +1842,6 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
     $(INSTALLED_ODM_BUILD_PROP_TARGET):build.prop-odm \
     $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET):build.prop-system_ext \
     $(INSTALLED_RAMDISK_BUILD_PROP_TARGET):build.prop-ramdisk \
-    $(BUILT_TARGET_FILES_PACKAGE) \
     $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
     $(INSTALLED_MISC_INFO_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
@@ -1851,7 +1853,7 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
     $(call dist-for-goals, droidcore-unbundled, $(f)))
 
   ifneq ($(ANDROID_BUILD_EMBEDDED),true)
-    $(call dist-for-goals, droidcore, \
+    $(call dist-for-goals-with-filenametag, droidcore, \
       $(APPS_ZIP) \
       $(INTERNAL_EMULATOR_PACKAGE_TARGET) \
     )
@@ -1951,10 +1953,8 @@ docs: $(ALL_DOCS)
 ifeq ($(HOST_OS),linux)
 ALL_SDK_TARGETS := $(INTERNAL_SDK_TARGET)
 sdk: $(ALL_SDK_TARGETS)
-$(call dist-for-goals,sdk, \
-    $(ALL_SDK_TARGETS) \
-    $(INSTALLED_BUILD_PROP_TARGET) \
-)
+$(call dist-for-goals-with-filenametag,sdk,$(ALL_SDK_TARGETS))
+$(call dist-for-goals,sdk,$(INSTALLED_BUILD_PROP_TARGET))
 endif
 
 # umbrella targets to assit engineers in verifying builds
@@ -2159,10 +2159,11 @@ endif  # TARGET_BUILD_APPS
 $(shell rm $(PRODUCT_OUT)/sbom-metadata.csv >/dev/null 2>&1)
 $(PRODUCT_OUT)/sbom-metadata.csv: $(installed_files)
 	rm -f $@
-	@echo installed_file$(comma)module_path$(comma)soong_module_type$(comma)is_prebuilt_make_module$(comma)product_copy_files$(comma)kernel_module_copy_files$(comma)is_platform_generated >> $@
+	@echo installed_file$(comma)module_path$(comma)soong_module_type$(comma)is_prebuilt_make_module$(comma)product_copy_files$(comma)kernel_module_copy_files$(comma)is_platform_generated,build_output_path >> $@
 	$(foreach f,$(installed_files),\
 	  $(eval _module_name := $(ALL_INSTALLED_FILES.$f)) \
 	  $(eval _path_on_device := $(patsubst $(PRODUCT_OUT)/%,%,$f)) \
+	  $(eval _build_output_path := $(PRODUCT_OUT)/$(_path_on_device)) \
 	  $(eval _module_path := $(strip $(sort $(ALL_MODULES.$(_module_name).PATH)))) \
 	  $(eval _soong_module_type := $(strip $(sort $(ALL_MODULES.$(_module_name).SOONG_MODULE_TYPE)))) \
 	  $(eval _is_prebuilt_make_module := $(ALL_MODULES.$(_module_name).IS_PREBUILT_MAKE_MODULE)) \
@@ -2180,9 +2181,9 @@ $(PRODUCT_OUT)/sbom-metadata.csv: $(installed_files)
 	  $(eval _is_linker_config := $(if $(findstring $f,$(SYSTEM_LINKER_CONFIG) $(vendor_linker_config_file)),Y)) \
 	  $(eval _is_partition_compat_symlink := $(if $(findstring $f,$(PARTITION_COMPAT_SYMLINKS)),Y)) \
 	  $(eval _is_platform_generated := $(_is_build_prop)$(_is_notice_file)$(_is_dexpreopt_image_profile)$(_is_product_system_other_avbkey)$(_is_event_log_tags_file)$(_is_system_other_odex_marker)$(_is_kernel_modules_blocklist)$(_is_fsverity_build_manifest_apk)$(_is_linker_config)$(_is_partition_compat_symlink)) \
-	  @echo /$(_path_on_device)$(comma)$(_module_path)$(comma)$(_soong_module_type)$(comma)$(_is_prebuilt_make_module)$(comma)$(_product_copy_files)$(comma)$(_kernel_module_copy_files)$(comma)$(_is_platform_generated) >> $@ $(newline) \
+	  @echo /$(_path_on_device)$(comma)$(_module_path)$(comma)$(_soong_module_type)$(comma)$(_is_prebuilt_make_module)$(comma)$(_product_copy_files)$(comma)$(_kernel_module_copy_files)$(comma)$(_is_platform_generated)$(comma)$(_build_output_path) >> $@ $(newline) \
 	  $(if $(_post_installed_dexpreopt_zip), \
-	  for i in $$(zipinfo -1 $(_post_installed_dexpreopt_zip)); do echo /$$i$(comma)$(_module_path)$(comma)$(_soong_module_type)$(comma)$(_is_prebuilt_make_module)$(comma)$(_product_copy_files)$(comma)$(_kernel_module_copy_files)$(comma)$(_is_platform_generated) >> $@ ; done $(newline) \
+	  for i in $$(zipinfo -1 $(_post_installed_dexpreopt_zip)); do echo /$$i$(comma)$(_module_path)$(comma)$(_soong_module_type)$(comma)$(_is_prebuilt_make_module)$(comma)$(_product_copy_files)$(comma)$(_kernel_module_copy_files)$(comma)$(_is_platform_generated)$(comma)$(PRODUCT_OUT)/$$i >> $@ ; done $(newline) \
 	  ) \
 	)
 
@@ -2192,14 +2193,14 @@ sbom: $(PRODUCT_OUT)/sbom.spdx.json
 $(PRODUCT_OUT)/sbom.spdx.json: $(PRODUCT_OUT)/sbom.spdx
 $(PRODUCT_OUT)/sbom.spdx: $(PRODUCT_OUT)/sbom-metadata.csv $(GEN_SBOM)
 	rm -rf $@
-	$(GEN_SBOM) --output_file $@ --metadata $(PRODUCT_OUT)/sbom-metadata.csv --product_out_dir=$(PRODUCT_OUT) --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr="$(PRODUCT_MANUFACTURER)" --json
+	$(GEN_SBOM) --output_file $@ --metadata $(PRODUCT_OUT)/sbom-metadata.csv --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr "$(PRODUCT_MANUFACTURER)" --json
 
 $(call dist-for-goals,droid,$(PRODUCT_OUT)/sbom.spdx.json:sbom/sbom.spdx.json)
 else
 apps_only_sbom_files := $(sort $(patsubst %,%.spdx.json,$(filter %.apk,$(apps_only_installed_files))))
 $(apps_only_sbom_files): $(PRODUCT_OUT)/sbom-metadata.csv $(GEN_SBOM)
 	rm -rf $@
-	$(GEN_SBOM) --output_file $@ --metadata $(PRODUCT_OUT)/sbom-metadata.csv --product_out_dir=$(PRODUCT_OUT) --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr="$(PRODUCT_MANUFACTURER)" --unbundled
+	$(GEN_SBOM) --output_file $@ --metadata $(PRODUCT_OUT)/sbom-metadata.csv --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr "$(PRODUCT_MANUFACTURER)" --unbundled_apk
 
 sbom: $(apps_only_sbom_files)
 
