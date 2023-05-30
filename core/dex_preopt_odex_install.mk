@@ -464,7 +464,8 @@ ifdef LOCAL_DEX_PREOPT
 	-global $(PRIVATE_GLOBAL_CONFIG) \
 	-module $(PRIVATE_MODULE_CONFIG) \
 	-dexpreopt_script $@ \
-	-out_dir $(OUT_DIR)
+	-out_dir $(OUT_DIR) \
+	-product_packages $(PRODUCT_OUT)/product_packages.txt
 
   my_dexpreopt_deps := $(my_dex_jar)
   my_dexpreopt_deps += $(if $(my_process_profile),$(LOCAL_DEX_PREOPT_PROFILE))
