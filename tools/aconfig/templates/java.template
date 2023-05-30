@@ -1,4 +1,4 @@
-package {namespace};
+package aconfig.{namespace};
 {{ if readwrite }}
 import android.provider.DeviceConfig;
 {{ endif }}
@@ -10,7 +10,7 @@ public final class Flags \{
             "{namespace}",
             "{item.feature_name}__{item.flag_name}",
             {item.default_value}
-        ); 
+        );
         {{ -else- }}
         return {item.default_value};
         {{ -endif }}
