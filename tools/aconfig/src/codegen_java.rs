@@ -59,7 +59,7 @@ fn create_class_element(package: &str, item: &Item) -> ClassElement {
     let device_config_flag = codegen::create_device_config_ident(package, &item.name)
         .expect("values checked at cache creation time");
     ClassElement {
-        method_name: item.name.clone(),
+        method_name: item.name.replace('-', "_"),
         readwrite: item.permission == Permission::ReadWrite,
         default_value: if item.state == FlagState::Enabled {
             "true".to_string()
