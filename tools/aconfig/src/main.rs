@@ -26,6 +26,7 @@ use std::path::{Path, PathBuf};
 
 mod aconfig;
 mod cache;
+mod codegen;
 mod codegen_cpp;
 mod codegen_java;
 mod codegen_rust;
