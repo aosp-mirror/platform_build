@@ -43,6 +43,8 @@ endif
 CHANGES_URL := https://android.googlesource.com/platform/build/+/master/Changes.md
 .KATI_READONLY := CHANGES_URL
 $(KATI_deprecated_var TARGET_USES_64_BIT_BINDER,All devices use 64-bit binder by default now. Uses of TARGET_USES_64_BIT_BINDER should be removed.)
+$(KATI_deprecated_var PRODUCT_SEPOLICY_SPLIT,All devices are built with split sepolicy.)
+$(KATI_deprecated_var PRODUCT_SEPOLICY_SPLIT_OVERRIDE,All devices are built with split sepolicy.)
 $(KATI_obsolete_var PATH,Do not use PATH directly. See $(CHANGES_URL)#PATH)
 $(KATI_obsolete_var PYTHONPATH,Do not use PYTHONPATH directly. See $(CHANGES_URL)#PYTHONPATH)
 $(KATI_obsolete_var OUT,Use OUT_DIR instead. See $(CHANGES_URL)#OUT)
@@ -736,7 +738,6 @@ endif
 
 requirements := \
     PRODUCT_TREBLE_LINKER_NAMESPACES \
-    PRODUCT_SEPOLICY_SPLIT \
     PRODUCT_ENFORCE_VINTF_MANIFEST \
     PRODUCT_NOTICE_SPLIT
 
@@ -750,14 +751,6 @@ $(foreach req,$(requirements),$(eval \
 
 PRODUCT_FULL_TREBLE_OVERRIDE ?=
 $(foreach req,$(requirements),$(eval $(req)_OVERRIDE ?=))
-
-ifneq ($(PRODUCT_SEPOLICY_SPLIT),true)
-# WARNING: DO NOT CHANGE: if you are downstream of AOSP, and you change this, without
-# letting upstream know it's important to you, we may do cleanup which breaks this
-# significantly. Please let us know if you are changing this.
-# TODO(b/257176017) - unsplit sepolicy is no longer supported
-PRODUCT_SEPOLICY_SPLIT := true
-endif
 
 # TODO(b/114488870): disallow PRODUCT_FULL_TREBLE_OVERRIDE from being used.
 .KATI_READONLY := \
