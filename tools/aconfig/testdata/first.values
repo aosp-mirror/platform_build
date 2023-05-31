@@ -1,18 +1,18 @@
 flag_value {
     namespace: "test"
-    name: "disabled-ro"
+    name: "disabled_ro"
     state: DISABLED
     permission: READ_ONLY
 }
 flag_value {
     namespace: "test"
-    name: "enabled-ro"
+    name: "enabled_ro"
     state: DISABLED
     permission: READ_WRITE
 }
 flag_value {
     namespace: "test"
-    name: "enabled-rw"
+    name: "enabled_rw"
     state: ENABLED
     permission: READ_WRITE
 }
