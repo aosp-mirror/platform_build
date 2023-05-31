@@ -244,7 +244,7 @@ mod tests {
     #[test]
     fn test_package_try_from_text_proto() {
         let expected = FlagDeclarations {
-            package: "ns".to_owned(),
+            package: "com.example".to_owned(),
             flags: vec![
                 FlagDeclaration { name: "a".to_owned(), description: "A".to_owned() },
                 FlagDeclaration { name: "b".to_owned(), description: "B".to_owned() },
@@ -252,7 +252,7 @@ mod tests {
         };
 
         let s = r#"
-        package: "ns"
+        package: "com.example"
         flag {
             name: "a"
             description: "A"
@@ -270,14 +270,14 @@ mod tests {
     #[test]
     fn test_flag_declaration_try_from_text_proto_list() {
         let expected = FlagValue {
-            package: "ns".to_owned(),
+            package: "com.example".to_owned(),
             name: "1234".to_owned(),
             state: FlagState::Enabled,
             permission: Permission::ReadOnly,
         };
 
         let s = r#"
-        package: "ns"
+        package: "com.example"
         name: "1234"
         state: ENABLED
         permission: READ_ONLY

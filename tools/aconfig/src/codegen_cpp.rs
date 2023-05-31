@@ -14,28 +14,35 @@
  * limitations under the License.
  */
 
-use anyhow::Result;
+use anyhow::{ensure, Result};
 use serde::Serialize;
 use tinytemplate::TinyTemplate;
 
 use crate::aconfig::{FlagState, Permission};
 use crate::cache::{Cache, Item};
+use crate::codegen;
 use crate::commands::OutputFile;
 
 pub fn generate_cpp_code(cache: &Cache) -> Result<OutputFile> {
     let class_elements: Vec<ClassElement> = cache.iter().map(create_class_element).collect();
     let readwrite = class_elements.iter().any(|item| item.readwrite);
-    let package = cache.package().to_lowercase();
-    let context = Context { package: package.clone(), readwrite, class_elements };
+    let package = cache.package().to_string();
+    let header = package.replace('.', "_");
+    let cpp_namespace = package.replace('.', "::");
+    ensure!(codegen::is_valid_name_ident(&header));
+    let context =
+        Context { header: header.clone(), cpp_namespace, package, readwrite, class_elements };
     let mut template = TinyTemplate::new();
     template.add_template("cpp_code_gen", include_str!("../templates/cpp.template"))?;
     let contents = template.render("cpp_code_gen", &context)?;
-    let path = ["aconfig", &(package + ".h")].iter().collect();
+    let path = ["aconfig", &(header + ".h")].iter().collect();
     Ok(OutputFile { contents: contents.into(), path })
 }
 
 #[derive(Serialize)]
 struct Context {
+    pub header: String,
+    pub cpp_namespace: String,
     pub package: String,
     pub readwrite: bool,
     pub class_elements: Vec<ClassElement>,
@@ -69,7 +76,7 @@ mod tests {
 
     #[test]
     fn test_cpp_codegen_build_time_flag_only() {
-        let package = "my_package";
+        let package = "com.example";
         let mut builder = CacheBuilder::new(package.to_string()).unwrap();
         builder
             .add_flag_declaration(
@@ -109,11 +116,10 @@ mod tests {
             )
             .unwrap();
         let cache = builder.build();
-        let expect_content = r#"#ifndef my_package_HEADER_H
-        #define my_package_HEADER_H
-        #include "my_package.h"
+        let expect_content = r#"#ifndef com_example_HEADER_H
+        #define com_example_HEADER_H
 
-        namespace my_package {
+        namespace com::example {
 
             class my_flag_one {
                 public:
@@ -133,7 +139,7 @@ mod tests {
         #endif
         "#;
         let file = generate_cpp_code(&cache).unwrap();
-        assert_eq!("aconfig/my_package.h", file.path.to_str().unwrap());
+        assert_eq!("aconfig/com_example.h", file.path.to_str().unwrap());
         assert_eq!(
             expect_content.replace(' ', ""),
             String::from_utf8(file.contents).unwrap().replace(' ', "")
@@ -142,7 +148,7 @@ mod tests {
 
     #[test]
     fn test_cpp_codegen_runtime_flag() {
-        let package = "my_package";
+        let package = "com.example";
         let mut builder = CacheBuilder::new(package.to_string()).unwrap();
         builder
             .add_flag_declaration(
@@ -172,20 +178,19 @@ mod tests {
             )
             .unwrap();
         let cache = builder.build();
-        let expect_content = r#"#ifndef my_package_HEADER_H
-        #define my_package_HEADER_H
-        #include "my_package.h"
+        let expect_content = r#"#ifndef com_example_HEADER_H
+        #define com_example_HEADER_H
 
         #include <server_configurable_flags/get_flags.h>
         using namespace server_configurable_flags;
 
-        namespace my_package {
+        namespace com::example {
 
             class my_flag_one {
                 public:
                     virtual const bool value() {
                         return GetServerConfigurableFlag(
-                            "my_package",
+                            "com.example",
                             "my_flag_one",
                             "false") == "true";
                     }
@@ -195,7 +200,7 @@ mod tests {
                 public:
                     virtual const bool value() {
                         return GetServerConfigurableFlag(
-                            "my_package",
+                            "com.example",
                             "my_flag_two",
                             "true") == "true";
                     }
@@ -205,7 +210,7 @@ mod tests {
         #endif
         "#;
         let file = generate_cpp_code(&cache).unwrap();
-        assert_eq!("aconfig/my_package.h", file.path.to_str().unwrap());
+        assert_eq!("aconfig/com_example.h", file.path.to_str().unwrap());
         assert_eq!(
             expect_content.replace(' ', ""),
             String::from_utf8(file.contents).unwrap().replace(' ', "")

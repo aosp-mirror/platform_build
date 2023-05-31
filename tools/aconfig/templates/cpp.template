@@ -1,11 +1,10 @@
-#ifndef {package}_HEADER_H
-#define {package}_HEADER_H
-#include "{package}.h"
+#ifndef {header}_HEADER_H
+#define {header}_HEADER_H
 {{ if readwrite }}
 #include <server_configurable_flags/get_flags.h>
 using namespace server_configurable_flags;
 {{ endif }}
-namespace {package} \{
+namespace {cpp_namespace} \{
     {{ for item in class_elements}}
     class {item.flag_name} \{
         public:

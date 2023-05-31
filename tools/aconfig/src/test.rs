@@ -21,7 +21,7 @@ pub mod test_utils {
 
     pub fn create_cache() -> Cache {
         crate::commands::create_cache(
-            "test",
+            "com.android.aconfig.test",
             vec![Input {
                 source: Source::File("testdata/test.aconfig".to_string()),
                 reader: Box::new(include_bytes!("../testdata/test.aconfig").as_slice()),
