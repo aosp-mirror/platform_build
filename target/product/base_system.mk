@@ -19,7 +19,6 @@ PRODUCT_PACKAGES += \
     abx \
     adbd_system_api \
     am \
-    android.hidl.allocator@1.0-service \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
     android.hidl.memory@1.0-impl \
@@ -109,7 +108,6 @@ PRODUCT_PACKAGES += \
     gatekeeperd \
     gpuservice \
     hid \
-    hwservicemanager \
     idmap2 \
     idmap2d \
     ime \
@@ -301,6 +299,14 @@ endif
 PRODUCT_PACKAGES += \
     system_manifest.xml \
     system_compatibility_matrix.xml \
+
+HIDL_SUPPORT_SERVICES := \
+    hwservicemanager \
+    android.hidl.allocator@1.0-service \
+
+# Base modules when shipping api level is less than or equal to 34
+PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34 += \
+    $(HIDL_SUPPORT_SERVICES) \
 
 PRODUCT_PACKAGES_ARM64 := libclang_rt.hwasan \
  libclang_rt.hwasan.bootstrap \
