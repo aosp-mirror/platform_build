@@ -34,11 +34,11 @@ pub struct Tracepoint {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Item {
-    // TODO: duplicating the Cache.namespace as Item.namespace makes the internal representation
+    // TODO: duplicating the Cache.package as Item.package makes the internal representation
     // closer to the proto message `parsed_flag`; hopefully this will enable us to replace the Item
-    // struct and use a newtype instead once aconfig has matured. Until then, namespace should
+    // struct and use a newtype instead once aconfig has matured. Until then, package should
     // really be a Cow<String>.
-    pub namespace: String,
+    pub package: String,
     pub name: String,
     pub description: String,
     pub state: FlagState,
@@ -48,7 +48,7 @@ pub struct Item {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Cache {
-    namespace: String,
+    package: String,
     items: Vec<Item>,
 }
 
@@ -96,9 +96,9 @@ impl Cache {
         self.items.into_iter()
     }
 
-    pub fn namespace(&self) -> &str {
-        debug_assert!(!self.namespace.is_empty());
-        &self.namespace
+    pub fn package(&self) -> &str {
+        debug_assert!(!self.package.is_empty());
+        &self.package
     }
 }
 
@@ -108,9 +108,9 @@ pub struct CacheBuilder {
 }
 
 impl CacheBuilder {
-    pub fn new(namespace: String) -> Result<CacheBuilder> {
-        ensure!(codegen::is_valid_identifier(&namespace), "bad namespace");
-        let cache = Cache { namespace, items: vec![] };
+    pub fn new(package: String) -> Result<CacheBuilder> {
+        ensure!(codegen::is_valid_identifier(&package), "bad package");
+        let cache = Cache { package, items: vec![] };
         Ok(CacheBuilder { cache })
     }
 
@@ -128,7 +128,7 @@ impl CacheBuilder {
             source
         );
         self.cache.items.push(Item {
-            namespace: self.cache.namespace.clone(),
+            package: self.cache.package.clone(),
             name: declaration.name.clone(),
             description: declaration.description,
             state: DEFAULT_FLAG_STATE,
@@ -147,18 +147,18 @@ impl CacheBuilder {
         source: Source,
         value: FlagValue,
     ) -> Result<&mut CacheBuilder> {
-        ensure!(codegen::is_valid_identifier(&value.namespace), "bad flag namespace");
+        ensure!(codegen::is_valid_identifier(&value.package), "bad flag package");
         ensure!(codegen::is_valid_identifier(&value.name), "bad flag name");
         ensure!(
-            value.namespace == self.cache.namespace,
-            "failed to set values for flag {}/{} from {}: expected namespace {}",
-            value.namespace,
+            value.package == self.cache.package,
+            "failed to set values for flag {}/{} from {}: expected package {}",
+            value.package,
             value.name,
             source,
-            self.cache.namespace
+            self.cache.package
         );
         let Some(existing_item) = self.cache.items.iter_mut().find(|item| item.name == value.name) else {
-            bail!("failed to set values for flag {}/{} from {}: flag not declared", value.namespace, value.name, source);
+            bail!("failed to set values for flag {}/{} from {}: flag not declared", value.package, value.name, source);
         };
         existing_item.state = value.state;
         existing_item.permission = value.permission;
@@ -222,7 +222,7 @@ mod tests {
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
-                    namespace: "ns".to_string(),
+                    package: "ns".to_string(),
                     name: "foo".to_string(),
                     state: FlagState::Enabled,
                     permission: Permission::ReadOnly,
@@ -245,7 +245,7 @@ mod tests {
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
-                    namespace: "ns".to_string(),
+                    package: "ns".to_string(),
                     name: "foo".to_string(),
                     state: FlagState::Disabled,
                     permission: Permission::ReadOnly,
@@ -257,7 +257,7 @@ mod tests {
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
-                    namespace: "ns".to_string(),
+                    package: "ns".to_string(),
                     name: "foo".to_string(),
                     state: FlagState::Enabled,
                     permission: Permission::ReadWrite,
@@ -265,19 +265,19 @@ mod tests {
             )
             .unwrap();
 
-        // different namespace -> no-op
+        // different package -> no-op
         let error = builder
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
-                    namespace: "some_other_namespace".to_string(),
+                    package: "some_other_package".to_string(),
                     name: "foo".to_string(),
                     state: FlagState::Enabled,
                     permission: Permission::ReadOnly,
                 },
             )
             .unwrap_err();
-        assert_eq!(&format!("{:?}", error), "failed to set values for flag some_other_namespace/foo from <memory>: expected namespace ns");
+        assert_eq!(&format!("{:?}", error), "failed to set values for flag some_other_package/foo from <memory>: expected package ns");
 
         let cache = builder.build();
         let item = cache.iter().find(|&item| item.name == "foo").unwrap();
@@ -286,7 +286,7 @@ mod tests {
     }
 
     #[test]
-    fn test_reject_empty_cache_namespace() {
+    fn test_reject_empty_cache_package() {
         CacheBuilder::new("".to_string()).unwrap_err();
     }
 
@@ -325,20 +325,20 @@ mod tests {
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
-                    namespace: "".to_string(),
+                    package: "".to_string(),
                     name: "foo".to_string(),
                     state: FlagState::Enabled,
                     permission: Permission::ReadOnly,
                 },
             )
             .unwrap_err();
-        assert_eq!(&format!("{:?}", error), "bad flag namespace");
+        assert_eq!(&format!("{:?}", error), "bad flag package");
 
         let error = builder
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
-                    namespace: "ns".to_string(),
+                    package: "ns".to_string(),
                     name: "".to_string(),
                     state: FlagState::Enabled,
                     permission: Permission::ReadOnly,

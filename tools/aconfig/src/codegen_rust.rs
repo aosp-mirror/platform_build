@@ -23,10 +23,10 @@ use crate::cache::{Cache, Item};
 use crate::commands::OutputFile;
 
 pub fn generate_rust_code(cache: &Cache) -> Result<OutputFile> {
-    let namespace = cache.namespace();
+    let package = cache.package();
     let parsed_flags: Vec<TemplateParsedFlag> =
-        cache.iter().map(|item| create_template_parsed_flag(namespace, item)).collect();
-    let context = TemplateContext { namespace: namespace.to_string(), parsed_flags };
+        cache.iter().map(|item| create_template_parsed_flag(package, item)).collect();
+    let context = TemplateContext { package: package.to_string(), parsed_flags };
     let mut template = TinyTemplate::new();
     template.add_template("rust_code_gen", include_str!("../templates/rust.template"))?;
     let contents = template.render("rust_code_gen", &context)?;
@@ -36,7 +36,7 @@ pub fn generate_rust_code(cache: &Cache) -> Result<OutputFile> {
 
 #[derive(Serialize)]
 struct TemplateContext {
-    pub namespace: String,
+    pub package: String,
     pub parsed_flags: Vec<TemplateParsedFlag>,
 }
 
@@ -53,10 +53,10 @@ struct TemplateParsedFlag {
 }
 
 #[allow(clippy::nonminimal_bool)]
-fn create_template_parsed_flag(namespace: &str, item: &Item) -> TemplateParsedFlag {
+fn create_template_parsed_flag(package: &str, item: &Item) -> TemplateParsedFlag {
     let template = TemplateParsedFlag {
         name: item.name.clone(),
-        fn_name: format!("{}_{}", namespace, &item.name),
+        fn_name: format!("{}_{}", package, &item.name),
         is_read_only_enabled: item.permission == Permission::ReadOnly
             && item.state == FlagState::Enabled,
         is_read_only_disabled: item.permission == Permission::ReadOnly

@@ -26,12 +26,12 @@ use crate::commands::OutputFile;
 pub fn generate_java_code(cache: &Cache) -> Result<OutputFile> {
     let class_elements: Vec<ClassElement> = cache.iter().map(create_class_element).collect();
     let readwrite = class_elements.iter().any(|item| item.readwrite);
-    let namespace = cache.namespace();
-    let context = Context { namespace: namespace.to_string(), readwrite, class_elements };
+    let package = cache.package();
+    let context = Context { package: package.to_string(), readwrite, class_elements };
     let mut template = TinyTemplate::new();
     template.add_template("java_code_gen", include_str!("../templates/java.template"))?;
     let contents = template.render("java_code_gen", &context)?;
-    let mut path: PathBuf = ["aconfig", namespace].iter().collect();
+    let mut path: PathBuf = ["aconfig", package].iter().collect();
     // TODO: Allow customization of the java class name
     path.push("Flags.java");
     Ok(OutputFile { contents: contents.into(), path })
@@ -39,7 +39,7 @@ pub fn generate_java_code(cache: &Cache) -> Result<OutputFile> {
 
 #[derive(Serialize)]
 struct Context {
-    pub namespace: String,
+    pub package: String,
     pub readwrite: bool,
     pub class_elements: Vec<ClassElement>,
 }
@@ -76,8 +76,8 @@ mod tests {
 
     #[test]
     fn test_generate_java_code() {
-        let namespace = "example";
-        let mut builder = CacheBuilder::new(namespace.to_string()).unwrap();
+        let package = "example";
+        let mut builder = CacheBuilder::new(package.to_string()).unwrap();
         builder
             .add_flag_declaration(
                 Source::File("test.txt".to_string()),
@@ -98,7 +98,7 @@ mod tests {
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
-                    namespace: namespace.to_string(),
+                    package: package.to_string(),
                     name: "test".to_string(),
                     state: FlagState::Disabled,
                     permission: Permission::ReadOnly,

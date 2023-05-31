@@ -1,4 +1,4 @@
-namespace: "test"
+package: "test"
 
 # This flag's final value is calculated from:
 # - test.aconfig: DISABLED + READ_WRITE (default)

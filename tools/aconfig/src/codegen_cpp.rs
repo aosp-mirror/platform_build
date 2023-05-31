@@ -25,18 +25,18 @@ use crate::commands::OutputFile;
 pub fn generate_cpp_code(cache: &Cache) -> Result<OutputFile> {
     let class_elements: Vec<ClassElement> = cache.iter().map(create_class_element).collect();
     let readwrite = class_elements.iter().any(|item| item.readwrite);
-    let namespace = cache.namespace().to_lowercase();
-    let context = Context { namespace: namespace.clone(), readwrite, class_elements };
+    let package = cache.package().to_lowercase();
+    let context = Context { package: package.clone(), readwrite, class_elements };
     let mut template = TinyTemplate::new();
     template.add_template("cpp_code_gen", include_str!("../templates/cpp.template"))?;
     let contents = template.render("cpp_code_gen", &context)?;
-    let path = ["aconfig", &(namespace + ".h")].iter().collect();
+    let path = ["aconfig", &(package + ".h")].iter().collect();
     Ok(OutputFile { contents: contents.into(), path })
 }
 
 #[derive(Serialize)]
 struct Context {
-    pub namespace: String,
+    pub package: String,
     pub readwrite: bool,
     pub class_elements: Vec<ClassElement>,
 }
@@ -69,8 +69,8 @@ mod tests {
 
     #[test]
     fn test_cpp_codegen_build_time_flag_only() {
-        let namespace = "my_namespace";
-        let mut builder = CacheBuilder::new(namespace.to_string()).unwrap();
+        let package = "my_package";
+        let mut builder = CacheBuilder::new(package.to_string()).unwrap();
         builder
             .add_flag_declaration(
                 Source::File("aconfig_one.txt".to_string()),
@@ -83,7 +83,7 @@ mod tests {
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
-                    namespace: namespace.to_string(),
+                    package: package.to_string(),
                     name: "my_flag_one".to_string(),
                     state: FlagState::Disabled,
                     permission: Permission::ReadOnly,
@@ -101,7 +101,7 @@ mod tests {
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
-                    namespace: namespace.to_string(),
+                    package: package.to_string(),
                     name: "my_flag_two".to_string(),
                     state: FlagState::Enabled,
                     permission: Permission::ReadOnly,
@@ -109,11 +109,11 @@ mod tests {
             )
             .unwrap();
         let cache = builder.build();
-        let expect_content = r#"#ifndef my_namespace_HEADER_H
-        #define my_namespace_HEADER_H
-        #include "my_namespace.h"
+        let expect_content = r#"#ifndef my_package_HEADER_H
+        #define my_package_HEADER_H
+        #include "my_package.h"
 
-        namespace my_namespace {
+        namespace my_package {
 
             class my_flag_one {
                 public:
@@ -133,7 +133,7 @@ mod tests {
         #endif
         "#;
         let file = generate_cpp_code(&cache).unwrap();
-        assert_eq!("aconfig/my_namespace.h", file.path.to_str().unwrap());
+        assert_eq!("aconfig/my_package.h", file.path.to_str().unwrap());
         assert_eq!(
             expect_content.replace(' ', ""),
             String::from_utf8(file.contents).unwrap().replace(' ', "")
@@ -142,8 +142,8 @@ mod tests {
 
     #[test]
     fn test_cpp_codegen_runtime_flag() {
-        let namespace = "my_namespace";
-        let mut builder = CacheBuilder::new(namespace.to_string()).unwrap();
+        let package = "my_package";
+        let mut builder = CacheBuilder::new(package.to_string()).unwrap();
         builder
             .add_flag_declaration(
                 Source::File("aconfig_one.txt".to_string()),
@@ -164,7 +164,7 @@ mod tests {
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
-                    namespace: namespace.to_string(),
+                    package: package.to_string(),
                     name: "my_flag_two".to_string(),
                     state: FlagState::Enabled,
                     permission: Permission::ReadWrite,
@@ -172,20 +172,20 @@ mod tests {
             )
             .unwrap();
         let cache = builder.build();
-        let expect_content = r#"#ifndef my_namespace_HEADER_H
-        #define my_namespace_HEADER_H
-        #include "my_namespace.h"
+        let expect_content = r#"#ifndef my_package_HEADER_H
+        #define my_package_HEADER_H
+        #include "my_package.h"
 
         #include <server_configurable_flags/get_flags.h>
         using namespace server_configurable_flags;
 
-        namespace my_namespace {
+        namespace my_package {
 
             class my_flag_one {
                 public:
                     virtual const bool value() {
                         return GetServerConfigurableFlag(
-                            "my_namespace",
+                            "my_package",
                             "my_flag_one",
                             "false") == "true";
                     }
@@ -195,7 +195,7 @@ mod tests {
                 public:
                     virtual const bool value() {
                         return GetServerConfigurableFlag(
-                            "my_namespace",
+                            "my_package",
                             "my_flag_two",
                             "true") == "true";
                     }
@@ -205,7 +205,7 @@ mod tests {
         #endif
         "#;
         let file = generate_cpp_code(&cache).unwrap();
-        assert_eq!("aconfig/my_namespace.h", file.path.to_str().unwrap());
+        assert_eq!("aconfig/my_package.h", file.path.to_str().unwrap());
         assert_eq!(
             expect_content.replace(' ', ""),
             String::from_utf8(file.contents).unwrap().replace(' ', "")

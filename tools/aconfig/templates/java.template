@@ -1,4 +1,4 @@
-package aconfig.{namespace};
+package aconfig.{package};
 {{ if readwrite }}
 import android.provider.DeviceConfig;
 {{ endif }}
@@ -7,7 +7,7 @@ public final class Flags \{
     public static boolean {item.method_name}() \{
         {{ if item.readwrite- }}
         return DeviceConfig.getBoolean(
-            "{namespace}",
+            "{package}",
             "{item.feature_name}__{item.flag_name}",
             {item.default_value}
         );

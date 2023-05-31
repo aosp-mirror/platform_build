@@ -55,12 +55,8 @@ pub struct OutputFile {
     pub contents: Vec<u8>,
 }
 
-pub fn create_cache(
-    namespace: &str,
-    declarations: Vec<Input>,
-    values: Vec<Input>,
-) -> Result<Cache> {
-    let mut builder = CacheBuilder::new(namespace.to_owned())?;
+pub fn create_cache(package: &str, declarations: Vec<Input>, values: Vec<Input>) -> Result<Cache> {
+    let mut builder = CacheBuilder::new(package.to_owned())?;
 
     for mut input in declarations {
         let mut contents = String::new();
@@ -68,11 +64,11 @@ pub fn create_cache(
         let dec_list = FlagDeclarations::try_from_text_proto(&contents)
             .with_context(|| format!("Failed to parse {}", input.source))?;
         ensure!(
-            namespace == dec_list.namespace,
-            "Failed to parse {}: expected namespace {}, got {}",
+            package == dec_list.package,
+            "Failed to parse {}: expected package {}, got {}",
             input.source,
-            namespace,
-            dec_list.namespace
+            package,
+            dec_list.package
         );
         for d in dec_list.flags.into_iter() {
             builder.add_flag_declaration(input.source.clone(), d)?;
@@ -111,7 +107,7 @@ pub fn create_device_config_defaults(caches: Vec<Cache>) -> Result<Vec<u8>> {
     {
         let line = format!(
             "{}/{}:{}\n",
-            item.namespace,
+            item.package,
             item.name,
             match item.state {
                 FlagState::Enabled => "enabled",
@@ -129,7 +125,7 @@ pub fn create_device_config_sysprops(caches: Vec<Cache>) -> Result<Vec<u8>> {
     {
         let line = format!(
             "persist.device_config.{}.{}={}\n",
-            item.namespace,
+            item.package,
             item.name,
             match item.state {
                 FlagState::Enabled => "true",
@@ -155,7 +151,7 @@ pub fn dump_cache(caches: Vec<Cache>, format: DumpFormat) -> Result<Vec<u8>> {
             for item in sort_and_iter_items(caches) {
                 let line = format!(
                     "{}/{}: {:?} {:?}\n",
-                    item.namespace, item.name, item.state, item.permission
+                    item.package, item.name, item.state, item.permission
                 );
                 output.extend_from_slice(line.as_bytes());
             }
@@ -181,7 +177,7 @@ fn sort_and_iter_items(caches: Vec<Cache>) -> impl Iterator<Item = Item> {
 }
 
 fn sort_and_iter_caches(mut caches: Vec<Cache>) -> impl Iterator<Item = Cache> {
-    caches.sort_by_cached_key(|cache| cache.namespace().to_string());
+    caches.sort_by_cached_key(|cache| cache.package().to_string());
     caches.into_iter()
 }
 
@@ -192,7 +188,7 @@ mod tests {
 
     fn create_test_cache_ns1() -> Cache {
         let s = r#"
-        namespace: "ns1"
+        package: "ns1"
         flag {
             name: "a"
             description: "Description of a"
@@ -205,7 +201,7 @@ mod tests {
         let declarations = vec![Input { source: Source::Memory, reader: Box::new(s.as_bytes()) }];
         let o = r#"
         flag_value {
-            namespace: "ns1"
+            package: "ns1"
             name: "a"
             state: DISABLED
             permission: READ_ONLY
@@ -217,7 +213,7 @@ mod tests {
 
     fn create_test_cache_ns2() -> Cache {
         let s = r#"
-        namespace: "ns2"
+        package: "ns2"
         flag {
             name: "c"
             description: "Description of c"
@@ -226,7 +222,7 @@ mod tests {
         let declarations = vec![Input { source: Source::Memory, reader: Box::new(s.as_bytes()) }];
         let o = r#"
         flag_value {
-            namespace: "ns2"
+            package: "ns2"
             name: "c"
             state: DISABLED
             permission: READ_ONLY
@@ -284,7 +280,7 @@ mod tests {
 
         let item =
             actual.parsed_flag.iter().find(|item| item.name == Some("b".to_string())).unwrap();
-        assert_eq!(item.namespace(), "ns1");
+        assert_eq!(item.package(), "ns1");
         assert_eq!(item.name(), "b");
         assert_eq!(item.description(), "Description of b");
         assert_eq!(item.state(), ProtoFlagState::DISABLED);
@@ -304,7 +300,7 @@ mod tests {
         assert_eq!(
             dump.parsed_flag
                 .iter()
-                .map(|parsed_flag| format!("{}/{}", parsed_flag.namespace(), parsed_flag.name()))
+                .map(|parsed_flag| format!("{}/{}", parsed_flag.package(), parsed_flag.name()))
                 .collect::<Vec<_>>(),
             vec!["ns1/a".to_string(), "ns1/b".to_string(), "ns2/c".to_string()]
         );
