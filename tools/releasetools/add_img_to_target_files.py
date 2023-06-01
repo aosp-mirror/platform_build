@@ -65,7 +65,7 @@ import verity_utils
 import ota_metadata_pb2
 import rangelib
 import sparse_img
-
+from concurrent.futures import ThreadPoolExecutor
 from apex_utils import GetApexInfoFromTargetFiles
 from common import ZipDelete, PARTITIONS_WITH_CARE_MAP, ExternalError, RunAndCheckOutput, IsSparseImage, MakeTempFile, ZipWrite
 
@@ -1083,8 +1083,15 @@ def AddImagesToTargetFiles(filename):
       ("system_dlkm", has_system_dlkm, AddSystemDlkm, []),
       ("system_other", has_system_other, AddSystemOther, []),
   )
-  for call in add_partition_calls:
-    add_partition(*call)
+  # If output_zip exists, each add_partition_calls writes bytes to the same output_zip,
+  # which is not thread-safe. So, run them in serial if output_zip exists.
+  if output_zip:
+    for call in add_partition_calls:
+      add_partition(*call)
+  else:
+    with ThreadPoolExecutor(max_workers=len(add_partition_calls)) as executor:
+      for future in [executor.submit(add_partition, *call) for call in add_partition_calls]:
+        future.result()
 
   AddApexInfo(output_zip)
 

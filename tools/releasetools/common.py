@@ -450,10 +450,7 @@ class BuildInfo(object):
 
   @property
   def is_vabc(self):
-    vendor_prop = self.info_dict.get("vendor.build.prop")
-    vabc_enabled = vendor_prop and \
-        vendor_prop.GetProp("ro.virtual_ab.compression.enabled") == "true"
-    return vabc_enabled
+    return self.info_dict.get("virtual_ab_compression") == "true"
 
   @property
   def is_android_r(self):
@@ -474,9 +471,9 @@ class BuildInfo(object):
     for prop in props:
       value = vendor_prop.GetProp(prop)
       try:
-          return int(value)
+        return int(value)
       except:
-          pass
+        pass
     return -1
 
   @property
@@ -755,6 +752,33 @@ def ReadBytesFromInputFile(input_file, fn):
 def ReadFromInputFile(input_file, fn):
   """Reads the str contents of fn from input zipfile or directory."""
   return ReadBytesFromInputFile(input_file, fn).decode()
+
+
+def WriteBytesToInputFile(input_file, fn, data):
+  """Write bytes |data| contents to fn of input zipfile or directory."""
+  if isinstance(input_file, zipfile.ZipFile):
+    with input_file.open(fn, "w") as entry_fp:
+      return entry_fp.write(data)
+  elif zipfile.is_zipfile(input_file):
+    with zipfile.ZipFile(input_file, "r", allowZip64=True) as zfp:
+      with zfp.open(fn, "w") as entry_fp:
+        return entry_fp.write(data)
+  else:
+    if not os.path.isdir(input_file):
+      raise ValueError(
+          "Invalid input_file, accepted inputs are ZipFile object, path to .zip file on disk, or path to extracted directory. Actual: " + input_file)
+    path = os.path.join(input_file, *fn.split("/"))
+    try:
+      with open(path, "wb") as f:
+        return f.write(data)
+    except IOError as e:
+      if e.errno == errno.ENOENT:
+        raise KeyError(fn)
+
+
+def WriteToInputFile(input_file, fn, str: str):
+  """Write str content to fn of input file or directory"""
+  return WriteBytesToInputFile(input_file, fn, str.encode())
 
 
 def ExtractFromInputFile(input_file, fn):
@@ -1396,7 +1420,8 @@ def RunHostInitVerifier(product_out, partition_map):
 def AppendAVBSigningArgs(cmd, partition):
   """Append signing arguments for avbtool."""
   # e.g., "--key path/to/signing_key --algorithm SHA256_RSA4096"
-  key_path = ResolveAVBSigningPathArgs(OPTIONS.info_dict.get("avb_" + partition + "_key_path"))
+  key_path = ResolveAVBSigningPathArgs(
+      OPTIONS.info_dict.get("avb_" + partition + "_key_path"))
   algorithm = OPTIONS.info_dict.get("avb_" + partition + "_algorithm")
   if key_path and algorithm:
     cmd.extend(["--key", key_path, "--algorithm", algorithm])
@@ -1415,7 +1440,7 @@ def ResolveAVBSigningPathArgs(split_args):
     if os.path.exists(new_path):
       return new_path
     raise ExternalError(
-      "Failed to find {}".format(new_path))
+        "Failed to find {}".format(new_path))
 
   if not split_args:
     return split_args
@@ -2757,6 +2782,8 @@ def MakeTempDir(prefix='tmp', suffix=''):
 
 def Cleanup():
   for i in OPTIONS.tempfiles:
+    if not os.path.exists(i):
+      continue
     if os.path.isdir(i):
       shutil.rmtree(i, ignore_errors=True)
     else:
@@ -4090,6 +4117,17 @@ def IsSparseImage(filepath):
     # Magic for android sparse image format
     # https://source.android.com/devices/bootloader/images
     return fp.read(4) == b'\x3A\xFF\x26\xED'
+
+
+def UnsparseImage(filepath, target_path=None):
+  if not IsSparseImage(filepath):
+    return
+  if target_path is None:
+    tmp_img = MakeTempFile(suffix=".img")
+    RunAndCheckOutput(["simg2img", filepath, tmp_img])
+    os.rename(tmp_img, filepath)
+  else:
+    RunAndCheckOutput(["simg2img", filepath, target_path])
 
 
 def ParseUpdateEngineConfig(path: str):

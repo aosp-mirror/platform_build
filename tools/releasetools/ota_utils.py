@@ -48,6 +48,7 @@ METADATA_PROTO_NAME = 'META-INF/com/android/metadata.pb'
 UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'OTA/*',
                  'RADIO/*', '*/build.prop', '*/default.prop', '*/build.default', "*/etc/vintf/*"]
 SECURITY_PATCH_LEVEL_PROP_NAME = "ro.build.version.security_patch"
+TARGET_FILES_IMAGES_SUBDIR = ["IMAGES", "PREBUILT_IMAGES", "RADIO"]
 
 
 def FinalizeMetadata(metadata, input_file, output_file, needed_property_files=None, package_key=None, pw=None):
@@ -642,8 +643,7 @@ def ConstructOtaApexInfo(target_zip, source_file=None):
   if not source_file:
     return target_apex_string
 
-  with zipfile.ZipFile(source_file, "r", allowZip64=True) as source_zip:
-    source_apex_string = _ReadApexInfo(source_zip)
+  source_apex_string = _ReadApexInfo(source_file)
   if not source_apex_string:
     return target_apex_string
 
@@ -728,6 +728,15 @@ def ExtractTargetFiles(path: str):
     return path
   extracted_dir = common.MakeTempDir("target_files")
   common.UnzipToDir(path, extracted_dir, UNZIP_PATTERN + [""])
+  for subdir in TARGET_FILES_IMAGES_SUBDIR:
+    image_dir = os.path.join(extracted_dir, subdir)
+    if not os.path.exists(image_dir):
+      continue
+    for filename in os.listdir(image_dir):
+      if not filename.endswith(".img"):
+        continue
+      common.UnsparseImage(os.path.join(image_dir, filename))
+
   return extracted_dir
 
 
@@ -1048,10 +1057,21 @@ def Fnmatch(filename, pattersn):
 
 def CopyTargetFilesDir(input_dir):
   output_dir = common.MakeTempDir("target_files")
-  shutil.copytree(os.path.join(input_dir, "IMAGES"), os.path.join(
-      output_dir, "IMAGES"), dirs_exist_ok=True)
+
+  def SymlinkIfNotSparse(src, dst):
+    if common.IsSparseImage(src):
+      return common.UnsparseImage(src, dst)
+    else:
+      return os.link(src, dst)
+
+  for subdir in TARGET_FILES_IMAGES_SUBDIR:
+    if not os.path.exists(os.path.join(input_dir, subdir)):
+      continue
+    shutil.copytree(os.path.join(input_dir, subdir), os.path.join(
+        output_dir, subdir), dirs_exist_ok=True, copy_function=SymlinkIfNotSparse)
   shutil.copytree(os.path.join(input_dir, "META"), os.path.join(
       output_dir, "META"), dirs_exist_ok=True)
+
   for (dirpath, _, filenames) in os.walk(input_dir):
     for filename in filenames:
       path = os.path.join(dirpath, filename)
