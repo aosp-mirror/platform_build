@@ -1,16 +1,19 @@
 SOONG_MAKEVARS_MK := $(SOONG_OUT_DIR)/make_vars-$(TARGET_PRODUCT).mk
-SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.variables
+SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.$(TARGET_PRODUCT).variables
 SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android-$(TARGET_PRODUCT).mk
-
-BINDER32BIT :=
-ifneq ($(TARGET_USES_64_BIT_BINDER),true)
-ifneq ($(TARGET_IS_64_BIT),true)
-BINDER32BIT := true
-endif
-endif
 
 include $(BUILD_SYSTEM)/art_config.mk
 include $(BUILD_SYSTEM)/dex_preopt_config.mk
+
+ifndef AFDO_PROFILES
+# Set AFDO_PROFILES
+-include vendor/google_data/pgo_profile/sampling/afdo_profiles.mk
+else
+$(error AFDO_PROFILES can only be set from soong_config.mk. For product-specific fdo_profiles, please use PRODUCT_AFDO_PROFILES)
+endif
+
+# PRODUCT_AFDO_PROFILES takes precedence over product-agnostic profiles in AFDO_PROFILES
+ALL_AFDO_PROFILES := $(PRODUCT_AFDO_PROFILES) $(AFDO_PROFILES)
 
 ifeq ($(WRITE_SOONG_VARIABLES),true)
 
@@ -110,6 +113,7 @@ $(call add_json_bool, EnableCFI,                         $(call invert_bool,$(fi
 $(call add_json_list, CFIExcludePaths,                   $(CFI_EXCLUDE_PATHS) $(PRODUCT_CFI_EXCLUDE_PATHS))
 $(call add_json_list, CFIIncludePaths,                   $(CFI_INCLUDE_PATHS) $(PRODUCT_CFI_INCLUDE_PATHS))
 $(call add_json_list, IntegerOverflowExcludePaths,       $(INTEGER_OVERFLOW_EXCLUDE_PATHS) $(PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS))
+$(call add_json_list, HWASanIncludePaths,                $(HWASAN_INCLUDE_PATHS) $(PRODUCT_HWASAN_INCLUDE_PATHS))
 
 $(call add_json_list, MemtagHeapExcludePaths,            $(MEMTAG_HEAP_EXCLUDE_PATHS) $(PRODUCT_MEMTAG_HEAP_EXCLUDE_PATHS))
 $(call add_json_list, MemtagHeapAsyncIncludePaths,       $(MEMTAG_HEAP_ASYNC_INCLUDE_PATHS) $(PRODUCT_MEMTAG_HEAP_ASYNC_INCLUDE_PATHS))
@@ -132,7 +136,6 @@ $(call add_json_list, NativeCoverageExcludePaths,        $(NATIVE_COVERAGE_EXCLU
 $(call add_json_bool, SamplingPGO,                       $(filter true,$(SAMPLING_PGO)))
 
 $(call add_json_bool, ArtUseReadBarrier,                 $(call invert_bool,$(filter false,$(PRODUCT_ART_USE_READ_BARRIER))))
-$(call add_json_bool, Binder32bit,                       $(BINDER32BIT))
 $(call add_json_str,  BtConfigIncludeDir,                $(BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR))
 $(call add_json_list, DeviceKernelHeaders,               $(TARGET_DEVICE_KERNEL_HEADERS) $(TARGET_BOARD_KERNEL_HEADERS) $(TARGET_PRODUCT_KERNEL_HEADERS))
 $(call add_json_str,  DeviceVndkVersion,                 $(BOARD_VNDK_VERSION))
@@ -146,6 +149,7 @@ $(call add_json_bool, Malloc_not_svelte,                 $(call invert_bool,$(fi
 $(call add_json_bool, Malloc_zero_contents,              $(call invert_bool,$(filter false,$(MALLOC_ZERO_CONTENTS))))
 $(call add_json_bool, Malloc_pattern_fill_contents,      $(MALLOC_PATTERN_FILL_CONTENTS))
 $(call add_json_str,  Override_rs_driver,                $(OVERRIDE_RS_DRIVER))
+$(call add_json_str,  DeviceMaxPageSizeSupported,        $(TARGET_MAX_PAGE_SIZE_SUPPORTED))
 
 $(call add_json_bool, UncompressPrivAppDex,              $(call invert_bool,$(filter true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS))))
 $(call add_json_list, ModulesLoadedByPrivilegedModules,  $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES))
@@ -281,10 +285,11 @@ $(call add_json_str,  PrebuiltHiddenApiDir, $(BOARD_PREBUILT_HIDDENAPI_DIR))
 
 $(call add_json_str,  ShippingApiLevel, $(PRODUCT_SHIPPING_API_LEVEL))
 
+$(call add_json_list, BuildBrokenPluginValidation,        $(BUILD_BROKEN_PLUGIN_VALIDATION))
 $(call add_json_bool, BuildBrokenClangProperty,           $(filter true,$(BUILD_BROKEN_CLANG_PROPERTY)))
 $(call add_json_bool, BuildBrokenClangAsFlags,            $(filter true,$(BUILD_BROKEN_CLANG_ASFLAGS)))
 $(call add_json_bool, BuildBrokenClangCFlags,             $(filter true,$(BUILD_BROKEN_CLANG_CFLAGS)))
-$(call add_json_bool, BuildBrokenDepfile,                 $(filter true,$(BUILD_BROKEN_DEPFILE)))
+$(call add_json_bool, GenruleSandboxing,                  $(filter true,$(GENRULE_SANDBOXING)))
 $(call add_json_bool, BuildBrokenEnforceSyspropOwner,     $(filter true,$(BUILD_BROKEN_ENFORCE_SYSPROP_OWNER)))
 $(call add_json_bool, BuildBrokenTrebleSyspropNeverallow, $(filter true,$(BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW)))
 $(call add_json_bool, BuildBrokenUsesSoongPython2Modules, $(filter true,$(BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES)))
@@ -309,7 +314,14 @@ $(call add_json_bool, IgnorePrefer32OnDevice, $(filter true,$(IGNORE_PREFER32_ON
 $(call add_json_list, IncludeTags,                $(PRODUCT_INCLUDE_TAGS))
 $(call add_json_list, SourceRootDirs,             $(PRODUCT_SOURCE_ROOT_DIRS))
 
-$(call add_json_list, AfdoProfiles,                $(PRODUCT_AFDO_PROFILES))
+$(call add_json_list, AfdoProfiles,                $(ALL_AFDO_PROFILES))
+
+$(call add_json_str,  ProductManufacturer, $(PRODUCT_MANUFACTURER))
+$(call add_json_str,  ProductBrand,        $(PRODUCT_BRAND))
+$(call add_json_list, BuildVersionTags,    $(BUILD_VERSION_TAGS))
+
+$(call add_json_str, ReleaseVersion,    $(_RELEASE_VERSION))
+$(call add_json_list, ReleaseDeviceConfigValueSets,    $(RELEASE_DEVICE_CONFIG_VALUE_SETS))
 
 $(call json_end)
 

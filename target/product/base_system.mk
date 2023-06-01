@@ -226,7 +226,7 @@ PRODUCT_PACKAGES += \
     mtpd \
     ndc \
     netd \
-    NetworkStackNext \
+    NetworkStack \
     odsign \
     org.apache.http.legacy \
     otacerts \
@@ -265,7 +265,6 @@ PRODUCT_PACKAGES += \
     sm \
     snapshotctl \
     snapuserd \
-    SoundPicker \
     storaged \
     surfaceflinger \
     svc \
@@ -290,6 +289,13 @@ PRODUCT_PACKAGES += \
     wificond \
     wifi.rc \
     wm \
+
+# These packages are not used on Android TV
+ifneq ($(PRODUCT_IS_ATV),true)
+  PRODUCT_PACKAGES += \
+      SoundPicker \
+
+endif
 
 # VINTF data for system image
 PRODUCT_PACKAGES += \

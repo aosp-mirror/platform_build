@@ -1,0 +1,23 @@
+{{- for parsed_flag in parsed_flags -}}
+{{- if parsed_flag.is_read_only_disabled -}}
+#[inline(always)]
+pub const fn r#{parsed_flag.fn_name}() -> bool \{
+    false
+}
+
+{{ endif -}}
+{{- if parsed_flag.is_read_only_enabled -}}
+#[inline(always)]
+pub const fn r#{parsed_flag.fn_name}() -> bool \{
+    true
+}
+
+{{ endif -}}
+{{- if parsed_flag.is_read_write -}}
+#[inline(always)]
+pub fn r#{parsed_flag.fn_name}() -> bool \{
+    profcollect_libflags_rust::GetServerConfigurableFlag("{namespace}", "{parsed_flag.name}", "false") == "true"
+}
+
+{{ endif -}}
+{{- endfor -}}

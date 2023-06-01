@@ -1,5 +1,18 @@
 # Build System Changes for Android.mk Writers
 
+## Perform validation of Soong plugins
+
+Each Soong plugin will require manual work to migrate to Bazel. In order to
+minimize the manual work outside of build/soong, we are restricting plugins to
+those that exist today and those in vendor or hardware directories.
+
+If you need to extend the build system via a plugin, please reach out to the
+build team via email android-building@googlegroups.com (external) for any
+questions, or see [go/soong](http://go/soong) (internal).
+
+To omit the validation, `BUILD_BROKEN_PLUGIN_VALIDATION` expects a list of
+plugins to omit from the validation.
+
 ## Python 2 to 3 migration
 
 The path set when running builds now makes the `python` executable point to python 3,
@@ -15,7 +28,6 @@ overridden by setting the `BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES` product conf
 variable to `true`.
 
 Python 2 is slated for complete removal in V.
-
 ## Stop referencing sysprop_library directly from cc modules
 
 For the migration to Bazel, we are no longer mapping sysprop_library targets
@@ -492,6 +504,24 @@ $(call dist-for-goals,foo,bar/baz)
 ```
 
 will copy `bar/baz` into `$DIST_DIR/baz` when `m foo dist` is run.
+
+#### FILE_NAME_TAG  {#FILE_NAME_TAG}
+
+To embed the `BUILD_NUMBER` (or for local builds, `eng.${USER}`), include
+`FILE_NAME_TAG_PLACEHOLDER` in the destination:
+
+``` make
+# you can use dist-for-goals-with-filenametag function
+$(call dist-for-goals-with-filenametag,foo,bar.zip)
+# or use FILE_NAME_TAG_PLACEHOLDER manually
+$(call dist-for-goals,foo,bar.zip:baz-FILE_NAME_TAG_PLACEHOLDER.zip)
+```
+
+Which will produce `$DIST_DIR/baz-1234567.zip` on build servers which set
+`BUILD_NUMBER=1234567`, or `$DIST_DIR/baz-eng.builder.zip` for local builds.
+
+If you just want to append `BUILD_NUMBER` at the end of basename, use
+`dist-for-goals-with-filenametag` instead of `dist-for-goals`.
 
 #### Renames during copy
 

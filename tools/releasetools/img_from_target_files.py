@@ -118,13 +118,18 @@ def EntriesForUserImages(input_file):
 
   entries = [
       'OTA/android-info.txt:android-info.txt',
+      'META/fastboot-info.txt:fastboot-info.txt',
   ]
   with zipfile.ZipFile(input_file) as input_zip:
     namelist = input_zip.namelist()
+  if 'PREBUILT_IMAGES/kernel_16k' in namelist:
+    entries.append('PREBUILT_IMAGES/kernel_16k:kernel_16k')
+  if 'PREBUILT_IMAGES/ramdisk_16k.img' in namelist:
+    entries.append('PREBUILT_IMAGES/ramdisk_16k.img:ramdisk_16k.img')
 
   for image_path in [name for name in namelist if name.startswith('IMAGES/')]:
     image = os.path.basename(image_path)
-    if OPTIONS.bootable_only and image not in('boot.img', 'recovery.img', 'bootloader', 'init_boot.img'):
+    if OPTIONS.bootable_only and image not in ('boot.img', 'recovery.img', 'bootloader', 'init_boot.img'):
       continue
     if not image.endswith('.img') and image != 'bootloader':
       continue
@@ -172,8 +177,8 @@ def RebuildAndWriteSuperImages(input_file, output_file):
 
   logger.info('Writing super.img to archive...')
   with zipfile.ZipFile(
-      output_file, 'a', compression=zipfile.ZIP_DEFLATED,
-      allowZip64=True) as output_zip:
+          output_file, 'a', compression=zipfile.ZIP_DEFLATED,
+          allowZip64=True) as output_zip:
     common.ZipWrite(output_zip, super_file, 'super.img')
 
 

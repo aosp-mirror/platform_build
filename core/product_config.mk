@@ -223,7 +223,7 @@ _product_config_saved_KATI_ALLOW_RULES := $(.KATI_ALLOW_RULES)
 endif
 
 ifeq (,$(current_product_makefile))
-  $(error Can not locate config makefile for product "$(TARGET_PRODUCT)")
+  $(error Cannot locate config makefile for product "$(TARGET_PRODUCT)")
 endif
 
 ifneq (,$(filter $(TARGET_PRODUCT),$(products_using_starlark_config)))
@@ -236,14 +236,22 @@ else
   $(shell mkdir -p $(OUT_DIR)/rbc)
   $(call dump-variables-rbc, $(OUT_DIR)/rbc/make_vars_pre_product_config.mk)
 
-  $(shell build/soong/scripts/update_out \
-    $(OUT_DIR)/rbc/rbc_product_config_results.mk \
-    build/soong/scripts/rbc-run \
-    $(current_product_makefile) \
-    $(OUT_DIR)/rbc/make_vars_pre_product_config.mk)
+  $(shell $(OUT_DIR)/mk2rbc \
+    --mode=write -r --outdir $(OUT_DIR)/rbc \
+    --launcher=$(OUT_DIR)/rbc/launcher.rbc \
+    --input_variables=$(OUT_DIR)/rbc/make_vars_pre_product_config.mk \
+    --makefile_list=$(OUT_DIR)/.module_paths/configuration.list \
+    $(current_product_makefile))
   ifneq ($(.SHELLSTATUS),0)
     $(error product configuration converter failed: $(.SHELLSTATUS))
   endif
+
+  $(shell build/soong/scripts/update_out $(OUT_DIR)/rbc/rbc_product_config_results.mk \
+    $(OUT_DIR)/rbcrun --mode=rbc $(OUT_DIR)/rbc/launcher.rbc)
+  ifneq ($(.SHELLSTATUS),0)
+    $(error product configuration runner failed: $(.SHELLSTATUS))
+  endif
+
   include $(OUT_DIR)/rbc/rbc_product_config_results.mk
 endif
 
@@ -279,6 +287,15 @@ BLUEPRINT_INCLUDE_TAGS_ALLOWLIST := com.android.mainline_go com.android.mainline
 $(foreach include_tag,$(PRODUCT_INCLUDE_TAGS), \
 	$(if $(filter $(include_tag),$(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST)),,\
 	$(call pretty-error, $(include_tag) is not in BLUEPRINT_INCLUDE_TAGS_ALLOWLIST: $(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST))))
+# Create default PRODUCT_INCLUDE_TAGS
+ifeq (, $(PRODUCT_INCLUDE_TAGS))
+# Soong analysis is global: even though a module might not be relevant to a specific product (e.g. build_tools for aosp_arm),
+# we still analyse it.
+# This means that in setups where we two have two prebuilts of module_sdk, we need a "default" to use in analysis
+# This should be a no-op in aosp and internal since no Android.bp file contains blueprint_package_includes
+PRODUCT_INCLUDE_TAGS += com.android.mainline # Use the big android one by default
+endif
+
 #############################################################################
 
 # Quick check and assign default values
@@ -517,7 +534,8 @@ ifdef OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
     PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE := $(OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE)
   endif
 else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
-  # No shipping level defined
+  # No shipping level defined. Enforce the product interface by default.
+  PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE := true
 else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),29),true)
   # Enforce product interface if PRODUCT_SHIPPING_API_LEVEL is greater than 29.
   PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE := true
@@ -532,7 +550,8 @@ PRODUCT_USE_PRODUCT_VNDK := false
 ifneq ($(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE),)
   PRODUCT_USE_PRODUCT_VNDK := $(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE)
 else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
-  # No shipping level defined
+  # No shipping level defined. Enforce the product interface by default.
+  PRODUCT_USE_PRODUCT_VNDK := true
 else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),29),true)
   # Enforce product interface for VNDK if PRODUCT_SHIPPING_API_LEVEL is greater
   # than 29.

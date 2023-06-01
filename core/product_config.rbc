@@ -54,25 +54,16 @@ def __print_attr(attr, value):
     if value == None:
         return
     if type(value) == "list":
-        if _options.rearrange:
-            value = __printvars_rearrange_list(value)
-        if _options.format == "pretty":
-            print(attr, "=", repr(value))
-        elif _options.format == "make":
-            value = list(value)
-            for i, x in enumerate(value):
-                if type(x) == "tuple" and len(x) == 1:
-                    value[i] = "@inherit:" + x[0] + ".mk"
-                elif type(x) != "string":
-                    fail("Wasn't a list of strings:", attr, " value:", value)
-            print(attr, ":=", " ".join(value))
-    elif _options.format == "pretty":
-        print(attr, "=", repr(value))
-    elif _options.format == "make":
+        value = list(value)
+        for i, x in enumerate(value):
+            if type(x) == "tuple" and len(x) == 1:
+                value[i] = "@inherit:" + x[0] + ".mk"
+            elif type(x) != "string":
+                fail("Wasn't a list of strings:", attr, " value:", value)
+        print(attr, ":=", " ".join(value))
+    else:
         # Trim all spacing to a single space
         print(attr, ":=", _mkstrip(value))
-    else:
-        fail("bad output format", _options.format)
 
 def _printvars(state):
     """Prints configuration and global variables."""
@@ -83,8 +74,7 @@ def _printvars(state):
             for nsname, nsvars in sorted(val.items()):
                 # Define SOONG_CONFIG_<ns> for Make, othewise
                 # it cannot be added to .KATI_READONLY list
-                if _options.format == "make":
-                    print("SOONG_CONFIG_" + nsname, ":=", " ".join(nsvars.keys()))
+                print("SOONG_CONFIG_" + nsname, ":=", " ".join(nsvars.keys()))
                 for var, val in sorted(nsvars.items()):
                     if val:
                         __print_attr("SOONG_CONFIG_%s_%s" % (nsname, var), val)
@@ -104,11 +94,6 @@ def _printvars(state):
             print("_all_dist_src_dst_pairs:=", " ".join(src_dst_list))
         elif attr not in globals_base or globals_base[attr] != val:
             __print_attr(attr, val)
-
-def __printvars_rearrange_list(value_list):
-    """Rearrange value list: return only distinct elements, maybe sorted."""
-    seen = {item: 0 for item in value_list}
-    return sorted(seen.keys()) if _options.rearrange == "sort" else seen.keys()
 
 def __sort_pcm_names(pcm_names):
     # We have to add an extension back onto the pcm names when sorting,
@@ -394,7 +379,7 @@ def _soong_config_namespace(g, nsname):
 def _soong_config_set(g, nsname, var, value):
     """Assigns the value to the variable in the namespace."""
     _soong_config_namespace(g, nsname)
-    g[_soong_config_namespaces_key][nsname][var]=value
+    g[_soong_config_namespaces_key][nsname][var]=_mkstrip(value)
 
 def _soong_config_append(g, nsname, var, value):
     """Appends to the value of the variable in the namespace."""
@@ -402,9 +387,9 @@ def _soong_config_append(g, nsname, var, value):
     ns = g[_soong_config_namespaces_key][nsname]
     oldv = ns.get(var)
     if oldv == None:
-        ns[var] = value
+        ns[var] = _mkstrip(value)
     else:
-        ns[var] += " " + value
+        ns[var] += " " + _mkstrip(value)
 
 
 def _soong_config_get(g, nsname, var):
@@ -691,16 +676,8 @@ def _mkwarning(file, message = ""):
     rblf_log(file, "warning", message, sep = ':')
 
 def _mk2rbc_error(loc, message):
-    """Prints a message about conversion error and stops.
-
-    If RBC_MK2RBC_CONTINUE environment variable is set,
-    the execution will continue after the message is printed.
-    """
-    if _options.mk2rbc_continue:
-        rblf_log(loc, message, sep = ':')
-    else:
-        _mkerror(loc, message)
-
+    """Prints a message about conversion error and stops."""
+    _mkerror(loc, message)
 
 def _mkinfo(file, message = ""):
     """Prints info."""
@@ -873,39 +850,12 @@ def _clear_var_list(g, h, var_list):
             # Cause the variable to appear set like the make version does
             g[v] = ""
 
-
-def __get_options():
-    """Returns struct containing runtime global settings."""
-    settings = dict(
-        format = "pretty",
-        rearrange = "",
-        trace_modules = False,
-        trace_variables = [],
-        mk2rbc_continue = False,
-    )
-    for x in getattr(rblf_cli, "RBC_OUT", "").split(","):
-        if x == "sort" or x == "unique":
-            if settings["rearrange"]:
-                fail("RBC_OUT: either sort or unique is allowed (and sort implies unique)")
-            settings["rearrange"] = x
-        elif x == "pretty" or x == "make":
-            settings["format"] = x
-        elif x == "global":
-            # TODO: Remove this, kept for backwards compatibility
-            pass
-        elif x != "":
-            fail("RBC_OUT: got %s, should be one of: [pretty|make] [sort|unique]" % x)
-    for x in getattr(rblf_cli, "RBC_DEBUG", "").split(","):
-        if x == "!trace":
-            settings["trace_modules"] = True
-        elif x != "":
-            settings["trace_variables"].append(x)
-    if getattr(rblf_cli, "RBC_MK2RBC_CONTINUE", ""):
-        settings["mk2rbc_continue"] = True
-    return struct(**settings)
-
 # Settings used during debugging.
-_options = __get_options()
+_options = struct(
+    trace_modules = False,
+    trace_variables = [],
+)
+
 rblf = struct(
     soong_config_namespace = _soong_config_namespace,
     soong_config_append = _soong_config_append,

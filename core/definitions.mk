@@ -75,9 +75,6 @@ INTERNAL_DALVIK_MODULES:=
 # All findbugs xml files
 ALL_FINDBUGS_FILES:=
 
-# GPL module license files
-ALL_GPL_MODULE_LICENSE_FILES:=
-
 # Packages with certificate violation
 CERTIFICATE_VIOLATION_MODULES :=
 
@@ -597,7 +594,7 @@ endef
 define declare-copy-target-license-metadata
 $(strip $(if $(filter $(OUT_DIR)%,$(2)),\
   $(eval _tgt:=$(strip $(1)))\
-  $(eval ALL_COPIED_TARGETS.$(_tgt).SOURCES := $(ALL_COPIED_TARGETS.$(_tgt).SOURCES) $(filter $(OUT_DIR)%,$(2)))\
+  $(eval ALL_COPIED_TARGETS.$(_tgt).SOURCES := $(sort $(ALL_COPIED_TARGETS.$(_tgt).SOURCES) $(filter $(OUT_DIR)%,$(2))))\
   $(eval ALL_COPIED_TARGETS += $(_tgt))))
 endef
 
@@ -897,7 +894,8 @@ $(call declare-container-license-metadata,$(1),SPDX-license-identifier-Apache-2.
 endef
 
 ###########################################################
-## Declare license dependencies $(2) for non-module target $(1)
+## Declare license dependencies $(2) with optional colon-separated
+## annotations for non-module target $(1)
 ###########################################################
 define declare-license-deps
 $(strip \
@@ -909,7 +907,8 @@ $(strip \
 endef
 
 ###########################################################
-## Declare license dependencies $(2) for non-module container-type target $(1)
+## Declare license dependencies $(2) with optional colon-separated
+## annotations for non-module container-type target $(1)
 ##
 ## Container-type targets are targets like .zip files that
 ## merely aggregate other files.
@@ -2960,7 +2959,7 @@ $(hide) \
   $(extract-package) \
   echo "Module name in Android tree: $(PRIVATE_MODULE)" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
   echo "Local path in Android tree: $(PRIVATE_PATH)" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
-  echo "Install path on $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT): $(PRIVATE_INSTALLED_MODULE)" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
+  echo "Install path: $(patsubst $(PRODUCT_OUT)/%,%,$(PRIVATE_INSTALLED_MODULE))" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
   echo >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log
 endef
 ART_VERIDEX_APPCOMPAT_SCRIPT:=$(HOST_OUT)/bin/appcompat.sh

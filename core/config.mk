@@ -42,6 +42,7 @@ endif
 # Mark variables deprecated/obsolete
 CHANGES_URL := https://android.googlesource.com/platform/build/+/master/Changes.md
 .KATI_READONLY := CHANGES_URL
+$(KATI_deprecated_var TARGET_USES_64_BIT_BINDER,All devices use 64-bit binder by default now. Uses of TARGET_USES_64_BIT_BINDER should be removed.)
 $(KATI_obsolete_var PATH,Do not use PATH directly. See $(CHANGES_URL)#PATH)
 $(KATI_obsolete_var PYTHONPATH,Do not use PYTHONPATH directly. See $(CHANGES_URL)#PYTHONPATH)
 $(KATI_obsolete_var OUT,Use OUT_DIR instead. See $(CHANGES_URL)#OUT)
@@ -270,7 +271,7 @@ SOONG_CONFIG_NAMESPACES :=
 # Ex: $(call add_soong_config_namespace,acme)
 
 define add_soong_config_namespace
-$(eval SOONG_CONFIG_NAMESPACES += $1) \
+$(eval SOONG_CONFIG_NAMESPACES += $(strip $1)) \
 $(eval SOONG_CONFIG_$(strip $1) :=)
 endef
 
@@ -280,8 +281,8 @@ endef
 # $1 is the namespace. $2 is the list of variables.
 # Ex: $(call add_soong_config_var,acme,COOL_FEATURE_A COOL_FEATURE_B)
 define add_soong_config_var
-$(eval SOONG_CONFIG_$(strip $1) += $2) \
-$(foreach v,$(strip $2),$(eval SOONG_CONFIG_$(strip $1)_$v := $($v)))
+$(eval SOONG_CONFIG_$(strip $1) += $(strip $2)) \
+$(foreach v,$(strip $2),$(eval SOONG_CONFIG_$(strip $1)_$v := $(strip $($v))))
 endef
 
 # The add_soong_config_var_value function defines a make variable and also adds
@@ -290,7 +291,7 @@ endef
 # Ex: $(call add_soong_config_var_value,acme,COOL_FEATURE,true)
 
 define add_soong_config_var_value
-$(eval $2 := $3) \
+$(eval $(strip $2) := $(strip $3)) \
 $(call add_soong_config_var,$1,$2)
 endef
 
@@ -298,8 +299,8 @@ endef
 #
 # internal utility to define a namespace and a variable in it.
 define soong_config_define_internal
-$(if $(filter $1,$(SOONG_CONFIG_NAMESPACES)),,$(eval SOONG_CONFIG_NAMESPACES:=$(SOONG_CONFIG_NAMESPACES) $1)) \
-$(if $(filter $2,$(SOONG_CONFIG_$(strip $1))),,$(eval SOONG_CONFIG_$(strip $1):=$(SOONG_CONFIG_$(strip $1)) $2))
+$(if $(filter $1,$(SOONG_CONFIG_NAMESPACES)),,$(eval SOONG_CONFIG_NAMESPACES:=$(SOONG_CONFIG_NAMESPACES) $(strip $1))) \
+$(if $(filter $2,$(SOONG_CONFIG_$(strip $1))),,$(eval SOONG_CONFIG_$(strip $1):=$(SOONG_CONFIG_$(strip $1)) $(strip $2)))
 endef
 
 # soong_config_set defines the variable in the given Soong config namespace
@@ -308,7 +309,7 @@ endef
 # Ex: $(call soong_config_set,acme,COOL_FEATURE,true)
 define soong_config_set
 $(call soong_config_define_internal,$1,$2) \
-$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$3)
+$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(strip $3))
 endef
 
 # soong_config_append appends to the value of the variable in the given Soong
@@ -317,7 +318,7 @@ endef
 # $1 is the namespace, $2 is the variable name, $3 is the value
 define soong_config_append
 $(call soong_config_define_internal,$1,$2) \
-$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(SOONG_CONFIG_$(strip $1)_$(strip $2)) $3)
+$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(SOONG_CONFIG_$(strip $1)_$(strip $2)) $(strip $3))
 endef
 
 # soong_config_append gets to the value of the variable in the given Soong
@@ -357,6 +358,51 @@ endif
 # Define most of the global variables.  These are the ones that
 # are specific to the user's build configuration.
 include $(BUILD_SYSTEM)/envsetup.mk
+
+# Returns true if it is a low memory device, otherwise it returns false.
+define is-low-mem-device
+$(if $(findstring ro.config.low_ram=true,$(PRODUCT_PROPERTY_OVERRIDES)),true,\
+$(if $(findstring ro.config.low_ram=true,$(PRODUCT_DEFAULT_PROPERTY_OVERRIDES)),true,\
+$(if $(findstring ro.config.low_ram=true,$(PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE)),true,\
+$(if $(findstring ro.config.low_ram=true,$(PRODUCT_COMPATIBLE_PROPERTY)),true,\
+$(if $(findstring ro.config.low_ram=true,$(PRODUCT_SYSTEM_DEFAULT_PROPERTIES)),true,\
+$(if $(findstring ro.config.low_ram=true,$(PRODUCT_SYSTEM_EXT_PROPERTIES)),true,\
+$(if $(findstring ro.config.low_ram=true,$(PRODUCT_PRODUCT_PROPERTIES)),true,\
+$(if $(findstring ro.config.low_ram=true,$(PRODUCT_VENDOR_PROPERTIES)),true,\
+$(if $(findstring ro.config.low_ram=true,$(PRODUCT_ODM_PROPERTIES)),true,false)))))))))
+endef
+
+# Get the board API level.
+board_api_level := $(PLATFORM_SDK_VERSION)
+ifdef BOARD_API_LEVEL
+  board_api_level := $(BOARD_API_LEVEL)
+else ifdef BOARD_SHIPPING_API_LEVEL
+  # Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
+  board_api_level := $(BOARD_SHIPPING_API_LEVEL)
+endif
+
+# Calculate the VSR vendor API level.
+vsr_vendor_api_level := $(board_api_level)
+
+ifdef PRODUCT_SHIPPING_API_LEVEL
+  vsr_vendor_api_level := $(call math_min,$(PRODUCT_SHIPPING_API_LEVEL),$(board_api_level))
+endif
+
+# Set TARGET_MAX_PAGE_SIZE_SUPPORTED.
+ifdef PRODUCT_MAX_PAGE_SIZE_SUPPORTED
+  TARGET_MAX_PAGE_SIZE_SUPPORTED := $(PRODUCT_MAX_PAGE_SIZE_SUPPORTED)
+else ifeq ($(strip $(call is-low-mem-device)),true)
+  # Low memory device will have 4096 binary alignment.
+  TARGET_MAX_PAGE_SIZE_SUPPORTED := 4096
+else
+  # The default binary alignment for userspace is 4096.
+  TARGET_MAX_PAGE_SIZE_SUPPORTED := 4096
+  # When VSR vendor API level >= 34, binary alignment will be 65536.
+  ifeq ($(call math_gt_or_eq,$(vsr_vendor_api_level),34),true)
+      TARGET_MAX_PAGE_SIZE_SUPPORTED := 65536
+  endif
+endif
+.KATI_READONLY := TARGET_MAX_PAGE_SIZE_SUPPORTED
 
 # Pruned directory options used when using findleaves.py
 # See envsetup.mk for a description of SCAN_EXCLUDE_DIRS
@@ -500,8 +546,10 @@ endif
 
 TARGET_BUILD_USE_PREBUILT_SDKS :=
 DISABLE_PREOPT :=
+DISABLE_PREOPT_BOOT_IMAGES :=
 ifneq (,$(TARGET_BUILD_APPS)$(TARGET_BUILD_UNBUNDLED_IMAGE))
   DISABLE_PREOPT := true
+  DISABLE_PREOPT_BOOT_IMAGES := true
 endif
 ifeq (true,$(TARGET_BUILD_UNBUNDLED))
   ifneq (true,$(UNBUNDLED_BUILD_SDKS_FROM_SOURCE))
@@ -512,6 +560,7 @@ endif
 .KATI_READONLY := \
   TARGET_BUILD_USE_PREBUILT_SDKS \
   DISABLE_PREOPT \
+  DISABLE_PREOPT_BOOT_IMAGES \
 
 prebuilt_sdk_tools := prebuilts/sdk/tools
 prebuilt_sdk_tools_bin := $(prebuilt_sdk_tools)/$(HOST_OS)/bin
@@ -783,13 +832,6 @@ ifdef PRODUCT_SHIPPING_API_LEVEL
   ifneq ($(call numbers_less_than,$(min_systemsdk_version),$(BOARD_SYSTEMSDK_VERSIONS)),)
     $(error BOARD_SYSTEMSDK_VERSIONS ($(BOARD_SYSTEMSDK_VERSIONS)) must all be greater than or equal to BOARD_API_LEVEL, BOARD_SHIPPING_API_LEVEL or PRODUCT_SHIPPING_API_LEVEL ($(min_systemsdk_version)))
   endif
-  ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),28),)
-    ifneq ($(TARGET_IS_64_BIT), true)
-      ifneq ($(TARGET_USES_64_BIT_BINDER), true)
-        $(error When PRODUCT_SHIPPING_API_LEVEL >= 28, TARGET_USES_64_BIT_BINDER must be true)
-      endif
-    endif
-  endif
   ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),29),)
     ifneq ($(BOARD_OTA_FRAMEWORK_VBMETA_VERSION_OVERRIDE),)
       $(error When PRODUCT_SHIPPING_API_LEVEL >= 29, BOARD_OTA_FRAMEWORK_VBMETA_VERSION_OVERRIDE cannot be set)
@@ -814,6 +856,7 @@ endif
 .KATI_READONLY := MAINLINE_SEPOLICY_DEV_CERTIFICATES
 
 BUILD_NUMBER_FROM_FILE := $$(cat $(SOONG_OUT_DIR)/build_number.txt)
+BUILD_HOSTNAME_FROM_FILE := $$(cat $(SOONG_OUT_DIR)/build_hostname.txt)
 BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
 
 # SEPolicy versions
@@ -1188,16 +1231,7 @@ RS_PREBUILT_COMPILER_RT := prebuilts/sdk/renderscript/lib/$(TARGET_ARCH)/libcomp
 RSCOMPAT_32BIT_ONLY_API_LEVELS := 8 9 10 11 12 13 14 15 16 17 18 19 20
 RSCOMPAT_NO_USAGEIO_API_LEVELS := 8 9 10 11 12 13
 
-# Add BUILD_NUMBER to apps default version name if it's unbundled build.
-ifdef TARGET_BUILD_APPS
-TARGET_BUILD_WITH_APPS_VERSION_NAME := true
-endif
-
-ifdef TARGET_BUILD_WITH_APPS_VERSION_NAME
-APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)-$(BUILD_NUMBER_FROM_FILE)
-else
 APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)
-endif
 
 # ANDROID_WARNING_ALLOWED_PROJECTS is generated by build/soong.
 define find_warning_allowed_projects

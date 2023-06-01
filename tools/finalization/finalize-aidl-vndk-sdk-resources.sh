@@ -4,13 +4,15 @@ set -ex
 
 function apply_droidstubs_hack() {
     if ! grep -q 'STOPSHIP: RESTORE THIS LOGIC WHEN DECLARING "REL" BUILD' "$top/build/soong/java/droidstubs.go" ; then
-        git -C "$top/build/soong" apply --allow-empty ../../build/make/tools/finalization/build_soong_java_droidstubs.go.apply_hack.diff
+        local build_soong_git_root="$(readlink -f $top/build/soong)"
+        git -C "$build_soong_git_root" apply --allow-empty ../../build/make/tools/finalization/build_soong_java_droidstubs.go.apply_hack.diff
     fi
 }
 
 function apply_resources_sdk_int_fix() {
     if ! grep -q 'public static final int RESOURCES_SDK_INT = SDK_INT;' "$top/frameworks/base/core/java/android/os/Build.java" ; then
-        git -C "$top/frameworks/base" apply --allow-empty ../../build/make/tools/finalization/frameworks_base.apply_resource_sdk_int.diff
+        local base_git_root="$(readlink -f $top/frameworks/base)"
+        git -C "$base_git_root" apply --allow-empty ../../build/make/tools/finalization/frameworks_base.apply_resource_sdk_int.diff
     fi
 }
 
@@ -92,9 +94,7 @@ function finalize_aidl_vndk_sdk_resources() {
     AIDL_TRANSITIVE_FREEZE=true $m aidl-freeze-api create_reference_dumps
 
     # Generate ABI dumps
-    ANDROID_BUILD_TOP="$top" \
-        out/host/linux-x86/bin/create_reference_dumps \
-        -p aosp_arm64 --build-variant user
+    ANDROID_BUILD_TOP="$top" out/host/linux-x86/bin/create_reference_dumps
 
     echo "NOTE: THIS INTENTIONALLY MAY FAIL AND REPAIR ITSELF (until 'DONE')"
     # Update new versions of files. See update-vndk-list.sh (which requires envsetup.sh)
@@ -107,6 +107,12 @@ function finalize_aidl_vndk_sdk_resources() {
     # frameworks/libs/modules-utils
     finalize_modules_utils
 
+    # development/sdk
+    local platform_source="$top/development/sdk/platform_source.prop_template"
+    sed -i -e 's/Pkg\.Revision.*/Pkg\.Revision=1/g' $platform_source
+    local build_tools_source="$top/development/sdk/build_tools_source.prop_template"
+    sed -i -e 's/Pkg\.Revision.*/Pkg\.Revision=${PLATFORM_SDK_VERSION}.0.0/g' $build_tools_source
+
     # build/make
     local version_defaults="$top/build/make/core/version_defaults.mk"
     sed -i -e "s/PLATFORM_SDK_VERSION := .*/PLATFORM_SDK_VERSION := ${FINAL_PLATFORM_SDK_VERSION}/g" $version_defaults
@@ -114,10 +120,10 @@ function finalize_aidl_vndk_sdk_resources() {
     sed -i -e "s/sepolicy_major_vers := .*/sepolicy_major_vers := ${FINAL_PLATFORM_SDK_VERSION}/g" "$top/build/make/core/config.mk"
     cp "$top/build/make/target/product/gsi/current.txt" "$top/build/make/target/product/gsi/$FINAL_PLATFORM_SDK_VERSION.txt"
 
-    # build/soong
-    local codename_version="\"${FINAL_PLATFORM_CODENAME}\":     ${FINAL_PLATFORM_SDK_VERSION}"
-    if ! grep -q "$codename_version" "$top/build/soong/android/api_levels.go" ; then
-        sed -i -e "/:.*$((${FINAL_PLATFORM_SDK_VERSION}-1)),/a \\\t\t$codename_version," "$top/build/soong/android/api_levels.go"
+    # build/bazel
+    local codename_version="\"${FINAL_PLATFORM_CODENAME}\": ${FINAL_PLATFORM_SDK_VERSION}"
+    if ! grep -q "$codename_version" "$top/build/bazel/rules/common/api_constants.bzl" ; then
+        sed -i -e "/:.*$((${FINAL_PLATFORM_SDK_VERSION}-1)),/a \\    $codename_version," "$top/build/bazel/rules/common/api_constants.bzl"
     fi
 
     # cts
