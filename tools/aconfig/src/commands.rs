@@ -22,8 +22,8 @@ use std::fmt;
 use std::io::Read;
 use std::path::PathBuf;
 
-use crate::aconfig::{FlagDeclarations, FlagValue};
-use crate::cache::{Cache, CacheBuilder};
+use crate::aconfig::{FlagDeclarations, FlagState, FlagValue, Permission};
+use crate::cache::{Cache, CacheBuilder, Item};
 use crate::codegen_cpp::generate_cpp_code;
 use crate::codegen_java::generate_java_code;
 use crate::codegen_rust::generate_rust_code;
@@ -105,6 +105,24 @@ pub fn create_rust_lib(cache: Cache) -> Result<OutputFile> {
     generate_rust_code(&cache)
 }
 
+pub fn create_device_config_defaults(caches: Vec<Cache>) -> Result<Vec<u8>> {
+    let mut output = Vec::new();
+    for item in sort_and_iter_items(caches).filter(|item| item.permission == Permission::ReadWrite)
+    {
+        let line = format!(
+            "{}/{}:{}\n",
+            item.namespace,
+            item.name,
+            match item.state {
+                FlagState::Enabled => "enabled",
+                FlagState::Disabled => "disabled",
+            }
+        );
+        output.extend_from_slice(line.as_bytes());
+    }
+    Ok(output)
+}
+
 #[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
 pub enum DumpFormat {
     Text,
@@ -112,35 +130,41 @@ pub enum DumpFormat {
     Protobuf,
 }
 
-pub fn dump_cache(mut caches: Vec<Cache>, format: DumpFormat) -> Result<Vec<u8>> {
+pub fn dump_cache(caches: Vec<Cache>, format: DumpFormat) -> Result<Vec<u8>> {
     let mut output = Vec::new();
-    caches.sort_by_cached_key(|cache| cache.namespace().to_string());
-    for cache in caches.into_iter() {
-        match format {
-            DumpFormat::Text => {
-                let mut lines = vec![];
-                for item in cache.iter() {
-                    lines.push(format!(
-                        "{}/{}: {:?} {:?}\n",
-                        item.namespace, item.name, item.state, item.permission
-                    ));
-                }
-                output.append(&mut lines.concat().into());
+    match format {
+        DumpFormat::Text => {
+            for item in sort_and_iter_items(caches) {
+                let line = format!(
+                    "{}/{}: {:?} {:?}\n",
+                    item.namespace, item.name, item.state, item.permission
+                );
+                output.extend_from_slice(line.as_bytes());
             }
-            DumpFormat::Debug => {
-                let mut lines = vec![];
-                for item in cache.iter() {
-                    lines.push(format!("{:#?}\n", item));
-                }
-                output.append(&mut lines.concat().into());
+        }
+        DumpFormat::Debug => {
+            for item in sort_and_iter_items(caches) {
+                let line = format!("{:#?}\n", item);
+                output.extend_from_slice(line.as_bytes());
             }
-            DumpFormat::Protobuf => {
+        }
+        DumpFormat::Protobuf => {
+            for cache in sort_and_iter_caches(caches) {
                 let parsed_flags: ProtoParsedFlags = cache.into();
                 parsed_flags.write_to_vec(&mut output)?;
             }
         }
     }
     Ok(output)
+}
+
+fn sort_and_iter_items(caches: Vec<Cache>) -> impl Iterator<Item = Item> {
+    sort_and_iter_caches(caches).flat_map(|cache| cache.into_iter())
+}
+
+fn sort_and_iter_caches(mut caches: Vec<Cache>) -> impl Iterator<Item = Cache> {
+    caches.sort_by_cached_key(|cache| cache.namespace().to_string());
+    caches.into_iter()
 }
 
 #[cfg(test)]
@@ -200,6 +224,14 @@ mod tests {
         let item = caches.iter().find(|&item| item.name == "a").unwrap();
         assert_eq!(FlagState::Disabled, item.state);
         assert_eq!(Permission::ReadOnly, item.permission);
+    }
+
+    #[test]
+    fn test_create_device_config_defaults() {
+        let caches = vec![crate::test::create_cache()];
+        let bytes = create_device_config_defaults(caches).unwrap();
+        let text = std::str::from_utf8(&bytes).unwrap();
+        assert_eq!("test/disabled_rw:disabled\ntest/enabled_rw:enabled\n", text);
     }
 
     #[test]
