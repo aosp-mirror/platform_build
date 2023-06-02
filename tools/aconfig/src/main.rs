@@ -125,7 +125,7 @@ fn main() -> Result<()> {
             let file = fs::File::open(path)?;
             let cache = Cache::read_from_reader(file)?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
-            let generated_file = commands::create_java_lib(&cache)?;
+            let generated_file = commands::create_java_lib(cache)?;
             write_output_file_realtive_to_dir(&dir, &generated_file)?;
         }
         Some(("create-cpp-lib", sub_matches)) => {
@@ -133,7 +133,7 @@ fn main() -> Result<()> {
             let file = fs::File::open(path)?;
             let cache = Cache::read_from_reader(file)?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
-            let generated_file = commands::create_cpp_lib(&cache)?;
+            let generated_file = commands::create_cpp_lib(cache)?;
             write_output_file_realtive_to_dir(&dir, &generated_file)?;
         }
         Some(("create-rust-lib", sub_matches)) => {
@@ -141,7 +141,7 @@ fn main() -> Result<()> {
             let file = fs::File::open(path)?;
             let cache = Cache::read_from_reader(file)?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
-            let generated_file = commands::create_rust_lib(&cache)?;
+            let generated_file = commands::create_rust_lib(cache)?;
             write_output_file_realtive_to_dir(&dir, &generated_file)?;
         }
         Some(("dump", sub_matches)) => {

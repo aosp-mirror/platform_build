@@ -93,16 +93,16 @@ pub fn create_cache(
     Ok(builder.build())
 }
 
-pub fn create_java_lib(cache: &Cache) -> Result<OutputFile> {
-    generate_java_code(cache)
+pub fn create_java_lib(cache: Cache) -> Result<OutputFile> {
+    generate_java_code(&cache)
 }
 
-pub fn create_cpp_lib(cache: &Cache) -> Result<OutputFile> {
-    generate_cpp_code(cache)
+pub fn create_cpp_lib(cache: Cache) -> Result<OutputFile> {
+    generate_cpp_code(&cache)
 }
 
-pub fn create_rust_lib(cache: &Cache) -> Result<OutputFile> {
-    generate_rust_code(cache)
+pub fn create_rust_lib(cache: Cache) -> Result<OutputFile> {
+    generate_rust_code(&cache)
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
