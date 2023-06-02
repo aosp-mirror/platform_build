@@ -446,6 +446,13 @@ endif
 # If local module needs HWASAN, add compiler flags.
 ifneq ($(filter hwaddress,$(my_sanitize)),)
   my_cflags += $(HWADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS)
+
+  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+    ifneq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
+      my_linker := /system/bin/linker_hwasan64
+    endif
+  endif
+
 endif
 
 # Use minimal diagnostics when integer overflow is enabled; never do it for HOST modules
