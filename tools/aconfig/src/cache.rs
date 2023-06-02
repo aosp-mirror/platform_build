@@ -179,7 +179,6 @@ impl CacheBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::aconfig::{FlagState, Permission};
 
     #[test]
     fn test_add_flag_declaration() {
