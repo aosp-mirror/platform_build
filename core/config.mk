@@ -1208,13 +1208,6 @@ TARGET_AVAIALBLE_SDK_VERSIONS := $(call numerically_sort,$(TARGET_AVAILABLE_SDK_
 TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT := $(call numbers_less_than,24,$(TARGET_AVAILABLE_SDK_VERSIONS))
 TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT := $(call numbers_less_than,30,$(TARGET_AVAILABLE_SDK_VERSIONS))
 
-# Missing optional uses-libraries so that the platform doesn't create build rules that depend on
-# them.
-INTERNAL_PLATFORM_MISSING_USES_LIBRARIES := \
-  com.google.android.ble \
-  com.google.android.media.effects \
-  com.google.android.wearable \
-
 # This is the standard way to name a directory containing prebuilt target
 # objects. E.g., prebuilt/$(TARGET_PREBUILT_TAG)/libc.so
 TARGET_PREBUILT_TAG := android-$(TARGET_ARCH)
