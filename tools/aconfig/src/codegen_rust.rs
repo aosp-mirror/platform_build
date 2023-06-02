@@ -111,7 +111,7 @@ pub const fn r#test_disabled_ro() -> bool {
 
 #[inline(always)]
 pub fn r#test_disabled_rw() -> bool {
-    profcollect_libflags_rust::GetServerConfigurableFlag("test", "disabled_rw", "false") == "true"
+    flags_rust::GetServerConfigurableFlag("test", "disabled_rw", "false") == "true"
 }
 
 #[inline(always)]
@@ -121,7 +121,7 @@ pub const fn r#test_enabled_ro() -> bool {
 
 #[inline(always)]
 pub fn r#test_enabled_rw() -> bool {
-    profcollect_libflags_rust::GetServerConfigurableFlag("test", "enabled_rw", "false") == "true"
+    flags_rust::GetServerConfigurableFlag("test", "enabled_rw", "false") == "true"
 }
 "#;
         assert_eq!(expected.trim(), String::from_utf8(generated.contents).unwrap().trim());
