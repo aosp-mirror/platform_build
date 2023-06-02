@@ -33,9 +33,6 @@ ifeq ($(TARGET_IS_64_BIT)|$(TARGET_2ND_ARCH),true|)
 check-vndk-list: ;
 else ifeq ($(TARGET_SKIP_CURRENT_VNDK),true)
 check-vndk-list: ;
-else ifeq ($(BOARD_VNDK_VERSION),)
-# b/143233626 do not check vndk-list when vndk libs are not built
-check-vndk-list: ;
 else
 check-vndk-list: $(check-vndk-list-timestamp)
 ifneq ($(SKIP_ABI_CHECKS),true)
@@ -172,8 +169,6 @@ $(check-vndk-abi-dump-list-timestamp):
 #####################################################################
 # VNDK package and snapshot.
 
-ifneq ($(BOARD_VNDK_VERSION),)
-
 include $(CLEAR_VARS)
 LOCAL_MODULE := vndk_package
 LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
@@ -213,8 +208,6 @@ LOCAL_REQUIRED_MODULES := $(foreach vndk_ver,$(_vndk_versions),com.android.vndk.
 include $(BUILD_PHONY_PACKAGE)
 
 _vndk_versions :=
-
-endif # BOARD_VNDK_VERSION is set
 
 #####################################################################
 # skip_mount.cfg, read by init to skip mounting some partitions when GSI is used.
