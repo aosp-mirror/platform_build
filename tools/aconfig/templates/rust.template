@@ -16,7 +16,7 @@ pub const fn r#{parsed_flag.fn_name}() -> bool \{
 {{- if parsed_flag.is_read_write -}}
 #[inline(always)]
 pub fn r#{parsed_flag.fn_name}() -> bool \{
-    profcollect_libflags_rust::GetServerConfigurableFlag("{namespace}", "{parsed_flag.name}", "false") == "true"
+    flags_rust::GetServerConfigurableFlag("{namespace}", "{parsed_flag.name}", "false") == "true"
 }
 
 {{ endif -}}
