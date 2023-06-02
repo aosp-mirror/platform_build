@@ -70,6 +70,11 @@ fn cli() -> Command {
                 .arg(Arg::new("out").long("out").default_value("-")),
         )
         .subcommand(
+            Command::new("create-device-config-sysprops")
+                .arg(Arg::new("cache").long("cache").action(ArgAction::Append).required(true))
+                .arg(Arg::new("out").long("out").default_value("-")),
+        )
+        .subcommand(
             Command::new("dump")
                 .arg(Arg::new("cache").long("cache").action(ArgAction::Append).required(true))
                 .arg(
@@ -169,6 +174,17 @@ fn main() -> Result<()> {
                 caches.push(cache);
             }
             let output = commands::create_device_config_defaults(caches)?;
+            let path = get_required_arg::<String>(sub_matches, "out")?;
+            write_output_to_file_or_stdout(path, &output)?;
+        }
+        Some(("create-device-config-sysprops", sub_matches)) => {
+            let mut caches = Vec::new();
+            for path in sub_matches.get_many::<String>("cache").unwrap_or_default() {
+                let file = fs::File::open(path)?;
+                let cache = Cache::read_from_reader(file)?;
+                caches.push(cache);
+            }
+            let output = commands::create_device_config_sysprops(caches)?;
             let path = get_required_arg::<String>(sub_matches, "out")?;
             write_output_to_file_or_stdout(path, &output)?;
         }

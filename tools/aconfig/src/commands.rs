@@ -123,6 +123,24 @@ pub fn create_device_config_defaults(caches: Vec<Cache>) -> Result<Vec<u8>> {
     Ok(output)
 }
 
+pub fn create_device_config_sysprops(caches: Vec<Cache>) -> Result<Vec<u8>> {
+    let mut output = Vec::new();
+    for item in sort_and_iter_items(caches).filter(|item| item.permission == Permission::ReadWrite)
+    {
+        let line = format!(
+            "persist.device_config.{}.{}={}\n",
+            item.namespace,
+            item.name,
+            match item.state {
+                FlagState::Enabled => "true",
+                FlagState::Disabled => "false",
+            }
+        );
+        output.extend_from_slice(line.as_bytes());
+    }
+    Ok(output)
+}
+
 #[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
 pub enum DumpFormat {
     Text,
@@ -232,6 +250,14 @@ mod tests {
         let bytes = create_device_config_defaults(caches).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
         assert_eq!("test/disabled_rw:disabled\ntest/enabled_rw:enabled\n", text);
+    }
+
+    #[test]
+    fn test_create_device_config_sysprops() {
+        let caches = vec![crate::test::create_cache()];
+        let bytes = create_device_config_sysprops(caches).unwrap();
+        let text = std::str::from_utf8(&bytes).unwrap();
+        assert_eq!("persist.device_config.test.disabled_rw=false\npersist.device_config.test.enabled_rw=true\n", text);
     }
 
     #[test]
