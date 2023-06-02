@@ -33,6 +33,9 @@ mod codegen_rust;
 mod commands;
 mod protos;
 
+#[cfg(test)]
+mod test;
+
 use crate::cache::Cache;
 use commands::{DumpFormat, Input, OutputFile, Source};
 
