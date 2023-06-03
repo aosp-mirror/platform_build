@@ -292,6 +292,8 @@ $(call add_json_bool, GenerateAidlNdkPlatformBackend, $(filter true,$(NEED_AIDL_
 
 $(call add_json_bool, ForceMultilibFirstOnDevice, $(filter true,$(FORCE_MULTILIB_FIRST_ON_DEVICE)))
 
+$(call add_json_list, IncludeTags,                $(PRODUCT_INCLUDE_TAGS))
+
 $(call json_end)
 
 $(file >$(SOONG_VARIABLES).tmp,$(json_contents))
