@@ -1000,6 +1000,14 @@ ifdef OVERRIDE_TARGET_FLATTEN_APEX
   TARGET_FLATTEN_APEX := $(OVERRIDE_TARGET_FLATTEN_APEX)
 endif
 
+# TODO(b/278826656) Remove the following message
+ifeq (true,$(TARGET_FLATTEN_APEX))
+  $(warning ********************************************************************************)
+  $(warning Flattened APEX will be deprecated soon. Please stop using flattened APEX and use)
+  $(warning "image" APEX instead.)
+  $(warning ********************************************************************************)
+endif
+
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
 ifdef PRODUCT_EXTRA_VNDK_VERSIONS
   $(foreach v,$(PRODUCT_EXTRA_VNDK_VERSIONS),$(call check_vndk_version,$(v)))
