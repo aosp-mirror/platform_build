@@ -180,9 +180,7 @@ TARGET_BUILD_JAVA_SUPPORT_LEVEL :=$= platform
 ADDITIONAL_SYSTEM_PROPERTIES += ro.treble.enabled=${PRODUCT_FULL_TREBLE}
 
 $(KATI_obsolete_var PRODUCT_FULL_TREBLE,\
-	Code should be written to work regardless of a device being Treble or \
-	variables like PRODUCT_SEPOLICY_SPLIT should be used until that is \
-	possible.)
+	Code should be written to work regardless of a device being Treble)
 
 # Sets ro.actionable_compatible_property.enabled to know on runtime whether the
 # allowed list of actionable compatible properties is enabled or not.
