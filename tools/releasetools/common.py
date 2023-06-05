@@ -2112,20 +2112,19 @@ def UnzipToDir(filename, dirname, patterns=None):
         archvie. Non-matching patterns will be filtered out. If there's no match
         after the filtering, no file will be unzipped.
   """
-  cmd = ["unzip", "-o", "-q", filename, "-d", dirname]
-  if patterns is not None:
+  with zipfile.ZipFile(filename, allowZip64=True, mode="r") as input_zip:
     # Filter out non-matching patterns. unzip will complain otherwise.
-    with zipfile.ZipFile(filename, allowZip64=True) as input_zip:
+    if patterns is not None:
       names = input_zip.namelist()
-    filtered = [
-        pattern for pattern in patterns if fnmatch.filter(names, pattern)]
+      filtered = [name for name in names if any(
+          [fnmatch.fnmatch(name, p) for p in patterns])]
 
-    # There isn't any matching files. Don't unzip anything.
-    if not filtered:
-      return
-    cmd.extend(filtered)
-
-  RunAndCheckOutput(cmd)
+      # There isn't any matching files. Don't unzip anything.
+      if not filtered:
+        return
+      input_zip.extractall(dirname, filtered)
+    else:
+      input_zip.extractall(dirname)
 
 
 def UnzipTemp(filename, patterns=None):
