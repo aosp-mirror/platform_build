@@ -68,6 +68,7 @@ import sparse_img
 from concurrent.futures import ThreadPoolExecutor
 from apex_utils import GetApexInfoFromTargetFiles
 from common import ZipDelete, PARTITIONS_WITH_CARE_MAP, ExternalError, RunAndCheckOutput, IsSparseImage, MakeTempFile, ZipWrite
+from build_image import FIXED_FILE_TIMESTAMP
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -80,12 +81,6 @@ OPTIONS.add_missing = False
 OPTIONS.rebuild_recovery = False
 OPTIONS.replace_updated_files_list = []
 OPTIONS.is_signing = False
-
-# Use a fixed timestamp (01/01/2009 00:00:00 UTC) for files when packaging
-# images. (b/24377993, b/80600931)
-FIXED_FILE_TIMESTAMP = int((
-    datetime.datetime(2009, 1, 1, 0, 0, 0, 0, None) -
-    datetime.datetime.utcfromtimestamp(0)).total_seconds())
 
 
 def ParseAvbFooter(img_path) -> avbtool.AvbFooter:
@@ -593,15 +588,6 @@ def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
     image_props["fs_config"] = fs_config
   if block_list:
     image_props["block_list"] = block_list.name
-
-  # Use repeatable ext4 FS UUID and hash_seed UUID (based on partition name and
-  # build fingerprint). Also use the legacy build id, because the vbmeta digest
-  # isn't available at this point.
-  build_info = common.BuildInfo(info_dict, use_legacy_id=True)
-  uuid_seed = what + "-" + build_info.GetPartitionFingerprint(what)
-  image_props["uuid"] = str(uuid.uuid5(uuid.NAMESPACE_URL, uuid_seed))
-  hash_seed = "hash_seed-" + uuid_seed
-  image_props["hash_seed"] = str(uuid.uuid5(uuid.NAMESPACE_URL, hash_seed))
 
   build_image.BuildImage(
       os.path.join(input_dir, what.upper()), image_props, output_file.name)
@@ -1144,21 +1130,24 @@ def AddImagesToTargetFiles(filename):
           item for item in vbmeta_partitions
           if item not in vbmeta_vendor.split()]
       vbmeta_partitions.append("vbmeta_vendor")
-    custom_avb_partitions = OPTIONS.info_dict.get("avb_custom_vbmeta_images_partition_list", "").strip().split()
+    custom_avb_partitions = OPTIONS.info_dict.get(
+        "avb_custom_vbmeta_images_partition_list", "").strip().split()
     if custom_avb_partitions:
       for avb_part in custom_avb_partitions:
         partition_name = "vbmeta_" + avb_part
-        included_partitions = OPTIONS.info_dict.get("avb_vbmeta_{}".format(avb_part), "").strip().split()
-        assert included_partitions, "Custom vbmeta partition {0} missing avb_vbmeta_{0} prop".format(avb_part)
+        included_partitions = OPTIONS.info_dict.get(
+            "avb_vbmeta_{}".format(avb_part), "").strip().split()
+        assert included_partitions, "Custom vbmeta partition {0} missing avb_vbmeta_{0} prop".format(
+            avb_part)
         banner(partition_name)
-        logger.info("VBMeta partition {} needs {}".format(partition_name, included_partitions))
+        logger.info("VBMeta partition {} needs {}".format(
+            partition_name, included_partitions))
         partitions[partition_name] = AddVBMeta(
             output_zip, partitions, partition_name, included_partitions)
         vbmeta_partitions = [
             item for item in vbmeta_partitions
             if item not in included_partitions]
         vbmeta_partitions.append(partition_name)
-
 
     if OPTIONS.info_dict.get("avb_building_vbmeta_image") == "true":
       banner("vbmeta")
