@@ -23,23 +23,33 @@ Usage:  build_image input_directory properties_file output_image \\
 """
 
 from __future__ import print_function
+import datetime
 
 import glob
 import logging
 import os
 import os.path
 import re
+import shlex
 import shutil
 import sys
+import uuid
 
 import common
 import verity_utils
+
 
 logger = logging.getLogger(__name__)
 
 OPTIONS = common.OPTIONS
 BLOCK_SIZE = common.BLOCK_SIZE
 BYTES_IN_MB = 1024 * 1024
+
+# Use a fixed timestamp (01/01/2009 00:00:00 UTC) for files when packaging
+# images. (b/24377993, b/80600931)
+FIXED_FILE_TIMESTAMP = int((
+    datetime.datetime(2009, 1, 1, 0, 0, 0, 0, None) -
+    datetime.datetime.utcfromtimestamp(0)).total_seconds())
 
 
 class BuildImageError(Exception):
@@ -487,6 +497,20 @@ def RunErofsFsck(out_file):
     raise
 
 
+def SetUUIDIfNotExist(image_props):
+
+  # Use repeatable ext4 FS UUID and hash_seed UUID (based on partition name and
+  # build fingerprint). Also use the legacy build id, because the vbmeta digest
+  # isn't available at this point.
+  what = image_props["mount_point"]
+  fingerprint = image_props.get("fingerprint", "")
+  uuid_seed = what + "-" + fingerprint
+  logger.info("Using fingerprint %s for partition %s", fingerprint, what)
+  image_props["uuid"] = str(uuid.uuid5(uuid.NAMESPACE_URL, uuid_seed))
+  hash_seed = "hash_seed-" + uuid_seed
+  image_props["hash_seed"] = str(uuid.uuid5(uuid.NAMESPACE_URL, hash_seed))
+
+
 def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   """Builds an image for the files under in_dir and writes it to out_file.
 
@@ -504,6 +528,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     BuildImageError: On build image failures.
   """
   in_dir, fs_config = SetUpInDirAndFsConfig(in_dir, prop_dict)
+  SetUUIDIfNotExist(prop_dict)
 
   build_command = []
   fs_type = prop_dict.get("fs_type", "")
@@ -635,6 +660,19 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     verity_image_builder.Build(out_file)
 
 
+def TryParseFingerprint(glob_dict: dict):
+  for (key, val) in glob_dict.items():
+    if not key.endswith("_add_hashtree_footer_args") and not key.endswith("_add_hash_footer_args"):
+      continue
+    for arg in shlex.split(val):
+      m = re.match(r"^com\.android\.build\.\w+\.fingerprint:", arg)
+      if m is None:
+        continue
+      fingerprint = arg[len(m.group()):]
+      glob_dict["fingerprint"] = fingerprint
+      return
+
+
 def ImagePropFromGlobalDict(glob_dict, mount_point):
   """Build an image property dictionary from the global dictionary.
 
@@ -643,7 +681,9 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     mount_point: such as "system", "data" etc.
   """
   d = {}
+  TryParseFingerprint(glob_dict)
 
+  d["timestamp"] = FIXED_FILE_TIMESTAMP
   if "build.prop" in glob_dict:
     timestamp = glob_dict["build.prop"].GetProp("ro.build.date.utc")
     if timestamp:
@@ -680,6 +720,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "avb_enable",
       "avb_avbtool",
       "use_dynamic_partition_size",
+      "fingerprint",
   )
   for p in common_props:
     copy_prop(p, p)
@@ -870,10 +911,9 @@ def BuildVBMeta(in_dir, glob_dict, output_path):
           if item not in vbmeta_vendor.split()]
       vbmeta_partitions.append("vbmeta_vendor")
 
-
   partitions = {part: os.path.join(in_dir, part + ".img")
                 for part in vbmeta_partitions}
-  partitions = {part:path for (part, path) in partitions.items() if os.path.exists(path)}
+  partitions = {part: path for (part, path) in partitions.items() if os.path.exists(path)}
   common.BuildVBMeta(output_path, partitions, name, vbmeta_partitions)
 
 
