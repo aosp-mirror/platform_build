@@ -33,6 +33,9 @@ mod codegen_rust;
 mod commands;
 mod protos;
 
+#[cfg(test)]
+mod test;
+
 use crate::cache::Cache;
 use commands::{DumpFormat, Input, OutputFile, Source};
 
@@ -60,6 +63,16 @@ fn cli() -> Command {
             Command::new("create-rust-lib")
                 .arg(Arg::new("cache").long("cache").required(true))
                 .arg(Arg::new("out").long("out").required(true)),
+        )
+        .subcommand(
+            Command::new("create-device-config-defaults")
+                .arg(Arg::new("cache").long("cache").action(ArgAction::Append).required(true))
+                .arg(Arg::new("out").long("out").default_value("-")),
+        )
+        .subcommand(
+            Command::new("create-device-config-sysprops")
+                .arg(Arg::new("cache").long("cache").action(ArgAction::Append).required(true))
+                .arg(Arg::new("out").long("out").default_value("-")),
         )
         .subcommand(
             Command::new("dump")
@@ -108,6 +121,15 @@ fn write_output_file_realtive_to_dir(root: &Path, output_file: &OutputFile) -> R
     Ok(())
 }
 
+fn write_output_to_file_or_stdout(path: &str, data: &[u8]) -> Result<()> {
+    if path == "-" {
+        io::stdout().write_all(data)?;
+    } else {
+        fs::File::create(path)?.write_all(data)?;
+    }
+    Ok(())
+}
+
 fn main() -> Result<()> {
     let matches = cli().get_matches();
     match matches.subcommand() {
@@ -125,7 +147,7 @@ fn main() -> Result<()> {
             let file = fs::File::open(path)?;
             let cache = Cache::read_from_reader(file)?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
-            let generated_file = commands::create_java_lib(&cache)?;
+            let generated_file = commands::create_java_lib(cache)?;
             write_output_file_realtive_to_dir(&dir, &generated_file)?;
         }
         Some(("create-cpp-lib", sub_matches)) => {
@@ -133,7 +155,7 @@ fn main() -> Result<()> {
             let file = fs::File::open(path)?;
             let cache = Cache::read_from_reader(file)?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
-            let generated_file = commands::create_cpp_lib(&cache)?;
+            let generated_file = commands::create_cpp_lib(cache)?;
             write_output_file_realtive_to_dir(&dir, &generated_file)?;
         }
         Some(("create-rust-lib", sub_matches)) => {
@@ -141,8 +163,30 @@ fn main() -> Result<()> {
             let file = fs::File::open(path)?;
             let cache = Cache::read_from_reader(file)?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
-            let generated_file = commands::create_rust_lib(&cache)?;
+            let generated_file = commands::create_rust_lib(cache)?;
             write_output_file_realtive_to_dir(&dir, &generated_file)?;
+        }
+        Some(("create-device-config-defaults", sub_matches)) => {
+            let mut caches = Vec::new();
+            for path in sub_matches.get_many::<String>("cache").unwrap_or_default() {
+                let file = fs::File::open(path)?;
+                let cache = Cache::read_from_reader(file)?;
+                caches.push(cache);
+            }
+            let output = commands::create_device_config_defaults(caches)?;
+            let path = get_required_arg::<String>(sub_matches, "out")?;
+            write_output_to_file_or_stdout(path, &output)?;
+        }
+        Some(("create-device-config-sysprops", sub_matches)) => {
+            let mut caches = Vec::new();
+            for path in sub_matches.get_many::<String>("cache").unwrap_or_default() {
+                let file = fs::File::open(path)?;
+                let cache = Cache::read_from_reader(file)?;
+                caches.push(cache);
+            }
+            let output = commands::create_device_config_sysprops(caches)?;
+            let path = get_required_arg::<String>(sub_matches, "out")?;
+            write_output_to_file_or_stdout(path, &output)?;
         }
         Some(("dump", sub_matches)) => {
             let mut caches = Vec::new();
@@ -154,12 +198,7 @@ fn main() -> Result<()> {
             let format = get_required_arg::<DumpFormat>(sub_matches, "format")?;
             let output = commands::dump_cache(caches, *format)?;
             let path = get_required_arg::<String>(sub_matches, "out")?;
-            let mut file: Box<dyn Write> = if *path == "-" {
-                Box::new(io::stdout())
-            } else {
-                Box::new(fs::File::create(path)?)
-            };
-            file.write_all(&output)?;
+            write_output_to_file_or_stdout(path, &output)?;
         }
         _ => unreachable!(),
     }
