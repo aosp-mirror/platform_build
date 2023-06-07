@@ -23,10 +23,10 @@ use crate::cache::{Cache, Item};
 use crate::commands::OutputFile;
 
 pub fn generate_rust_code(cache: &Cache) -> Result<OutputFile> {
-    let namespace = cache.namespace().to_lowercase();
+    let namespace = cache.namespace();
     let parsed_flags: Vec<TemplateParsedFlag> =
-        cache.iter().map(|item| create_template_parsed_flag(&namespace, item)).collect();
-    let context = TemplateContext { namespace, parsed_flags };
+        cache.iter().map(|item| create_template_parsed_flag(namespace, item)).collect();
+    let context = TemplateContext { namespace: namespace.to_string(), parsed_flags };
     let mut template = TinyTemplate::new();
     template.add_template("rust_code_gen", include_str!("../templates/rust.template"))?;
     let contents = template.render("rust_code_gen", &context)?;
@@ -56,7 +56,7 @@ struct TemplateParsedFlag {
 fn create_template_parsed_flag(namespace: &str, item: &Item) -> TemplateParsedFlag {
     let template = TemplateParsedFlag {
         name: item.name.clone(),
-        fn_name: format!("{}_{}", namespace, item.name.replace('-', "_").to_lowercase()),
+        fn_name: format!("{}_{}", namespace, &item.name),
         is_read_only_enabled: item.permission == Permission::ReadOnly
             && item.state == FlagState::Enabled,
         is_read_only_disabled: item.permission == Permission::ReadOnly
@@ -111,7 +111,7 @@ pub const fn r#test_disabled_ro() -> bool {
 
 #[inline(always)]
 pub fn r#test_disabled_rw() -> bool {
-    profcollect_libflags_rust::GetServerConfigurableFlag("test", "disabled-rw", "false") == "true"
+    flags_rust::GetServerConfigurableFlag("test", "disabled_rw", "false") == "true"
 }
 
 #[inline(always)]
@@ -121,7 +121,7 @@ pub const fn r#test_enabled_ro() -> bool {
 
 #[inline(always)]
 pub fn r#test_enabled_rw() -> bool {
-    profcollect_libflags_rust::GetServerConfigurableFlag("test", "enabled-rw", "false") == "true"
+    flags_rust::GetServerConfigurableFlag("test", "enabled_rw", "false") == "true"
 }
 "#;
         assert_eq!(expected.trim(), String::from_utf8(generated.contents).unwrap().trim());

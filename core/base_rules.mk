@@ -1005,6 +1005,9 @@ endif
 ALL_MODULES.$(my_register_name).SHARED_LIBS := \
     $(ALL_MODULES.$(my_register_name).SHARED_LIBS) $(LOCAL_SHARED_LIBRARIES)
 
+ALL_MODULES.$(my_register_name).STATIC_LIBS := \
+    $(ALL_MODULES.$(my_register_name).STATIC_LIBS) $(LOCAL_STATIC_LIBRARIES)
+
 ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS := \
     $(ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS) $(LOCAL_SYSTEM_SHARED_LIBRARIES)
 

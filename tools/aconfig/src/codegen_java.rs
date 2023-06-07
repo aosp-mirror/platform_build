@@ -31,7 +31,7 @@ pub fn generate_java_code(cache: &Cache) -> Result<OutputFile> {
     let mut template = TinyTemplate::new();
     template.add_template("java_code_gen", include_str!("../templates/java.template"))?;
     let contents = template.render("java_code_gen", &context)?;
-    let mut path: PathBuf = namespace.split('.').collect();
+    let mut path: PathBuf = ["aconfig", namespace].iter().collect();
     // TODO: Allow customization of the java class name
     path.push("Flags.java");
     Ok(OutputFile { contents: contents.into(), path })
@@ -76,7 +76,7 @@ mod tests {
 
     #[test]
     fn test_generate_java_code() {
-        let namespace = "com.example";
+        let namespace = "example";
         let mut builder = CacheBuilder::new(namespace.to_string()).unwrap();
         builder
             .add_flag_declaration(
@@ -106,7 +106,7 @@ mod tests {
             )
             .unwrap();
         let cache = builder.build();
-        let expect_content = r#"package com.example;
+        let expect_content = r#"package aconfig.example;
 
         import android.provider.DeviceConfig;
 
@@ -118,7 +118,7 @@ mod tests {
 
             public static boolean test2() {
                 return DeviceConfig.getBoolean(
-                    "com.example",
+                    "example",
                     "test2__test2",
                     false
                 );
@@ -127,7 +127,7 @@ mod tests {
         }
         "#;
         let file = generate_java_code(&cache).unwrap();
-        assert_eq!("com/example/Flags.java", file.path.to_str().unwrap());
+        assert_eq!("aconfig/example/Flags.java", file.path.to_str().unwrap());
         assert_eq!(
             expect_content.replace(' ', ""),
             String::from_utf8(file.contents).unwrap().replace(' ', "")

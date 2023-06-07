@@ -111,18 +111,19 @@ endif
 # Local module variables and functions used in dexpreopt and manifest_check.
 ################################################################################
 
-my_filtered_optional_uses_libraries := $(filter-out $(INTERNAL_PLATFORM_MISSING_USES_LIBRARIES), \
-  $(LOCAL_OPTIONAL_USES_LIBRARIES))
-
 # TODO(b/132357300): This may filter out too much, as PRODUCT_PACKAGES doesn't
 # include all packages (the full list is unknown until reading all Android.mk
 # makefiles). As a consequence, a library may be present but not included in
 # dexpreopt, which will result in class loader context mismatch and a failure
-# to load dexpreopt code on device. We should fix this, either by deferring
-# dependency computation until the full list of product packages is known, or
-# by adding product-specific lists of missing libraries.
+# to load dexpreopt code on device.
+# However, we have to do filtering here. Otherwise, we may include extra
+# libraries that Soong and Make don't generate build rules for (e.g., a library
+# that exists in the source tree but not installable), and therefore get Ninja
+# errors.
+# We have deferred CLC computation to the Ninja phase, but the dependency
+# computation still needs to be done early. For now, this is the best we can do.
 my_filtered_optional_uses_libraries := $(filter $(PRODUCT_PACKAGES), \
-  $(my_filtered_optional_uses_libraries))
+  $(LOCAL_OPTIONAL_USES_LIBRARIES))
 
 ifeq ($(LOCAL_MODULE_CLASS),APPS)
   # compatibility libraries are added to class loader context of an app only if
@@ -464,7 +465,8 @@ ifdef LOCAL_DEX_PREOPT
 	-global $(PRIVATE_GLOBAL_CONFIG) \
 	-module $(PRIVATE_MODULE_CONFIG) \
 	-dexpreopt_script $@ \
-	-out_dir $(OUT_DIR)
+	-out_dir $(OUT_DIR) \
+	-product_packages $(PRODUCT_OUT)/product_packages.txt
 
   my_dexpreopt_deps := $(my_dex_jar)
   my_dexpreopt_deps += $(if $(my_process_profile),$(LOCAL_DEX_PREOPT_PROFILE))
