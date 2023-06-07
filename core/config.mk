@@ -43,6 +43,8 @@ endif
 CHANGES_URL := https://android.googlesource.com/platform/build/+/master/Changes.md
 .KATI_READONLY := CHANGES_URL
 $(KATI_deprecated_var TARGET_USES_64_BIT_BINDER,All devices use 64-bit binder by default now. Uses of TARGET_USES_64_BIT_BINDER should be removed.)
+$(KATI_deprecated_var PRODUCT_SEPOLICY_SPLIT,All devices are built with split sepolicy.)
+$(KATI_deprecated_var PRODUCT_SEPOLICY_SPLIT_OVERRIDE,All devices are built with split sepolicy.)
 $(KATI_obsolete_var PATH,Do not use PATH directly. See $(CHANGES_URL)#PATH)
 $(KATI_obsolete_var PYTHONPATH,Do not use PYTHONPATH directly. See $(CHANGES_URL)#PYTHONPATH)
 $(KATI_obsolete_var OUT,Use OUT_DIR instead. See $(CHANGES_URL)#OUT)
@@ -549,7 +551,10 @@ DISABLE_PREOPT :=
 DISABLE_PREOPT_BOOT_IMAGES :=
 ifneq (,$(TARGET_BUILD_APPS)$(TARGET_BUILD_UNBUNDLED_IMAGE))
   DISABLE_PREOPT := true
-  DISABLE_PREOPT_BOOT_IMAGES := true
+  # VSDK builds perform dexpreopt during merge_target_files build step.
+  ifneq (true,$(BUILDING_WITH_VSDK))
+    DISABLE_PREOPT_BOOT_IMAGES := true
+  endif
 endif
 ifeq (true,$(TARGET_BUILD_UNBUNDLED))
   ifneq (true,$(UNBUNDLED_BUILD_SDKS_FROM_SOURCE))
@@ -736,7 +741,6 @@ endif
 
 requirements := \
     PRODUCT_TREBLE_LINKER_NAMESPACES \
-    PRODUCT_SEPOLICY_SPLIT \
     PRODUCT_ENFORCE_VINTF_MANIFEST \
     PRODUCT_NOTICE_SPLIT
 
@@ -750,14 +754,6 @@ $(foreach req,$(requirements),$(eval \
 
 PRODUCT_FULL_TREBLE_OVERRIDE ?=
 $(foreach req,$(requirements),$(eval $(req)_OVERRIDE ?=))
-
-ifneq ($(PRODUCT_SEPOLICY_SPLIT),true)
-# WARNING: DO NOT CHANGE: if you are downstream of AOSP, and you change this, without
-# letting upstream know it's important to you, we may do cleanup which breaks this
-# significantly. Please let us know if you are changing this.
-# TODO(b/257176017) - unsplit sepolicy is no longer supported
-PRODUCT_SEPOLICY_SPLIT := true
-endif
 
 # TODO(b/114488870): disallow PRODUCT_FULL_TREBLE_OVERRIDE from being used.
 .KATI_READONLY := \
@@ -1208,13 +1204,6 @@ TARGET_AVAIALBLE_SDK_VERSIONS := $(call numerically_sort,$(TARGET_AVAILABLE_SDK_
 TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT := $(call numbers_less_than,24,$(TARGET_AVAILABLE_SDK_VERSIONS))
 TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT := $(call numbers_less_than,30,$(TARGET_AVAILABLE_SDK_VERSIONS))
 
-# Missing optional uses-libraries so that the platform doesn't create build rules that depend on
-# them.
-INTERNAL_PLATFORM_MISSING_USES_LIBRARIES := \
-  com.google.android.ble \
-  com.google.android.media.effects \
-  com.google.android.wearable \
-
 # This is the standard way to name a directory containing prebuilt target
 # objects. E.g., prebuilt/$(TARGET_PREBUILT_TAG)/libc.so
 TARGET_PREBUILT_TAG := android-$(TARGET_ARCH)
@@ -1270,6 +1259,9 @@ ifneq ($(filter-out false,$(USE_RBE)),)
 endif
 
 .KATI_READONLY := JAVAC_NINJA_POOL R8_NINJA_POOL D8_NINJA_POOL
+
+# Soong modules that are known to have broken optional_uses_libs dependencies.
+BUILD_WARNING_BAD_OPTIONAL_USES_LIBS_ALLOWLIST := LegacyCamera Gallery2
 
 # These goals don't need to collect and include Android.mks/CleanSpec.mks
 # in the source tree.
