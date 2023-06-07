@@ -11,8 +11,8 @@ namespace {cpp_namespace} \{
             virtual const bool value() \{
                 {{ if item.readwrite- }}
                 return GetServerConfigurableFlag(
-                    "{package}",
-                    "{item.flag_name}",
+                    "{item.device_config_namespace}",
+                    "{item.device_config_flag}",
                     "{item.default_value}") == "true";
                 {{ -else- }}
                 return {item.default_value};

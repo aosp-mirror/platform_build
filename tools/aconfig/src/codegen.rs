@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+use anyhow::{ensure, Result};
+
 pub fn is_valid_name_ident(s: &str) -> bool {
     // Identifiers must match [a-z][a-z0-9_]*
     let mut chars = s.chars();
@@ -28,6 +30,12 @@ pub fn is_valid_name_ident(s: &str) -> bool {
 
 pub fn is_valid_package_ident(s: &str) -> bool {
     s.split('.').all(is_valid_name_ident)
+}
+
+pub fn create_device_config_ident(package: &str, flag_name: &str) -> Result<String> {
+    ensure!(is_valid_package_ident(package), "bad package");
+    ensure!(is_valid_package_ident(flag_name), "bad flag name");
+    Ok(format!("{}.{}", package, flag_name))
 }
 
 #[cfg(test)]
@@ -61,5 +69,13 @@ mod tests {
         assert!(!is_valid_package_ident("foo.bar."));
         assert!(!is_valid_package_ident("."));
         assert!(!is_valid_package_ident("foo..bar"));
+    }
+
+    #[test]
+    fn test_create_device_config_ident() {
+        assert_eq!(
+            "com.foo.bar.some_flag",
+            create_device_config_ident("com.foo.bar", "some_flag").unwrap()
+        );
     }
 }

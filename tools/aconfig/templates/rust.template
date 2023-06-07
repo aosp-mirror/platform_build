@@ -19,7 +19,7 @@ pub const fn r#{parsed_flag.name}() -> bool \{
 {{- if parsed_flag.is_read_write -}}
 #[inline(always)]
 pub fn r#{parsed_flag.name}() -> bool \{
-    flags_rust::GetServerConfigurableFlag("{package}", "{parsed_flag.name}", "false") == "true"
+    flags_rust::GetServerConfigurableFlag("{parsed_flag.device_config_namespace}", "{parsed_flag.device_config_flag}", "false") == "true"
 }
 
 {{ endif -}}

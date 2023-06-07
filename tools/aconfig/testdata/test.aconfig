@@ -5,6 +5,7 @@ package: "com.android.aconfig.test"
 # - first.values: DISABLED + READ_ONLY
 flag {
     name: "disabled_ro"
+    namespace: "aconfig_test"
     description: "This flag is DISABLED + READ_ONLY"
 }
 
@@ -12,6 +13,7 @@ flag {
 # - test.aconfig: DISABLED + READ_WRITE (default)
 flag {
     name: "disabled_rw"
+    namespace: "aconfig_test"
     description: "This flag is DISABLED + READ_WRITE"
 }
 
@@ -21,6 +23,7 @@ flag {
 # - second.values: ENABLED + READ_ONLY
 flag {
     name: "enabled_ro"
+    namespace: "aconfig_test"
     description: "This flag is ENABLED + READ_ONLY"
 }
 
@@ -29,5 +32,6 @@ flag {
 # - first.values: ENABLED + READ_WRITE
 flag {
     name: "enabled_rw"
+    namespace: "aconfig_test"
     description: "This flag is ENABLED + READ_WRITE"
 }

@@ -21,12 +21,14 @@ use tinytemplate::TinyTemplate;
 
 use crate::aconfig::{FlagState, Permission};
 use crate::cache::{Cache, Item};
+use crate::codegen;
 use crate::commands::OutputFile;
 
 pub fn generate_java_code(cache: &Cache) -> Result<OutputFile> {
-    let class_elements: Vec<ClassElement> = cache.iter().map(create_class_element).collect();
-    let readwrite = class_elements.iter().any(|item| item.readwrite);
     let package = cache.package();
+    let class_elements: Vec<ClassElement> =
+        cache.iter().map(|item| create_class_element(package, item)).collect();
+    let readwrite = class_elements.iter().any(|item| item.readwrite);
     let context = Context { package: package.to_string(), readwrite, class_elements };
     let mut template = TinyTemplate::new();
     template.add_template("java_code_gen", include_str!("../templates/java.template"))?;
@@ -49,11 +51,13 @@ struct ClassElement {
     pub method_name: String,
     pub readwrite: bool,
     pub default_value: String,
-    pub feature_name: String,
-    pub flag_name: String,
+    pub device_config_namespace: String,
+    pub device_config_flag: String,
 }
 
-fn create_class_element(item: &Item) -> ClassElement {
+fn create_class_element(package: &str, item: &Item) -> ClassElement {
+    let device_config_flag = codegen::create_device_config_ident(package, &item.name)
+        .expect("values checked at cache creation time");
     ClassElement {
         method_name: item.name.clone(),
         readwrite: item.permission == Permission::ReadWrite,
@@ -62,8 +66,8 @@ fn create_class_element(item: &Item) -> ClassElement {
         } else {
             "false".to_string()
         },
-        feature_name: item.name.clone(),
-        flag_name: item.name.clone(),
+        device_config_namespace: item.namespace.clone(),
+        device_config_flag,
     }
 }
 
@@ -83,6 +87,7 @@ mod tests {
                 Source::File("test.txt".to_string()),
                 FlagDeclaration {
                     name: "test".to_string(),
+                    namespace: "ns".to_string(),
                     description: "buildtime enable".to_string(),
                 },
             )
@@ -91,6 +96,7 @@ mod tests {
                 Source::File("test2.txt".to_string()),
                 FlagDeclaration {
                     name: "test2".to_string(),
+                    namespace: "ns".to_string(),
                     description: "runtime disable".to_string(),
                 },
             )
@@ -118,8 +124,8 @@ mod tests {
 
             public static boolean test2() {
                 return DeviceConfig.getBoolean(
-                    "com.example",
-                    "test2__test2",
+                    "ns",
+                    "com.example.test2",
                     false
                 );
             }

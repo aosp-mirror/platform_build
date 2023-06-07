@@ -40,6 +40,7 @@ pub struct Item {
     // really be a Cow<String>.
     pub package: String,
     pub name: String,
+    pub namespace: String,
     pub description: String,
     pub state: FlagState,
     pub permission: Permission,
@@ -120,6 +121,7 @@ impl CacheBuilder {
         declaration: FlagDeclaration,
     ) -> Result<&mut CacheBuilder> {
         ensure!(codegen::is_valid_name_ident(&declaration.name), "bad flag name");
+        ensure!(codegen::is_valid_name_ident(&declaration.namespace), "bad namespace");
         ensure!(!declaration.description.is_empty(), "empty flag description");
         ensure!(
             self.cache.items.iter().all(|item| item.name != declaration.name),
@@ -130,6 +132,7 @@ impl CacheBuilder {
         self.cache.items.push(Item {
             package: self.cache.package.clone(),
             name: declaration.name.clone(),
+            namespace: declaration.namespace.clone(),
             description: declaration.description,
             state: DEFAULT_FLAG_STATE,
             permission: DEFAULT_FLAG_PERMISSION,
@@ -186,13 +189,21 @@ mod tests {
         builder
             .add_flag_declaration(
                 Source::File("first.txt".to_string()),
-                FlagDeclaration { name: "foo".to_string(), description: "desc".to_string() },
+                FlagDeclaration {
+                    name: "foo".to_string(),
+                    namespace: "ns".to_string(),
+                    description: "desc".to_string(),
+                },
             )
             .unwrap();
         let error = builder
             .add_flag_declaration(
                 Source::File("second.txt".to_string()),
-                FlagDeclaration { name: "foo".to_string(), description: "desc".to_string() },
+                FlagDeclaration {
+                    name: "foo".to_string(),
+                    namespace: "ns".to_string(),
+                    description: "desc".to_string(),
+                },
             )
             .unwrap_err();
         assert_eq!(
@@ -202,7 +213,11 @@ mod tests {
         builder
             .add_flag_declaration(
                 Source::File("first.txt".to_string()),
-                FlagDeclaration { name: "bar".to_string(), description: "desc".to_string() },
+                FlagDeclaration {
+                    name: "bar".to_string(),
+                    namespace: "ns".to_string(),
+                    description: "desc".to_string(),
+                },
             )
             .unwrap();
 
@@ -237,7 +252,11 @@ mod tests {
         builder
             .add_flag_declaration(
                 Source::File("first.txt".to_string()),
-                FlagDeclaration { name: "foo".to_string(), description: "desc".to_string() },
+                FlagDeclaration {
+                    name: "foo".to_string(),
+                    namespace: "ns".to_string(),
+                    description: "desc".to_string(),
+                },
             )
             .unwrap();
 
@@ -297,7 +316,11 @@ mod tests {
         let error = builder
             .add_flag_declaration(
                 Source::Memory,
-                FlagDeclaration { name: "".to_string(), description: "Description".to_string() },
+                FlagDeclaration {
+                    name: "".to_string(),
+                    namespace: "ns".to_string(),
+                    description: "Description".to_string(),
+                },
             )
             .unwrap_err();
         assert_eq!(&format!("{:?}", error), "bad flag name");
@@ -305,7 +328,11 @@ mod tests {
         let error = builder
             .add_flag_declaration(
                 Source::Memory,
-                FlagDeclaration { name: "foo".to_string(), description: "".to_string() },
+                FlagDeclaration {
+                    name: "foo".to_string(),
+                    namespace: "ns".to_string(),
+                    description: "".to_string(),
+                },
             )
             .unwrap_err();
         assert_eq!(&format!("{:?}", error), "empty flag description");
@@ -317,7 +344,11 @@ mod tests {
         builder
             .add_flag_declaration(
                 Source::Memory,
-                FlagDeclaration { name: "foo".to_string(), description: "desc".to_string() },
+                FlagDeclaration {
+                    name: "foo".to_string(),
+                    namespace: "ns".to_string(),
+                    description: "desc".to_string(),
+                },
             )
             .unwrap();
 

@@ -81,6 +81,7 @@ impl From<Permission> for ProtoFlagPermission {
 #[derive(Debug, PartialEq, Eq)]
 pub struct FlagDeclaration {
     pub name: String,
+    pub namespace: String,
     pub description: String,
 }
 
@@ -100,10 +101,13 @@ impl TryFrom<ProtoFlagDeclaration> for FlagDeclaration {
         let Some(name) = proto.name else {
             bail!("missing 'name' field");
         };
+        let Some(namespace) = proto.namespace else {
+            bail!("missing 'namespace' field");
+        };
         let Some(description) = proto.description else {
             bail!("missing 'description' field");
         };
-        Ok(FlagDeclaration { name, description })
+        Ok(FlagDeclaration { name, namespace, description })
     }
 }
 
@@ -186,6 +190,7 @@ impl From<Item> for ProtoParsedFlag {
         let mut proto = crate::protos::ProtoParsedFlag::new();
         proto.set_package(item.package.to_owned());
         proto.set_name(item.name.clone());
+        proto.set_namespace(item.namespace.clone());
         proto.set_description(item.description.clone());
         proto.set_state(item.state.into());
         proto.set_permission(item.permission.into());
@@ -214,11 +219,13 @@ mod tests {
     fn test_flag_try_from_text_proto() {
         let expected = FlagDeclaration {
             name: "1234".to_owned(),
+            namespace: "ns".to_owned(),
             description: "Description of the flag".to_owned(),
         };
 
         let s = r#"
         name: "1234"
+        namespace: "ns"
         description: "Description of the flag"
         "#;
         let actual = FlagDeclaration::try_from_text_proto(s).unwrap();
@@ -246,8 +253,16 @@ mod tests {
         let expected = FlagDeclarations {
             package: "com.example".to_owned(),
             flags: vec![
-                FlagDeclaration { name: "a".to_owned(), description: "A".to_owned() },
-                FlagDeclaration { name: "b".to_owned(), description: "B".to_owned() },
+                FlagDeclaration {
+                    name: "a".to_owned(),
+                    namespace: "ns".to_owned(),
+                    description: "A".to_owned(),
+                },
+                FlagDeclaration {
+                    name: "b".to_owned(),
+                    namespace: "ns".to_owned(),
+                    description: "B".to_owned(),
+                },
             ],
         };
 
@@ -255,10 +270,12 @@ mod tests {
         package: "com.example"
         flag {
             name: "a"
+            namespace: "ns"
             description: "A"
         }
         flag {
             name: "b"
+            namespace: "ns"
             description: "B"
         }
         "#;

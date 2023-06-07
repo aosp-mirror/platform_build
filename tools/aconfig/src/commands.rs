@@ -191,10 +191,12 @@ mod tests {
         package: "com.example"
         flag {
             name: "a"
+            namespace: "ns"
             description: "Description of a"
         }
         flag {
             name: "b"
+            namespace: "ns"
             description: "Description of b"
         }
         "#;
@@ -216,6 +218,7 @@ mod tests {
         package: "com.other"
         flag {
             name: "c"
+            namespace: "ns"
             description: "Description of c"
         }
         "#;

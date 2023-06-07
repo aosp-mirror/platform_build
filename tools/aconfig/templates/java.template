@@ -7,8 +7,8 @@ public final class Flags \{
     public static boolean {item.method_name}() \{
         {{ if item.readwrite- }}
         return DeviceConfig.getBoolean(
-            "{package}",
-            "{item.feature_name}__{item.flag_name}",
+            "{item.device_config_namespace}",
+            "{item.device_config_flag}",
             {item.default_value}
         );
         {{ -else- }}
