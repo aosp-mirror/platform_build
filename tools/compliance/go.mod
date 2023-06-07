@@ -7,7 +7,10 @@ replace google.golang.org/protobuf v0.0.0 => ../../../../external/golang-protobu
 require (
 	android/soong v0.0.0
 	github.com/google/blueprint v0.0.0
+	github.com/spdx/tools-golang v0.0.0
 )
+
+replace github.com/spdx/tools-golang v0.0.0 => ../../../../external/spdx-tools
 
 require golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f // indirect
 
