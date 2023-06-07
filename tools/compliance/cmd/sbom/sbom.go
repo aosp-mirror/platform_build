@@ -35,7 +35,7 @@ import (
 	"github.com/google/blueprint/deptools"
 
 	"github.com/spdx/tools-golang/builder/builder2v2"
-	"github.com/spdx/tools-golang/json"
+	spdx_json "github.com/spdx/tools-golang/json"
 	"github.com/spdx/tools-golang/spdx/common"
 	spdx "github.com/spdx/tools-golang/spdx/v2_2"
 	"github.com/spdx/tools-golang/spdxlib"
@@ -274,7 +274,7 @@ func getProjectMetadata(_ *context, pmix *projectmetadata.Index,
 	tn *compliance.TargetNode) (*projectmetadata.ProjectMetadata, error) {
 	pms, err := pmix.MetadataForProjects(tn.Projects()...)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to read projects for %q: %w\n", tn, err)
+		return nil, fmt.Errorf("Unable to read projects for %q: %w\n", tn.Name(), err)
 	}
 	if len(pms) == 0 {
 		return nil, nil
