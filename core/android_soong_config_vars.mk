@@ -154,6 +154,10 @@ ifdef PRODUCT_AVF_ENABLED
 $(call add_soong_config_var_value,ANDROID,avf_enabled,$(PRODUCT_AVF_ENABLED))
 endif
 
+ifdef PRODUCT_AVF_KERNEL_MODULES_ENABLED
+$(call add_soong_config_var_value,ANDROID,avf_kernel_modules_enabled,$(PRODUCT_AVF_KERNEL_MODULES_ENABLED))
+endif
+
 # Enable system_server optimizations by default unless explicitly set or if
 # there may be dependent runtime jars.
 # TODO(b/240588226): Remove the off-by-default exceptions after handling
