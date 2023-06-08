@@ -81,6 +81,7 @@ impl From<Permission> for ProtoFlagPermission {
 #[derive(Debug, PartialEq, Eq)]
 pub struct FlagDeclaration {
     pub name: String,
+    pub namespace: String,
     pub description: String,
 }
 
@@ -100,16 +101,19 @@ impl TryFrom<ProtoFlagDeclaration> for FlagDeclaration {
         let Some(name) = proto.name else {
             bail!("missing 'name' field");
         };
+        let Some(namespace) = proto.namespace else {
+            bail!("missing 'namespace' field");
+        };
         let Some(description) = proto.description else {
             bail!("missing 'description' field");
         };
-        Ok(FlagDeclaration { name, description })
+        Ok(FlagDeclaration { name, namespace, description })
     }
 }
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct FlagDeclarations {
-    pub namespace: String,
+    pub package: String,
     pub flags: Vec<FlagDeclaration>,
 }
 
@@ -117,20 +121,20 @@ impl FlagDeclarations {
     pub fn try_from_text_proto(text_proto: &str) -> Result<FlagDeclarations> {
         let proto: ProtoFlagDeclarations = crate::protos::try_from_text_proto(text_proto)
             .with_context(|| text_proto.to_owned())?;
-        let Some(namespace) = proto.namespace else {
-            bail!("missing 'namespace' field");
+        let Some(package) = proto.package else {
+            bail!("missing 'package' field");
         };
         let mut flags = vec![];
         for proto_flag in proto.flag.into_iter() {
             flags.push(proto_flag.try_into()?);
         }
-        Ok(FlagDeclarations { namespace, flags })
+        Ok(FlagDeclarations { package, flags })
     }
 }
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct FlagValue {
-    pub namespace: String,
+    pub package: String,
     pub name: String,
     pub state: FlagState,
     pub permission: Permission,
@@ -153,8 +157,8 @@ impl TryFrom<ProtoFlagValue> for FlagValue {
     type Error = Error;
 
     fn try_from(proto: ProtoFlagValue) -> Result<Self, Self::Error> {
-        let Some(namespace) = proto.namespace else {
-            bail!("missing 'namespace' field");
+        let Some(package) = proto.package else {
+            bail!("missing 'package' field");
         };
         let Some(name) = proto.name else {
             bail!("missing 'name' field");
@@ -167,7 +171,7 @@ impl TryFrom<ProtoFlagValue> for FlagValue {
             bail!("missing 'permission' field");
         };
         let permission = proto_permission.try_into()?;
-        Ok(FlagValue { namespace, name, state, permission })
+        Ok(FlagValue { package, name, state, permission })
     }
 }
 
@@ -184,8 +188,9 @@ impl From<Cache> for ProtoParsedFlags {
 impl From<Item> for ProtoParsedFlag {
     fn from(item: Item) -> Self {
         let mut proto = crate::protos::ProtoParsedFlag::new();
-        proto.set_namespace(item.namespace.to_owned());
+        proto.set_package(item.package.to_owned());
         proto.set_name(item.name.clone());
+        proto.set_namespace(item.namespace.clone());
         proto.set_description(item.description.clone());
         proto.set_state(item.state.into());
         proto.set_permission(item.permission.into());
@@ -214,11 +219,13 @@ mod tests {
     fn test_flag_try_from_text_proto() {
         let expected = FlagDeclaration {
             name: "1234".to_owned(),
+            namespace: "ns".to_owned(),
             description: "Description of the flag".to_owned(),
         };
 
         let s = r#"
         name: "1234"
+        namespace: "ns"
         description: "Description of the flag"
         "#;
         let actual = FlagDeclaration::try_from_text_proto(s).unwrap();
@@ -242,23 +249,33 @@ mod tests {
     }
 
     #[test]
-    fn test_namespace_try_from_text_proto() {
+    fn test_package_try_from_text_proto() {
         let expected = FlagDeclarations {
-            namespace: "ns".to_owned(),
+            package: "com.example".to_owned(),
             flags: vec![
-                FlagDeclaration { name: "a".to_owned(), description: "A".to_owned() },
-                FlagDeclaration { name: "b".to_owned(), description: "B".to_owned() },
+                FlagDeclaration {
+                    name: "a".to_owned(),
+                    namespace: "ns".to_owned(),
+                    description: "A".to_owned(),
+                },
+                FlagDeclaration {
+                    name: "b".to_owned(),
+                    namespace: "ns".to_owned(),
+                    description: "B".to_owned(),
+                },
             ],
         };
 
         let s = r#"
-        namespace: "ns"
+        package: "com.example"
         flag {
             name: "a"
+            namespace: "ns"
             description: "A"
         }
         flag {
             name: "b"
+            namespace: "ns"
             description: "B"
         }
         "#;
@@ -270,14 +287,14 @@ mod tests {
     #[test]
     fn test_flag_declaration_try_from_text_proto_list() {
         let expected = FlagValue {
-            namespace: "ns".to_owned(),
+            package: "com.example".to_owned(),
             name: "1234".to_owned(),
             state: FlagState::Enabled,
             permission: Permission::ReadOnly,
         };
 
         let s = r#"
-        namespace: "ns"
+        package: "com.example"
         name: "1234"
         state: ENABLED
         permission: READ_ONLY
