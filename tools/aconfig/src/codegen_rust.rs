@@ -126,6 +126,12 @@ pub fn r#enabled_rw() -> bool {
 }
 }
 "#;
-        assert_eq!(expected.trim(), String::from_utf8(generated.contents).unwrap().trim());
+        assert_eq!(
+            None,
+            crate::test::first_significant_code_diff(
+                expected,
+                &String::from_utf8(generated.contents).unwrap()
+            )
+        );
     }
 }

@@ -227,8 +227,11 @@ mod tests {
         let file = generate_cpp_code(&cache).unwrap();
         assert_eq!("aconfig/com_example.h", file.path.to_str().unwrap());
         assert_eq!(
-            expect_content.replace(' ', ""),
-            String::from_utf8(file.contents).unwrap().replace(' ', "")
+            None,
+            crate::test::first_significant_code_diff(
+                expect_content,
+                &String::from_utf8(file.contents).unwrap()
+            )
         );
     }
 }
