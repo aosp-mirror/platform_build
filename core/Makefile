@@ -5412,7 +5412,7 @@ ifeq ($(BUILDING_VBMETA_IMAGE),true)
 	$(hide) echo "flash --apply-vbmeta vbmeta" >> $@
 endif
 ifneq (,$(strip $(BOARD_AVB_VBMETA_SYSTEM)))
-	$(hide) echo "flash --apply-vbmeta vbmeta_system" >> $@
+	$(hide) echo "flash vbmeta_system" >> $@
 endif
 ifneq (,$(strip $(BOARD_AVB_VBMETA_VENDOR)))
 	$(hide) echo "flash --apply-vbmeta vbmeta_vendor" >> $@
@@ -5422,7 +5422,7 @@ ifneq ($(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
 endif
 ifneq (,$(strip $(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)))
 	$(hide) $(foreach partition,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS), \
-	  echo "flash --apply-vbmeta vbmeta_$(partition)" >> $@;)
+	  echo "flash vbmeta_$(partition)" >> $@;)
 endif
 endif # BOARD_AVB_ENABLE
 	$(hide) echo "reboot fastboot" >> $@
