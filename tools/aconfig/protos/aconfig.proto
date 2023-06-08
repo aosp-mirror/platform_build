@@ -36,16 +36,17 @@ enum flag_permission {
 
 message flag_declaration {
   required string name = 1;
-  required string description = 2;
+  required string namespace = 2;
+  required string description = 3;
 };
 
 message flag_declarations {
-  required string namespace = 1;
+  required string package = 1;
   repeated flag_declaration flag = 2;
 };
 
 message flag_value {
-  required string namespace = 1;
+  required string package = 1;
   required string name = 2;
   required flag_state state = 3;
   required flag_permission permission = 4;
@@ -65,12 +66,13 @@ message tracepoint {
 }
 
 message parsed_flag {
-  required string namespace = 1;
+  required string package = 1;
   required string name = 2;
-  required string description = 3;
-  required flag_state state = 4;
-  required flag_permission permission = 5;
-  repeated tracepoint trace = 6;
+  required string namespace = 3;
+  required string description = 4;
+  required flag_state state = 5;
+  required flag_permission permission = 6;
+  repeated tracepoint trace = 7;
 }
 
 message parsed_flags {

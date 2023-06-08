@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-pub fn is_valid_identifier(s: &str) -> bool {
+use anyhow::{ensure, Result};
+
+pub fn is_valid_name_ident(s: &str) -> bool {
     // Identifiers must match [a-z][a-z0-9_]*
     let mut chars = s.chars();
     let Some(first) = chars.next() else {
@@ -26,18 +28,54 @@ pub fn is_valid_identifier(s: &str) -> bool {
     chars.all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || ch == '_')
 }
 
+pub fn is_valid_package_ident(s: &str) -> bool {
+    s.split('.').all(is_valid_name_ident)
+}
+
+pub fn create_device_config_ident(package: &str, flag_name: &str) -> Result<String> {
+    ensure!(is_valid_package_ident(package), "bad package");
+    ensure!(is_valid_package_ident(flag_name), "bad flag name");
+    Ok(format!("{}.{}", package, flag_name))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_is_valid_identifier() {
-        assert!(is_valid_identifier("foo"));
-        assert!(is_valid_identifier("foo_bar_123"));
+    fn test_is_valid_name_ident() {
+        assert!(is_valid_name_ident("foo"));
+        assert!(is_valid_name_ident("foo_bar_123"));
 
-        assert!(!is_valid_identifier(""));
-        assert!(!is_valid_identifier("123_foo"));
-        assert!(!is_valid_identifier("foo-bar"));
-        assert!(!is_valid_identifier("foo-b\u{00e5}r"));
+        assert!(!is_valid_name_ident(""));
+        assert!(!is_valid_name_ident("123_foo"));
+        assert!(!is_valid_name_ident("foo-bar"));
+        assert!(!is_valid_name_ident("foo-b\u{00e5}r"));
+    }
+
+    #[test]
+    fn test_is_valid_package_ident() {
+        assert!(is_valid_package_ident("foo"));
+        assert!(is_valid_package_ident("foo_bar_123"));
+        assert!(is_valid_package_ident("foo.bar"));
+        assert!(is_valid_package_ident("foo.bar.a123"));
+
+        assert!(!is_valid_package_ident(""));
+        assert!(!is_valid_package_ident("123_foo"));
+        assert!(!is_valid_package_ident("foo-bar"));
+        assert!(!is_valid_package_ident("foo-b\u{00e5}r"));
+        assert!(!is_valid_package_ident("foo.bar.123"));
+        assert!(!is_valid_package_ident(".foo.bar"));
+        assert!(!is_valid_package_ident("foo.bar."));
+        assert!(!is_valid_package_ident("."));
+        assert!(!is_valid_package_ident("foo..bar"));
+    }
+
+    #[test]
+    fn test_create_device_config_ident() {
+        assert_eq!(
+            "com.foo.bar.some_flag",
+            create_device_config_ident("com.foo.bar", "some_flag").unwrap()
+        );
     }
 }
