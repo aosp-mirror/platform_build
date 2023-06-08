@@ -106,7 +106,8 @@ pub fn create_device_config_defaults(caches: Vec<Cache>) -> Result<Vec<u8>> {
     for item in sort_and_iter_items(caches).filter(|item| item.permission == Permission::ReadWrite)
     {
         let line = format!(
-            "{}/{}:{}\n",
+            "{}:{}.{}={}\n",
+            item.namespace,
             item.package,
             item.name,
             match item.state {
@@ -248,7 +249,7 @@ mod tests {
         let caches = vec![crate::test::create_cache()];
         let bytes = create_device_config_defaults(caches).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
-        assert_eq!("com.android.aconfig.test/disabled_rw:disabled\ncom.android.aconfig.test/enabled_rw:enabled\n", text);
+        assert_eq!("aconfig_test:com.android.aconfig.test.disabled_rw=disabled\naconfig_test:com.android.aconfig.test.enabled_rw=enabled\n", text);
     }
 
     #[test]
