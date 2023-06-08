@@ -35,4 +35,7 @@ rust_binary_host {
 rust_test_host {
     name: "aconfig.test",
     defaults: ["aconfig.defaults"],
+    rustlibs: [
+        "libitertools",
+    ],
 }
