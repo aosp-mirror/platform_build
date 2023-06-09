@@ -37,12 +37,5 @@ ifdef LOCAL_USE_VNDK
     $(shell echo $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): LOCAL_USE_VNDK must not be used with LOCAL_SDK_VERSION >&2)
     $(error done)
   endif
-
-  # If we're not using the VNDK, drop all restrictions
-  ifndef BOARD_VNDK_VERSION
-    LOCAL_USE_VNDK:=
-    LOCAL_USE_VNDK_VENDOR:=
-    LOCAL_USE_VNDK_PRODUCT:=
-  endif
 endif
 
