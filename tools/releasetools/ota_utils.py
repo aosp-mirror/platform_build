@@ -846,6 +846,11 @@ class PayloadGenerator(object):
     if os.path.exists(dynamic_partition_info):
       cmd.extend(["--dynamic_partition_info_file", dynamic_partition_info])
 
+    apex_info = os.path.join(
+      target_dir, "META", "apex_info.pb")
+    if os.path.exists(apex_info):
+      cmd.extend(["--apex_info_file", apex_info])
+
     major_version, minor_version = ParseUpdateEngineConfig(
         os.path.join(target_dir, "META", "update_engine_config.txt"))
     if source_file:
