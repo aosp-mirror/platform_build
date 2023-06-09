@@ -1572,15 +1572,10 @@ ifdef LOCAL_USE_VNDK
 else ifdef LOCAL_SDK_VERSION
   my_target_global_c_includes :=
   my_target_global_c_system_includes := $(my_ndk_stl_include_path) $(my_ndk_sysroot_include)
-else ifdef BOARD_VNDK_VERSION
-  my_target_global_c_includes := $(SRC_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
-  my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
 else
   my_target_global_c_includes := $(SRC_HEADERS) \
     $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
-  my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) $(TARGET_OUT_HEADERS) \
+  my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) \
     $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
 endif
 
@@ -1667,14 +1662,8 @@ imported_includes :=
 
 ifdef LOCAL_USE_VNDK
   imported_includes += $(call intermediates-dir-for,HEADER_LIBRARIES,device_kernel_headers,$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))
-else ifdef LOCAL_SDK_VERSION
-  # Apps shouldn't need device-specific kernel headers
-else ifdef BOARD_VNDK_VERSION
-  # For devices building with the VNDK, only the VNDK gets device-specific kernel headers by default
-  # In soong, it's entirely opt-in
 else
-  # For older non-VNDK builds, continue adding in kernel headers to everything like we used to
-  imported_includes += $(call intermediates-dir-for,HEADER_LIBRARIES,device_kernel_headers,$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))
+  # everything else should manually specify headers
 endif
 
 imported_includes := $(strip \

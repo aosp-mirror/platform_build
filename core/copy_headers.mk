@@ -18,10 +18,8 @@ include $(BUILD_SYSTEM)/local_vndk.mk
 # If we're using the VNDK, only vendor modules using the VNDK may use
 # LOCAL_COPY_HEADERS. Platform libraries will not have the include path
 # present.
-ifdef BOARD_VNDK_VERSION
 ifndef LOCAL_USE_VNDK
   $(call pretty-error,Only vendor modules using LOCAL_USE_VNDK may use LOCAL_COPY_HEADERS)
-endif
 endif
 
 # Clean up LOCAL_COPY_HEADERS_TO, since soong_ui will be comparing cleaned
