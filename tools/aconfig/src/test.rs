@@ -24,17 +24,17 @@ pub mod test_utils {
         crate::commands::create_cache(
             "com.android.aconfig.test",
             vec![Input {
-                source: Source::File("testdata/test.aconfig".to_string()),
-                reader: Box::new(include_bytes!("../testdata/test.aconfig").as_slice()),
+                source: Source::File("tests/test.aconfig".to_string()),
+                reader: Box::new(include_bytes!("../tests/test.aconfig").as_slice()),
             }],
             vec![
                 Input {
-                    source: Source::File("testdata/first.values".to_string()),
-                    reader: Box::new(include_bytes!("../testdata/first.values").as_slice()),
+                    source: Source::File("tests/first.values".to_string()),
+                    reader: Box::new(include_bytes!("../tests/first.values").as_slice()),
                 },
                 Input {
-                    source: Source::File("testdata/test.aconfig".to_string()),
-                    reader: Box::new(include_bytes!("../testdata/second.values").as_slice()),
+                    source: Source::File("tests/test.aconfig".to_string()),
+                    reader: Box::new(include_bytes!("../tests/second.values").as_slice()),
                 },
             ],
         )
