@@ -20,71 +20,104 @@ _flag_partitions = [
     "vendor",
 ]
 
-def _combine_dicts_no_duplicate_keys(dicts):
-    result = {}
-    for d in dicts:
-        for k, v in d.items():
-            if k in result:
-                fail("Duplicate key: " + k)
-            result[k] = v
-    return result
+ALL = ["all"]
+PRODUCT = ["product"]
+SYSTEM = ["system"]
+SYSTEM_EXT = ["system_ext"]
+VENDOR = ["vendor"]
 
-def release_config(target_release, flag_definitions, config_maps, fail_if_no_release_config = True):
-    result = {
-        "_ALL_RELEASE_FLAGS": [flag.name for flag in flag_definitions],
+_valid_types = ["NoneType", "bool", "list", "string", "int"]
+
+def flag(name, partitions, default):
+    "Declare a flag."
+    if not partitions:
+        fail("At least 1 partition is required")
+    if not name.startswith("RELEASE_"):
+        fail("Release flag names must start with RELEASE_")
+    if " " in name or "\t" in name or "\n" in name:
+        fail("Flag names must not contain whitespace: \"" + name + "\"")
+    for partition in partitions:
+        if partition == "all":
+            if len(partitions) > 1:
+                fail("\"all\" can't be combined with other partitions: " + str(partitions))
+        elif partition not in _flag_partitions:
+            fail("Invalid partition: " + partition + ", allowed partitions: "
+                    + str(_flag_partitions))
+    if type(default) not in _valid_types:
+        fail("Invalid type of default for flag \"" + name + "\" (" + type(default) + ")")
+    return {
+        "name": name,
+        "partitions": partitions,
+        "default": default
     }
-    all_flags = {}
-    for flag in flag_definitions:
-        if sorted(dir(flag)) != ["default", "name", "partitions"]:
-            fail("Flag structs must contain 3 fields: name, partitions, and default")
-        if not flag.partitions:
-            fail("At least 1 partition is required")
-        for partition in flag.partitions:
-            if partition == "all":
-                if len(flag.partitions) > 1:
-                    fail("\"all\" can't be combined with other partitions: " + str(flag.partitions))
-            elif partition not in _flag_partitions:
-                fail("Invalid partition: " + flag.partition + ", allowed partitions: " + str(_flag_partitions))
-        if not flag.name.startswith("RELEASE_"):
-            fail("Release flag names must start with RELEASE_")
-        if " " in flag.name or "\t" in flag.name or "\n" in flag.name:
-            fail("Flag names must not contain whitespace.")
-        if flag.name in all_flags:
-            fail("Duplicate declaration of flag " + flag.name)
-        all_flags[flag.name] = True
 
-        default = flag.default
-        if type(default) == "bool":
-            default = "true" if default else ""
 
-        result["_ALL_RELEASE_FLAGS." + flag.name + ".PARTITIONS"] = flag.partitions
-        result["_ALL_RELEASE_FLAGS." + flag.name + ".DEFAULT"] = default
-        result["_ALL_RELEASE_FLAGS." + flag.name + ".VALUE"] = default
+def value(name, value):
+    "Define the flag value for a particular configuration."
+    return {
+        "name": name,
+        "value": value,
+    }
 
-    # If TARGET_RELEASE is set, fail if there is no matching release config
-    # If it isn't set, no release config files will be included and all flags
-    # will get their default values.
-    if target_release:
-        config_map = _combine_dicts_no_duplicate_keys(config_maps)
-        if target_release not in config_map:
-            fail("No release config found for TARGET_RELEASE: " + target_release + ". Available releases are: " + str(config_map.keys()))
-        release_config = config_map[target_release]
-        if sorted(dir(release_config)) != ["flags", "release_version"]:
-            fail("A release config must be a struct with a flags and release_version fields")
-        result["_RELEASE_VERSION"] = release_config.release_version
-        for flag in release_config.flags:
-            if sorted(dir(flag)) != ["name", "value"]:
-                fail("A flag must be a struct with name and value fields, got: " + str(sorted(dir(flag))))
-            if flag.name not in all_flags:
-                fail("Undeclared build flag: " + flag.name)
-            value = flag.value
-            if type(value) == "bool":
-                value = "true" if value else ""
-            result["_ALL_RELEASE_FLAGS." + flag.name + ".VALUE"] = value
-    elif fail_if_no_release_config:
-        fail("FAIL_IF_NO_RELEASE_CONFIG was set and TARGET_RELEASE was not")
+
+def _format_value(val):
+    "Format the starlark type correctly for make"
+    if type(val) == "NoneType":
+        return ""
+    elif type(val) == "bool":
+        return "true" if val else ""
     else:
-        # No TARGET_RELEASE means release version 0
-        result["_RELEASE_VERSION"] = 0
+        return val
+
+
+def release_config(all_flags, all_values):
+    "Return the make variables that should be set for this release config."
+    # Validate flags
+    flag_names = []
+    for flag in all_flags:
+        if flag["name"] in flag_names:
+            fail(flag["declared_in"] + ": Duplicate declaration of flag " + flag["name"])
+        flag_names.append(flag["name"])
+
+    # Record which flags go on which partition
+    partitions = {}
+    for flag in all_flags:
+        for partition in flag["partitions"]:
+            if partition == "all":
+                for partition in _flag_partitions:
+                    partitions.setdefault(partition, []).append(flag["name"])
+            else:
+                partitions.setdefault(partition, []).append(flag["name"])
+
+    # Validate values
+    values = {}
+    for value in all_values:
+        if value["name"] not in flag_names:
+            fail(value["set_in"] + ": Value set for undeclared build flag: " + value["name"])
+        values[value["name"]] = value
+
+    # Collect values
+    result = {
+        "_ALL_RELEASE_FLAGS": sorted(flag_names),
+    }
+    for partition, names in partitions.items():
+        result["_ALL_RELEASE_FLAGS.PARTITIONS." + partition] = names
+    for flag in all_flags:
+        if flag["name"] in values:
+            val = values[flag["name"]]["value"]
+            set_in = values[flag["name"]]["set_in"]
+            if type(val) not in _valid_types:
+                fail("Invalid type of value for flag \"" + flag["name"] + "\" (" + type(val) + ")")
+        else:
+            val = flag["default"]
+            set_in = flag["declared_in"]
+        val = _format_value(val)
+        result[flag["name"]] = val
+        result["_ALL_RELEASE_FLAGS." + flag["name"] + ".PARTITIONS"] = flag["partitions"]
+        result["_ALL_RELEASE_FLAGS." + flag["name"] + ".DEFAULT"] = _format_value(flag["default"])
+        result["_ALL_RELEASE_FLAGS." + flag["name"] + ".VALUE"] = val
+        result["_ALL_RELEASE_FLAGS." + flag["name"] + ".DECLARED_IN"] = flag["declared_in"]
+        result["_ALL_RELEASE_FLAGS." + flag["name"] + ".SET_IN"] = set_in
 
     return result
+
