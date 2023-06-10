@@ -24,19 +24,24 @@ endef
 #$(warning $(call find_and_earlier,A B C,C))
 #$(warning $(call find_and_earlier,A B C,D))
 
-# Runs the starlark file given in $(1), and sets all the variables in its top-level
+# Runs a starlark file, and sets all the variables in its top-level
 # variables_to_export_to_make variable as make variables.
 #
 # In order to avoid running starlark every time the stamp file is checked, we use
 # $(KATI_shell_no_rerun). Then, to make sure that we actually do rerun kati when
 # modifying the starlark files, we add the starlark files to the kati stamp file with
 # $(KATI_extra_file_deps).
+#
+# Arguments:
+#  $(1): A single starlark file to use as the entrypoint
+#  $(2): An optional list of starlark files to NOT include as kati dependencies.
+#  $(3): An optional list of extra flags to pass to rbcrun
 define run-starlark
 $(eval _starlark_results := $(OUT_DIR)/starlark_results/$(subst /,_,$(1)).mk)
-$(KATI_shell_no_rerun mkdir -p $(OUT_DIR)/starlark_results && $(OUT_DIR)/rbcrun --mode=make $(1) >$(_starlark_results) && touch -t 200001010000 $(_starlark_results))
+$(KATI_shell_no_rerun mkdir -p $(OUT_DIR)/starlark_results && $(OUT_DIR)/rbcrun --mode=make $(3) $(1) >$(_starlark_results) && touch -t 200001010000 $(_starlark_results))
 $(if $(filter-out 0,$(.SHELLSTATUS)),$(error Starlark failed to run))
 $(eval include $(_starlark_results))
-$(KATI_extra_file_deps $(LOADED_STARLARK_FILES))
+$(KATI_extra_file_deps $(filter-out $(2),$(LOADED_STARLARK_FILES)))
 $(eval LOADED_STARLARK_FILES :=)
 $(eval _starlark_results :=)
 endef
