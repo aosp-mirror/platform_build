@@ -66,17 +66,22 @@ device_config_value_set {
     ],
 }
 
+java_device_config_definitions_library {
+    name: "aconfig_test_java",
+    device_config_definitions: "aconfig.test.flags",
+}
+
 android_test {
     name: "aconfig.test.java",
     srcs: [
         "tests/**/*.java",
-        ":aconfig.test.flags{.srcjar}",
     ],
     manifest: "tests/AndroidManifest.xml",
     certificate: "platform",
     static_libs: [
         "androidx.test.rules",
         "testng",
+        "aconfig_test_java",
     ],
     test_suites: ["device-tests"],
 }
