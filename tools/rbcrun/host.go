@@ -34,9 +34,10 @@ const (
 	ExecutionModeMake ExecutionMode = iota
 )
 
+const allowExternalEntrypointKey = "allowExternalEntrypoint"
 const callerDirKey = "callerDir"
-const shellKey = "shell"
 const executionModeKey = "executionMode"
+const shellKey = "shell"
 
 type modentry struct {
 	globals starlark.StringDict
@@ -64,7 +65,7 @@ var makeBuiltins starlark.StringDict = starlark.StringDict{
 
 // Takes a module name (the first argument to the load() function) and returns the path
 // it's trying to load, stripping out leading //, and handling leading :s.
-func cleanModuleName(moduleName string, callerDir string) (string, error) {
+func cleanModuleName(moduleName string, callerDir string, allowExternalPaths bool) (string, error) {
 	if strings.Count(moduleName, ":") > 1 {
 		return "", fmt.Errorf("at most 1 colon must be present in starlark path: %s", moduleName)
 	}
@@ -82,7 +83,7 @@ func cleanModuleName(moduleName string, callerDir string) (string, error) {
 	} else if strings.HasPrefix(moduleName, ":") {
 		moduleName = moduleName[1:]
 		localLoad = true
-	} else {
+	} else if !allowExternalPaths {
 		return "", fmt.Errorf("load path must start with // or :")
 	}
 
@@ -93,11 +94,13 @@ func cleanModuleName(moduleName string, callerDir string) (string, error) {
 	if filepath.Clean(moduleName) != moduleName {
 		return "", fmt.Errorf("load path must be clean, found: %s, expected: %s", moduleName, filepath.Clean(moduleName))
 	}
-	if strings.HasPrefix(moduleName, "../") {
-		return "", fmt.Errorf("load path must not start with ../: %s", moduleName)
-	}
-	if strings.HasPrefix(moduleName, "/") {
-		return "", fmt.Errorf("load path starts with /, use // for a absolute path: %s", moduleName)
+	if !allowExternalPaths {
+		if strings.HasPrefix(moduleName, "../") {
+			return "", fmt.Errorf("load path must not start with ../: %s", moduleName)
+		}
+		if strings.HasPrefix(moduleName, "/") {
+			return "", fmt.Errorf("load path starts with /, use // for a absolute path: %s", moduleName)
+		}
 	}
 
 	if localLoad {
@@ -114,17 +117,18 @@ func cleanModuleName(moduleName string, callerDir string) (string, error) {
 // bound to None if file is missing.
 func loader(thread *starlark.Thread, module string) (starlark.StringDict, error) {
 	mode := thread.Local(executionModeKey).(ExecutionMode)
+	allowExternalEntrypoint := thread.Local(allowExternalEntrypointKey).(bool)
 	var defaultSymbol string
 	mustLoad := true
 	if mode == ExecutionModeRbc {
 		pipePos := strings.LastIndex(module, "|")
-		mustLoad = pipePos < 0
-		if !mustLoad {
+		if pipePos >= 0 {
+			mustLoad = false
 			defaultSymbol = module[pipePos+1:]
 			module = module[:pipePos]
 		}
 	}
-	modulePath, err := cleanModuleName(module, thread.Local(callerDirKey).(string))
+	modulePath, err := cleanModuleName(module, thread.Local(callerDirKey).(string), allowExternalEntrypoint)
 	if err != nil {
 		return nil, err
 	}
@@ -155,9 +159,11 @@ func loader(thread *starlark.Thread, module string) (starlark.StringDict, error)
 				childThread.SetLocal(testReporterKey, v)
 			}
 
+			// Only the entrypoint starlark file allows external loads.
+			childThread.SetLocal(allowExternalEntrypointKey, false)
 			childThread.SetLocal(callerDirKey, filepath.Dir(modulePath))
-			childThread.SetLocal(shellKey, thread.Local(shellKey))
 			childThread.SetLocal(executionModeKey, mode)
+			childThread.SetLocal(shellKey, thread.Local(shellKey))
 			if mode == ExecutionModeRbc {
 				globals, err := starlark.ExecFile(childThread, modulePath, nil, rbcBuiltins)
 				e = &modentry{globals, err}
@@ -318,7 +324,7 @@ func log(thread *starlark.Thread, fn *starlark.Builtin, args starlark.Tuple, kwa
 // * src is an optional source of bytes to use instead of filename
 //   (it can be a string, or a byte array, or an io.Reader instance)
 // Returns the top-level starlark variables, the list of starlark files loaded, and an error
-func Run(filename string, src interface{}, mode ExecutionMode) (starlark.StringDict, []string, error) {
+func Run(filename string, src interface{}, mode ExecutionMode, allowExternalEntrypoint bool) (starlark.StringDict, []string, error) {
 	// NOTE(asmundak): OS-specific. Behave similar to Linux `system` call,
 	// which always uses /bin/sh to run the command
 	shellPath := "/bin/sh"
@@ -347,7 +353,7 @@ func Run(filename string, src interface{}, mode ExecutionMode) (starlark.StringD
 		if err != nil {
 			return nil, nil, err
 		}
-		if strings.HasPrefix(filename, "../") {
+		if !allowExternalEntrypoint && strings.HasPrefix(filename, "../") {
 			return nil, nil, fmt.Errorf("path could not be made relative to workspace root: %s", filename)
 		}
 	} else {
@@ -358,9 +364,10 @@ func Run(filename string, src interface{}, mode ExecutionMode) (starlark.StringD
 	moduleCache[filename] = nil
 
 	var results starlark.StringDict
+	mainThread.SetLocal(allowExternalEntrypointKey, allowExternalEntrypoint)
 	mainThread.SetLocal(callerDirKey, filepath.Dir(filename))
-	mainThread.SetLocal(shellKey, shellPath)
 	mainThread.SetLocal(executionModeKey, mode)
+	mainThread.SetLocal(shellKey, shellPath)
 	if mode == ExecutionModeRbc {
 		results, err = starlark.ExecFile(mainThread, filename, src, rbcBuiltins)
 	} else if mode == ExecutionModeMake {
