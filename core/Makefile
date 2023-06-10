@@ -5882,11 +5882,22 @@ define dump-dynamic-partitions-info
     echo "virtual_ab_cow_version=$(PRODUCT_VIRTUAL_AB_COW_VERSION)" >> $(1))
 endef
 
+# Copy an image file to a directory and generate a block list map file from the image.
+# $(1): path of the image file
+# $(2): target out directory
+# $(3): name of the map file. skip generating map file if empty
+define copy-image-and-generate-map
+  mkdir -p $(2)
+  cp $(1) $(2)
+  $(if $(3),$(HOST_OUT_EXECUTABLES)/map_file_generator $(1) $(2)/$(3))
+endef
+
 # By conditionally including the dependency of the target files package on the
 # full system image deps, we speed up builds that do not build the system
 # image.
 ifdef BUILDING_SYSTEM_IMAGE
   $(BUILT_TARGET_FILES_DIR): $(FULL_SYSTEMIMAGE_DEPS)
+  $(BUILT_TARGET_FILES_DIR): $(BUILT_SYSTEMIMAGE)
 else
   # releasetools may need the system build.prop even when building a
   # system-image-less product.
@@ -5899,6 +5910,7 @@ endif
 
 ifdef BUILDING_SYSTEM_OTHER_IMAGE
   $(BUILT_TARGET_FILES_DIR): $(INTERNAL_SYSTEMOTHERIMAGE_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(BUILT_SYSTEMOTHERIMAGE_TARGET)
 endif
 
 ifdef BUILDING_VENDOR_BOOT_IMAGE
@@ -5930,18 +5942,21 @@ endif
 
 ifdef BUILDING_VENDOR_IMAGE
   $(BUILT_TARGET_FILES_DIR): $(INTERNAL_VENDORIMAGE_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(BUILT_VENDORIMAGE_TARGET)
 else ifdef BOARD_PREBUILT_VENDORIMAGE
   $(BUILT_TARGET_FILES_DIR): $(INSTALLED_VENDORIMAGE_TARGET)
 endif
 
 ifdef BUILDING_PRODUCT_IMAGE
   $(BUILT_TARGET_FILES_DIR): $(INTERNAL_PRODUCTIMAGE_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(BUILT_PRODUCTIMAGE_TARGET)
 else ifdef BOARD_PREBUILT_PRODUCTIMAGE
   $(BUILT_TARGET_FILES_DIR): $(INSTALLED_PRODUCTIMAGE_TARGET)
 endif
 
 ifdef BUILDING_SYSTEM_EXT_IMAGE
   $(BUILT_TARGET_FILES_DIR): $(INTERNAL_SYSTEM_EXTIMAGE_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(BUILT_SYSTEM_EXTIMAGE_TARGET)
 else ifdef BOARD_PREBUILT_SYSTEM_EXTIMAGE
   $(BUILT_TARGET_FILES_DIR): $(INSTALLED_SYSTEM_EXTIMAGE_TARGET)
 endif
@@ -5956,24 +5971,28 @@ endif
 
 ifdef BUILDING_ODM_IMAGE
   $(BUILT_TARGET_FILES_DIR): $(INTERNAL_ODMIMAGE_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(BUILT_ODMIMAGE_TARGET)
 else ifdef BOARD_PREBUILT_ODMIMAGE
   $(BUILT_TARGET_FILES_DIR): $(INSTALLED_ODMIMAGE_TARGET)
 endif
 
 ifdef BUILDING_VENDOR_DLKM_IMAGE
   $(BUILT_TARGET_FILES_DIR): $(INTERNAL_VENDOR_DLKMIMAGE_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(BUILT_VENDOR_DLKMIMAGE_TARGET)
 else ifdef BOARD_PREBUILT_VENDOR_DLKMIMAGE
   $(BUILT_TARGET_FILES_DIR): $(INSTALLED_VENDOR_DLKMIMAGE_TARGET)
 endif
 
 ifdef BUILDING_ODM_DLKM_IMAGE
   $(BUILT_TARGET_FILES_DIR): $(INTERNAL_ODM_DLKMIMAGE_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(BUILT_ODM_DLKMIMAGE_TARGET)
 else ifdef BOARD_PREBUILT_ODM_DLKMIMAGE
   $(BUILT_TARGET_FILES_DIR): $(INSTALLED_ODM_DLKMIMAGE_TARGET)
 endif
 
 ifdef BUILDING_SYSTEM_DLKM_IMAGE
   $(BUILT_TARGET_FILES_DIR): $(INTERNAL_SYSTEM_DLKMIMAGE_FILES)
+  $(BUILT_TARGET_FILES_DIR): $(BUILT_SYSTEM_DLKMIMAGE_TARGET)
 else ifdef BOARD_PREBUILT_SYSTEM_DLKMIMAGE
   $(BUILT_TARGET_FILES_DIR): $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET)
 endif
@@ -6025,6 +6044,7 @@ $(BUILT_TARGET_FILES_DIR): \
 	    $(SOONG_APEX_KEYS_FILE) \
 	    $(SOONG_ZIP) \
 	    $(HOST_OUT_EXECUTABLES)/fs_config \
+	    $(HOST_OUT_EXECUTABLES)/map_file_generator \
 	    $(ADD_IMG_TO_TARGET_FILES) \
 	    $(MAKE_RECOVERY_PATCH) \
 	    $(BUILT_KERNEL_CONFIGS_FILE) \
@@ -6381,27 +6401,35 @@ endif # BOARD_CUSTOMIMAGES_PARTITION_LIST
 	@# Run fs_config on all the system, vendor, boot ramdisk,
 	@# and recovery ramdisk files in the zip, and save the output
 ifdef BUILDING_SYSTEM_IMAGE
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_SYSTEMIMAGE),$(zip_root)/IMAGES,system.map)
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM,system/) > $(zip_root)/META/filesystem_config.txt
 endif
 ifdef BUILDING_VENDOR_IMAGE
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_VENDORIMAGE_TARGET),$(zip_root)/IMAGES,vendor.map)
 	$(hide) $(call fs_config,$(zip_root)/VENDOR,vendor/) > $(zip_root)/META/vendor_filesystem_config.txt
 endif
 ifdef BUILDING_PRODUCT_IMAGE
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_PRODUCTIMAGE_TARGET),$(zip_root)/IMAGES,product.map)
 	$(hide) $(call fs_config,$(zip_root)/PRODUCT,product/) > $(zip_root)/META/product_filesystem_config.txt
 endif
 ifdef BUILDING_SYSTEM_EXT_IMAGE
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_SYSTEM_EXTIMAGE_TARGET),$(zip_root)/IMAGES,system_ext.map)
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM_EXT,system_ext/) > $(zip_root)/META/system_ext_filesystem_config.txt
 endif
 ifdef BUILDING_ODM_IMAGE
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_ODMIMAGE_TARGET),$(zip_root)/IMAGES,odm.map)
 	$(hide) $(call fs_config,$(zip_root)/ODM,odm/) > $(zip_root)/META/odm_filesystem_config.txt
 endif
 ifdef BUILDING_VENDOR_DLKM_IMAGE
+	$(hide)$(call copy-image-and-generate-map,$(BUILT_VENDOR_DLKMIMAGE_TARGET),$(zip_root)/IMAGES,vendor_dlkm.map)
 	$(hide) $(call fs_config,$(zip_root)/VENDOR_DLKM,vendor_dlkm/) > $(zip_root)/META/vendor_dlkm_filesystem_config.txt
 endif
 ifdef BUILDING_ODM_DLKM_IMAGE
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_ODM_DLKMIMAGE_TARGET),$(zip_root)/IMAGES,odm_dlkm.map)
 	$(hide) $(call fs_config,$(zip_root)/ODM_DLKM,odm_dlkm/) > $(zip_root)/META/odm_dlkm_filesystem_config.txt
 endif
 ifdef BUILDING_SYSTEM_DLKM_IMAGE
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_SYSTEM_DLKMIMAGE_TARGET),$(zip_root)/IMAGES,system_dlkm.map)
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM_DLKM,system_dlkm/) > $(zip_root)/META/system_dlkm_filesystem_config.txt
 endif
 	@# ROOT always contains the files for the root under normal boot.
@@ -6423,6 +6451,7 @@ ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 	$(hide) $(call fs_config,$(zip_root)/RECOVERY/RAMDISK,) > $(zip_root)/META/recovery_filesystem_config.txt
 endif
 ifdef BUILDING_SYSTEM_OTHER_IMAGE
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_SYSTEMOTHERIMAGE_TARGET),$(zip_root)/IMAGES)
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM_OTHER,system/) > $(zip_root)/META/system_other_filesystem_config.txt
 endif
 	@# Metadata for compatibility verification.
@@ -6488,6 +6517,7 @@ $(call declare-container-license-deps,$(BUILT_TARGET_FILES_PACKAGE), $(INSTALLED
             $(APKCERTS_FILE) \
             $(SOONG_APEX_KEYS_FILE) \
             $(HOST_OUT_EXECUTABLES)/fs_config \
+            $(HOST_OUT_EXECUTABLES)/map_file_generator \
             $(ADD_IMG_TO_TARGET_FILES) \
             $(MAKE_RECOVERY_PATCH) \
             $(BUILT_KERNEL_CONFIGS_FILE) \
