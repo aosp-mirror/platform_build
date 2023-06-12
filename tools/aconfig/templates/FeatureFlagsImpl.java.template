@@ -1,11 +1,12 @@
-package {package};
-{{ if readwrite }}
+package {package_name};
+{{ if is_read_write }}
 import android.provider.DeviceConfig;
 {{ endif }}
-public final class Flags \{
+public final class FeatureFlagsImpl implements FeatureFlags \{
     {{ for item in class_elements}}
-    public static boolean {item.method_name}() \{
-        {{ if item.readwrite- }}
+    @Override
+    public boolean {item.method_name}() \{
+        {{ if item.is_read_write- }}
         return DeviceConfig.getBoolean(
             "{item.device_config_namespace}",
             "{item.device_config_flag}",
