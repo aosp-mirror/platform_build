@@ -928,20 +928,7 @@ def LoadInfoDict(input_file, repacking=False):
         input_file, partition, ramdisk_format=ramdisk_format)
   d["build.prop"] = d["system.build.prop"]
 
-  # Set up the salt (based on fingerprint) that will be used when adding AVB
-  # hash / hashtree footers.
   if d.get("avb_enable") == "true":
-    build_info = BuildInfo(d, use_legacy_id=True)
-    for partition in PARTITIONS_WITH_BUILD_PROP:
-      fingerprint = build_info.GetPartitionFingerprint(partition)
-      if fingerprint:
-        d["avb_{}_salt".format(partition)] = sha256(
-            fingerprint.encode()).hexdigest()
-
-    # Set up the salt for partitions without build.prop
-    if build_info.fingerprint:
-      d["avb_salt"] = sha256(build_info.fingerprint.encode()).hexdigest()
-
     # Set the vbmeta digest if exists
     try:
       d["vbmeta_digest"] = read_helper("META/vbmeta_digest.txt").rstrip()
@@ -2137,20 +2124,19 @@ def UnzipToDir(filename, dirname, patterns=None):
         archvie. Non-matching patterns will be filtered out. If there's no match
         after the filtering, no file will be unzipped.
   """
-  cmd = ["unzip", "-o", "-q", filename, "-d", dirname]
-  if patterns is not None:
+  with zipfile.ZipFile(filename, allowZip64=True, mode="r") as input_zip:
     # Filter out non-matching patterns. unzip will complain otherwise.
-    with zipfile.ZipFile(filename, allowZip64=True) as input_zip:
+    if patterns is not None:
       names = input_zip.namelist()
-    filtered = [
-        pattern for pattern in patterns if fnmatch.filter(names, pattern)]
+      filtered = [name for name in names if any(
+          [fnmatch.fnmatch(name, p) for p in patterns])]
 
-    # There isn't any matching files. Don't unzip anything.
-    if not filtered:
-      return
-    cmd.extend(filtered)
-
-  RunAndCheckOutput(cmd)
+      # There isn't any matching files. Don't unzip anything.
+      if not filtered:
+        return
+      input_zip.extractall(dirname, filtered)
+    else:
+      input_zip.extractall(dirname)
 
 
 def UnzipTemp(filename, patterns=None):

@@ -13,14 +13,17 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<!-- This test config file is auto-generated. -->
-<configuration description="Runs {MODULE}">
-    <option name="test-suite-tag" value="apct" />
-    <option name="test-suite-tag" value="apct-junit" />
 
-    {EXTRA_CONFIGS}
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="aconfig.test.java">
 
-    <test class="com.android.tradefed.testtype.HostTest" >
-        {EXTRA_TEST_RUNNER_CONFIGS}<option name="jar" value="{MODULE}.jar" />
-    </test>
-</configuration>
+    <uses-permission android:name="android.permission.READ_DEVICE_CONFIG" />
+
+    <application>
+        <uses-library android:name="android.test.runner"/>
+    </application>
+
+    <instrumentation android:name="androidx.test.runner.AndroidJUnitRunner"
+        android:targetPackage="aconfig.test.java"
+        android:label="aconfig integration tests (java)" />
+</manifest>

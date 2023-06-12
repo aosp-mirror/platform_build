@@ -20,13 +20,18 @@ use tinytemplate::TinyTemplate;
 
 use crate::aconfig::{FlagState, Permission};
 use crate::cache::{Cache, Item};
+use crate::codegen;
 use crate::commands::OutputFile;
 
 pub fn generate_rust_code(cache: &Cache) -> Result<OutputFile> {
-    let namespace = cache.namespace();
+    let package = cache.package();
     let parsed_flags: Vec<TemplateParsedFlag> =
-        cache.iter().map(|item| create_template_parsed_flag(namespace, item)).collect();
-    let context = TemplateContext { namespace: namespace.to_string(), parsed_flags };
+        cache.iter().map(|item| TemplateParsedFlag::new(package, item)).collect();
+    let context = TemplateContext {
+        package: package.to_string(),
+        parsed_flags,
+        modules: package.split('.').map(|s| s.to_string()).collect::<Vec<_>>(),
+    };
     let mut template = TinyTemplate::new();
     template.add_template("rust_code_gen", include_str!("../templates/rust.template"))?;
     let contents = template.render("rust_code_gen", &context)?;
@@ -36,14 +41,16 @@ pub fn generate_rust_code(cache: &Cache) -> Result<OutputFile> {
 
 #[derive(Serialize)]
 struct TemplateContext {
-    pub namespace: String,
+    pub package: String,
     pub parsed_flags: Vec<TemplateParsedFlag>,
+    pub modules: Vec<String>,
 }
 
 #[derive(Serialize)]
 struct TemplateParsedFlag {
     pub name: String,
-    pub fn_name: String,
+    pub device_config_namespace: String,
+    pub device_config_flag: String,
 
     // TinyTemplate's conditionals are limited to single <bool> expressions; list all options here
     // Invariant: exactly one of these fields will be true
@@ -52,78 +59,79 @@ struct TemplateParsedFlag {
     pub is_read_write: bool,
 }
 
-#[allow(clippy::nonminimal_bool)]
-fn create_template_parsed_flag(namespace: &str, item: &Item) -> TemplateParsedFlag {
-    let template = TemplateParsedFlag {
-        name: item.name.clone(),
-        fn_name: format!("{}_{}", namespace, &item.name),
-        is_read_only_enabled: item.permission == Permission::ReadOnly
-            && item.state == FlagState::Enabled,
-        is_read_only_disabled: item.permission == Permission::ReadOnly
-            && item.state == FlagState::Disabled,
-        is_read_write: item.permission == Permission::ReadWrite,
-    };
-    #[rustfmt::skip]
-    debug_assert!(
-        (template.is_read_only_enabled && !template.is_read_only_disabled && !template.is_read_write) ||
-        (!template.is_read_only_enabled && template.is_read_only_disabled && !template.is_read_write) ||
-        (!template.is_read_only_enabled && !template.is_read_only_disabled && template.is_read_write),
-        "TemplateParsedFlag invariant failed: {} {} {}",
-        template.is_read_only_enabled,
-        template.is_read_only_disabled,
-        template.is_read_write,
-    );
-    template
+impl TemplateParsedFlag {
+    #[allow(clippy::nonminimal_bool)]
+    fn new(package: &str, item: &Item) -> Self {
+        let template = TemplateParsedFlag {
+            name: item.name.clone(),
+            device_config_namespace: item.namespace.to_string(),
+            device_config_flag: codegen::create_device_config_ident(package, &item.name)
+                .expect("values checked at cache creation time"),
+            is_read_only_enabled: item.permission == Permission::ReadOnly
+                && item.state == FlagState::Enabled,
+            is_read_only_disabled: item.permission == Permission::ReadOnly
+                && item.state == FlagState::Disabled,
+            is_read_write: item.permission == Permission::ReadWrite,
+        };
+        #[rustfmt::skip]
+        debug_assert!(
+            (template.is_read_only_enabled && !template.is_read_only_disabled && !template.is_read_write) ||
+            (!template.is_read_only_enabled && template.is_read_only_disabled && !template.is_read_write) ||
+            (!template.is_read_only_enabled && !template.is_read_only_disabled && template.is_read_write),
+            "TemplateParsedFlag invariant failed: {} {} {}",
+            template.is_read_only_enabled,
+            template.is_read_only_disabled,
+            template.is_read_write,
+        );
+        template
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::commands::{create_cache, Input, Source};
 
     #[test]
     fn test_generate_rust_code() {
-        let cache = create_cache(
-            "test",
-            vec![Input {
-                source: Source::File("testdata/test.aconfig".to_string()),
-                reader: Box::new(include_bytes!("../testdata/test.aconfig").as_slice()),
-            }],
-            vec![
-                Input {
-                    source: Source::File("testdata/first.values".to_string()),
-                    reader: Box::new(include_bytes!("../testdata/first.values").as_slice()),
-                },
-                Input {
-                    source: Source::File("testdata/test.aconfig".to_string()),
-                    reader: Box::new(include_bytes!("../testdata/second.values").as_slice()),
-                },
-            ],
-        )
-        .unwrap();
+        let cache = crate::test::create_cache();
         let generated = generate_rust_code(&cache).unwrap();
         assert_eq!("src/lib.rs", format!("{}", generated.path.display()));
         let expected = r#"
+pub mod com {
+pub mod android {
+pub mod aconfig {
+pub mod test {
 #[inline(always)]
-pub const fn r#test_disabled_ro() -> bool {
+pub const fn r#disabled_ro() -> bool {
     false
 }
 
 #[inline(always)]
-pub fn r#test_disabled_rw() -> bool {
-    profcollect_libflags_rust::GetServerConfigurableFlag("test", "disabled_rw", "false") == "true"
+pub fn r#disabled_rw() -> bool {
+    flags_rust::GetServerConfigurableFlag("aconfig_test", "com.android.aconfig.test.disabled_rw", "false") == "true"
 }
 
 #[inline(always)]
-pub const fn r#test_enabled_ro() -> bool {
+pub const fn r#enabled_ro() -> bool {
     true
 }
 
 #[inline(always)]
-pub fn r#test_enabled_rw() -> bool {
-    profcollect_libflags_rust::GetServerConfigurableFlag("test", "enabled_rw", "false") == "true"
+pub fn r#enabled_rw() -> bool {
+    flags_rust::GetServerConfigurableFlag("aconfig_test", "com.android.aconfig.test.enabled_rw", "false") == "true"
+}
+
+}
+}
+}
 }
 "#;
-        assert_eq!(expected.trim(), String::from_utf8(generated.contents).unwrap().trim());
+        assert_eq!(
+            None,
+            crate::test::first_significant_code_diff(
+                expected,
+                &String::from_utf8(generated.contents).unwrap()
+            )
+        );
     }
 }

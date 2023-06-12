@@ -25,6 +25,7 @@ import (
 	"time"
 
 	"android/soong/tools/compliance"
+
 	"github.com/spdx/tools-golang/builder/builder2v2"
 	"github.com/spdx/tools-golang/spdx/common"
 	spdx "github.com/spdx/tools-golang/spdx/v2_2"
@@ -2375,8 +2376,8 @@ func validate(doc *spdx.Document) error {
 	if doc.DocumentName == "" {
 		return fmt.Errorf("DocumentName: got nothing, want Document Name")
 	}
-	if fmt.Sprintf("%v", doc.CreationInfo.Creators[1].Creator) != "Google LLC" {
-		return fmt.Errorf("Creator: got %v, want  'Google LLC'")
+	if c := fmt.Sprintf("%v", doc.CreationInfo.Creators[1].Creator); c != "Google LLC" {
+		return fmt.Errorf("Creator: got %v, want  'Google LLC'", c)
 	}
 	_, err := time.Parse(time.RFC3339, doc.CreationInfo.Created)
 	if err != nil {

@@ -125,6 +125,7 @@ func TestLoad(t *testing.T) {
 	if err := os.Chdir(filepath.Dir(dir)); err != nil {
 		t.Fatal(err)
 	}
+	thread.SetLocal(allowExternalEntrypointKey, false)
 	thread.SetLocal(callerDirKey, dir)
 	thread.SetLocal(executionModeKey, ExecutionModeRbc)
 	if _, err := starlark.ExecFile(thread, "testdata/load.star", nil, rbcBuiltins); err != nil {
