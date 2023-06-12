@@ -40,8 +40,7 @@ ifdef INTERNAL_BUILD_ID_MAKEFILE
   include $(INTERNAL_BUILD_ID_MAKEFILE)
 endif
 
-DEFAULT_PLATFORM_VERSION := VP1A
-.KATI_READONLY := DEFAULT_PLATFORM_VERSION
+# Set release configuration. The default resides in build/release/build_flags.mk.
 MIN_PLATFORM_VERSION := UP1A
 MAX_PLATFORM_VERSION := VP1A
 
