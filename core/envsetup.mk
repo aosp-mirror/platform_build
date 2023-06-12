@@ -66,7 +66,7 @@ $(strip \
   $(if $(filter $(ALL_VERSIONS),$(2)),,
     $(error Invalid MAX_PLATFORM_VERSION '$(2)'))
   $(if $(filter $(ALL_VERSIONS),$(3)),,
-    $(error Invalid DEFAULT_PLATFORM_VERSION '$(3)'))
+    $(error Invalid RELEASE_PLATFORM_VERSION '$(3)'))
 
   $(eval allowed_versions_ := $(call find_and_earlier,$(ALL_VERSIONS),$(2)))
 
@@ -77,7 +77,7 @@ $(strip \
     $(filter-out $(call find_and_earlier,$(allowed_versions_),$(1)),$(allowed_versions_)))
 
   $(if $(filter $(allowed_versions_),$(3)),,
-    $(error DEFAULT_PLATFORM_VERSION '$(3)' must be between MIN_PLATFORM_VERSION '$(1)' and MAX_PLATFORM_VERSION '$(2)'))
+    $(error RELEASE_PLATFORM_VERSION '$(3)' must be between MIN_PLATFORM_VERSION '$(1)' and MAX_PLATFORM_VERSION '$(2)'))
 
   $(allowed_versions_))
 endef
