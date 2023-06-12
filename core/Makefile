@@ -5401,6 +5401,9 @@ endif
 ifdef BOARD_PREBUILT_DTBOIMAGE
 	$(hide) echo "flash dtbo" >> $@
 endif
+ifneq ($(INSTALLED_DTIMAGE_TARGET),)
+	$(hide) echo "flash dts dt.img" >> $@
+endif
 ifneq ($(INSTALLED_VENDOR_KERNEL_BOOTIMAGE_TARGET),)
 	$(hide) echo "flash vendor_kernel_boot" >> $@
 endif
