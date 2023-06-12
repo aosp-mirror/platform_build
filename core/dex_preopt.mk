@@ -95,7 +95,7 @@ booclasspath_locations_arg := $(subst $(space),:,$(DEXPREOPT_BOOTCLASSPATH_DEX_L
 boot_images := $(subst :,$(space),$(DEXPREOPT_IMAGE_LOCATIONS_ON_DEVICE$(DEXPREOPT_INFIX)))
 boot_image_arg := $(subst $(space),:,$(patsubst /%,%,$(boot_images)))
 
-boot_zip_metadata_txt := $(boot_zip).METADATA.txt
+boot_zip_metadata_txt := $(dir $(boot_zip))boot_zip/METADATA.txt
 $(boot_zip_metadata_txt):
 	rm -f $@
 	echo "booclasspath = $(booclasspath_arg)" >> $@
@@ -112,7 +112,7 @@ $(boot_zip): $(bootclasspath_jars) $(system_server_jars) $(SOONG_ZIP) $(MERGE_ZI
 	$(SOONG_ZIP) -o $@.tmp \
 	  -C $(dir $(firstword $(PRIVATE_BOOTCLASSPATH_JARS)))/.. $(addprefix -f ,$(PRIVATE_BOOTCLASSPATH_JARS)) \
 	  -C $(PRODUCT_OUT) $(addprefix -f ,$(PRIVATE_SYSTEM_SERVER_JARS)) \
-	  -e METADATA.txt -f $(boot_zip_metadata_txt)
+	  -j -f $(boot_zip_metadata_txt)
 	$(MERGE_ZIPS) $@ $@.tmp $(DEXPREOPT_IMAGE_ZIP_boot) $(DEXPREOPT_IMAGE_ZIP_art) $(DEXPREOPT_IMAGE_ZIP_mainline)
 	rm -f $@.tmp
 
