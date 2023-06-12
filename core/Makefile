@@ -27,25 +27,27 @@ $(eval $(strip $(1)): PRIVATE_OUT := $(strip $(1)))
 $(eval $(strip $(1)): PRIVATE_FLAG_NAMES := $(strip $(2)))
 $(strip $(1)):
 	mkdir -p $$(dir $$(PRIVATE_OUT))
-	( \
-		echo '{' ; \
-		echo 'flags: [' ; \
-		$$(foreach flag, $$(PRIVATE_FLAG_NAMES), \
+	echo '{' > $$(PRIVATE_OUT)
+	echo '"flags": [' >> $$(PRIVATE_OUT)
+	$$(foreach flag, $$(PRIVATE_FLAG_NAMES), \
+		( \
 			printf '  { "name": "%s", "value": "%s", ' \
 					'$$(flag)' \
 					'$$(_ALL_RELEASE_FLAGS.$$(flag).VALUE)' \
 					; \
-			printf '"set": "%s", "default": "%s", "declared": "%s", }' \
+			printf '"set": "%s", "default": "%s", "declared": "%s" }' \
 					'$$(_ALL_RELEASE_FLAGS.$$(flag).SET_IN)' \
 					'$$(_ALL_RELEASE_FLAGS.$$(flag).DEFAULT)' \
 					'$$(_ALL_RELEASE_FLAGS.$$(flag).DECLARED_IN)' \
 					; \
 			printf '$$(if $$(filter $$(lastword $$(PRIVATE_FLAG_NAMES)),$$(flag)),,$$(comma))\n' ; \
-		) \
-		echo "]" ; \
-		echo "}" \
-	) >> $$(PRIVATE_OUT)
+		) >> $$(PRIVATE_OUT) \
+	)
+	echo "]" >> $$(PRIVATE_OUT)
+	echo "}" >> $$(PRIVATE_OUT)
 endef
+
+_FLAG_PARTITIONS := product system system_ext vendor
 
 $(foreach partition, $(_FLAG_PARTITIONS), \
 	$(eval BUILD_FLAG_SUMMARIES.$(partition) \
