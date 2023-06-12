@@ -817,8 +817,8 @@ class PayloadGenerator(object):
     target_dir = ExtractTargetFiles(target_file)
     cmd = ["delta_generator",
            "--out_file", payload_file]
-    with open(os.path.join(target_dir, "META", "ab_partitions.txt")) as fp:
-      ab_partitions = fp.read().strip().split("\n")
+    with open(os.path.join(target_dir, "META", "ab_partitions.txt"), "r") as fp:
+      ab_partitions = fp.read().strip().splitlines()
     cmd.extend(["--partition_names", ":".join(ab_partitions)])
     cmd.extend(
         ["--new_partitions", GetPartitionImages(target_dir, ab_partitions, False)])
@@ -845,6 +845,11 @@ class PayloadGenerator(object):
 
     if os.path.exists(dynamic_partition_info):
       cmd.extend(["--dynamic_partition_info_file", dynamic_partition_info])
+
+    apex_info = os.path.join(
+      target_dir, "META", "apex_info.pb")
+    if os.path.exists(apex_info):
+      cmd.extend(["--apex_info_file", apex_info])
 
     major_version, minor_version = ParseUpdateEngineConfig(
         os.path.join(target_dir, "META", "update_engine_config.txt"))

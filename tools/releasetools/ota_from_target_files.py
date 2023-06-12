@@ -1063,6 +1063,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
       # ZIP_STORED.
       common.ZipWriteStr(output_zip, care_map_name, care_map_data,
                          compress_type=zipfile.ZIP_STORED)
+      # break here to avoid going into else when care map has been handled
+      break
     else:
       logger.warning("Cannot find care map file in target_file package")
 

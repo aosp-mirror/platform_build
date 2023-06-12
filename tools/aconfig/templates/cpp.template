@@ -1,24 +1,20 @@
-#ifndef {namespace}_HEADER_H
-#define {namespace}_HEADER_H
-#include "{namespace}.h"
+#ifndef {header}_HEADER_H
+#define {header}_HEADER_H
 {{ if readwrite }}
 #include <server_configurable_flags/get_flags.h>
 using namespace server_configurable_flags;
 {{ endif }}
-namespace {namespace} \{
+namespace {cpp_namespace} \{
     {{ for item in class_elements}}
-    class {item.flag_name} \{
-        public:
-            virtual const bool value() \{
-                {{ if item.readwrite- }}
-                return GetServerConfigurableFlag(
-                    "{namespace}",
-                    "{item.flag_name}",
-                    "{item.default_value}") == "true";
-                {{ -else- }}
-                return {item.default_value};
-                {{ -endif }}
-            }
+    static const bool {item.flag_name}() \{
+        {{ if item.readwrite- }}
+        return GetServerConfigurableFlag(
+            "{item.device_config_namespace}",
+            "{item.device_config_flag}",
+            "{item.default_value}") == "true";
+        {{ -else- }}
+            return {item.default_value};
+        {{ -endif }}
     }
     {{ endfor }}
 }

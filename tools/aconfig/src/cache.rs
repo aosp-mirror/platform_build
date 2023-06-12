@@ -34,12 +34,13 @@ pub struct Tracepoint {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Item {
-    // TODO: duplicating the Cache.namespace as Item.namespace makes the internal representation
+    // TODO: duplicating the Cache.package as Item.package makes the internal representation
     // closer to the proto message `parsed_flag`; hopefully this will enable us to replace the Item
-    // struct and use a newtype instead once aconfig has matured. Until then, namespace should
+    // struct and use a newtype instead once aconfig has matured. Until then, package should
     // really be a Cow<String>.
-    pub namespace: String,
+    pub package: String,
     pub name: String,
+    pub namespace: String,
     pub description: String,
     pub state: FlagState,
     pub permission: Permission,
@@ -48,7 +49,7 @@ pub struct Item {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Cache {
-    namespace: String,
+    package: String,
     items: Vec<Item>,
 }
 
@@ -96,9 +97,9 @@ impl Cache {
         self.items.into_iter()
     }
 
-    pub fn namespace(&self) -> &str {
-        debug_assert!(!self.namespace.is_empty());
-        &self.namespace
+    pub fn package(&self) -> &str {
+        debug_assert!(!self.package.is_empty());
+        &self.package
     }
 }
 
@@ -108,9 +109,9 @@ pub struct CacheBuilder {
 }
 
 impl CacheBuilder {
-    pub fn new(namespace: String) -> Result<CacheBuilder> {
-        ensure!(codegen::is_valid_identifier(&namespace), "bad namespace");
-        let cache = Cache { namespace, items: vec![] };
+    pub fn new(package: String) -> Result<CacheBuilder> {
+        ensure!(codegen::is_valid_package_ident(&package), "bad package");
+        let cache = Cache { package, items: vec![] };
         Ok(CacheBuilder { cache })
     }
 
@@ -119,7 +120,8 @@ impl CacheBuilder {
         source: Source,
         declaration: FlagDeclaration,
     ) -> Result<&mut CacheBuilder> {
-        ensure!(codegen::is_valid_identifier(&declaration.name), "bad flag name");
+        ensure!(codegen::is_valid_name_ident(&declaration.name), "bad flag name");
+        ensure!(codegen::is_valid_name_ident(&declaration.namespace), "bad namespace");
         ensure!(!declaration.description.is_empty(), "empty flag description");
         ensure!(
             self.cache.items.iter().all(|item| item.name != declaration.name),
@@ -128,8 +130,9 @@ impl CacheBuilder {
             source
         );
         self.cache.items.push(Item {
-            namespace: self.cache.namespace.clone(),
+            package: self.cache.package.clone(),
             name: declaration.name.clone(),
+            namespace: declaration.namespace.clone(),
             description: declaration.description,
             state: DEFAULT_FLAG_STATE,
             permission: DEFAULT_FLAG_PERMISSION,
@@ -147,18 +150,18 @@ impl CacheBuilder {
         source: Source,
         value: FlagValue,
     ) -> Result<&mut CacheBuilder> {
-        ensure!(codegen::is_valid_identifier(&value.namespace), "bad flag namespace");
-        ensure!(codegen::is_valid_identifier(&value.name), "bad flag name");
+        ensure!(codegen::is_valid_package_ident(&value.package), "bad flag package");
+        ensure!(codegen::is_valid_name_ident(&value.name), "bad flag name");
         ensure!(
-            value.namespace == self.cache.namespace,
-            "failed to set values for flag {}/{} from {}: expected namespace {}",
-            value.namespace,
+            value.package == self.cache.package,
+            "failed to set values for flag {}/{} from {}: expected package {}",
+            value.package,
             value.name,
             source,
-            self.cache.namespace
+            self.cache.package
         );
         let Some(existing_item) = self.cache.items.iter_mut().find(|item| item.name == value.name) else {
-            bail!("failed to set values for flag {}/{} from {}: flag not declared", value.namespace, value.name, source);
+            bail!("failed to set values for flag {}/{} from {}: flag not declared", value.package, value.name, source);
         };
         existing_item.state = value.state;
         existing_item.permission = value.permission;
@@ -179,21 +182,28 @@ impl CacheBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::aconfig::{FlagState, Permission};
 
     #[test]
     fn test_add_flag_declaration() {
-        let mut builder = CacheBuilder::new("ns".to_string()).unwrap();
+        let mut builder = CacheBuilder::new("com.example".to_string()).unwrap();
         builder
             .add_flag_declaration(
                 Source::File("first.txt".to_string()),
-                FlagDeclaration { name: "foo".to_string(), description: "desc".to_string() },
+                FlagDeclaration {
+                    name: "foo".to_string(),
+                    namespace: "ns".to_string(),
+                    description: "desc".to_string(),
+                },
             )
             .unwrap();
         let error = builder
             .add_flag_declaration(
                 Source::File("second.txt".to_string()),
-                FlagDeclaration { name: "foo".to_string(), description: "desc".to_string() },
+                FlagDeclaration {
+                    name: "foo".to_string(),
+                    namespace: "ns".to_string(),
+                    description: "desc".to_string(),
+                },
             )
             .unwrap_err();
         assert_eq!(
@@ -203,7 +213,11 @@ mod tests {
         builder
             .add_flag_declaration(
                 Source::File("first.txt".to_string()),
-                FlagDeclaration { name: "bar".to_string(), description: "desc".to_string() },
+                FlagDeclaration {
+                    name: "bar".to_string(),
+                    namespace: "ns".to_string(),
+                    description: "desc".to_string(),
+                },
             )
             .unwrap();
 
@@ -218,12 +232,12 @@ mod tests {
 
     #[test]
     fn test_add_flag_value() {
-        let mut builder = CacheBuilder::new("ns".to_string()).unwrap();
+        let mut builder = CacheBuilder::new("com.example".to_string()).unwrap();
         let error = builder
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
-                    namespace: "ns".to_string(),
+                    package: "com.example".to_string(),
                     name: "foo".to_string(),
                     state: FlagState::Enabled,
                     permission: Permission::ReadOnly,
@@ -232,13 +246,17 @@ mod tests {
             .unwrap_err();
         assert_eq!(
             &format!("{:?}", error),
-            "failed to set values for flag ns/foo from <memory>: flag not declared"
+            "failed to set values for flag com.example/foo from <memory>: flag not declared"
         );
 
         builder
             .add_flag_declaration(
                 Source::File("first.txt".to_string()),
-                FlagDeclaration { name: "foo".to_string(), description: "desc".to_string() },
+                FlagDeclaration {
+                    name: "foo".to_string(),
+                    namespace: "ns".to_string(),
+                    description: "desc".to_string(),
+                },
             )
             .unwrap();
 
@@ -246,7 +264,7 @@ mod tests {
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
-                    namespace: "ns".to_string(),
+                    package: "com.example".to_string(),
                     name: "foo".to_string(),
                     state: FlagState::Disabled,
                     permission: Permission::ReadOnly,
@@ -258,7 +276,7 @@ mod tests {
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
-                    namespace: "ns".to_string(),
+                    package: "com.example".to_string(),
                     name: "foo".to_string(),
                     state: FlagState::Enabled,
                     permission: Permission::ReadWrite,
@@ -266,19 +284,19 @@ mod tests {
             )
             .unwrap();
 
-        // different namespace -> no-op
+        // different package -> no-op
         let error = builder
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
-                    namespace: "some_other_namespace".to_string(),
+                    package: "some_other_package".to_string(),
                     name: "foo".to_string(),
                     state: FlagState::Enabled,
                     permission: Permission::ReadOnly,
                 },
             )
             .unwrap_err();
-        assert_eq!(&format!("{:?}", error), "failed to set values for flag some_other_namespace/foo from <memory>: expected namespace ns");
+        assert_eq!(&format!("{:?}", error), "failed to set values for flag some_other_package/foo from <memory>: expected package com.example");
 
         let cache = builder.build();
         let item = cache.iter().find(|&item| item.name == "foo").unwrap();
@@ -287,18 +305,22 @@ mod tests {
     }
 
     #[test]
-    fn test_reject_empty_cache_namespace() {
+    fn test_reject_empty_cache_package() {
         CacheBuilder::new("".to_string()).unwrap_err();
     }
 
     #[test]
     fn test_reject_empty_flag_declaration_fields() {
-        let mut builder = CacheBuilder::new("ns".to_string()).unwrap();
+        let mut builder = CacheBuilder::new("com.example".to_string()).unwrap();
 
         let error = builder
             .add_flag_declaration(
                 Source::Memory,
-                FlagDeclaration { name: "".to_string(), description: "Description".to_string() },
+                FlagDeclaration {
+                    name: "".to_string(),
+                    namespace: "ns".to_string(),
+                    description: "Description".to_string(),
+                },
             )
             .unwrap_err();
         assert_eq!(&format!("{:?}", error), "bad flag name");
@@ -306,7 +328,11 @@ mod tests {
         let error = builder
             .add_flag_declaration(
                 Source::Memory,
-                FlagDeclaration { name: "foo".to_string(), description: "".to_string() },
+                FlagDeclaration {
+                    name: "foo".to_string(),
+                    namespace: "ns".to_string(),
+                    description: "".to_string(),
+                },
             )
             .unwrap_err();
         assert_eq!(&format!("{:?}", error), "empty flag description");
@@ -314,11 +340,15 @@ mod tests {
 
     #[test]
     fn test_reject_empty_flag_value_files() {
-        let mut builder = CacheBuilder::new("ns".to_string()).unwrap();
+        let mut builder = CacheBuilder::new("com.example".to_string()).unwrap();
         builder
             .add_flag_declaration(
                 Source::Memory,
-                FlagDeclaration { name: "foo".to_string(), description: "desc".to_string() },
+                FlagDeclaration {
+                    name: "foo".to_string(),
+                    namespace: "ns".to_string(),
+                    description: "desc".to_string(),
+                },
             )
             .unwrap();
 
@@ -326,20 +356,20 @@ mod tests {
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
-                    namespace: "".to_string(),
+                    package: "".to_string(),
                     name: "foo".to_string(),
                     state: FlagState::Enabled,
                     permission: Permission::ReadOnly,
                 },
             )
             .unwrap_err();
-        assert_eq!(&format!("{:?}", error), "bad flag namespace");
+        assert_eq!(&format!("{:?}", error), "bad flag package");
 
         let error = builder
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
-                    namespace: "ns".to_string(),
+                    package: "com.example".to_string(),
                     name: "".to_string(),
                     state: FlagState::Enabled,
                     permission: Permission::ReadOnly,

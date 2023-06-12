@@ -21,17 +21,19 @@ use tinytemplate::TinyTemplate;
 
 use crate::aconfig::{FlagState, Permission};
 use crate::cache::{Cache, Item};
+use crate::codegen;
 use crate::commands::OutputFile;
 
 pub fn generate_java_code(cache: &Cache) -> Result<OutputFile> {
-    let class_elements: Vec<ClassElement> = cache.iter().map(create_class_element).collect();
+    let package = cache.package();
+    let class_elements: Vec<ClassElement> =
+        cache.iter().map(|item| create_class_element(package, item)).collect();
     let readwrite = class_elements.iter().any(|item| item.readwrite);
-    let namespace = cache.namespace();
-    let context = Context { namespace: namespace.to_string(), readwrite, class_elements };
+    let context = Context { package: package.to_string(), readwrite, class_elements };
     let mut template = TinyTemplate::new();
     template.add_template("java_code_gen", include_str!("../templates/java.template"))?;
     let contents = template.render("java_code_gen", &context)?;
-    let mut path: PathBuf = ["aconfig", namespace].iter().collect();
+    let mut path: PathBuf = package.split('.').collect();
     // TODO: Allow customization of the java class name
     path.push("Flags.java");
     Ok(OutputFile { contents: contents.into(), path })
@@ -39,7 +41,7 @@ pub fn generate_java_code(cache: &Cache) -> Result<OutputFile> {
 
 #[derive(Serialize)]
 struct Context {
-    pub namespace: String,
+    pub package: String,
     pub readwrite: bool,
     pub class_elements: Vec<ClassElement>,
 }
@@ -49,21 +51,23 @@ struct ClassElement {
     pub method_name: String,
     pub readwrite: bool,
     pub default_value: String,
-    pub feature_name: String,
-    pub flag_name: String,
+    pub device_config_namespace: String,
+    pub device_config_flag: String,
 }
 
-fn create_class_element(item: &Item) -> ClassElement {
+fn create_class_element(package: &str, item: &Item) -> ClassElement {
+    let device_config_flag = codegen::create_device_config_ident(package, &item.name)
+        .expect("values checked at cache creation time");
     ClassElement {
-        method_name: item.name.clone(),
+        method_name: item.name.replace('-', "_"),
         readwrite: item.permission == Permission::ReadWrite,
         default_value: if item.state == FlagState::Enabled {
             "true".to_string()
         } else {
             "false".to_string()
         },
-        feature_name: item.name.clone(),
-        flag_name: item.name.clone(),
+        device_config_namespace: item.namespace.clone(),
+        device_config_flag,
     }
 }
 
@@ -76,13 +80,14 @@ mod tests {
 
     #[test]
     fn test_generate_java_code() {
-        let namespace = "example";
-        let mut builder = CacheBuilder::new(namespace.to_string()).unwrap();
+        let package = "com.example";
+        let mut builder = CacheBuilder::new(package.to_string()).unwrap();
         builder
             .add_flag_declaration(
                 Source::File("test.txt".to_string()),
                 FlagDeclaration {
                     name: "test".to_string(),
+                    namespace: "ns".to_string(),
                     description: "buildtime enable".to_string(),
                 },
             )
@@ -91,6 +96,7 @@ mod tests {
                 Source::File("test2.txt".to_string()),
                 FlagDeclaration {
                     name: "test2".to_string(),
+                    namespace: "ns".to_string(),
                     description: "runtime disable".to_string(),
                 },
             )
@@ -98,7 +104,7 @@ mod tests {
             .add_flag_value(
                 Source::Memory,
                 FlagValue {
-                    namespace: namespace.to_string(),
+                    package: package.to_string(),
                     name: "test".to_string(),
                     state: FlagState::Disabled,
                     permission: Permission::ReadOnly,
@@ -106,7 +112,7 @@ mod tests {
             )
             .unwrap();
         let cache = builder.build();
-        let expect_content = r#"package aconfig.example;
+        let expect_content = r#"package com.example;
 
         import android.provider.DeviceConfig;
 
@@ -118,8 +124,8 @@ mod tests {
 
             public static boolean test2() {
                 return DeviceConfig.getBoolean(
-                    "example",
-                    "test2__test2",
+                    "ns",
+                    "com.example.test2",
                     false
                 );
             }
@@ -127,10 +133,13 @@ mod tests {
         }
         "#;
         let file = generate_java_code(&cache).unwrap();
-        assert_eq!("aconfig/example/Flags.java", file.path.to_str().unwrap());
+        assert_eq!("com/example/Flags.java", file.path.to_str().unwrap());
         assert_eq!(
-            expect_content.replace(' ', ""),
-            String::from_utf8(file.contents).unwrap().replace(' ', "")
+            None,
+            crate::test::first_significant_code_diff(
+                expect_content,
+                &String::from_utf8(file.contents).unwrap()
+            )
         );
     }
 }
