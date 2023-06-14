@@ -247,6 +247,16 @@ _product_list_vars += PRODUCT_CFI_EXCLUDE_PATHS
 # Whether any paths should have HWASan enabled for components
 _product_list_vars += PRODUCT_HWASAN_INCLUDE_PATHS
 
+# Whether any paths should have Memtag_heap enabled for components
+_product_list_vars += PRODUCT_MEMTAG_HEAP_ASYNC_INCLUDE_PATHS
+_product_list_vars += PRODUCT_MEMTAG_HEAP_ASYNC_DEFAULT_INCLUDE_PATHS
+_product_list_vars += PRODUCT_MEMTAG_HEAP_SYNC_INCLUDE_PATHS
+_product_list_vars += PRODUCT_MEMTAG_HEAP_SYNC_DEFAULT_INCLUDE_PATHS
+_product_list_vars += PRODUCT_MEMTAG_HEAP_EXCLUDE_PATHS
+
+# Whether this product wants to start with an empty list of default memtag_heap include paths
+_product_single_value_vars += PRODUCT_MEMTAG_HEAP_SKIP_DEFAULT_PATHS
+
 # Whether the Scudo hardened allocator is disabled platform-wide
 _product_single_value_vars += PRODUCT_DISABLE_SCUDO
 
