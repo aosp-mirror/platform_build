@@ -89,7 +89,7 @@ pub fn create_cache(package: &str, declarations: Vec<Input>, values: Vec<Input>)
     Ok(builder.build())
 }
 
-pub fn create_java_lib(cache: Cache) -> Result<OutputFile> {
+pub fn create_java_lib(cache: Cache) -> Result<Vec<OutputFile>> {
     generate_java_code(&cache)
 }
 
