@@ -17,7 +17,10 @@
 use anyhow::{ensure, Result};
 
 pub fn is_valid_name_ident(s: &str) -> bool {
-    // Identifiers must match [a-z][a-z0-9_]*
+    // Identifiers must match [a-z][a-z0-9_]*, except consecutive underscores are not allowed
+    if s.contains("__") {
+        return false;
+    }
     let mut chars = s.chars();
     let Some(first) = chars.next() else {
         return false;
@@ -46,11 +49,14 @@ mod tests {
     fn test_is_valid_name_ident() {
         assert!(is_valid_name_ident("foo"));
         assert!(is_valid_name_ident("foo_bar_123"));
+        assert!(is_valid_name_ident("foo_"));
 
         assert!(!is_valid_name_ident(""));
         assert!(!is_valid_name_ident("123_foo"));
         assert!(!is_valid_name_ident("foo-bar"));
         assert!(!is_valid_name_ident("foo-b\u{00e5}r"));
+        assert!(!is_valid_name_ident("foo__bar"));
+        assert!(!is_valid_name_ident("_foo"));
     }
 
     #[test]
@@ -59,6 +65,7 @@ mod tests {
         assert!(is_valid_package_ident("foo_bar_123"));
         assert!(is_valid_package_ident("foo.bar"));
         assert!(is_valid_package_ident("foo.bar.a123"));
+        assert!(!is_valid_package_ident("foo._bar"));
 
         assert!(!is_valid_package_ident(""));
         assert!(!is_valid_package_ident("123_foo"));
@@ -69,6 +76,7 @@ mod tests {
         assert!(!is_valid_package_ident("foo.bar."));
         assert!(!is_valid_package_ident("."));
         assert!(!is_valid_package_ident("foo..bar"));
+        assert!(!is_valid_package_ident("foo.__bar"));
     }
 
     #[test]
