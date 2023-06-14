@@ -5897,7 +5897,9 @@ endef
 define copy-image-and-generate-map
   mkdir -p $(2)
   cp $(1) $(2)
-  $(if $(3),$(HOST_OUT_EXECUTABLES)/map_file_generator $(1) $(2)/$(3))
+  $(if $(3),
+    UNSQUASHFS=$(HOST_OUT_EXECUTABLES)/unsquashfs $(HOST_OUT_EXECUTABLES)/map_file_generator $(1) $(2)/$(3)
+  )
 endef
 
 # By conditionally including the dependency of the target files package on the
