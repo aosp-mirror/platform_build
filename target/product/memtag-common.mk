@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2023 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,9 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# BUILD_ID is usually used to specify the branch name
-# (like "MAIN") or a branch name and a release candidate
-# (like "CRB01").  It must be a single word, and is
-# capitalized by convention.
 
-BUILD_ID=UD1A.230615.001
+# This is a recommended set of common components to enable MTE for.
+
+PRODUCT_MEMTAG_HEAP_ASYNC_DEFAULT_INCLUDE_PATHS := \
+    external/android-clat \
+    external/iproute2 \
+    external/iptables \
+    external/mtpd \
+    external/ppp \
+    hardware/st/nfc \
+    hardware/st/secure_element \
+    hardware/st/secure_element2 \
+    packages/modules/StatsD \
+    system/bpf \
+    system/netd/netutil_wrappers \
+    system/netd/server
