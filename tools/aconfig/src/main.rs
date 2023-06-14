@@ -147,8 +147,10 @@ fn main() -> Result<()> {
             let file = fs::File::open(path)?;
             let cache = Cache::read_from_reader(file)?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
-            let generated_file = commands::create_java_lib(cache)?;
-            write_output_file_realtive_to_dir(&dir, &generated_file)?;
+            let generated_files = commands::create_java_lib(cache)?;
+            generated_files
+                .iter()
+                .try_for_each(|file| write_output_file_realtive_to_dir(&dir, file))?;
         }
         Some(("create-cpp-lib", sub_matches)) => {
             let path = get_required_arg::<String>(sub_matches, "cache")?;
