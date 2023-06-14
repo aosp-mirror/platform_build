@@ -164,8 +164,6 @@ def MergeDexopt(temp_dir, output_target_files_dir):
           'deapexer',
           '--debugfs_path',
           'debugfs_static',
-          '--blkid_path',
-          'blkid',
           '--fsckerofs_path',
           'fsck.erofs',
           'extract',
