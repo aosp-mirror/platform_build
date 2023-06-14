@@ -140,6 +140,10 @@ ifeq ($(filter memtag_heap, $(my_sanitize)),)
                                     $(PRODUCT_MEMTAG_HEAP_ASYNC_INCLUDE_PATHS)
     combined_exclude_paths := $(MEMTAG_HEAP_EXCLUDE_PATHS) \
                               $(PRODUCT_MEMTAG_HEAP_EXCLUDE_PATHS)
+    ifneq ($(PRODUCT_MEMTAG_HEAP_SKIP_DEFAULT_PATHS),true)
+      combined_sync_include_paths += $(PRODUCT_MEMTAG_HEAP_SYNC_DEFAULT_INCLUDE_PATHS)
+      combined_async_include_paths += $(PRODUCT_MEMTAG_HEAP_ASYNC_DEFAULT_INCLUDE_PATHS)
+    endif
 
     ifeq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_exclude_paths)),\
           $(filter $(dir)%,$(LOCAL_PATH)))),)

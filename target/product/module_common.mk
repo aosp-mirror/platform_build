@@ -17,6 +17,7 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/default_art_config.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_default.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/cfi-common.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/memtag-common.mk)
 
 # Enables treble, which enabled certain -D compilation flags. In particular, libhidlbase
 # uses -DENFORCE_VINTF_MANIFEST. See b/185759877
