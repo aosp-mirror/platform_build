@@ -33,7 +33,7 @@ pub mod test_utils {
                     reader: Box::new(include_bytes!("../tests/first.values").as_slice()),
                 },
                 Input {
-                    source: Source::File("tests/test.aconfig".to_string()),
+                    source: Source::File("tests/second.values".to_string()),
                     reader: Box::new(include_bytes!("../tests/second.values").as_slice()),
                 },
             ],
