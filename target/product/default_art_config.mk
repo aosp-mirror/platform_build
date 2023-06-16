@@ -115,4 +115,4 @@ PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.dex2oat-Xms=64m \
     dalvik.vm.dex2oat-Xmx=512m \
 
-PRODUCT_ENABLE_UFFD_GC := false  # TODO(jiakaiz): Change this to "default".
+PRODUCT_ENABLE_UFFD_GC := default
