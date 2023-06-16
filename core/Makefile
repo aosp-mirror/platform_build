@@ -5890,16 +5890,25 @@ define dump-dynamic-partitions-info
     echo "virtual_ab_cow_version=$(PRODUCT_VIRTUAL_AB_COW_VERSION)" >> $(1))
 endef
 
-# Copy an image file to a directory and generate a block list map file from the image.
+# Copy an image file to a directory and generate a block list map file from the image,
+# only if the map_file_generator supports the file system.
+# Otherwise, skip generating map files as well as copying images. The image will be
+# generated from the $(ADD_IMG_TO_TARGET_FILES) to generate the map file with it.
 # $(1): path of the image file
 # $(2): target out directory
-# $(3): name of the map file. skip generating map file if empty
+# $(3): image name to generate a map file. skip generating map file if empty
 define copy-image-and-generate-map
-  mkdir -p $(2)
-  cp $(1) $(2)
-  $(if $(3),
-    UNSQUASHFS=$(HOST_OUT_EXECUTABLES)/unsquashfs $(HOST_OUT_EXECUTABLES)/map_file_generator $(1) $(2)/$(3)
-  )
+  $(eval _supported_fs_for_map_file_generator := erofs ext%)
+  $(eval _img := $(call to-upper,$(3)))
+  $(if $(3),$(eval _map_fs_type := $(BOARD_$(_img)IMAGE_FILE_SYSTEM_TYPE)),\
+    $(eval _no_map_file := "true"))
+  $(if $(filter $(_supported_fs_for_map_file_generator),$(_map_fs_type))$(_no_map_file),\
+    mkdir -p $(2); \
+    cp $(1) $(2); \
+    $(if $(3),$(HOST_OUT_EXECUTABLES)/map_file_generator $(1) $(2)/$(3).map))
+  $(eval _img :=)
+  $(eval _map_fs_type :=)
+  $(eval _no_map_file :=)
 endef
 
 # By conditionally including the dependency of the target files package on the
@@ -6411,35 +6420,35 @@ endif # BOARD_CUSTOMIMAGES_PARTITION_LIST
 	@# Run fs_config on all the system, vendor, boot ramdisk,
 	@# and recovery ramdisk files in the zip, and save the output
 ifdef BUILDING_SYSTEM_IMAGE
-	$(hide) $(call copy-image-and-generate-map,$(BUILT_SYSTEMIMAGE),$(zip_root)/IMAGES,system.map)
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_SYSTEMIMAGE),$(zip_root)/IMAGES,system)
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM,system/) > $(zip_root)/META/filesystem_config.txt
 endif
 ifdef BUILDING_VENDOR_IMAGE
-	$(hide) $(call copy-image-and-generate-map,$(BUILT_VENDORIMAGE_TARGET),$(zip_root)/IMAGES,vendor.map)
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_VENDORIMAGE_TARGET),$(zip_root)/IMAGES,vendor)
 	$(hide) $(call fs_config,$(zip_root)/VENDOR,vendor/) > $(zip_root)/META/vendor_filesystem_config.txt
 endif
 ifdef BUILDING_PRODUCT_IMAGE
-	$(hide) $(call copy-image-and-generate-map,$(BUILT_PRODUCTIMAGE_TARGET),$(zip_root)/IMAGES,product.map)
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_PRODUCTIMAGE_TARGET),$(zip_root)/IMAGES,product)
 	$(hide) $(call fs_config,$(zip_root)/PRODUCT,product/) > $(zip_root)/META/product_filesystem_config.txt
 endif
 ifdef BUILDING_SYSTEM_EXT_IMAGE
-	$(hide) $(call copy-image-and-generate-map,$(BUILT_SYSTEM_EXTIMAGE_TARGET),$(zip_root)/IMAGES,system_ext.map)
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_SYSTEM_EXTIMAGE_TARGET),$(zip_root)/IMAGES,system_ext)
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM_EXT,system_ext/) > $(zip_root)/META/system_ext_filesystem_config.txt
 endif
 ifdef BUILDING_ODM_IMAGE
-	$(hide) $(call copy-image-and-generate-map,$(BUILT_ODMIMAGE_TARGET),$(zip_root)/IMAGES,odm.map)
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_ODMIMAGE_TARGET),$(zip_root)/IMAGES,odm)
 	$(hide) $(call fs_config,$(zip_root)/ODM,odm/) > $(zip_root)/META/odm_filesystem_config.txt
 endif
 ifdef BUILDING_VENDOR_DLKM_IMAGE
-	$(hide)$(call copy-image-and-generate-map,$(BUILT_VENDOR_DLKMIMAGE_TARGET),$(zip_root)/IMAGES,vendor_dlkm.map)
+	$(hide)$(call copy-image-and-generate-map,$(BUILT_VENDOR_DLKMIMAGE_TARGET),$(zip_root)/IMAGES,vendor_dlkm)
 	$(hide) $(call fs_config,$(zip_root)/VENDOR_DLKM,vendor_dlkm/) > $(zip_root)/META/vendor_dlkm_filesystem_config.txt
 endif
 ifdef BUILDING_ODM_DLKM_IMAGE
-	$(hide) $(call copy-image-and-generate-map,$(BUILT_ODM_DLKMIMAGE_TARGET),$(zip_root)/IMAGES,odm_dlkm.map)
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_ODM_DLKMIMAGE_TARGET),$(zip_root)/IMAGES,odm_dlkm)
 	$(hide) $(call fs_config,$(zip_root)/ODM_DLKM,odm_dlkm/) > $(zip_root)/META/odm_dlkm_filesystem_config.txt
 endif
 ifdef BUILDING_SYSTEM_DLKM_IMAGE
-	$(hide) $(call copy-image-and-generate-map,$(BUILT_SYSTEM_DLKMIMAGE_TARGET),$(zip_root)/IMAGES,system_dlkm.map)
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_SYSTEM_DLKMIMAGE_TARGET),$(zip_root)/IMAGES,system_dlkm)
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM_DLKM,system_dlkm/) > $(zip_root)/META/system_dlkm_filesystem_config.txt
 endif
 	@# ROOT always contains the files for the root under normal boot.
