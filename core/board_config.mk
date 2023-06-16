@@ -174,6 +174,7 @@ _board_strip_list += ODM_MANIFEST_SKUS
 
 
 _build_broken_var_list := \
+  BUILD_BROKEN_PLUGIN_VALIDATION \
   BUILD_BROKEN_CLANG_PROPERTY \
   BUILD_BROKEN_CLANG_ASFLAGS \
   BUILD_BROKEN_CLANG_CFLAGS \
@@ -967,27 +968,13 @@ define check_vndk_version
   $(if $(wildcard $(vndk_path)/*/Android.bp),,$(error VNDK version $(1) not found))
 endef
 
-ifdef BOARD_VNDK_VERSION
-  ifeq ($(BOARD_VNDK_VERSION),$(PLATFORM_VNDK_VERSION))
-    $(error BOARD_VNDK_VERSION is equal to PLATFORM_VNDK_VERSION; use BOARD_VNDK_VERSION := current)
-  endif
-  ifneq ($(BOARD_VNDK_VERSION),current)
-    $(call check_vndk_version,$(BOARD_VNDK_VERSION))
-  endif
-  TARGET_VENDOR_TEST_SUFFIX := /vendor
-else
-  TARGET_VENDOR_TEST_SUFFIX :=
+ifeq ($(BOARD_VNDK_VERSION),$(PLATFORM_VNDK_VERSION))
+  $(error BOARD_VNDK_VERSION is equal to PLATFORM_VNDK_VERSION; use BOARD_VNDK_VERSION := current)
 endif
-
-# If PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY is set,
-# BOARD_VNDK_VERSION must be set because PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY
-# is a enforcement of inter-partition dependency, and it doesn't have any meaning
-# when BOARD_VNDK_VERSION isn't set.
-ifeq ($(PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY),true)
-  ifeq ($(BOARD_VNDK_VERSION),)
-    $(error BOARD_VNDK_VERSION must be set when PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY is true)
-  endif
+ifneq ($(BOARD_VNDK_VERSION),current)
+  $(call check_vndk_version,$(BOARD_VNDK_VERSION))
 endif
+TARGET_VENDOR_TEST_SUFFIX := /vendor
 
 ###########################################
 # APEXes are by default not flattened, i.e. updatable.
@@ -997,6 +984,14 @@ endif
 # setting the OVERRIDE_TARGET_FLATTEN_APEX environment variable.
 ifdef OVERRIDE_TARGET_FLATTEN_APEX
   TARGET_FLATTEN_APEX := $(OVERRIDE_TARGET_FLATTEN_APEX)
+endif
+
+# TODO(b/278826656) Remove the following message
+ifeq (true,$(TARGET_FLATTEN_APEX))
+  $(warning ********************************************************************************)
+  $(warning Flattened APEX will be deprecated soon. Please stop using flattened APEX and use)
+  $(warning "image" APEX instead.)
+  $(warning ********************************************************************************)
 endif
 
 ifeq (,$(TARGET_BUILD_UNBUNDLED))

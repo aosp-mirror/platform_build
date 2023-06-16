@@ -1,0 +1,11 @@
+package {package_name};
+
+public final class Flags \{
+    {{ for item in class_elements}}
+    public static boolean {item.method_name}() \{
+        return FEATURE_FLAGS.{item.method_name}();
+    }
+    {{ endfor }}
+    private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
+
+}

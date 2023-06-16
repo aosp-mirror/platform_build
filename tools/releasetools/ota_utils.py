@@ -48,6 +48,7 @@ METADATA_PROTO_NAME = 'META-INF/com/android/metadata.pb'
 UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'OTA/*',
                  'RADIO/*', '*/build.prop', '*/default.prop', '*/build.default', "*/etc/vintf/*"]
 SECURITY_PATCH_LEVEL_PROP_NAME = "ro.build.version.security_patch"
+TARGET_FILES_IMAGES_SUBDIR = ["IMAGES", "PREBUILT_IMAGES", "RADIO"]
 
 
 def FinalizeMetadata(metadata, input_file, output_file, needed_property_files=None, package_key=None, pw=None):
@@ -727,6 +728,15 @@ def ExtractTargetFiles(path: str):
     return path
   extracted_dir = common.MakeTempDir("target_files")
   common.UnzipToDir(path, extracted_dir, UNZIP_PATTERN + [""])
+  for subdir in TARGET_FILES_IMAGES_SUBDIR:
+    image_dir = os.path.join(extracted_dir, subdir)
+    if not os.path.exists(image_dir):
+      continue
+    for filename in os.listdir(image_dir):
+      if not filename.endswith(".img"):
+        continue
+      common.UnsparseImage(os.path.join(image_dir, filename))
+
   return extracted_dir
 
 
@@ -750,6 +760,9 @@ def GetPartitionImages(target_files_dir: str, ab_partitions, allow_empty=True):
 
 def LocatePartitionMap(target_files_dir: str, partition: str):
   path = os.path.join(target_files_dir, "RADIO", partition + ".map")
+  if os.path.exists(path):
+    return path
+  path = os.path.join(target_files_dir, "IMAGES", partition + ".map")
   if os.path.exists(path):
     return path
   return ""
@@ -807,8 +820,8 @@ class PayloadGenerator(object):
     target_dir = ExtractTargetFiles(target_file)
     cmd = ["delta_generator",
            "--out_file", payload_file]
-    with open(os.path.join(target_dir, "META", "ab_partitions.txt")) as fp:
-      ab_partitions = fp.read().strip().split("\n")
+    with open(os.path.join(target_dir, "META", "ab_partitions.txt"), "r") as fp:
+      ab_partitions = fp.read().strip().splitlines()
     cmd.extend(["--partition_names", ":".join(ab_partitions)])
     cmd.extend(
         ["--new_partitions", GetPartitionImages(target_dir, ab_partitions, False)])
@@ -835,6 +848,11 @@ class PayloadGenerator(object):
 
     if os.path.exists(dynamic_partition_info):
       cmd.extend(["--dynamic_partition_info_file", dynamic_partition_info])
+
+    apex_info = os.path.join(
+      target_dir, "META", "apex_info.pb")
+    if os.path.exists(apex_info):
+      cmd.extend(["--apex_info_file", apex_info])
 
     major_version, minor_version = ParseUpdateEngineConfig(
         os.path.join(target_dir, "META", "update_engine_config.txt"))
@@ -1047,12 +1065,18 @@ def Fnmatch(filename, pattersn):
 
 def CopyTargetFilesDir(input_dir):
   output_dir = common.MakeTempDir("target_files")
-  IMAGES_DIR = ["IMAGES", "PREBUILT_IMAGES", "RADIO"]
-  for subdir in IMAGES_DIR:
+
+  def SymlinkIfNotSparse(src, dst):
+    if common.IsSparseImage(src):
+      return common.UnsparseImage(src, dst)
+    else:
+      return os.link(src, dst)
+
+  for subdir in TARGET_FILES_IMAGES_SUBDIR:
     if not os.path.exists(os.path.join(input_dir, subdir)):
       continue
     shutil.copytree(os.path.join(input_dir, subdir), os.path.join(
-        output_dir, subdir), dirs_exist_ok=True, copy_function=os.link)
+        output_dir, subdir), dirs_exist_ok=True, copy_function=SymlinkIfNotSparse)
   shutil.copytree(os.path.join(input_dir, "META"), os.path.join(
       output_dir, "META"), dirs_exist_ok=True)
 

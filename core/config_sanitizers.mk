@@ -140,6 +140,10 @@ ifeq ($(filter memtag_heap, $(my_sanitize)),)
                                     $(PRODUCT_MEMTAG_HEAP_ASYNC_INCLUDE_PATHS)
     combined_exclude_paths := $(MEMTAG_HEAP_EXCLUDE_PATHS) \
                               $(PRODUCT_MEMTAG_HEAP_EXCLUDE_PATHS)
+    ifneq ($(PRODUCT_MEMTAG_HEAP_SKIP_DEFAULT_PATHS),true)
+      combined_sync_include_paths += $(PRODUCT_MEMTAG_HEAP_SYNC_DEFAULT_INCLUDE_PATHS)
+      combined_async_include_paths += $(PRODUCT_MEMTAG_HEAP_ASYNC_DEFAULT_INCLUDE_PATHS)
+    endif
 
     ifeq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_exclude_paths)),\
           $(filter $(dir)%,$(LOCAL_PATH)))),)
@@ -247,6 +251,13 @@ ifneq ($(filter memtag_heap memtag_stack,$(my_sanitize)),)
   else
     my_cflags += -fsanitize-memtag-mode=async
   endif
+endif
+
+# Ignore SANITIZE_TARGET_DIAG=memtag_heap without SANITIZE_TARGET=memtag_heap
+# This can happen if a condition above filters out memtag_heap from
+# my_sanitize. It is easier to handle all of these cases here centrally.
+ifneq ($(filter memtag_heap,$(my_sanitize_diag)),)
+  my_sanitize_diag := $(filter-out memtag_heap,$(my_sanitize_diag))
 endif
 
 ifneq ($(filter memtag_heap,$(my_sanitize)),)
@@ -446,6 +457,13 @@ endif
 # If local module needs HWASAN, add compiler flags.
 ifneq ($(filter hwaddress,$(my_sanitize)),)
   my_cflags += $(HWADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS)
+
+  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+    ifneq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
+      my_linker := /system/bin/linker_hwasan64
+    endif
+  endif
+
 endif
 
 # Use minimal diagnostics when integer overflow is enabled; never do it for HOST modules

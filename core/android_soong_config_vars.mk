@@ -27,6 +27,7 @@ $(call add_soong_config_namespace,ANDROID)
 # Add variables to the namespace below:
 
 $(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_MEDIASERVER)
+$(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_DRMSERVER)
 $(call add_soong_config_var,ANDROID,TARGET_ENABLE_MEDIADRM_64)
 $(call add_soong_config_var,ANDROID,IS_TARGET_MIXED_SEPOLICY)
 ifeq ($(IS_TARGET_MIXED_SEPOLICY),true)
@@ -151,6 +152,10 @@ $(call add_soong_config_var,ANDROID,SYSTEMUI_USE_COMPOSE)
 
 ifdef PRODUCT_AVF_ENABLED
 $(call add_soong_config_var_value,ANDROID,avf_enabled,$(PRODUCT_AVF_ENABLED))
+endif
+
+ifdef PRODUCT_AVF_KERNEL_MODULES_ENABLED
+$(call add_soong_config_var_value,ANDROID,avf_kernel_modules_enabled,$(PRODUCT_AVF_KERNEL_MODULES_ENABLED))
 endif
 
 # Enable system_server optimizations by default unless explicitly set or if
