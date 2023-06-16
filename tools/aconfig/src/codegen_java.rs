@@ -86,8 +86,24 @@ fn create_class_element(package: &str, item: &Item) -> ClassElement {
         device_config_flag,
         flag_name_constant_suffix: item.name.to_ascii_uppercase(),
         is_read_write: item.permission == Permission::ReadWrite,
-        method_name: item.name.clone(),
+        method_name: format_java_method_name(&item.name),
     }
+}
+
+fn format_java_method_name(flag_name: &str) -> String {
+    flag_name
+        .split('_')
+        .filter(|&word| !word.is_empty())
+        .enumerate()
+        .map(|(index, word)| {
+            if index == 0 {
+                word.to_ascii_lowercase()
+            } else {
+                word[0..1].to_ascii_uppercase() + &word[1..].to_ascii_lowercase()
+            }
+        })
+        .collect::<Vec<String>>()
+        .join("")
 }
 
 #[cfg(test)]
@@ -102,17 +118,17 @@ mod tests {
         let expect_flags_content = r#"
         package com.android.aconfig.test;
         public final class Flags {
-            public static boolean disabled_ro() {
-                return FEATURE_FLAGS.disabled_ro();
+            public static boolean disabledRo() {
+                return FEATURE_FLAGS.disabledRo();
             }
-            public static boolean disabled_rw() {
-                return FEATURE_FLAGS.disabled_rw();
+            public static boolean disabledRw() {
+                return FEATURE_FLAGS.disabledRw();
             }
-            public static boolean enabled_ro() {
-                return FEATURE_FLAGS.enabled_ro();
+            public static boolean enabledRo() {
+                return FEATURE_FLAGS.enabledRo();
             }
-            public static boolean enabled_rw() {
-                return FEATURE_FLAGS.enabled_rw();
+            public static boolean enabledRw() {
+                return FEATURE_FLAGS.enabledRw();
             }
             private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
 
@@ -123,11 +139,11 @@ mod tests {
         import android.provider.DeviceConfig;
         public final class FeatureFlagsImpl implements FeatureFlags {
             @Override
-            public boolean disabled_ro() {
+            public boolean disabledRo() {
                 return false;
             }
             @Override
-            public boolean disabled_rw() {
+            public boolean disabledRw() {
                 return DeviceConfig.getBoolean(
                     "aconfig_test",
                     "com.android.aconfig.test.disabled_rw",
@@ -135,11 +151,11 @@ mod tests {
                 );
             }
             @Override
-            public boolean enabled_ro() {
+            public boolean enabledRo() {
                 return true;
             }
             @Override
-            public boolean enabled_rw() {
+            public boolean enabledRw() {
                 return DeviceConfig.getBoolean(
                     "aconfig_test",
                     "com.android.aconfig.test.enabled_rw",
@@ -151,10 +167,10 @@ mod tests {
         let expected_featureflags_content = r#"
         package com.android.aconfig.test;
         public interface FeatureFlags {
-            boolean disabled_ro();
-            boolean disabled_rw();
-            boolean enabled_ro();
-            boolean enabled_rw();
+            boolean disabledRo();
+            boolean disabledRw();
+            boolean enabledRo();
+            boolean enabledRw();
         }
         "#;
         let mut file_set = HashMap::from([
@@ -179,5 +195,13 @@ mod tests {
         }
 
         assert!(file_set.is_empty());
+    }
+
+    #[test]
+    fn test_format_java_method_name() {
+        let input = "____some_snake___name____";
+        let expected = "someSnakeName";
+        let formatted_name = format_java_method_name(input);
+        assert_eq!(expected, formatted_name);
     }
 }
