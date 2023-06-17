@@ -1,7 +1,7 @@
-import static com.android.aconfig.test.Flags.disabled_ro;
-import static com.android.aconfig.test.Flags.disabled_rw;
-import static com.android.aconfig.test.Flags.enabled_ro;
-import static com.android.aconfig.test.Flags.enabled_rw;
+import static com.android.aconfig.test.Flags.disabledRo;
+import static com.android.aconfig.test.Flags.disabledRw;
+import static com.android.aconfig.test.Flags.enabledRo;
+import static com.android.aconfig.test.Flags.enabledRw;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -13,25 +13,25 @@ import org.junit.runners.JUnit4;
 public final class AconfigTest {
     @Test
     public void testDisabledReadOnlyFlag() {
-        assertFalse(disabled_ro());
+        assertFalse(disabledRo());
     }
 
     @Test
     public void testEnabledReadOnlyFlag() {
-        // TODO: change to assertTrue(enabled_ro()) when the build supports reading tests/*.values
+        // TODO: change to assertTrue(enabledRo()) when the build supports reading tests/*.values
         // (currently all flags are assigned the default READ_ONLY + DISABLED)
-        assertFalse(enabled_ro());
+        assertFalse(enabledRo());
     }
 
     @Test
     public void testDisabledReadWriteFlag() {
-        assertFalse(disabled_rw());
+        assertFalse(disabledRw());
     }
 
     @Test
     public void testEnabledReadWriteFlag() {
-        // TODO: change to assertTrue(enabled_rw()) when the build supports reading tests/*.values
+        // TODO: change to assertTrue(enabledRw()) when the build supports reading tests/*.values
         // (currently all flags are assigned the default READ_ONLY + DISABLED)
-        assertFalse(enabled_rw());
+        assertFalse(enabledRw());
     }
 }
