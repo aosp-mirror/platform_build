@@ -2114,17 +2114,28 @@ def UnzipToDir(filename, dirname, patterns=None):
   """
   with zipfile.ZipFile(filename, allowZip64=True, mode="r") as input_zip:
     # Filter out non-matching patterns. unzip will complain otherwise.
+    entries = input_zip.infolist()
+    # b/283033491
+    # Per https://en.wikipedia.org/wiki/ZIP_(file_format)#Central_directory_file_header
+    # In zip64 mode, central directory record's header_offset field might be
+    # set to 0xFFFFFFFF if header offset is > 2^32. In this case, the extra
+    # fields will contain an 8 byte little endian integer at offset 20
+    # to indicate the actual local header offset.
+    # As of python3.11, python does not handle zip64 central directories
+    # correctly, so we will manually do the parsing here.
+    for entry in entries:
+      if entry.header_offset == 0xFFFFFFFF and len(entry.extra) >= 28:
+        entry.header_offset = int.from_bytes(entry.extra[20:28], "little")
     if patterns is not None:
-      names = input_zip.namelist()
-      filtered = [name for name in names if any(
-          [fnmatch.fnmatch(name, p) for p in patterns])]
+      filtered = [info for info in entries if any(
+          [fnmatch.fnmatch(info.filename, p) for p in patterns])]
 
       # There isn't any matching files. Don't unzip anything.
       if not filtered:
         return
       input_zip.extractall(dirname, filtered)
     else:
-      input_zip.extractall(dirname)
+      input_zip.extractall(dirname, entries)
 
 
 def UnzipTemp(filename, patterns=None):
