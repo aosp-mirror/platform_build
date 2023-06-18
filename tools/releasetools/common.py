@@ -2135,9 +2135,23 @@ def UnzipToDir(filename, dirname, patterns=None):
     # to indicate the actual local header offset.
     # As of python3.11, python does not handle zip64 central directories
     # correctly, so we will manually do the parsing here.
+
+    # ZIP64 central directory extra field has two required fields:
+    # 2 bytes header ID and 2 bytes size field. Thes two require fields have
+    # a total size of 4 bytes. Then it has three other 8 bytes field, followed
+    # by a 4 byte disk number field. The last disk number field is not required
+    # to be present, but if it is present, the total size of extra field will be
+    # divisible by 8(because 2+2+4+8*n is always going to be multiple of 8)
+    # Most extra fields are optional, but when they appear, their must appear
+    # in the order defined by zip64 spec. Since file header offset is the 2nd
+    # to last field in zip64 spec, it will only be at last 8 bytes or last 12-4
+    # bytes, depending on whether disk number is present.
     for entry in entries:
-      if entry.header_offset == 0xFFFFFFFF and len(entry.extra) >= 28:
-        entry.header_offset = int.from_bytes(entry.extra[20:28], "little")
+      if entry.header_offset == 0xFFFFFFFF:
+        if len(entry.extra) % 8 == 0:
+          entry.header_offset = int.from_bytes(entry.extra[-12:-4], "little")
+        else:
+          entry.header_offset = int.from_bytes(entry.extra[-8:], "little")
     if patterns is not None:
       filtered = [info for info in entries if any(
           [fnmatch.fnmatch(info.filename, p) for p in patterns])]
