@@ -93,17 +93,17 @@ func main() {
 	flags.Usage = func() {
 		fmt.Fprintf(os.Stderr, `Usage: %s {options} file.meta_lic {file.meta_lic...}
 
-Outputs a space-separated Target ActsOn Origin Condition tuple for each
-resolution in the graph. When -dot flag given, outputs nodes and edges
-in graphviz directed graph format.
+Calculates the source-sharing requirements in reverse starting at the
+-rtrace projects or metadata files that inherited source-sharing and
+working back to the targets where the source-sharing requirmements
+originate.
 
-If one or more '-c condition' conditions are given, outputs the
-resolution for the union of the conditions. Otherwise, outputs the
-resolution for all conditions.
+Outputs a space-separated pair where the first field is an originating
+target with one or more restricted conditions and where the second
+field is a colon-separated list of the restricted conditions.
 
-In plain text mode, when '-label_conditions' is requested, the Target
-and Origin have colon-separated license conditions appended:
-i.e. target:condition1:condition2 etc.
+Outputs a count of the originating targets, and if the count is zero,
+outputs a warning to check the -rtrace projects and/or filenames.
 
 Options:
 `, filepath.Base(os.Args[0]))
