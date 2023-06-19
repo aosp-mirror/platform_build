@@ -28,64 +28,39 @@
 
 // ---- When building with the Android tool-chain ----
 #[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Flag_declaration as ProtoFlagDeclaration;
-
-#[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Flag_declarations as ProtoFlagDeclarations;
-
-#[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Flag_value as ProtoFlagValue;
-
-#[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Flag_values as ProtoFlagValues;
-
-#[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Flag_permission as ProtoFlagPermission;
-
-#[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Flag_state as ProtoFlagState;
-
-#[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Parsed_flags as ProtoParsedFlags;
-
-#[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Parsed_flag as ProtoParsedFlag;
-
-#[cfg(not(feature = "cargo"))]
-pub use aconfig_protos::aconfig::Tracepoint as ProtoTracepoint;
+mod auto_generated {
+    pub use aconfig_protos::aconfig::Flag_declaration as ProtoFlagDeclaration;
+    pub use aconfig_protos::aconfig::Flag_declarations as ProtoFlagDeclarations;
+    pub use aconfig_protos::aconfig::Flag_permission as ProtoFlagPermission;
+    pub use aconfig_protos::aconfig::Flag_state as ProtoFlagState;
+    pub use aconfig_protos::aconfig::Flag_value as ProtoFlagValue;
+    pub use aconfig_protos::aconfig::Flag_values as ProtoFlagValues;
+    pub use aconfig_protos::aconfig::Parsed_flag as ProtoParsedFlag;
+    pub use aconfig_protos::aconfig::Parsed_flags as ProtoParsedFlags;
+    pub use aconfig_protos::aconfig::Tracepoint as ProtoTracepoint;
+}
 
 // ---- When building with cargo ----
 #[cfg(feature = "cargo")]
-include!(concat!(env!("OUT_DIR"), "/aconfig_proto/mod.rs"));
-
-#[cfg(feature = "cargo")]
-pub use aconfig::Flag_declaration as ProtoFlagDeclaration;
-
-#[cfg(feature = "cargo")]
-pub use aconfig::Flag_declarations as ProtoFlagDeclarations;
-
-#[cfg(feature = "cargo")]
-pub use aconfig::Flag_value as ProtoFlagValue;
-
-#[cfg(feature = "cargo")]
-pub use aconfig::Flag_values as ProtoFlagValues;
-
-#[cfg(feature = "cargo")]
-pub use aconfig::Flag_permission as ProtoFlagPermission;
-
-#[cfg(feature = "cargo")]
-pub use aconfig::Flag_state as ProtoFlagState;
-
-#[cfg(feature = "cargo")]
-pub use aconfig::Parsed_flags as ProtoParsedFlags;
-
-#[cfg(feature = "cargo")]
-pub use aconfig::Parsed_flag as ProtoParsedFlag;
-
-#[cfg(feature = "cargo")]
-pub use aconfig::Tracepoint as ProtoTracepoint;
+mod auto_generated {
+    // include! statements should be avoided (because they import file contents verbatim), but
+    // because this is only used during local development, and only if using cargo instead of the
+    // Android tool-chain, we allow it
+    include!(concat!(env!("OUT_DIR"), "/aconfig_proto/mod.rs"));
+    pub use aconfig::Flag_declaration as ProtoFlagDeclaration;
+    pub use aconfig::Flag_declarations as ProtoFlagDeclarations;
+    pub use aconfig::Flag_permission as ProtoFlagPermission;
+    pub use aconfig::Flag_state as ProtoFlagState;
+    pub use aconfig::Flag_value as ProtoFlagValue;
+    pub use aconfig::Flag_values as ProtoFlagValues;
+    pub use aconfig::Parsed_flag as ProtoParsedFlag;
+    pub use aconfig::Parsed_flags as ProtoParsedFlags;
+    pub use aconfig::Tracepoint as ProtoTracepoint;
+}
 
 // ---- Common for both the Android tool-chain and cargo ----
+pub use auto_generated::*;
+
 use anyhow::Result;
 
 pub fn try_from_text_proto<T>(s: &str) -> Result<T>
