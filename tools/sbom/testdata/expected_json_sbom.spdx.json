@@ -110,6 +110,16 @@
                     "checksumValue": "33333"
                 }
             ]
+        },
+        {
+            "fileName": "file4.a",
+            "SPDXID": "SPDXRef-file4",
+            "checksums": [
+                {
+                    "algorithm": "SHA1",
+                    "checksumValue": "44444"
+                }
+            ]
         }
     ],
     "relationships": [
@@ -127,6 +137,11 @@
             "spdxElementId": "SPDXRef-file3",
             "relatedSpdxElement": "SPDXRef-SOURCE-package1",
             "relationshipType": "GENERATED_FROM"
+        },
+        {
+            "spdxElementId": "SPDXRef-file1",
+            "relatedSpdxElement": "SPDXRef-file4",
+            "relationshipType": "STATIC_LINK"
         },
         {
             "spdxElementId": "SPDXRef-SOURCE-package1",
