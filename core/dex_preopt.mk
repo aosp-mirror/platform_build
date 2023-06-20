@@ -94,6 +94,7 @@ booclasspath_arg := $(subst $(space),:,$(patsubst $(dexpreopt_root_dir)%,%,$(DEX
 booclasspath_locations_arg := $(subst $(space),:,$(DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS))
 boot_images := $(subst :,$(space),$(DEXPREOPT_IMAGE_LOCATIONS_ON_DEVICE$(DEXPREOPT_INFIX)))
 boot_image_arg := $(subst $(space),:,$(patsubst /%,%,$(boot_images)))
+dex2oat_extra_args := $(if $(filter true,$(ENABLE_UFFD_GC)),--runtime-arg -Xgc:CMC)
 
 boot_zip_metadata_txt := $(dir $(boot_zip))boot_zip/METADATA.txt
 $(boot_zip_metadata_txt):
@@ -101,6 +102,7 @@ $(boot_zip_metadata_txt):
 	echo "booclasspath = $(booclasspath_arg)" >> $@
 	echo "booclasspath-locations = $(booclasspath_locations_arg)" >> $@
 	echo "boot-image = $(boot_image_arg)" >> $@
+	echo "extra-args = $(dex2oat_extra_args)" >> $@
 
 $(call dist-for-goals, droidcore, $(boot_zip_metadata_txt))
 

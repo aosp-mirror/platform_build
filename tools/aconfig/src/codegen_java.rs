@@ -19,20 +19,18 @@ use serde::Serialize;
 use std::path::PathBuf;
 use tinytemplate::TinyTemplate;
 
-use crate::aconfig::{FlagState, Permission};
-use crate::cache::{Cache, Item};
 use crate::codegen;
 use crate::commands::OutputFile;
+use crate::protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
 
-pub fn generate_java_code(cache: &Cache) -> Result<Vec<OutputFile>> {
-    let package = cache.package();
+pub fn generate_java_code<'a, I>(package: &str, parsed_flags_iter: I) -> Result<Vec<OutputFile>>
+where
+    I: Iterator<Item = &'a ProtoParsedFlag>,
+{
     let class_elements: Vec<ClassElement> =
-        cache.iter().map(|item| create_class_element(package, item)).collect();
-    let is_read_write = class_elements.iter().any(|item| item.is_read_write);
+        parsed_flags_iter.map(|pf| create_class_element(package, pf)).collect();
+    let is_read_write = class_elements.iter().any(|elem| elem.is_read_write);
     let context = Context { package_name: package.to_string(), is_read_write, class_elements };
-
-    let java_files = vec!["Flags.java", "FeatureFlagsImpl.java", "FeatureFlags.java"];
-
     let mut template = TinyTemplate::new();
     template.add_template("Flags.java", include_str!("../templates/Flags.java.template"))?;
     template.add_template(
@@ -45,7 +43,7 @@ pub fn generate_java_code(cache: &Cache) -> Result<Vec<OutputFile>> {
     )?;
 
     let path: PathBuf = package.split('.').collect();
-    java_files
+    ["Flags.java", "FeatureFlagsImpl.java", "FeatureFlags.java"]
         .iter()
         .map(|file| {
             Ok(OutputFile {
@@ -73,20 +71,20 @@ struct ClassElement {
     pub method_name: String,
 }
 
-fn create_class_element(package: &str, item: &Item) -> ClassElement {
-    let device_config_flag = codegen::create_device_config_ident(package, &item.name)
-        .expect("values checked at cache creation time");
+fn create_class_element(package: &str, pf: &ProtoParsedFlag) -> ClassElement {
+    let device_config_flag = codegen::create_device_config_ident(package, pf.name())
+        .expect("values checked at flag parse time");
     ClassElement {
-        default_value: if item.state == FlagState::Enabled {
+        default_value: if pf.state() == ProtoFlagState::ENABLED {
             "true".to_string()
         } else {
             "false".to_string()
         },
-        device_config_namespace: item.namespace.clone(),
+        device_config_namespace: pf.namespace().to_string(),
         device_config_flag,
-        flag_name_constant_suffix: item.name.to_ascii_uppercase(),
-        is_read_write: item.permission == Permission::ReadWrite,
-        method_name: format_java_method_name(&item.name),
+        flag_name_constant_suffix: pf.name().to_ascii_uppercase(),
+        is_read_write: pf.permission() == ProtoFlagPermission::READ_WRITE,
+        method_name: format_java_method_name(pf.name()),
     }
 }
 
@@ -113,11 +111,17 @@ mod tests {
 
     #[test]
     fn test_generate_java_code() {
-        let cache = crate::test::create_cache();
-        let generated_files = generate_java_code(&cache).unwrap();
+        let parsed_flags = crate::test::parse_test_flags();
+        let generated_files =
+            generate_java_code(crate::test::TEST_PACKAGE, parsed_flags.parsed_flag.iter()).unwrap();
         let expect_flags_content = r#"
         package com.android.aconfig.test;
         public final class Flags {
+            public static final String FLAG_DISABLED_RO = "com.android.aconfig.test.disabled_ro";
+            public static final String FLAG_DISABLED_RW = "com.android.aconfig.test.disabled_rw";
+            public static final String FLAG_ENABLED_RO = "com.android.aconfig.test.enabled_ro";
+            public static final String FLAG_ENABLED_RW = "com.android.aconfig.test.enabled_rw";
+
             public static boolean disabledRo() {
                 return FEATURE_FLAGS.disabledRo();
             }
@@ -131,7 +135,6 @@ mod tests {
                 return FEATURE_FLAGS.enabledRw();
             }
             private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
-
         }
         "#;
         let expected_featureflagsimpl_content = r#"

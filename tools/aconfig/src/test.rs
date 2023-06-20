@@ -16,29 +16,32 @@
 
 #[cfg(test)]
 pub mod test_utils {
-    use crate::cache::Cache;
-    use crate::commands::{Input, Source};
+    use crate::commands::Input;
+    use crate::protos::ProtoParsedFlags;
     use itertools;
 
-    pub fn create_cache() -> Cache {
-        crate::commands::create_cache(
+    pub const TEST_PACKAGE: &str = "com.android.aconfig.test";
+
+    pub fn parse_test_flags() -> ProtoParsedFlags {
+        let bytes = crate::commands::parse_flags(
             "com.android.aconfig.test",
             vec![Input {
-                source: Source::File("tests/test.aconfig".to_string()),
+                source: "tests/test.aconfig".to_string(),
                 reader: Box::new(include_bytes!("../tests/test.aconfig").as_slice()),
             }],
             vec![
                 Input {
-                    source: Source::File("tests/first.values".to_string()),
+                    source: "tests/first.values".to_string(),
                     reader: Box::new(include_bytes!("../tests/first.values").as_slice()),
                 },
                 Input {
-                    source: Source::File("tests/test.aconfig".to_string()),
+                    source: "tests/second.values".to_string(),
                     reader: Box::new(include_bytes!("../tests/second.values").as_slice()),
                 },
             ],
         )
-        .unwrap()
+        .unwrap();
+        crate::protos::parsed_flags::try_from_binary_proto(&bytes).unwrap()
     }
 
     pub fn first_significant_code_diff(a: &str, b: &str) -> Option<String> {
