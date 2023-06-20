@@ -77,9 +77,14 @@ pub mod flag_declaration {
     use anyhow::ensure;
 
     pub fn verify_fields(pdf: &ProtoFlagDeclaration) -> Result<()> {
+        ensure!(pdf.has_name(), "bad flag declaration: missing name");
+        ensure!(pdf.has_namespace(), "bad flag declaration: missing namespace");
+        ensure!(pdf.has_description(), "bad flag declaration: missing description");
+
         ensure!(codegen::is_valid_name_ident(pdf.name()), "bad flag declaration: bad name");
         ensure!(codegen::is_valid_name_ident(pdf.namespace()), "bad flag declaration: bad name");
         ensure!(!pdf.description().is_empty(), "bad flag declaration: empty description");
+
         Ok(())
     }
 }
@@ -96,6 +101,8 @@ pub mod flag_declarations {
     }
 
     pub fn verify_fields(pdf: &ProtoFlagDeclarations) -> Result<()> {
+        ensure!(pdf.has_package(), "bad flag declarations: missing package");
+
         ensure!(
             codegen::is_valid_package_ident(pdf.package()),
             "bad flag declarations: bad package"
@@ -103,6 +110,7 @@ pub mod flag_declarations {
         for flag_declaration in pdf.flag.iter() {
             super::flag_declaration::verify_fields(flag_declaration)?;
         }
+
         Ok(())
     }
 }
@@ -113,8 +121,14 @@ pub mod flag_value {
     use anyhow::ensure;
 
     pub fn verify_fields(fv: &ProtoFlagValue) -> Result<()> {
+        ensure!(fv.has_package(), "bad flag value: missing package");
+        ensure!(fv.has_name(), "bad flag value: missing name");
+        ensure!(fv.has_state(), "bad flag value: missing state");
+        ensure!(fv.has_permission(), "bad flag value: missing permission");
+
         ensure!(codegen::is_valid_package_ident(fv.package()), "bad flag value: bad package");
         ensure!(codegen::is_valid_name_ident(fv.name()), "bad flag value: bad name");
+
         Ok(())
     }
 }
@@ -141,7 +155,12 @@ pub mod tracepoint {
     use anyhow::ensure;
 
     pub fn verify_fields(tp: &ProtoTracepoint) -> Result<()> {
+        ensure!(tp.has_source(), "bad tracepoint: missing source");
+        ensure!(tp.has_state(), "bad tracepoint: missing state");
+        ensure!(tp.has_permission(), "bad tracepoint: missing permission");
+
         ensure!(!tp.source().is_empty(), "bad tracepoint: empty source");
+
         Ok(())
     }
 }
@@ -152,6 +171,13 @@ pub mod parsed_flag {
     use anyhow::ensure;
 
     pub fn verify_fields(pf: &ProtoParsedFlag) -> Result<()> {
+        ensure!(pf.has_package(), "bad parsed flag: missing package");
+        ensure!(pf.has_name(), "bad parsed flag: missing name");
+        ensure!(pf.has_namespace(), "bad parsed flag: missing namespace");
+        ensure!(pf.has_description(), "bad parsed flag: missing description");
+        ensure!(pf.has_state(), "bad parsed flag: missing state");
+        ensure!(pf.has_permission(), "bad parsed flag: missing permission");
+
         ensure!(codegen::is_valid_package_ident(pf.package()), "bad parsed flag: bad package");
         ensure!(codegen::is_valid_name_ident(pf.name()), "bad parsed flag: bad name");
         ensure!(codegen::is_valid_name_ident(pf.namespace()), "bad parsed flag: bad namespace");
@@ -160,6 +186,7 @@ pub mod parsed_flag {
         for tp in pf.trace.iter() {
             super::tracepoint::verify_fields(tp)?;
         }
+
         Ok(())
     }
 }
@@ -259,7 +286,7 @@ flag {
 "#,
         )
         .unwrap_err();
-        assert!(format!("{:?}", error).contains("Message not initialized"));
+        assert_eq!(format!("{:?}", error), "bad flag declarations: missing package");
 
         // bad input: missing namespace in flag declaration
         let error = flag_declarations::try_from_text_proto(
@@ -277,7 +304,7 @@ flag {
 "#,
         )
         .unwrap_err();
-        assert!(format!("{:?}", error).contains("Message not initialized"));
+        assert_eq!(format!("{:?}", error), "bad flag declaration: missing namespace");
 
         // bad input: bad package name in flag declarations
         let error = flag_declarations::try_from_text_proto(
@@ -388,7 +415,7 @@ flag_value {
 "#,
         )
         .unwrap_err();
-        assert!(format!("{:?}", error).contains("Message not initialized"));
+        assert_eq!(format!("{:?}", error), "bad flag value: missing state");
 
         // bad input: missing permission in flag value
         let error = flag_values::try_from_text_proto(
@@ -401,7 +428,7 @@ flag_value {
 "#,
         )
         .unwrap_err();
-        assert!(format!("{:?}", error).contains("Message not initialized"));
+        assert_eq!(format!("{:?}", error), "bad flag value: missing permission");
     }
 
     fn try_from_binary_proto_from_text_proto(text_proto: &str) -> Result<ProtoParsedFlags> {
@@ -484,7 +511,7 @@ parsed_flag {
         let error = try_from_binary_proto_from_text_proto(text_proto).unwrap_err();
         assert_eq!(format!("{:?}", error), "bad parsed flag: empty trace");
 
-        // bad input: missing fields in parsed_flag
+        // bad input: missing namespace in parsed_flag
         let text_proto = r#"
 parsed_flag {
     package: "com.first"
@@ -500,7 +527,7 @@ parsed_flag {
 }
 "#;
         let error = try_from_binary_proto_from_text_proto(text_proto).unwrap_err();
-        assert!(format!("{:?}", error).contains("Message not initialized"));
+        assert_eq!(format!("{:?}", error), "bad parsed flag: missing namespace");
 
         // bad input: parsed_flag not sorted by package
         let text_proto = r#"
