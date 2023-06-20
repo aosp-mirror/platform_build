@@ -66,6 +66,7 @@ struct ClassElement {
     pub default_value: String,
     pub device_config_namespace: String,
     pub device_config_flag: String,
+    pub flag_name_constant_suffix: String,
     pub is_read_write: bool,
     pub method_name: String,
 }
@@ -81,6 +82,7 @@ fn create_class_element(package: &str, pf: &ProtoParsedFlag) -> ClassElement {
         },
         device_config_namespace: pf.namespace().to_string(),
         device_config_flag,
+        flag_name_constant_suffix: pf.name().to_ascii_uppercase(),
         is_read_write: pf.permission() == ProtoFlagPermission::READ_WRITE,
         method_name: format_java_method_name(pf.name()),
     }
@@ -115,6 +117,11 @@ mod tests {
         let expect_flags_content = r#"
         package com.android.aconfig.test;
         public final class Flags {
+            public static final String FLAG_DISABLED_RO = "com.android.aconfig.test.disabled_ro";
+            public static final String FLAG_DISABLED_RW = "com.android.aconfig.test.disabled_rw";
+            public static final String FLAG_ENABLED_RO = "com.android.aconfig.test.enabled_ro";
+            public static final String FLAG_ENABLED_RW = "com.android.aconfig.test.enabled_rw";
+
             public static boolean disabledRo() {
                 return FEATURE_FLAGS.disabledRo();
             }
