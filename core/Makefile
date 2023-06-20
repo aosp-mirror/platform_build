@@ -1045,8 +1045,8 @@ COMPRESSION_COMMAND_DEPS := $(LZ4)
 COMPRESSION_COMMAND := $(LZ4) -l -12 --favor-decSpeed
 RAMDISK_EXT := .lz4
 else
-COMPRESSION_COMMAND_DEPS := $(MINIGZIP)
-COMPRESSION_COMMAND := $(MINIGZIP)
+COMPRESSION_COMMAND_DEPS := $(GZIP)
+COMPRESSION_COMMAND := $(GZIP)
 RAMDISK_EXT := .gz
 endif
 
@@ -5257,7 +5257,6 @@ INTERNAL_OTATOOLS_MODULES := \
   make_f2fs_casefold \
   merge_ota \
   merge_target_files \
-  minigzip \
   mk_combined_img \
   mkbootfs \
   mkbootimg \
