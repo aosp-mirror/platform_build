@@ -5408,6 +5408,9 @@ endif
 ifneq ($(INSTALLED_VENDOR_KERNEL_BOOTIMAGE_TARGET),)
 	$(hide) echo "flash vendor_kernel_boot" >> $@
 endif
+ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
+	$(hide) echo "flash recovery" >> $@
+endif
 ifeq ($(BOARD_USES_PVMFWIMAGE),true)
 	$(hide) echo "flash pvmfw" >> $@
 endif
