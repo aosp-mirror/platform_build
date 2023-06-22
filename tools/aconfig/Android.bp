@@ -44,31 +44,31 @@ rust_test_host {
 
 // integration tests: java
 
-device_config_definitions {
+aconfig_declarations {
     name: "aconfig.test.flags",
-    namespace: "com.android.aconfig.test",
+    package: "com.android.aconfig.test",
     srcs: ["tests/test.aconfig"],
 }
 
-device_config_values {
+aconfig_values {
     name: "aconfig.test.flag.values",
-    namespace: "com.android.aconfig.test",
+    package: "com.android.aconfig.test",
     srcs: [
         "tests/first.values",
         "tests/second.values",
     ],
 }
 
-device_config_value_set {
+aconfig_value_set {
     name: "aconfig.test.flag.value_set",
     values: [
         "aconfig.test.flag.values",
     ],
 }
 
-java_device_config_definitions_library {
+java_aconfig_library {
     name: "aconfig_test_java",
-    device_config_definitions: "aconfig.test.flags",
+    aconfig_declarations: "aconfig.test.flags",
 }
 
 android_test {
