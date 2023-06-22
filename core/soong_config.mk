@@ -265,8 +265,6 @@ $(call add_json_str,  DeviceCurrentApiLevelForVendorModules,  $(BOARD_CURRENT_AP
 $(call add_json_bool, EnforceInterPartitionJavaSdkLibrary, $(filter true,$(PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY)))
 $(call add_json_list, InterPartitionJavaLibraryAllowList, $(PRODUCT_INTER_PARTITION_JAVA_LIBRARY_ALLOWLIST))
 
-$(call add_json_bool, InstallExtraFlattenedApexes, $(PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES))
-
 $(call add_json_bool, CompressedApex, $(filter true,$(PRODUCT_COMPRESSED_APEX)))
 
 ifndef APEX_BUILD_FOR_PRE_S_DEVICES
@@ -319,7 +317,7 @@ $(call add_json_str,  ProductBrand,        $(PRODUCT_BRAND))
 $(call add_json_list, BuildVersionTags,    $(BUILD_VERSION_TAGS))
 
 $(call add_json_str, ReleaseVersion,    $(_RELEASE_VERSION))
-$(call add_json_list, ReleaseDeviceConfigValueSets,    $(RELEASE_DEVICE_CONFIG_VALUE_SETS))
+$(call add_json_list, ReleaseAconfigValueSets,    $(RELEASE_ACONFIG_VALUE_SETS))
 
 $(call json_end)
 
