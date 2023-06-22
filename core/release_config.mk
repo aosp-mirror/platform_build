@@ -21,7 +21,7 @@
 # defining the build flag values.
 #
 # (If you're thinking about aconfig flags, there is one build flag,
-# RELEASE_DEVICE_CONFIG_VALUE_SETS, that sets which device_config_value_set
+# RELEASE_ACONFIG_VALUE_SETS, that sets which aconfig_value_set
 # module to use to set the aconfig flag values.)
 #
 # The short release config names *can* appear multiple times, to allow
