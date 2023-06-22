@@ -35,6 +35,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import stat
 import tempfile
 import threading
 import time
@@ -2114,6 +2115,26 @@ def Gunzip(in_filename, out_filename):
     shutil.copyfileobj(in_file, out_file)
 
 
+def UnzipSingleFile(input_zip: zipfile.ZipFile, info: zipfile.ZipInfo, dirname: str):
+  # According to https://stackoverflow.com/questions/434641/how-do-i-set-permissions-attributes-on-a-file-in-a-zip-file-using-pythons-zip/6297838#6297838
+  # higher bits of |external_attr| are unix file permission and types
+  unix_filetype = info.external_attr >> 16
+
+  def CheckMask(a, mask):
+    return (a & mask) == mask
+
+  def IsSymlink(a):
+    return CheckMask(a, stat.S_IFLNK)
+  # python3.11 zipfile implementation doesn't handle symlink correctly
+  if not IsSymlink(unix_filetype):
+    return input_zip.extract(info, dirname)
+  if dirname is None:
+    dirname = os.getcwd()
+  target = os.path.join(dirname, info.filename)
+  os.makedirs(os.path.dirname(target), exist_ok=True)
+  os.symlink(input_zip.read(info).decode(), target)
+
+
 def UnzipToDir(filename, dirname, patterns=None):
   """Unzips the archive to the given directory.
 
@@ -2159,9 +2180,11 @@ def UnzipToDir(filename, dirname, patterns=None):
       # There isn't any matching files. Don't unzip anything.
       if not filtered:
         return
-      input_zip.extractall(dirname, filtered)
+      for info in filtered:
+        UnzipSingleFile(input_zip, info, dirname)
     else:
-      input_zip.extractall(dirname, entries)
+      for info in entries:
+        UnzipSingleFile(input_zip, info, dirname)
 
 
 def UnzipTemp(filename, patterns=None):
