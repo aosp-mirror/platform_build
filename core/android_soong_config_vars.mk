@@ -29,7 +29,7 @@ $(call add_soong_config_namespace,ANDROID)
 $(call add_soong_config_var,ANDROID,TARGET_ENABLE_MEDIADRM_64)
 $(call add_soong_config_var,ANDROID,BOARD_USES_ODMIMAGE)
 
-ifeq (,$(filter com.google.android.conscrypt,$(PRODUCT_PACKAGES)))
+ifeq (,$(findstring com.google.android.conscrypt,$(PRODUCT_PACKAGES)))
   # Prebuilt module SDKs require prebuilt modules to work, and currently
   # prebuilt modules are only provided for com.google.android.xxx. If we can't
   # find one of them in PRODUCT_PACKAGES then assume com.android.xxx are in use,
@@ -49,7 +49,7 @@ else ifeq (,$(filter-out modules_% mainline_modules_%,$(TARGET_PRODUCT)))
   # Always build from source for the module targets. This ought to be covered by
   # the TARGET_BUILD_APPS check above, but there are test builds that don't set it.
   SOONG_CONFIG_art_module_source_build := true
-else ifdef MODULE_BUILD_FROM_SOURCE
+else ifeq (true,$(MODULE_BUILD_FROM_SOURCE))
   # Build from source if other Mainline modules are.
   SOONG_CONFIG_art_module_source_build := true
 else ifneq (,$(filter true,$(NATIVE_COVERAGE) $(CLANG_COVERAGE)))
@@ -72,7 +72,7 @@ else ifeq (,$(filter x86 x86_64,$(HOST_CROSS_ARCH)))
 else ifneq (,$(filter dex2oatds dex2oats,$(PRODUCT_HOST_PACKAGES)))
   # Some products depend on host tools that aren't available as prebuilts.
   SOONG_CONFIG_art_module_source_build := true
-else ifeq (,$(filter com.google.android.art,$(PRODUCT_PACKAGES)))
+else ifeq (,$(findstring com.google.android.art,$(PRODUCT_PACKAGES)))
   # TODO(b/192006406): There is currently no good way to control which prebuilt
   # APEX (com.google.android.art or com.android.art) gets picked for deapexing
   # to provide dex jars for hiddenapi and dexpreopting. Instead the AOSP APEX is
@@ -90,6 +90,6 @@ ifdef APEX_BUILD_FOR_PRE_S_DEVICES
 $(call add_soong_config_var_value,ANDROID,library_linking_strategy,prefer_static)
 endif
 
-ifdef MODULE_BUILD_FROM_SOURCE
+ifeq (true,$(MODULE_BUILD_FROM_SOURCE))
 $(call add_soong_config_var_value,ANDROID,module_build_from_source,true)
 endif
