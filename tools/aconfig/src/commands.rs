@@ -74,6 +74,7 @@ pub fn parse_flags(package: &str, declarations: Vec<Input>, values: Vec<Input>) 
             parsed_flag.set_name(flag_declaration.take_name());
             parsed_flag.set_namespace(flag_declaration.take_namespace());
             parsed_flag.set_description(flag_declaration.take_description());
+            parsed_flag.bug.append(&mut flag_declaration.bug);
             parsed_flag.set_state(DEFAULT_FLAG_STATE);
             parsed_flag.set_permission(DEFAULT_FLAG_PERMISSION);
             let mut tracepoint = ProtoTracepoint::new();
@@ -309,6 +310,97 @@ mod tests {
         let bytes = dump_parsed_flags(vec![input], DumpFormat::Text).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
         assert!(text.contains("com.android.aconfig.test/disabled_ro: DISABLED READ_ONLY"));
+    }
+
+    #[test]
+    fn test_dump_protobuf_format() {
+        let text_proto = r#"
+parsed_flag {
+  package: "com.android.aconfig.test"
+  name: "disabled_ro"
+  namespace: "aconfig_test"
+  description: "This flag is DISABLED + READ_ONLY"
+  state: DISABLED
+  permission: READ_ONLY
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  trace {
+    source: "tests/first.values"
+    state: DISABLED
+    permission: READ_ONLY
+  }
+  bug: "123"
+}
+parsed_flag {
+  package: "com.android.aconfig.test"
+  name: "disabled_rw"
+  namespace: "aconfig_test"
+  description: "This flag is DISABLED + READ_WRITE"
+  state: DISABLED
+  permission: READ_WRITE
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  bug: "456"
+}
+parsed_flag {
+  package: "com.android.aconfig.test"
+  name: "enabled_ro"
+  namespace: "aconfig_test"
+  description: "This flag is ENABLED + READ_ONLY"
+  state: ENABLED
+  permission: READ_ONLY
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  trace {
+    source: "tests/first.values"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  trace {
+    source: "tests/second.values"
+    state: ENABLED
+    permission: READ_ONLY
+  }
+  bug: "789"
+  bug: "abc"
+}
+parsed_flag {
+  package: "com.android.aconfig.test"
+  name: "enabled_rw"
+  namespace: "aconfig_test"
+  description: "This flag is ENABLED + READ_WRITE"
+  state: ENABLED
+  permission: READ_WRITE
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  trace {
+    source: "tests/first.values"
+    state: ENABLED
+    permission: READ_WRITE
+  }
+}
+"#;
+        let expected = protobuf::text_format::parse_from_str::<ProtoParsedFlags>(text_proto)
+            .unwrap()
+            .write_to_bytes()
+            .unwrap();
+
+        let input = parse_test_flags_as_input();
+        let actual = dump_parsed_flags(vec![input], DumpFormat::Protobuf).unwrap();
+
+        assert_eq!(expected, actual);
     }
 
     fn parse_test_flags_as_input() -> Input {
