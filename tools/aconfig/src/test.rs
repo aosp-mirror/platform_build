@@ -22,6 +22,85 @@ pub mod test_utils {
 
     pub const TEST_PACKAGE: &str = "com.android.aconfig.test";
 
+    pub const TEST_FLAGS_TEXTPROTO: &str = r#"
+parsed_flag {
+  package: "com.android.aconfig.test"
+  name: "disabled_ro"
+  namespace: "aconfig_test"
+  description: "This flag is DISABLED + READ_ONLY"
+  bug: "123"
+  state: DISABLED
+  permission: READ_ONLY
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  trace {
+    source: "tests/first.values"
+    state: DISABLED
+    permission: READ_ONLY
+  }
+}
+parsed_flag {
+  package: "com.android.aconfig.test"
+  name: "disabled_rw"
+  namespace: "aconfig_test"
+  description: "This flag is DISABLED + READ_WRITE"
+  bug: "456"
+  state: DISABLED
+  permission: READ_WRITE
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+}
+parsed_flag {
+  package: "com.android.aconfig.test"
+  name: "enabled_ro"
+  namespace: "aconfig_test"
+  description: "This flag is ENABLED + READ_ONLY"
+  bug: "789"
+  bug: "abc"
+  state: ENABLED
+  permission: READ_ONLY
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  trace {
+    source: "tests/first.values"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  trace {
+    source: "tests/second.values"
+    state: ENABLED
+    permission: READ_ONLY
+  }
+}
+parsed_flag {
+  package: "com.android.aconfig.test"
+  name: "enabled_rw"
+  namespace: "aconfig_test"
+  description: "This flag is ENABLED + READ_WRITE"
+  state: ENABLED
+  permission: READ_WRITE
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  trace {
+    source: "tests/first.values"
+    state: ENABLED
+    permission: READ_WRITE
+  }
+}
+"#;
+
     pub fn parse_test_flags() -> ProtoParsedFlags {
         let bytes = crate::commands::parse_flags(
             "com.android.aconfig.test",
