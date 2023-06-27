@@ -62,13 +62,23 @@ mod auto_generated {
 pub use auto_generated::*;
 
 use anyhow::Result;
+use paste::paste;
 
 fn try_from_text_proto<T>(s: &str) -> Result<T>
 where
     T: protobuf::MessageFull,
 {
-    // warning: parse_from_str does not check if required fields are set
     protobuf::text_format::parse_from_str(s).map_err(|e| e.into())
+}
+
+macro_rules! ensure_required_fields {
+    ($type:expr, $struct:expr, $($field:expr),+) => {
+        $(
+        paste! {
+            ensure!($struct.[<has_ $field>](), "bad {}: missing {}", $type, $field);
+        }
+        )+
+    };
 }
 
 pub mod flag_declaration {
@@ -77,13 +87,13 @@ pub mod flag_declaration {
     use anyhow::ensure;
 
     pub fn verify_fields(pdf: &ProtoFlagDeclaration) -> Result<()> {
-        ensure!(pdf.has_name(), "bad flag declaration: missing name");
-        ensure!(pdf.has_namespace(), "bad flag declaration: missing namespace");
-        ensure!(pdf.has_description(), "bad flag declaration: missing description");
+        ensure_required_fields!("flag declaration", pdf, "name", "namespace", "description");
 
         ensure!(codegen::is_valid_name_ident(pdf.name()), "bad flag declaration: bad name");
         ensure!(codegen::is_valid_name_ident(pdf.namespace()), "bad flag declaration: bad name");
         ensure!(!pdf.description().is_empty(), "bad flag declaration: empty description");
+
+        // ProtoFlagDeclaration.bug: Vec<String>: may be empty, no checks needed
 
         Ok(())
     }
@@ -101,7 +111,7 @@ pub mod flag_declarations {
     }
 
     pub fn verify_fields(pdf: &ProtoFlagDeclarations) -> Result<()> {
-        ensure!(pdf.has_package(), "bad flag declarations: missing package");
+        ensure_required_fields!("flag declarations", pdf, "package");
 
         ensure!(
             codegen::is_valid_package_ident(pdf.package()),
@@ -121,10 +131,7 @@ pub mod flag_value {
     use anyhow::ensure;
 
     pub fn verify_fields(fv: &ProtoFlagValue) -> Result<()> {
-        ensure!(fv.has_package(), "bad flag value: missing package");
-        ensure!(fv.has_name(), "bad flag value: missing name");
-        ensure!(fv.has_state(), "bad flag value: missing state");
-        ensure!(fv.has_permission(), "bad flag value: missing permission");
+        ensure_required_fields!("flag value", fv, "package", "name", "state", "permission");
 
         ensure!(codegen::is_valid_package_ident(fv.package()), "bad flag value: bad package");
         ensure!(codegen::is_valid_name_ident(fv.name()), "bad flag value: bad name");
@@ -155,9 +162,7 @@ pub mod tracepoint {
     use anyhow::ensure;
 
     pub fn verify_fields(tp: &ProtoTracepoint) -> Result<()> {
-        ensure!(tp.has_source(), "bad tracepoint: missing source");
-        ensure!(tp.has_state(), "bad tracepoint: missing state");
-        ensure!(tp.has_permission(), "bad tracepoint: missing permission");
+        ensure_required_fields!("tracepoint", tp, "source", "state", "permission");
 
         ensure!(!tp.source().is_empty(), "bad tracepoint: empty source");
 
@@ -171,12 +176,16 @@ pub mod parsed_flag {
     use anyhow::ensure;
 
     pub fn verify_fields(pf: &ProtoParsedFlag) -> Result<()> {
-        ensure!(pf.has_package(), "bad parsed flag: missing package");
-        ensure!(pf.has_name(), "bad parsed flag: missing name");
-        ensure!(pf.has_namespace(), "bad parsed flag: missing namespace");
-        ensure!(pf.has_description(), "bad parsed flag: missing description");
-        ensure!(pf.has_state(), "bad parsed flag: missing state");
-        ensure!(pf.has_permission(), "bad parsed flag: missing permission");
+        ensure_required_fields!(
+            "parsed flag",
+            pf,
+            "package",
+            "name",
+            "namespace",
+            "description",
+            "state",
+            "permission"
+        );
 
         ensure!(codegen::is_valid_package_ident(pf.package()), "bad parsed flag: bad package");
         ensure!(codegen::is_valid_name_ident(pf.name()), "bad parsed flag: bad name");
@@ -186,6 +195,8 @@ pub mod parsed_flag {
         for tp in pf.trace.iter() {
             super::tracepoint::verify_fields(tp)?;
         }
+
+        // ProtoParsedFlag.bug: Vec<String>: may be empty, no checks needed
 
         Ok(())
     }
@@ -251,6 +262,8 @@ flag {
     name: "first"
     namespace: "first_ns"
     description: "This is the description of the first flag."
+    bug: "123"
+    bug: "abc"
 }
 flag {
     name: "second"
@@ -265,10 +278,14 @@ flag {
         assert_eq!(first.name(), "first");
         assert_eq!(first.namespace(), "first_ns");
         assert_eq!(first.description(), "This is the description of the first flag.");
+        assert_eq!(first.bug.len(), 2);
+        assert_eq!(first.bug[0], "123");
+        assert_eq!(first.bug[1], "abc");
         let second = flag_declarations.flag.iter().find(|pf| pf.name() == "second").unwrap();
         assert_eq!(second.name(), "second");
         assert_eq!(second.namespace(), "second_ns");
         assert_eq!(second.description(), "This is the description of the second flag.");
+        assert_eq!(second.bug.len(), 0);
 
         // bad input: missing package in flag declarations
         let error = flag_declarations::try_from_text_proto(
