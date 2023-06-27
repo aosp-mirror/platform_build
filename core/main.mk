@@ -4,7 +4,7 @@ $(warning Either use 'envsetup.sh; m' or 'build/soong/soong_ui.bash --make-mode'
 $(error done)
 endif
 
-$(info [1/1] initializing build system ...)
+$(info [1/1] initializing legacy Make module parser ...)
 
 # Absolute path of the present working direcotry.
 # This overrides the shell variable $PWD, which does not necessarily points to
@@ -554,7 +554,7 @@ ifndef subdir_makefiles_total
 subdir_makefiles_total := $(words init post finish)
 endif
 
-$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] finishing build rules ...)
+$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] finishing legacy Make module parsing ...)
 
 # -------------------------------------------------------------------
 # All module makefiles have been included at this point.
@@ -2232,4 +2232,4 @@ endif
 
 $(call dist-write-file,$(KATI_PACKAGE_MK_DIR)/dist.mk)
 
-$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] writing build rules ...)
+$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] writing legacy Make module rules ...)
