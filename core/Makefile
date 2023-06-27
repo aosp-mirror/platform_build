@@ -4893,6 +4893,8 @@ endif
 check_vintf_all_deps += $(vintffm_log)
 $(vintffm_log): $(HOST_OUT_EXECUTABLES)/vintffm $(check_vintf_system_deps)
 	@( $< --check --dirmap /system:$(TARGET_OUT) \
+	  --dirmap /system_ext:$(TARGET_OUT_SYSTEM_EXT) \
+	  --dirmap /product:$(TARGET_OUT_PRODUCT) \
 	  $(VINTF_FRAMEWORK_MANIFEST_FROZEN_DIR) > $@ 2>&1 ) || ( cat $@ && exit 1 )
 
 $(call declare-1p-target,$(vintffm_log))
