@@ -4200,6 +4200,13 @@ INSTALLED_CUSTOMIMAGES_TARGET :=
 
 ifneq ($(strip $(BOARD_CUSTOMIMAGES_PARTITION_LIST)),)
 INTERNAL_AVB_CUSTOMIMAGES_SIGNING_ARGS :=
+BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST :=
+# If BOARD_AVB_$(call to-upper,$(partition))_KEY_PATH is set, the image will be included in
+# BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST, otherwise the image won't be AVB signed.
+$(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
+	$(if $(BOARD_AVB_$(call to-upper,$(partition))_KEY_PATH), \
+	$(eval BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST += $(partition)) \
+	$(eval BOARD_$(call to-upper,$(partition))_IMAGE_LIST := $(BOARD_AVB_$(call to-upper,$(partition))_IMAGE_LIST))))
 
 # Sign custom image.
 # $(1): the prebuilt custom image.
@@ -4224,9 +4231,26 @@ endif
 INSTALLED_CUSTOMIMAGES_TARGET += $(3)
 endef
 
-$(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
+# Copy unsigned custom image.
+# $(1): the prebuilt custom image.
+# $(2): the signed custom image target.
+define copy_custom_image
+$(2): $(1) $(INTERNAL_USERIMAGES_DEPS)
+	@echo Target custom image: $(2)
+	mkdir -p $(dir $(2))
+	cp $(1) $(2)
+INSTALLED_CUSTOMIMAGES_TARGET += $(2)
+endef
+
+# Add AVB custom image to droid target
+$(foreach partition,$(BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST), \
   $(foreach image,$(BOARD_AVB_$(call to-upper,$(partition))_IMAGE_LIST), \
      $(eval $(call sign_custom_image,$(image),$(partition),$(PRODUCT_OUT)/$(notdir $(image))))))
+
+# Add unsigned custom image to droid target
+$(foreach partition,$(filter-out $(BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST), $(BOARD_CUSTOMIMAGES_PARTITION_LIST)), \
+  $(foreach image,$(BOARD_$(call to-upper,$(partition))_IMAGE_LIST), \
+     $(eval $(call copy_custom_image,$(image),$(PRODUCT_OUT)/$(notdir $(image))))))
 endif
 
 # -----------------------------------------------------------------
@@ -4503,7 +4527,9 @@ define check-and-set-custom-avb-chain-args
 $(eval part := $(1))
 $(eval PART=$(call to-upper,$(part)))
 $(eval _rollback_index_location := BOARD_AVB_$(PART)_ROLLBACK_INDEX_LOCATION)
+$(eval _key_path := BOARD_AVB_$(PART)_KEY_PATH)
 $(if $($(_rollback_index_location)),,$(error $(_rollback_index_location) is not defined))
+$(if $($(_key_path)),,$(error $(_key_path) is not defined))
 
 INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
     --chain_partition $(part):$($(_rollback_index_location)):$(AVB_CHAIN_KEY_DIR)/$(part).avbpubkey
@@ -4583,8 +4609,8 @@ $(foreach partition,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS),$(eval $(call check-an
 $(foreach partition,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS),$(eval BOARD_AVB_MAKE_VBMETA_$(call to-upper,$(partition))_IMAGE_ARGS += --padding_size 4096))
 endif
 
-ifneq ($(strip $(BOARD_CUSTOMIMAGES_PARTITION_LIST)),)
-$(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
+ifneq ($(strip $(BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST)),)
+$(foreach partition,$(BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST), \
     $(eval $(call check-and-set-custom-avb-chain-args,$(partition))))
 endif
 
@@ -4671,8 +4697,8 @@ define extract-avb-chain-public-keys
   $(if $(BOARD_AVB_VBMETA_VENDOR_KEY_PATH),\
     $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_VBMETA_VENDOR_KEY_PATH) \
         --output $(1)/vbmeta_vendor.avbpubkey)
-  $(if $(BOARD_CUSTOMIMAGES_PARTITION_LIST),\
-    $(hide) $(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
+  $(if $(BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST),\
+    $(hide) $(foreach partition,$(BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST), \
         $(AVBTOOL) extract_public_key --key $(BOARD_AVB_$(call to-upper,$(partition))_KEY_PATH) \
             --output $(1)/$(partition).avbpubkey;)) \
   $(if $(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS),\
@@ -5591,15 +5617,20 @@ ifdef BOARD_AVB_RECOVERY_KEY_PATH
 	$(hide) echo "avb_recovery_rollback_index_location=$(BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION)" >> $@
 endif # BOARD_AVB_RECOVERY_KEY_PATH
 ifneq (,$(strip $(BOARD_CUSTOMIMAGES_PARTITION_LIST)))
-	$(hide) echo "avb_custom_images_partition_list=$(BOARD_CUSTOMIMAGES_PARTITION_LIST)" >> $@
-	$(hide) $(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
+	$(hide) echo "custom_images_partition_list=$(filter-out $(BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST), $(BOARD_CUSTOMIMAGES_PARTITION_LIST))" >> $@
+	$(hide) $(foreach partition,$(filter-out $(BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST), $(BOARD_CUSTOMIMAGES_PARTITION_LIST)), \
+	    echo "$(partition)_image_list=$(foreach image,$(BOARD_$(call to-upper,$(partition))_IMAGE_LIST),$(notdir $(image)))" >> $@;)
+endif # BOARD_CUSTOMIMAGES_PARTITION_LIST
+ifneq (,$(strip $(BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST)))
+	$(hide) echo "avb_custom_images_partition_list=$(BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST)" >> $@
+	$(hide) $(foreach partition,$(BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST), \
 	    echo "avb_$(partition)_key_path=$(BOARD_AVB_$(call to-upper,$(partition))_KEY_PATH)"  >> $@; \
 	    echo "avb_$(partition)_algorithm=$(BOARD_AVB_$(call to-upper,$(partition))_ALGORITHM)"  >> $@; \
 	    echo "avb_$(partition)_add_hashtree_footer_args=$(BOARD_AVB_$(call to-upper,$(partition))_ADD_HASHTREE_FOOTER_ARGS)"  >> $@; \
 	    echo "avb_$(partition)_rollback_index_location=$(BOARD_AVB_$(call to-upper,$(partition))_ROLLBACK_INDEX_LOCATION)"  >> $@; \
 	    echo "avb_$(partition)_partition_size=$(BOARD_AVB_$(call to-upper,$(partition))_PARTITION_SIZE)"  >> $@; \
 	    echo "avb_$(partition)_image_list=$(foreach image,$(BOARD_AVB_$(call to-upper,$(partition))_IMAGE_LIST),$(notdir $(image)))" >> $@;)
-endif # BOARD_CUSTOMIMAGES_PARTITION_LIST
+endif # BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST
 ifneq (,$(strip $(BOARD_AVB_VBMETA_SYSTEM)))
 	$(hide) echo "avb_vbmeta_system=$(BOARD_AVB_VBMETA_SYSTEM)" >> $@
 	$(hide) echo "avb_vbmeta_system_args=$(BOARD_AVB_MAKE_VBMETA_SYSTEM_IMAGE_ARGS)" >> $@
@@ -6410,7 +6441,7 @@ endif
 ifneq ($(strip $(BOARD_CUSTOMIMAGES_PARTITION_LIST)),)
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) $(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
-	    $(foreach image,$(BOARD_AVB_$(call to-upper,$(partition))_IMAGE_LIST),cp $(image) $(zip_root)/PREBUILT_IMAGES/;))
+	    $(foreach image,$(BOARD_$(call to-upper,$(partition))_IMAGE_LIST),cp $(image) $(zip_root)/PREBUILT_IMAGES/;))
 endif # BOARD_CUSTOMIMAGES_PARTITION_LIST
 	@# The radio images in BOARD_PACK_RADIOIMAGES will be additionally copied from RADIO/ into
 	@# IMAGES/, which then will be added into <product>-img.zip. Such images must be listed in
