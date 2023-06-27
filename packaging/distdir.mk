@@ -30,6 +30,7 @@ $(foreach pair,$(DIST_GOAL_OUTPUT_PAIRS), \
     $(eval _dist_$$(goal):)))
 
 define copy-one-dist-file
+$(2): .KATI_TAGS += ;rule_name=dist-cp
 $(2): $(1)
 	@echo "Dist: $$@"
 	rm -f $$@
