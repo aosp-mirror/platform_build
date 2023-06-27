@@ -1357,53 +1357,6 @@ function getprebuilt
     get_abs_build_var ANDROID_PREBUILTS
 }
 
-function tracedmdump()
-{
-    local T=$(gettop)
-    if [ ! "$T" ]; then
-        echo "Couldn't locate the top of the tree.  Try setting TOP."
-        return
-    fi
-    local prebuiltdir=$(getprebuilt)
-    local arch=$(gettargetarch)
-    local KERNEL=$T/prebuilts/qemu-kernel/$arch/vmlinux-qemu
-
-    local TRACE=$1
-    if [ ! "$TRACE" ] ; then
-        echo "usage:  tracedmdump  tracename"
-        return
-    fi
-
-    if [ ! -r "$KERNEL" ] ; then
-        echo "Error: cannot find kernel: '$KERNEL'"
-        return
-    fi
-
-    local BASETRACE=$(basename $TRACE)
-    if [ "$BASETRACE" = "$TRACE" ] ; then
-        TRACE=$ANDROID_PRODUCT_OUT/traces/$TRACE
-    fi
-
-    echo "post-processing traces..."
-    rm -f $TRACE/qtrace.dexlist
-    post_trace $TRACE
-    if [ $? -ne 0 ]; then
-        echo "***"
-        echo "*** Error: malformed trace.  Did you remember to exit the emulator?"
-        echo "***"
-        return
-    fi
-    echo "generating dexlist output..."
-    /bin/ls $ANDROID_PRODUCT_OUT/system/framework/*.jar $ANDROID_PRODUCT_OUT/system/app/*.apk $ANDROID_PRODUCT_OUT/data/app/*.apk 2>/dev/null | xargs dexlist > $TRACE/qtrace.dexlist
-    echo "generating dmtrace data..."
-    q2dm -r $ANDROID_PRODUCT_OUT/symbols $TRACE $KERNEL $TRACE/dmtrace || return
-    echo "generating html file..."
-    dmtracedump -h $TRACE/dmtrace >| $TRACE/dmtrace.html || return
-    echo "done, see $TRACE/dmtrace.html for details"
-    echo "or run:"
-    echo "    traceview $TRACE/dmtrace"
-}
-
 # communicate with a running device or emulator, set up necessary state,
 # and run the hat command.
 function runhat()
