@@ -4827,25 +4827,24 @@ ifeq (,$(TARGET_BUILD_UNBUNDLED))
 intermediates := $(call intermediates-dir-for,PACKAGING,check_vintf_all)
 check_vintf_all_deps :=
 
-APEX_OUT := $(PRODUCT_OUT)/apex
 # -----------------------------------------------------------------
-# Create apex-info-file.xml
+# Activate vendor APEXes for checkvintf
 
 apex_dirs := \
-  $(TARGET_OUT)/apex/% \
-  $(TARGET_OUT_SYSTEM_EXT)/apex/% \
   $(TARGET_OUT_VENDOR)/apex/% \
-  $(TARGET_OUT_ODM)/apex/% \
-  $(TARGET_OUT_PRODUCT)/apex/% \
 
 apex_files := $(sort $(filter $(apex_dirs), $(INTERNAL_ALLIMAGES_FILES)))
+
+APEX_OUT := $(intermediates)/apex
 APEX_INFO_FILE := $(APEX_OUT)/apex-info-list.xml
 
-# dump_apex_info scans $(PRODUCT_OUT)/apex and writes apex-info-list.xml there.
-# This relies on the fact that rules for .apex files install the contents in $(PRODUCT_OUT)/apex.
-$(APEX_INFO_FILE): $(HOST_OUT_EXECUTABLES)/dump_apex_info $(apex_files)
-	@echo "Creating apex-info-file in $(PRODUCT_OUT) "
-	$< --root_dir $(PRODUCT_OUT)
+# apexd_host scans/activates APEX files and writes /apex/apex-info-list.xml
+$(APEX_INFO_FILE): $(HOST_OUT_EXECUTABLES)/apexd_host $(apex_files)
+	@echo "Extracting apexes..."
+	@rm -rf $(APEX_OUT)
+	@mkdir -p $(APEX_OUT)
+	$< --vendor_path $(TARGET_OUT_VENDOR) \
+	   --apex_path $(APEX_OUT)
 
 apex_files :=
 apex_dirs :=
@@ -5299,7 +5298,6 @@ INTERNAL_OTATOOLS_MODULES += \
   apex_compression_tool \
   deapexer \
   debugfs_static \
-  dump_apex_info \
   fsck.erofs \
   make_erofs \
   merge_zips \
