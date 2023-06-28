@@ -633,14 +633,17 @@ def GetTargetFilesZipForPartialUpdates(input_file, ab_partitions):
         return True
     return False
 
-  postinstall_config = common.ReadFromInputFile(input_file, POSTINSTALL_CONFIG)
-  postinstall_config = [
-      line for line in postinstall_config.splitlines() if IsInPartialList(line)]
-  if postinstall_config:
-    postinstall_config = "\n".join(postinstall_config)
-    common.WriteToInputFile(input_file, POSTINSTALL_CONFIG, postinstall_config)
-  else:
-    os.unlink(os.path.join(input_file, POSTINSTALL_CONFIG))
+  if common.DoesInputFileContain(input_file, POSTINSTALL_CONFIG):
+    postinstall_config = common.ReadFromInputFile(
+        input_file, POSTINSTALL_CONFIG)
+    postinstall_config = [
+        line for line in postinstall_config.splitlines() if IsInPartialList(line)]
+    if postinstall_config:
+      postinstall_config = "\n".join(postinstall_config)
+      common.WriteToInputFile(
+          input_file, POSTINSTALL_CONFIG, postinstall_config)
+    else:
+      os.unlink(os.path.join(input_file, POSTINSTALL_CONFIG))
 
   return input_file
 
@@ -1063,6 +1066,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
       # ZIP_STORED.
       common.ZipWriteStr(output_zip, care_map_name, care_map_data,
                          compress_type=zipfile.ZIP_STORED)
+      # break here to avoid going into else when care map has been handled
+      break
     else:
       logger.warning("Cannot find care map file in target_file package")
 

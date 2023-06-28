@@ -114,7 +114,7 @@ endif
 # are controlled by the MODULE_BUILD_FROM_SOURCE environment variable by
 # default.
 INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
-  bluetooth \
+  btservices \
   permission \
   rkpd \
   uwb \
@@ -152,6 +152,10 @@ $(call add_soong_config_var,ANDROID,SYSTEMUI_USE_COMPOSE)
 
 ifdef PRODUCT_AVF_ENABLED
 $(call add_soong_config_var_value,ANDROID,avf_enabled,$(PRODUCT_AVF_ENABLED))
+endif
+
+ifdef PRODUCT_AVF_KERNEL_MODULES_ENABLED
+$(call add_soong_config_var_value,ANDROID,avf_kernel_modules_enabled,$(PRODUCT_AVF_KERNEL_MODULES_ENABLED))
 endif
 
 # Enable system_server optimizations by default unless explicitly set or if

@@ -1,0 +1,7 @@
+package {package_name};
+
+public interface FeatureFlags \{
+    {{ for item in class_elements}}
+    boolean {item.method_name}();
+    {{ endfor }}
+}

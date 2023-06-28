@@ -40,8 +40,7 @@ ifdef INTERNAL_BUILD_ID_MAKEFILE
   include $(INTERNAL_BUILD_ID_MAKEFILE)
 endif
 
-DEFAULT_PLATFORM_VERSION := VP1A
-.KATI_READONLY := DEFAULT_PLATFORM_VERSION
+# Set release configuration. The default resides in build/release/build_flags.mk.
 MIN_PLATFORM_VERSION := UP1A
 MAX_PLATFORM_VERSION := VP1A
 
@@ -104,7 +103,7 @@ ifndef PLATFORM_SECURITY_PATCH
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-    PLATFORM_SECURITY_PATCH := 2023-05-05
+    PLATFORM_SECURITY_PATCH := 2023-06-05
 endif
 
 include $(BUILD_SYSTEM)/version_util.mk

@@ -2,6 +2,8 @@ package {
     default_applicable_licenses: ["Android-Apache-2.0"],
 }
 
+// host binary: aconfig
+
 rust_protobuf_host {
     name: "libaconfig_protos",
     protos: ["protos/aconfig.proto"],
@@ -25,6 +27,9 @@ rust_defaults {
         "libserde_json",
         "libtinytemplate",
     ],
+    proc_macros: [
+        "libpaste",
+    ]
 }
 
 rust_binary_host {
@@ -35,4 +40,51 @@ rust_binary_host {
 rust_test_host {
     name: "aconfig.test",
     defaults: ["aconfig.defaults"],
+    rustlibs: [
+        "libitertools",
+    ],
+}
+
+// integration tests: java
+
+aconfig_declarations {
+    name: "aconfig.test.flags",
+    package: "com.android.aconfig.test",
+    srcs: ["tests/test.aconfig"],
+}
+
+aconfig_values {
+    name: "aconfig.test.flag.values",
+    package: "com.android.aconfig.test",
+    srcs: [
+        "tests/first.values",
+        "tests/second.values",
+    ],
+}
+
+aconfig_value_set {
+    name: "aconfig.test.flag.value_set",
+    values: [
+        "aconfig.test.flag.values",
+    ],
+}
+
+java_aconfig_library {
+    name: "aconfig_test_java",
+    aconfig_declarations: "aconfig.test.flags",
+}
+
+android_test {
+    name: "aconfig.test.java",
+    srcs: [
+        "tests/**/*.java",
+    ],
+    manifest: "tests/AndroidManifest.xml",
+    certificate: "platform",
+    static_libs: [
+        "androidx.test.rules",
+        "testng",
+        "aconfig_test_java",
+    ],
+    test_suites: ["device-tests"],
 }

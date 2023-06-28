@@ -31,6 +31,7 @@ SPDXID_UPSTREAM_PACKAGE1 = 'SPDXRef-UPSTREAM-package1'
 SPDXID_FILE1 = 'SPDXRef-file1'
 SPDXID_FILE2 = 'SPDXRef-file2'
 SPDXID_FILE3 = 'SPDXRef-file3'
+SPDXID_FILE4 = 'SPDXRef-file4'
 
 
 class SBOMWritersTest(unittest.TestCase):
@@ -101,6 +102,8 @@ class SBOMWritersTest(unittest.TestCase):
       sbom_data.File(id=SPDXID_FILE2, name='/bin/file2', checksum='SHA1: 22222'))
     self.sbom_doc.files.append(
       sbom_data.File(id=SPDXID_FILE3, name='/bin/file3', checksum='SHA1: 33333'))
+    self.sbom_doc.files.append(
+      sbom_data.File(id=SPDXID_FILE4, name='file4.a', checksum='SHA1: 44444'))
 
     self.sbom_doc.add_relationship(sbom_data.Relationship(id1=SPDXID_FILE1,
                                                           relationship=sbom_data.RelationshipType.GENERATED_FROM,
@@ -111,6 +114,10 @@ class SBOMWritersTest(unittest.TestCase):
     self.sbom_doc.add_relationship(sbom_data.Relationship(id1=SPDXID_FILE3,
                                                           relationship=sbom_data.RelationshipType.GENERATED_FROM,
                                                           id2=SPDXID_SOURCE_PACKAGE1
+                                                          ))
+    self.sbom_doc.add_relationship(sbom_data.Relationship(id1=SPDXID_FILE1,
+                                                          relationship=sbom_data.RelationshipType.STATIC_LINK,
+                                                          id2=SPDXID_FILE4
                                                           ))
 
     # SBOM fragment of a APK
@@ -136,6 +143,14 @@ class SBOMWritersTest(unittest.TestCase):
     with io.StringIO() as output:
       sbom_writers.TagValueWriter.write(self.sbom_doc, output)
       expected_output = pathlib.Path('testdata/expected_tagvalue_sbom.spdx').read_text()
+      self.maxDiff = None
+      self.assertEqual(expected_output, output.getvalue())
+
+  def test_tagvalue_writer_doc_describes_file(self):
+    with io.StringIO() as output:
+      self.sbom_doc.describes = SPDXID_FILE4
+      sbom_writers.TagValueWriter.write(self.sbom_doc, output)
+      expected_output = pathlib.Path('testdata/expected_tagvalue_sbom_doc_describes_file.spdx').read_text()
       self.maxDiff = None
       self.assertEqual(expected_output, output.getvalue())
 

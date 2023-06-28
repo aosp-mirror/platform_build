@@ -65,8 +65,6 @@ class ApexApkSigner(object):
         OPTIONS.search_path, "bin", "debugfs_static")
     self.fsckerofs_path = os.path.join(
         OPTIONS.search_path, "bin", "fsck.erofs")
-    self.blkid_path = os.path.join(
-        OPTIONS.search_path, "bin", "blkid_static")
     self.avbtool = avbtool if avbtool else "avbtool"
     self.sign_tool = sign_tool
 
@@ -129,15 +127,10 @@ class ApexApkSigner(object):
           "Couldn't find location of fsck.erofs: " +
           "Path {} does not exist. ".format(self.fsckerofs_path) +
           "Make sure bin/fsck.erofs can be found in -p <path>")
-    if not os.path.exists(self.blkid_path):
-      raise ApexSigningError(
-          "Couldn't find location of blkid: " +
-          "Path {} does not exist. ".format(self.blkid_path) +
-          "Make sure bin/blkid can be found in -p <path>")
     payload_dir = common.MakeTempDir()
     extract_cmd = ['deapexer', '--debugfs_path', self.debugfs_path,
                    '--fsckerofs_path', self.fsckerofs_path,
-                   '--blkid_path', self.blkid_path, 'extract',
+                   'extract',
                    self.apex_path, payload_dir]
     common.RunAndCheckOutput(extract_cmd)
     assert os.path.exists(self.apex_path)

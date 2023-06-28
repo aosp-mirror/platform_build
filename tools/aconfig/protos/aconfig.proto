@@ -35,20 +35,22 @@ enum flag_permission {
 // aconfig input messages: flag declarations and values
 
 message flag_declaration {
-  required string name = 1;
-  required string description = 2;
+  optional string name = 1;
+  optional string namespace = 2;
+  optional string description = 3;
+  repeated string bug = 4;
 };
 
 message flag_declarations {
-  required string namespace = 1;
+  optional string package = 1;
   repeated flag_declaration flag = 2;
 };
 
 message flag_value {
-  required string namespace = 1;
-  required string name = 2;
-  required flag_state state = 3;
-  required flag_permission permission = 4;
+  optional string package = 1;
+  optional string name = 2;
+  optional flag_state state = 3;
+  optional flag_permission permission = 4;
 };
 
 message flag_values {
@@ -59,18 +61,20 @@ message flag_values {
 
 message tracepoint {
   // path to declaration or value file relative to $TOP
-  required string source = 1;
-  required flag_state state = 2;
-  required flag_permission permission = 3;
+  optional string source = 1;
+  optional flag_state state = 2;
+  optional flag_permission permission = 3;
 }
 
 message parsed_flag {
-  required string namespace = 1;
-  required string name = 2;
-  required string description = 3;
-  required flag_state state = 4;
-  required flag_permission permission = 5;
-  repeated tracepoint trace = 6;
+  optional string package = 1;
+  optional string name = 2;
+  optional string namespace = 3;
+  optional string description = 4;
+  repeated string bug = 5;
+  optional flag_state state = 6;
+  optional flag_permission permission = 7;
+  repeated tracepoint trace = 8;
 }
 
 message parsed_flags {
