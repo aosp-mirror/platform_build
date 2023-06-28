@@ -1424,9 +1424,10 @@ def ResolveAVBSigningPathArgs(split_args):
   def ResolveBinaryPath(path):
     if os.path.exists(path):
       return path
-    new_path = os.path.join(OPTIONS.search_path, path)
-    if os.path.exists(new_path):
-      return new_path
+    if OPTIONS.search_path:
+      new_path = os.path.join(OPTIONS.search_path, path)
+      if os.path.exists(new_path):
+        return new_path
     raise ExternalError(
         "Failed to find {}".format(new_path))
 
