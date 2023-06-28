@@ -9,6 +9,16 @@ public final class Flags \{
         return FEATURE_FLAGS.{item.method_name}();
     }
     {{ endfor }}
-    private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
+    {{ if is_test_mode }}
+    public static void setFeatureFlagsImpl(FeatureFlags featureFlags) \{
+        Flags.FEATURE_FLAGS = featureFlags;
+    }
+
+    public static void unsetFeatureFlagsImpl() \{
+        Flags.FEATURE_FLAGS = null;
+    }
+    {{ -endif}}
+
+    private static FeatureFlags FEATURE_FLAGS{{ -if not is_test_mode }} = new FeatureFlagsImpl(){{ -endif- }};
 
 }
