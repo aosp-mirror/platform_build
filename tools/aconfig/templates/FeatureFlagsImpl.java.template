@@ -1,0 +1,61 @@
+package {package_name};
+{{ -if is_test_mode }}
+import static java.util.stream.Collectors.toMap;
+
+import java.util.stream.Stream;
+import java.util.HashMap;
+{{ else}}
+{{ if is_read_write- }}
+import android.provider.DeviceConfig;
+{{ -endif- }}
+{{ endif }}
+public final class FeatureFlagsImpl implements FeatureFlags \{
+    {{ for item in class_elements}}
+    @Override
+    public boolean {item.method_name}() \{
+        {{ -if not is_test_mode- }}
+        {{ if item.is_read_write }}
+        return DeviceConfig.getBoolean(
+            "{item.device_config_namespace}",
+            "{item.device_config_flag}",
+            {item.default_value}
+        );
+        {{ else }}
+        return {item.default_value};
+        {{ -endif- }}
+        {{ else }}
+        return getFlag(Flags.FLAG_{item.flag_name_constant_suffix});
+        {{ -endif }}
+    }
+    {{ endfor }}
+
+    {{ if is_test_mode- }}
+    public void setFlag(String flagName, boolean value) \{
+        if (!this.mFlagMap.containsKey(flagName)) \{
+            throw new IllegalArgumentException("no such flag" + flagName);
+        }
+        this.mFlagMap.put(flagName, value);
+    }
+
+    private boolean getFlag(String flagName) \{
+        Boolean value = this.mFlagMap.get(flagName);
+        if (value == null) \{
+            throw new IllegalArgumentException(flagName + " is not set");
+        }
+        return value;
+    }
+
+    private HashMap<String, Boolean> mFlagMap = Stream.of(
+            {{-for item in class_elements}}
+            Flags.FLAG_{item.flag_name_constant_suffix}{{ if not @last }},{{ endif }}
+            {{ -endfor }}
+        )
+        .collect(
+            HashMap::new,
+            (map, elem) -> map.put(elem, null),
+            HashMap::putAll
+        );
+    {{ -endif }}
+}
+
+

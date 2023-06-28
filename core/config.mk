@@ -356,6 +356,16 @@ ANDROID_BUILDSPEC := $(TOPDIR)buildspec.mk
 endif
 -include $(ANDROID_BUILDSPEC)
 
+# Starting in Android U, non-VNDK devices not supported
+# WARNING: DO NOT CHANGE: if you are downstream of AOSP, and you change this, without
+# letting upstream know it's important to you, we may do cleanup which breaks this
+# significantly. Please let us know if you are changing this.
+ifndef BOARD_VNDK_VERSION
+# READ WARNING - DO NOT CHANGE
+BOARD_VNDK_VERSION := current
+# READ WARNING - DO NOT CHANGE
+endif
+
 # ---------------------------------------------------------------
 # Define most of the global variables.  These are the ones that
 # are specific to the user's build configuration.
@@ -775,24 +785,6 @@ ifeq ($(PRODUCT_FULL_TREBLE),true)
   BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED ?= true
 endif
 
-# Starting in Android U, non-VNDK devices not supported
-# WARNING: DO NOT CHANGE: if you are downstream of AOSP, and you change this, without
-# letting upstream know it's important to you, we may do cleanup which breaks this
-# significantly. Please let us know if you are changing this.
-ifndef BOARD_VNDK_VERSION
-# READ WARNING - DO NOT CHANGE
-BOARD_VNDK_VERSION := current
-# READ WARNING - DO NOT CHANGE
-endif
-
-ifdef PRODUCT_PRODUCT_VNDK_VERSION
-  ifndef BOARD_VNDK_VERSION
-    # VNDK for product partition is not available unless BOARD_VNDK_VERSION
-    # defined.
-    $(error PRODUCT_PRODUCT_VNDK_VERSION cannot be defined without defining BOARD_VNDK_VERSION)
-  endif
-endif
-
 # Set BOARD_SYSTEMSDK_VERSIONS to the latest SystemSDK version starting from P-launching
 # devices if unset.
 ifndef BOARD_SYSTEMSDK_VERSIONS
@@ -907,6 +899,7 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
     31.0 \
     32.0 \
     33.0 \
+    34.0 \
 
 .KATI_READONLY := \
     PLATFORM_SEPOLICY_COMPAT_VERSIONS \

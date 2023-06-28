@@ -12,17 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Partitions that get build system flag summaries
-_FLAG_PARTITIONS := system vendor system_ext product
-
-# All possible release flags. Defined in the build_flags.mk files
-# throughout the tree
-_ALL_RELEASE_FLAGS :=
 
 # -----------------------------------------------------------------
 # Choose the flag files
+# -----------------------------------------------------------------
+# Release configs are defined in reflease_config_map files, which map
+# the short name (e.g. -next) used in lunch to the starlark files
+# defining the build flag values.
+#
+# (If you're thinking about aconfig flags, there is one build flag,
+# RELEASE_ACONFIG_VALUE_SETS, that sets which aconfig_value_set
+# module to use to set the aconfig flag values.)
+#
+# The short release config names *can* appear multiple times, to allow
+# for AOSP and vendor specific flags under the same name, but the
+# individual flag values must appear in exactly one config.  Vendor
+# does not override AOSP, or anything like that.  This is because
+# vendor code usually includes prebuilts, and having vendor compile
+# with different flags from AOSP increases the likelihood of flag
+# mismatch.
+
 # Do this first, because we're going to unset TARGET_RELEASE before
 # including anyone, so they don't start making conditionals based on it.
+# This logic is in make because starlark doesn't understand optional
+# vendor files.
 
 # If this is a google source tree, restrict it to only the one file
 # which has OWNERS control.  If it isn't let others define their own.
@@ -42,17 +55,12 @@ config_map_files := $(wildcard build/release/release_config_map.mk) \
 # $1 config name
 # $2 release config files
 define declare-release-config
-    $(eval # No duplicates)
-    $(if $(filter $(_all_release_configs), $(strip $(1))), \
-        $(error declare-release-config: config $(strip $(1)) declared in: $(_included) Previously declared here: $(_all_release_configs.$(strip $(1)).DECLARED_IN)) \
-    )
-    $(eval # Must have release config files)
     $(if $(strip $(2)),,  \
         $(error declare-release-config: config $(strip $(1)) must have release config files) \
     )
     $(eval _all_release_configs := $(sort $(_all_release_configs) $(strip $(1))))
-    $(eval _all_release_configs.$(strip $(1)).DECLARED_IN := $(_included))
-    $(eval _all_release_configs.$(strip $(1)).FILES := $(strip $(2)))
+    $(eval _all_release_configs.$(strip $(1)).DECLARED_IN := $(_included) $(_all_release_configs.$(strip $(1)).DECLARED_IN))
+    $(eval _all_release_configs.$(strip $(1)).FILES := $(_all_release_configs.$(strip $(1)).FILES) $(strip $(2)))
 endef
 
 # Include the config map files
@@ -70,17 +78,17 @@ ifeq ($(filter $(_all_release_configs), $(TARGET_RELEASE)),)
 else
     # Choose flag files
     # Don't sort this, use it in the order they gave us.
-    _release_config_files := $(_all_release_configs.$(TARGET_RELEASE).FILES)
+    flag_value_files := $(_all_release_configs.$(TARGET_RELEASE).FILES)
 endif
 else
 # Useful for finding scripts etc that aren't passing or setting TARGET_RELEASE
 ifneq ($(FAIL_IF_NO_RELEASE_CONFIG),)
     $(error FAIL_IF_NO_RELEASE_CONFIG was set and TARGET_RELEASE was not)
 endif
-_release_config_files :=
+flag_value_files :=
 endif
 
-# Unset variables so they can't use it
+# Unset variables so they can't use them
 define declare-release-config
 $(error declare-release-config can only be called from inside release_config_map.mk files)
 endef
@@ -96,6 +104,7 @@ TARGET_RELEASE:=
 endif
 .KATI_READONLY := TARGET_RELEASE
 
+
 $(foreach config, $(_all_release_configs), \
     $(eval _all_release_configs.$(config).DECLARED_IN:= ) \
     $(eval _all_release_configs.$(config).FILES:= ) \
@@ -103,120 +112,53 @@ $(foreach config, $(_all_release_configs), \
 _all_release_configs:=
 config_map_files:=
 
+
 # -----------------------------------------------------------------
-# Declare the flags
+# Flag declarations and values
+# -----------------------------------------------------------------
+# This part is in starlark.  We generate a root starlark file that loads
+# all of the flags declaration files that we found, and the flag_value_files
+# that we chose from the config map above.  Then we run that, and load the
+# results of that into the make environment.
 
-# $1 partition(s)
-# $2 flag name. Must start with RELEASE_
-# $3 default. True or false
-define declare-build-flag
-    $(if $(filter-out all $(_FLAG_PARTITIONS), $(strip $(1))), \
-        $(error declare-build-flag: invalid partitions: $(strip $(1))) \
-    )
-    $(if $(and $(filter all,$(strip $(1))),$(filter-out all, $(strip $(1)))), \
-        $(error declare-build-flag: "all" can't be combined with other partitions: $(strip $(1))), \
-        $(eval declare-build-flag.partition := $(_FLAG_PARTITIONS)) \
-    )
-    $(if $(filter-out RELEASE_%, $(strip $(2))), \
-        $(error declare-build-flag: Release flag names must start with RELEASE_: $(strip $(2))) \
-    )
-    $(eval _ALL_RELEASE_FLAGS += $(strip $(2)))
-    $(foreach partition, $(declare-build-flag.partition), \
-        $(eval _ALL_RELEASE_FLAGS.PARTITIONS.$(partition) := $(sort \
-            $(_ALL_RELEASE_FLAGS.PARTITIONS.$(partition)) $(strip $(2)))) \
-    )
-    $(eval _ALL_RELEASE_FLAGS.$(strip $(2)).PARTITIONS := $(declare-build-flag.partition))
-    $(eval _ALL_RELEASE_FLAGS.$(strip $(2)).DEFAULT := $(strip $(3)))
-    $(eval _ALL_RELEASE_FLAGS.$(strip $(2)).DECLARED_IN := $(_included))
-    $(eval _ALL_RELEASE_FLAGS.$(strip $(2)).VALUE := $(strip $(3)))
-    $(eval _ALL_RELEASE_FLAGS.$(strip $(2)).SET_IN := $(_included))
-    $(eval declare-build-flag.partition:=)
-endef
-
-
-# Choose the files
 # If this is a google source tree, restrict it to only the one file
 # which has OWNERS control.  If it isn't let others define their own.
-flag_declaration_files := $(wildcard build/release/build_flags.mk) \
-    $(if $(wildcard vendor/google/release/build_flags.mk), \
-        vendor/google/release/build_flags.mk, \
+# TODO: Remove wildcard for build/release one when all branch manifests
+# have updated.
+flag_declaration_files := $(wildcard build/release/build_flags.bzl) \
+    $(if $(wildcard vendor/google/release/build_flags.bzl), \
+        vendor/google/release/build_flags.bzl, \
         $(sort \
-            $(wildcard device/*/release/build_flags.mk) \
-            $(wildcard device/*/*/release/build_flags.mk) \
-            $(wildcard vendor/*/release/build_flags.mk) \
-            $(wildcard vendor/*/*/release/build_flags.mk) \
+            $(wildcard device/*/release/build_flags.bzl) \
+            $(wildcard device/*/*/release/build_flags.bzl) \
+            $(wildcard vendor/*/release/build_flags.bzl) \
+            $(wildcard vendor/*/*/release/build_flags.bzl) \
         ) \
     )
 
-# Include the files
-$(foreach f, $(flag_declaration_files), \
-    $(eval _included := $(f)) \
-    $(eval include $(f)) \
-)
 
-# Don't let anyone declare build flags after here
-define declare-build-flag
-$(error declare-build-flag can only be called from inside flag definition files.)
-endef
+# Because starlark can't find files with $(wildcard), write an entrypoint starlark script that
+# contains the result of the above wildcards for the starlark code to use.
+filename_to_starlark=$(subst /,_,$(subst .,_,$(1)))
+_c:=load("//build/make/core/release_config.bzl", "release_config")
+_c+=$(newline)def add(d, k, v):
+_c+=$(newline)$(space)d = dict(d)
+_c+=$(newline)$(space)d[k] = v
+_c+=$(newline)$(space)return d
+_c+=$(foreach f,$(flag_declaration_files),$(newline)load("$(f)", flags_$(call filename_to_starlark,$(f)) = "flags"))
+_c+=$(newline)all_flags = [] $(foreach f,$(flag_declaration_files),+ [add(x, "declared_in", "$(f)") for x in flags_$(call filename_to_starlark,$(f))])
+_c+=$(foreach f,$(flag_value_files),$(newline)load("//$(f)", values_$(call filename_to_starlark,$(f)) = "values"))
+_c+=$(newline)all_values = [] $(foreach f,$(flag_value_files),+ [add(x, "set_in", "$(f)") for x in values_$(call filename_to_starlark,$(f))])
+_c+=$(newline)variables_to_export_to_make = release_config(all_flags, all_values)
+$(file >$(OUT_DIR)/release_config_entrypoint.bzl,$(_c))
+_c:=
+filename_to_starlark:=
 
-# No more flags from here on
-.KATI_READONLY := _ALL_RELEASE_FLAGS
+# Exclude the entrypoint file as a dependency (by passing it as the 2nd argument) so that we don't
+# rerun kati every build. Kati will replay the $(file) command that generates it every build,
+# updating its timestamp.
+#
+# We also need to pass --allow_external_entrypoint to rbcrun in case the OUT_DIR is set to something
+# outside of the source tree.
+$(call run-starlark,$(OUT_DIR)/release_config_entrypoint.bzl,$(OUT_DIR)/release_config_entrypoint.bzl,--allow_external_entrypoint)
 
-# -----------------------------------------------------------------
-# Set the flags
-
-# $(1): Flag name. Must start with RELEASE_ and have been defined by declare-build-flag
-# $(2): Value. True or false
-define set-build-flag
-    $(if $(filter-out $(_ALL_RELEASE_FLAGS), $(strip $(1))), \
-        $(error set-build-flag: Undeclared build flag: $(strip $(1))) \
-    )
-    $(eval _ALL_RELEASE_FLAGS.$(strip $(1)).VALUE := $(strip $(2)))
-    $(eval _ALL_RELEASE_FLAGS.$(strip $(1)).SET_IN := $(_included))
-endef
-
-# This writes directly to a file so that the version never exists in make for
-# people to write conditionals upon.
-define set-release-version
-    $(eval _RELEASE_VERSION := $(strip $(1)))
-endef
-
-# Include the files (if there are any)
-ifneq ($(strip $(_release_config_files)),)
-    $(foreach f, $(_release_config_files), \
-        $(eval _included := $(f)) \
-        $(eval include $(f)) \
-    )
-else
-    # No TARGET_RELEASE means release version 0
-    $(call set-release-version, 0)
-endif
-
-
-ifeq ($(_RELEASE_VERSION)),)
-    $(error No release config file called set-release-version. Included files were: $(_release_config_files))
-endif
-
-# Don't let anyone declare build flags after here
-define set-build-flag
-$(error set-build-flag can only be called from inside release config files.)
-endef
-
-# Don't let anyone set the release version after here
-define set-release-version
-$(error set-release-version can only be called from inside release config files.)
-endef
-
-# Set the flag values, and don't allow any one to modify them.
-$(foreach flag, $(_ALL_RELEASE_FLAGS), \
-    $(eval $(flag) := $(_ALL_RELEASE_FLAGS.$(flag).VALUE)) \
-    $(eval .KATI_READONLY := $(flag)) \
-)
-
-
-# -----------------------------------------------------------------
-# Clear out vars
-flag_declaration_files:=
-flag_files:=
-_included:=
-_release_config_files:=

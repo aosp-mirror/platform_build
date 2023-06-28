@@ -140,6 +140,10 @@ ifeq ($(filter memtag_heap, $(my_sanitize)),)
                                     $(PRODUCT_MEMTAG_HEAP_ASYNC_INCLUDE_PATHS)
     combined_exclude_paths := $(MEMTAG_HEAP_EXCLUDE_PATHS) \
                               $(PRODUCT_MEMTAG_HEAP_EXCLUDE_PATHS)
+    ifneq ($(PRODUCT_MEMTAG_HEAP_SKIP_DEFAULT_PATHS),true)
+      combined_sync_include_paths += $(PRODUCT_MEMTAG_HEAP_SYNC_DEFAULT_INCLUDE_PATHS)
+      combined_async_include_paths += $(PRODUCT_MEMTAG_HEAP_ASYNC_DEFAULT_INCLUDE_PATHS)
+    endif
 
     ifeq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_exclude_paths)),\
           $(filter $(dir)%,$(LOCAL_PATH)))),)
@@ -176,6 +180,7 @@ endif
 ifneq ($(filter address,$(my_sanitize)),)
   my_sanitize := $(filter-out cfi,$(my_sanitize))
   my_sanitize := $(filter-out memtag_stack,$(my_sanitize))
+  my_sanitize := $(filter-out memtag_globals,$(my_sanitize))
   my_sanitize := $(filter-out memtag_heap,$(my_sanitize))
   my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
 endif
@@ -183,8 +188,8 @@ endif
 # Disable memtag for host targets. Host executables in AndroidMk files are
 # deprecated, but some partners still have them floating around.
 ifdef LOCAL_IS_HOST_MODULE
-  my_sanitize := $(filter-out memtag_heap memtag_stack,$(my_sanitize))
-  my_sanitize_diag := $(filter-out memtag_heap memtag_stack,$(my_sanitize_diag))
+  my_sanitize := $(filter-out memtag_heap memtag_stack memtag_globals,$(my_sanitize))
+  my_sanitize_diag := $(filter-out memtag_heap memtag_stack memtag_globals,$(my_sanitize_diag))
 endif
 
 # Disable sanitizers which need the UBSan runtime for host targets.
@@ -219,11 +224,13 @@ ifneq ($(filter arm x86 x86_64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
   my_sanitize := $(filter-out hwaddress,$(my_sanitize))
   my_sanitize := $(filter-out memtag_heap,$(my_sanitize))
   my_sanitize := $(filter-out memtag_stack,$(my_sanitize))
+  my_sanitize := $(filter-out memtag_globals,$(my_sanitize))
 endif
 
 ifneq ($(filter hwaddress,$(my_sanitize)),)
   my_sanitize := $(filter-out address,$(my_sanitize))
   my_sanitize := $(filter-out memtag_stack,$(my_sanitize))
+  my_sanitize := $(filter-out memtag_globals,$(my_sanitize))
   my_sanitize := $(filter-out memtag_heap,$(my_sanitize))
   my_sanitize := $(filter-out thread,$(my_sanitize))
   my_sanitize := $(filter-out cfi,$(my_sanitize))
@@ -240,13 +247,20 @@ ifneq ($(filter hwaddress,$(my_sanitize)),)
   endif
 endif
 
-ifneq ($(filter memtag_heap memtag_stack,$(my_sanitize)),)
+ifneq ($(filter memtag_heap memtag_stack memtag_globals,$(my_sanitize)),)
   ifneq ($(filter memtag_heap,$(my_sanitize_diag)),)
     my_cflags += -fsanitize-memtag-mode=sync
     my_sanitize_diag := $(filter-out memtag_heap,$(my_sanitize_diag))
   else
     my_cflags += -fsanitize-memtag-mode=async
   endif
+endif
+
+# Ignore SANITIZE_TARGET_DIAG=memtag_heap without SANITIZE_TARGET=memtag_heap
+# This can happen if a condition above filters out memtag_heap from
+# my_sanitize. It is easier to handle all of these cases here centrally.
+ifneq ($(filter memtag_heap,$(my_sanitize_diag)),)
+  my_sanitize_diag := $(filter-out memtag_heap,$(my_sanitize_diag))
 endif
 
 ifneq ($(filter memtag_heap,$(my_sanitize)),)
@@ -260,6 +274,14 @@ ifneq ($(filter memtag_stack,$(my_sanitize)),)
   my_ldflags += -march=armv8a+memtag
   my_asflags += -march=armv8a+memtag
   my_sanitize := $(filter-out memtag_stack,$(my_sanitize))
+endif
+
+ifneq ($(filter memtag_globals,$(my_sanitize)),)
+  my_cflags += -fsanitize=memtag-globals
+  # TODO(mitchp): For now, enable memtag-heap with memtag-globals because the
+  # linker isn't new enough
+  # (https://reviews.llvm.org/differential/changeset/?ref=4243566).
+  my_sanitize := $(filter-out memtag_globals,$(my_sanitize))
 endif
 
 # TSAN is not supported on 32-bit architectures. For non-multilib cases, make

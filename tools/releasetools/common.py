@@ -35,6 +35,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import stat
 import tempfile
 import threading
 import time
@@ -1423,9 +1424,10 @@ def ResolveAVBSigningPathArgs(split_args):
   def ResolveBinaryPath(path):
     if os.path.exists(path):
       return path
-    new_path = os.path.join(OPTIONS.search_path, path)
-    if os.path.exists(new_path):
-      return new_path
+    if OPTIONS.search_path:
+      new_path = os.path.join(OPTIONS.search_path, path)
+      if os.path.exists(new_path):
+        return new_path
     raise ExternalError(
         "Failed to find {}".format(new_path))
 
@@ -2114,6 +2116,26 @@ def Gunzip(in_filename, out_filename):
     shutil.copyfileobj(in_file, out_file)
 
 
+def UnzipSingleFile(input_zip: zipfile.ZipFile, info: zipfile.ZipInfo, dirname: str):
+  # According to https://stackoverflow.com/questions/434641/how-do-i-set-permissions-attributes-on-a-file-in-a-zip-file-using-pythons-zip/6297838#6297838
+  # higher bits of |external_attr| are unix file permission and types
+  unix_filetype = info.external_attr >> 16
+
+  def CheckMask(a, mask):
+    return (a & mask) == mask
+
+  def IsSymlink(a):
+    return CheckMask(a, stat.S_IFLNK)
+  # python3.11 zipfile implementation doesn't handle symlink correctly
+  if not IsSymlink(unix_filetype):
+    return input_zip.extract(info, dirname)
+  if dirname is None:
+    dirname = os.getcwd()
+  target = os.path.join(dirname, info.filename)
+  os.makedirs(os.path.dirname(target), exist_ok=True)
+  os.symlink(input_zip.read(info).decode(), target)
+
+
 def UnzipToDir(filename, dirname, patterns=None):
   """Unzips the archive to the given directory.
 
@@ -2126,17 +2148,44 @@ def UnzipToDir(filename, dirname, patterns=None):
   """
   with zipfile.ZipFile(filename, allowZip64=True, mode="r") as input_zip:
     # Filter out non-matching patterns. unzip will complain otherwise.
+    entries = input_zip.infolist()
+    # b/283033491
+    # Per https://en.wikipedia.org/wiki/ZIP_(file_format)#Central_directory_file_header
+    # In zip64 mode, central directory record's header_offset field might be
+    # set to 0xFFFFFFFF if header offset is > 2^32. In this case, the extra
+    # fields will contain an 8 byte little endian integer at offset 20
+    # to indicate the actual local header offset.
+    # As of python3.11, python does not handle zip64 central directories
+    # correctly, so we will manually do the parsing here.
+
+    # ZIP64 central directory extra field has two required fields:
+    # 2 bytes header ID and 2 bytes size field. Thes two require fields have
+    # a total size of 4 bytes. Then it has three other 8 bytes field, followed
+    # by a 4 byte disk number field. The last disk number field is not required
+    # to be present, but if it is present, the total size of extra field will be
+    # divisible by 8(because 2+2+4+8*n is always going to be multiple of 8)
+    # Most extra fields are optional, but when they appear, their must appear
+    # in the order defined by zip64 spec. Since file header offset is the 2nd
+    # to last field in zip64 spec, it will only be at last 8 bytes or last 12-4
+    # bytes, depending on whether disk number is present.
+    for entry in entries:
+      if entry.header_offset == 0xFFFFFFFF:
+        if len(entry.extra) % 8 == 0:
+          entry.header_offset = int.from_bytes(entry.extra[-12:-4], "little")
+        else:
+          entry.header_offset = int.from_bytes(entry.extra[-8:], "little")
     if patterns is not None:
-      names = input_zip.namelist()
-      filtered = [name for name in names if any(
-          [fnmatch.fnmatch(name, p) for p in patterns])]
+      filtered = [info for info in entries if any(
+          [fnmatch.fnmatch(info.filename, p) for p in patterns])]
 
       # There isn't any matching files. Don't unzip anything.
       if not filtered:
         return
-      input_zip.extractall(dirname, filtered)
+      for info in filtered:
+        UnzipSingleFile(input_zip, info, dirname)
     else:
-      input_zip.extractall(dirname)
+      for info in entries:
+        UnzipSingleFile(input_zip, info, dirname)
 
 
 def UnzipTemp(filename, patterns=None):
@@ -2402,12 +2451,22 @@ def GetMinSdkVersionInt(apk_name, codename_to_api_level_map):
   try:
     return int(version)
   except ValueError:
-    # Not a decimal number. Codename?
-    if version in codename_to_api_level_map:
-      return codename_to_api_level_map[version]
+    # Not a decimal number.
+    #
+    # It could be either a straight codename, e.g.
+    #     UpsideDownCake
+    #
+    # Or a codename with API fingerprint SHA, e.g.
+    #     UpsideDownCake.e7d3947f14eb9dc4fec25ff6c5f8563e
+    #
+    # Extract the codename and try and map it to a version number.
+    split = version.split(".")
+    codename = split[0]
+    if codename in codename_to_api_level_map:
+      return codename_to_api_level_map[codename]
     raise ExternalError(
-        "Unknown minSdkVersion: '{}'. Known codenames: {}".format(
-            version, codename_to_api_level_map))
+        "Unknown codename: '{}' from minSdkVersion: '{}'. Known codenames: {}".format(
+            codename, version, codename_to_api_level_map))
 
 
 def SignFile(input_name, output_name, key, password, min_api_level=None,
