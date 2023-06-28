@@ -1642,6 +1642,7 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
         'gki_signing_algorithm': 'SHA256_RSA4096',
         'gki_signing_signature_args': '--prop foo:bar',
     }
+    common.OPTIONS.search_path = None
     test_file = tempfile.NamedTemporaryFile()
     self.assertRaises(common.ExternalError, common._GenerateGkiCertificate,
                       test_file.name, 'generic_kernel')
