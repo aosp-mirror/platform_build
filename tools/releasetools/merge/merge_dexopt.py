@@ -118,42 +118,15 @@ def MergeDexopt(temp_dir, output_target_files_dir):
   apex_extract_root_dir = os.path.join(temp_dir, 'apex')
   os.makedirs(apex_extract_root_dir)
 
-  # The directory structure for updatable APEXes is:
-  #
-  # SYSTEM
-  #     apex
-  #         com.android.adbd.apex
-  #         com.android.appsearch.apex
-  #         com.android.art.apex
-  #         ...
-  apex_root = os.path.join(output_target_files_dir, 'SYSTEM', 'apex')
-  for apex in (glob.glob(os.path.join(apex_root, '*.apex')) +
-                glob.glob(os.path.join(apex_root, '*.capex'))):
-    logging.info('  apex: %s', apex)
-    # deapexer is in the same directory as the merge_target_files binary extracted
-    # from otatools.zip.
-    apex_json_info = subprocess.check_output(['deapexer', 'info', apex])
-    logging.info('    info: %s', apex_json_info)
-    apex_info = json.loads(apex_json_info)
-    apex_name = apex_info['name']
-    logging.info('    name: %s', apex_name)
-
-    apex_extract_dir = os.path.join(apex_extract_root_dir, apex_name)
-    os.makedirs(apex_extract_dir)
-
-    # deapexer uses debugfs_static/fsck.erofs from otatools.zip.
-    command = [
-        'deapexer',
-        '--debugfs_path',
-        'debugfs_static',
-        '--fsckerofs_path',
-        'fsck.erofs',
-        'extract',
-        apex,
-        apex_extract_dir,
-    ]
-    logging.info('    running %s', command)
-    subprocess.check_call(command)
+  command = [
+      'apexd_host',
+      '--system_path',
+      os.path.join(temp_dir, 'system'),
+      '--apex_path',
+      apex_extract_root_dir,
+  ]
+  logging.info('    running %s', command)
+  subprocess.check_call(command)
 
   # Modify system config to point to the tools that have been extracted.
   # Absolute or .. paths are not allowed  by the dexpreopt_gen tool in
