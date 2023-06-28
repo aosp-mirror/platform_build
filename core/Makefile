@@ -3233,6 +3233,12 @@ ifdef BOARD_USES_SYSTEM_EXTIMAGE
   ALL_DEFAULT_INSTALLED_MODULES += $(_systemext_symlink)
 endif
 
+# Create symlink /system/bin/hwservicemanager -> /system/system_ext/bin/hwservicemanager
+# Old vendor libraries (like libhidlbase) may require /system/bin/hwservicemanager to be present
+$(call symlink-file,$(TARGET_OUT_SYSTEM_EXT)/bin/hwservicemanager,/system/system_ext/bin/hwservicemanager, $(TARGET_OUT)/bin/hwservicemanager)
+INTERNAL_SYSTEMIMAGE_FILES += \
+    $(TARGET_OUT)/bin/hwservicemanager
+
 # -----------------------------------------------------------------
 # system_dlkm partition image
 
