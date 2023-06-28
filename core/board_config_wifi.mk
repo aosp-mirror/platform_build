@@ -81,6 +81,3 @@ endif
 ifeq ($(strip $(TARGET_USES_AOSP_FOR_WLAN)),true)
     $(call soong_config_set,wifi,target_uses_aosp_for_wlan,true)
 endif
-ifdef WIFI_FEATURE_IMU_DETECTION
-    $(call soong_config_set,wifi,feature_imu_detection,$(WIFI_FEATURE_IMU_DETECTION))
-endif

@@ -34,7 +34,7 @@ mod protos;
 #[cfg(test)]
 mod test;
 
-use commands::{DumpFormat, Input, OutputFile};
+use commands::{CodegenMode, DumpFormat, Input, OutputFile};
 
 fn cli() -> Command {
     Command::new("aconfig")
@@ -49,7 +49,13 @@ fn cli() -> Command {
         .subcommand(
             Command::new("create-java-lib")
                 .arg(Arg::new("cache").long("cache").required(true))
-                .arg(Arg::new("out").long("out").required(true)),
+                .arg(Arg::new("out").long("out").required(true))
+                .arg(
+                    Arg::new("mode")
+                        .long("mode")
+                        .value_parser(EnumValueParser::<commands::CodegenMode>::new())
+                        .default_value("production"),
+                ),
         )
         .subcommand(
             Command::new("create-cpp-lib")
@@ -148,7 +154,8 @@ fn main() -> Result<()> {
         }
         Some(("create-java-lib", sub_matches)) => {
             let cache = open_single_file(sub_matches, "cache")?;
-            let generated_files = commands::create_java_lib(cache)?;
+            let mode = get_required_arg::<CodegenMode>(sub_matches, "mode")?;
+            let generated_files = commands::create_java_lib(cache, *mode)?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
             generated_files
                 .iter()
