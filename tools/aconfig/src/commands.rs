@@ -74,6 +74,7 @@ pub fn parse_flags(package: &str, declarations: Vec<Input>, values: Vec<Input>) 
             parsed_flag.set_name(flag_declaration.take_name());
             parsed_flag.set_namespace(flag_declaration.take_namespace());
             parsed_flag.set_description(flag_declaration.take_description());
+            parsed_flag.bug.append(&mut flag_declaration.bug);
             parsed_flag.set_state(DEFAULT_FLAG_STATE);
             parsed_flag.set_permission(DEFAULT_FLAG_PERMISSION);
             let mut tracepoint = ProtoTracepoint::new();
@@ -128,12 +129,18 @@ pub fn parse_flags(package: &str, declarations: Vec<Input>, values: Vec<Input>) 
     Ok(output)
 }
 
-pub fn create_java_lib(mut input: Input) -> Result<Vec<OutputFile>> {
+#[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
+pub enum CodegenMode {
+    Production,
+    Test,
+}
+
+pub fn create_java_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec<OutputFile>> {
     let parsed_flags = input.try_parse_flags()?;
     let Some(package) = find_unique_package(&parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
-    generate_java_code(package, parsed_flags.parsed_flag.iter())
+    generate_java_code(package, parsed_flags.parsed_flag.iter(), codegen_mode)
 }
 
 pub fn create_cpp_lib(mut input: Input) -> Result<OutputFile> {
@@ -202,6 +209,7 @@ pub enum DumpFormat {
     Text,
     Debug,
     Protobuf,
+    Textproto,
 }
 
 pub fn dump_parsed_flags(mut input: Vec<Input>, format: DumpFormat) -> Result<Vec<u8>> {
@@ -232,6 +240,10 @@ pub fn dump_parsed_flags(mut input: Vec<Input>, format: DumpFormat) -> Result<Ve
         }
         DumpFormat::Protobuf => {
             parsed_flags.write_to_vec(&mut output)?;
+        }
+        DumpFormat::Textproto => {
+            let s = protobuf::text_format::print_to_string_pretty(&parsed_flags);
+            output.extend_from_slice(s.as_bytes());
         }
     }
     Ok(output)
@@ -309,6 +321,29 @@ mod tests {
         let bytes = dump_parsed_flags(vec![input], DumpFormat::Text).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
         assert!(text.contains("com.android.aconfig.test/disabled_ro: DISABLED READ_ONLY"));
+    }
+
+    #[test]
+    fn test_dump_protobuf_format() {
+        let expected = protobuf::text_format::parse_from_str::<ProtoParsedFlags>(
+            crate::test::TEST_FLAGS_TEXTPROTO,
+        )
+        .unwrap()
+        .write_to_bytes()
+        .unwrap();
+
+        let input = parse_test_flags_as_input();
+        let actual = dump_parsed_flags(vec![input], DumpFormat::Protobuf).unwrap();
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_dump_textproto_format() {
+        let input = parse_test_flags_as_input();
+        let bytes = dump_parsed_flags(vec![input], DumpFormat::Textproto).unwrap();
+        let text = std::str::from_utf8(&bytes).unwrap();
+        assert_eq!(crate::test::TEST_FLAGS_TEXTPROTO.trim(), text.trim());
     }
 
     fn parse_test_flags_as_input() -> Input {
