@@ -32,12 +32,15 @@ pub fn is_valid_name_ident(s: &str) -> bool {
 }
 
 pub fn is_valid_package_ident(s: &str) -> bool {
+    if !s.contains('.') {
+        return false;
+    }
     s.split('.').all(is_valid_name_ident)
 }
 
 pub fn create_device_config_ident(package: &str, flag_name: &str) -> Result<String> {
     ensure!(is_valid_package_ident(package), "bad package");
-    ensure!(is_valid_package_ident(flag_name), "bad flag name");
+    ensure!(is_valid_name_ident(flag_name), "bad flag name");
     Ok(format!("{}.{}", package, flag_name))
 }
 
@@ -61,12 +64,13 @@ mod tests {
 
     #[test]
     fn test_is_valid_package_ident() {
-        assert!(is_valid_package_ident("foo"));
-        assert!(is_valid_package_ident("foo_bar_123"));
         assert!(is_valid_package_ident("foo.bar"));
+        assert!(is_valid_package_ident("foo.bar_baz"));
         assert!(is_valid_package_ident("foo.bar.a123"));
-        assert!(!is_valid_package_ident("foo._bar"));
 
+        assert!(!is_valid_package_ident("foo_bar_123"));
+        assert!(!is_valid_package_ident("foo"));
+        assert!(!is_valid_package_ident("foo._bar"));
         assert!(!is_valid_package_ident(""));
         assert!(!is_valid_package_ident("123_foo"));
         assert!(!is_valid_package_ident("foo-bar"));
@@ -75,6 +79,7 @@ mod tests {
         assert!(!is_valid_package_ident(".foo.bar"));
         assert!(!is_valid_package_ident("foo.bar."));
         assert!(!is_valid_package_ident("."));
+        assert!(!is_valid_package_ident(".."));
         assert!(!is_valid_package_ident("foo..bar"));
         assert!(!is_valid_package_ident("foo.__bar"));
     }
