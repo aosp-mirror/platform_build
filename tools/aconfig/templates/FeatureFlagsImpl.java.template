@@ -3,6 +3,7 @@ package {package_name};
 import static java.util.stream.Collectors.toMap;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 {{ else}}
 {{ if is_read_write- }}
@@ -34,6 +35,12 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
             throw new IllegalArgumentException("no such flag" + flagName);
         }
         this.mFlagMap.put(flagName, value);
+    }
+
+    public void resetAll() \{
+        for (Map.Entry entry : mFlagMap.entrySet()) \{
+            entry.setValue(null);
+        }
     }
 
     private boolean getFlag(String flagName) \{
