@@ -37,7 +37,7 @@ pub fn is_valid_package_ident(s: &str) -> bool {
 
 pub fn create_device_config_ident(package: &str, flag_name: &str) -> Result<String> {
     ensure!(is_valid_package_ident(package), "bad package");
-    ensure!(is_valid_package_ident(flag_name), "bad flag name");
+    ensure!(is_valid_name_ident(flag_name), "bad flag name");
     Ok(format!("{}.{}", package, flag_name))
 }
 
