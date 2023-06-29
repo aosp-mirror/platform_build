@@ -233,8 +233,8 @@ mod tests {
         let expected_featureflagsimpl_content = r#"
         package com.android.aconfig.test;
         import static java.util.stream.Collectors.toMap;
-        import java.util.stream.Stream;
         import java.util.HashMap;
+        import java.util.stream.Stream;
         public final class FeatureFlagsImpl implements FeatureFlags {
             @Override
             public boolean disabledRo() {

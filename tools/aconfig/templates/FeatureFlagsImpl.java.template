@@ -2,15 +2,15 @@ package {package_name};
 {{ -if is_test_mode }}
 import static java.util.stream.Collectors.toMap;
 
-import java.util.stream.Stream;
 import java.util.HashMap;
+import java.util.stream.Stream;
 {{ else}}
 {{ if is_read_write- }}
 import android.provider.DeviceConfig;
 {{ -endif- }}
 {{ endif }}
 public final class FeatureFlagsImpl implements FeatureFlags \{
-    {{ for item in class_elements}}
+{{ for item in class_elements}}
     @Override
     public boolean {item.method_name}() \{
         {{ -if not is_test_mode- }}
@@ -20,16 +20,15 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
             "{item.device_config_flag}",
             {item.default_value}
         );
-        {{ else }}
+        {{ -else }}
         return {item.default_value};
         {{ -endif- }}
         {{ else }}
         return getFlag(Flags.FLAG_{item.flag_name_constant_suffix});
         {{ -endif }}
     }
-    {{ endfor }}
-
-    {{ if is_test_mode- }}
+{{ endfor- }}
+{{ if is_test_mode }}
     public void setFlag(String flagName, boolean value) \{
         if (!this.mFlagMap.containsKey(flagName)) \{
             throw new IllegalArgumentException("no such flag" + flagName);
@@ -55,7 +54,5 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
             (map, elem) -> map.put(elem, null),
             HashMap::putAll
         );
-    {{ -endif }}
+{{ -endif }}
 }
-
-
