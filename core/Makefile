@@ -5296,6 +5296,7 @@ INTERNAL_OTATOOLS_MODULES := \
 
 # Additional tools to unpack and repack the apex file.
 INTERNAL_OTATOOLS_MODULES += \
+  apexd_host \
   apexer \
   apex_compression_tool \
   deapexer \
