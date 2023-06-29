@@ -65,8 +65,8 @@ mod tests {
         assert!(is_valid_package_ident("foo_bar_123"));
         assert!(is_valid_package_ident("foo.bar"));
         assert!(is_valid_package_ident("foo.bar.a123"));
-        assert!(!is_valid_package_ident("foo._bar"));
 
+        assert!(!is_valid_package_ident("foo._bar"));
         assert!(!is_valid_package_ident(""));
         assert!(!is_valid_package_ident("123_foo"));
         assert!(!is_valid_package_ident("foo-bar"));
