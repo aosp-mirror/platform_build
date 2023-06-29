@@ -1356,6 +1356,7 @@ else ifdef FULL_BUILD
   product_host_FILES := $(call host-installed-files,$(INTERNAL_PRODUCT))
   product_target_FILES := $(call product-installed-files, $(INTERNAL_PRODUCT))
   # WARNING: The product_MODULES variable is depended on by external files.
+  # It contains the list of register names that will be installed on the device
   product_MODULES := $(_pif_modules)
 
   # Verify the artifact path requirements made by included products.
