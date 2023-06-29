@@ -549,7 +549,7 @@ parsed_flag {
         // bad input: parsed_flag not sorted by package
         let text_proto = r#"
 parsed_flag {
-    package: "bbb"
+    package: "bbb.bbb"
     name: "first"
     namespace: "first_ns"
     description: "This is the description of the first flag."
@@ -562,7 +562,7 @@ parsed_flag {
     }
 }
 parsed_flag {
-    package: "aaa"
+    package: "aaa.aaa"
     name: "second"
     namespace: "second_ns"
     description: "This is the description of the second flag."
@@ -578,7 +578,7 @@ parsed_flag {
         let error = try_from_binary_proto_from_text_proto(text_proto).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
-            "bad parsed flags: not sorted: bbb.first comes before aaa.second"
+            "bad parsed flags: not sorted: bbb.bbb.first comes before aaa.aaa.second"
         );
 
         // bad input: parsed_flag not sorted by name
