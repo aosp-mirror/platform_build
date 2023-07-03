@@ -37,6 +37,7 @@ python_defaults {
         "releasetools_build_image",
         "releasetools_build_super_image",
         "releasetools_common",
+        "libavbtool",
     ],
     required: [
         "care_map_generator",
@@ -62,7 +63,7 @@ python_defaults {
         "mkuserimg_mke2fs",
         "simg2img",
         "tune2fs",
-        "mkf2fsuserimg.sh",
+        "mkf2fsuserimg",
         "fsck.f2fs",
     ],
 }
@@ -94,10 +95,13 @@ python_defaults {
         "check_target_files_vintf.py",
     ],
     libs: [
+        "apex_manifest",
         "releasetools_common",
     ],
     required: [
         "checkvintf",
+        "deapexer",
+        "dump_apex_info",
     ],
 }
 
@@ -150,7 +154,6 @@ python_defaults {
         "edify_generator.py",
         "non_ab_ota.py",
         "ota_from_target_files.py",
-        "ota_utils.py",
         "target_files_diff.py",
     ],
     libs: [
@@ -160,6 +163,7 @@ python_defaults {
         "releasetools_verity_utils",
         "apex_manifest",
         "care_map_proto_py",
+        "ota_utils_lib",
     ],
     required: [
         "brillo_update_payload",
@@ -321,6 +325,51 @@ python_binary_host {
     defaults: [
         "releasetools_binary_defaults",
         "releasetools_add_img_to_target_files_defaults",
+    ],
+}
+
+python_library_host {
+    name: "ota_utils_lib",
+    srcs: [
+        "ota_utils.py",
+        "payload_signer.py",
+    ],
+    libs: [
+        "releasetools_common",
+    ],
+}
+
+python_binary_host {
+    name: "merge_ota",
+    version: {
+        py3: {
+            embedded_launcher: true,
+        },
+    },
+    srcs: [
+        "merge_ota.py",
+    ],
+    libs: [
+        "ota_metadata_proto",
+        "update_payload",
+        "care_map_proto_py",
+        "releasetools_common",
+        "ota_utils_lib",
+    ],
+}
+
+python_binary_host {
+    name: "create_brick_ota",
+    version: {
+        py3: {
+            embedded_launcher: true,
+        },
+    },
+    srcs: [
+        "create_brick_ota.py",
+    ],
+    libs: [
+        "ota_utils_lib",
     ],
 }
 
@@ -519,23 +568,6 @@ python_binary_host {
 }
 
 python_binary_host {
-    name: "fsverity_manifest_generator",
-    defaults: ["releasetools_binary_defaults"],
-    srcs: [
-        "fsverity_manifest_generator.py",
-    ],
-    libs: [
-        "fsverity_digests_proto_python",
-        "releasetools_common",
-    ],
-    required: [
-        "aapt2",
-        "apksigner",
-        "fsverity",
-    ],
-}
-
-python_binary_host {
     name: "fsverity_metadata_generator",
     defaults: ["releasetools_binary_defaults"],
     srcs: [
@@ -561,6 +593,7 @@ python_defaults {
         "sign_apex.py",
         "sign_target_files_apks.py",
         "validate_target_files.py",
+        "merge_ota.py",
         ":releasetools_merge_sources",
         ":releasetools_merge_tests",
 
@@ -577,11 +610,13 @@ python_defaults {
         "releasetools_img_from_target_files",
         "releasetools_ota_from_target_files",
         "releasetools_verity_utils",
+        "update_payload",
     ],
     data: [
         "testdata/**/*",
         ":com.android.apex.compressed.v1",
         ":com.android.apex.compressed.v1_original",
+        ":com.android.apex.vendor.foo.with_vintf"
     ],
     target: {
         darwin: {

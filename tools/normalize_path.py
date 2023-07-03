@@ -22,8 +22,8 @@ import sys
 
 if len(sys.argv) > 1:
   for p in sys.argv[1:]:
-    print os.path.normpath(p)
+    print(os.path.normpath(p))
   sys.exit(0)
 
 for line in sys.stdin:
-  print os.path.normpath(line.strip())
+  print(os.path.normpath(line.strip()))

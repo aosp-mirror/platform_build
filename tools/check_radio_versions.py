@@ -22,11 +22,18 @@ try:
 except ImportError:
   from sha import sha as sha1
 
-if len(sys.argv) < 2:
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--board_info_txt", nargs="?", required=True)
+parser.add_argument("--board_info_check", nargs="*", required=True)
+args = parser.parse_args()
+
+if not args.board_info_txt:
   sys.exit(0)
 
 build_info = {}
-f = open(sys.argv[1])
+f = open(args.board_info_txt)
 for line in f:
   line = line.strip()
   if line.startswith("require"):
@@ -36,7 +43,7 @@ f.close()
 
 bad = False
 
-for item in sys.argv[2:]:
+for item in args.board_info_check:
   key, fn = item.split(":", 1)
 
   values = build_info.get(key, None)
@@ -52,8 +59,8 @@ for item in sys.argv[2:]:
   try:
     f = open(fn + ".sha1")
   except IOError:
-    if not bad: print
-    print "*** Error opening \"%s.sha1\"; can't verify %s" % (fn, key)
+    if not bad: print()
+    print("*** Error opening \"%s.sha1\"; can't verify %s" % (fn, key))
     bad = True
     continue
   for line in f:
@@ -63,17 +70,17 @@ for item in sys.argv[2:]:
     versions[h] = v
 
   if digest not in versions:
-    if not bad: print
-    print "*** SHA-1 hash of \"%s\" doesn't appear in \"%s.sha1\"" % (fn, fn)
+    if not bad: print()
+    print("*** SHA-1 hash of \"%s\" doesn't appear in \"%s.sha1\"" % (fn, fn))
     bad = True
     continue
 
   if versions[digest] not in values:
-    if not bad: print
-    print "*** \"%s\" is version %s; not any %s allowed by \"%s\"." % (
-        fn, versions[digest], key, sys.argv[1])
+    if not bad: print()
+    print("*** \"%s\" is version %s; not any %s allowed by \"%s\"." % (
+        fn, versions[digest], key, args.board_info_txt))
     bad = True
 
 if bad:
-  print
+  print()
   sys.exit(1)
