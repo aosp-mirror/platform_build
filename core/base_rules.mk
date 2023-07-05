@@ -578,7 +578,7 @@ ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 
       ALL_VINTF_MANIFEST_FRAGMENTS_LIST += $(my_vintf_new_pairs)
 
-      $(my_all_targets) : $(my_vintf_new_installed)
+      $(my_all_targets) : $(my_vintf_installed)
     endif # my_vintf_fragments
 
     # Rule to install the module's companion init.rc.
