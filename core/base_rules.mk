@@ -979,6 +979,11 @@ ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
       $(my_init_rc_pairs) \
       $(my_test_data_pairs) \
       $(my_vintf_pairs))
+  # Store the list of vintf/init_rc as order-only dependencies
+  ALL_MODULES.$(my_register_name).ORDERONLY_INSTALLED := \
+    $(strip $(ALL_MODULES.$(my_register_name).ORDERONLY_INSTALLED) \
+      $(my_init_rc_installed) \
+      $(my_vintf_installed))
 else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   ALL_MODULES.$(my_register_name).INSTALLED := \
     $(strip $(ALL_MODULES.$(my_register_name).INSTALLED) \
@@ -988,6 +993,10 @@ else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
     $(strip $(ALL_MODULES.$(my_register_name).BUILT_INSTALLED) \
     $(LOCAL_BUILT_MODULE):$(LOCAL_INSTALLED_MODULE) \
     $(my_init_rc_pairs) $(my_test_data_pairs) $(my_vintf_pairs))
+  ALL_MODULES.$(my_register_name).ORDERONLY_INSTALLED := \
+    $(strip $(ALL_MODULES.$(my_register_name).ORDERONLY_INSTALLED) \
+      $(my_init_rc_installed) \
+      $(my_vintf_installed))
 endif
 ifdef LOCAL_PICKUP_FILES
 # Files or directories ready to pick up by the build system
