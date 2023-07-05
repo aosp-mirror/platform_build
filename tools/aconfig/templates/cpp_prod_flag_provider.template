@@ -1,12 +1,12 @@
-#ifndef {header}_HEADER_H
-#define {header}_HEADER_H
-{{ if readwrite }}
-#include <server_configurable_flags/get_flags.h>
-using namespace server_configurable_flags;
-{{ endif }}
+#ifndef {header}_flag_provider_HEADER_H
+#define {header}_flag_provider_HEADER_H
+#include "{header}.h"
+
 namespace {cpp_namespace} \{
+class flag_provider : public flag_provider_interface \{
+public:
     {{ for item in class_elements}}
-    static const bool {item.flag_name}() \{
+    virtual bool {item.flag_name}() override \{
         {{ if item.readwrite- }}
         return GetServerConfigurableFlag(
             "{item.device_config_namespace}",
@@ -17,5 +17,6 @@ namespace {cpp_namespace} \{
         {{ -endif }}
     }
     {{ endfor }}
+};
 }
 #endif
