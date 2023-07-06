@@ -778,6 +778,9 @@ $(KATI_obsolete_var $(foreach req,$(requirements),$(req)_OVERRIDE) \
 
 requirements :=
 
+# Set default value of KEEP_VNDK.
+KEEP_VNDK ?= true
+
 # BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED can be true only if early-mount of
 # partitions is supported. But the early-mount must be supported for full
 # treble products, and so BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED should be set

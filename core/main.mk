@@ -218,6 +218,12 @@ ifdef BOARD_VNDK_VERSION
   else
     ADDITIONAL_VENDOR_PROPERTIES := ro.vndk.version=$(BOARD_VNDK_VERSION)
   endif
+
+  # TODO(b/290159430): ro.vndk.deprecate is a temporal variable for deprecating VNDK.
+  # This variable will be removed once ro.vndk.version can be removed.
+  ifneq ($(KEEP_VNDK),true)
+    ADDITIONAL_SYSTEM_PROPERTIES += ro.vndk.deprecate=true
+  endif
 endif
 
 # Add cpu properties for bionic and ART.

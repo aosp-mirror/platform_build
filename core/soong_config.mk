@@ -318,6 +318,8 @@ $(call add_json_list, BuildVersionTags,    $(BUILD_VERSION_TAGS))
 $(call add_json_str, ReleaseVersion,    $(_RELEASE_VERSION))
 $(call add_json_list, ReleaseAconfigValueSets,    $(RELEASE_ACONFIG_VALUE_SETS))
 
+$(call add_json_bool, KeepVndk, $(filter true,$(KEEP_VNDK)))
+
 $(call json_end)
 
 $(file >$(SOONG_VARIABLES).tmp,$(json_contents))
