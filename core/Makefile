@@ -2471,7 +2471,11 @@ $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): PRIVATE_RECOVERY_UI_PROPERTIES := \
     TARGET_RECOVERY_UI_PROGRESS_BAR_BASELINE:progress_bar_baseline \
     TARGET_RECOVERY_UI_TOUCH_LOW_THRESHOLD:touch_low_threshold \
     TARGET_RECOVERY_UI_TOUCH_HIGH_THRESHOLD:touch_high_threshold \
-    TARGET_RECOVERY_UI_VR_STEREO_OFFSET:vr_stereo_offset
+    TARGET_RECOVERY_UI_VR_STEREO_OFFSET:vr_stereo_offset \
+    TARGET_RECOVERY_UI_BRIGHTNESS_FILE:brightness_file \
+    TARGET_RECOVERY_UI_MAX_BRIGHTNESS_FILE:max_brightness_file \
+    TARGET_RECOVERY_UI_BRIGHTNESS_NORMAL:brightness_normal_percent \
+    TARGET_RECOVERY_UI_BRIGHTNESS_DIMMED:brightness_dimmed_percent
 
 # Parses the given list of build variables and writes their values as build properties if defined.
 # For example, if a target defines `TARGET_RECOVERY_UI_MARGIN_HEIGHT := 100`,
