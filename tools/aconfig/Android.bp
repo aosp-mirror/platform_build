@@ -2,6 +2,28 @@ package {
     default_applicable_licenses: ["Android-Apache-2.0"],
 }
 
+// proto libraries for consumers of `aconfig dump --format=protobuf` output
+
+java_library {
+    name: "libaconfig_java_proto_lite",
+    host_supported: true,
+    srcs: ["protos/aconfig.proto"],
+    static_libs: ["libprotobuf-java-lite"],
+    proto: {
+        type: "lite",
+    },
+    sdk_version: "current",
+}
+
+java_library_host {
+    name: "libaconfig_java_proto_full",
+    srcs: ["protos/aconfig.proto"],
+    static_libs: ["libprotobuf-java-full"],
+    proto: {
+        type: "full",
+    },
+}
+
 // host binary: aconfig
 
 rust_protobuf_host {
