@@ -26,7 +26,10 @@ TARGET_2ND_ARCH := x86
 TARGET_2ND_ARCH_VARIANT := x86_64
 
 TARGET_PRELINK_MODULE := false
+
 include build/make/target/board/BoardConfigGsiCommon.mk
+
+ifndef BUILDING_GSI
 include build/make/target/board/BoardConfigEmuCommon.mk
 
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
@@ -43,3 +46,5 @@ WPA_SUPPLICANT_VERSION      := VER_0_8_X
 WIFI_DRIVER_FW_PATH_PARAM   := "/dev/null"
 WIFI_DRIVER_FW_PATH_STA     := "/dev/null"
 WIFI_DRIVER_FW_PATH_AP      := "/dev/null"
+
+endif # !BUILDING_GSI

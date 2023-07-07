@@ -22,6 +22,19 @@
 
 namespace android {
 
+// An entry is considered a directory if it has a stored size of zero
+// and it ends with '/' or '\' character.
+static bool isDirectory(ZipEntry* entry) {
+   if (entry->getUncompressedLen() != 0) {
+       return false;
+   }
+
+   const char* name = entry->getFileName();
+   size_t nameLength = strlen(name);
+   char lastChar = name[nameLength-1];
+   return lastChar == '/' || lastChar == '\\';
+}
+
 static int getAlignment(bool pageAlignSharedLibs, int defaultAlignment,
     ZipEntry* pEntry) {
 
@@ -59,7 +72,7 @@ static int copyAndAlign(ZipFile* pZin, ZipFile* pZout, int alignment, bool zopfl
             return 1;
         }
 
-        if (pEntry->isCompressed()) {
+        if (pEntry->isCompressed() || isDirectory(pEntry)) {
             /* copy the entry without padding */
             //printf("--- %s: orig at %ld len=%ld (compressed)\n",
             //    pEntry->getFileName(), (long) pEntry->getFileOffset(),
@@ -160,7 +173,13 @@ int verify(const char* fileName, int alignment, bool verbose,
                 printf("%8jd %s (OK - compressed)\n",
                     (intmax_t) pEntry->getFileOffset(), pEntry->getFileName());
             }
-        } else {
+        } else if(isDirectory(pEntry)) {
+            // Directory entries do not need to be aligned.
+            if (verbose)
+                printf("%8jd %s (OK - directory)\n",
+                       (intmax_t) pEntry->getFileOffset(), pEntry->getFileName());
+            continue;
+       } else {
             off_t offset = pEntry->getFileOffset();
             const int alignTo = getAlignment(pageAlignSharedLibs, alignment, pEntry);
             if ((offset % alignTo) != 0) {

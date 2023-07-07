@@ -1,0 +1,6 @@
+# Comments are allowed
+name: "noticetd"
+description: "Notice Test Data"
+third_party {
+    version: "1.0"
+}

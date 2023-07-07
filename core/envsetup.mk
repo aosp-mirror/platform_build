@@ -135,15 +135,17 @@ ifneq (,$(findstring Darwin,$(UNAME)))
   HOST_OS := darwin
 endif
 
-HOST_OS_EXTRA := $(shell uname -rsm)
-ifeq ($(HOST_OS),linux)
-  ifneq ($(wildcard /etc/os-release),)
-    HOST_OS_EXTRA += $(shell source /etc/os-release; echo $$PRETTY_NAME)
+ifeq ($(CALLED_FROM_SETUP),true)
+  HOST_OS_EXTRA := $(shell uname -rsm)
+  ifeq ($(HOST_OS),linux)
+    ifneq ($(wildcard /etc/os-release),)
+      HOST_OS_EXTRA += $(shell source /etc/os-release; echo $$PRETTY_NAME)
+    endif
+  else ifeq ($(HOST_OS),darwin)
+    HOST_OS_EXTRA += $(shell sw_vers -productVersion)
   endif
-else ifeq ($(HOST_OS),darwin)
-  HOST_OS_EXTRA += $(shell sw_vers -productVersion)
+  HOST_OS_EXTRA := $(subst $(space),-,$(HOST_OS_EXTRA))
 endif
-HOST_OS_EXTRA := $(subst $(space),-,$(HOST_OS_EXTRA))
 
 # BUILD_OS is the real host doing the build.
 BUILD_OS := $(HOST_OS)
@@ -323,11 +325,11 @@ endif
 # likely to be relevant to the product or board configuration.
 # Soong config variables are dumped as $(call soong_config_set) calls
 # instead of the raw variable values, because mk2rbc can't read the
-# raw ones.
+# raw ones. There is a final sed command on the output file to
+# remove leading spaces because I couldn't figure out how to remove
+# them in pure make code.
 define dump-variables-rbc
 $(eval _dump_variables_rbc_excluded := \
-  BOARD_PLAT_PRIVATE_SEPOLICY_DIR \
-  BOARD_PLAT_PUBLIC_SEPOLICY_DIR \
   BUILD_NUMBER \
   DATE \
   LOCAL_PATH \
@@ -347,6 +349,7 @@ $(v) := $(strip $($(v)))$(newline))\
 $(foreach ns,$(sort $(SOONG_CONFIG_NAMESPACES)),\
 $(foreach v,$(sort $(SOONG_CONFIG_$(ns))),\
 $$(call soong_config_set,$(ns),$(v),$(SOONG_CONFIG_$(ns)_$(v)))$(newline))))
+$(shell sed -i "s/^ *//g" $(1))
 endef
 
 # Read the product specs so we can get TARGET_DEVICE and other
