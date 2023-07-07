@@ -245,7 +245,7 @@ ifeq (true,$(LOCAL_ENFORCE_USES_LIBRARIES))
   $(my_enforced_uses_libraries): PRIVATE_OPTIONAL_USES_LIBRARIES := $(my_optional_uses_libs_args)
   $(my_enforced_uses_libraries): PRIVATE_DEXPREOPT_CONFIGS := $(my_dexpreopt_config_args)
   $(my_enforced_uses_libraries): PRIVATE_RELAX_CHECK := $(my_relax_check_arg)
-  $(my_enforced_uses_libraries): $(AAPT)
+  $(my_enforced_uses_libraries): $(AAPT2)
   $(my_enforced_uses_libraries): $(my_verify_script)
   $(my_enforced_uses_libraries): $(my_dexpreopt_dep_configs)
   $(my_enforced_uses_libraries): $(my_manifest_or_apk)
@@ -254,7 +254,7 @@ ifeq (true,$(LOCAL_ENFORCE_USES_LIBRARIES))
 	$(my_verify_script) \
 	  --enforce-uses-libraries \
 	  --enforce-uses-libraries-status $@ \
-	  --aapt $(AAPT) \
+	  --aapt $(AAPT2) \
 	  $(PRIVATE_USES_LIBRARIES) \
 	  $(PRIVATE_OPTIONAL_USES_LIBRARIES) \
 	  $(PRIVATE_DEXPREOPT_CONFIGS) \
@@ -272,11 +272,8 @@ my_dexpreopt_images :=
 my_dexpreopt_images_deps :=
 my_dexpreopt_image_locations_on_host :=
 my_dexpreopt_image_locations_on_device :=
-my_dexpreopt_infix := boot
+my_dexpreopt_infix := $(DEXPREOPT_INFIX)
 my_create_dexpreopt_config :=
-ifeq (true, $(DEXPREOPT_USE_ART_IMAGE))
-  my_dexpreopt_infix := art
-endif
 
 ifdef LOCAL_DEX_PREOPT
   ifeq (,$(filter PRESIGNED,$(LOCAL_CERTIFICATE)))
@@ -445,6 +442,7 @@ ifdef LOCAL_DEX_PREOPT
 
   my_dexpreopt_script := $(intermediates)/dexpreopt.sh
   my_dexpreopt_zip := $(intermediates)/dexpreopt.zip
+  DEXPREOPT.$(LOCAL_MODULE).POST_INSTALLED_DEXPREOPT_ZIP := $(my_dexpreopt_zip)
   .KATI_RESTAT: $(my_dexpreopt_script)
   $(my_dexpreopt_script): PRIVATE_MODULE := $(LOCAL_MODULE)
   $(my_dexpreopt_script): PRIVATE_GLOBAL_SOONG_CONFIG := $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE)

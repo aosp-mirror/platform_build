@@ -30,7 +30,6 @@ PRODUCT_PACKAGES += \
     Gallery2 \
     LatinIME \
     Music \
-    OneTimeInitializer \
     preinstalled-packages-platform-handheld-product.xml \
     QuickSearchBox \
     SettingsIntelligence \
