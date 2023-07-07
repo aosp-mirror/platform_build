@@ -19,12 +19,14 @@ import (
 	"sort"
 	"strings"
 	"testing"
+
+	"android/soong/tools/compliance/testfs"
 )
 
 func TestReadLicenseGraph(t *testing.T) {
 	tests := []struct {
 		name            string
-		fs              *testFS
+		fs              *testfs.TestFS
 		roots           []string
 		expectedError   string
 		expectedEdges   []edge
@@ -32,7 +34,7 @@ func TestReadLicenseGraph(t *testing.T) {
 	}{
 		{
 			name: "trivial",
-			fs: &testFS{
+			fs: &testfs.TestFS{
 				"app.meta_lic": []byte("package_name: \"Android\"\n"),
 			},
 			roots:           []string{"app.meta_lic"},
@@ -41,7 +43,7 @@ func TestReadLicenseGraph(t *testing.T) {
 		},
 		{
 			name: "unterminated",
-			fs: &testFS{
+			fs: &testfs.TestFS{
 				"app.meta_lic": []byte("package_name: \"Android\n"),
 			},
 			roots:         []string{"app.meta_lic"},
@@ -49,7 +51,7 @@ func TestReadLicenseGraph(t *testing.T) {
 		},
 		{
 			name: "danglingref",
-			fs: &testFS{
+			fs: &testfs.TestFS{
 				"app.meta_lic": []byte(AOSP + "deps: {\n  file: \"lib.meta_lic\"\n}\n"),
 			},
 			roots:         []string{"app.meta_lic"},
@@ -57,7 +59,7 @@ func TestReadLicenseGraph(t *testing.T) {
 		},
 		{
 			name: "singleedge",
-			fs: &testFS{
+			fs: &testfs.TestFS{
 				"app.meta_lic": []byte(AOSP + "deps: {\n  file: \"lib.meta_lic\"\n}\n"),
 				"lib.meta_lic": []byte(AOSP),
 			},
@@ -67,7 +69,7 @@ func TestReadLicenseGraph(t *testing.T) {
 		},
 		{
 			name: "fullgraph",
-			fs: &testFS{
+			fs: &testfs.TestFS{
 				"apex.meta_lic": []byte(AOSP + "deps: {\n  file: \"app.meta_lic\"\n}\ndeps: {\n  file: \"bin.meta_lic\"\n}\n"),
 				"app.meta_lic":  []byte(AOSP),
 				"bin.meta_lic":  []byte(AOSP + "deps: {\n  file: \"lib.meta_lic\"\n}\n"),

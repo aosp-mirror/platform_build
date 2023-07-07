@@ -45,7 +45,7 @@ func (ctx ApplicableConditionsContext) Context(lg *LicenseGraph, path TargetEdge
 }
 
 // VisitNode is called for each root and for each walked dependency node by
-// WalkTopDown. When VisitNode returns true, WalkTopDown will proceed to walk
+// WalkTopDown and WalkTopDownBreadthFirst. When VisitNode returns true, WalkTopDown will proceed to walk
 // down the dependences of the node
 type VisitNode func(lg *LicenseGraph, target *TargetNode, path TargetEdgePath) bool
 
@@ -76,6 +76,54 @@ func WalkTopDown(ctx EdgeContextProvider, lg *LicenseGraph, visit VisitNode) {
 	for _, r := range lg.rootFiles {
 		path.Clear()
 		walk(lg.targets[r])
+	}
+}
+
+// WalkTopDownBreadthFirst performs a Breadth-first top down walk of `lg` calling `visit` and descending
+// into depenencies when `visit` returns true.
+func WalkTopDownBreadthFirst(ctx EdgeContextProvider, lg *LicenseGraph, visit VisitNode) {
+	path := NewTargetEdgePath(32)
+
+	var walk func(fnode *TargetNode)
+	walk = func(fnode *TargetNode) {
+		edgesToWalk := make(TargetEdgeList, 0, len(fnode.edges))
+		for _, edge := range fnode.edges {
+			var edgeContext interface{}
+			if ctx == nil {
+				edgeContext = nil
+			} else {
+				edgeContext = ctx.Context(lg, *path, edge)
+			}
+			path.Push(edge, edgeContext)
+			if visit(lg, edge.dependency, *path){
+				edgesToWalk = append(edgesToWalk, edge)
+			}
+			path.Pop()
+		}
+
+		for _, edge := range(edgesToWalk) {
+			var edgeContext interface{}
+			if ctx == nil {
+				edgeContext = nil
+			} else {
+				edgeContext = ctx.Context(lg, *path, edge)
+			}
+			path.Push(edge, edgeContext)
+			walk(edge.dependency)
+			path.Pop()
+		}
+	}
+
+	path.Clear()
+	rootsToWalk := make([]*TargetNode, 0, len(lg.rootFiles))
+	for _, r := range lg.rootFiles {
+		if visit(lg, lg.targets[r], *path){
+			rootsToWalk = append(rootsToWalk, lg.targets[r])
+		}
+	}
+
+	for _, rnode := range(rootsToWalk) {
+		walk(rnode)
 	}
 }
 
@@ -199,40 +247,16 @@ func WalkResolutionsForCondition(lg *LicenseGraph, conditions LicenseConditionSe
 // WalkActionsForCondition performs a top-down walk of the LicenseGraph
 // resolving all distributed works for `conditions`.
 func WalkActionsForCondition(lg *LicenseGraph, conditions LicenseConditionSet) ActionSet {
-	shipped := ShippedNodes(lg)
-
-	// cmap identifies previously walked target/condition pairs.
-	cmap := make(map[resolutionKey]struct{})
-
 	// amap maps 'actsOn' targets to the applicable conditions
 	//
 	// amap is the resulting ActionSet
 	amap := make(ActionSet)
-	WalkTopDown(ApplicableConditionsContext{conditions}, lg, func(lg *LicenseGraph, tn *TargetNode, path TargetEdgePath) bool {
-		universe := conditions
-		if len(path) > 0 {
-			universe = path[len(path)-1].ctx.(LicenseConditionSet)
+
+	for tn := range ShippedNodes(lg) {
+		if cs := conditions.Intersection(tn.resolution); !cs.IsEmpty() {
+			amap[tn] = cs
 		}
-		if universe.IsEmpty() {
-			return false
-		}
-		key := resolutionKey{tn, universe}
-		if _, ok := cmap[key]; ok {
-			return false
-		}
-		if !shipped.Contains(tn) {
-			return false
-		}
-		cs := universe.Intersection(tn.resolution)
-		if !cs.IsEmpty() {
-			if _, ok := amap[tn]; ok {
-				amap[tn] = cs
-			} else {
-				amap[tn] = amap[tn].Union(cs)
-			}
-		}
-		return true
-	})
+	}
 
 	return amap
 }

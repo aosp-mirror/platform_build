@@ -26,6 +26,8 @@ $(call add_soong_config_namespace,ANDROID)
 
 # Add variables to the namespace below:
 
+$(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_MEDIASERVER)
+$(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_DRMSERVER)
 $(call add_soong_config_var,ANDROID,TARGET_ENABLE_MEDIADRM_64)
 $(call add_soong_config_var,ANDROID,IS_TARGET_MIXED_SEPOLICY)
 ifeq ($(IS_TARGET_MIXED_SEPOLICY),true)
@@ -33,13 +35,55 @@ $(call add_soong_config_var_value,ANDROID,MIXED_SEPOLICY_VERSION,$(BOARD_SEPOLIC
 endif
 $(call add_soong_config_var,ANDROID,BOARD_USES_ODMIMAGE)
 $(call add_soong_config_var,ANDROID,BOARD_USES_RECOVERY_AS_BOOT)
-$(call add_soong_config_var,ANDROID,BOARD_BUILD_SYSTEM_ROOT_IMAGE)
 $(call add_soong_config_var,ANDROID,PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT)
 
 # Default behavior for the tree wrt building modules or using prebuilts. This
 # can always be overridden by setting the environment variable
 # MODULE_BUILD_FROM_SOURCE.
-BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := false
+
+ifneq ($(SANITIZE_TARGET)$(EMMA_INSTRUMENT_FRAMEWORK),)
+  # Always use sources when building the framework with Java coverage or
+  # sanitized builds as they both require purpose built prebuilts which we do
+  # not provide.
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
+
+ifneq ($(CLANG_COVERAGE)$(NATIVE_COVERAGE_PATHS),)
+  # Always use sources when building with clang coverage and native coverage.
+  # It is possible that there are certain situations when building with coverage
+  # would work with prebuilts, e.g. when the coverage is not being applied to
+  # modules for which we provide prebuilts. Unfortunately, determining that
+  # would require embedding knowledge of which coverage paths affect which
+  # modules here. That would duplicate a lot of information, add yet another
+  # location  module authors have to update and complicate the logic here.
+  # For nowe we will just always build from sources when doing coverage builds.
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
+
+# ART does not provide linux_bionic variants needed for products that
+# set HOST_CROSS_OS=linux_bionic.
+ifeq (linux_bionic,${HOST_CROSS_OS})
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
+
+# ART does not provide host side arm64 variants needed for products that
+# set HOST_CROSS_ARCH=arm64.
+ifeq (arm64,${HOST_CROSS_ARCH})
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
+
+# TV based devices do not seem to work with prebuilts, so build from source
+# for now and fix in a follow up.
+ifneq (,$(filter tv,$(subst $(comma),$(space),${PRODUCT_CHARACTERISTICS})))
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
+
+# ATV based devices do not seem to work with prebuilts, so build from source
+# for now and fix in a follow up.
+ifneq (,${PRODUCT_IS_ATV})
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
 
 ifneq (,$(MODULE_BUILD_FROM_SOURCE))
   # Keep an explicit setting.
@@ -71,12 +115,17 @@ endif
 
 $(call soong_config_set,art_module,source_build,$(ART_MODULE_BUILD_FROM_SOURCE))
 
+ifdef TARGET_BOARD_AUTO
+  $(call add_soong_config_var_value, ANDROID, target_board_auto, $(TARGET_BOARD_AUTO))
+endif
+
 # Ensure that those mainline modules who have individually toggleable prebuilts
 # are controlled by the MODULE_BUILD_FROM_SOURCE environment variable by
 # default.
 INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
-  bluetooth \
+  btservices \
   permission \
+  rkpd \
   uwb \
   wifi \
 
@@ -87,6 +136,10 @@ $(foreach m, $(INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES),\
 # Apex build mode variables
 ifdef APEX_BUILD_FOR_PRE_S_DEVICES
 $(call add_soong_config_var_value,ANDROID,library_linking_strategy,prefer_static)
+else
+ifdef KEEP_APEX_INHERIT
+$(call add_soong_config_var_value,ANDROID,library_linking_strategy,prefer_static)
+endif
 endif
 
 ifeq (true,$(MODULE_BUILD_FROM_SOURCE))
@@ -98,11 +151,33 @@ ifeq (eng,$(TARGET_BUILD_VARIANT))
 $(call soong_config_set,messaging,build_variant_eng,true)
 endif
 
-# TODO(b/203088572): Remove when Java optimizations enabled by default for
-# SystemUI.
+# Enable SystemUI optimizations by default unless explicitly set.
+SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
-# TODO(b/196084106): Remove when Java optimizations enabled by default for
-# system packages.
+
+# Disable Compose in SystemUI by default.
+SYSTEMUI_USE_COMPOSE ?= false
+$(call add_soong_config_var,ANDROID,SYSTEMUI_USE_COMPOSE)
+
+ifdef PRODUCT_AVF_ENABLED
+$(call add_soong_config_var_value,ANDROID,avf_enabled,$(PRODUCT_AVF_ENABLED))
+endif
+
+# Enable system_server optimizations by default unless explicitly set or if
+# there may be dependent runtime jars.
+# TODO(b/240588226): Remove the off-by-default exceptions after handling
+# system_server jars automatically w/ R8.
+ifeq (true,$(PRODUCT_BROKEN_SUBOPTIMAL_ORDER_OF_SYSTEM_SERVER_JARS))
+  # If system_server jar ordering is broken, don't assume services.jar can be
+  # safely optimized in isolation, as there may be dependent jars.
+  SYSTEM_OPTIMIZE_JAVA ?= false
+else ifneq (platform:services,$(lastword $(PRODUCT_SYSTEM_SERVER_JARS)))
+  # If services is not the final jar in the dependency ordering, don't assume
+  # it can be safely optimized in isolation, as there may be dependent jars.
+  SYSTEM_OPTIMIZE_JAVA ?= false
+else
+  SYSTEM_OPTIMIZE_JAVA ?= true
+endif
 $(call add_soong_config_var,ANDROID,SYSTEM_OPTIMIZE_JAVA)
 
 # Check for SupplementalApi module.

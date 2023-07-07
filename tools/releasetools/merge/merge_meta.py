@@ -29,6 +29,7 @@ import common
 import merge_utils
 import sparse_img
 import verity_utils
+from ota_utils import ParseUpdateEngineConfig
 
 from common import ExternalError
 
@@ -52,20 +53,41 @@ PARTITION_TAG_PATTERN = re.compile(r'partition="(.*?)"')
 MODULE_KEY_PATTERN = re.compile(r'name="(.+)\.(apex|apk)"')
 
 
+
+
+def MergeUpdateEngineConfig(input_metadir1, input_metadir2, merged_meta_dir):
+  UPDATE_ENGINE_CONFIG_NAME = "update_engine_config.txt"
+  config1_path = os.path.join(
+      input_metadir1, UPDATE_ENGINE_CONFIG_NAME)
+  config2_path = os.path.join(
+      input_metadir2, UPDATE_ENGINE_CONFIG_NAME)
+  config1 = ParseUpdateEngineConfig(config1_path)
+  config2 = ParseUpdateEngineConfig(config2_path)
+  # Copy older config to merged target files for maximum compatibility
+  # update_engine in system partition is from system side, but
+  # update_engine_sideload in recovery is from vendor side.
+  if config1 < config2:
+    shutil.copy(config1_path, os.path.join(
+        merged_meta_dir, UPDATE_ENGINE_CONFIG_NAME))
+  else:
+    shutil.copy(config2_path, os.path.join(
+        merged_meta_dir, UPDATE_ENGINE_CONFIG_NAME))
+
+
 def MergeMetaFiles(temp_dir, merged_dir):
   """Merges various files in META/*."""
 
   framework_meta_dir = os.path.join(temp_dir, 'framework_meta', 'META')
-  merge_utils.ExtractItems(
-      input_zip=OPTIONS.framework_target_files,
+  merge_utils.CollectTargetFiles(
+      input_zipfile_or_dir=OPTIONS.framework_target_files,
       output_dir=os.path.dirname(framework_meta_dir),
-      extract_item_list=('META/*',))
+      item_list=('META/*',))
 
   vendor_meta_dir = os.path.join(temp_dir, 'vendor_meta', 'META')
-  merge_utils.ExtractItems(
-      input_zip=OPTIONS.vendor_target_files,
+  merge_utils.CollectTargetFiles(
+      input_zipfile_or_dir=OPTIONS.vendor_target_files,
       output_dir=os.path.dirname(vendor_meta_dir),
-      extract_item_list=('META/*',))
+      item_list=('META/*',))
 
   merged_meta_dir = os.path.join(merged_dir, 'META')
 
@@ -101,6 +123,11 @@ def MergeMetaFiles(temp_dir, merged_dir):
         vendor_meta_dir=vendor_meta_dir,
         merged_meta_dir=merged_meta_dir,
         file_name=file_name)
+
+  MergeUpdateEngineConfig(
+      framework_meta_dir,
+      vendor_meta_dir, merged_meta_dir,
+  )
 
   # Write the now-finalized OPTIONS.merged_misc_info.
   merge_utils.WriteSortedData(

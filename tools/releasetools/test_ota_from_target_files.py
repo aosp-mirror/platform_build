@@ -17,6 +17,7 @@
 import copy
 import os
 import os.path
+import tempfile
 import zipfile
 
 import common
@@ -24,17 +25,18 @@ import ota_metadata_pb2
 import test_utils
 from ota_utils import (
     BuildLegacyOtaMetadata, CalculateRuntimeDevicesAndFingerprints,
-    ConstructOtaApexInfo, FinalizeMetadata, GetPackageMetadata, PropertyFiles)
+    ConstructOtaApexInfo, FinalizeMetadata, GetPackageMetadata, PropertyFiles, AbOtaPropertyFiles, PayloadGenerator, StreamingPropertyFiles)
 from ota_from_target_files import (
-    _LoadOemDicts, AbOtaPropertyFiles,
+    _LoadOemDicts,
     GetTargetFilesZipForCustomImagesUpdates,
     GetTargetFilesZipForPartialUpdates,
     GetTargetFilesZipForSecondaryImages,
     GetTargetFilesZipWithoutPostinstallConfig,
-    Payload, PayloadSigner, POSTINSTALL_CONFIG,
-    StreamingPropertyFiles, AB_PARTITIONS)
+    POSTINSTALL_CONFIG, AB_PARTITIONS)
 from apex_utils import GetApexInfoFromTargetFiles
 from test_utils import PropertyFilesTestCase
+from common import OPTIONS
+from payload_signer import PayloadSigner
 
 
 def construct_target_files(secondary=False, compressedApex=False):
@@ -973,7 +975,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTestCase):
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetPayloadMetadataOffsetAndSize(self):
     target_file = construct_target_files()
-    payload = Payload()
+    payload = PayloadGenerator()
     payload.Generate(target_file)
 
     payload_signer = PayloadSigner()
@@ -1028,7 +1030,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTestCase):
         0, proc.returncode,
         'Failed to run brillo_update_payload:\n{}'.format(stdoutdata))
 
-    signed_metadata_sig_file = payload_signer.Sign(metadata_sig_file)
+    signed_metadata_sig_file = payload_signer.SignHashFile(metadata_sig_file)
 
     # Finally we can compare the two signatures.
     with open(signed_metadata_sig_file, 'rb') as verify_fp:
@@ -1038,7 +1040,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTestCase):
   def construct_zip_package_withValidPayload(with_metadata=False):
     # Cannot use construct_zip_package() since we need a "valid" payload.bin.
     target_file = construct_target_files()
-    payload = Payload()
+    payload = PayloadGenerator()
     payload.Generate(target_file)
 
     payload_signer = PayloadSigner()
@@ -1142,10 +1144,10 @@ class PayloadSignerTest(test_utils.ReleaseToolsTestCase):
     self.assertEqual('openssl', payload_signer.signer)
 
   def test_init_withExternalSigner(self):
-    common.OPTIONS.payload_signer = 'abc'
     common.OPTIONS.payload_signer_args = ['arg1', 'arg2']
     common.OPTIONS.payload_signer_maximum_signature_size = '512'
-    payload_signer = PayloadSigner()
+    payload_signer = PayloadSigner(
+        OPTIONS.package_key, OPTIONS.private_key_suffix, payload_signer='abc')
     self.assertEqual('abc', payload_signer.signer)
     self.assertEqual(['arg1', 'arg2'], payload_signer.signer_args)
     self.assertEqual(512, payload_signer.maximum_signature_size)
@@ -1168,35 +1170,36 @@ class PayloadSignerTest(test_utils.ReleaseToolsTestCase):
   def test_Sign(self):
     payload_signer = PayloadSigner()
     input_file = os.path.join(self.testdata_dir, self.SIGFILE)
-    signed_file = payload_signer.Sign(input_file)
+    signed_file = payload_signer.SignHashFile(input_file)
 
     verify_file = os.path.join(self.testdata_dir, self.SIGNED_SIGFILE)
     self._assertFilesEqual(verify_file, signed_file)
 
   def test_Sign_withExternalSigner_openssl(self):
     """Uses openssl as the external payload signer."""
-    common.OPTIONS.payload_signer = 'openssl'
     common.OPTIONS.payload_signer_args = [
         'pkeyutl', '-sign', '-keyform', 'DER', '-inkey',
         os.path.join(self.testdata_dir, 'testkey.pk8'),
         '-pkeyopt', 'digest:sha256']
-    payload_signer = PayloadSigner()
+    payload_signer = PayloadSigner(
+        OPTIONS.package_key, OPTIONS.private_key_suffix, payload_signer="openssl")
     input_file = os.path.join(self.testdata_dir, self.SIGFILE)
-    signed_file = payload_signer.Sign(input_file)
+    signed_file = payload_signer.SignHashFile(input_file)
 
     verify_file = os.path.join(self.testdata_dir, self.SIGNED_SIGFILE)
     self._assertFilesEqual(verify_file, signed_file)
 
   def test_Sign_withExternalSigner_script(self):
     """Uses testdata/payload_signer.sh as the external payload signer."""
-    common.OPTIONS.payload_signer = os.path.join(
+    external_signer = os.path.join(
         self.testdata_dir, 'payload_signer.sh')
-    os.chmod(common.OPTIONS.payload_signer, 0o700)
+    os.chmod(external_signer, 0o700)
     common.OPTIONS.payload_signer_args = [
         os.path.join(self.testdata_dir, 'testkey.pk8')]
-    payload_signer = PayloadSigner()
+    payload_signer = PayloadSigner(
+        OPTIONS.package_key, OPTIONS.private_key_suffix, payload_signer=external_signer)
     input_file = os.path.join(self.testdata_dir, self.SIGFILE)
-    signed_file = payload_signer.Sign(input_file)
+    signed_file = payload_signer.SignHashFile(input_file)
 
     verify_file = os.path.join(self.testdata_dir, self.SIGNED_SIGFILE)
     self._assertFilesEqual(verify_file, signed_file)
@@ -1219,7 +1222,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
   @staticmethod
   def _create_payload_full(secondary=False):
     target_file = construct_target_files(secondary)
-    payload = Payload(secondary)
+    payload = PayloadGenerator(secondary, OPTIONS.wipe_user_data)
     payload.Generate(target_file)
     return payload
 
@@ -1227,7 +1230,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
   def _create_payload_incremental():
     target_file = construct_target_files()
     source_file = construct_target_files()
-    payload = Payload()
+    payload = PayloadGenerator()
     payload.Generate(target_file, source_file)
     return payload
 
@@ -1245,7 +1248,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
   def test_Generate_additionalArgs(self):
     target_file = construct_target_files()
     source_file = construct_target_files()
-    payload = Payload()
+    payload = PayloadGenerator()
     # This should work the same as calling payload.Generate(target_file,
     # source_file).
     payload.Generate(
@@ -1256,7 +1259,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
   def test_Generate_invalidInput(self):
     target_file = construct_target_files()
     common.ZipDelete(target_file, 'IMAGES/vendor.img')
-    payload = Payload()
+    payload = PayloadGenerator()
     self.assertRaises(common.ExternalError, payload.Generate, target_file)
 
   @test_utils.SkipIfExternalToolsUnavailable()
@@ -1292,6 +1295,9 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     common.OPTIONS.wipe_user_data = True
     payload = self._create_payload_full()
     payload.Sign(PayloadSigner())
+    with tempfile.NamedTemporaryFile() as fp:
+      with zipfile.ZipFile(fp, "w") as zfp:
+        payload.WriteToZip(zfp)
 
     with open(payload.payload_properties) as properties_fp:
       self.assertIn("POWERWASH=1", properties_fp.read())
@@ -1300,6 +1306,9 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
   def test_Sign_secondary(self):
     payload = self._create_payload_full(secondary=True)
     payload.Sign(PayloadSigner())
+    with tempfile.NamedTemporaryFile() as fp:
+      with zipfile.ZipFile(fp, "w") as zfp:
+        payload.WriteToZip(zfp)
 
     with open(payload.payload_properties) as properties_fp:
       self.assertIn("SWITCH_SLOT_ON_REBOOT=0", properties_fp.read())
@@ -1324,31 +1333,15 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     with zipfile.ZipFile(output_file) as verify_zip:
       # First make sure we have the essential entries.
       namelist = verify_zip.namelist()
-      self.assertIn(Payload.PAYLOAD_BIN, namelist)
-      self.assertIn(Payload.PAYLOAD_PROPERTIES_TXT, namelist)
+      self.assertIn(PayloadGenerator.PAYLOAD_BIN, namelist)
+      self.assertIn(PayloadGenerator.PAYLOAD_PROPERTIES_TXT, namelist)
 
       # Then assert these entries are stored.
       for entry_info in verify_zip.infolist():
-        if entry_info.filename not in (Payload.PAYLOAD_BIN,
-                                       Payload.PAYLOAD_PROPERTIES_TXT):
+        if entry_info.filename not in (PayloadGenerator.PAYLOAD_BIN,
+                                       PayloadGenerator.PAYLOAD_PROPERTIES_TXT):
           continue
         self.assertEqual(zipfile.ZIP_STORED, entry_info.compress_type)
-
-  @test_utils.SkipIfExternalToolsUnavailable()
-  def test_WriteToZip_unsignedPayload(self):
-    """Unsigned payloads should not be allowed to be written to zip."""
-    payload = self._create_payload_full()
-
-    output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
-      self.assertRaises(AssertionError, payload.WriteToZip, output_zip)
-
-    # Also test with incremental payload.
-    payload = self._create_payload_incremental()
-
-    output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w', allowZip64=True) as output_zip:
-      self.assertRaises(AssertionError, payload.WriteToZip, output_zip)
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_WriteToZip_secondary(self):
@@ -1362,14 +1355,14 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     with zipfile.ZipFile(output_file) as verify_zip:
       # First make sure we have the essential entries.
       namelist = verify_zip.namelist()
-      self.assertIn(Payload.SECONDARY_PAYLOAD_BIN, namelist)
-      self.assertIn(Payload.SECONDARY_PAYLOAD_PROPERTIES_TXT, namelist)
+      self.assertIn(PayloadGenerator.SECONDARY_PAYLOAD_BIN, namelist)
+      self.assertIn(PayloadGenerator.SECONDARY_PAYLOAD_PROPERTIES_TXT, namelist)
 
       # Then assert these entries are stored.
       for entry_info in verify_zip.infolist():
         if entry_info.filename not in (
-                Payload.SECONDARY_PAYLOAD_BIN,
-                Payload.SECONDARY_PAYLOAD_PROPERTIES_TXT):
+                PayloadGenerator.SECONDARY_PAYLOAD_BIN,
+                PayloadGenerator.SECONDARY_PAYLOAD_PROPERTIES_TXT):
           continue
         self.assertEqual(zipfile.ZIP_STORED, entry_info.compress_type)
 
