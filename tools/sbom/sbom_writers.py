@@ -110,24 +110,26 @@ class TagValueWriter:
     return tagvalues
 
   @staticmethod
-  def marshal_described_element(sbom_doc):
+  def marshal_described_element(sbom_doc, fragment):
     if not sbom_doc.describes:
       return None
 
     product_package = [p for p in sbom_doc.packages if p.id == sbom_doc.describes]
     if product_package:
       tagvalues = TagValueWriter.marshal_package(product_package[0])
-      tagvalues.append(
-        f'{Tags.RELATIONSHIP}: {sbom_doc.id} {sbom_data.RelationshipType.DESCRIBES} {sbom_doc.describes}')
+      if not fragment:
+        tagvalues.append(
+            f'{Tags.RELATIONSHIP}: {sbom_doc.id} {sbom_data.RelationshipType.DESCRIBES} {sbom_doc.describes}')
 
       tagvalues.append('')
       return tagvalues
 
     file = [f for f in sbom_doc.files if f.id == sbom_doc.describes]
     if file:
-      tagvalues = [
-        f'{Tags.RELATIONSHIP}: {sbom_doc.id} {sbom_data.RelationshipType.DESCRIBES} {sbom_doc.describes}'
-      ]
+      tagvalues = TagValueWriter.marshal_file(file[0])
+      if not fragment:
+        tagvalues.append(
+            f'{Tags.RELATIONSHIP}: {sbom_doc.id} {sbom_data.RelationshipType.DESCRIBES} {sbom_doc.describes}')
 
       return tagvalues
 
@@ -180,6 +182,8 @@ class TagValueWriter:
   def marshal_files(sbom_doc):
     tagvalues = []
     for file in sbom_doc.files:
+      if file.id == sbom_doc.describes:
+        continue
       tagvalues += TagValueWriter.marshal_file(file)
     return tagvalues
 
@@ -204,9 +208,9 @@ class TagValueWriter:
     content = []
     if not fragment:
       content += TagValueWriter.marshal_doc_headers(sbom_doc)
-      described_element = TagValueWriter.marshal_described_element(sbom_doc)
-      if described_element:
-        content += described_element
+    described_element = TagValueWriter.marshal_described_element(sbom_doc, fragment)
+    if described_element:
+      content += described_element
     content += TagValueWriter.marshal_files(sbom_doc)
     tagvalues, marshaled_relationships = TagValueWriter.marshal_packages(sbom_doc)
     content += tagvalues
