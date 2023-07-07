@@ -1,0 +1,13 @@
+package_name:  "Android"
+module_classes: "EXECUTABLES"
+projects:  "bin/onelibrary"
+license_kinds:  "legacy_proprietary"
+license_conditions:  "proprietary"
+is_container:  false
+built:  "out/target/product/fictional/obj/EXECUTABLES/bin_intermediates/bin6"
+installed:  "out/target/product/fictional/system/bin/bin6"
+sources:  "out/target/product/fictional/system/lib/lib6.a"
+deps:  {
+  file:  "testdata/regressconcur/lib/lib6.a.meta_lic"
+  annotations:  "static"
+}

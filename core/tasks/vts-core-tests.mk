@@ -18,12 +18,15 @@ test_suite_readme := test/vts/tools/vts-core-tradefed/README
 
 include $(BUILD_SYSTEM)/tasks/tools/vts-kernel-tests.mk
 
-kernel_test_copy_pairs := \
-  $(call target-native-copy-pairs,$(kernel_test_modules),$(kernel_test_vts_out))
+ltp_copy_pairs := \
+  $(call target-native-copy-pairs,$(kernel_ltp_modules),$(kernel_ltp_vts_out))
+kselftest_copy_pairs := \
+  $(call target-native-copy-pairs,$(kernel_kselftest_modules),$(kernel_kselftest_vts_out))
 
-copy_kernel_tests := $(call copy-many-files,$(kernel_test_copy_pairs))
+copy_ltp_tests := $(call copy-many-files,$(ltp_copy_pairs))
+copy_kselftest_tests := $(call copy-many-files,$(kselftest_copy_pairs))
 
-test_suite_extra_deps := $(copy_kernel_tests)
+test_suite_extra_deps := $(copy_ltp_tests) $(copy_kselftest_tests)
 
 include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
 

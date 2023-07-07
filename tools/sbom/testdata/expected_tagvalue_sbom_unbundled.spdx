@@ -1,0 +1,12 @@
+FileName: /bin/file1.apk
+SPDXID: SPDXRef-file1
+FileChecksum: SHA1: 11111
+
+PackageName: Unbundled apk package
+SPDXID: SPDXRef-SOURCE-package1
+PackageDownloadLocation: NONE
+FilesAnalyzed: false
+PackageVersion: build_finger_print
+PackageSupplier: Organization: Google
+
+Relationship: SPDXRef-file1 GENERATED_FROM SPDXRef-SOURCE-package1

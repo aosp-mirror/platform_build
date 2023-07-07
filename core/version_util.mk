@@ -56,39 +56,52 @@ MAX_PLATFORM_VERSION :=
 # unreleased API level targetable by this branch, not just those that are valid
 # lunch targets for this branch.
 
+PLATFORM_VERSION_CODENAME := $(PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION))
 ifndef PLATFORM_VERSION_CODENAME
-  PLATFORM_VERSION_CODENAME := $(PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION))
-  ifndef PLATFORM_VERSION_CODENAME
-    # PLATFORM_VERSION_CODENAME falls back to TARGET_PLATFORM_VERSION
-    PLATFORM_VERSION_CODENAME := $(TARGET_PLATFORM_VERSION)
-  endif
-
-  # This is all of the *active* development codenames.
-  # This confusing name is needed because
-  # all_codenames has been baked into build.prop for ages.
-  #
-  # Should be either the same as PLATFORM_VERSION_CODENAME or a comma-separated
-  # list of additional codenames after PLATFORM_VERSION_CODENAME.
-  PLATFORM_VERSION_ALL_CODENAMES :=
-
-  # Build a list of all active code names. Avoid duplicates, and stop when we
-  # reach a codename that matches PLATFORM_VERSION_CODENAME (anything beyond
-  # that is not included in our build).
-  _versions_in_target := \
-    $(call find_and_earlier,$(ALL_VERSIONS),$(TARGET_PLATFORM_VERSION))
-  $(foreach version,$(_versions_in_target),\
-    $(eval _codename := $(PLATFORM_VERSION_CODENAME.$(version)))\
-    $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_CODENAMES)),,\
-      $(eval PLATFORM_VERSION_ALL_CODENAMES += $(_codename))))
-
-  # And convert from space separated to comma separated.
-  PLATFORM_VERSION_ALL_CODENAMES := \
-    $(subst $(space),$(comma),$(strip $(PLATFORM_VERSION_ALL_CODENAMES)))
-
+  # PLATFORM_VERSION_CODENAME falls back to TARGET_PLATFORM_VERSION
+  PLATFORM_VERSION_CODENAME := $(TARGET_PLATFORM_VERSION)
 endif
+
+# This is all of the *active* development codenames.
+# This confusing name is needed because
+# all_codenames has been baked into build.prop for ages.
+#
+# Should be either the same as PLATFORM_VERSION_CODENAME or a comma-separated
+# list of additional codenames after PLATFORM_VERSION_CODENAME.
+PLATFORM_VERSION_ALL_CODENAMES :=
+
+# Build a list of all active code names. Avoid duplicates, and stop when we
+# reach a codename that matches PLATFORM_VERSION_CODENAME (anything beyond
+# that is not included in our build).
+_versions_in_target := \
+  $(call find_and_earlier,$(ALL_VERSIONS),$(TARGET_PLATFORM_VERSION))
+$(foreach version,$(_versions_in_target),\
+  $(eval _codename := $(PLATFORM_VERSION_CODENAME.$(version)))\
+  $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_CODENAMES)),,\
+    $(eval PLATFORM_VERSION_ALL_CODENAMES += $(_codename))))
+
+# And the list of actually all the codenames that are in preview. The
+# ALL_CODENAMES variable is sort of a lie for historical reasons and only
+# includes codenames up to and including the currently active codename, whereas
+# this variable also includes future codenames. For example, while AOSP is still
+# merging into U, but V development has started, ALL_CODENAMES will only be U,
+# but ALL_PREVIEW_CODENAMES will be U and V.
+PLATFORM_VERSION_ALL_PREVIEW_CODENAMES :=
+$(foreach version,$(ALL_VERSIONS),\
+  $(eval _codename := $(PLATFORM_VERSION_CODENAME.$(version)))\
+  $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_PREVIEW_CODENAMES)),,\
+    $(eval PLATFORM_VERSION_ALL_PREVIEW_CODENAMES += $(_codename))))
+
+# And convert from space separated to comma separated.
+PLATFORM_VERSION_ALL_CODENAMES := \
+  $(subst $(space),$(comma),$(strip $(PLATFORM_VERSION_ALL_CODENAMES)))
+PLATFORM_VERSION_ALL_PREVIEW_CODENAMES := \
+  $(subst $(space),$(comma),$(strip $(PLATFORM_VERSION_ALL_PREVIEW_CODENAMES)))
+
 .KATI_READONLY := \
   PLATFORM_VERSION_CODENAME \
-  PLATFORM_VERSION_ALL_CODENAMES
+  PLATFORM_VERSION_ALL_CODENAMES \
+  PLATFORM_VERSION_ALL_PREVIEW_CODENAMES \
 
 ifneq (REL,$(PLATFORM_VERSION_CODENAME))
   codenames := \
@@ -172,7 +185,7 @@ ifndef PLATFORM_SYSTEMSDK_MIN_VERSION
   # to the public SDK where platform essentially supports all previous SDK versions,
   # platform supports only a few number of recent system SDK versions as some of
   # old system APIs are gradually deprecated, removed and then deleted.
-  PLATFORM_SYSTEMSDK_MIN_VERSION := 28
+  PLATFORM_SYSTEMSDK_MIN_VERSION := 29
 endif
 .KATI_READONLY := PLATFORM_SYSTEMSDK_MIN_VERSION
 
@@ -253,6 +266,6 @@ ifndef PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION
   # Used to set minimum supported target sdk version. Apps targeting sdk
   # version lower than the set value will result in a warning being shown
   # when any activity from the app is started.
-  PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION := 23
+  PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION := 28
 endif
 .KATI_READONLY := PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION

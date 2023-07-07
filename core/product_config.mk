@@ -74,7 +74,7 @@ endif
 ###########################################################
 
 define find-copy-subdir-files
-$(sort $(shell find $(2) -name "$(1)" -type f | $(SED_EXTENDED) "s:($(2)/?(.*)):\\1\\:$(3)/\\2:" | sed "s://:/:g"))
+$(shell find $(2) -name "$(1)" -type f | $(SED_EXTENDED) "s:($(2)/?(.*)):\\1\\:$(3)/\\2:" | sed "s://:/:g" | sort)
 endef
 
 #
@@ -144,7 +144,6 @@ endif
 #
 include $(BUILD_SYSTEM)/node_fns.mk
 include $(BUILD_SYSTEM)/product.mk
-include $(BUILD_SYSTEM)/device.mk
 
 # Read all product definitions.
 #
@@ -210,7 +209,6 @@ $(foreach f,$(android_products_makefiles), \
 # Dedup, extract product names, etc.
 product_paths := $(sort $(product_paths))
 all_named_products := $(sort $(call _first,$(product_paths),:))
-all_product_makefiles := $(sort $(call _second,$(product_paths),:))
 current_product_makefile := $(call _second,$(filter $(TARGET_PRODUCT):%,$(product_paths)),:)
 COMMON_LUNCH_CHOICES := $(sort $(common_lunch_choices))
 
@@ -230,7 +228,6 @@ endif
 
 ifneq (,$(filter $(TARGET_PRODUCT),$(products_using_starlark_config)))
   RBC_PRODUCT_CONFIG := true
-  RBC_BOARD_CONFIG := true
 endif
 
 ifndef RBC_PRODUCT_CONFIG
@@ -274,10 +271,25 @@ endif
 ############################################################################
 
 current_product_makefile :=
-all_product_makefiles :=
-all_product_configs :=
 
 #############################################################################
+# Check product include tag allowlist
+BLUEPRINT_INCLUDE_TAGS_ALLOWLIST := com.android.mainline_go com.android.mainline
+.KATI_READONLY := BLUEPRINT_INCLUDE_TAGS_ALLOWLIST
+$(foreach include_tag,$(PRODUCT_INCLUDE_TAGS), \
+	$(if $(filter $(include_tag),$(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST)),,\
+	$(call pretty-error, $(include_tag) is not in BLUEPRINT_INCLUDE_TAGS_ALLOWLIST: $(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST))))
+# Create default PRODUCT_INCLUDE_TAGS
+ifeq (, $(PRODUCT_INCLUDE_TAGS))
+# Soong analysis is global: even though a module might not be relevant to a specific product (e.g. build_tools for aosp_arm),
+# we still analyse it.
+# This means that in setups where we two have two prebuilts of module_sdk, we need a "default" to use in analysis
+# This should be a no-op in aosp and internal since no Android.bp file contains blueprint_package_includes
+PRODUCT_INCLUDE_TAGS += com.android.mainline # Use the big android one by default
+endif
+
+#############################################################################
+
 # Quick check and assign default values
 
 TARGET_DEVICE := $(PRODUCT_DEVICE)
@@ -476,6 +488,9 @@ endif
 ifdef PRODUCT_SHIPPING_API_LEVEL
   ifneq (,$(call math_gt_or_eq,29,$(PRODUCT_SHIPPING_API_LEVEL)))
     PRODUCT_PACKAGES += $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29)
+  endif
+  ifneq (,$(call math_gt_or_eq,33,$(PRODUCT_SHIPPING_API_LEVEL)))
+    PRODUCT_PACKAGES += $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_33)
   endif
 endif
 

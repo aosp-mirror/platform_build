@@ -83,27 +83,17 @@ endef
 # If needle appears multiple times, only the first occurrance
 # will survive.
 #
-# How it works:
-#
-# - Stick everything in haystack into a single word,
-#   with "|||" separating the words.
-# - Replace occurrances of "|||$(needle)|||" with "||| |||",
-#   breaking haystack back into multiple words, with spaces
-#   where needle appeared.
-# - Add needle between the first and second words of haystack.
-# - Replace "|||" with spaces, breaking haystack back into
-#   individual words.
-#
 define uniq-word
 $(strip \
   $(if $(filter-out 0 1,$(words $(filter $(2),$(1)))), \
-    $(eval h := |||$(subst $(space),|||,$(strip $(1)))|||) \
-    $(eval h := $(subst |||$(strip $(2))|||,|||$(space)|||,$(h))) \
-    $(eval h := $(word 1,$(h)) $(2) $(wordlist 2,9999,$(h))) \
-    $(subst |||,$(space),$(h)) \
-   , \
-    $(1) \
- ))
+    $(eval _uniq_word_seen :=) \
+    $(foreach w,$(1), \
+      $(if $(filter $(2),$(w)), \
+        $(if $(_uniq_word_seen),, \
+          $(w) \
+          $(eval _uniq_word_seen := true)), \
+        $(w))), \
+  $(1)))
 endef
 
 INHERIT_TAG := @inherit:
