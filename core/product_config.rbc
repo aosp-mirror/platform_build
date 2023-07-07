@@ -59,6 +59,12 @@ def __print_attr(attr, value):
         if _options.format == "pretty":
             print(attr, "=", repr(value))
         elif _options.format == "make":
+            value = list(value)
+            for i, x in enumerate(value):
+                if type(x) == "tuple" and len(x) == 1:
+                    value[i] = "@inherit:" + x[0] + ".mk"
+                elif type(x) != "string":
+                    fail("Wasn't a list of strings:", attr, " value:", value)
             print(attr, ":=", " ".join(value))
     elif _options.format == "pretty":
         print(attr, "=", repr(value))
@@ -147,7 +153,7 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
 
         # Run this one, obtaining its configuration and child PCMs.
         if _options.trace_modules:
-            print("#%d: %s" % (n, name))
+            rblf_log("%d: %s" % (n, name))
 
         # Run PCM.
         handle = __h_new()
@@ -167,7 +173,7 @@ def _product_configuration(top_pcm_name, top_pcm, input_variables_init):
         # Now we know everything about this PCM, record it in 'configs'.
         children = handle.inherited_modules
         if _options.trace_modules:
-            print("#   ", "    ".join(children.keys()))
+            rblf_log("   ", "    ".join(children.keys()))
         # Starlark dictionaries are guaranteed to iterate through in insertion order,
         # so children.keys() will be ordered by the inherit() calls
         configs[name] = (pcm, handle.cfg, children.keys(), False)
@@ -234,9 +240,9 @@ def evaluate_finalized_product_variables(configs, top_level_pcm_name, trace=Fals
     configs = cloned_configs
 
     if trace:
-        print("\n#---Postfix---")
+        rblf_log("\n---Postfix---")
         for x in configs_postfix:
-            print("#   ", x)
+            rblf_log("   ", x)
 
     # Traverse the tree from the bottom, evaluating inherited values
     for pcm_name in configs_postfix:
@@ -309,7 +315,7 @@ def _substitute_inherited(configs, pcm_name, cfg):
             old_val = val
             new_val = _value_expand(configs, attr, val)
             if new_val != old_val:
-                print("%s(i): %s=%s (was %s)" % (pcm_name, attr, new_val, old_val))
+                rblf_log("%s(i): %s=%s (was %s)" % (pcm_name, attr, new_val, old_val))
             cfg[attr] = new_val
 
 def _value_expand(configs, attr, values_list):
@@ -363,7 +369,7 @@ def _percolate_inherited(configs, cfg_name, cfg, children_names):
 
     for attr in _options.trace_variables:
         if attr in percolated_attrs:
-            print("%s: %s^=%s" % (cfg_name, attr, cfg[attr]))
+            rblf_log("%s: %s^=%s" % (cfg_name, attr, cfg[attr]))
 
 def __move_items(to_list, from_cfg, attr):
     value = from_cfg.get(attr, [])
@@ -456,6 +462,9 @@ def _addsuffix(suffix, string_or_list):
 
 def __words(string_or_list):
     if type(string_or_list) == "list":
+        for x in string_or_list:
+            if type(x) != "string":
+                return string_or_list
         string_or_list = " ".join(string_or_list)
     return _mkstrip(string_or_list).split()
 
@@ -536,8 +545,11 @@ def _copy_if_exists(path_pair):
     """If from file exists, returns [from:to] pair."""
     value = path_pair.split(":", 2)
 
+    if value[0].find('*') != -1:
+        fail("copy_if_exists: input file cannot contain *")
+
     # Check that l[0] exists
-    return [":".join(value)] if rblf_file_exists(value[0]) else []
+    return [":".join(value)] if rblf_wildcard(value[0]) else []
 
 def _enforce_product_packages_exist(handle, pkg_string_or_list=[]):
     """Makes including non-existent modules in PRODUCT_PACKAGES an error."""
@@ -551,10 +563,6 @@ def _add_product_dex_preopt_module_config(handle, modules, config):
     config = _mkstrip(config).replace(" ", "|@SP@|")
     _setdefault(handle, "PRODUCT_DEX_PREOPT_MODULE_CONFIGS")
     handle.cfg["PRODUCT_DEX_PREOPT_MODULE_CONFIGS"] += [m + "=" + config for m in modules]
-
-def _file_wildcard_exists(file_pattern):
-    """Return True if there are files matching given bash pattern."""
-    return len(rblf_wildcard(file_pattern)) > 0
 
 def _find_and_copy(pattern, from_dir, to_dir):
     """Return a copy list for the files matching the pattern."""
@@ -604,6 +612,27 @@ def _filter(pattern, text):
                 res.append(w)
                 break
     return res
+
+def _first_word(input):
+    """Equivalent to the GNU make function $(firstword)."""
+    input = __words(input)
+    if len(input) == 0:
+        return ""
+    return input[0]
+
+def _last_word(input):
+    """Equivalent to the GNU make function $(lastword)."""
+    input = __words(input)
+    l = len(input)
+    if l == 0:
+        return ""
+    return input[l-1]
+
+def _flatten_2d_list(list):
+    result = []
+    for x in list:
+        result += x
+    return result
 
 def _dir(paths):
     """Equivalent to the GNU make function $(dir).
@@ -767,8 +796,11 @@ def _mkstrip(s):
     That is, removes string's leading and trailing whitespace characters and
     replaces any sequence of whitespace characters with with a single space.
     """
-    if type(s) != "string":
-        return s
+    t = type(s)
+    if t == "list":
+        s = " ".join(s)
+    elif t != "string":
+        fail("Argument to mkstrip must be a string or list, got: "+t)
     result = ""
     was_space = False
     for ch in s.strip().elems():
@@ -805,6 +837,41 @@ def _product_copy_files_by_pattern(src, dest, s):
     parsed_percent = ["", ""]
     words = s if type(s) == "list" else _mkstrip(s).split(" ")
     return [ __mkpatsubst_word(parsed_percent, parsed_src, x) + ":" + __mkpatsubst_word(parsed_percent, parsed_dest, x) for x in words]
+
+
+__zero_values = {
+    "string": "",
+    "list": [],
+    "int": 0,
+    "float": 0,
+    "bool": False,
+    "dict": {},
+    "NoneType": None,
+    "tuple": (),
+}
+def __zero_value(x):
+    t = type(x)
+    if t in __zero_values:
+        return __zero_values[t]
+    else:
+        fail("Unknown type: "+t)
+
+
+def _clear_var_list(g, h, var_list):
+    cfg = __h_cfg(h)
+    for v in __words(var_list):
+        # Set these variables to their zero values rather than None
+        # or removing them from the dictionary because if they were
+        # removed entirely, ?= would set their value, when it would not
+        # after a make-based clear_var_list call.
+        if v in g:
+            g[v] = __zero_value(g[v])
+        if v in cfg:
+            cfg[v] = __zero_value(cfg[v])
+
+        if v not in cfg and v not in g:
+            # Cause the variable to appear set like the make version does
+            g[v] = ""
 
 
 def __get_options():
@@ -850,18 +917,20 @@ rblf = struct(
     addsuffix = _addsuffix,
     board_platform_in = _board_platform_in,
     board_platform_is = _board_platform_is,
+    clear_var_list = _clear_var_list,
     copy_files = _copy_files,
     copy_if_exists = _copy_if_exists,
     cfg = __h_cfg,
     dir = _dir,
     enforce_product_packages_exist = _enforce_product_packages_exist,
     expand_wildcard = _expand_wildcard,
-    file_exists = rblf_file_exists,
-    file_wildcard_exists = _file_wildcard_exists,
     filter = _filter,
     filter_out = _filter_out,
     find_and_copy = _find_and_copy,
     findstring = _findstring,
+    first_word = _first_word,
+    last_word = _last_word,
+    flatten_2d_list = _flatten_2d_list,
     inherit = _inherit,
     indirect = _indirect,
     mk2rbc_error = _mk2rbc_error,

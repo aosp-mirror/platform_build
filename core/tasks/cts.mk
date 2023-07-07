@@ -211,7 +211,7 @@ ALL_TARGETS.$(cts-combined-xml-coverage-report).META_LIC:=$(module_license_metad
 #  3 - Format of the report
 define generate-coverage-report-cts
 	$(hide) mkdir -p $(dir $@)
-	$(hide) $(PRIVATE_CTS_API_COVERAGE_EXE) -d $(PRIVATE_DEXDEPS_EXE) -a $(PRIVATE_API_XML_DESC) -n $(PRIVATE_NAPI_XML_DESC) -f $(3) -o $@ $(2)
+	$(hide) $(PRIVATE_CTS_API_COVERAGE_EXE) -j 8 -d $(PRIVATE_DEXDEPS_EXE) -a $(PRIVATE_API_XML_DESC) -n $(PRIVATE_NAPI_XML_DESC) -f $(3) -o $@ $(2)
 	@ echo $(1): file://$$(cd $(dir $@); pwd)/$(notdir $@)
 endef
 
