@@ -1,0 +1,5 @@
+#
+# system.prop for generic riscv64 sdk
+#
+
+rild.libpath=/vendor/lib64/libreference-ril.so
