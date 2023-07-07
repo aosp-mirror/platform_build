@@ -16,13 +16,19 @@ import copy
 import itertools
 import logging
 import os
+import shutil
 import struct
 import zipfile
 
 import ota_metadata_pb2
-from common import (ZipDelete, ZipClose, OPTIONS, MakeTempFile,
+import common
+import fnmatch
+from common import (ZipDelete, DoesInputFileContain, ReadBytesFromInputFile, OPTIONS, MakeTempFile,
                     ZipWriteStr, BuildInfo, LoadDictionaryFromFile,
-                    SignFile, PARTITIONS_WITH_BUILD_PROP, PartitionBuildProps)
+                    SignFile, PARTITIONS_WITH_BUILD_PROP, PartitionBuildProps,
+                    GetRamdiskFormat, ParseUpdateEngineConfig)
+from payload_signer import PayloadSigner
+
 
 logger = logging.getLogger(__name__)
 
@@ -39,11 +45,12 @@ OPTIONS.boot_variable_file = None
 
 METADATA_NAME = 'META-INF/com/android/metadata'
 METADATA_PROTO_NAME = 'META-INF/com/android/metadata.pb'
-UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'OTA/*', 'RADIO/*']
+UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'OTA/*',
+                 'RADIO/*', '*/build.prop', '*/default.prop', '*/build.default', "*/etc/vintf/*"]
 SECURITY_PATCH_LEVEL_PROP_NAME = "ro.build.version.security_patch"
 
 
-def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
+def FinalizeMetadata(metadata, input_file, output_file, needed_property_files=None, package_key=None, pw=None):
   """Finalizes the metadata and signs an A/B OTA package.
 
   In order to stream an A/B OTA package, we need 'ota-streaming-property-files'
@@ -61,32 +68,42 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
     input_file: The input ZIP filename that doesn't contain the package METADATA
         entry yet.
     output_file: The final output ZIP filename.
-    needed_property_files: The list of PropertyFiles' to be generated.
+    needed_property_files: The list of PropertyFiles' to be generated. Default is [AbOtaPropertyFiles(), StreamingPropertyFiles()]
+    package_key: The key used to sign this OTA package
+    pw: Password for the package_key
   """
+  no_signing = package_key is None
+
+  if needed_property_files is None:
+    # AbOtaPropertyFiles intends to replace StreamingPropertyFiles, as it covers
+    # all the info of the latter. However, system updaters and OTA servers need to
+    # take time to switch to the new flag. We keep both of the flags for
+    # P-timeframe, and will remove StreamingPropertyFiles in later release.
+    needed_property_files = (
+        AbOtaPropertyFiles(),
+        StreamingPropertyFiles(),
+    )
 
   def ComputeAllPropertyFiles(input_file, needed_property_files):
     # Write the current metadata entry with placeholders.
-    with zipfile.ZipFile(input_file, allowZip64=True) as input_zip:
+    with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip:
       for property_files in needed_property_files:
         metadata.property_files[property_files.name] = property_files.Compute(
             input_zip)
-      namelist = input_zip.namelist()
 
-    if METADATA_NAME in namelist or METADATA_PROTO_NAME in namelist:
-      ZipDelete(input_file, [METADATA_NAME, METADATA_PROTO_NAME])
-    output_zip = zipfile.ZipFile(input_file, 'a', allowZip64=True)
-    WriteMetadata(metadata, output_zip)
-    ZipClose(output_zip)
+    ZipDelete(input_file, [METADATA_NAME, METADATA_PROTO_NAME], True)
+    with zipfile.ZipFile(input_file, 'a', allowZip64=True) as output_zip:
+      WriteMetadata(metadata, output_zip)
 
-    if OPTIONS.no_signing:
+    if no_signing:
       return input_file
 
     prelim_signing = MakeTempFile(suffix='.zip')
-    SignOutput(input_file, prelim_signing)
+    SignOutput(input_file, prelim_signing, package_key, pw)
     return prelim_signing
 
   def FinalizeAllPropertyFiles(prelim_signing, needed_property_files):
-    with zipfile.ZipFile(prelim_signing, allowZip64=True) as prelim_signing_zip:
+    with zipfile.ZipFile(prelim_signing, 'r', allowZip64=True) as prelim_signing_zip:
       for property_files in needed_property_files:
         metadata.property_files[property_files.name] = property_files.Finalize(
             prelim_signing_zip,
@@ -112,15 +129,17 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
 
   # Replace the METADATA entry.
   ZipDelete(prelim_signing, [METADATA_NAME, METADATA_PROTO_NAME])
-  output_zip = zipfile.ZipFile(prelim_signing, 'a', allowZip64=True)
-  WriteMetadata(metadata, output_zip)
-  ZipClose(output_zip)
+  with zipfile.ZipFile(prelim_signing, 'a', allowZip64=True) as output_zip:
+    WriteMetadata(metadata, output_zip)
 
   # Re-sign the package after updating the metadata entry.
-  if OPTIONS.no_signing:
-    output_file = prelim_signing
+  if no_signing:
+    logger.info(f"Signing disabled for output file {output_file}")
+    shutil.copy(prelim_signing, output_file)
   else:
-    SignOutput(prelim_signing, output_file)
+    logger.info(
+        f"Signing the output file {output_file} with key {package_key}")
+    SignOutput(prelim_signing, output_file, package_key, pw)
 
   # Reopen the final signed zip to double check the streaming metadata.
   with zipfile.ZipFile(output_file, allowZip64=True) as output_zip:
@@ -371,15 +390,18 @@ def ComputeRuntimeBuildInfos(default_build_info, boot_variable_values):
     for partition in PARTITIONS_WITH_BUILD_PROP:
       partition_prop_key = "{}.build.prop".format(partition)
       input_file = info_dict[partition_prop_key].input_file
+      ramdisk = GetRamdiskFormat(info_dict)
       if isinstance(input_file, zipfile.ZipFile):
         with zipfile.ZipFile(input_file.filename, allowZip64=True) as input_zip:
           info_dict[partition_prop_key] = \
               PartitionBuildProps.FromInputFile(input_zip, partition,
-                                                placeholder_values)
+                                                placeholder_values,
+                                                ramdisk)
       else:
         info_dict[partition_prop_key] = \
             PartitionBuildProps.FromInputFile(input_file, partition,
-                                              placeholder_values)
+                                              placeholder_values,
+                                              ramdisk)
     info_dict["build.prop"] = info_dict["system.build.prop"]
     build_info_set.add(BuildInfo(info_dict, default_build_info.oem_dicts))
 
@@ -570,7 +592,7 @@ class PropertyFiles(object):
     else:
       tokens.append(ComputeEntryOffsetSize(METADATA_NAME))
       if METADATA_PROTO_NAME in zip_file.namelist():
-          tokens.append(ComputeEntryOffsetSize(METADATA_PROTO_NAME))
+        tokens.append(ComputeEntryOffsetSize(METADATA_PROTO_NAME))
 
     return ','.join(tokens)
 
@@ -592,10 +614,13 @@ class PropertyFiles(object):
     return []
 
 
-def SignOutput(temp_zip_name, output_zip_name):
-  pw = OPTIONS.key_passwords[OPTIONS.package_key]
+def SignOutput(temp_zip_name, output_zip_name, package_key=None, pw=None):
+  if package_key is None:
+    package_key = OPTIONS.package_key
+  if pw is None and OPTIONS.key_passwords:
+    pw = OPTIONS.key_passwords[package_key]
 
-  SignFile(temp_zip_name, output_zip_name, OPTIONS.package_key, pw,
+  SignFile(temp_zip_name, output_zip_name, package_key, pw,
            whole_file=True)
 
 
@@ -603,12 +628,10 @@ def ConstructOtaApexInfo(target_zip, source_file=None):
   """If applicable, add the source version to the apex info."""
 
   def _ReadApexInfo(input_zip):
-    if "META/apex_info.pb" not in input_zip.namelist():
+    if not DoesInputFileContain(input_zip, "META/apex_info.pb"):
       logger.warning("target_file doesn't contain apex_info.pb %s", input_zip)
       return None
-
-    with input_zip.open("META/apex_info.pb", "r") as zfp:
-      return zfp.read()
+    return ReadBytesFromInputFile(input_zip, "META/apex_info.pb")
 
   target_apex_string = _ReadApexInfo(target_zip)
   # Return early if the target apex info doesn't exist or is empty.
@@ -619,8 +642,7 @@ def ConstructOtaApexInfo(target_zip, source_file=None):
   if not source_file:
     return target_apex_string
 
-  with zipfile.ZipFile(source_file, "r", allowZip64=True) as source_zip:
-    source_apex_string = _ReadApexInfo(source_zip)
+  source_apex_string = _ReadApexInfo(source_file)
   if not source_apex_string:
     return target_apex_string
 
@@ -689,10 +711,355 @@ def IsZucchiniCompatible(source_file: str, target_file: str):
         if entry in zfp.namelist():
           return zfp.read(entry).decode()
     else:
-      entry_path = os.path.join(entry, path)
+      entry_path = os.path.join(path, entry)
       if os.path.exists(entry_path):
         with open(entry_path, "r") as fp:
           return fp.read()
-      else:
-        return ""
-  return ReadEntry(source_file, _ZUCCHINI_CONFIG_ENTRY_NAME) == ReadEntry(target_file, _ZUCCHINI_CONFIG_ENTRY_NAME)
+    return False
+  sourceEntry = ReadEntry(source_file, _ZUCCHINI_CONFIG_ENTRY_NAME)
+  targetEntry = ReadEntry(target_file, _ZUCCHINI_CONFIG_ENTRY_NAME)
+  return sourceEntry and targetEntry and sourceEntry == targetEntry
+
+
+def ExtractTargetFiles(path: str):
+  if os.path.isdir(path):
+    logger.info("target files %s is already extracted", path)
+    return path
+  extracted_dir = common.MakeTempDir("target_files")
+  common.UnzipToDir(path, extracted_dir, UNZIP_PATTERN + [""])
+  return extracted_dir
+
+
+def LocatePartitionPath(target_files_dir: str, partition: str, allow_empty):
+  path = os.path.join(target_files_dir, "RADIO", partition + ".img")
+  if os.path.exists(path):
+    return path
+  path = os.path.join(target_files_dir, "IMAGES", partition + ".img")
+  if os.path.exists(path):
+    return path
+  if allow_empty:
+    return ""
+  raise common.ExternalError(
+      "Partition {} not found in target files {}".format(partition, target_files_dir))
+
+
+def GetPartitionImages(target_files_dir: str, ab_partitions, allow_empty=True):
+  assert os.path.isdir(target_files_dir)
+  return ":".join([LocatePartitionPath(target_files_dir, partition, allow_empty) for partition in ab_partitions])
+
+
+def LocatePartitionMap(target_files_dir: str, partition: str):
+  path = os.path.join(target_files_dir, "RADIO", partition + ".map")
+  if os.path.exists(path):
+    return path
+  return ""
+
+
+def GetPartitionMaps(target_files_dir: str, ab_partitions):
+  assert os.path.isdir(target_files_dir)
+  return ":".join([LocatePartitionMap(target_files_dir, partition) for partition in ab_partitions])
+
+
+class PayloadGenerator(object):
+  """Manages the creation and the signing of an A/B OTA Payload."""
+
+  PAYLOAD_BIN = 'payload.bin'
+  PAYLOAD_PROPERTIES_TXT = 'payload_properties.txt'
+  SECONDARY_PAYLOAD_BIN = 'secondary/payload.bin'
+  SECONDARY_PAYLOAD_PROPERTIES_TXT = 'secondary/payload_properties.txt'
+
+  def __init__(self, secondary=False, wipe_user_data=False, minor_version=None, is_partial_update=False):
+    """Initializes a Payload instance.
+
+    Args:
+      secondary: Whether it's generating a secondary payload (default: False).
+    """
+    self.payload_file = None
+    self.payload_properties = None
+    self.secondary = secondary
+    self.wipe_user_data = wipe_user_data
+    self.minor_version = minor_version
+    self.is_partial_update = is_partial_update
+
+  def _Run(self, cmd):  # pylint: disable=no-self-use
+    # Don't pipe (buffer) the output if verbose is set. Let
+    # brillo_update_payload write to stdout/stderr directly, so its progress can
+    # be monitored.
+    if OPTIONS.verbose:
+      common.RunAndCheckOutput(cmd, stdout=None, stderr=None)
+    else:
+      common.RunAndCheckOutput(cmd)
+
+  def Generate(self, target_file, source_file=None, additional_args=None):
+    """Generates a payload from the given target-files zip(s).
+
+    Args:
+      target_file: The filename of the target build target-files zip.
+      source_file: The filename of the source build target-files zip; or None if
+          generating a full OTA.
+      additional_args: A list of additional args that should be passed to
+          delta_generator binary; or None.
+    """
+    if additional_args is None:
+      additional_args = []
+
+    payload_file = common.MakeTempFile(prefix="payload-", suffix=".bin")
+    target_dir = ExtractTargetFiles(target_file)
+    cmd = ["delta_generator",
+           "--out_file", payload_file]
+    with open(os.path.join(target_dir, "META", "ab_partitions.txt")) as fp:
+      ab_partitions = fp.read().strip().split("\n")
+    cmd.extend(["--partition_names", ":".join(ab_partitions)])
+    cmd.extend(
+        ["--new_partitions", GetPartitionImages(target_dir, ab_partitions, False)])
+    cmd.extend(
+        ["--new_mapfiles", GetPartitionMaps(target_dir, ab_partitions)])
+    if source_file is not None:
+      source_dir = ExtractTargetFiles(source_file)
+      cmd.extend(
+          ["--old_partitions", GetPartitionImages(source_dir, ab_partitions, True)])
+      cmd.extend(
+          ["--old_mapfiles", GetPartitionMaps(source_dir, ab_partitions)])
+
+      if OPTIONS.disable_fec_computation:
+        cmd.extend(["--disable_fec_computation=true"])
+      if OPTIONS.disable_verity_computation:
+        cmd.extend(["--disable_verity_computation=true"])
+    postinstall_config = os.path.join(
+        target_dir, "META", "postinstall_config.txt")
+
+    if os.path.exists(postinstall_config):
+      cmd.extend(["--new_postinstall_config_file", postinstall_config])
+    dynamic_partition_info = os.path.join(
+        target_dir, "META", "dynamic_partitions_info.txt")
+
+    if os.path.exists(dynamic_partition_info):
+      cmd.extend(["--dynamic_partition_info_file", dynamic_partition_info])
+
+    major_version, minor_version = ParseUpdateEngineConfig(
+        os.path.join(target_dir, "META", "update_engine_config.txt"))
+    if source_file:
+      major_version, minor_version = ParseUpdateEngineConfig(
+          os.path.join(source_dir, "META", "update_engine_config.txt"))
+    if self.minor_version:
+      minor_version = self.minor_version
+    cmd.extend(["--major_version", str(major_version)])
+    if source_file is not None or self.is_partial_update:
+      cmd.extend(["--minor_version", str(minor_version)])
+    if self.is_partial_update:
+      cmd.extend(["--is_partial_update=true"])
+    cmd.extend(additional_args)
+    self._Run(cmd)
+
+    self.payload_file = payload_file
+    self.payload_properties = None
+
+  def Sign(self, payload_signer):
+    """Generates and signs the hashes of the payload and metadata.
+
+    Args:
+      payload_signer: A PayloadSigner() instance that serves the signing work.
+
+    Raises:
+      AssertionError: On any failure when calling brillo_update_payload script.
+    """
+    assert isinstance(payload_signer, PayloadSigner)
+
+    # 1. Generate hashes of the payload and metadata files.
+    payload_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
+    metadata_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
+    cmd = ["brillo_update_payload", "hash",
+           "--unsigned_payload", self.payload_file,
+           "--signature_size", str(payload_signer.maximum_signature_size),
+           "--metadata_hash_file", metadata_sig_file,
+           "--payload_hash_file", payload_sig_file]
+    self._Run(cmd)
+
+    # 2. Sign the hashes.
+    signed_payload_sig_file = payload_signer.SignHashFile(payload_sig_file)
+    signed_metadata_sig_file = payload_signer.SignHashFile(metadata_sig_file)
+
+    # 3. Insert the signatures back into the payload file.
+    signed_payload_file = common.MakeTempFile(prefix="signed-payload-",
+                                              suffix=".bin")
+    cmd = ["brillo_update_payload", "sign",
+           "--unsigned_payload", self.payload_file,
+           "--payload", signed_payload_file,
+           "--signature_size", str(payload_signer.maximum_signature_size),
+           "--metadata_signature_file", signed_metadata_sig_file,
+           "--payload_signature_file", signed_payload_sig_file]
+    self._Run(cmd)
+
+    self.payload_file = signed_payload_file
+
+  def WriteToZip(self, output_zip):
+    """Writes the payload to the given zip.
+
+    Args:
+      output_zip: The output ZipFile instance.
+    """
+    assert self.payload_file is not None
+    # 4. Dump the signed payload properties.
+    properties_file = common.MakeTempFile(prefix="payload-properties-",
+                                          suffix=".txt")
+    cmd = ["brillo_update_payload", "properties",
+           "--payload", self.payload_file,
+           "--properties_file", properties_file]
+    self._Run(cmd)
+
+    if self.secondary:
+      with open(properties_file, "a") as f:
+        f.write("SWITCH_SLOT_ON_REBOOT=0\n")
+
+    if self.wipe_user_data:
+      with open(properties_file, "a") as f:
+        f.write("POWERWASH=1\n")
+
+    self.payload_properties = properties_file
+
+    if self.secondary:
+      payload_arcname = PayloadGenerator.SECONDARY_PAYLOAD_BIN
+      payload_properties_arcname = PayloadGenerator.SECONDARY_PAYLOAD_PROPERTIES_TXT
+    else:
+      payload_arcname = PayloadGenerator.PAYLOAD_BIN
+      payload_properties_arcname = PayloadGenerator.PAYLOAD_PROPERTIES_TXT
+
+    # Add the signed payload file and properties into the zip. In order to
+    # support streaming, we pack them as ZIP_STORED. So these entries can be
+    # read directly with the offset and length pairs.
+    common.ZipWrite(output_zip, self.payload_file, arcname=payload_arcname,
+                    compress_type=zipfile.ZIP_STORED)
+    common.ZipWrite(output_zip, self.payload_properties,
+                    arcname=payload_properties_arcname,
+                    compress_type=zipfile.ZIP_STORED)
+
+
+class StreamingPropertyFiles(PropertyFiles):
+  """A subclass for computing the property-files for streaming A/B OTAs."""
+
+  def __init__(self):
+    super(StreamingPropertyFiles, self).__init__()
+    self.name = 'ota-streaming-property-files'
+    self.required = (
+        # payload.bin and payload_properties.txt must exist.
+        'payload.bin',
+        'payload_properties.txt',
+    )
+    self.optional = (
+        # apex_info.pb isn't directly used in the update flow
+        'apex_info.pb',
+        # care_map is available only if dm-verity is enabled.
+        'care_map.pb',
+        'care_map.txt',
+        # compatibility.zip is available only if target supports Treble.
+        'compatibility.zip',
+    )
+
+
+class AbOtaPropertyFiles(StreamingPropertyFiles):
+  """The property-files for A/B OTA that includes payload_metadata.bin info.
+
+  Since P, we expose one more token (aka property-file), in addition to the ones
+  for streaming A/B OTA, for a virtual entry of 'payload_metadata.bin'.
+  'payload_metadata.bin' is the header part of a payload ('payload.bin'), which
+  doesn't exist as a separate ZIP entry, but can be used to verify if the
+  payload can be applied on the given device.
+
+  For backward compatibility, we keep both of the 'ota-streaming-property-files'
+  and the newly added 'ota-property-files' in P. The new token will only be
+  available in 'ota-property-files'.
+  """
+
+  def __init__(self):
+    super(AbOtaPropertyFiles, self).__init__()
+    self.name = 'ota-property-files'
+
+  def _GetPrecomputed(self, input_zip):
+    offset, size = self._GetPayloadMetadataOffsetAndSize(input_zip)
+    return ['payload_metadata.bin:{}:{}'.format(offset, size)]
+
+  @staticmethod
+  def _GetPayloadMetadataOffsetAndSize(input_zip):
+    """Computes the offset and size of the payload metadata for a given package.
+
+    (From system/update_engine/update_metadata.proto)
+    A delta update file contains all the deltas needed to update a system from
+    one specific version to another specific version. The update format is
+    represented by this struct pseudocode:
+
+    struct delta_update_file {
+      char magic[4] = "CrAU";
+      uint64 file_format_version;
+      uint64 manifest_size;  // Size of protobuf DeltaArchiveManifest
+
+      // Only present if format_version > 1:
+      uint32 metadata_signature_size;
+
+      // The Bzip2 compressed DeltaArchiveManifest
+      char manifest[metadata_signature_size];
+
+      // The signature of the metadata (from the beginning of the payload up to
+      // this location, not including the signature itself). This is a
+      // serialized Signatures message.
+      char medatada_signature_message[metadata_signature_size];
+
+      // Data blobs for files, no specific format. The specific offset
+      // and length of each data blob is recorded in the DeltaArchiveManifest.
+      struct {
+        char data[];
+      } blobs[];
+
+      // These two are not signed:
+      uint64 payload_signatures_message_size;
+      char payload_signatures_message[];
+    };
+
+    'payload-metadata.bin' contains all the bytes from the beginning of the
+    payload, till the end of 'medatada_signature_message'.
+    """
+    payload_info = input_zip.getinfo('payload.bin')
+    (payload_offset, payload_size) = GetZipEntryOffset(input_zip, payload_info)
+
+    # Read the underlying raw zipfile at specified offset
+    payload_fp = input_zip.fp
+    payload_fp.seek(payload_offset)
+    header_bin = payload_fp.read(24)
+
+    # network byte order (big-endian)
+    header = struct.unpack("!IQQL", header_bin)
+
+    # 'CrAU'
+    magic = header[0]
+    assert magic == 0x43724155, "Invalid magic: {:x}, computed offset {}" \
+        .format(magic, payload_offset)
+
+    manifest_size = header[2]
+    metadata_signature_size = header[3]
+    metadata_total = 24 + manifest_size + metadata_signature_size
+    assert metadata_total <= payload_size
+
+    return (payload_offset, metadata_total)
+
+
+def Fnmatch(filename, pattersn):
+  return any([fnmatch.fnmatch(filename, pat) for pat in pattersn])
+
+
+def CopyTargetFilesDir(input_dir):
+  output_dir = common.MakeTempDir("target_files")
+  shutil.copytree(os.path.join(input_dir, "IMAGES"), os.path.join(
+      output_dir, "IMAGES"), dirs_exist_ok=True)
+  shutil.copytree(os.path.join(input_dir, "META"), os.path.join(
+      output_dir, "META"), dirs_exist_ok=True)
+  for (dirpath, _, filenames) in os.walk(input_dir):
+    for filename in filenames:
+      path = os.path.join(dirpath, filename)
+      relative_path = path.removeprefix(input_dir).removeprefix("/")
+      if not Fnmatch(relative_path, UNZIP_PATTERN):
+        continue
+      if filename.endswith(".prop") or filename == "prop.default" or "/etc/vintf/" in relative_path:
+        target_path = os.path.join(
+            output_dir, relative_path)
+        os.makedirs(os.path.dirname(target_path), exist_ok=True)
+        shutil.copy(path, target_path)
+  return output_dir
