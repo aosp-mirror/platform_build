@@ -65,7 +65,16 @@ func Test(t *testing.T) {
 				usedBy{"highest.apex/lib/libb.so"},
 				firstParty{},
 			},
-			expectedDeps: []string{"testdata/firstparty/FIRST_PARTY_LICENSE"},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/firstparty/bin/bin1.meta_lic",
+				"testdata/firstparty/bin/bin2.meta_lic",
+				"testdata/firstparty/highest.apex.meta_lic",
+				"testdata/firstparty/lib/liba.so.meta_lic",
+				"testdata/firstparty/lib/libb.so.meta_lic",
+				"testdata/firstparty/lib/libc.a.meta_lic",
+				"testdata/firstparty/lib/libd.so.meta_lic",
+			},
 		},
 		{
 			condition: "firstparty",
@@ -81,7 +90,16 @@ func Test(t *testing.T) {
 				usedBy{"container.zip/libb.so"},
 				firstParty{},
 			},
-			expectedDeps: []string{"testdata/firstparty/FIRST_PARTY_LICENSE"},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/firstparty/bin/bin1.meta_lic",
+				"testdata/firstparty/bin/bin2.meta_lic",
+				"testdata/firstparty/container.zip.meta_lic",
+				"testdata/firstparty/lib/liba.so.meta_lic",
+				"testdata/firstparty/lib/libb.so.meta_lic",
+				"testdata/firstparty/lib/libc.a.meta_lic",
+				"testdata/firstparty/lib/libd.so.meta_lic",
+			},
 		},
 		{
 			condition: "firstparty",
@@ -93,7 +111,13 @@ func Test(t *testing.T) {
 				usedBy{"application"},
 				firstParty{},
 			},
-			expectedDeps: []string{"testdata/firstparty/FIRST_PARTY_LICENSE"},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/firstparty/application.meta_lic",
+				"testdata/firstparty/bin/bin3.meta_lic",
+				"testdata/firstparty/lib/liba.so.meta_lic",
+				"testdata/firstparty/lib/libb.so.meta_lic",
+			},
 		},
 		{
 			condition: "firstparty",
@@ -105,7 +129,12 @@ func Test(t *testing.T) {
 				usedBy{"bin/bin1"},
 				firstParty{},
 			},
-			expectedDeps: []string{"testdata/firstparty/FIRST_PARTY_LICENSE"},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/firstparty/bin/bin1.meta_lic",
+				"testdata/firstparty/lib/liba.so.meta_lic",
+				"testdata/firstparty/lib/libc.a.meta_lic",
+			},
 		},
 		{
 			condition: "firstparty",
@@ -117,7 +146,10 @@ func Test(t *testing.T) {
 				usedBy{"lib/libd.so"},
 				firstParty{},
 			},
-			expectedDeps: []string{"testdata/firstparty/FIRST_PARTY_LICENSE"},
+			expectedDeps: []string{
+				"testdata/firstparty/FIRST_PARTY_LICENSE",
+				"testdata/firstparty/lib/libd.so.meta_lic",
+			},
 		},
 		{
 			condition: "notice",
@@ -142,6 +174,13 @@ func Test(t *testing.T) {
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
 				"testdata/notice/NOTICE_LICENSE",
+				"testdata/notice/bin/bin1.meta_lic",
+				"testdata/notice/bin/bin2.meta_lic",
+				"testdata/notice/highest.apex.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+				"testdata/notice/lib/libc.a.meta_lic",
+				"testdata/notice/lib/libd.so.meta_lic",
 			},
 		},
 		{
@@ -167,6 +206,13 @@ func Test(t *testing.T) {
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
 				"testdata/notice/NOTICE_LICENSE",
+				"testdata/notice/bin/bin1.meta_lic",
+				"testdata/notice/bin/bin2.meta_lic",
+				"testdata/notice/container.zip.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
+				"testdata/notice/lib/libc.a.meta_lic",
+				"testdata/notice/lib/libd.so.meta_lic",
 			},
 		},
 		{
@@ -186,6 +232,10 @@ func Test(t *testing.T) {
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
 				"testdata/notice/NOTICE_LICENSE",
+				"testdata/notice/application.meta_lic",
+				"testdata/notice/bin/bin3.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libb.so.meta_lic",
 			},
 		},
 		{
@@ -207,6 +257,9 @@ func Test(t *testing.T) {
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
 				"testdata/notice/NOTICE_LICENSE",
+				"testdata/notice/bin/bin1.meta_lic",
+				"testdata/notice/lib/liba.so.meta_lic",
+				"testdata/notice/lib/libc.a.meta_lic",
 			},
 		},
 		{
@@ -219,7 +272,10 @@ func Test(t *testing.T) {
 				usedBy{"lib/libd.so"},
 				notice{},
 			},
-			expectedDeps: []string{"testdata/notice/NOTICE_LICENSE"},
+			expectedDeps: []string{
+				"testdata/notice/NOTICE_LICENSE",
+				"testdata/notice/lib/libd.so.meta_lic",
+			},
 		},
 		{
 			condition: "reciprocal",
@@ -244,6 +300,13 @@ func Test(t *testing.T) {
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
 				"testdata/reciprocal/RECIPROCAL_LICENSE",
+				"testdata/reciprocal/bin/bin1.meta_lic",
+				"testdata/reciprocal/bin/bin2.meta_lic",
+				"testdata/reciprocal/highest.apex.meta_lic",
+				"testdata/reciprocal/lib/liba.so.meta_lic",
+				"testdata/reciprocal/lib/libb.so.meta_lic",
+				"testdata/reciprocal/lib/libc.a.meta_lic",
+				"testdata/reciprocal/lib/libd.so.meta_lic",
 			},
 		},
 		{
@@ -269,6 +332,13 @@ func Test(t *testing.T) {
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
 				"testdata/reciprocal/RECIPROCAL_LICENSE",
+				"testdata/reciprocal/bin/bin1.meta_lic",
+				"testdata/reciprocal/bin/bin2.meta_lic",
+				"testdata/reciprocal/container.zip.meta_lic",
+				"testdata/reciprocal/lib/liba.so.meta_lic",
+				"testdata/reciprocal/lib/libb.so.meta_lic",
+				"testdata/reciprocal/lib/libc.a.meta_lic",
+				"testdata/reciprocal/lib/libd.so.meta_lic",
 			},
 		},
 		{
@@ -288,6 +358,10 @@ func Test(t *testing.T) {
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
 				"testdata/reciprocal/RECIPROCAL_LICENSE",
+				"testdata/reciprocal/application.meta_lic",
+				"testdata/reciprocal/bin/bin3.meta_lic",
+				"testdata/reciprocal/lib/liba.so.meta_lic",
+				"testdata/reciprocal/lib/libb.so.meta_lic",
 			},
 		},
 		{
@@ -309,6 +383,9 @@ func Test(t *testing.T) {
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
 				"testdata/reciprocal/RECIPROCAL_LICENSE",
+				"testdata/reciprocal/bin/bin1.meta_lic",
+				"testdata/reciprocal/lib/liba.so.meta_lic",
+				"testdata/reciprocal/lib/libc.a.meta_lic",
 			},
 		},
 		{
@@ -323,6 +400,7 @@ func Test(t *testing.T) {
 			},
 			expectedDeps: []string{
 				"testdata/notice/NOTICE_LICENSE",
+				"testdata/reciprocal/lib/libd.so.meta_lic",
 			},
 		},
 		{
@@ -353,6 +431,13 @@ func Test(t *testing.T) {
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
 				"testdata/reciprocal/RECIPROCAL_LICENSE",
 				"testdata/restricted/RESTRICTED_LICENSE",
+				"testdata/restricted/bin/bin1.meta_lic",
+				"testdata/restricted/bin/bin2.meta_lic",
+				"testdata/restricted/highest.apex.meta_lic",
+				"testdata/restricted/lib/liba.so.meta_lic",
+				"testdata/restricted/lib/libb.so.meta_lic",
+				"testdata/restricted/lib/libc.a.meta_lic",
+				"testdata/restricted/lib/libd.so.meta_lic",
 			},
 		},
 		{
@@ -383,6 +468,13 @@ func Test(t *testing.T) {
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
 				"testdata/reciprocal/RECIPROCAL_LICENSE",
 				"testdata/restricted/RESTRICTED_LICENSE",
+				"testdata/restricted/bin/bin1.meta_lic",
+				"testdata/restricted/bin/bin2.meta_lic",
+				"testdata/restricted/container.zip.meta_lic",
+				"testdata/restricted/lib/liba.so.meta_lic",
+				"testdata/restricted/lib/libb.so.meta_lic",
+				"testdata/restricted/lib/libc.a.meta_lic",
+				"testdata/restricted/lib/libd.so.meta_lic",
 			},
 		},
 		{
@@ -402,6 +494,10 @@ func Test(t *testing.T) {
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
 				"testdata/restricted/RESTRICTED_LICENSE",
+				"testdata/restricted/application.meta_lic",
+				"testdata/restricted/bin/bin3.meta_lic",
+				"testdata/restricted/lib/liba.so.meta_lic",
+				"testdata/restricted/lib/libb.so.meta_lic",
 			},
 		},
 		{
@@ -426,6 +522,9 @@ func Test(t *testing.T) {
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
 				"testdata/reciprocal/RECIPROCAL_LICENSE",
 				"testdata/restricted/RESTRICTED_LICENSE",
+				"testdata/restricted/bin/bin1.meta_lic",
+				"testdata/restricted/lib/liba.so.meta_lic",
+				"testdata/restricted/lib/libc.a.meta_lic",
 			},
 		},
 		{
@@ -438,7 +537,10 @@ func Test(t *testing.T) {
 				usedBy{"lib/libd.so"},
 				notice{},
 			},
-			expectedDeps: []string{"testdata/notice/NOTICE_LICENSE"},
+			expectedDeps: []string{
+				"testdata/notice/NOTICE_LICENSE",
+				"testdata/restricted/lib/libd.so.meta_lic",
+			},
 		},
 		{
 			condition: "proprietary",
@@ -468,6 +570,13 @@ func Test(t *testing.T) {
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
 				"testdata/proprietary/PROPRIETARY_LICENSE",
+				"testdata/proprietary/bin/bin1.meta_lic",
+				"testdata/proprietary/bin/bin2.meta_lic",
+				"testdata/proprietary/highest.apex.meta_lic",
+				"testdata/proprietary/lib/liba.so.meta_lic",
+				"testdata/proprietary/lib/libb.so.meta_lic",
+				"testdata/proprietary/lib/libc.a.meta_lic",
+				"testdata/proprietary/lib/libd.so.meta_lic",
 				"testdata/restricted/RESTRICTED_LICENSE",
 			},
 		},
@@ -499,6 +608,13 @@ func Test(t *testing.T) {
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
 				"testdata/proprietary/PROPRIETARY_LICENSE",
+				"testdata/proprietary/bin/bin1.meta_lic",
+				"testdata/proprietary/bin/bin2.meta_lic",
+				"testdata/proprietary/container.zip.meta_lic",
+				"testdata/proprietary/lib/liba.so.meta_lic",
+				"testdata/proprietary/lib/libb.so.meta_lic",
+				"testdata/proprietary/lib/libc.a.meta_lic",
+				"testdata/proprietary/lib/libd.so.meta_lic",
 				"testdata/restricted/RESTRICTED_LICENSE",
 			},
 		},
@@ -519,6 +635,10 @@ func Test(t *testing.T) {
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
 				"testdata/proprietary/PROPRIETARY_LICENSE",
+				"testdata/proprietary/application.meta_lic",
+				"testdata/proprietary/bin/bin3.meta_lic",
+				"testdata/proprietary/lib/liba.so.meta_lic",
+				"testdata/proprietary/lib/libb.so.meta_lic",
 			},
 		},
 		{
@@ -540,6 +660,9 @@ func Test(t *testing.T) {
 			expectedDeps: []string{
 				"testdata/firstparty/FIRST_PARTY_LICENSE",
 				"testdata/proprietary/PROPRIETARY_LICENSE",
+				"testdata/proprietary/bin/bin1.meta_lic",
+				"testdata/proprietary/lib/liba.so.meta_lic",
+				"testdata/proprietary/lib/libc.a.meta_lic",
 			},
 		},
 		{
@@ -552,7 +675,10 @@ func Test(t *testing.T) {
 				usedBy{"lib/libd.so"},
 				notice{},
 			},
-			expectedDeps: []string{"testdata/notice/NOTICE_LICENSE"},
+			expectedDeps: []string{
+				"testdata/notice/NOTICE_LICENSE",
+				"testdata/proprietary/lib/libd.so.meta_lic",
+			},
 		},
 	}
 	for _, tt := range tests {
