@@ -24,7 +24,7 @@ PRODUCT_PACKAGES += \
     android.hidl.manager-V1.0-java \
     android.hidl.memory@1.0-impl \
     android.hidl.memory@1.0-impl.vendor \
-    android.system.suspend@1.0-service \
+    android.system.suspend-service \
     android.test.base \
     android.test.mock \
     android.test.runner \
@@ -53,8 +53,11 @@ PRODUCT_PACKAGES += \
     com.android.adservices \
     com.android.appsearch \
     com.android.btservices \
+    com.android.configinfrastructure \
     com.android.conscrypt \
+    com.android.devicelock \
     com.android.extservices \
+    com.android.healthfitness \
     com.android.i18n \
     com.android.ipsec \
     com.android.location.provider \
@@ -65,12 +68,14 @@ PRODUCT_PACKAGES += \
     com.android.os.statsd \
     com.android.permission \
     com.android.resolv \
+    com.android.rkpd \
     com.android.neuralnetworks \
     com.android.scheduling \
     com.android.sdkext \
     com.android.tethering \
     com.android.tzdata \
     com.android.uwb \
+    com.android.virt \
     com.android.wifi \
     ContactsProvider \
     content \
@@ -118,8 +123,10 @@ PRODUCT_PACKAGES += \
     incident-helper-cmd \
     init.environ.rc \
     init_system \
+    initial-package-stopped-states.xml \
     input \
     installd \
+    IntentResolver \
     ip \
     iptables \
     ip-up-vpn \
@@ -201,7 +208,6 @@ PRODUCT_PACKAGES += \
     libvulkan \
     libwilhelm \
     linker \
-    linkerconfig \
     llkd \
     lmkd \
     LocalTransport \
@@ -220,6 +226,7 @@ PRODUCT_PACKAGES += \
     mke2fs \
     mkfs.erofs \
     monkey \
+    mtectrl \
     mtpd \
     ndc \
     netd \
@@ -235,8 +242,10 @@ PRODUCT_PACKAGES += \
     platform.xml \
     pm \
     pppd \
+    preinstalled-packages-asl-files.xml \
     preinstalled-packages-platform.xml \
     privapp-permissions-platform.xml \
+    prng_seeder \
     racoon \
     recovery-persist \
     resize2fs \
@@ -273,7 +282,6 @@ PRODUCT_PACKAGES += \
     traced \
     traced_probes \
     tune2fs \
-    tzdatacheck \
     uiautomator \
     uinput \
     uncrypt \
@@ -282,7 +290,6 @@ PRODUCT_PACKAGES += \
     viewcompiler \
     voip-common \
     vold \
-    WallpaperBackup \
     watchdogd \
     wificond \
     wifi.rc \
@@ -293,11 +300,9 @@ PRODUCT_PACKAGES += \
     system_manifest.xml \
     system_compatibility_matrix.xml \
 
-# HWASAN runtime for SANITIZE_TARGET=hwaddress builds
-ifneq (,$(filter hwaddress,$(SANITIZE_TARGET)))
-  PRODUCT_PACKAGES += \
-   libclang_rt.hwasan.bootstrap
-endif
+PRODUCT_PACKAGES_ARM64 := libclang_rt.hwasan \
+ libclang_rt.hwasan.bootstrap \
+ libc_hwasan \
 
 # Jacoco agent JARS to be built and installed, if any.
 ifeq ($(EMMA_INSTRUMENT),true)
@@ -315,6 +320,16 @@ ifeq ($(EMMA_INSTRUMENT),true)
     endif # EMMA_INSTRUMENT_FRAMEWORK
   endif # EMMA_INSTRUMENT_STATIC
 endif # EMMA_INSTRUMENT
+
+ifeq (,$(DISABLE_WALLPAPER_BACKUP))
+  PRODUCT_PACKAGES += \
+    WallpaperBackup
+endif
+
+# For testing purposes
+ifeq ($(FORCE_AUDIO_SILENT), true)
+    PRODUCT_SYSTEM_PROPERTIES += ro.audio.silent=1
+endif
 
 # Host tools to install
 PRODUCT_HOST_PACKAGES += \
@@ -343,7 +358,6 @@ PRODUCT_HOST_PACKAGES += \
     sqlite3 \
     tinyplay \
     tune2fs \
-    tzdatacheck \
     unwind_info \
     unwind_reg_info \
     unwind_symbols \
@@ -376,12 +390,14 @@ PRODUCT_PACKAGES_DEBUG := \
     iotop \
     iperf3 \
     iw \
+    layertracegenerator \
+    libclang_rt.ubsan_standalone \
     logpersist.start \
     logtagd.rc \
     procrank \
     profcollectd \
     profcollectctl \
-    remount \
+    record_binder \
     servicedispatcher \
     showmap \
     sqlite3 \
@@ -400,7 +416,11 @@ PRODUCT_PACKAGES_DEBUG := \
 # The set of packages whose code can be loaded by the system server.
 PRODUCT_SYSTEM_SERVER_APPS += \
     SettingsProvider \
+
+ifeq (,$(DISABLE_WALLPAPER_BACKUP))
+  PRODUCT_SYSTEM_SERVER_APPS += \
     WallpaperBackup
+endif
 
 PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE := \
     libdumpcoverage

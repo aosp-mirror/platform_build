@@ -23,5 +23,14 @@
 
     <test class="com.android.tradefed.testtype.IsolatedHostTest" >
         <option name="jar" value="{MODULE}.jar" />
+        <option name="java-flags" value="--add-modules=jdk.compiler"/>
+        <option name="java-flags" value="--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"/>
+        <option name="java-flags" value="--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED"/>
+        <option name="java-flags" value="--add-exports=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED"/>
+        <option name="java-flags" value="--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED"/>
+        <option name="java-flags" value="--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED"/>
+        <option name="java-flags" value="--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED"/>
+        <option name="java-flags" value="--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED"/>
+        <option name="java-flags" value="--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED"/>
     </test>
 </configuration>
