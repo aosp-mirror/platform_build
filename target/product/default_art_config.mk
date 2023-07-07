@@ -55,7 +55,10 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.adservices:framework-sdksandbox \
     com.android.appsearch:framework-appsearch \
     com.android.btservices:framework-bluetooth \
+    com.android.configinfrastructure:framework-configinfrastructure \
     com.android.conscrypt:conscrypt \
+    com.android.devicelock:framework-devicelock \
+    com.android.healthfitness:framework-healthfitness \
     com.android.i18n:core-icu4j \
     com.android.ipsec:android.net.ipsec.ike \
     com.android.media:updatable-media \
@@ -70,6 +73,7 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.tethering:framework-connectivity-t \
     com.android.tethering:framework-tethering \
     com.android.uwb:framework-uwb \
+    com.android.virt:framework-virtualization \
     com.android.wifi:framework-wifi \
 
 # List of system_server classpath jars delivered via apex.
@@ -80,10 +84,18 @@ PRODUCT_APEX_SYSTEM_SERVER_JARS := \
     com.android.adservices:service-sdksandbox \
     com.android.appsearch:service-appsearch \
     com.android.art:service-art \
+    com.android.configinfrastructure:service-configinfrastructure \
+    com.android.healthfitness:service-healthfitness \
     com.android.media:service-media-s \
+    com.android.ondevicepersonalization:service-ondevicepersonalization \
     com.android.permission:service-permission \
+    com.android.rkpd:service-rkp \
 
-PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION += art/build/boot/boot-image-profile.txt
+# Use $(wildcard) to avoid referencing the profile in thin manifests that don't have the
+# art project.
+ifneq (,$(wildcard art))
+  PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION += art/build/boot/boot-image-profile.txt
+endif
 
 # List of jars on the platform that system_server loads dynamically using separate classloaders.
 # Keep the list sorted library names.
@@ -94,6 +106,7 @@ PRODUCT_STANDALONE_SYSTEM_SERVER_JARS := \
 # Note: For modules available in Q, DO NOT add new entries here.
 PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS := \
     com.android.btservices:service-bluetooth \
+    com.android.devicelock:service-devicelock \
     com.android.os.statsd:service-statsd \
     com.android.scheduling:service-scheduling \
     com.android.tethering:service-connectivity \
@@ -108,3 +121,5 @@ PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.image-dex2oat-Xmx=64m \
     dalvik.vm.dex2oat-Xms=64m \
     dalvik.vm.dex2oat-Xmx=512m \
+
+PRODUCT_ENABLE_UFFD_GC := false  # TODO(jiakaiz): Change this to "default".
