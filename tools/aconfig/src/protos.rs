@@ -200,6 +200,11 @@ pub mod parsed_flag {
 
         Ok(())
     }
+
+    pub fn path_to_declaration(pf: &ProtoParsedFlag) -> &str {
+        debug_assert!(!pf.trace.is_empty());
+        pf.trace[0].source()
+    }
 }
 
 pub mod parsed_flags {
@@ -214,6 +219,8 @@ pub mod parsed_flags {
     }
 
     pub fn verify_fields(pf: &ProtoParsedFlags) -> Result<()> {
+        use crate::protos::parsed_flag::path_to_declaration;
+
         let mut previous: Option<&ProtoParsedFlag> = None;
         for parsed_flag in pf.parsed_flag.iter() {
             if let Some(prev) = previous {
@@ -221,7 +228,12 @@ pub mod parsed_flags {
                 let b = create_sorting_key(parsed_flag);
                 match a.cmp(&b) {
                     Ordering::Less => {}
-                    Ordering::Equal => bail!("bad parsed flags: duplicate flag {}", a),
+                    Ordering::Equal => bail!(
+                        "bad parsed flags: duplicate flag {} (defined in {} and {})",
+                        a,
+                        path_to_declaration(prev),
+                        path_to_declaration(parsed_flag)
+                    ),
                     Ordering::Greater => {
                         bail!("bad parsed flags: not sorted: {} comes before {}", a, b)
                     }
@@ -646,7 +658,37 @@ parsed_flag {
 }
 "#;
         let error = try_from_binary_proto_from_text_proto(text_proto).unwrap_err();
-        assert_eq!(format!("{:?}", error), "bad parsed flags: duplicate flag com.foo.bar");
+        assert_eq!(format!("{:?}", error), "bad parsed flags: duplicate flag com.foo.bar (defined in flags.declarations and flags.declarations)");
+    }
+
+    #[test]
+    fn test_parsed_flag_path_to_declaration() {
+        let text_proto = r#"
+parsed_flag {
+    package: "com.foo"
+    name: "bar"
+    namespace: "first_ns"
+    description: "This is the description of the first flag."
+    state: DISABLED
+    permission: READ_ONLY
+    trace {
+        source: "flags.declarations"
+        state: DISABLED
+        permission: READ_ONLY
+    }
+    trace {
+        source: "flags.values"
+        state: ENABLED
+        permission: READ_ONLY
+    }
+}
+"#;
+        let parsed_flags = try_from_binary_proto_from_text_proto(text_proto).unwrap();
+        let parsed_flag = &parsed_flags.parsed_flag[0];
+        assert_eq!(
+            crate::protos::parsed_flag::path_to_declaration(parsed_flag),
+            "flags.declarations"
+        );
     }
 
     #[test]
@@ -717,7 +759,7 @@ parsed_flag {
 
         // bad cases
         let error = parsed_flags::merge(vec![first.clone(), first.clone()]).unwrap_err();
-        assert_eq!(format!("{:?}", error), "bad parsed flags: duplicate flag com.first.first");
+        assert_eq!(format!("{:?}", error), "bad parsed flags: duplicate flag com.first.first (defined in flags.declarations and flags.declarations)");
 
         // valid cases
         assert!(parsed_flags::merge(vec![]).unwrap().parsed_flag.is_empty());
