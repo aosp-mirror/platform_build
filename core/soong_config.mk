@@ -9,7 +9,18 @@ BINDER32BIT := true
 endif
 endif
 
+include $(BUILD_SYSTEM)/art_config.mk
 include $(BUILD_SYSTEM)/dex_preopt_config.mk
+
+ifndef AFDO_PROFILES
+# Set AFDO_PROFILES
+-include vendor/google_data/pgo_profile/sampling/afdo_profiles.mk
+else
+$(error AFDO_PROFILES can only be set from soong_config.mk. For product-specific fdo_profiles, please use PRODUCT_AFDO_PROFILES)
+endif
+
+# PRODUCT_AFDO_PROFILES takes precedence over product-agnostic profiles in AFDO_PROFILES
+ALL_AFDO_PROFILES := $(PRODUCT_AFDO_PROFILES) $(AFDO_PROFILES)
 
 ifeq ($(WRITE_SOONG_VARIABLES),true)
 
@@ -30,10 +41,12 @@ $(call add_json_bool, Platform_sdk_final,                $(filter REL,$(PLATFORM
 $(call add_json_val,  Platform_sdk_extension_version,    $(PLATFORM_SDK_EXTENSION_VERSION))
 $(call add_json_val,  Platform_base_sdk_extension_version, $(PLATFORM_BASE_SDK_EXTENSION_VERSION))
 $(call add_json_csv,  Platform_version_active_codenames, $(PLATFORM_VERSION_ALL_CODENAMES))
+$(call add_json_csv,  Platform_version_all_preview_codenames, $(PLATFORM_VERSION_ALL_PREVIEW_CODENAMES))
 $(call add_json_str,  Platform_security_patch,           $(PLATFORM_SECURITY_PATCH))
 $(call add_json_str,  Platform_preview_sdk_version,      $(PLATFORM_PREVIEW_SDK_VERSION))
 $(call add_json_str,  Platform_base_os,                  $(PLATFORM_BASE_OS))
 $(call add_json_str,  Platform_version_last_stable,      $(PLATFORM_VERSION_LAST_STABLE))
+$(call add_json_str,  Platform_version_known_codenames,  $(PLATFORM_VERSION_KNOWN_CODENAMES))
 
 $(call add_json_str,  Platform_min_supported_target_sdk_version, $(PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION))
 
@@ -93,6 +106,7 @@ $(call add_json_str,  AAPTPreferredConfig,               $(PRODUCT_AAPT_PREF_CON
 $(call add_json_list, AAPTPrebuiltDPI,                   $(PRODUCT_AAPT_PREBUILT_DPI))
 
 $(call add_json_str,  DefaultAppCertificate,             $(PRODUCT_DEFAULT_DEV_CERTIFICATE))
+$(call add_json_str,  MainlineSepolicyDevCertificates,   $(MAINLINE_SEPOLICY_DEV_CERTIFICATES))
 
 $(call add_json_str,  AppsDefaultVersionName,            $(APPS_DEFAULT_VERSION_NAME))
 
@@ -106,6 +120,7 @@ $(call add_json_bool, EnableCFI,                         $(call invert_bool,$(fi
 $(call add_json_list, CFIExcludePaths,                   $(CFI_EXCLUDE_PATHS) $(PRODUCT_CFI_EXCLUDE_PATHS))
 $(call add_json_list, CFIIncludePaths,                   $(CFI_INCLUDE_PATHS) $(PRODUCT_CFI_INCLUDE_PATHS))
 $(call add_json_list, IntegerOverflowExcludePaths,       $(INTEGER_OVERFLOW_EXCLUDE_PATHS) $(PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS))
+$(call add_json_list, HWASanIncludePaths,                $(HWASAN_INCLUDE_PATHS) $(PRODUCT_HWASAN_INCLUDE_PATHS))
 
 $(call add_json_list, MemtagHeapExcludePaths,            $(MEMTAG_HEAP_EXCLUDE_PATHS) $(PRODUCT_MEMTAG_HEAP_EXCLUDE_PATHS))
 $(call add_json_list, MemtagHeapAsyncIncludePaths,       $(MEMTAG_HEAP_ASYNC_INCLUDE_PATHS) $(PRODUCT_MEMTAG_HEAP_ASYNC_INCLUDE_PATHS))
@@ -142,6 +157,7 @@ $(call add_json_bool, Malloc_not_svelte,                 $(call invert_bool,$(fi
 $(call add_json_bool, Malloc_zero_contents,              $(call invert_bool,$(filter false,$(MALLOC_ZERO_CONTENTS))))
 $(call add_json_bool, Malloc_pattern_fill_contents,      $(MALLOC_PATTERN_FILL_CONTENTS))
 $(call add_json_str,  Override_rs_driver,                $(OVERRIDE_RS_DRIVER))
+$(call add_json_str,  DeviceMaxPageSizeSupported,        $(TARGET_MAX_PAGE_SIZE_SUPPORTED))
 
 $(call add_json_bool, UncompressPrivAppDex,              $(call invert_bool,$(filter true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS))))
 $(call add_json_list, ModulesLoadedByPrivilegedModules,  $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES))
@@ -169,6 +185,8 @@ $(call add_json_list, VendorSnapshotDirsExcluded,        $(VENDOR_SNAPSHOT_DIRS_
 $(call add_json_list, RecoverySnapshotDirsIncluded,      $(RECOVERY_SNAPSHOT_DIRS_INCLUDED))
 $(call add_json_list, RecoverySnapshotDirsExcluded,      $(RECOVERY_SNAPSHOT_DIRS_EXCLUDED))
 $(call add_json_bool, HostFakeSnapshotEnabled,           $(HOST_FAKE_SNAPSHOT_ENABLE))
+
+$(call add_json_bool, MultitreeUpdateMeta,               $(filter true,$(TARGET_MULTITREE_UPDATE_META)))
 
 $(call add_json_bool, Treble_linker_namespaces,          $(filter true,$(PRODUCT_TREBLE_LINKER_NAMESPACES)))
 $(call add_json_bool, Enforce_vintf_manifest,            $(filter true,$(PRODUCT_ENFORCE_VINTF_MANIFEST)))
@@ -205,9 +223,8 @@ $(call add_json_list, BoardOdmSepolicyDirs,              $(BOARD_ODM_SEPOLICY_DI
 $(call add_json_list, BoardVendorDlkmSepolicyDirs,       $(BOARD_VENDOR_DLKM_SEPOLICY_DIRS))
 $(call add_json_list, BoardOdmDlkmSepolicyDirs,          $(BOARD_ODM_DLKM_SEPOLICY_DIRS))
 $(call add_json_list, BoardSystemDlkmSepolicyDirs,       $(BOARD_SYSTEM_DLKM_SEPOLICY_DIRS))
-# TODO: BOARD_PLAT_* dirs only kept for compatibility reasons. Will be a hard error on API level 31
-$(call add_json_list, SystemExtPublicSepolicyDirs,       $(SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS) $(BOARD_PLAT_PUBLIC_SEPOLICY_DIR))
-$(call add_json_list, SystemExtPrivateSepolicyDirs,      $(SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS) $(BOARD_PLAT_PRIVATE_SEPOLICY_DIR))
+$(call add_json_list, SystemExtPublicSepolicyDirs,       $(SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS))
+$(call add_json_list, SystemExtPrivateSepolicyDirs,      $(SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS))
 $(call add_json_list, BoardSepolicyM4Defs,               $(BOARD_SEPOLICY_M4DEFS))
 $(call add_json_str,  BoardSepolicyVers,                 $(BOARD_SEPOLICY_VERS))
 $(call add_json_str,  SystemExtSepolicyPrebuiltApiDir,   $(BOARD_SYSTEM_EXT_PREBUILT_DIR))
@@ -245,10 +262,10 @@ $(call add_json_list, TargetFSConfigGen,                 $(TARGET_FS_CONFIG_GEN)
 $(call add_json_list, MissingUsesLibraries,              $(INTERNAL_PLATFORM_MISSING_USES_LIBRARIES))
 
 $(call add_json_map, VendorVars)
-$(foreach namespace,$(SOONG_CONFIG_NAMESPACES),\
+$(foreach namespace,$(sort $(SOONG_CONFIG_NAMESPACES)),\
   $(call add_json_map, $(namespace))\
-  $(foreach key,$(SOONG_CONFIG_$(namespace)),\
-    $(call add_json_str,$(key),$(SOONG_CONFIG_$(namespace)_$(key))))\
+  $(foreach key,$(sort $(SOONG_CONFIG_$(namespace))),\
+    $(call add_json_str,$(key),$(subst ",\",$(SOONG_CONFIG_$(namespace)_$(key)))))\
   $(call end_json_map))
 $(call end_json_map)
 
@@ -262,6 +279,10 @@ $(call add_json_bool, InstallExtraFlattenedApexes, $(PRODUCT_INSTALL_EXTRA_FLATT
 
 $(call add_json_bool, CompressedApex, $(filter true,$(PRODUCT_COMPRESSED_APEX)))
 
+ifndef APEX_BUILD_FOR_PRE_S_DEVICES
+$(call add_json_bool, TrimmedApex, $(filter true,$(PRODUCT_TRIMMED_APEX)))
+endif
+
 $(call add_json_bool, BoardUsesRecoveryAsBoot, $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)))
 
 $(call add_json_list, BoardKernelBinaries, $(BOARD_KERNEL_BINARIES))
@@ -272,8 +293,13 @@ $(call add_json_str,  PrebuiltHiddenApiDir, $(BOARD_PREBUILT_HIDDENAPI_DIR))
 
 $(call add_json_str,  ShippingApiLevel, $(PRODUCT_SHIPPING_API_LEVEL))
 
+$(call add_json_bool, BuildBrokenClangProperty,           $(filter true,$(BUILD_BROKEN_CLANG_PROPERTY)))
+$(call add_json_bool, BuildBrokenClangAsFlags,            $(filter true,$(BUILD_BROKEN_CLANG_ASFLAGS)))
+$(call add_json_bool, BuildBrokenClangCFlags,             $(filter true,$(BUILD_BROKEN_CLANG_CFLAGS)))
+$(call add_json_bool, BuildBrokenDepfile,                 $(filter true,$(BUILD_BROKEN_DEPFILE)))
 $(call add_json_bool, BuildBrokenEnforceSyspropOwner,     $(filter true,$(BUILD_BROKEN_ENFORCE_SYSPROP_OWNER)))
 $(call add_json_bool, BuildBrokenTrebleSyspropNeverallow, $(filter true,$(BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW)))
+$(call add_json_bool, BuildBrokenUsesSoongPython2Modules, $(filter true,$(BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES)))
 $(call add_json_bool, BuildBrokenVendorPropertyNamespace, $(filter true,$(BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE)))
 $(call add_json_list, BuildBrokenInputDirModules, $(BUILD_BROKEN_INPUT_DIR_MODULES))
 
@@ -289,6 +315,17 @@ $(call add_json_list, SepolicyFreezeTestExtraDirs,         $(SEPOLICY_FREEZE_TES
 $(call add_json_list, SepolicyFreezeTestExtraPrebuiltDirs, $(SEPOLICY_FREEZE_TEST_EXTRA_PREBUILT_DIRS))
 
 $(call add_json_bool, GenerateAidlNdkPlatformBackend, $(filter true,$(NEED_AIDL_NDK_PLATFORM_BACKEND)))
+
+$(call add_json_bool, IgnorePrefer32OnDevice, $(filter true,$(IGNORE_PREFER32_ON_DEVICE)))
+
+$(call add_json_list, IncludeTags,                $(PRODUCT_INCLUDE_TAGS))
+$(call add_json_list, SourceRootDirs,             $(PRODUCT_SOURCE_ROOT_DIRS))
+
+$(call add_json_list, AfdoProfiles,                $(ALL_AFDO_PROFILES))
+
+$(call add_json_str,  ProductManufacturer, $(PRODUCT_MANUFACTURER))
+$(call add_json_str,  ProductBrand,        $(PRODUCT_BRAND))
+$(call add_json_list, BuildVersionTags,    $(BUILD_VERSION_TAGS))
 
 $(call json_end)
 
