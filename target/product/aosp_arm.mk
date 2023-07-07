@@ -49,7 +49,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_product.mk)
 #
 # All components inherited here go to vendor image
 #
-$(call inherit-product-if-exists, device/generic/goldfish/arm32-vendor.mk)
+$(call inherit-product-if-exists, build/make/target/product/ramdisk_stub.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86/device.mk)
 
@@ -57,6 +57,9 @@ $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86/device.mk)
 # Special settings for GSI releasing
 #
 ifeq (aosp_arm,$(TARGET_PRODUCT))
+# Build modules from source if this has not been pre-configured
+MODULE_BUILD_FROM_SOURCE ?= true
+
 $(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_release.mk)
 endif
 

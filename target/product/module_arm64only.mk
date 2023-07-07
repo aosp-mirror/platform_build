@@ -18,5 +18,4 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/module_common.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
 
 PRODUCT_NAME := module_arm64only
-PRODUCT_BRAND := Android
 PRODUCT_DEVICE := module_arm64only

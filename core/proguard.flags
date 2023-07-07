@@ -9,10 +9,26 @@
 # Add this flag in your package's own configuration if it's needed.
 #-flattenpackagehierarchy
 
-# Keep classes and methods that have the guava @VisibleForTesting annotation
--keep @**.VisibleForTesting class *
+# Keep classes and members with the platform-defined @VisibleForTesting annotation.
+-keep @com.android.internal.annotations.VisibleForTesting class *
 -keepclassmembers class * {
-@**.VisibleForTesting *;
+    @com.android.internal.annotations.VisibleForTesting *;
+}
+
+# Keep classes and members with non-platform @VisibleForTesting annotations, but
+# only within platform-defined packages. This avoids keeping external, library-specific
+# test code that isn't actually needed for platform testing.
+# TODO(b/239961360): Migrate away from androidx.annotation.VisibleForTesting
+# and com.google.common.annotations.VisibleForTesting use in platform code.
+-keep @**.VisibleForTesting class android.**,com.android.**,com.google.android.**
+-keepclassmembers class android.**,com.android.**,com.google.android.** {
+    @**.VisibleForTesting *;
+}
+
+# Keep rule for members that are needed solely to keep alive downstream weak
+# references, and could otherwise be removed after tree shaking optimizations.
+-keepclassmembers,allowaccessmodification,allowobfuscation,allowshrinking class * {
+  @com.android.internal.annotations.KeepForWeakReference <fields>;
 }
 
 # Understand the common @Keep annotation from various Android packages:
