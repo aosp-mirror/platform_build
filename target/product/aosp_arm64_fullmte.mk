@@ -1,4 +1,4 @@
-# Copyright (C) 2021 The Android Open Source Project
+# Copyright (C) 2023 The Android Open-Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,14 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-test_suite_name := catbox
-test_suite_tradefed := catbox-tradefed
-test_suite_readme := test/catbox/tools/catbox-tradefed/README
-test_suite_tools := $(HOST_OUT_JAVA_LIBRARIES)/catbox-report-lib.jar
+include $(SRC_TARGET_DIR)/product/fullmte.mk
 
-include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
+PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
 
-.PHONY: catbox
-catbox: $(compatibility_zip)
-$(call dist-for-goals, catbox, $(compatibility_zip))
+$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_arm64.mk)
+
+# Build modules from source if this has not been pre-configured
+MODULE_BUILD_FROM_SOURCE ?= true
+
+$(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_release.mk)
+
+PRODUCT_NAME := aosp_arm64_fullmte

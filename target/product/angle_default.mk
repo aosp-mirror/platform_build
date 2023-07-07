@@ -1,4 +1,5 @@
-# Copyright (C) 2021 The Android Open Source Project
+#
+# Copyright 2023 The Android Open-Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,14 +12,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-test_suite_name := catbox
-test_suite_tradefed := catbox-tradefed
-test_suite_readme := test/catbox/tools/catbox-tradefed/README
-test_suite_tools := $(HOST_OUT_JAVA_LIBRARIES)/catbox-report-lib.jar
+# To enable ANGLE as the default system GLES drivers, add
+# $(call inherit-product, $(SRC_TARGET_DIR)/product/angle_enabled.mk) to the Makefile.
 
-include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
+$(call inherit-product, $(SRC_TARGET_DIR)/product/angle_supported.mk)
 
-.PHONY: catbox
-catbox: $(compatibility_zip)
-$(call dist-for-goals, catbox, $(compatibility_zip))
+PRODUCT_VENDOR_PROPERTIES += \
+    persist.graphics.egl=angle

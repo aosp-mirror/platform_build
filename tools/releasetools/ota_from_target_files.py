@@ -248,6 +248,9 @@ A/B OTA specific options
 
   --security_patch_level
       Override the security patch level in target files
+
+  --max_threads
+      Specify max number of threads allowed when generating A/B OTA
 """
 
 from __future__ import print_function
@@ -321,6 +324,8 @@ OPTIONS.enable_zucchini = True
 OPTIONS.enable_lz4diff = False
 OPTIONS.vabc_compression_param = None
 OPTIONS.security_patch_level = None
+OPTIONS.max_threads = None
+
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
@@ -985,6 +990,9 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
 
   additional_args += ["--security_patch_level", security_patch_level]
 
+  if OPTIONS.max_threads:
+    additional_args += ["--max_threads", OPTIONS.max_threads]
+
   additional_args += ["--enable_zucchini=" +
                       str(OPTIONS.enable_zucchini).lower()]
 
@@ -1191,6 +1199,12 @@ def main(argv):
       OPTIONS.vabc_compression_param = a.lower()
     elif o == "--security_patch_level":
       OPTIONS.security_patch_level = a
+    elif o in ("--max_threads"):
+      if a.isdigit():
+        OPTIONS.max_threads = a
+      else:
+        raise ValueError("Cannot parse value %r for option %r - only "
+                         "integers are allowed." % (a, o))
     else:
       return False
     return True
@@ -1242,6 +1256,7 @@ def main(argv):
                                  "enable_lz4diff=",
                                  "vabc_compression_param=",
                                  "security_patch_level=",
+                                 "max_threads=",
                              ], extra_option_handler=option_handler)
   common.InitLogging()
 

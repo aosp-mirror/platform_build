@@ -642,8 +642,7 @@ def ConstructOtaApexInfo(target_zip, source_file=None):
   if not source_file:
     return target_apex_string
 
-  with zipfile.ZipFile(source_file, "r", allowZip64=True) as source_zip:
-    source_apex_string = _ReadApexInfo(source_zip)
+  source_apex_string = _ReadApexInfo(source_file)
   if not source_apex_string:
     return target_apex_string
 

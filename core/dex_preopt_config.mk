@@ -12,9 +12,15 @@ else ifneq (true,$(filter true,$(PRODUCT_USES_DEFAULT_ART_CONFIG)))
   # would result in passing bad arguments to dex2oat and failing the build.
   ENABLE_PREOPT :=
   ENABLE_PREOPT_BOOT_IMAGES :=
-else ifeq (true,$(DISABLE_PREOPT))
-  # Disable dexpreopt for libraries/apps, but do compile boot images.
-  ENABLE_PREOPT :=
+else
+  ifeq (true,$(DISABLE_PREOPT))
+    # Disable dexpreopt for libraries/apps, but may compile boot images.
+    ENABLE_PREOPT :=
+  endif
+  ifeq (true,$(DISABLE_PREOPT_BOOT_IMAGES))
+    # Disable dexpreopt for boot images, but may compile libraries/apps.
+    ENABLE_PREOPT_BOOT_IMAGES :=
+  endif
 endif
 
 # The default value for LOCAL_DEX_PREOPT
