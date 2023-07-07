@@ -452,12 +452,14 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
         test_file.write(bytes(data))
       test_file.close()
 
-      expected_stat = os.stat(test_file_name)
       expected_mode = extra_zipwrite_args.get("perms", 0o644)
       expected_compress_type = extra_zipwrite_args.get("compress_type",
                                                        zipfile.ZIP_STORED)
-      time.sleep(5)  # Make sure the atime/mtime will change measurably.
 
+      # Arbitrary timestamp, just to make sure common.ZipWrite() restores
+      # the timestamp after writing.
+      os.utime(test_file_name, (1234567, 1234567))
+      expected_stat = os.stat(test_file_name)
       common.ZipWrite(zip_file, test_file_name, **extra_zipwrite_args)
       common.ZipClose(zip_file)
 
@@ -480,8 +482,6 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     try:
       expected_compress_type = extra_args.get("compress_type",
                                               zipfile.ZIP_STORED)
-      time.sleep(5)  # Make sure the atime/mtime will change measurably.
-
       if not isinstance(zinfo_or_arcname, zipfile.ZipInfo):
         arcname = zinfo_or_arcname
         expected_mode = extra_args.get("perms", 0o644)
@@ -528,11 +528,13 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
         test_file.write(data)
       test_file.close()
 
+      # Arbitrary timestamp, just to make sure common.ZipWrite() restores
+      # the timestamp after writing.
+      os.utime(test_file_name, (1234567, 1234567))
       expected_stat = os.stat(test_file_name)
       expected_mode = 0o644
       expected_compress_type = extra_args.get("compress_type",
                                               zipfile.ZIP_STORED)
-      time.sleep(5)  # Make sure the atime/mtime will change measurably.
 
       common.ZipWrite(zip_file, test_file_name, **extra_args)
       common.ZipWriteStr(zip_file, arcname_small, small, **extra_args)
@@ -2186,3 +2188,29 @@ class PartitionBuildPropsTest(test_utils.ReleaseToolsTestCase):
       }
       self.assertRaises(ValueError, common.PartitionBuildProps.FromInputFile,
                         input_zip, 'odm', placeholder_values)
+
+  def test_partitionBuildProps_fromInputFile_deepcopy(self):
+    build_prop = [
+        'ro.odm.build.date.utc=1578430045',
+        'ro.odm.build.fingerprint='
+        'google/coral/coral:10/RP1A.200325.001/6337676:user/dev-keys',
+        'ro.product.odm.device=coral',
+    ]
+    input_file = self._BuildZipFile({
+        'ODM/etc/build.prop': '\n'.join(build_prop),
+    })
+
+    with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip:
+      placeholder_values = {
+          'ro.boot.product.device_name': ['std', 'pro']
+      }
+      partition_props = common.PartitionBuildProps.FromInputFile(
+          input_zip, 'odm', placeholder_values)
+
+    copied_props = copy.deepcopy(partition_props)
+    self.assertEqual({
+      'ro.odm.build.date.utc': '1578430045',
+      'ro.odm.build.fingerprint':
+      'google/coral/coral:10/RP1A.200325.001/6337676:user/dev-keys',
+      'ro.product.odm.device': 'coral',
+    }, copied_props.build_props)

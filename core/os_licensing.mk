@@ -5,7 +5,7 @@ systemlicense: $(call corresponding-license-metadata, $(SYSTEM_NOTICE_DEPS)) rep
 
 ifneq (,$(SYSTEM_NOTICE_DEPS))
 
-SYSTEM_NOTICE_DEPS += $(UNMOUNTED_NOTICE_DEPS)
+SYSTEM_NOTICE_DEPS += $(UNMOUNTED_NOTICE_DEPS) $(UNMOUNTED_NOTICE_VENDOR_DEPS)
 
 ifneq ($(PRODUCT_NOTICE_SPLIT),true)
 $(eval $(call html-notice-rule,$(target_notice_file_html_gz),"System image",$(system_notice_file_message),$(SYSTEM_NOTICE_DEPS),$(SYSTEM_NOTICE_DEPS)))
@@ -21,8 +21,8 @@ $(installed_notice_html_or_xml_gz): $(target_notice_file_xml_gz)
 	$(copy-file-to-target)
 endif
 
-$(call declare-0p-target,$(target_notice_file_xml_gz))
-$(call declare-0p-target,$(installed_notice_html_or_xml_gz))
+$(call declare-1p-target,$(target_notice_file_xml_gz))
+$(call declare-1p-target,$(installed_notice_html_or_xml_gz))
 endif
 
 .PHONY: vendorlicense
@@ -30,7 +30,7 @@ vendorlicense: $(call corresponding-license-metadata, $(VENDOR_NOTICE_DEPS)) rep
 
 ifneq (,$(VENDOR_NOTICE_DEPS))
 
-VENDOR_NOTICE_DEPS += $(UNMOUNTED_NOTICE_DEPS)
+VENDOR_NOTICE_DEPS += $(UNMOUNTED_NOTICE_VENDOR_DEPS)
 
 $(eval $(call text-notice-rule,$(target_vendor_notice_file_txt),"Vendor image", \
          "Notices for files contained in all filesystem images except system/system_ext/product/odm/vendor_dlkm/odm_dlkm in this directory:", \
@@ -43,8 +43,8 @@ $(eval $(call xml-notice-rule,$(target_vendor_notice_file_xml_gz),"Vendor image"
 $(installed_vendor_notice_xml_gz): $(target_vendor_notice_file_xml_gz)
 	$(copy-file-to-target)
 
-$(call declare-0p-target,$(target_vendor_notice_file_xml_gz))
-$(call declare-0p-target,$(installed_vendor_notice_xml_gz))
+$(call declare-1p-target,$(target_vendor_notice_file_xml_gz))
+$(call declare-1p-target,$(installed_vendor_notice_xml_gz))
 endif
 
 .PHONY: odmlicense
@@ -62,8 +62,8 @@ $(eval $(call xml-notice-rule,$(target_odm_notice_file_xml_gz),"ODM filesystem i
 $(installed_odm_notice_xml_gz): $(target_odm_notice_file_xml_gz)
 	$(copy-file-to-target)
 
-$(call declare-0p-target,$(target_odm_notice_file_xml_gz))
-$(call declare-0p-target,$(installed_odm_notice_xml_gz))
+$(call declare-1p-target,$(target_odm_notice_file_xml_gz))
+$(call declare-1p-target,$(installed_odm_notice_xml_gz))
 endif
 
 .PHONY: oemlicense
@@ -84,8 +84,8 @@ $(eval $(call xml-notice-rule,$(target_product_notice_file_xml_gz),"Product imag
 $(installed_product_notice_xml_gz): $(target_product_notice_file_xml_gz)
 	$(copy-file-to-target)
 
-$(call declare-0p-target,$(target_product_notice_file_xml_gz))
-$(call declare-0p-target,$(installed_product_notice_xml_gz))
+$(call declare-1p-target,$(target_product_notice_file_xml_gz))
+$(call declare-1p-target,$(installed_product_notice_xml_gz))
 endif
 
 .PHONY: systemextlicense
@@ -103,8 +103,8 @@ $(eval $(call xml-notice-rule,$(target_system_ext_notice_file_xml_gz),"System_ex
 $(installed_system_ext_notice_xml_gz): $(target_system_ext_notice_file_xml_gz)
 	$(copy-file-to-target)
 
-$(call declare-0p-target,$(target_system_ext_notice_file_xml_gz))
-$(call declare-0p-target,$(installed_system_ext_notice_xml_gz))
+$(call declare-1p-target,$(target_system_ext_notice_file_xml_gz))
+$(call declare-1p-target,$(installed_system_ext_notice_xml_gz))
 endif
 
 .PHONY: vendor_dlkmlicense
@@ -122,8 +122,8 @@ $(eval $(call xml-notice-rule,$(target_vendor_dlkm_notice_file_xml_gz),"Vendor_d
 $(installed_vendor_dlkm_notice_xml_gz): $(target_vendor_dlkm_notice_file_xml_gz)
 	$(copy-file-to-target)
 
-$(call declare-0p-target,$(target_vendor_dlkm_notice_file_xml_gz))
-$(call declare-0p-target,$(installed_vendor_dlkm_notice_xml_gz))
+$(call declare-1p-target,$(target_vendor_dlkm_notice_file_xml_gz))
+$(call declare-1p-target,$(installed_vendor_dlkm_notice_xml_gz))
 endif
 
 .PHONY: odm_dlkmlicense
@@ -141,8 +141,8 @@ $(eval $(call xml-notice-rule,$(target_odm_dlkm_notice_file_xml_gz),"ODM_dlkm fi
 $(installed_odm_dlkm_notice_xml_gz): $(target_odm_dlkm_notice_file_xml_gz)
 	$(copy-file-to-target)
 
-$(call declare-0p-target,$(target_odm_dlkm_notice_file_xml_gz))
-$(call declare-0p-target,$(installed_odm_dlkm_notice_xml_gz))
+$(call declare-1p-target,$(target_odm_dlkm_notice_file_xml_gz))
+$(call declare-1p-target,$(installed_odm_dlkm_notice_xml_gz))
 endif
 
 .PHONY: system_dlkmlicense
@@ -160,8 +160,8 @@ $(eval $(call xml-notice-rule,$(target_system_dlkm_notice_file_xml_gz),"System_d
 $(installed_system_dlkm_notice_xml_gz): $(target_system_dlkm_notice_file_xml_gz)
 	$(copy-file-to-target)
 
-$(call declare-0p-target,$(target_system_dlkm_notice_file_xml_gz))
-$(call declare-0p-target,$(installed_sysetm_dlkm_notice_xml_gz))
+$(call declare-1p-target,$(target_system_dlkm_notice_file_xml_gz))
+$(call declare-1p-target,$(installed_sysetm_dlkm_notice_xml_gz))
 endif
 
 endif # not TARGET_BUILD_APPS

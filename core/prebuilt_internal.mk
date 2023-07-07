@@ -57,6 +57,9 @@ else
   $(error $(LOCAL_MODULE) : unexpected LOCAL_MODULE_CLASS for prebuilts: $(LOCAL_MODULE_CLASS))
 endif
 
+$(if $(filter-out $(SOONG_ANDROID_MK),$(LOCAL_MODULE_MAKEFILE)), \
+  $(eval ALL_MODULES.$(my_register_name).IS_PREBUILT_MAKE_MODULE := Y))
+
 $(built_module) : $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
 my_prebuilt_src_file :=
