@@ -30,7 +30,6 @@ test_suite_subdir := android-$(test_suite_name)
 out_dir := $(HOST_OUT)/$(test_suite_name)/$(test_suite_subdir)
 test_artifacts := $(COMPATIBILITY.$(test_suite_name).FILES)
 test_tools := $(HOST_OUT_JAVA_LIBRARIES)/tradefed.jar \
-  $(HOST_OUT_JAVA_LIBRARIES)/tradefed-no-fwk.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/tradefed-test-framework.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/loganalysis.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/compatibility-host-util.jar \
@@ -51,10 +50,21 @@ $(test_suite_jdk): PRIVATE_JDK_DIR := $(test_suite_jdk_dir)
 $(test_suite_jdk): PRIVATE_SUBDIR := $(test_suite_subdir)
 $(test_suite_jdk): $(shell find $(test_suite_jdk_dir) -type f | sort)
 $(test_suite_jdk): $(SOONG_ZIP)
-	$(SOONG_ZIP) -o $@ -P $(PRIVATE_SUBDIR)/jdk -C $(PRIVATE_JDK_DIR) -D $(PRIVATE_JDK_DIR)
+	$(SOONG_ZIP) -o $@ -P $(PRIVATE_SUBDIR)/jdk -C $(PRIVATE_JDK_DIR) -D $(PRIVATE_JDK_DIR) -sha256
 
-$(call declare-license-metadata,$(test_suite_jdk),SPDX-license-identifier-GPL-2.0-with-classpath-exception,restricted,\
+$(call declare-license-metadata,$(test_suite_jdk),SPDX-license-identifier-GPL-2.0-with-classpath-exception,permissive,\
   $(test_suite_jdk_dir)/legal/java.base/LICENSE,JDK,prebuilts/jdk/$(notdir $(patsubst %/,%,$(dir $(test_suite_jdk_dir)))))
+
+# Copy license metadata
+$(call declare-copy-target-license-metadata,$(out_dir)/$(notdir $(test_suite_jdk)),$(test_suite_jdk))
+$(foreach t,$(test_tools) $(test_suite_prebuilt_tools),\
+  $(eval _dst := $(out_dir)/tools/$(notdir $(t)))\
+  $(if $(strip $(ALL_TARGETS.$(t).META_LIC)),\
+    $(call declare-copy-target-license-metadata,$(_dst),$(t)),\
+    $(warning $(t) has no license metadata)\
+  )\
+)
+test_copied_tools := $(foreach t,$(test_tools) $(test_suite_prebuilt_tools), $(out_dir)/tools/$(notdir $(t))) $(out_dir)/$(notdir $(test_suite_jdk))
 
 
 # Include host shared libraries
@@ -65,7 +75,7 @@ $(if $(strip $(host_shared_libs)),\
     $(eval _src := $(call word-colon,1,$(p)))\
     $(eval _dst := $(call word-colon,2,$(p)))\
     $(if $(strip $(ALL_TARGETS.$(_src).META_LIC)),\
-      $(eval ALL_TARGETS.$(_dst).META_LIC := $(ALL_TARGETS.$(_src).META_LIC)),\
+      $(call declare-copy-target-license-metadata,$(_dst),$(_src)),\
       $(warning $(_src) has no license metadata for $(_dst))\
     )\
   )\
@@ -112,7 +122,7 @@ $(compatibility_zip): $(compatibility_zip_deps) | $(ADB) $(ACP)
 	cp $(PRIVATE_TOOLS) $(PRIVATE_OUT_DIR)/tools
 	$(if $(PRIVATE_DYNAMIC_CONFIG),$(hide) cp $(PRIVATE_DYNAMIC_CONFIG) $(PRIVATE_OUT_DIR)/testcases/$(PRIVATE_SUITE_NAME).dynamic)
 	find $(PRIVATE_RESOURCES) | sort >$@.list
-	$(SOONG_ZIP) -d -o $@.tmp -C $(dir $@) -l $@.list
+	$(SOONG_ZIP) -d -o $@.tmp -C $(dir $@) -l $@.list -sha256
 	$(MERGE_ZIPS) $@ $@.tmp $(PRIVATE_JDK)
 	rm -f $@.tmp
 # Build a list of tests
@@ -124,7 +134,7 @@ $(compatibility_zip): $(compatibility_zip_deps) | $(ADB) $(ACP)
 $(call declare-0p-target,$(compatibility_tests_list_zip),)
 
 $(call declare-1p-container,$(compatibility_zip),)
-$(call declare-container-license-deps,$(compatibility_zip),$(compatibility_zip_deps) $(test_suite_jdk), $(out_dir)/:/)
+$(call declare-container-license-deps,$(compatibility_zip),$(compatibility_zip_deps) $(test_copied_tools), $(out_dir)/:/)
 
 $(eval $(call html-notice-rule,$(test_suite_notice_html),"Test suites","Notices for files contained in the test suites filesystem image:",$(compatibility_zip),$(compatibility_zip)))
 $(eval $(call text-notice-rule,$(test_suite_notice_txt),"Test suites","Notices for files contained in the test suites filesystem image:",$(compatibility_zip),$(compatibility_zip)))

@@ -12,9 +12,15 @@ else ifneq (true,$(filter true,$(PRODUCT_USES_DEFAULT_ART_CONFIG)))
   # would result in passing bad arguments to dex2oat and failing the build.
   ENABLE_PREOPT :=
   ENABLE_PREOPT_BOOT_IMAGES :=
-else ifeq (true,$(DISABLE_PREOPT))
-  # Disable dexpreopt for libraries/apps, but do compile boot images.
-  ENABLE_PREOPT :=
+else
+  ifeq (true,$(DISABLE_PREOPT))
+    # Disable dexpreopt for libraries/apps, but may compile boot images.
+    ENABLE_PREOPT :=
+  endif
+  ifeq (true,$(DISABLE_PREOPT_BOOT_IMAGES))
+    # Disable dexpreopt for boot images, but may compile libraries/apps.
+    ENABLE_PREOPT_BOOT_IMAGES :=
+  endif
 endif
 
 # The default value for LOCAL_DEX_PREOPT
@@ -96,7 +102,6 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_list, DisablePreoptModules,                    $(DEXPREOPT_DISABLED_MODULES))
   $(call add_json_bool, OnlyPreoptBootImageAndSystemServer,      $(filter true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY)))
   $(call add_json_bool, PreoptWithUpdatableBcp,                  $(filter true,$(DEX_PREOPT_WITH_UPDATABLE_BCP)))
-  $(call add_json_bool, UseArtImage,                             $(filter true,$(DEXPREOPT_USE_ART_IMAGE)))
   $(call add_json_bool, DontUncompressPrivAppsDex,               $(filter true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS)))
   $(call add_json_list, ModulesLoadedByPrivilegedModules,        $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES))
   $(call add_json_bool, HasSystemOther,                          $(BOARD_USES_SYSTEM_OTHER_ODEX))
@@ -131,6 +136,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_str,  Dex2oatXmx,                              $(DEX2OAT_XMX))
   $(call add_json_str,  Dex2oatXms,                              $(DEX2OAT_XMS))
   $(call add_json_str,  EmptyDirectory,                          $(OUT_DIR)/empty)
+  $(call add_json_bool, EnableUffdGc,                            $(filter true,$(ENABLE_UFFD_GC)))
 
 ifdef TARGET_ARCH
   $(call add_json_map,  CpuVariant)

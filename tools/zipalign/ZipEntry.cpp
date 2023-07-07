@@ -40,14 +40,10 @@ namespace android {
  */
 status_t ZipEntry::initFromCDE(FILE* fp)
 {
-    status_t result;
-    long posn; // NOLINT(google-runtime-int), for ftell/fseek
-    bool hasDD;
-
     //ALOGV("initFromCDE ---\n");
 
     /* read the CDE */
-    result = mCDE.read(fp);
+    status_t result = mCDE.read(fp);
     if (result != OK) {
         ALOGD("mCDE.read failed\n");
         return result;
@@ -56,8 +52,8 @@ status_t ZipEntry::initFromCDE(FILE* fp)
     //mCDE.dump();
 
     /* using the info in the CDE, go load up the LFH */
-    posn = ftell(fp);
-    if (fseek(fp, mCDE.mLocalHeaderRelOffset, SEEK_SET) != 0) {
+    off_t posn = ftello(fp);
+    if (fseeko(fp, mCDE.mLocalHeaderRelOffset, SEEK_SET) != 0) {
         ALOGD("local header seek failed (%" PRIu32 ")\n",
             mCDE.mLocalHeaderRelOffset);
         return UNKNOWN_ERROR;
@@ -69,7 +65,7 @@ status_t ZipEntry::initFromCDE(FILE* fp)
         return result;
     }
 
-    if (fseek(fp, posn, SEEK_SET) != 0)
+    if (fseeko(fp, posn, SEEK_SET) != 0)
         return UNKNOWN_ERROR;
 
     //mLFH.dump();
@@ -80,7 +76,7 @@ status_t ZipEntry::initFromCDE(FILE* fp)
      * compressed size, and uncompressed size will be zero.  In practice
      * these seem to be rare.
      */
-    hasDD = (mLFH.mGPBitFlag & kUsesDataDescr) != 0;
+    bool hasDD = (mLFH.mGPBitFlag & kUsesDataDescr) != 0;
     if (hasDD) {
         // do something clever
         //ALOGD("+++ has data descriptor\n");

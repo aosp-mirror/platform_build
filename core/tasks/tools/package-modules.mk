@@ -27,7 +27,7 @@ LOCAL_MODULE_CLASS := PACKAGING
 LOCAL_MODULE_STEM := $(my_package_name).zip
 LOCAL_UNINSTALLABLE_MODULE := true
 include $(BUILD_SYSTEM)/base_rules.mk
-my_staging_dir := $(intermediates)
+my_staging_dir := $(intermediates)/staging
 my_package_zip := $(LOCAL_BUILT_MODULE)
 
 my_built_modules := $(foreach p,$(my_copy_pairs),$(call word-colon,1,$(p)))
@@ -50,12 +50,12 @@ ifneq ($(filter-out true false,$(my_modules_strict)),)
   $(error done)
 endif
 
-my_missing_files = $(shell $(call echo-warning,$(my_makefile),$(my_package_name): Unknown installed file for module '$(1)'))
+my_missing_files = $(shell $(call echo-warning,$(my_makefile),$(my_package_name): Unknown installed file for module '$(1)'))$(shell$(call echo-warning,$(my_makefile),$(my_package_name): Some necessary modules may have been skipped by Soong. Check if PRODUCT_SOURCE_ROOT_DIRS is pruning necessary Android.bp files.))
 ifeq ($(ALLOW_MISSING_DEPENDENCIES),true)
   # Ignore unknown installed files on partial builds
   my_missing_files =
 else ifneq ($(my_modules_strict),false)
-  my_missing_files = $(shell $(call echo-error,$(my_makefile),$(my_package_name): Unknown installed file for module '$(1)'))$(eval my_missing_error := true)
+  my_missing_files = $(shell $(call echo-error,$(my_makefile),$(my_package_name): Unknown installed file for module '$(1)'))$(shell$(call echo-warning,$(my_makefile),$(my_package_name): Some necessary modules may have been skipped by Soong. Check if PRODUCT_SOURCE_ROOT_DIRS is pruning necessary Android.bp files.))$(eval my_missing_error := true)
 endif
 
 # Iterate over modules' built files and installed files;
@@ -94,17 +94,18 @@ ifneq ($(my_missing_error),)
 endif
 
 $(my_package_zip): PRIVATE_COPY_PAIRS := $(my_copy_pairs)
+$(my_package_zip): PRIVATE_STAGING_DIR := $(my_staging_dir)
 $(my_package_zip): PRIVATE_PICKUP_FILES := $(my_pickup_files)
 $(my_package_zip) : $(my_built_modules)
 	@echo "Package $@"
-	@rm -rf $(dir $@) && mkdir -p $(dir $@)
+	@rm -rf $(PRIVATE_STAGING_DIR) && mkdir -p $(PRIVATE_STAGING_DIR)
 	$(foreach p, $(PRIVATE_COPY_PAIRS),\
 	  $(eval pair := $(subst :,$(space),$(p)))\
 	  mkdir -p $(dir $(word 2,$(pair))) && \
 	  cp -Rf $(word 1,$(pair)) $(word 2,$(pair)) && ) true
 	$(hide) $(foreach f, $(PRIVATE_PICKUP_FILES),\
-	  cp -RfL $(f) $(dir $@) && ) true
-	$(hide) cd $(dir $@) && zip -rqX $(notdir $@) *
+	  cp -RfL $(f) $(PRIVATE_STAGING_DIR) && ) true
+	$(hide) cd $(PRIVATE_STAGING_DIR) && zip -rqX ../$(notdir $@) *
 
 my_makefile :=
 my_staging_dir :=

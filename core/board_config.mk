@@ -174,6 +174,10 @@ _board_strip_list += ODM_MANIFEST_SKUS
 
 
 _build_broken_var_list := \
+  BUILD_BROKEN_CLANG_PROPERTY \
+  BUILD_BROKEN_CLANG_ASFLAGS \
+  BUILD_BROKEN_CLANG_CFLAGS \
+  BUILD_BROKEN_DEPFILE \
   BUILD_BROKEN_DUP_RULES \
   BUILD_BROKEN_DUP_SYSPROP \
   BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES \
@@ -184,6 +188,7 @@ _build_broken_var_list := \
   BUILD_BROKEN_PREBUILT_ELF_FILES \
   BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW \
   BUILD_BROKEN_USES_NETWORK \
+  BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES \
   BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE \
   BUILD_BROKEN_VINTF_PRODUCT_COPY_FILES \
 
@@ -234,10 +239,7 @@ else
   .KATI_READONLY := TARGET_DEVICE_DIR
 endif
 
-# TODO(colefaust) change this if to RBC_PRODUCT_CONFIG when
-# the board configuration is known to work on everything
-# the product config works on.
-ifndef RBC_BOARD_CONFIG
+ifndef RBC_PRODUCT_CONFIG
 include $(board_config_mk)
 else
   $(shell mkdir -p $(OUT_DIR)/rbc)
@@ -284,6 +286,8 @@ $(foreach var,$(_board_strip_list),$(eval $(var) := $$(strip $$($(var)))))
 $(foreach var,$(_board_true_false_vars), \
   $(if $(filter-out true false,$($(var))), \
     $(error Valid values of $(var) are "true", "false", and "". Not "$($(var))")))
+
+include $(BUILD_SYSTEM)/board_config_wifi.mk
 
 # Default *_CPU_VARIANT_RUNTIME to CPU_VARIANT if unspecified.
 TARGET_CPU_VARIANT_RUNTIME := $(or $(TARGET_CPU_VARIANT_RUNTIME),$(TARGET_CPU_VARIANT))
@@ -400,12 +404,6 @@ define check_image_config
   $(eval _uc_name :=) \
   $(eval _lc_name :=)
 endef
-
-###########################################
-# Now we can substitute with the real value of TARGET_COPY_OUT_RAMDISK
-ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
-TARGET_COPY_OUT_RAMDISK := $(TARGET_COPY_OUT_ROOT)
-endif
 
 ###########################################
 # Configure whether we're building the system image
@@ -556,15 +554,8 @@ endif
 
 # Are we building a debug vendor_boot image
 BUILDING_DEBUG_VENDOR_BOOT_IMAGE :=
-# Can't build vendor_boot-debug.img if BOARD_BUILD_SYSTEM_ROOT_IMAGE is true,
-# because building debug vendor_boot image requires a ramdisk.
-ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
-  ifeq ($(PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE),true)
-    $(warning PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE is true, but so is BOARD_BUILD_SYSTEM_ROOT_IMAGE. \
-      Skip building the debug vendor_boot image.)
-  endif
 # Can't build vendor_boot-debug.img if we're not building a ramdisk.
-else ifndef BUILDING_RAMDISK_IMAGE
+ifndef BUILDING_RAMDISK_IMAGE
   ifeq ($(PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE),true)
     $(warning PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE is true, but we're not building a ramdisk image. \
       Skip building the debug vendor_boot image.)
@@ -601,15 +592,8 @@ endif
 
 # Are we building a debug boot image
 BUILDING_DEBUG_BOOT_IMAGE :=
-# Can't build boot-debug.img if BOARD_BUILD_SYSTEM_ROOT_IMAGE is true,
-# because building debug boot image requires a ramdisk.
-ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
-  ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),true)
-    $(warning PRODUCT_BUILD_DEBUG_BOOT_IMAGE is true, but so is BOARD_BUILD_SYSTEM_ROOT_IMAGE. \
-      Skip building the debug boot image.)
-  endif
 # Can't build boot-debug.img if we're not building a ramdisk.
-else ifndef BUILDING_RAMDISK_IMAGE
+ifndef BUILDING_RAMDISK_IMAGE
   ifeq ($(PRODUCT_BUILD_DEBUG_BOOT_IMAGE),true)
     $(warning PRODUCT_BUILD_DEBUG_BOOT_IMAGE is true, but we're not building a ramdisk image. \
       Skip building the debug boot image.)
@@ -930,22 +914,10 @@ endif
 .KATI_READONLY := BUILDING_SYSTEM_DLKM_IMAGE
 
 BOARD_USES_PVMFWIMAGE :=
-ifdef BOARD_PREBUILT_PVMFWIMAGE
-  BOARD_USES_PVMFWIMAGE := true
-endif
 ifeq ($(PRODUCT_BUILD_PVMFW_IMAGE),true)
   BOARD_USES_PVMFWIMAGE := true
 endif
 .KATI_READONLY := BOARD_USES_PVMFWIMAGE
-
-BUILDING_PVMFW_IMAGE :=
-ifeq ($(PRODUCT_BUILD_PVMFW_IMAGE),true)
-  BUILDING_PVMFW_IMAGE := true
-endif
-ifdef BOARD_PREBUILT_PVMFWIMAGE
-  BUILDING_PVMFW_IMAGE :=
-endif
-.KATI_READONLY := BUILDING_PVMFW_IMAGE
 
 ###########################################
 # Ensure consistency among TARGET_RECOVERY_UPDATER_LIBS, AB_OTA_UPDATER, and PRODUCT_OTA_FORCE_NON_AB_PACKAGE.
@@ -1018,19 +990,13 @@ ifeq ($(PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY),true)
 endif
 
 ###########################################
-# APEXes are by default flattened, i.e. non-updatable, if not building unbundled
-# apps. It can be unflattened (and updatable) by inheriting from
-# updatable_apex.mk
+# APEXes are by default not flattened, i.e. updatable.
 #
 # APEX flattening can also be forcibly enabled (resp. disabled) by
 # setting OVERRIDE_TARGET_FLATTEN_APEX to true (resp. false), e.g. by
 # setting the OVERRIDE_TARGET_FLATTEN_APEX environment variable.
 ifdef OVERRIDE_TARGET_FLATTEN_APEX
   TARGET_FLATTEN_APEX := $(OVERRIDE_TARGET_FLATTEN_APEX)
-else
-  ifeq (,$(TARGET_BUILD_APPS)$(TARGET_FLATTEN_APEX))
-    TARGET_FLATTEN_APEX := true
-  endif
 endif
 
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
