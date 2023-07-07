@@ -46,11 +46,23 @@ define generate-common-build-props
         echo "ro.product.$(1).manufacturer=$(PRODUCT_MANUFACTURER)" >> $(2);\
         echo "ro.product.$(1).model=$(PRODUCT_MODEL)" >> $(2);\
         echo "ro.product.$(1).name=$(TARGET_PRODUCT)" >> $(2);\
+        # Attestation specific properties for AOSP/GSI build running on device.
+        echo "ro.product.model_for_attestation=$(PRODUCT_MODEL_FOR_ATTESTATION)" >> $(2);\
+        echo "ro.product.brand_for_attestation=$(PRODUCT_BRAND_FOR_ATTESTATION)" >> $(2);\
+        echo "ro.product.name_for_attestation=$(PRODUCT_NAME_FOR_ATTESTATION)" >> $(2);\
     )\
-    $(if $(filter system vendor odm,$(1)),\
-        echo "ro.$(1).product.cpu.abilist=$(TARGET_CPU_ABI_LIST) " >> $(2);\
-        echo "ro.$(1).product.cpu.abilist32=$(TARGET_CPU_ABI_LIST_32_BIT)" >> $(2);\
-        echo "ro.$(1).product.cpu.abilist64=$(TARGET_CPU_ABI_LIST_64_BIT)" >> $(2);\
+    $(if $(filter true,$(ZYGOTE_FORCE_64)),\
+        $(if $(filter vendor,$(1)),\
+            echo "ro.$(1).product.cpu.abilist=$(TARGET_CPU_ABI_LIST_64_BIT)" >> $(2);\
+            echo "ro.$(1).product.cpu.abilist32=" >> $(2);\
+            echo "ro.$(1).product.cpu.abilist64=$(TARGET_CPU_ABI_LIST_64_BIT)" >> $(2);\
+        )\
+    ,\
+        $(if $(filter system vendor odm,$(1)),\
+            echo "ro.$(1).product.cpu.abilist=$(TARGET_CPU_ABI_LIST)" >> $(2);\
+            echo "ro.$(1).product.cpu.abilist32=$(TARGET_CPU_ABI_LIST_32_BIT)" >> $(2);\
+            echo "ro.$(1).product.cpu.abilist64=$(TARGET_CPU_ABI_LIST_64_BIT)" >> $(2);\
+        )\
     )\
     echo "ro.$(1).build.date=`$(DATE_FROM_FILE)`" >> $(2);\
     echo "ro.$(1).build.date.utc=`$(DATE_FROM_FILE) +%s`" >> $(2);\
@@ -129,7 +141,7 @@ endif
 	    fi;)
 	$(hide) echo "# end of file" >> $$@
 
-$(call declare-0p-target,$(2))
+$(call declare-1p-target,$(2))
 endef
 
 # -----------------------------------------------------------------
@@ -261,7 +273,6 @@ $(gen_from_buildinfo_sh): $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT) | $(B
 	        BUILD_USERNAME="$(BUILD_USERNAME)" \
 	        BUILD_HOSTNAME="$(BUILD_HOSTNAME)" \
 	        BUILD_NUMBER="$(BUILD_NUMBER_FROM_FILE)" \
-	        BOARD_BUILD_SYSTEM_ROOT_IMAGE="$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)" \
 	        BOARD_USE_VBMETA_DIGTEST_IN_FINGERPRINT="$(BOARD_USE_VBMETA_DIGTEST_IN_FINGERPRINT)" \
 	        PLATFORM_VERSION="$(PLATFORM_VERSION)" \
 	        PLATFORM_DISPLAY_VERSION="$(PLATFORM_DISPLAY_VERSION)" \
@@ -282,6 +293,7 @@ $(gen_from_buildinfo_sh): $(INTERNAL_BUILD_ID_MAKEFILE) $(API_FINGERPRINT) | $(B
 	        TARGET_CPU_ABI_LIST_64_BIT="$(TARGET_CPU_ABI_LIST_64_BIT)" \
 	        TARGET_CPU_ABI="$(TARGET_CPU_ABI)" \
 	        TARGET_CPU_ABI2="$(TARGET_CPU_ABI2)" \
+	        ZYGOTE_FORCE_64_BIT="$(ZYGOTE_FORCE_64_BIT)" \
 	        bash $(BUILDINFO_SH) > $@
 
 ifdef TARGET_SYSTEM_PROP
@@ -531,3 +543,19 @@ $(eval $(call build-properties,\
     $(empty)))
 
 $(eval $(call declare-1p-target,$(INSTALLED_RAMDISK_BUILD_PROP_TARGET)))
+
+ALL_INSTALLED_BUILD_PROP_FILES := \
+  $(INSTALLED_BUILD_PROP_TARGET) \
+  $(INSTALLED_VENDOR_BUILD_PROP_TARGET) \
+  $(INSTALLED_PRODUCT_BUILD_PROP_TARGET) \
+  $(INSTALLED_ODM_BUILD_PROP_TARGET) \
+  $(INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET) \
+  $(INSTALLED_ODM_DLKM_BUILD_PROP_TARGET) \
+  $(INSTALLED_SYSTEM_DLKM_BUILD_PROP_TARGET) \
+  $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET) \
+  $(INSTALLED_RAMDISK_BUILD_PROP_TARGET)
+
+# $1 installed file path, e.g. out/target/product/vsoc_x86_64/system/build.prop
+define is-build-prop
+$(if $(findstring $1,$(ALL_INSTALLED_BUILD_PROP_FILES)),Y)
+endef
