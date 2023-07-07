@@ -1,0 +1,125 @@
+From b4ae5c71f327d00081bbb0b7b26d48eb88761fbc Mon Sep 17 00:00:00 2001
+From: Alex Buynytskyy <alexbuy@google.com>
+Date: Tue, 21 Feb 2023 01:43:14 +0000
+Subject: [PATCH] Revert "HACK: allow apps with pre-release SDK RESTRICT AUTOMERGE"
+
+This reverts commit 3c9a5321dc94124367f2f4363d85a8f488f5d4d1.
+
+Reason for revert: not needed anymore
+
+Change-Id: I5c5e3af78a41e7bd8cbc99464dccc57c345105f3
+---
+
+diff --git a/core/java/android/content/pm/PackageParser.java b/core/java/android/content/pm/PackageParser.java
+index 3f4df4d..c15b3e0 100644
+--- a/core/java/android/content/pm/PackageParser.java
++++ b/core/java/android/content/pm/PackageParser.java
+@@ -2628,15 +2628,6 @@
+             return Build.VERSION_CODES.CUR_DEVELOPMENT;
+         }
+ 
+-        // STOPSHIP: hack for the pre-release SDK
+-        if (platformSdkCodenames.length == 0
+-                && Build.VERSION.KNOWN_CODENAMES.stream().max(String::compareTo).orElse("").equals(
+-                targetCode)) {
+-            Slog.w(TAG, "Package requires development platform " + targetCode
+-                    + ", returning current version " + Build.VERSION.SDK_INT);
+-            return Build.VERSION.SDK_INT;
+-        }
+-
+         // Otherwise, we're looking at an incompatible pre-release SDK.
+         if (platformSdkCodenames.length > 0) {
+             outError[0] = "Requires development platform " + targetCode
+@@ -2708,15 +2699,6 @@
+             return Build.VERSION_CODES.CUR_DEVELOPMENT;
+         }
+ 
+-        // STOPSHIP: hack for the pre-release SDK
+-        if (platformSdkCodenames.length == 0
+-                && Build.VERSION.KNOWN_CODENAMES.stream().max(String::compareTo).orElse("").equals(
+-                minCode)) {
+-            Slog.w(TAG, "Package requires min development platform " + minCode
+-                    + ", returning current version " + Build.VERSION.SDK_INT);
+-            return Build.VERSION.SDK_INT;
+-        }
+-
+         // Otherwise, we're looking at an incompatible pre-release SDK.
+         if (platformSdkCodenames.length > 0) {
+             outError[0] = "Requires development platform " + minCode
+diff --git a/core/java/android/content/pm/parsing/FrameworkParsingPackageUtils.java b/core/java/android/content/pm/parsing/FrameworkParsingPackageUtils.java
+index 8cc4cdb..3e1c5bb 100644
+--- a/core/java/android/content/pm/parsing/FrameworkParsingPackageUtils.java
++++ b/core/java/android/content/pm/parsing/FrameworkParsingPackageUtils.java
+@@ -316,15 +316,6 @@
+             return input.success(Build.VERSION_CODES.CUR_DEVELOPMENT);
+         }
+ 
+-        // STOPSHIP: hack for the pre-release SDK
+-        if (platformSdkCodenames.length == 0
+-                && Build.VERSION.KNOWN_CODENAMES.stream().max(String::compareTo).orElse("").equals(
+-                        minCode)) {
+-            Slog.w(TAG, "Parsed package requires min development platform " + minCode
+-                    + ", returning current version " + Build.VERSION.SDK_INT);
+-            return input.success(Build.VERSION.SDK_INT);
+-        }
+-
+         // Otherwise, we're looking at an incompatible pre-release SDK.
+         if (platformSdkCodenames.length > 0) {
+             return input.error(PackageManager.INSTALL_FAILED_OLDER_SDK,
+@@ -377,27 +368,19 @@
+             return input.success(targetVers);
+         }
+ 
+-        // If it's a pre-release SDK and the codename matches this platform, it
+-        // definitely targets this SDK.
+-        if (matchTargetCode(platformSdkCodenames, targetCode)) {
+-            return input.success(Build.VERSION_CODES.CUR_DEVELOPMENT);
+-        }
+-
+-        // STOPSHIP: hack for the pre-release SDK
+-        if (platformSdkCodenames.length == 0
+-                && Build.VERSION.KNOWN_CODENAMES.stream().max(String::compareTo).orElse("").equals(
+-                        targetCode)) {
+-            Slog.w(TAG, "Parsed package requires development platform " + targetCode
+-                    + ", returning current version " + Build.VERSION.SDK_INT);
+-            return input.success(Build.VERSION.SDK_INT);
+-        }
+-
+         try {
+             if (allowUnknownCodenames && UnboundedSdkLevel.isAtMost(targetCode)) {
+                 return input.success(Build.VERSION_CODES.CUR_DEVELOPMENT);
+             }
+         } catch (IllegalArgumentException e) {
+-            return input.error(PackageManager.INSTALL_FAILED_OLDER_SDK, "Bad package SDK");
++            // isAtMost() throws it when encountering an older SDK codename
++            return input.error(PackageManager.INSTALL_FAILED_OLDER_SDK, e.getMessage());
++        }
++
++        // If it's a pre-release SDK and the codename matches this platform, it
++        // definitely targets this SDK.
++        if (matchTargetCode(platformSdkCodenames, targetCode)) {
++            return input.success(Build.VERSION_CODES.CUR_DEVELOPMENT);
+         }
+ 
+         // Otherwise, we're looking at an incompatible pre-release SDK.
+diff --git a/services/tests/servicestests/src/com/android/server/systemconfig/SystemConfigTest.java b/services/tests/servicestests/src/com/android/server/systemconfig/SystemConfigTest.java
+index 687e8f7..92c7871 100644
+--- a/services/tests/servicestests/src/com/android/server/systemconfig/SystemConfigTest.java
++++ b/services/tests/servicestests/src/com/android/server/systemconfig/SystemConfigTest.java
+@@ -446,14 +446,14 @@
+                         + "    <library \n"
+                         + "        name=\"foo\"\n"
+                         + "        file=\"" + mFooJar + "\"\n"
+-                        + "        on-bootclasspath-before=\"A\"\n"
++                        + "        on-bootclasspath-before=\"Q\"\n"
+                         + "        on-bootclasspath-since=\"W\"\n"
+                         + "     />\n\n"
+                         + " </permissions>";
+         parseSharedLibraries(contents);
+         assertFooIsOnlySharedLibrary();
+         SystemConfig.SharedLibraryEntry entry = mSysConfig.getSharedLibraries().get("foo");
+-        assertThat(entry.onBootclasspathBefore).isEqualTo("A");
++        assertThat(entry.onBootclasspathBefore).isEqualTo("Q");
+         assertThat(entry.onBootclasspathSince).isEqualTo("W");
+     }
+ 

@@ -1,0 +1,8 @@
+package_name:  "Android"
+projects:  "lib/restricted"
+license_kinds:  "SPDX-license-identifier-GPL-2.0"
+license_conditions:  "restricted"
+is_container:  false
+built:  "out/target/product/fictional/obj/SHARED_LIBRARIES/lib_intermediates/lib9.so"
+built:  "out/target/product/fictional/obj/SHARED_LIBRARIES/lib_intermediates/lib9.a"
+installed:  "out/target/product/fictional/system/lib/lib9.so"
