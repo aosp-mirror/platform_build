@@ -49,3 +49,36 @@ genrule_defaults {
   out: ["kernel_release.txt"],
   cmd: "$(location) --tools lz4:$(location lz4) --input $(in) --output-release > $(out)"
 }
+
+cc_binary_host {
+  name: "build-runfiles",
+  srcs: ["build-runfiles.cc"],
+}
+
+python_binary_host {
+  name: "check_radio_versions",
+  srcs: ["check_radio_versions.py"],
+}
+
+python_binary_host {
+  name: "check_elf_file",
+  srcs: ["check_elf_file.py"],
+}
+
+python_binary_host {
+  name: "generate_gts_shared_report",
+  srcs: ["generate_gts_shared_report.py"],
+}
+
+python_binary_host {
+    name: "list_files",
+    main: "list_files.py",
+    srcs: [
+        "list_files.py",
+    ],
+    version: {
+      py3: {
+        embedded_launcher: true,
+      }
+    }
+}

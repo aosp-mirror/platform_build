@@ -1,5 +1,0 @@
-{
-    "inherits": [
-        "test/configs/parsing/cycles/2.mcombo"
-    ]
-}
