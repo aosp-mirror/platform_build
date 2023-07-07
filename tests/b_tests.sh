@@ -24,6 +24,7 @@ lunch aosp_arm64
 test_target=//build/bazel/scripts/difftool:difftool
 
 b build "$test_target"
+b build -- "$test_target"
 b build "$test_target" --run-soong-tests
 b build --run-soong-tests "$test_target"
 b --run-soong-tests build "$test_target"

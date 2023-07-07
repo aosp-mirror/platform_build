@@ -41,6 +41,11 @@
     java.lang.Object readResolve();
 }
 
+# Keep all Javascript API methods
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
 # Keep Throwable's constructor that takes a String argument.
 -keepclassmembers class * extends java.lang.Throwable {
   <init>(java.lang.String);

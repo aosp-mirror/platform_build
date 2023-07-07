@@ -27,7 +27,13 @@ _product_single_value_vars += PRODUCT_MODEL
 _product_single_value_vars += PRODUCT_NAME_FOR_ATTESTATION
 _product_single_value_vars += PRODUCT_MODEL_FOR_ATTESTATION
 
-# The resoure configuration options to use for this product.
+# Defines the ELF segment alignment for binaries (executables and shared libraries).
+# The ELF segment alignment has to be a PAGE_SIZE multiple. For example, if
+# PRODUCT_MAX_PAGE_SIZE_SUPPORTED=65536, the possible values for PAGE_SIZE could be
+# 4096, 16384 and 65536.
+_product_single_value_vars += PRODUCT_MAX_PAGE_SIZE_SUPPORTED
+
+# The resource configuration options to use for this product.
 _product_list_vars += PRODUCT_LOCALES
 _product_list_vars += PRODUCT_AAPT_CONFIG
 _product_single_value_vars += PRODUCT_AAPT_PREF_CONFIG
@@ -36,6 +42,7 @@ _product_list_vars += PRODUCT_HOST_PACKAGES
 _product_list_vars += PRODUCT_PACKAGES
 _product_list_vars += PRODUCT_PACKAGES_DEBUG
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_ASAN
+_product_list_vars += PRODUCT_PACKAGES_ARM64
 # Packages included only for eng/userdebug builds, when building with EMMA_INSTRUMENT=true
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE
 _product_list_vars += PRODUCT_PACKAGES_ENG
@@ -237,6 +244,9 @@ _product_list_vars += PRODUCT_CFI_INCLUDE_PATHS
 # Whether any paths are excluded from sanitization when SANITIZE_TARGET=cfi
 _product_list_vars += PRODUCT_CFI_EXCLUDE_PATHS
 
+# Whether any paths should have HWASan enabled for components
+_product_list_vars += PRODUCT_HWASAN_INCLUDE_PATHS
+
 # Whether the Scudo hardened allocator is disabled platform-wide
 _product_single_value_vars += PRODUCT_DISABLE_SCUDO
 
@@ -268,6 +278,9 @@ _product_single_value_vars += PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
 
 # List of tags that will be used to gate blueprint modules from the build graph
 _product_list_vars += PRODUCT_INCLUDE_TAGS
+
+# List of directories that will be used to gate blueprint modules from the build graph
+_product_list_vars += PRODUCT_SOURCE_ROOT_DIRS
 
 # When this is true, various build time as well as runtime debugfs restrictions are enabled.
 _product_single_value_vars += PRODUCT_SET_DEBUGFS_RESTRICTIONS
@@ -390,6 +403,8 @@ _product_list_vars += PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS
 # - "false": disallows the build system and the runtime to use userfaultfd GC even if the device
 #   supports it
 _product_single_value_vars += PRODUCT_ENABLE_UFFD_GC
+
+_product_list_vars += PRODUCT_AFDO_PROFILES
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)

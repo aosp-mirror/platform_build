@@ -27,6 +27,7 @@ $(call add_soong_config_namespace,ANDROID)
 # Add variables to the namespace below:
 
 $(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_MEDIASERVER)
+$(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_DRMSERVER)
 $(call add_soong_config_var,ANDROID,TARGET_ENABLE_MEDIADRM_64)
 $(call add_soong_config_var,ANDROID,IS_TARGET_MIXED_SEPOLICY)
 ifeq ($(IS_TARGET_MIXED_SEPOLICY),true)
@@ -39,7 +40,50 @@ $(call add_soong_config_var,ANDROID,PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT)
 # Default behavior for the tree wrt building modules or using prebuilts. This
 # can always be overridden by setting the environment variable
 # MODULE_BUILD_FROM_SOURCE.
-BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := false
+
+ifneq ($(SANITIZE_TARGET)$(EMMA_INSTRUMENT_FRAMEWORK),)
+  # Always use sources when building the framework with Java coverage or
+  # sanitized builds as they both require purpose built prebuilts which we do
+  # not provide.
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
+
+ifneq ($(CLANG_COVERAGE)$(NATIVE_COVERAGE_PATHS),)
+  # Always use sources when building with clang coverage and native coverage.
+  # It is possible that there are certain situations when building with coverage
+  # would work with prebuilts, e.g. when the coverage is not being applied to
+  # modules for which we provide prebuilts. Unfortunately, determining that
+  # would require embedding knowledge of which coverage paths affect which
+  # modules here. That would duplicate a lot of information, add yet another
+  # location  module authors have to update and complicate the logic here.
+  # For nowe we will just always build from sources when doing coverage builds.
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
+
+# ART does not provide linux_bionic variants needed for products that
+# set HOST_CROSS_OS=linux_bionic.
+ifeq (linux_bionic,${HOST_CROSS_OS})
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
+
+# ART does not provide host side arm64 variants needed for products that
+# set HOST_CROSS_ARCH=arm64.
+ifeq (arm64,${HOST_CROSS_ARCH})
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
+
+# TV based devices do not seem to work with prebuilts, so build from source
+# for now and fix in a follow up.
+ifneq (,$(filter tv,$(subst $(comma),$(space),${PRODUCT_CHARACTERISTICS})))
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
+
+# ATV based devices do not seem to work with prebuilts, so build from source
+# for now and fix in a follow up.
+ifneq (,${PRODUCT_IS_ATV})
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
 
 ifneq (,$(MODULE_BUILD_FROM_SOURCE))
   # Keep an explicit setting.
@@ -79,8 +123,9 @@ endif
 # are controlled by the MODULE_BUILD_FROM_SOURCE environment variable by
 # default.
 INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
-  bluetooth \
+  btservices \
   permission \
+  rkpd \
   uwb \
   wifi \
 

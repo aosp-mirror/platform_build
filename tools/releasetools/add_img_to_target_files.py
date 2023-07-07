@@ -818,6 +818,9 @@ def AddSuperEmpty(output_zip):
   """Create a super_empty.img and store it in output_zip."""
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "super_empty.img")
+  if os.path.exists(img.name):
+    logger.info("super_empty.img already exists; no need to rebuild...")
+    return
   build_super_image.BuildSuperImage(OPTIONS.info_dict, img.name)
   img.Write()
 
@@ -842,13 +845,14 @@ def ReplaceUpdatedFiles(zip_filename, files_list):
   SYSTEM/ after rebuilding recovery.
   """
   common.ZipDelete(zip_filename, files_list)
-  with zipfile.ZipFile(zip_filename, "a",
+  output_zip = zipfile.ZipFile(zip_filename, "a",
                                compression=zipfile.ZIP_DEFLATED,
-                               allowZip64=True) as output_zip:
-    for item in files_list:
-      file_path = os.path.join(OPTIONS.input_tmp, item)
-      assert os.path.exists(file_path)
-      common.ZipWrite(output_zip, file_path, arcname=item)
+                               allowZip64=True)
+  for item in files_list:
+    file_path = os.path.join(OPTIONS.input_tmp, item)
+    assert os.path.exists(file_path)
+    common.ZipWrite(output_zip, file_path, arcname=item)
+  common.ZipClose(output_zip)
 
 
 def HasPartition(partition_name):
@@ -1191,7 +1195,7 @@ def AddImagesToTargetFiles(filename):
   AddVbmetaDigest(output_zip)
 
   if output_zip:
-    output_zip.close()
+    common.ZipClose(output_zip)
     if OPTIONS.replace_updated_files_list:
       ReplaceUpdatedFiles(output_zip.filename,
                           OPTIONS.replace_updated_files_list)

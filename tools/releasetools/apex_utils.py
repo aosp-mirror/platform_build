@@ -431,7 +431,7 @@ def SignUncompressedApex(avbtool, apex_file, payload_key, container_key,
   apex_zip = zipfile.ZipFile(apex_file, 'a', allowZip64=True)
   common.ZipWrite(apex_zip, payload_file, arcname=APEX_PAYLOAD_IMAGE)
   common.ZipWrite(apex_zip, payload_public_key, arcname=APEX_PUBKEY)
-  apex_zip.close()
+  common.ZipClose(apex_zip)
 
   # 3. Sign the APEX container with container_key.
   signed_apex = common.MakeTempFile(prefix='apex-container-', suffix='.apex')
@@ -626,7 +626,7 @@ def GetApexInfoFromTargetFiles(input_file, partition, compressed_only=True):
     if os.path.isfile(deapexer_path):
       deapexer = deapexer_path
 
-  for apex_filename in os.listdir(target_dir):
+  for apex_filename in sorted(os.listdir(target_dir)):
     apex_filepath = os.path.join(target_dir, apex_filename)
     if not os.path.isfile(apex_filepath) or \
             not zipfile.is_zipfile(apex_filepath):

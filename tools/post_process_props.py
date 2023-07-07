@@ -43,7 +43,7 @@ def validate_grf_props(prop_list, sdk_version):
   """Validate GRF properties if exist.
 
   If ro.board.first_api_level is defined, check if its value is valid for the
-  sdk version.
+  sdk version. This is only for the release version.
   Also, validate the value of ro.board.api_level if defined.
 
   Returns:
@@ -51,6 +51,7 @@ def validate_grf_props(prop_list, sdk_version):
   """
   grf_api_level = prop_list.get_value("ro.board.first_api_level")
   board_api_level = prop_list.get_value("ro.board.api_level")
+  platform_version_codename = prop_list.get_value("ro.build.version.codename")
 
   if not grf_api_level:
     if board_api_level:
@@ -61,6 +62,18 @@ def validate_grf_props(prop_list, sdk_version):
     return True
 
   grf_api_level = int(grf_api_level)
+  if board_api_level:
+    board_api_level = int(board_api_level)
+    if board_api_level < grf_api_level:
+      sys.stderr.write("error: ro.board.api_level(%d) must be greater than "
+                       "ro.board.first_api_level(%d)\n"
+                       % (board_api_level, grf_api_level))
+      return False
+
+  # skip sdk version validation for dev-stage non-REL devices
+  if platform_version_codename != "REL":
+    return True
+
   if grf_api_level > sdk_version:
     sys.stderr.write("error: ro.board.first_api_level(%d) must be less than "
                      "or equal to ro.build.version.sdk(%d)\n"
@@ -68,12 +81,10 @@ def validate_grf_props(prop_list, sdk_version):
     return False
 
   if board_api_level:
-    board_api_level = int(board_api_level)
-    if board_api_level < grf_api_level or board_api_level > sdk_version:
-      sys.stderr.write("error: ro.board.api_level(%d) must be neither less "
-                       "than ro.board.first_api_level(%d) nor greater than "
-                       "ro.build.version.sdk(%d)\n"
-                       % (board_api_level, grf_api_level, sdk_version))
+    if board_api_level > sdk_version:
+      sys.stderr.write("error: ro.board.api_level(%d) must be less than or "
+                       "equal to ro.build.version.sdk(%d)\n"
+                       % (board_api_level, sdk_version))
       return False
 
   return True
