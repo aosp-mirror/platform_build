@@ -2120,20 +2120,33 @@ def UnzipSingleFile(input_zip: zipfile.ZipFile, info: zipfile.ZipInfo, dirname: 
   # According to https://stackoverflow.com/questions/434641/how-do-i-set-permissions-attributes-on-a-file-in-a-zip-file-using-pythons-zip/6297838#6297838
   # higher bits of |external_attr| are unix file permission and types
   unix_filetype = info.external_attr >> 16
+  file_perm = unix_filetype & 0o777
 
   def CheckMask(a, mask):
     return (a & mask) == mask
 
   def IsSymlink(a):
     return CheckMask(a, stat.S_IFLNK)
+
+  def IsDir(a):
+    return CheckMask(a, stat.S_IFDIR)
   # python3.11 zipfile implementation doesn't handle symlink correctly
   if not IsSymlink(unix_filetype):
-    return input_zip.extract(info, dirname)
+    target = input_zip.extract(info, dirname)
+    # We want to ensure that the file is at least read/writable by owner and readable by all users
+    if IsDir(unix_filetype):
+      os.chmod(target, file_perm | 0o755)
+    else:
+      os.chmod(target, file_perm | 0o644)
+    return target
   if dirname is None:
     dirname = os.getcwd()
   target = os.path.join(dirname, info.filename)
   os.makedirs(os.path.dirname(target), exist_ok=True)
+  if os.path.exists(target):
+    os.unlink(target)
   os.symlink(input_zip.read(info).decode(), target)
+  return target
 
 
 def UnzipToDir(filename, dirname, patterns=None):
