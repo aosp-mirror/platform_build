@@ -3465,45 +3465,6 @@ $(ASAN_IN_SYSTEM_INSTALLED): $(INSTALLED_USERDATAIMAGE_TARGET_DEPS)
 	tar cfj $(ASAN_IN_SYSTEM_INSTALLED) $(ASAN_SYSTEM_INSTALL_OPTIONS) -C $(TARGET_OUT_DATA)/.. $(ASAN_OUT_DIRS_FOR_SYSTEM_INSTALL) >/dev/null
 
 # -----------------------------------------------------------------
-# partition table image
-ifdef BOARD_BPT_INPUT_FILES
-
-BUILT_BPTIMAGE_TARGET := $(PRODUCT_OUT)/partition-table.img
-BUILT_BPTJSON_TARGET := $(PRODUCT_OUT)/partition-table.bpt
-
-INTERNAL_BVBTOOL_MAKE_TABLE_ARGS := \
-	--output_gpt $(BUILT_BPTIMAGE_TARGET) \
-	--output_json $(BUILT_BPTJSON_TARGET) \
-	$(foreach file, $(BOARD_BPT_INPUT_FILES), --input $(file))
-
-ifdef BOARD_BPT_DISK_SIZE
-INTERNAL_BVBTOOL_MAKE_TABLE_ARGS += --disk_size $(BOARD_BPT_DISK_SIZE)
-endif
-
-define build-bptimage-target
-  $(call pretty,"Target partition table image: $(INSTALLED_BPTIMAGE_TARGET)")
-  $(hide) $(BPTTOOL) make_table $(INTERNAL_BVBTOOL_MAKE_TABLE_ARGS) $(BOARD_BPT_MAKE_TABLE_ARGS)
-endef
-
-INSTALLED_BPTIMAGE_TARGET := $(BUILT_BPTIMAGE_TARGET)
-$(BUILT_BPTJSON_TARGET): $(INSTALLED_BPTIMAGE_TARGET)
-	$(hide) touch -c $(BUILT_BPTJSON_TARGET)
-
-$(INSTALLED_BPTIMAGE_TARGET): $(BPTTOOL) $(BOARD_BPT_INPUT_FILES)
-	$(build-bptimage-target)
-
-$(call declare-1p-container,$(INSTALLED_BPTIMAGE_TARGET),)
-$(call declare-container-license-deps,$(INSTALLED_BPTIMAGE_TARGET),$(BOARD_BPT_INPUT_FILES),$(PRODUCT_OUT)/:/)
-
-UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_BPTIMAGE_TARGET)
-
-.PHONY: bptimage-nodeps
-bptimage-nodeps:
-	$(build-bptimage-target)
-
-endif # BOARD_BPT_INPUT_FILES
-
-# -----------------------------------------------------------------
 # cache partition image
 INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_OUT_CACHE)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
 ifdef BUILDING_CACHE_IMAGE
@@ -5628,14 +5589,6 @@ ifneq (,$(strip $(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)))
 	echo "avb_vbmeta_$(partition)_rollback_index_location=$(BOARD_AVB_VBMETA_$(call to-upper,$(partition))_ROLLBACK_INDEX_LOCATION)" >> $@ ;)
 endif # BOARD_AVB_VBMETA_CUSTOM_PARTITIONS
 endif # BOARD_AVB_ENABLE
-ifdef BOARD_BPT_INPUT_FILES
-	$(hide) echo "board_bpt_enable=true" >> $@
-	$(hide) echo "board_bpt_make_table_args=$(BOARD_BPT_MAKE_TABLE_ARGS)" >> $@
-	$(hide) echo "board_bpt_input_files=$(BOARD_BPT_INPUT_FILES)" >> $@
-endif
-ifdef BOARD_BPT_DISK_SIZE
-	$(hide) echo "board_bpt_disk_size=$(BOARD_BPT_DISK_SIZE)" >> $@
-endif
 	$(call generate-userimage-prop-dictionary, $@)
 ifeq ($(AB_OTA_UPDATER),true)
 	@# Include the build type in META/misc_info.txt so the server can easily differentiate production builds.
