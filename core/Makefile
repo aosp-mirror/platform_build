@@ -4999,7 +4999,9 @@ my_board_extracted_kernel := true
 endif # INSTALLED_BOOTIMAGE_TARGET
 endif # my_board_extracted_kernel
 
-ifneq ($(my_board_extracted_kernel),true)
+ifeq ($(my_board_extracted_kernel),true)
+$(call dist-for-goals, droid_targets, $(BUILT_KERNEL_VERSION_FILE))
+else
 $(warning Neither INSTALLED_KERNEL_TARGET nor INSTALLED_BOOTIMAGE_TARGET is defined when \
     PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS  is true. Information about the updated kernel \
     cannot be built into OTA update package. You can fix this by: \
