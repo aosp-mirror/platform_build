@@ -358,7 +358,6 @@ PRODUCT_HOST_PACKAGES += \
     incident_report \
     ld.mc \
     lpdump \
-    minigzip \
     mke2fs \
     mkfs.erofs \
     resize2fs \
