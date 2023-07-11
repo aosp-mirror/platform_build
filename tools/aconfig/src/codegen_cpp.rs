@@ -133,8 +133,6 @@ mod tests {
 
 #include <string>
 #include <memory>
-#include <server_configurable_flags/get_flags.h>
-using namespace server_configurable_flags;
 
 namespace com::android::aconfig::test {
 class flag_provider_interface {
@@ -196,8 +194,6 @@ inline void reset_overrides() {
 
 #include <string>
 #include <memory>
-#include <server_configurable_flags/get_flags.h>
-using namespace server_configurable_flags;
 
 namespace com::android::aconfig::test {
 class flag_provider_interface {
@@ -258,6 +254,8 @@ inline void reset_overrides() {
 #define com_android_aconfig_test_flag_provider_HEADER_H
 
 #include "com_android_aconfig_test.h"
+#include <server_configurable_flags/get_flags.h>
+using namespace server_configurable_flags;
 
 namespace com::android::aconfig::test {
 class flag_provider : public flag_provider_interface {
@@ -294,6 +292,8 @@ public:
 #define com_android_aconfig_test_flag_provider_HEADER_H
 
 #include "com_android_aconfig_test.h"
+#include <server_configurable_flags/get_flags.h>
+using namespace server_configurable_flags;
 
 #include <unordered_map>
 #include <unordered_set>
