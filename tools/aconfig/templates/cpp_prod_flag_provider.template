@@ -1,6 +1,10 @@
 #ifndef {header}_flag_provider_HEADER_H
 #define {header}_flag_provider_HEADER_H
 #include "{header}.h"
+{{ if readwrite }}
+#include <server_configurable_flags/get_flags.h>
+using namespace server_configurable_flags;
+{{ endif }}
 
 namespace {cpp_namespace} \{
 class flag_provider : public flag_provider_interface \{
