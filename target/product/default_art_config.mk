@@ -103,6 +103,7 @@ PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS := \
     com.android.os.statsd:service-statsd \
     com.android.scheduling:service-scheduling \
     com.android.tethering:service-connectivity \
+    com.android.threadnetwork:service-threadnetwork \
     com.android.uwb:service-uwb \
     com.android.wifi:service-wifi \
 
