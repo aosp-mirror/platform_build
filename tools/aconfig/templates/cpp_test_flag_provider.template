@@ -2,6 +2,11 @@
 #define {header}_flag_provider_HEADER_H
 #include "{header}.h"
 
+{{ if readwrite }}
+#include <server_configurable_flags/get_flags.h>
+using namespace server_configurable_flags;
+{{ endif }}
+
 #include <unordered_map>
 #include <unordered_set>
 #include <cassert>

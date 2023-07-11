@@ -3,10 +3,7 @@
 
 #include <string>
 #include <memory>
-{{ if readwrite }}
-#include <server_configurable_flags/get_flags.h>
-using namespace server_configurable_flags;
-{{ endif }}
+
 namespace {cpp_namespace} \{
 
 class flag_provider_interface \{
