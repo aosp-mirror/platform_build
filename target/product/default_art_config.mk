@@ -38,6 +38,11 @@ endif
 PRODUCT_BOOT_JARS := \
     $(ART_APEX_JARS)
 
+# List of jars to be included in the ART boot image for testing.
+# DO NOT reorder this list. The order must match the one described above.
+PRODUCT_TEST_ONLY_ART_BOOT_IMAGE_JARS := \
+    $(ART_APEX_JARS)
+
 # /system and /system_ext boot jars.
 PRODUCT_BOOT_JARS += \
     framework-minus-apex \

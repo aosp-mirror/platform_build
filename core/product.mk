@@ -146,6 +146,9 @@ _product_list_vars += PRODUCT_BOOT_JARS
 # PRODUCT_BOOT_JARS, so that device-specific jars go after common jars.
 _product_list_vars += PRODUCT_BOOT_JARS_EXTRA
 
+# List of jars to be included in the ART boot image for testing.
+_product_list_vars += PRODUCT_TEST_ONLY_ART_BOOT_IMAGE_JARS
+
 _product_single_value_vars += PRODUCT_SUPPORTS_VBOOT
 _product_list_vars += PRODUCT_SYSTEM_SERVER_APPS
 # List of system_server classpath jars on the platform.
