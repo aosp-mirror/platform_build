@@ -1075,6 +1075,10 @@ function cproj()
     echo "can't find Android.mk"
 }
 
+function adb() {
+   `which adb` "${@}"
+}
+
 # simplified version of ps; output in the form
 # <pid> <procname>
 function qpid() {
