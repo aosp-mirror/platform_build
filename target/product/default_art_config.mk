@@ -40,8 +40,11 @@ PRODUCT_BOOT_JARS := \
 
 # List of jars to be included in the ART boot image for testing.
 # DO NOT reorder this list. The order must match the one described above.
+# Note: We use the host variant of "core-icu4j" and "conscrypt" for testing.
 PRODUCT_TEST_ONLY_ART_BOOT_IMAGE_JARS := \
-    $(ART_APEX_JARS)
+    $(ART_APEX_JARS) \
+    platform:core-icu4j-host \
+    platform:conscrypt-host \
 
 # /system and /system_ext boot jars.
 PRODUCT_BOOT_JARS += \
@@ -115,6 +118,8 @@ PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS := \
 # <old_apex>:<old_jar>:<new_apex>:<new_jar>
 PRODUCT_CONFIGURED_JAR_LOCATION_OVERRIDES := \
     platform:framework-minus-apex:platform:framework \
+    platform:core-icu4j-host:com.android.i18n:core-icu4j \
+    platform:conscrypt-host:com.android.conscrypt:conscrypt \
 
 # Minimal configuration for running dex2oat (default argument values).
 # PRODUCT_USES_DEFAULT_ART_CONFIG must be true to enable boot image compilation.
