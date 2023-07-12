@@ -1234,7 +1234,6 @@ def BuildVendorPartitions(output_zip_path):
     vendor_misc_info["no_recovery"] = "true"  # recovery
     vendor_misc_info["avb_enable"] = "false"  # vbmeta
 
-  vendor_misc_info["board_bpt_enable"] = "false"  # partition-table
   vendor_misc_info["has_dtbo"] = "false"  # dtbo
   vendor_misc_info["has_pvmfw"] = "false"  # pvmfw
   vendor_misc_info["avb_custom_images_partition_list"] = ""  # custom images
