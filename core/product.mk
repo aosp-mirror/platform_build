@@ -317,6 +317,10 @@ _product_list_vars += PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES
 _product_list_vars += PRODUCT_PACKAGE_NAME_OVERRIDES
 _product_list_vars += PRODUCT_CERTIFICATE_OVERRIDES
 
+# Overrides the (apex, jar) pairs above when determining the on-device location. The format is:
+# <old_apex>:<old_jar>:<new_apex>:<new_jar>
+_product_list_vars += PRODUCT_CONFIGURED_JAR_LOCATION_OVERRIDES
+
 # Controls for whether different partitions are built for the current product.
 _product_single_value_vars += PRODUCT_BUILD_SYSTEM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_SYSTEM_OTHER_IMAGE

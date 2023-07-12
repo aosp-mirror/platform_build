@@ -106,6 +106,11 @@ PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS := \
     com.android.uwb:service-uwb \
     com.android.wifi:service-wifi \
 
+# Overrides the (apex, jar) pairs above when determining the on-device location. The format is:
+# <old_apex>:<old_jar>:<new_apex>:<new_jar>
+PRODUCT_CONFIGURED_JAR_LOCATION_OVERRIDES := \
+    platform:framework-minus-apex:platform:framework \
+
 # Minimal configuration for running dex2oat (default argument values).
 # PRODUCT_USES_DEFAULT_ART_CONFIG must be true to enable boot image compilation.
 PRODUCT_USES_DEFAULT_ART_CONFIG := true
