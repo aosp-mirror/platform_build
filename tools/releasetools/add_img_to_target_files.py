@@ -684,34 +684,6 @@ def AddVBMeta(output_zip, partitions, name, needed_partitions):
   return img.name
 
 
-def AddPartitionTable(output_zip):
-  """Create a partition table image and store it in output_zip."""
-
-  img = OutputFile(
-      output_zip, OPTIONS.input_tmp, "IMAGES", "partition-table.img")
-  bpt = OutputFile(
-      output_zip, OPTIONS.input_tmp, "META", "partition-table.bpt")
-
-  # use BPTTOOL from environ, or "bpttool" if empty or not set.
-  bpttool = os.getenv("BPTTOOL") or "bpttool"
-  cmd = [bpttool, "make_table", "--output_json", bpt.name,
-         "--output_gpt", img.name]
-  input_files_str = OPTIONS.info_dict["board_bpt_input_files"]
-  input_files = input_files_str.split()
-  for i in input_files:
-    cmd.extend(["--input", i])
-  disk_size = OPTIONS.info_dict.get("board_bpt_disk_size")
-  if disk_size:
-    cmd.extend(["--disk_size", disk_size])
-  args = OPTIONS.info_dict.get("board_bpt_make_table_args")
-  if args:
-    cmd.extend(shlex.split(args))
-  common.RunAndCheckOutput(cmd)
-
-  img.Write()
-  bpt.Write()
-
-
 def AddCache(output_zip):
   """Create an empty cache image and store it in output_zip."""
 
@@ -1086,10 +1058,6 @@ def AddImagesToTargetFiles(filename):
     AddUserdata(output_zip)
     banner("cache")
     AddCache(output_zip)
-
-  if OPTIONS.info_dict.get("board_bpt_enable") == "true":
-    banner("partition-table")
-    AddPartitionTable(output_zip)
 
   add_partition("dtbo",
                 OPTIONS.info_dict.get("has_dtbo") == "true", AddDtbo, [])
