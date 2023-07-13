@@ -1,0 +1,22 @@
+#ifndef {header}_c_HEADER_H
+#define {header}_c_HEADER_H
+
+#ifdef __cplusplus
+extern "C" \{
+#endif
+
+{{ for item in class_elements}}
+extern const char* {header}_{item.uppercase_flag_name};
+{{ endfor -}}
+
+{{ for item in class_elements}}
+bool {header}_{item.flag_name}();{{ endfor }}
+
+void {header}_override_flag(const char* name, bool val);
+
+void {header}_reset_overrides();
+
+#ifdef __cplusplus
+}
+#endif
+#endif
