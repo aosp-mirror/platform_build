@@ -11,6 +11,8 @@ FileName: file4.a
 SPDXID: SPDXRef-file4
 FileChecksum: SHA1: 44444
 
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-file4
+
 PackageName: PRODUCT
 SPDXID: SPDXRef-PRODUCT
 PackageDownloadLocation: NONE
@@ -18,8 +20,6 @@ FilesAnalyzed: true
 PackageVersion: build_finger_print
 PackageSupplier: Organization: Google
 PackageVerificationCode: 123456
-
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-PRODUCT
 
 FileName: /bin/file1
 SPDXID: SPDXRef-file1
