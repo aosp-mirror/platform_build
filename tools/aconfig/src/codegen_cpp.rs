@@ -67,6 +67,16 @@ where
             },
             dir: "",
         },
+        FileSpec {
+            name: &format!("{}_c.h", header),
+            template: include_str!("../templates/c_exported_header.template"),
+            dir: "include",
+        },
+        FileSpec {
+            name: &format!("{}_c.cc", header),
+            template: include_str!("../templates/c_source_file.template"),
+            dir: "",
+        },
     ];
     files.iter().map(|file| generate_file(file, &context)).collect()
 }
@@ -387,6 +397,71 @@ namespace com::android::aconfig::test {
 }
 "#;
 
+    const C_EXPORTED_HEADER_EXPECTED: &str = r#"
+#ifndef com_android_aconfig_test_c_HEADER_H
+#define com_android_aconfig_test_c_HEADER_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern const char* com_android_aconfig_test_DISABLED_RO;
+extern const char* com_android_aconfig_test_DISABLED_RW;
+extern const char* com_android_aconfig_test_ENABLED_RO;
+extern const char* com_android_aconfig_test_ENABLED_RW;
+
+bool com_android_aconfig_test_disabled_ro();
+
+bool com_android_aconfig_test_disabled_rw();
+
+bool com_android_aconfig_test_enabled_ro();
+
+bool com_android_aconfig_test_enabled_rw();
+
+void com_android_aconfig_test_override_flag(const char* name, bool val);
+
+void com_android_aconfig_test_reset_overrides();
+
+#ifdef __cplusplus
+}
+#endif
+#endif
+"#;
+
+    const C_SOURCE_FILE_EXPECTED: &str = r#"
+#include "com_android_aconfig_test_c.h"
+#include "com_android_aconfig_test.h"
+#include <string>
+
+const char* com_android_aconfig_test_DISABLED_RO = "com.android.aconfig.test.disabled_ro";
+const char* com_android_aconfig_test_DISABLED_RW = "com.android.aconfig.test.disabled_rw";
+const char* com_android_aconfig_test_ENABLED_RO = "com.android.aconfig.test.enabled_ro";
+const char* com_android_aconfig_test_ENABLED_RW = "com.android.aconfig.test.enabled_rw";
+
+bool com_android_aconfig_test_disabled_ro() {
+    return com::android::aconfig::test::disabled_ro();
+}
+
+bool com_android_aconfig_test_disabled_rw() {
+    return com::android::aconfig::test::disabled_rw();
+}
+
+bool com_android_aconfig_test_enabled_ro() {
+    return com::android::aconfig::test::enabled_ro();
+}
+
+bool com_android_aconfig_test_enabled_rw() {
+    return com::android::aconfig::test::enabled_rw();
+}
+
+void com_android_aconfig_test_override_flag(const char* name, bool val) {
+    com::android::aconfig::test::override_flag(std::string(name), val);
+}
+
+void com_android_aconfig_test_reset_overrides() {
+    com::android::aconfig::test::reset_overrides();
+}
+"#;
     fn test_generate_cpp_code(mode: CodegenMode) {
         let parsed_flags = crate::test::parse_test_flags();
         let generated =
@@ -432,6 +507,26 @@ namespace com::android::aconfig::test {
             None,
             crate::test::first_significant_code_diff(
                 SOURCE_FILE_EXPECTED,
+                generated_files_map.get(&target_file_path).unwrap()
+            )
+        );
+
+        target_file_path = String::from("include/com_android_aconfig_test_c.h");
+        assert!(generated_files_map.contains_key(&target_file_path));
+        assert_eq!(
+            None,
+            crate::test::first_significant_code_diff(
+                C_EXPORTED_HEADER_EXPECTED,
+                generated_files_map.get(&target_file_path).unwrap()
+            )
+        );
+
+        target_file_path = String::from("com_android_aconfig_test_c.cc");
+        assert!(generated_files_map.contains_key(&target_file_path));
+        assert_eq!(
+            None,
+            crate::test::first_significant_code_diff(
+                C_SOURCE_FILE_EXPECTED,
                 generated_files_map.get(&target_file_path).unwrap()
             )
         );
