@@ -1076,7 +1076,7 @@ function cproj()
 }
 
 function adb() {
-   `which adb` "${@}"
+   command adb "${@}"
 }
 
 # simplified version of ps; output in the form
