@@ -3,8 +3,6 @@
 #include "{header}_flag_provider.h"
 
 namespace {cpp_namespace} \{
-{{ for item in class_elements}}
-std::string const {item.uppercase_flag_name} = "{item.device_config_flag}";{{ endfor }}
 std::unique_ptr<flag_provider_interface> provider_ =
     std::make_unique<flag_provider>();
 }
