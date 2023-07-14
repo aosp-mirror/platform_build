@@ -8,25 +8,20 @@ using namespace server_configurable_flags;
 {{ endif }}
 
 #include <unordered_map>
-#include <unordered_set>
-#include <cassert>
 
 namespace {cpp_namespace} \{
 class flag_provider : public flag_provider_interface \{
 private:
     std::unordered_map<std::string, bool> overrides_;
-    std::unordered_set<std::string> flag_names_;
 
 public:
     flag_provider()
-        : overrides_(),
-        flag_names_() \{
-        {{ for item in class_elements}}
-        flag_names_.insert({item.uppercase_flag_name});{{ endfor }}
-    }
+        : overrides_()
+    \{}
+
     {{ for item in class_elements}}
     virtual bool {item.flag_name}() override \{
-        auto it = overrides_.find({item.uppercase_flag_name});
+        auto it = overrides_.find("{item.flag_name}");
 	      if (it != overrides_.end()) \{
 	          return it->second;
         } else \{
@@ -40,13 +35,13 @@ public:
           {{ -endif }}
         }
     }
-    {{ endfor }}
-    virtual void override_flag(std::string const& flag, bool val) override \{
-        assert(flag_names_.count(flag));
-        overrides_[flag] = val;
-    }
 
-    virtual void reset_overrides() override \{
+    virtual void {item.flag_name}(bool val) override \{
+        overrides_["{item.flag_name}"] = val;
+    }
+    {{ endfor }}
+
+    virtual void reset_flags() override \{
         overrides_.clear();
     }
 };

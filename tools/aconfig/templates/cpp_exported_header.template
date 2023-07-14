@@ -11,35 +11,43 @@ public:
     virtual ~flag_provider_interface() = default;
     {{ for item in class_elements}}
     virtual bool {item.flag_name}() = 0;
-    {{ endfor }}
-    virtual void override_flag(std::string const&, bool) \{}
 
-    virtual void reset_overrides() \{}
+    {{ if for_test }}
+    virtual void {item.flag_name}(bool val) = 0;
+    {{ -endif }}
+    {{ endfor }}
+
+    {{ if for_test }}
+    virtual void reset_flags() \{}
+    {{ -endif }}
 };
 
 extern std::unique_ptr<flag_provider_interface> provider_;
-{{ for item in class_elements}}
-extern std::string const {item.uppercase_flag_name};{{ endfor }}
+
 {{ for item in class_elements}}
 inline bool {item.flag_name}() \{
-    {{ if for_prod }}
+    {{ if for_test }}
+    return provider_->{item.flag_name}();
+    {{ -else- }}
     {{ if not item.readwrite- }}
     return {item.default_value};
     {{ -else- }}
     return provider_->{item.flag_name}();
     {{ -endif }}
-    {{ -else- }}
-    return provider_->{item.flag_name}();
     {{ -endif }}
 }
+
+{{ if for_test }}
+inline void {item.flag_name}(bool val) \{
+    provider_->{item.flag_name}(val);
+}
+{{ -endif }}
 {{ endfor }}
-inline void override_flag(std::string const& name, bool val) \{
-    return provider_->override_flag(name, val);
-}
 
-inline void reset_overrides() \{
-    return provider_->reset_overrides();
+{{ if for_test }}
+inline void reset_flags() \{
+    return provider_->reset_flags();
 }
-
+{{ -endif }}
 }
 #endif
