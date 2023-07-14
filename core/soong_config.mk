@@ -235,6 +235,7 @@ $(call add_json_bool, WithDexpreopt,                     $(filter true,$(WITH_DE
 $(call add_json_list, ManifestPackageNameOverrides,      $(PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES))
 $(call add_json_list, PackageNameOverrides,              $(PRODUCT_PACKAGE_NAME_OVERRIDES))
 $(call add_json_list, CertificateOverrides,              $(PRODUCT_CERTIFICATE_OVERRIDES))
+$(call add_json_list, ConfiguredJarLocationOverrides,    $(PRODUCT_CONFIGURED_JAR_LOCATION_OVERRIDES))
 
 $(call add_json_str, ApexGlobalMinSdkVersionOverride,    $(APEX_GLOBAL_MIN_SDK_VERSION_OVERRIDE))
 
