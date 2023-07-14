@@ -5,16 +5,17 @@
 extern "C" \{
 #endif
 
-{{ for item in class_elements}}
-extern const char* {header}_{item.uppercase_flag_name};
-{{ endfor -}}
+{{ for item in class_elements }}
+bool {header}_{item.flag_name}();
 
-{{ for item in class_elements}}
-bool {header}_{item.flag_name}();{{ endfor }}
+{{ if for_test }}
+void set_{header}_{item.flag_name}(bool val);
+{{ -endif }}
+{{ endfor - }}
 
-void {header}_override_flag(const char* name, bool val);
-
-void {header}_reset_overrides();
+{{ if for_test }}
+void {header}_reset_flags();
+{{ -endif }}
 
 #ifdef __cplusplus
 }

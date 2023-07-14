@@ -1,21 +1,20 @@
 #include "{header}_c.h"
 #include "{header}.h"
-#include <string>
-
-{{ for item in class_elements}}
-const char* {header}_{item.uppercase_flag_name} = "{item.device_config_flag}";
-{{ endfor - }}
 
 {{ for item in class_elements}}
 bool {header}_{item.flag_name}() \{
     return {cpp_namespace}::{item.flag_name}();
 }
-{{ endfor }}
 
-void {header}_override_flag(const char* name, bool val) \{
-     {cpp_namespace}::override_flag(std::string(name), val);
+{{ if for_test }}
+void set_{header}_{item.flag_name}(bool val) \{
+    {cpp_namespace}::{item.flag_name}(val);
 }
+{{ -endif }}
+{{ endfor -}}
 
-void {header}_reset_overrides() \{
-     {cpp_namespace}::reset_overrides();
+{{ if for_test }}
+void {header}_reset_flags() \{
+     {cpp_namespace}::reset_flags();
 }
+{{ -endif }}
