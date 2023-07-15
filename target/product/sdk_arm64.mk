@@ -14,8 +14,11 @@
 # limitations under the License.
 #
 
-# Don't modify this file - It's just an alias!
+$(call inherit-product, $(SRC_TARGET_DIR)/product/languages_default.mk)
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/sdk_phone_arm64.mk)
+TARGET_SUPPORTS_32_BIT_APPS := true
+TARGET_SUPPORTS_64_BIT_APPS := true
 
 PRODUCT_NAME := sdk_arm64
+PRODUCT_BRAND := Android
+PRODUCT_DEVICE := mainline_arm64
