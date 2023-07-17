@@ -136,10 +136,8 @@ mod tests {
     use std::collections::HashMap;
 
     const EXPORTED_PROD_HEADER_EXPECTED: &str = r#"
-#ifndef com_android_aconfig_test_HEADER_H
-#define com_android_aconfig_test_HEADER_H
+#pragma once
 
-#include <string>
 #include <memory>
 
 namespace com::android::aconfig::test {
@@ -176,14 +174,11 @@ inline bool enabled_rw() {
 }
 
 }
-#endif
 "#;
 
     const EXPORTED_TEST_HEADER_EXPECTED: &str = r#"
-#ifndef com_android_aconfig_test_HEADER_H
-#define com_android_aconfig_test_HEADER_H
+#pragma once
 
-#include <string>
 #include <memory>
 
 namespace com::android::aconfig::test {
@@ -250,16 +245,13 @@ inline void reset_flags() {
 }
 
 }
-#endif
 "#;
 
     const PROD_FLAG_PROVIDER_HEADER_EXPECTED: &str = r#"
-#ifndef com_android_aconfig_test_flag_provider_HEADER_H
-#define com_android_aconfig_test_flag_provider_HEADER_H
+#pragma once
 
 #include "com_android_aconfig_test.h"
 #include <server_configurable_flags/get_flags.h>
-using namespace server_configurable_flags;
 
 namespace com::android::aconfig::test {
 class flag_provider : public flag_provider_interface {
@@ -270,7 +262,7 @@ public:
     }
 
     virtual bool disabled_rw() override {
-        return GetServerConfigurableFlag(
+        return server_configurable_flags::GetServerConfigurableFlag(
             "aconfig_test",
             "com.android.aconfig.test.disabled_rw",
             "false") == "true";
@@ -281,25 +273,23 @@ public:
     }
 
     virtual bool enabled_rw() override {
-        return GetServerConfigurableFlag(
+        return server_configurable_flags::GetServerConfigurableFlag(
             "aconfig_test",
             "com.android.aconfig.test.enabled_rw",
             "true") == "true";
     }
 };
 }
-#endif
 "#;
 
     const TEST_FLAG_PROVIDER_HEADER_EXPECTED: &str = r#"
-#ifndef com_android_aconfig_test_flag_provider_HEADER_H
-#define com_android_aconfig_test_flag_provider_HEADER_H
+#pragma once
 
 #include "com_android_aconfig_test.h"
 #include <server_configurable_flags/get_flags.h>
-using namespace server_configurable_flags;
 
 #include <unordered_map>
+#include <string>
 
 namespace com::android::aconfig::test {
 class flag_provider : public flag_provider_interface {
@@ -330,7 +320,7 @@ public:
         if (it != overrides_.end()) {
             return it->second;
         } else {
-            return GetServerConfigurableFlag(
+            return server_configurable_flags::GetServerConfigurableFlag(
                 "aconfig_test",
                 "com.android.aconfig.test.disabled_rw",
                 "false") == "true";
@@ -359,7 +349,7 @@ public:
         if (it != overrides_.end()) {
             return it->second;
         } else {
-            return GetServerConfigurableFlag(
+            return server_configurable_flags::GetServerConfigurableFlag(
                 "aconfig_test",
                 "com.android.aconfig.test.enabled_rw",
                 "true") == "true";
@@ -375,7 +365,6 @@ public:
     }
 };
 }
-#endif
 "#;
 
     const SOURCE_FILE_EXPECTED: &str = r#"
@@ -389,8 +378,7 @@ namespace com::android::aconfig::test {
 "#;
 
     const C_EXPORTED_PROD_HEADER_EXPECTED: &str = r#"
-#ifndef com_android_aconfig_test_c_HEADER_H
-#define com_android_aconfig_test_c_HEADER_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -407,12 +395,10 @@ bool com_android_aconfig_test_enabled_rw();
 #ifdef __cplusplus
 }
 #endif
-#endif
 "#;
 
     const C_EXPORTED_TEST_HEADER_EXPECTED: &str = r#"
-#ifndef com_android_aconfig_test_c_HEADER_H
-#define com_android_aconfig_test_c_HEADER_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -439,7 +425,6 @@ void com_android_aconfig_test_reset_flags();
 #ifdef __cplusplus
 }
 #endif
-#endif
 "#;
 
     const C_PROD_SOURCE_FILE_EXPECTED: &str = r#"
@@ -447,7 +432,7 @@ void com_android_aconfig_test_reset_flags();
 #include "com_android_aconfig_test.h"
 
 bool com_android_aconfig_test_disabled_ro() {
-    return com::android::aconfig::test::disabled_ro();
+    return false;
 }
 
 bool com_android_aconfig_test_disabled_rw() {
@@ -455,7 +440,7 @@ bool com_android_aconfig_test_disabled_rw() {
 }
 
 bool com_android_aconfig_test_enabled_ro() {
-    return com::android::aconfig::test::enabled_ro();
+    return true;
 }
 
 bool com_android_aconfig_test_enabled_rw() {
