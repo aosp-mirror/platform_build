@@ -1,5 +1,4 @@
-#ifndef {header}_c_HEADER_H
-#define {header}_c_HEADER_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C" \{
@@ -19,5 +18,4 @@ void {header}_reset_flags();
 
 #ifdef __cplusplus
 }
-#endif
 #endif
