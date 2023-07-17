@@ -2170,6 +2170,8 @@ $(if $(filter true,$(BOARD_BUILD_GKI_BOOT_IMAGE_WITHOUT_RAMDISK)),\
 $(hide) echo "root_dir=$(TARGET_ROOT_OUT)" >> $(1)
 $(if $(filter true,$(PRODUCT_USE_DYNAMIC_PARTITION_SIZE)),\
     $(hide) echo "use_dynamic_partition_size=true" >> $(1))
+$(if $(COPY_IMAGES_FOR_TARGET_FILES_ZIP),\
+    $(hide) echo "use_fixed_timestamp=true" >> $(1))
 $(if $(3),$(hide) $(foreach kv,$(3),echo "$(kv)" >> $(1);))
 endef
 
@@ -5856,17 +5858,19 @@ endef
 # $(2): target out directory
 # $(3): image name to generate a map file. skip generating map file if empty
 define copy-image-and-generate-map
-  $(eval _supported_fs_for_map_file_generator := erofs ext%)
-  $(eval _img := $(call to-upper,$(3)))
-  $(if $(3),$(eval _map_fs_type := $(BOARD_$(_img)IMAGE_FILE_SYSTEM_TYPE)),\
-    $(eval _no_map_file := "true"))
-  $(if $(filter $(_supported_fs_for_map_file_generator),$(_map_fs_type))$(_no_map_file),\
-    mkdir -p $(2); \
-    cp $(1) $(2); \
-    $(if $(3),$(HOST_OUT_EXECUTABLES)/map_file_generator $(1) $(2)/$(3).map))
-  $(eval _img :=)
-  $(eval _map_fs_type :=)
-  $(eval _no_map_file :=)
+  $(if $(COPY_IMAGES_FOR_TARGET_FILES_ZIP), \
+    $(eval _supported_fs_for_map_file_generator := erofs ext%) \
+    $(eval _img := $(call to-upper,$(3))) \
+    $(if $(3),$(eval _map_fs_type := $(BOARD_$(_img)IMAGE_FILE_SYSTEM_TYPE)),\
+      $(eval _no_map_file := "true")) \
+    $(if $(filter $(_supported_fs_for_map_file_generator),$(_map_fs_type))$(_no_map_file),\
+      mkdir -p $(2); \
+      cp $(1) $(2); \
+      $(if $(3),$(HOST_OUT_EXECUTABLES)/map_file_generator $(1) $(2)/$(3).map)) \
+    $(eval _img :=) \
+    $(eval _map_fs_type :=) \
+    $(eval _no_map_file :=) \
+  )
 endef
 
 # By conditionally including the dependency of the target files package on the
@@ -5874,7 +5878,9 @@ endef
 # image.
 ifdef BUILDING_SYSTEM_IMAGE
   $(BUILT_TARGET_FILES_DIR): $(FULL_SYSTEMIMAGE_DEPS)
-  $(BUILT_TARGET_FILES_DIR): $(BUILT_SYSTEMIMAGE)
+  ifdef COPY_IMAGES_FOR_TARGET_FILES_ZIP
+    $(BUILT_TARGET_FILES_DIR): $(BUILT_SYSTEMIMAGE)
+  endif
 else
   # releasetools may need the system build.prop even when building a
   # system-image-less product.
@@ -5887,7 +5893,9 @@ endif
 
 ifdef BUILDING_SYSTEM_OTHER_IMAGE
   $(BUILT_TARGET_FILES_DIR): $(INTERNAL_SYSTEMOTHERIMAGE_FILES)
-  $(BUILT_TARGET_FILES_DIR): $(BUILT_SYSTEMOTHERIMAGE_TARGET)
+  ifdef COPY_IMAGES_FOR_TARGET_FILES_ZIP
+    $(BUILT_TARGET_FILES_DIR): $(BUILT_SYSTEMOTHERIMAGE_TARGET)
+  endif
 endif
 
 ifdef BUILDING_VENDOR_BOOT_IMAGE
@@ -5919,21 +5927,27 @@ endif
 
 ifdef BUILDING_VENDOR_IMAGE
   $(BUILT_TARGET_FILES_DIR): $(INTERNAL_VENDORIMAGE_FILES)
-  $(BUILT_TARGET_FILES_DIR): $(BUILT_VENDORIMAGE_TARGET)
+  ifdef COPY_IMAGES_FOR_TARGET_FILES_ZIP
+    $(BUILT_TARGET_FILES_DIR): $(BUILT_VENDORIMAGE_TARGET)
+  endif
 else ifdef BOARD_PREBUILT_VENDORIMAGE
   $(BUILT_TARGET_FILES_DIR): $(INSTALLED_VENDORIMAGE_TARGET)
 endif
 
 ifdef BUILDING_PRODUCT_IMAGE
   $(BUILT_TARGET_FILES_DIR): $(INTERNAL_PRODUCTIMAGE_FILES)
-  $(BUILT_TARGET_FILES_DIR): $(BUILT_PRODUCTIMAGE_TARGET)
+  ifdef COPY_IMAGES_FOR_TARGET_FILES_ZIP
+    $(BUILT_TARGET_FILES_DIR): $(BUILT_PRODUCTIMAGE_TARGET)
+  endif
 else ifdef BOARD_PREBUILT_PRODUCTIMAGE
   $(BUILT_TARGET_FILES_DIR): $(INSTALLED_PRODUCTIMAGE_TARGET)
 endif
 
 ifdef BUILDING_SYSTEM_EXT_IMAGE
   $(BUILT_TARGET_FILES_DIR): $(INTERNAL_SYSTEM_EXTIMAGE_FILES)
-  $(BUILT_TARGET_FILES_DIR): $(BUILT_SYSTEM_EXTIMAGE_TARGET)
+  ifdef COPY_IMAGES_FOR_TARGET_FILES_ZIP
+    $(BUILT_TARGET_FILES_DIR): $(BUILT_SYSTEM_EXTIMAGE_TARGET)
+  endif
 else ifdef BOARD_PREBUILT_SYSTEM_EXTIMAGE
   $(BUILT_TARGET_FILES_DIR): $(INSTALLED_SYSTEM_EXTIMAGE_TARGET)
 endif
@@ -5948,28 +5962,36 @@ endif
 
 ifdef BUILDING_ODM_IMAGE
   $(BUILT_TARGET_FILES_DIR): $(INTERNAL_ODMIMAGE_FILES)
-  $(BUILT_TARGET_FILES_DIR): $(BUILT_ODMIMAGE_TARGET)
+  ifdef COPY_IMAGES_FOR_TARGET_FILES_ZIP
+    $(BUILT_TARGET_FILES_DIR): $(BUILT_ODMIMAGE_TARGET)
+  endif
 else ifdef BOARD_PREBUILT_ODMIMAGE
   $(BUILT_TARGET_FILES_DIR): $(INSTALLED_ODMIMAGE_TARGET)
 endif
 
 ifdef BUILDING_VENDOR_DLKM_IMAGE
   $(BUILT_TARGET_FILES_DIR): $(INTERNAL_VENDOR_DLKMIMAGE_FILES)
-  $(BUILT_TARGET_FILES_DIR): $(BUILT_VENDOR_DLKMIMAGE_TARGET)
+  ifdef COPY_IMAGES_FOR_TARGET_FILES_ZIP
+    $(BUILT_TARGET_FILES_DIR): $(BUILT_VENDOR_DLKMIMAGE_TARGET)
+  endif
 else ifdef BOARD_PREBUILT_VENDOR_DLKMIMAGE
   $(BUILT_TARGET_FILES_DIR): $(INSTALLED_VENDOR_DLKMIMAGE_TARGET)
 endif
 
 ifdef BUILDING_ODM_DLKM_IMAGE
   $(BUILT_TARGET_FILES_DIR): $(INTERNAL_ODM_DLKMIMAGE_FILES)
-  $(BUILT_TARGET_FILES_DIR): $(BUILT_ODM_DLKMIMAGE_TARGET)
+  ifdef COPY_IMAGES_FOR_TARGET_FILES_ZIP
+    $(BUILT_TARGET_FILES_DIR): $(BUILT_ODM_DLKMIMAGE_TARGET)
+  endif
 else ifdef BOARD_PREBUILT_ODM_DLKMIMAGE
   $(BUILT_TARGET_FILES_DIR): $(INSTALLED_ODM_DLKMIMAGE_TARGET)
 endif
 
 ifdef BUILDING_SYSTEM_DLKM_IMAGE
   $(BUILT_TARGET_FILES_DIR): $(INTERNAL_SYSTEM_DLKMIMAGE_FILES)
-  $(BUILT_TARGET_FILES_DIR): $(BUILT_SYSTEM_DLKMIMAGE_TARGET)
+  ifdef COPY_IMAGES_FOR_TARGET_FILES_ZIP
+    $(BUILT_TARGET_FILES_DIR): $(BUILT_SYSTEM_DLKMIMAGE_TARGET)
+  endif
 else ifdef BOARD_PREBUILT_SYSTEM_DLKMIMAGE
   $(BUILT_TARGET_FILES_DIR): $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET)
 endif
