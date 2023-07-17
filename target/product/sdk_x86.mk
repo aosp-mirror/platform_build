@@ -14,11 +14,8 @@
 # limitations under the License.
 #
 
-# This is a simple product that uses configures the minimum amount
-# needed to build the SDK (without the emulator).
+# Don't modify this file - It's just an alias!
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/languages_default.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/sdk_phone_x86.mk)
 
-PRODUCT_NAME := sdk_x86_64
-PRODUCT_BRAND := Android
-PRODUCT_DEVICE := mainline_x86
+PRODUCT_NAME := sdk_x86
