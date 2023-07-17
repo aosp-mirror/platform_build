@@ -1,7 +1,5 @@
-#ifndef {header}_HEADER_H
-#define {header}_HEADER_H
+#pragma once
 
-#include <string>
 #include <memory>
 
 namespace {cpp_namespace} \{
@@ -50,4 +48,3 @@ inline void reset_flags() \{
 }
 {{ -endif }}
 }
-#endif
