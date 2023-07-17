@@ -3,7 +3,15 @@
 
 {{ for item in class_elements}}
 bool {header}_{item.flag_name}() \{
+    {{ if for_test }}
     return {cpp_namespace}::{item.flag_name}();
+    {{ -else- }}
+    {{ if not item.readwrite- }}
+    return {item.default_value};
+    {{ -else- }}
+    return {cpp_namespace}::{item.flag_name}();
+    {{ -endif }}
+    {{ -endif }}
 }
 
 {{ if for_test }}
