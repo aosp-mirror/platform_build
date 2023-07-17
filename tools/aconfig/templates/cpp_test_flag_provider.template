@@ -1,13 +1,13 @@
-#ifndef {header}_flag_provider_HEADER_H
-#define {header}_flag_provider_HEADER_H
+#pragma once
+
 #include "{header}.h"
 
 {{ if readwrite }}
 #include <server_configurable_flags/get_flags.h>
-using namespace server_configurable_flags;
 {{ endif }}
 
 #include <unordered_map>
+#include <string>
 
 namespace {cpp_namespace} \{
 class flag_provider : public flag_provider_interface \{
@@ -26,7 +26,7 @@ public:
 	          return it->second;
         } else \{
           {{ if item.readwrite- }}
-          return GetServerConfigurableFlag(
+          return server_configurable_flags::GetServerConfigurableFlag(
               "{item.device_config_namespace}",
               "{item.device_config_flag}",
               "{item.default_value}") == "true";
@@ -46,4 +46,3 @@ public:
     }
 };
 }
-#endif
