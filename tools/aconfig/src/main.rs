@@ -71,7 +71,13 @@ fn cli() -> Command {
         .subcommand(
             Command::new("create-rust-lib")
                 .arg(Arg::new("cache").long("cache").required(true))
-                .arg(Arg::new("out").long("out").required(true)),
+                .arg(Arg::new("out").long("out").required(true))
+                .arg(
+                    Arg::new("mode")
+                        .long("mode")
+                        .value_parser(EnumValueParser::<commands::CodegenMode>::new())
+                        .default_value("production"),
+                ),
         )
         .subcommand(
             Command::new("create-device-config-defaults")
@@ -178,7 +184,8 @@ fn main() -> Result<()> {
         }
         Some(("create-rust-lib", sub_matches)) => {
             let cache = open_single_file(sub_matches, "cache")?;
-            let generated_file = commands::create_rust_lib(cache)?;
+            let mode = get_required_arg::<CodegenMode>(sub_matches, "mode")?;
+            let generated_file = commands::create_rust_lib(cache, *mode)?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
             write_output_file_realtive_to_dir(&dir, &generated_file)?;
         }
