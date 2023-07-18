@@ -1,0 +1,38 @@
+//! codegenerated rust flag lib
+
+/// flag provider
+pub struct FlagProvider
+
+impl FlagProvider \{
+
+    {{ for flag in template_flags }}
+    /// query flag {flag.name}
+    pub fn {flag.name}(&self) -> bool \{
+    {{ if flag.readwrite -}}
+        flags_rust::GetServerConfigurableFlag(
+          "{flag.device_config_namespace}",
+          "{flag.device_config_flag}",
+          "{flag.default_value}") == "true"
+    {{ -else- }}
+        {flag.default_value}
+    {{ -endif }}
+    }
+    {{ endfor }}
+
+}
+
+/// flag provider
+pub static PROVIDER: FlagProvider = FlagProvider;
+
+{{ for flag in template_flags }}
+/// query flag {flag.name}
+#[inline(always)]
+{{ if flag.readwrite -}}
+pub fn {flag.name}() -> bool \{
+    PROVIDER.{flag.name}()
+{{ -else- }}
+pub fn {flag.name}() -> bool \{
+    {flag.default_value}
+{{ -endif }}
+}
+{{ endfor }}
