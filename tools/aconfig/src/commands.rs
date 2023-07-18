@@ -108,7 +108,11 @@ pub fn parse_flags(package: &str, declarations: Vec<Input>, values: Vec<Input>) 
             crate::protos::flag_value::verify_fields(&flag_value)
                 .with_context(|| format!("Failed to parse {}", input.source))?;
 
-            let Some(parsed_flag) = parsed_flags.parsed_flag.iter_mut().find(|pf| pf.package() == flag_value.package() && pf.name() == flag_value.name()) else {
+            let Some(parsed_flag) = parsed_flags
+                .parsed_flag
+                .iter_mut()
+                .find(|pf| pf.package() == flag_value.package() && pf.name() == flag_value.name())
+            else {
                 // (silently) skip unknown flags
                 continue;
             };
@@ -151,12 +155,12 @@ pub fn create_cpp_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec
     generate_cpp_code(package, parsed_flags.parsed_flag.iter(), codegen_mode)
 }
 
-pub fn create_rust_lib(mut input: Input) -> Result<OutputFile> {
+pub fn create_rust_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<OutputFile> {
     let parsed_flags = input.try_parse_flags()?;
     let Some(package) = find_unique_package(&parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
-    generate_rust_code(package, parsed_flags.parsed_flag.iter())
+    generate_rust_code(package, parsed_flags.parsed_flag.iter(), codegen_mode)
 }
 
 pub fn create_device_config_defaults(mut input: Input) -> Result<Vec<u8>> {
