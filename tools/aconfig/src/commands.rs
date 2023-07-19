@@ -127,6 +127,8 @@ pub fn parse_flags(package: &str, declarations: Vec<Input>, values: Vec<Input>) 
         }
     }
 
+    // Create a sorted parsed_flags
+    crate::protos::parsed_flags::sort_parsed_flags(&mut parsed_flags);
     crate::protos::parsed_flags::verify_fields(&parsed_flags)?;
     let mut output = Vec::new();
     parsed_flags.write_to_vec(&mut output)?;
