@@ -92,7 +92,6 @@ PRODUCT_PACKAGES += \
     dump.erofs \
     dumpstate \
     dumpsys \
-    DynamicSystemInstallationService \
     e2fsck \
     ExtShared \
     flags_health_check \
@@ -299,6 +298,13 @@ PRODUCT_PACKAGES += \
 ifneq ($(PRODUCT_IS_ATV),true)
   PRODUCT_PACKAGES += \
       SoundPicker \
+
+endif
+
+# Product does not support Dynamic System Update
+ifneq ($(PRODUCT_NO_DYNAMIC_SYSTEM_UPDATE),true)
+    PRODUCT_PACKAGES += \
+        DynamicSystemInstallationService \
 
 endif
 
