@@ -92,7 +92,7 @@ mod tests {
 //! codegenerated rust flag lib
 
 /// flag provider
-pub struct FlagProvider
+pub struct FlagProvider;
 
 impl FlagProvider {
     /// query flag disabled_ro
