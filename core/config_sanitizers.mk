@@ -413,7 +413,6 @@ ifneq ($(filter cfi,$(my_sanitize)),)
     my_cflags += -fvisibility=default
   endif
   my_ldflags += $(CFI_EXTRA_LDFLAGS)
-  my_arflags += --plugin $(LLVM_PREBUILTS_PATH)/../lib64/LLVMgold.so
 
   ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
         my_ldflags := $(filter-out -fsanitize-cfi-cross-dso,$(my_ldflags))
