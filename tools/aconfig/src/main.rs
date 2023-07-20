@@ -16,7 +16,7 @@
 
 //! `aconfig` is a build time tool to manage build time configurations, such as feature flags.
 
-use anyhow::{anyhow, ensure, Result};
+use anyhow::{anyhow, bail, ensure, Result};
 use clap::{builder::ArgAction, builder::EnumValueParser, Arg, ArgMatches, Command};
 use core::any::Any;
 use std::fs;
@@ -24,8 +24,6 @@ use std::io;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 
-mod aconfig;
-mod cache;
 mod codegen;
 mod codegen_cpp;
 mod codegen_java;
@@ -36,8 +34,7 @@ mod protos;
 #[cfg(test)]
 mod test;
 
-use crate::cache::Cache;
-use commands::{DumpFormat, Input, OutputFile, Source};
+use commands::{CodegenMode, DumpFormat, Input, OutputFile};
 
 fn cli() -> Command {
     Command::new("aconfig")
@@ -52,12 +49,24 @@ fn cli() -> Command {
         .subcommand(
             Command::new("create-java-lib")
                 .arg(Arg::new("cache").long("cache").required(true))
-                .arg(Arg::new("out").long("out").required(true)),
+                .arg(Arg::new("out").long("out").required(true))
+                .arg(
+                    Arg::new("mode")
+                        .long("mode")
+                        .value_parser(EnumValueParser::<commands::CodegenMode>::new())
+                        .default_value("production"),
+                ),
         )
         .subcommand(
             Command::new("create-cpp-lib")
                 .arg(Arg::new("cache").long("cache").required(true))
-                .arg(Arg::new("out").long("out").required(true)),
+                .arg(Arg::new("out").long("out").required(true))
+                .arg(
+                    Arg::new("mode")
+                        .long("mode")
+                        .value_parser(EnumValueParser::<commands::CodegenMode>::new())
+                        .default_value("production"),
+                ),
         )
         .subcommand(
             Command::new("create-rust-lib")
@@ -100,9 +109,17 @@ fn open_zero_or_more_files(matches: &ArgMatches, arg_name: &str) -> Result<Vec<I
     let mut opened_files = vec![];
     for path in matches.get_many::<String>(arg_name).unwrap_or_default() {
         let file = Box::new(fs::File::open(path)?);
-        opened_files.push(Input { source: Source::File(path.to_string()), reader: file });
+        opened_files.push(Input { source: path.to_string(), reader: file });
     }
     Ok(opened_files)
+}
+
+fn open_single_file(matches: &ArgMatches, arg_name: &str) -> Result<Input> {
+    let Some(path) = matches.get_one::<String>(arg_name) else {
+        bail!("missing argument {}", arg_name);
+    };
+    let file = Box::new(fs::File::open(path)?);
+    Ok(Input { source: path.to_string(), reader: file })
 }
 
 fn write_output_file_realtive_to_dir(root: &Path, output_file: &OutputFile) -> Result<()> {
@@ -137,66 +154,50 @@ fn main() -> Result<()> {
             let package = get_required_arg::<String>(sub_matches, "package")?;
             let declarations = open_zero_or_more_files(sub_matches, "declarations")?;
             let values = open_zero_or_more_files(sub_matches, "values")?;
-            let cache = commands::create_cache(package, declarations, values)?;
+            let output = commands::parse_flags(package, declarations, values)?;
             let path = get_required_arg::<String>(sub_matches, "cache")?;
-            let file = fs::File::create(path)?;
-            cache.write_to_writer(file)?;
+            write_output_to_file_or_stdout(path, &output)?;
         }
         Some(("create-java-lib", sub_matches)) => {
-            let path = get_required_arg::<String>(sub_matches, "cache")?;
-            let file = fs::File::open(path)?;
-            let cache = Cache::read_from_reader(file)?;
+            let cache = open_single_file(sub_matches, "cache")?;
+            let mode = get_required_arg::<CodegenMode>(sub_matches, "mode")?;
+            let generated_files = commands::create_java_lib(cache, *mode)?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
-            let generated_file = commands::create_java_lib(cache)?;
-            write_output_file_realtive_to_dir(&dir, &generated_file)?;
+            generated_files
+                .iter()
+                .try_for_each(|file| write_output_file_realtive_to_dir(&dir, file))?;
         }
         Some(("create-cpp-lib", sub_matches)) => {
-            let path = get_required_arg::<String>(sub_matches, "cache")?;
-            let file = fs::File::open(path)?;
-            let cache = Cache::read_from_reader(file)?;
+            let cache = open_single_file(sub_matches, "cache")?;
+            let mode = get_required_arg::<CodegenMode>(sub_matches, "mode")?;
+            let generated_files = commands::create_cpp_lib(cache, *mode)?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
-            let generated_file = commands::create_cpp_lib(cache)?;
-            write_output_file_realtive_to_dir(&dir, &generated_file)?;
+            generated_files
+                .iter()
+                .try_for_each(|file| write_output_file_realtive_to_dir(&dir, file))?;
         }
         Some(("create-rust-lib", sub_matches)) => {
-            let path = get_required_arg::<String>(sub_matches, "cache")?;
-            let file = fs::File::open(path)?;
-            let cache = Cache::read_from_reader(file)?;
-            let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
+            let cache = open_single_file(sub_matches, "cache")?;
             let generated_file = commands::create_rust_lib(cache)?;
+            let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
             write_output_file_realtive_to_dir(&dir, &generated_file)?;
         }
         Some(("create-device-config-defaults", sub_matches)) => {
-            let mut caches = Vec::new();
-            for path in sub_matches.get_many::<String>("cache").unwrap_or_default() {
-                let file = fs::File::open(path)?;
-                let cache = Cache::read_from_reader(file)?;
-                caches.push(cache);
-            }
-            let output = commands::create_device_config_defaults(caches)?;
+            let cache = open_single_file(sub_matches, "cache")?;
+            let output = commands::create_device_config_defaults(cache)?;
             let path = get_required_arg::<String>(sub_matches, "out")?;
             write_output_to_file_or_stdout(path, &output)?;
         }
         Some(("create-device-config-sysprops", sub_matches)) => {
-            let mut caches = Vec::new();
-            for path in sub_matches.get_many::<String>("cache").unwrap_or_default() {
-                let file = fs::File::open(path)?;
-                let cache = Cache::read_from_reader(file)?;
-                caches.push(cache);
-            }
-            let output = commands::create_device_config_sysprops(caches)?;
+            let cache = open_single_file(sub_matches, "cache")?;
+            let output = commands::create_device_config_sysprops(cache)?;
             let path = get_required_arg::<String>(sub_matches, "out")?;
             write_output_to_file_or_stdout(path, &output)?;
         }
         Some(("dump", sub_matches)) => {
-            let mut caches = Vec::new();
-            for path in sub_matches.get_many::<String>("cache").unwrap_or_default() {
-                let file = fs::File::open(path)?;
-                let cache = Cache::read_from_reader(file)?;
-                caches.push(cache);
-            }
+            let input = open_zero_or_more_files(sub_matches, "cache")?;
             let format = get_required_arg::<DumpFormat>(sub_matches, "format")?;
-            let output = commands::dump_cache(caches, *format)?;
+            let output = commands::dump_parsed_flags(input, *format)?;
             let path = get_required_arg::<String>(sub_matches, "out")?;
             write_output_to_file_or_stdout(path, &output)?;
         }

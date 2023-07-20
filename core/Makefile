@@ -412,7 +412,7 @@ $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(1) $(6)
 	  unzip -qoDD -d $$(PRIVATE_MODULE_DIR) $$(PRIVATE_MODULE_ARCHIVE); \
 	  mkdir -p $$(PRIVATE_OUTPUT_DIR)/lib; \
 	  cp -r  $(3)/$(DEPMOD_STAGING_SUBDIR)/$(2)/lib/modules $$(PRIVATE_OUTPUT_DIR)/lib/; \
-	  find $$(PRIVATE_MODULE_DIR) -type f -name *.ko | xargs basename -a > $$(PRIVATE_LOAD_FILE); \
+	  find $$(PRIVATE_MODULE_DIR) -type f -name '*.ko' | xargs basename -a > $$(PRIVATE_LOAD_FILE); \
 	)
 	$(if $(1),\
 	  cp $$(PRIVATE_MODULES) $$(PRIVATE_MODULE_DIR)/; \
@@ -2471,7 +2471,11 @@ $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): PRIVATE_RECOVERY_UI_PROPERTIES := \
     TARGET_RECOVERY_UI_PROGRESS_BAR_BASELINE:progress_bar_baseline \
     TARGET_RECOVERY_UI_TOUCH_LOW_THRESHOLD:touch_low_threshold \
     TARGET_RECOVERY_UI_TOUCH_HIGH_THRESHOLD:touch_high_threshold \
-    TARGET_RECOVERY_UI_VR_STEREO_OFFSET:vr_stereo_offset
+    TARGET_RECOVERY_UI_VR_STEREO_OFFSET:vr_stereo_offset \
+    TARGET_RECOVERY_UI_BRIGHTNESS_FILE:brightness_file \
+    TARGET_RECOVERY_UI_MAX_BRIGHTNESS_FILE:max_brightness_file \
+    TARGET_RECOVERY_UI_BRIGHTNESS_NORMAL:brightness_normal_percent \
+    TARGET_RECOVERY_UI_BRIGHTNESS_DIMMED:brightness_dimmed_percent
 
 # Parses the given list of build variables and writes their values as build properties if defined.
 # For example, if a target defines `TARGET_RECOVERY_UI_MARGIN_HEIGHT := 100`,
@@ -4827,25 +4831,24 @@ ifeq (,$(TARGET_BUILD_UNBUNDLED))
 intermediates := $(call intermediates-dir-for,PACKAGING,check_vintf_all)
 check_vintf_all_deps :=
 
-APEX_OUT := $(PRODUCT_OUT)/apex
 # -----------------------------------------------------------------
-# Create apex-info-file.xml
+# Activate vendor APEXes for checkvintf
 
 apex_dirs := \
-  $(TARGET_OUT)/apex/% \
-  $(TARGET_OUT_SYSTEM_EXT)/apex/% \
   $(TARGET_OUT_VENDOR)/apex/% \
-  $(TARGET_OUT_ODM)/apex/% \
-  $(TARGET_OUT_PRODUCT)/apex/% \
 
 apex_files := $(sort $(filter $(apex_dirs), $(INTERNAL_ALLIMAGES_FILES)))
+
+APEX_OUT := $(intermediates)/apex
 APEX_INFO_FILE := $(APEX_OUT)/apex-info-list.xml
 
-# dump_apex_info scans $(PRODUCT_OUT)/apex and writes apex-info-list.xml there.
-# This relies on the fact that rules for .apex files install the contents in $(PRODUCT_OUT)/apex.
-$(APEX_INFO_FILE): $(HOST_OUT_EXECUTABLES)/dump_apex_info $(apex_files)
-	@echo "Creating apex-info-file in $(PRODUCT_OUT) "
-	$< --root_dir $(PRODUCT_OUT)
+# apexd_host scans/activates APEX files and writes /apex/apex-info-list.xml
+$(APEX_INFO_FILE): $(HOST_OUT_EXECUTABLES)/apexd_host $(apex_files)
+	@echo "Extracting apexes..."
+	@rm -rf $(APEX_OUT)
+	@mkdir -p $(APEX_OUT)
+	$< --vendor_path $(TARGET_OUT_VENDOR) \
+	   --apex_path $(APEX_OUT)
 
 apex_files :=
 apex_dirs :=
@@ -4893,6 +4896,8 @@ endif
 check_vintf_all_deps += $(vintffm_log)
 $(vintffm_log): $(HOST_OUT_EXECUTABLES)/vintffm $(check_vintf_system_deps)
 	@( $< --check --dirmap /system:$(TARGET_OUT) \
+	  --dirmap /system_ext:$(TARGET_OUT_SYSTEM_EXT) \
+	  --dirmap /product:$(TARGET_OUT_PRODUCT) \
 	  $(VINTF_FRAMEWORK_MANIFEST_FROZEN_DIR) > $@ 2>&1 ) || ( cat $@ && exit 1 )
 
 $(call declare-1p-target,$(vintffm_log))
@@ -5295,12 +5300,11 @@ INTERNAL_OTATOOLS_MODULES := \
 
 # Additional tools to unpack and repack the apex file.
 INTERNAL_OTATOOLS_MODULES += \
+  apexd_host \
   apexer \
   apex_compression_tool \
-  blkid_static \
   deapexer \
   debugfs_static \
-  dump_apex_info \
   fsck.erofs \
   make_erofs \
   merge_zips \
@@ -5403,8 +5407,14 @@ endif
 ifdef BOARD_PREBUILT_DTBOIMAGE
 	$(hide) echo "flash dtbo" >> $@
 endif
+ifneq ($(INSTALLED_DTIMAGE_TARGET),)
+	$(hide) echo "flash dts dt.img" >> $@
+endif
 ifneq ($(INSTALLED_VENDOR_KERNEL_BOOTIMAGE_TARGET),)
 	$(hide) echo "flash vendor_kernel_boot" >> $@
+endif
+ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
+	$(hide) echo "flash recovery" >> $@
 endif
 ifeq ($(BOARD_USES_PVMFWIMAGE),true)
 	$(hide) echo "flash pvmfw" >> $@
@@ -5884,14 +5894,25 @@ define dump-dynamic-partitions-info
     echo "virtual_ab_cow_version=$(PRODUCT_VIRTUAL_AB_COW_VERSION)" >> $(1))
 endef
 
-# Copy an image file to a directory and generate a block list map file from the image.
+# Copy an image file to a directory and generate a block list map file from the image,
+# only if the map_file_generator supports the file system.
+# Otherwise, skip generating map files as well as copying images. The image will be
+# generated from the $(ADD_IMG_TO_TARGET_FILES) to generate the map file with it.
 # $(1): path of the image file
 # $(2): target out directory
-# $(3): name of the map file. skip generating map file if empty
+# $(3): image name to generate a map file. skip generating map file if empty
 define copy-image-and-generate-map
-  mkdir -p $(2)
-  cp $(1) $(2)
-  $(if $(3),$(HOST_OUT_EXECUTABLES)/map_file_generator $(1) $(2)/$(3))
+  $(eval _supported_fs_for_map_file_generator := erofs ext%)
+  $(eval _img := $(call to-upper,$(3)))
+  $(if $(3),$(eval _map_fs_type := $(BOARD_$(_img)IMAGE_FILE_SYSTEM_TYPE)),\
+    $(eval _no_map_file := "true"))
+  $(if $(filter $(_supported_fs_for_map_file_generator),$(_map_fs_type))$(_no_map_file),\
+    mkdir -p $(2); \
+    cp $(1) $(2); \
+    $(if $(3),$(HOST_OUT_EXECUTABLES)/map_file_generator $(1) $(2)/$(3).map))
+  $(eval _img :=)
+  $(eval _map_fs_type :=)
+  $(eval _no_map_file :=)
 endef
 
 # By conditionally including the dependency of the target files package on the
@@ -6403,35 +6424,35 @@ endif # BOARD_CUSTOMIMAGES_PARTITION_LIST
 	@# Run fs_config on all the system, vendor, boot ramdisk,
 	@# and recovery ramdisk files in the zip, and save the output
 ifdef BUILDING_SYSTEM_IMAGE
-	$(hide) $(call copy-image-and-generate-map,$(BUILT_SYSTEMIMAGE),$(zip_root)/IMAGES,system.map)
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_SYSTEMIMAGE),$(zip_root)/IMAGES,system)
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM,system/) > $(zip_root)/META/filesystem_config.txt
 endif
 ifdef BUILDING_VENDOR_IMAGE
-	$(hide) $(call copy-image-and-generate-map,$(BUILT_VENDORIMAGE_TARGET),$(zip_root)/IMAGES,vendor.map)
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_VENDORIMAGE_TARGET),$(zip_root)/IMAGES,vendor)
 	$(hide) $(call fs_config,$(zip_root)/VENDOR,vendor/) > $(zip_root)/META/vendor_filesystem_config.txt
 endif
 ifdef BUILDING_PRODUCT_IMAGE
-	$(hide) $(call copy-image-and-generate-map,$(BUILT_PRODUCTIMAGE_TARGET),$(zip_root)/IMAGES,product.map)
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_PRODUCTIMAGE_TARGET),$(zip_root)/IMAGES,product)
 	$(hide) $(call fs_config,$(zip_root)/PRODUCT,product/) > $(zip_root)/META/product_filesystem_config.txt
 endif
 ifdef BUILDING_SYSTEM_EXT_IMAGE
-	$(hide) $(call copy-image-and-generate-map,$(BUILT_SYSTEM_EXTIMAGE_TARGET),$(zip_root)/IMAGES,system_ext.map)
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_SYSTEM_EXTIMAGE_TARGET),$(zip_root)/IMAGES,system_ext)
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM_EXT,system_ext/) > $(zip_root)/META/system_ext_filesystem_config.txt
 endif
 ifdef BUILDING_ODM_IMAGE
-	$(hide) $(call copy-image-and-generate-map,$(BUILT_ODMIMAGE_TARGET),$(zip_root)/IMAGES,odm.map)
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_ODMIMAGE_TARGET),$(zip_root)/IMAGES,odm)
 	$(hide) $(call fs_config,$(zip_root)/ODM,odm/) > $(zip_root)/META/odm_filesystem_config.txt
 endif
 ifdef BUILDING_VENDOR_DLKM_IMAGE
-	$(hide)$(call copy-image-and-generate-map,$(BUILT_VENDOR_DLKMIMAGE_TARGET),$(zip_root)/IMAGES,vendor_dlkm.map)
+	$(hide)$(call copy-image-and-generate-map,$(BUILT_VENDOR_DLKMIMAGE_TARGET),$(zip_root)/IMAGES,vendor_dlkm)
 	$(hide) $(call fs_config,$(zip_root)/VENDOR_DLKM,vendor_dlkm/) > $(zip_root)/META/vendor_dlkm_filesystem_config.txt
 endif
 ifdef BUILDING_ODM_DLKM_IMAGE
-	$(hide) $(call copy-image-and-generate-map,$(BUILT_ODM_DLKMIMAGE_TARGET),$(zip_root)/IMAGES,odm_dlkm.map)
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_ODM_DLKMIMAGE_TARGET),$(zip_root)/IMAGES,odm_dlkm)
 	$(hide) $(call fs_config,$(zip_root)/ODM_DLKM,odm_dlkm/) > $(zip_root)/META/odm_dlkm_filesystem_config.txt
 endif
 ifdef BUILDING_SYSTEM_DLKM_IMAGE
-	$(hide) $(call copy-image-and-generate-map,$(BUILT_SYSTEM_DLKMIMAGE_TARGET),$(zip_root)/IMAGES,system_dlkm.map)
+	$(hide) $(call copy-image-and-generate-map,$(BUILT_SYSTEM_DLKMIMAGE_TARGET),$(zip_root)/IMAGES,system_dlkm)
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM_DLKM,system_dlkm/) > $(zip_root)/META/system_dlkm_filesystem_config.txt
 endif
 	@# ROOT always contains the files for the root under normal boot.

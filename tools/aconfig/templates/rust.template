@@ -1,25 +1,25 @@
 {{- for mod in modules -}}
 pub mod {mod} \{
 {{ endfor -}}
-{{- for parsed_flag in parsed_flags -}}
-{{- if parsed_flag.is_read_only_disabled -}}
+{{- for flag in template_flags -}}
+{{- if flag.is_read_only_disabled -}}
 #[inline(always)]
-pub const fn r#{parsed_flag.name}() -> bool \{
+pub const fn r#{flag.name}() -> bool \{
     false
 }
 
 {{ endif -}}
-{{- if parsed_flag.is_read_only_enabled -}}
+{{- if flag.is_read_only_enabled -}}
 #[inline(always)]
-pub const fn r#{parsed_flag.name}() -> bool \{
+pub const fn r#{flag.name}() -> bool \{
     true
 }
 
 {{ endif -}}
-{{- if parsed_flag.is_read_write -}}
+{{- if flag.is_read_write -}}
 #[inline(always)]
-pub fn r#{parsed_flag.name}() -> bool \{
-    flags_rust::GetServerConfigurableFlag("{parsed_flag.device_config_namespace}", "{parsed_flag.device_config_flag}", "false") == "true"
+pub fn r#{flag.name}() -> bool \{
+    flags_rust::GetServerConfigurableFlag("{flag.device_config_namespace}", "{flag.device_config_flag}", "false") == "true"
 }
 
 {{ endif -}}

@@ -1,0 +1,49 @@
+#ifndef {header}_flag_provider_HEADER_H
+#define {header}_flag_provider_HEADER_H
+#include "{header}.h"
+
+#include <unordered_map>
+#include <unordered_set>
+#include <cassert>
+
+namespace {cpp_namespace} \{
+class flag_provider : public flag_provider_interface \{
+private:
+    std::unordered_map<std::string, bool> overrides_;
+    std::unordered_set<std::string> flag_names_;
+
+public:
+    flag_provider()
+        : overrides_(),
+        flag_names_() \{
+        {{ for item in class_elements}}
+        flag_names_.insert({item.uppercase_flag_name});{{ endfor }}
+    }
+    {{ for item in class_elements}}
+    virtual bool {item.flag_name}() override \{
+        auto it = overrides_.find({item.uppercase_flag_name});
+	      if (it != overrides_.end()) \{
+	          return it->second;
+        } else \{
+          {{ if item.readwrite- }}
+          return GetServerConfigurableFlag(
+              "{item.device_config_namespace}",
+              "{item.device_config_flag}",
+              "{item.default_value}") == "true";
+          {{ -else- }}
+              return {item.default_value};
+          {{ -endif }}
+        }
+    }
+    {{ endfor }}
+    virtual void override_flag(std::string const& flag, bool val) override \{
+        assert(flag_names_.count(flag));
+        overrides_[flag] = val;
+    }
+
+    virtual void reset_overrides() override \{
+        overrides_.clear();
+    }
+};
+}
+#endif

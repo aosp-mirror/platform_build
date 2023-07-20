@@ -4,6 +4,7 @@ LLNDK: libGLESv2.so
 LLNDK: libGLESv3.so
 LLNDK: libRS.so
 LLNDK: libandroid_net.so
+LLNDK: libapexsupport.so
 LLNDK: libbinder_ndk.so
 LLNDK: libc.so
 LLNDK: libcgrouprc.so

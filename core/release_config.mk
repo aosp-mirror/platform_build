@@ -16,6 +16,22 @@
 # -----------------------------------------------------------------
 # Choose the flag files
 # -----------------------------------------------------------------
+# Release configs are defined in reflease_config_map files, which map
+# the short name (e.g. -next) used in lunch to the starlark files
+# defining the build flag values.
+#
+# (If you're thinking about aconfig flags, there is one build flag,
+# RELEASE_ACONFIG_VALUE_SETS, that sets which aconfig_value_set
+# module to use to set the aconfig flag values.)
+#
+# The short release config names *can* appear multiple times, to allow
+# for AOSP and vendor specific flags under the same name, but the
+# individual flag values must appear in exactly one config.  Vendor
+# does not override AOSP, or anything like that.  This is because
+# vendor code usually includes prebuilts, and having vendor compile
+# with different flags from AOSP increases the likelihood of flag
+# mismatch.
+
 # Do this first, because we're going to unset TARGET_RELEASE before
 # including anyone, so they don't start making conditionals based on it.
 # This logic is in make because starlark doesn't understand optional
@@ -39,17 +55,12 @@ config_map_files := $(wildcard build/release/release_config_map.mk) \
 # $1 config name
 # $2 release config files
 define declare-release-config
-    $(eval # No duplicates)
-    $(if $(filter $(_all_release_configs), $(strip $(1))), \
-        $(error declare-release-config: config $(strip $(1)) declared in: $(_included) Previously declared here: $(_all_release_configs.$(strip $(1)).DECLARED_IN)) \
-    )
-    $(eval # Must have release config files)
     $(if $(strip $(2)),,  \
         $(error declare-release-config: config $(strip $(1)) must have release config files) \
     )
     $(eval _all_release_configs := $(sort $(_all_release_configs) $(strip $(1))))
-    $(eval _all_release_configs.$(strip $(1)).DECLARED_IN := $(_included))
-    $(eval _all_release_configs.$(strip $(1)).FILES := $(strip $(2)))
+    $(eval _all_release_configs.$(strip $(1)).DECLARED_IN := $(_included) $(_all_release_configs.$(strip $(1)).DECLARED_IN))
+    $(eval _all_release_configs.$(strip $(1)).FILES := $(_all_release_configs.$(strip $(1)).FILES) $(strip $(2)))
 endef
 
 # Include the config map files

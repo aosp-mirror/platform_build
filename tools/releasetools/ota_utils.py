@@ -762,6 +762,9 @@ def LocatePartitionMap(target_files_dir: str, partition: str):
   path = os.path.join(target_files_dir, "RADIO", partition + ".map")
   if os.path.exists(path):
     return path
+  path = os.path.join(target_files_dir, "IMAGES", partition + ".map")
+  if os.path.exists(path):
+    return path
   return ""
 
 

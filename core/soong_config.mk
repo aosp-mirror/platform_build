@@ -116,8 +116,8 @@ $(call add_json_list, IntegerOverflowExcludePaths,       $(INTEGER_OVERFLOW_EXCL
 $(call add_json_list, HWASanIncludePaths,                $(HWASAN_INCLUDE_PATHS) $(PRODUCT_HWASAN_INCLUDE_PATHS))
 
 $(call add_json_list, MemtagHeapExcludePaths,            $(MEMTAG_HEAP_EXCLUDE_PATHS) $(PRODUCT_MEMTAG_HEAP_EXCLUDE_PATHS))
-$(call add_json_list, MemtagHeapAsyncIncludePaths,       $(MEMTAG_HEAP_ASYNC_INCLUDE_PATHS) $(PRODUCT_MEMTAG_HEAP_ASYNC_INCLUDE_PATHS))
-$(call add_json_list, MemtagHeapSyncIncludePaths,        $(MEMTAG_HEAP_SYNC_INCLUDE_PATHS) $(PRODUCT_MEMTAG_HEAP_SYNC_INCLUDE_PATHS))
+$(call add_json_list, MemtagHeapAsyncIncludePaths,       $(MEMTAG_HEAP_ASYNC_INCLUDE_PATHS) $(PRODUCT_MEMTAG_HEAP_ASYNC_INCLUDE_PATHS) $(if $(filter true,$(PRODUCT_MEMTAG_HEAP_SKIP_DEFAULT_PATHS)),,$(PRODUCT_MEMTAG_HEAP_ASYNC_DEFAULT_INCLUDE_PATHS)))
+$(call add_json_list, MemtagHeapSyncIncludePaths,       $(MEMTAG_HEAP_SYNC_INCLUDE_PATHS) $(PRODUCT_MEMTAG_HEAP_SYNC_INCLUDE_PATHS) $(if $(filter true,$(PRODUCT_MEMTAG_HEAP_SKIP_DEFAULT_PATHS)),,$(PRODUCT_MEMTAG_HEAP_SYNC_DEFAULT_INCLUDE_PATHS)))
 
 $(call add_json_bool, DisableScudo,                      $(filter true,$(PRODUCT_DISABLE_SCUDO)))
 
@@ -226,7 +226,6 @@ $(call add_json_str,  PlatformSepolicyVersion,           $(PLATFORM_SEPOLICY_VER
 $(call add_json_str,  TotSepolicyVersion,                $(TOT_SEPOLICY_VERSION))
 $(call add_json_list, PlatformSepolicyCompatVersions,    $(PLATFORM_SEPOLICY_COMPAT_VERSIONS))
 
-$(call add_json_bool, Flatten_apex,                      $(filter true,$(TARGET_FLATTEN_APEX)))
 $(call add_json_bool, ForceApexSymlinkOptimization,      $(filter true,$(TARGET_FORCE_APEX_SYMLINK_OPTIMIZATION)))
 
 $(call add_json_str,  DexpreoptGlobalConfig,             $(DEX_PREOPT_CONFIG))
@@ -264,8 +263,6 @@ $(call add_json_str,  DeviceCurrentApiLevelForVendorModules,  $(BOARD_CURRENT_AP
 
 $(call add_json_bool, EnforceInterPartitionJavaSdkLibrary, $(filter true,$(PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY)))
 $(call add_json_list, InterPartitionJavaLibraryAllowList, $(PRODUCT_INTER_PARTITION_JAVA_LIBRARY_ALLOWLIST))
-
-$(call add_json_bool, InstallExtraFlattenedApexes, $(PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES))
 
 $(call add_json_bool, CompressedApex, $(filter true,$(PRODUCT_COMPRESSED_APEX)))
 
@@ -319,7 +316,7 @@ $(call add_json_str,  ProductBrand,        $(PRODUCT_BRAND))
 $(call add_json_list, BuildVersionTags,    $(BUILD_VERSION_TAGS))
 
 $(call add_json_str, ReleaseVersion,    $(_RELEASE_VERSION))
-$(call add_json_list, ReleaseDeviceConfigValueSets,    $(RELEASE_DEVICE_CONFIG_VALUE_SETS))
+$(call add_json_list, ReleaseAconfigValueSets,    $(RELEASE_ACONFIG_VALUE_SETS))
 
 $(call json_end)
 

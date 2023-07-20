@@ -7,6 +7,7 @@ flag {
     name: "disabled_ro"
     namespace: "aconfig_test"
     description: "This flag is DISABLED + READ_ONLY"
+    bug: "123"
 }
 
 # This flag's final value is calculated from:
@@ -15,6 +16,7 @@ flag {
     name: "disabled_rw"
     namespace: "aconfig_test"
     description: "This flag is DISABLED + READ_WRITE"
+    bug: "456"
 }
 
 # This flag's final value is calculated from:
@@ -25,6 +27,8 @@ flag {
     name: "enabled_ro"
     namespace: "aconfig_test"
     description: "This flag is ENABLED + READ_ONLY"
+    bug: "789"
+    bug: "abc"
 }
 
 # This flag's final value is calculated from:
@@ -34,4 +38,5 @@ flag {
     name: "enabled_rw"
     namespace: "aconfig_test"
     description: "This flag is ENABLED + READ_WRITE"
+    # no bug field: bug is not mandatory
 }

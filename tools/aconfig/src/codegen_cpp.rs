@@ -16,17 +16,23 @@
 
 use anyhow::{ensure, Result};
 use serde::Serialize;
+use std::path::PathBuf;
 use tinytemplate::TinyTemplate;
 
-use crate::aconfig::{FlagState, Permission};
-use crate::cache::{Cache, Item};
 use crate::codegen;
-use crate::commands::OutputFile;
+use crate::commands::{CodegenMode, OutputFile};
+use crate::protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
 
-pub fn generate_cpp_code(cache: &Cache) -> Result<OutputFile> {
-    let package = cache.package();
+pub fn generate_cpp_code<'a, I>(
+    package: &str,
+    parsed_flags_iter: I,
+    codegen_mode: CodegenMode,
+) -> Result<Vec<OutputFile>>
+where
+    I: Iterator<Item = &'a ProtoParsedFlag>,
+{
     let class_elements: Vec<ClassElement> =
-        cache.iter().map(|item| create_class_element(package, item)).collect();
+        parsed_flags_iter.map(|pf| create_class_element(package, pf)).collect();
     let readwrite = class_elements.iter().any(|item| item.readwrite);
     let header = package.replace('.', "_");
     let cpp_namespace = package.replace('.', "::");
@@ -36,190 +42,408 @@ pub fn generate_cpp_code(cache: &Cache) -> Result<OutputFile> {
         cpp_namespace,
         package: package.to_string(),
         readwrite,
+        for_prod: codegen_mode == CodegenMode::Production,
         class_elements,
     };
+
+    let files = [
+        FileSpec {
+            name: &format!("{}.h", header),
+            template: include_str!("../templates/cpp_exported_header.template"),
+            dir: "include",
+        },
+        FileSpec {
+            name: &format!("{}.cc", header),
+            template: include_str!("../templates/cpp_source_file.template"),
+            dir: "",
+        },
+        FileSpec {
+            name: &format!("{}_flag_provider.h", header),
+            template: match codegen_mode {
+                CodegenMode::Production => {
+                    include_str!("../templates/cpp_prod_flag_provider.template")
+                }
+                CodegenMode::Test => include_str!("../templates/cpp_test_flag_provider.template"),
+            },
+            dir: "",
+        },
+    ];
+    files.iter().map(|file| generate_file(file, &context)).collect()
+}
+
+pub fn generate_file(file: &FileSpec, context: &Context) -> Result<OutputFile> {
     let mut template = TinyTemplate::new();
-    template.add_template("cpp_code_gen", include_str!("../templates/cpp.template"))?;
-    let contents = template.render("cpp_code_gen", &context)?;
-    let path = ["aconfig", &(header + ".h")].iter().collect();
+    template.add_template(file.name, file.template)?;
+    let contents = template.render(file.name, &context)?;
+    let path: PathBuf = [&file.dir, &file.name].iter().collect();
     Ok(OutputFile { contents: contents.into(), path })
 }
 
 #[derive(Serialize)]
-struct Context {
+pub struct FileSpec<'a> {
+    pub name: &'a str,
+    pub template: &'a str,
+    pub dir: &'a str,
+}
+
+#[derive(Serialize)]
+pub struct Context {
     pub header: String,
     pub cpp_namespace: String,
     pub package: String,
     pub readwrite: bool,
+    pub for_prod: bool,
     pub class_elements: Vec<ClassElement>,
 }
 
 #[derive(Serialize)]
-struct ClassElement {
+pub struct ClassElement {
     pub readwrite: bool,
     pub default_value: String,
     pub flag_name: String,
+    pub uppercase_flag_name: String,
     pub device_config_namespace: String,
     pub device_config_flag: String,
 }
 
-fn create_class_element(package: &str, item: &Item) -> ClassElement {
+fn create_class_element(package: &str, pf: &ProtoParsedFlag) -> ClassElement {
     ClassElement {
-        readwrite: item.permission == Permission::ReadWrite,
-        default_value: if item.state == FlagState::Enabled {
+        readwrite: pf.permission() == ProtoFlagPermission::READ_WRITE,
+        default_value: if pf.state() == ProtoFlagState::ENABLED {
             "true".to_string()
         } else {
             "false".to_string()
         },
-        flag_name: item.name.clone(),
-        device_config_namespace: item.namespace.to_string(),
-        device_config_flag: codegen::create_device_config_ident(package, &item.name)
-            .expect("values checked at cache creation time"),
+        flag_name: pf.name().to_string(),
+        uppercase_flag_name: pf.name().to_string().to_ascii_uppercase(),
+        device_config_namespace: pf.namespace().to_string(),
+        device_config_flag: codegen::create_device_config_ident(package, pf.name())
+            .expect("values checked at flag parse time"),
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::aconfig::{FlagDeclaration, FlagState, FlagValue, Permission};
-    use crate::cache::CacheBuilder;
-    use crate::commands::Source;
+    use std::collections::HashMap;
 
-    #[test]
-    fn test_cpp_codegen_build_time_flag_only() {
-        let package = "com.example";
-        let mut builder = CacheBuilder::new(package.to_string()).unwrap();
-        builder
-            .add_flag_declaration(
-                Source::File("aconfig_one.txt".to_string()),
-                FlagDeclaration {
-                    name: "my_flag_one".to_string(),
-                    namespace: "ns".to_string(),
-                    description: "buildtime disable".to_string(),
-                },
-            )
-            .unwrap()
-            .add_flag_value(
-                Source::Memory,
-                FlagValue {
-                    package: package.to_string(),
-                    name: "my_flag_one".to_string(),
-                    state: FlagState::Disabled,
-                    permission: Permission::ReadOnly,
-                },
-            )
-            .unwrap()
-            .add_flag_declaration(
-                Source::File("aconfig_two.txt".to_string()),
-                FlagDeclaration {
-                    name: "my_flag_two".to_string(),
-                    namespace: "ns".to_string(),
-                    description: "buildtime enable".to_string(),
-                },
-            )
-            .unwrap()
-            .add_flag_value(
-                Source::Memory,
-                FlagValue {
-                    package: package.to_string(),
-                    name: "my_flag_two".to_string(),
-                    state: FlagState::Enabled,
-                    permission: Permission::ReadOnly,
-                },
-            )
-            .unwrap();
-        let cache = builder.build();
-        let expect_content = r#"#ifndef com_example_HEADER_H
-        #define com_example_HEADER_H
+    const EXPORTED_PROD_HEADER_EXPECTED: &str = r#"
+#ifndef com_android_aconfig_test_HEADER_H
+#define com_android_aconfig_test_HEADER_H
 
-        namespace com::example {
+#include <string>
+#include <memory>
+#include <server_configurable_flags/get_flags.h>
+using namespace server_configurable_flags;
 
-            static const bool my_flag_one() {
-                return false;
-            }
+namespace com::android::aconfig::test {
+class flag_provider_interface {
+public:
 
-            static const bool my_flag_two() {
-                return true;
-            }
+    virtual ~flag_provider_interface() = default;
 
+    virtual bool disabled_ro() = 0;
+
+    virtual bool disabled_rw() = 0;
+
+    virtual bool enabled_ro() = 0;
+
+    virtual bool enabled_rw() = 0;
+
+    virtual void override_flag(std::string const&, bool) {}
+
+    virtual void reset_overrides() {}
+};
+
+extern std::unique_ptr<flag_provider_interface> provider_;
+
+extern std::string const DISABLED_RO;
+extern std::string const DISABLED_RW;
+extern std::string const ENABLED_RO;
+extern std::string const ENABLED_RW;
+
+inline bool disabled_ro() {
+    return false;
+}
+
+inline bool disabled_rw() {
+    return provider_->disabled_rw();
+}
+
+inline bool enabled_ro() {
+    return true;
+}
+
+inline bool enabled_rw() {
+    return provider_->enabled_rw();
+}
+
+inline void override_flag(std::string const& name, bool val) {
+    return provider_->override_flag(name, val);
+}
+
+inline void reset_overrides() {
+    return provider_->reset_overrides();
+}
+
+}
+#endif
+"#;
+
+    const EXPORTED_TEST_HEADER_EXPECTED: &str = r#"
+#ifndef com_android_aconfig_test_HEADER_H
+#define com_android_aconfig_test_HEADER_H
+
+#include <string>
+#include <memory>
+#include <server_configurable_flags/get_flags.h>
+using namespace server_configurable_flags;
+
+namespace com::android::aconfig::test {
+class flag_provider_interface {
+public:
+
+    virtual ~flag_provider_interface() = default;
+
+    virtual bool disabled_ro() = 0;
+
+    virtual bool disabled_rw() = 0;
+
+    virtual bool enabled_ro() = 0;
+
+    virtual bool enabled_rw() = 0;
+
+    virtual void override_flag(std::string const&, bool) {}
+
+    virtual void reset_overrides() {}
+};
+
+extern std::unique_ptr<flag_provider_interface> provider_;
+
+extern std::string const DISABLED_RO;
+extern std::string const DISABLED_RW;
+extern std::string const ENABLED_RO;
+extern std::string const ENABLED_RW;
+
+inline bool disabled_ro() {
+    return provider_->disabled_ro();
+}
+
+inline bool disabled_rw() {
+    return provider_->disabled_rw();
+}
+
+inline bool enabled_ro() {
+    return provider_->enabled_ro();
+}
+
+inline bool enabled_rw() {
+    return provider_->enabled_rw();
+}
+
+inline void override_flag(std::string const& name, bool val) {
+    return provider_->override_flag(name, val);
+}
+
+inline void reset_overrides() {
+    return provider_->reset_overrides();
+}
+
+}
+#endif
+"#;
+
+    const PROD_FLAG_PROVIDER_HEADER_EXPECTED: &str = r#"
+#ifndef com_android_aconfig_test_flag_provider_HEADER_H
+#define com_android_aconfig_test_flag_provider_HEADER_H
+
+#include "com_android_aconfig_test.h"
+
+namespace com::android::aconfig::test {
+class flag_provider : public flag_provider_interface {
+public:
+
+    virtual bool disabled_ro() override {
+        return false;
+    }
+
+    virtual bool disabled_rw() override {
+        return GetServerConfigurableFlag(
+            "aconfig_test",
+            "com.android.aconfig.test.disabled_rw",
+            "false") == "true";
+    }
+
+    virtual bool enabled_ro() override {
+        return true;
+    }
+
+    virtual bool enabled_rw() override {
+        return GetServerConfigurableFlag(
+            "aconfig_test",
+            "com.android.aconfig.test.enabled_rw",
+            "true") == "true";
+    }
+};
+}
+#endif
+"#;
+
+    const TEST_FLAG_PROVIDER_HEADER_EXPECTED: &str = r#"
+#ifndef com_android_aconfig_test_flag_provider_HEADER_H
+#define com_android_aconfig_test_flag_provider_HEADER_H
+
+#include "com_android_aconfig_test.h"
+
+#include <unordered_map>
+#include <unordered_set>
+#include <cassert>
+
+namespace com::android::aconfig::test {
+class flag_provider : public flag_provider_interface {
+private:
+    std::unordered_map<std::string, bool> overrides_;
+    std::unordered_set<std::string> flag_names_;
+
+public:
+
+    flag_provider()
+        : overrides_(),
+          flag_names_() {
+        flag_names_.insert(DISABLED_RO);
+        flag_names_.insert(DISABLED_RW);
+        flag_names_.insert(ENABLED_RO);
+        flag_names_.insert(ENABLED_RW);
+    }
+
+    virtual bool disabled_ro() override {
+        auto it = overrides_.find(DISABLED_RO);
+        if (it != overrides_.end()) {
+            return it->second;
+        } else {
+            return false;
         }
-        #endif
-        "#;
-        let file = generate_cpp_code(&cache).unwrap();
-        assert_eq!("aconfig/com_example.h", file.path.to_str().unwrap());
+    }
+
+    virtual bool disabled_rw() override {
+        auto it = overrides_.find(DISABLED_RW);
+        if (it != overrides_.end()) {
+            return it->second;
+        } else {
+            return GetServerConfigurableFlag(
+                "aconfig_test",
+                "com.android.aconfig.test.disabled_rw",
+                "false") == "true";
+        }
+    }
+
+    virtual bool enabled_ro() override {
+        auto it = overrides_.find(ENABLED_RO);
+        if (it != overrides_.end()) {
+            return it->second;
+        } else {
+            return true;
+        }
+    }
+
+    virtual bool enabled_rw() override {
+        auto it = overrides_.find(ENABLED_RW);
+        if (it != overrides_.end()) {
+            return it->second;
+        } else {
+            return GetServerConfigurableFlag(
+                "aconfig_test",
+                "com.android.aconfig.test.enabled_rw",
+                "true") == "true";
+        }
+    }
+
+    virtual void override_flag(std::string const& flag, bool val) override {
+        assert(flag_names_.count(flag));
+        overrides_[flag] = val;
+    }
+
+    virtual void reset_overrides() override {
+        overrides_.clear();
+    }
+};
+}
+#endif
+"#;
+
+    const SOURCE_FILE_EXPECTED: &str = r#"
+#include "com_android_aconfig_test.h"
+#include "com_android_aconfig_test_flag_provider.h"
+
+namespace com::android::aconfig::test {
+
+    std::string const DISABLED_RO = "com.android.aconfig.test.disabled_ro";
+    std::string const DISABLED_RW = "com.android.aconfig.test.disabled_rw";
+    std::string const ENABLED_RO = "com.android.aconfig.test.enabled_ro";
+    std::string const ENABLED_RW = "com.android.aconfig.test.enabled_rw";
+
+    std::unique_ptr<flag_provider_interface> provider_ =
+        std::make_unique<flag_provider>();
+}
+"#;
+
+    fn test_generate_cpp_code(mode: CodegenMode) {
+        let parsed_flags = crate::test::parse_test_flags();
+        let generated =
+            generate_cpp_code(crate::test::TEST_PACKAGE, parsed_flags.parsed_flag.iter(), mode)
+                .unwrap();
+        let mut generated_files_map = HashMap::new();
+        for file in generated {
+            generated_files_map.insert(
+                String::from(file.path.to_str().unwrap()),
+                String::from_utf8(file.contents.clone()).unwrap(),
+            );
+        }
+
+        let mut target_file_path = String::from("include/com_android_aconfig_test.h");
+        assert!(generated_files_map.contains_key(&target_file_path));
         assert_eq!(
-            expect_content.replace(' ', ""),
-            String::from_utf8(file.contents).unwrap().replace(' ', "")
+            None,
+            crate::test::first_significant_code_diff(
+                match mode {
+                    CodegenMode::Production => EXPORTED_PROD_HEADER_EXPECTED,
+                    CodegenMode::Test => EXPORTED_TEST_HEADER_EXPECTED,
+                },
+                generated_files_map.get(&target_file_path).unwrap()
+            )
+        );
+
+        target_file_path = String::from("com_android_aconfig_test_flag_provider.h");
+        assert!(generated_files_map.contains_key(&target_file_path));
+        assert_eq!(
+            None,
+            crate::test::first_significant_code_diff(
+                match mode {
+                    CodegenMode::Production => PROD_FLAG_PROVIDER_HEADER_EXPECTED,
+                    CodegenMode::Test => TEST_FLAG_PROVIDER_HEADER_EXPECTED,
+                },
+                generated_files_map.get(&target_file_path).unwrap()
+            )
+        );
+
+        target_file_path = String::from("com_android_aconfig_test.cc");
+        assert!(generated_files_map.contains_key(&target_file_path));
+        assert_eq!(
+            None,
+            crate::test::first_significant_code_diff(
+                SOURCE_FILE_EXPECTED,
+                generated_files_map.get(&target_file_path).unwrap()
+            )
         );
     }
 
     #[test]
-    fn test_cpp_codegen_runtime_flag() {
-        let package = "com.example";
-        let mut builder = CacheBuilder::new(package.to_string()).unwrap();
-        builder
-            .add_flag_declaration(
-                Source::File("aconfig_one.txt".to_string()),
-                FlagDeclaration {
-                    name: "my_flag_one".to_string(),
-                    namespace: "ns".to_string(),
-                    description: "buildtime disable".to_string(),
-                },
-            )
-            .unwrap()
-            .add_flag_declaration(
-                Source::File("aconfig_two.txt".to_string()),
-                FlagDeclaration {
-                    name: "my_flag_two".to_string(),
-                    namespace: "ns".to_string(),
-                    description: "runtime enable".to_string(),
-                },
-            )
-            .unwrap()
-            .add_flag_value(
-                Source::Memory,
-                FlagValue {
-                    package: package.to_string(),
-                    name: "my_flag_two".to_string(),
-                    state: FlagState::Enabled,
-                    permission: Permission::ReadWrite,
-                },
-            )
-            .unwrap();
-        let cache = builder.build();
-        let expect_content = r#"#ifndef com_example_HEADER_H
-        #define com_example_HEADER_H
+    fn test_generate_cpp_code_for_prod() {
+        test_generate_cpp_code(CodegenMode::Production);
+    }
 
-        #include <server_configurable_flags/get_flags.h>
-        using namespace server_configurable_flags;
-
-        namespace com::example {
-
-            static const bool my_flag_one() {
-                return GetServerConfigurableFlag(
-                    "ns",
-                    "com.example.my_flag_one",
-                    "false") == "true";
-            }
-
-            static const bool my_flag_two() {
-                return GetServerConfigurableFlag(
-                    "ns",
-                    "com.example.my_flag_two",
-                    "true") == "true";
-            }
-
-        }
-        #endif
-        "#;
-        let file = generate_cpp_code(&cache).unwrap();
-        assert_eq!("aconfig/com_example.h", file.path.to_str().unwrap());
-        assert_eq!(
-            None,
-            crate::test::first_significant_code_diff(
-                expect_content,
-                &String::from_utf8(file.contents).unwrap()
-            )
-        );
+    #[test]
+    fn test_generate_cpp_code_for_test() {
+        test_generate_cpp_code(CodegenMode::Test);
     }
 }

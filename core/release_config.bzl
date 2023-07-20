@@ -88,6 +88,7 @@ def release_config(all_flags, all_values):
                 partitions.setdefault(partition, []).append(flag["name"])
 
     # Validate values
+    # TODO(joeo): Disallow duplicate values after we've split AOSP and vendor flags.
     values = {}
     for value in all_values:
         if value["name"] not in flag_names:

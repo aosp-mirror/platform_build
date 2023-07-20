@@ -99,9 +99,8 @@ python_defaults {
         "releasetools_common",
     ],
     required: [
+        "apexd_host",
         "checkvintf",
-        "deapexer",
-        "dump_apex_info",
     ],
 }
 
