@@ -50,6 +50,7 @@ python_binary_host {
         "releasetools_ota_from_target_files",
     ],
     required: [
+        "apexd_host",
         "checkvintf",
         "host_init_verifier",
         "secilc",

@@ -19,127 +19,300 @@ use serde::Serialize;
 use std::path::PathBuf;
 use tinytemplate::TinyTemplate;
 
-use crate::aconfig::{FlagState, Permission};
-use crate::cache::{Cache, Item};
 use crate::codegen;
-use crate::commands::OutputFile;
+use crate::commands::{CodegenMode, OutputFile};
+use crate::protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
 
-pub fn generate_java_code(cache: &Cache) -> Result<OutputFile> {
-    let package = cache.package();
+pub fn generate_java_code<'a, I>(
+    package: &str,
+    parsed_flags_iter: I,
+    codegen_mode: CodegenMode,
+) -> Result<Vec<OutputFile>>
+where
+    I: Iterator<Item = &'a ProtoParsedFlag>,
+{
     let class_elements: Vec<ClassElement> =
-        cache.iter().map(|item| create_class_element(package, item)).collect();
-    let readwrite = class_elements.iter().any(|item| item.readwrite);
-    let context = Context { package: package.to_string(), readwrite, class_elements };
+        parsed_flags_iter.map(|pf| create_class_element(package, pf)).collect();
+    let is_read_write = class_elements.iter().any(|elem| elem.is_read_write);
+    let is_test_mode = codegen_mode == CodegenMode::Test;
+    let context =
+        Context { class_elements, is_test_mode, is_read_write, package_name: package.to_string() };
     let mut template = TinyTemplate::new();
-    template.add_template("java_code_gen", include_str!("../templates/java.template"))?;
-    let contents = template.render("java_code_gen", &context)?;
-    let mut path: PathBuf = package.split('.').collect();
-    // TODO: Allow customization of the java class name
-    path.push("Flags.java");
-    Ok(OutputFile { contents: contents.into(), path })
+    template.add_template("Flags.java", include_str!("../templates/Flags.java.template"))?;
+    template.add_template(
+        "FeatureFlagsImpl.java",
+        include_str!("../templates/FeatureFlagsImpl.java.template"),
+    )?;
+    template.add_template(
+        "FeatureFlags.java",
+        include_str!("../templates/FeatureFlags.java.template"),
+    )?;
+
+    let path: PathBuf = package.split('.').collect();
+    ["Flags.java", "FeatureFlagsImpl.java", "FeatureFlags.java"]
+        .iter()
+        .map(|file| {
+            Ok(OutputFile {
+                contents: template.render(file, &context)?.into(),
+                path: path.join(file),
+            })
+        })
+        .collect::<Result<Vec<OutputFile>>>()
 }
 
 #[derive(Serialize)]
 struct Context {
-    pub package: String,
-    pub readwrite: bool,
     pub class_elements: Vec<ClassElement>,
+    pub is_test_mode: bool,
+    pub is_read_write: bool,
+    pub package_name: String,
 }
 
 #[derive(Serialize)]
 struct ClassElement {
-    pub method_name: String,
-    pub readwrite: bool,
-    pub default_value: String,
+    pub default_value: bool,
     pub device_config_namespace: String,
     pub device_config_flag: String,
+    pub flag_name_constant_suffix: String,
+    pub is_read_write: bool,
+    pub method_name: String,
 }
 
-fn create_class_element(package: &str, item: &Item) -> ClassElement {
-    let device_config_flag = codegen::create_device_config_ident(package, &item.name)
-        .expect("values checked at cache creation time");
+fn create_class_element(package: &str, pf: &ProtoParsedFlag) -> ClassElement {
+    let device_config_flag = codegen::create_device_config_ident(package, pf.name())
+        .expect("values checked at flag parse time");
     ClassElement {
-        method_name: item.name.replace('-', "_"),
-        readwrite: item.permission == Permission::ReadWrite,
-        default_value: if item.state == FlagState::Enabled {
-            "true".to_string()
-        } else {
-            "false".to_string()
-        },
-        device_config_namespace: item.namespace.clone(),
+        default_value: pf.state() == ProtoFlagState::ENABLED,
+        device_config_namespace: pf.namespace().to_string(),
         device_config_flag,
+        flag_name_constant_suffix: pf.name().to_ascii_uppercase(),
+        is_read_write: pf.permission() == ProtoFlagPermission::READ_WRITE,
+        method_name: format_java_method_name(pf.name()),
     }
+}
+
+fn format_java_method_name(flag_name: &str) -> String {
+    flag_name
+        .split('_')
+        .filter(|&word| !word.is_empty())
+        .enumerate()
+        .map(|(index, word)| {
+            if index == 0 {
+                word.to_ascii_lowercase()
+            } else {
+                word[0..1].to_ascii_uppercase() + &word[1..].to_ascii_lowercase()
+            }
+        })
+        .collect::<Vec<String>>()
+        .join("")
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::aconfig::{FlagDeclaration, FlagValue};
-    use crate::cache::CacheBuilder;
-    use crate::commands::Source;
+    use std::collections::HashMap;
+
+    const EXPECTED_FEATUREFLAGS_CONTENT: &str = r#"
+    package com.android.aconfig.test;
+    public interface FeatureFlags {
+        boolean disabledRo();
+        boolean disabledRw();
+        boolean enabledRo();
+        boolean enabledRw();
+    }"#;
+
+    const EXPECTED_FLAG_COMMON_CONTENT: &str = r#"
+    package com.android.aconfig.test;
+    public final class Flags {
+        public static final String FLAG_DISABLED_RO = "com.android.aconfig.test.disabled_ro";
+        public static final String FLAG_DISABLED_RW = "com.android.aconfig.test.disabled_rw";
+        public static final String FLAG_ENABLED_RO = "com.android.aconfig.test.enabled_ro";
+        public static final String FLAG_ENABLED_RW = "com.android.aconfig.test.enabled_rw";
+
+        public static boolean disabledRo() {
+            return FEATURE_FLAGS.disabledRo();
+        }
+        public static boolean disabledRw() {
+            return FEATURE_FLAGS.disabledRw();
+        }
+        public static boolean enabledRo() {
+            return FEATURE_FLAGS.enabledRo();
+        }
+        public static boolean enabledRw() {
+            return FEATURE_FLAGS.enabledRw();
+        }
+    "#;
 
     #[test]
-    fn test_generate_java_code() {
-        let package = "com.example";
-        let mut builder = CacheBuilder::new(package.to_string()).unwrap();
-        builder
-            .add_flag_declaration(
-                Source::File("test.txt".to_string()),
-                FlagDeclaration {
-                    name: "test".to_string(),
-                    namespace: "ns".to_string(),
-                    description: "buildtime enable".to_string(),
-                },
-            )
-            .unwrap()
-            .add_flag_declaration(
-                Source::File("test2.txt".to_string()),
-                FlagDeclaration {
-                    name: "test2".to_string(),
-                    namespace: "ns".to_string(),
-                    description: "runtime disable".to_string(),
-                },
-            )
-            .unwrap()
-            .add_flag_value(
-                Source::Memory,
-                FlagValue {
-                    package: package.to_string(),
-                    name: "test".to_string(),
-                    state: FlagState::Disabled,
-                    permission: Permission::ReadOnly,
-                },
-            )
-            .unwrap();
-        let cache = builder.build();
-        let expect_content = r#"package com.example;
-
+    fn test_generate_java_code_production() {
+        let parsed_flags = crate::test::parse_test_flags();
+        let generated_files = generate_java_code(
+            crate::test::TEST_PACKAGE,
+            parsed_flags.parsed_flag.iter(),
+            CodegenMode::Production,
+        )
+        .unwrap();
+        let expect_flags_content = EXPECTED_FLAG_COMMON_CONTENT.to_string()
+            + r#"
+            private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
+        }"#;
+        let expected_featureflagsimpl_content = r#"
+        package com.android.aconfig.test;
         import android.provider.DeviceConfig;
-
-        public final class Flags {
-
-            public static boolean test() {
+        public final class FeatureFlagsImpl implements FeatureFlags {
+            @Override
+            public boolean disabledRo() {
                 return false;
             }
-
-            public static boolean test2() {
+            @Override
+            public boolean disabledRw() {
                 return DeviceConfig.getBoolean(
-                    "ns",
-                    "com.example.test2",
+                    "aconfig_test",
+                    "com.android.aconfig.test.disabled_rw",
                     false
                 );
             }
-
+            @Override
+            public boolean enabledRo() {
+                return true;
+            }
+            @Override
+            public boolean enabledRw() {
+                return DeviceConfig.getBoolean(
+                    "aconfig_test",
+                    "com.android.aconfig.test.enabled_rw",
+                    true
+                );
+            }
         }
         "#;
-        let file = generate_java_code(&cache).unwrap();
-        assert_eq!("com/example/Flags.java", file.path.to_str().unwrap());
-        assert_eq!(
-            None,
-            crate::test::first_significant_code_diff(
-                expect_content,
-                &String::from_utf8(file.contents).unwrap()
-            )
-        );
+        let mut file_set = HashMap::from([
+            ("com/android/aconfig/test/Flags.java", expect_flags_content.as_str()),
+            ("com/android/aconfig/test/FeatureFlagsImpl.java", expected_featureflagsimpl_content),
+            ("com/android/aconfig/test/FeatureFlags.java", EXPECTED_FEATUREFLAGS_CONTENT),
+        ]);
+
+        for file in generated_files {
+            let file_path = file.path.to_str().unwrap();
+            assert!(file_set.contains_key(file_path), "Cannot find {}", file_path);
+            assert_eq!(
+                None,
+                crate::test::first_significant_code_diff(
+                    file_set.get(file_path).unwrap(),
+                    &String::from_utf8(file.contents.clone()).unwrap()
+                ),
+                "File {} content is not correct",
+                file_path
+            );
+            file_set.remove(file_path);
+        }
+
+        assert!(file_set.is_empty());
+    }
+
+    #[test]
+    fn test_generate_java_code_test() {
+        let parsed_flags = crate::test::parse_test_flags();
+        let generated_files = generate_java_code(
+            crate::test::TEST_PACKAGE,
+            parsed_flags.parsed_flag.iter(),
+            CodegenMode::Test,
+        )
+        .unwrap();
+        let expect_flags_content = EXPECTED_FLAG_COMMON_CONTENT.to_string()
+            + r#"
+            public static void setFeatureFlagsImpl(FeatureFlags featureFlags) {
+                Flags.FEATURE_FLAGS = featureFlags;
+            }
+            public static void unsetFeatureFlagsImpl() {
+                Flags.FEATURE_FLAGS = null;
+            }
+            private static FeatureFlags FEATURE_FLAGS;
+        }
+        "#;
+        let expected_featureflagsimpl_content = r#"
+        package com.android.aconfig.test;
+        import static java.util.stream.Collectors.toMap;
+        import java.util.HashMap;
+        import java.util.Map;
+        import java.util.stream.Stream;
+        public final class FeatureFlagsImpl implements FeatureFlags {
+            @Override
+            public boolean disabledRo() {
+                return getFlag(Flags.FLAG_DISABLED_RO);
+            }
+            @Override
+            public boolean disabledRw() {
+                return getFlag(Flags.FLAG_DISABLED_RW);
+            }
+            @Override
+            public boolean enabledRo() {
+                return getFlag(Flags.FLAG_ENABLED_RO);
+            }
+            @Override
+            public boolean enabledRw() {
+                return getFlag(Flags.FLAG_ENABLED_RW);
+            }
+            public void setFlag(String flagName, boolean value) {
+                if (!this.mFlagMap.containsKey(flagName)) {
+                    throw new IllegalArgumentException("no such flag" + flagName);
+                }
+                this.mFlagMap.put(flagName, value);
+            }
+            public void resetAll() {
+                for (Map.Entry entry : mFlagMap.entrySet()) {
+                    entry.setValue(null);
+                }
+            }
+            private boolean getFlag(String flagName) {
+                Boolean value = this.mFlagMap.get(flagName);
+                if (value == null) {
+                    throw new IllegalArgumentException(flagName + " is not set");
+                }
+                return value;
+            }
+            private HashMap<String, Boolean> mFlagMap = Stream.of(
+                    Flags.FLAG_DISABLED_RO,
+                    Flags.FLAG_DISABLED_RW,
+                    Flags.FLAG_ENABLED_RO,
+                    Flags.FLAG_ENABLED_RW
+                )
+                .collect(
+                    HashMap::new,
+                    (map, elem) -> map.put(elem, null),
+                    HashMap::putAll
+                );
+        }
+        "#;
+        let mut file_set = HashMap::from([
+            ("com/android/aconfig/test/Flags.java", expect_flags_content.as_str()),
+            ("com/android/aconfig/test/FeatureFlagsImpl.java", expected_featureflagsimpl_content),
+            ("com/android/aconfig/test/FeatureFlags.java", EXPECTED_FEATUREFLAGS_CONTENT),
+        ]);
+
+        for file in generated_files {
+            let file_path = file.path.to_str().unwrap();
+            assert!(file_set.contains_key(file_path), "Cannot find {}", file_path);
+            assert_eq!(
+                None,
+                crate::test::first_significant_code_diff(
+                    file_set.get(file_path).unwrap(),
+                    &String::from_utf8(file.contents.clone()).unwrap()
+                ),
+                "File {} content is not correct",
+                file_path
+            );
+            file_set.remove(file_path);
+        }
+
+        assert!(file_set.is_empty());
+    }
+
+    #[test]
+    fn test_format_java_method_name() {
+        let input = "____some_snake___name____";
+        let expected = "someSnakeName";
+        let formatted_name = format_java_method_name(input);
+        assert_eq!(expected, formatted_name);
     }
 }

@@ -2,6 +2,28 @@ package {
     default_applicable_licenses: ["Android-Apache-2.0"],
 }
 
+// proto libraries for consumers of `aconfig dump --format=protobuf` output
+
+java_library {
+    name: "libaconfig_java_proto_lite",
+    host_supported: true,
+    srcs: ["protos/aconfig.proto"],
+    static_libs: ["libprotobuf-java-lite"],
+    proto: {
+        type: "lite",
+    },
+    sdk_version: "current",
+}
+
+java_library_host {
+    name: "libaconfig_java_proto_full",
+    srcs: ["protos/aconfig.proto"],
+    static_libs: ["libprotobuf-java-full"],
+    proto: {
+        type: "full",
+    },
+}
+
 // host binary: aconfig
 
 rust_protobuf_host {
@@ -27,6 +49,9 @@ rust_defaults {
         "libserde_json",
         "libtinytemplate",
     ],
+    proc_macros: [
+        "libpaste",
+    ]
 }
 
 rust_binary_host {
@@ -44,31 +69,31 @@ rust_test_host {
 
 // integration tests: java
 
-device_config_definitions {
+aconfig_declarations {
     name: "aconfig.test.flags",
-    namespace: "com.android.aconfig.test",
+    package: "com.android.aconfig.test",
     srcs: ["tests/test.aconfig"],
 }
 
-device_config_values {
+aconfig_values {
     name: "aconfig.test.flag.values",
-    namespace: "com.android.aconfig.test",
+    package: "com.android.aconfig.test",
     srcs: [
         "tests/first.values",
         "tests/second.values",
     ],
 }
 
-device_config_value_set {
+aconfig_value_set {
     name: "aconfig.test.flag.value_set",
     values: [
         "aconfig.test.flag.values",
     ],
 }
 
-java_device_config_definitions_library {
+java_aconfig_library {
     name: "aconfig_test_java",
-    device_config_definitions: "aconfig.test.flags",
+    aconfig_declarations: "aconfig.test.flags",
 }
 
 android_test {

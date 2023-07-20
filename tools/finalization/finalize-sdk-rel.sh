@@ -4,19 +4,19 @@ set -ex
 
 function revert_droidstubs_hack() {
     if grep -q 'STOPSHIP: RESTORE THIS LOGIC WHEN DECLARING "REL" BUILD' "$top/build/soong/java/droidstubs.go" ; then
-        git -C "$top/build/soong" apply --allow-empty ../../build/make/tools/finalization/build_soong_java_droidstubs.go.revert_hack.diff
+        patch --strip=1 --no-backup-if-mismatch --directory="$top/build/soong" --input=../../build/make/tools/finalization/build_soong_java_droidstubs.go.revert_hack.diff
     fi
 }
 
 function revert_resources_sdk_int_fix() {
     if grep -q 'public static final int RESOURCES_SDK_INT = SDK_INT;' "$top/frameworks/base/core/java/android/os/Build.java" ; then
-        git -C "$top/frameworks/base" apply --allow-empty ../../build/make/tools/finalization/frameworks_base.revert_resource_sdk_int.diff
+        patch --strip=1 --no-backup-if-mismatch --directory="$top/frameworks/base" --input=../../build/make/tools/finalization/frameworks_base.revert_resource_sdk_int.diff
     fi
 }
 
 function apply_prerelease_sdk_hack() {
     if ! grep -q 'STOPSHIP: hack for the pre-release SDK' "$top/frameworks/base/core/java/android/content/pm/parsing/FrameworkParsingPackageUtils.java" ; then
-        git -C "$top/frameworks/base" apply --allow-empty ../../build/make/tools/finalization/frameworks_base.apply_hack.diff
+        patch --strip=1 --no-backup-if-mismatch --directory="$top/frameworks/base" --input=../../build/make/tools/finalization/frameworks_base.apply_hack.diff
     fi
 }
 

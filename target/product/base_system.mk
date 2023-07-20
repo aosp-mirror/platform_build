@@ -70,6 +70,7 @@ PRODUCT_PACKAGES += \
     com.android.scheduling \
     com.android.sdkext \
     com.android.tethering \
+    com.android.threadnetwork \
     com.android.tzdata \
     com.android.uwb \
     com.android.virt \

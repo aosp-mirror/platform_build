@@ -47,17 +47,6 @@ PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 # Disable the build-time debugfs restrictions on GSI builds
 PRODUCT_SET_DEBUGFS_RESTRICTIONS := false
 
-# GSI targets should install "unflattened" APEXes in /system
-TARGET_FLATTEN_APEX := false
-
-# GSI targets should install "flattened" APEXes in /system_ext as well
-PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES := true
-
-# The flattened version of com.android.apex.cts.shim.v1 should be explicitly installed
-# because the shim apex is prebuilt one and PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES is not
-# supported for prebuilt_apex modules yet.
-PRODUCT_PACKAGES += com.android.apex.cts.shim.v1_with_prebuilts.flattened
-
 # GSI specific tasks on boot
 PRODUCT_PACKAGES += \
     gsi_skip_mount.cfg \
@@ -91,3 +80,6 @@ PRODUCT_EXPORT_BOOT_IMAGE_TO_DIST := true
 # Additional settings used in all GSI builds
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.crypto.metadata_init_delete_all_keys.enabled=false \
+
+# Window Extensions
+$(call inherit-product, $(SRC_TARGET_DIR)/product/window_extensions.mk)

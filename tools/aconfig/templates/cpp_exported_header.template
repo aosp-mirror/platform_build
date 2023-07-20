@@ -1,0 +1,48 @@
+#ifndef {header}_HEADER_H
+#define {header}_HEADER_H
+
+#include <string>
+#include <memory>
+{{ if readwrite }}
+#include <server_configurable_flags/get_flags.h>
+using namespace server_configurable_flags;
+{{ endif }}
+namespace {cpp_namespace} \{
+
+class flag_provider_interface \{
+public:
+    virtual ~flag_provider_interface() = default;
+    {{ for item in class_elements}}
+    virtual bool {item.flag_name}() = 0;
+    {{ endfor }}
+    virtual void override_flag(std::string const&, bool) \{}
+
+    virtual void reset_overrides() \{}
+};
+
+extern std::unique_ptr<flag_provider_interface> provider_;
+{{ for item in class_elements}}
+extern std::string const {item.uppercase_flag_name};{{ endfor }}
+{{ for item in class_elements}}
+inline bool {item.flag_name}() \{
+    {{ if for_prod }}
+    {{ if not item.readwrite- }}
+    return {item.default_value};
+    {{ -else- }}
+    return provider_->{item.flag_name}();
+    {{ -endif }}
+    {{ -else- }}
+    return provider_->{item.flag_name}();
+    {{ -endif }}
+}
+{{ endfor }}
+inline void override_flag(std::string const& name, bool val) \{
+    return provider_->override_flag(name, val);
+}
+
+inline void reset_overrides() \{
+    return provider_->reset_overrides();
+}
+
+}
+#endif

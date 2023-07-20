@@ -16,29 +16,111 @@
 
 #[cfg(test)]
 pub mod test_utils {
-    use crate::cache::Cache;
-    use crate::commands::{Input, Source};
+    use crate::commands::Input;
+    use crate::protos::ProtoParsedFlags;
     use itertools;
 
-    pub fn create_cache() -> Cache {
-        crate::commands::create_cache(
+    pub const TEST_PACKAGE: &str = "com.android.aconfig.test";
+
+    pub const TEST_FLAGS_TEXTPROTO: &str = r#"
+parsed_flag {
+  package: "com.android.aconfig.test"
+  name: "disabled_ro"
+  namespace: "aconfig_test"
+  description: "This flag is DISABLED + READ_ONLY"
+  bug: "123"
+  state: DISABLED
+  permission: READ_ONLY
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  trace {
+    source: "tests/first.values"
+    state: DISABLED
+    permission: READ_ONLY
+  }
+}
+parsed_flag {
+  package: "com.android.aconfig.test"
+  name: "disabled_rw"
+  namespace: "aconfig_test"
+  description: "This flag is DISABLED + READ_WRITE"
+  bug: "456"
+  state: DISABLED
+  permission: READ_WRITE
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+}
+parsed_flag {
+  package: "com.android.aconfig.test"
+  name: "enabled_ro"
+  namespace: "aconfig_test"
+  description: "This flag is ENABLED + READ_ONLY"
+  bug: "789"
+  bug: "abc"
+  state: ENABLED
+  permission: READ_ONLY
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  trace {
+    source: "tests/first.values"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  trace {
+    source: "tests/second.values"
+    state: ENABLED
+    permission: READ_ONLY
+  }
+}
+parsed_flag {
+  package: "com.android.aconfig.test"
+  name: "enabled_rw"
+  namespace: "aconfig_test"
+  description: "This flag is ENABLED + READ_WRITE"
+  state: ENABLED
+  permission: READ_WRITE
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  trace {
+    source: "tests/first.values"
+    state: ENABLED
+    permission: READ_WRITE
+  }
+}
+"#;
+
+    pub fn parse_test_flags() -> ProtoParsedFlags {
+        let bytes = crate::commands::parse_flags(
             "com.android.aconfig.test",
             vec![Input {
-                source: Source::File("tests/test.aconfig".to_string()),
+                source: "tests/test.aconfig".to_string(),
                 reader: Box::new(include_bytes!("../tests/test.aconfig").as_slice()),
             }],
             vec![
                 Input {
-                    source: Source::File("tests/first.values".to_string()),
+                    source: "tests/first.values".to_string(),
                     reader: Box::new(include_bytes!("../tests/first.values").as_slice()),
                 },
                 Input {
-                    source: Source::File("tests/test.aconfig".to_string()),
+                    source: "tests/second.values".to_string(),
                     reader: Box::new(include_bytes!("../tests/second.values").as_slice()),
                 },
             ],
         )
-        .unwrap()
+        .unwrap();
+        crate::protos::parsed_flags::try_from_binary_proto(&bytes).unwrap()
     }
 
     pub fn first_significant_code_diff(a: &str, b: &str) -> Option<String> {

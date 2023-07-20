@@ -18,18 +18,19 @@ use anyhow::Result;
 use serde::Serialize;
 use tinytemplate::TinyTemplate;
 
-use crate::aconfig::{FlagState, Permission};
-use crate::cache::{Cache, Item};
 use crate::codegen;
 use crate::commands::OutputFile;
+use crate::protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
 
-pub fn generate_rust_code(cache: &Cache) -> Result<OutputFile> {
-    let package = cache.package();
-    let parsed_flags: Vec<TemplateParsedFlag> =
-        cache.iter().map(|item| TemplateParsedFlag::new(package, item)).collect();
+pub fn generate_rust_code<'a, I>(package: &str, parsed_flags_iter: I) -> Result<OutputFile>
+where
+    I: Iterator<Item = &'a ProtoParsedFlag>,
+{
+    let template_flags: Vec<TemplateParsedFlag> =
+        parsed_flags_iter.map(|pf| TemplateParsedFlag::new(package, pf)).collect();
     let context = TemplateContext {
         package: package.to_string(),
-        parsed_flags,
+        template_flags,
         modules: package.split('.').map(|s| s.to_string()).collect::<Vec<_>>(),
     };
     let mut template = TinyTemplate::new();
@@ -42,7 +43,7 @@ pub fn generate_rust_code(cache: &Cache) -> Result<OutputFile> {
 #[derive(Serialize)]
 struct TemplateContext {
     pub package: String,
-    pub parsed_flags: Vec<TemplateParsedFlag>,
+    pub template_flags: Vec<TemplateParsedFlag>,
     pub modules: Vec<String>,
 }
 
@@ -61,17 +62,17 @@ struct TemplateParsedFlag {
 
 impl TemplateParsedFlag {
     #[allow(clippy::nonminimal_bool)]
-    fn new(package: &str, item: &Item) -> Self {
+    fn new(package: &str, pf: &ProtoParsedFlag) -> Self {
         let template = TemplateParsedFlag {
-            name: item.name.clone(),
-            device_config_namespace: item.namespace.to_string(),
-            device_config_flag: codegen::create_device_config_ident(package, &item.name)
-                .expect("values checked at cache creation time"),
-            is_read_only_enabled: item.permission == Permission::ReadOnly
-                && item.state == FlagState::Enabled,
-            is_read_only_disabled: item.permission == Permission::ReadOnly
-                && item.state == FlagState::Disabled,
-            is_read_write: item.permission == Permission::ReadWrite,
+            name: pf.name().to_string(),
+            device_config_namespace: pf.namespace().to_string(),
+            device_config_flag: codegen::create_device_config_ident(package, pf.name())
+                .expect("values checked at flag parse time"),
+            is_read_only_enabled: pf.permission() == ProtoFlagPermission::READ_ONLY
+                && pf.state() == ProtoFlagState::ENABLED,
+            is_read_only_disabled: pf.permission() == ProtoFlagPermission::READ_ONLY
+                && pf.state() == ProtoFlagState::DISABLED,
+            is_read_write: pf.permission() == ProtoFlagPermission::READ_WRITE,
         };
         #[rustfmt::skip]
         debug_assert!(
@@ -93,8 +94,9 @@ mod tests {
 
     #[test]
     fn test_generate_rust_code() {
-        let cache = crate::test::create_cache();
-        let generated = generate_rust_code(&cache).unwrap();
+        let parsed_flags = crate::test::parse_test_flags();
+        let generated =
+            generate_rust_code(crate::test::TEST_PACKAGE, parsed_flags.parsed_flag.iter()).unwrap();
         assert_eq!("src/lib.rs", format!("{}", generated.path.display()));
         let expected = r#"
 pub mod com {

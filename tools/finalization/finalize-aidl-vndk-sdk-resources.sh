@@ -5,14 +5,14 @@ set -ex
 function apply_droidstubs_hack() {
     if ! grep -q 'STOPSHIP: RESTORE THIS LOGIC WHEN DECLARING "REL" BUILD' "$top/build/soong/java/droidstubs.go" ; then
         local build_soong_git_root="$(readlink -f $top/build/soong)"
-        git -C "$build_soong_git_root" apply --allow-empty ../../build/make/tools/finalization/build_soong_java_droidstubs.go.apply_hack.diff
+        patch --strip=1 --no-backup-if-mismatch --directory="$build_soong_git_root" --input=../../build/make/tools/finalization/build_soong_java_droidstubs.go.apply_hack.diff
     fi
 }
 
 function apply_resources_sdk_int_fix() {
     if ! grep -q 'public static final int RESOURCES_SDK_INT = SDK_INT;' "$top/frameworks/base/core/java/android/os/Build.java" ; then
         local base_git_root="$(readlink -f $top/frameworks/base)"
-        git -C "$base_git_root" apply --allow-empty ../../build/make/tools/finalization/frameworks_base.apply_resource_sdk_int.diff
+        patch --strip=1 --no-backup-if-mismatch --directory="$base_git_root" --input=../../build/make/tools/finalization/frameworks_base.apply_resource_sdk_int.diff
     fi
 }
 

@@ -1,0 +1,23 @@
+package {package_name};
+
+public final class Flags \{
+{{- for item in class_elements}}
+    public static final String FLAG_{item.flag_name_constant_suffix} = "{item.device_config_flag}";
+{{- endfor }}
+{{ for item in class_elements}}
+    public static boolean {item.method_name}() \{
+        return FEATURE_FLAGS.{item.method_name}();
+    }
+{{ endfor }}
+{{ -if is_test_mode }}
+    public static void setFeatureFlagsImpl(FeatureFlags featureFlags) \{
+        Flags.FEATURE_FLAGS = featureFlags;
+    }
+
+    public static void unsetFeatureFlagsImpl() \{
+        Flags.FEATURE_FLAGS = null;
+    }
+{{ endif}}
+    private static FeatureFlags FEATURE_FLAGS{{ -if not is_test_mode }} = new FeatureFlagsImpl(){{ -endif- }};
+
+}
