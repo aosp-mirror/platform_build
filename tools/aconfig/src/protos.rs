@@ -255,6 +255,10 @@ pub mod parsed_flags {
         Ok(merged)
     }
 
+    pub fn sort_parsed_flags(pf: &mut ProtoParsedFlags) {
+        pf.parsed_flag.sort_by_key(create_sorting_key);
+    }
+
     fn create_sorting_key(pf: &ProtoParsedFlag) -> String {
         format!("{}.{}", pf.package(), pf.name())
     }
