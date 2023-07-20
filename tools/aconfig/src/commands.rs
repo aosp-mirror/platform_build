@@ -213,7 +213,6 @@ pub fn create_device_config_sysprops(mut input: Input) -> Result<Vec<u8>> {
 #[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
 pub enum DumpFormat {
     Text,
-    Debug,
     Protobuf,
     Textproto,
 }
@@ -235,12 +234,6 @@ pub fn dump_parsed_flags(mut input: Vec<Input>, format: DumpFormat) -> Result<Ve
                     parsed_flag.state(),
                     parsed_flag.permission()
                 );
-                output.extend_from_slice(line.as_bytes());
-            }
-        }
-        DumpFormat::Debug => {
-            for parsed_flag in parsed_flags.parsed_flag.into_iter() {
-                let line = format!("{:#?}\n", parsed_flag);
                 output.extend_from_slice(line.as_bytes());
             }
         }
