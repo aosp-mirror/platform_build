@@ -213,6 +213,7 @@ pub fn create_device_config_sysprops(mut input: Input) -> Result<Vec<u8>> {
 #[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
 pub enum DumpFormat {
     Text,
+    Verbose,
     Protobuf,
     Textproto,
 }
@@ -233,6 +234,21 @@ pub fn dump_parsed_flags(mut input: Vec<Input>, format: DumpFormat) -> Result<Ve
                     parsed_flag.name(),
                     parsed_flag.permission(),
                     parsed_flag.state()
+                );
+                output.extend_from_slice(line.as_bytes());
+            }
+        }
+        DumpFormat::Verbose => {
+            for parsed_flag in parsed_flags.parsed_flag.into_iter() {
+                let sources: Vec<_> =
+                    parsed_flag.trace.iter().map(|tracepoint| tracepoint.source()).collect();
+                let line = format!(
+                    "{}/{}: {:?} + {:?} ({})\n",
+                    parsed_flag.package(),
+                    parsed_flag.name(),
+                    parsed_flag.permission(),
+                    parsed_flag.state(),
+                    sources.join(", ")
                 );
                 output.extend_from_slice(line.as_bytes());
             }
