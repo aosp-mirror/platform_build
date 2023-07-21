@@ -1,0 +1,17 @@
+cc_aconfig_library {
+    name: "aconfig_test_cc_library",
+    aconfig_declarations: "aconfig.test.flags",
+}
+
+cc_binary {
+    name: "aconfig_hello_world_cc",
+    srcs: [
+        "aconfig_hello_world.cpp",
+    ],
+    static_libs: [
+        "aconfig_test_cc_library",
+    ],
+    shared_libs: [
+        "server_configurable_flags",
+    ],
+}
