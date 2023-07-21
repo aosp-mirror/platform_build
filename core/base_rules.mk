@@ -1058,6 +1058,10 @@ ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS := \
   $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS) \
   $(filter-out $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS),$(my_supported_variant))
 
+ALL_MODULES.$(my_register_name).ACONFIG_FILES := \
+    $(ALL_MODULES.$(my_register_name).ACONFIG_FILES) $(LOCAL_ACONFIG_FILES)
+
+
 ##########################################################################
 ## When compiling against API imported module, use API import stub
 ## libraries.
