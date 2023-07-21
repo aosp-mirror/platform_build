@@ -16,53 +16,93 @@ VENDOR_DLKM_NOTICE_DEPS :=
 ODM_DLKM_NOTICE_DEPS :=
 SYSTEM_DLKM_NOTICE_DEPS :=
 
-# -----------------------------------------------------------------
-# Release Config Flags
 
-# Create a summary file of build flags for each partition
-# $(1): build flags json file
-# $(2): flag names
-define generate-partition-build-flag-file
-$(eval $(strip $(1)): PRIVATE_OUT := $(strip $(1)))
-$(eval $(strip $(1)): PRIVATE_FLAG_NAMES := $(strip $(2)))
-$(strip $(1)):
-	mkdir -p $$(dir $$(PRIVATE_OUT))
-	echo '{' > $$(PRIVATE_OUT)
-	echo '"flags": [' >> $$(PRIVATE_OUT)
-	$$(foreach flag, $$(PRIVATE_FLAG_NAMES), \
-		( \
-			printf '  { "name": "%s", "value": "%s", ' \
-					'$$(flag)' \
-					'$$(_ALL_RELEASE_FLAGS.$$(flag).VALUE)' \
-					; \
-			printf '"set": "%s", "default": "%s", "declared": "%s" }' \
-					'$$(_ALL_RELEASE_FLAGS.$$(flag).SET_IN)' \
-					'$$(_ALL_RELEASE_FLAGS.$$(flag).DEFAULT)' \
-					'$$(_ALL_RELEASE_FLAGS.$$(flag).DECLARED_IN)' \
-					; \
-			printf '$$(if $$(filter $$(lastword $$(PRIVATE_FLAG_NAMES)),$$(flag)),,$$(comma))\n' ; \
-		) >> $$(PRIVATE_OUT) \
-	)
-	echo "]" >> $$(PRIVATE_OUT)
-	echo "}" >> $$(PRIVATE_OUT)
+# IMAGES_TO_BUILD is a list of the partition .img files that will be created.
+IMAGES_TO_BUILD:=
+ifneq ($(BUILDING_BOOT_IMAGE),)
+  IMAGES_TO_BUILD += boot
+endif
+ifneq ($(BUILDING_CACHE_IMAGE),)
+  IMAGES_TO_BUILD += cache
+endif
+ifneq ($(BUILDING_DEBUG_BOOT_IMAGE),)
+  IMAGES_TO_BUILD += debug_boot
+endif
+ifneq ($(BUILDING_DEBUG_VENDOR_BOOT_IMAGE),)
+  IMAGES_TO_BUILD += debug_vendor_boot
+endif
+ifneq ($(BUILDING_INIT_BOOT_IMAGE),)
+  IMAGES_TO_BUILD += init_boot
+endif
+ifneq ($(BUILDING_ODM_DLKM_IMAGE),)
+  IMAGES_TO_BUILD += odm_dlkm
+endif
+ifneq ($(BUILDING_ODM_IMAGE),)
+  IMAGES_TO_BUILD += odm
+endif
+ifneq ($(BUILDING_PRODUCT_IMAGE),)
+  IMAGES_TO_BUILD += product
+endif
+ifneq ($(BUILDING_RAMDISK_IMAGE),)
+  IMAGES_TO_BUILD += ramdisk
+endif
+ifneq ($(BUILDING_RECOVERY_IMAGE),)
+  IMAGES_TO_BUILD += recovery
+endif
+ifneq ($(BUILDING_SUPER_EMPTY_IMAGE),)
+  IMAGES_TO_BUILD += super_empty
+endif
+ifneq ($(BUILDING_SYSTEM_DLKM_IMAGE),)
+  IMAGES_TO_BUILD += system_dlkm
+endif
+ifneq ($(BUILDING_SYSTEM_EXT_IMAGE),)
+  IMAGES_TO_BUILD += system_ext
+endif
+ifneq ($(BUILDING_SYSTEM_IMAGE),)
+  IMAGES_TO_BUILD += system
+endif
+ifneq ($(BUILDING_SYSTEM_OTHER_IMAGE),)
+  IMAGES_TO_BUILD += system_other
+endif
+ifneq ($(BUILDING_USERDATA_IMAGE),)
+  IMAGES_TO_BUILD += userdata
+endif
+ifneq ($(BUILDING_VBMETA_IMAGE),)
+  IMAGES_TO_BUILD += vbmeta
+endif
+ifneq ($(BUILDING_VENDOR_BOOT_IMAGE),)
+  IMAGES_TO_BUILD += vendor_boot
+endif
+ifneq ($(BUILDING_VENDOR_DLKM_IMAGE),)
+  IMAGES_TO_BUILD += vendor_dlkm
+endif
+ifneq ($(BUILDING_VENDOR_IMAGE),)
+  IMAGES_TO_BUILD += vendor
+endif
+ifneq ($(BUILDING_VENDOR_KERNEL_BOOT_IMAGE),)
+  IMAGES_TO_BUILD += vendor_kernel_boot
+endif
+
+
+###########################################################
+# Get the module names suitable for ALL_MODULES.* variables that are installed
+# for a given partition
+#
+# $(1): Partition
+###########################################################
+define register-names-for-partition
+$(sort $(foreach m,$(product_MODULES),\
+	$(if $(filter $(PRODUCT_OUT)/$(strip $(1))/%, $(ALL_MODULES.$(m).INSTALLED)), \
+		$(m)
+	) \
+))
 endef
 
-_FLAG_PARTITIONS := product system system_ext vendor
 
-$(foreach partition, $(_FLAG_PARTITIONS), \
-	$(eval BUILD_FLAG_SUMMARIES.$(partition) \
-			:= $(TARGET_OUT_FLAGS)/$(partition)/etc/build_flags.json) \
-	$(eval $(call generate-partition-build-flag-file, \
-				$(BUILD_FLAG_SUMMARIES.$(partition)), \
-				$(_ALL_RELEASE_FLAGS.PARTITIONS.$(partition)) \
-            ) \
-    ) \
-)
+# Release & Aconfig Flags
+# -----------------------------------------------------------------
+include $(BUILD_SYSTEM)/packaging/flags.mk
 
-# TODO: Remove
-.PHONY: flag-files
-flag-files: $(foreach partition, $(_FLAG_PARTITIONS), \
-		$(TARGET_OUT_FLAGS)/$(partition)/etc/build_flags.json)
 
 # -----------------------------------------------------------------
 # Define rules to copy PRODUCT_COPY_FILES defined by the product.
