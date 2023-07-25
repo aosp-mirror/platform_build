@@ -425,6 +425,7 @@ ifdef PRODUCT_SHIPPING_API_LEVEL
 endif
 
 # Set TARGET_MAX_PAGE_SIZE_SUPPORTED.
+# TARGET_MAX_PAGE_SIZE_SUPPORTED indicates the alignment of the ELF segments.
 ifdef PRODUCT_MAX_PAGE_SIZE_SUPPORTED
   TARGET_MAX_PAGE_SIZE_SUPPORTED := $(PRODUCT_MAX_PAGE_SIZE_SUPPORTED)
 else ifeq ($(strip $(call is-low-mem-device)),true)
@@ -439,6 +440,19 @@ else
   endif
 endif
 .KATI_READONLY := TARGET_MAX_PAGE_SIZE_SUPPORTED
+
+# Boolean variable determining if AOSP is page size agnostic. This means
+# that AOSP can use a kernel configured with 4k/16k/64k PAGE SIZES.
+TARGET_PAGE_SIZE_AGNOSTIC := false
+ifdef PRODUCT_PAGE_SIZE_AGNOSTIC
+  TARGET_PAGE_SIZE_AGNOSTIC := $(PRODUCT_PAGE_SIZE_AGNOSTIC)
+  ifeq ($(TARGET_PAGE_SIZE_AGNOSTIC),true)
+      ifneq ($(TARGET_MAX_PAGE_SIZE_SUPPORTED),65536)
+          $(error TARGET_MAX_PAGE_SIZE_SUPPORTED has to be 65536 to support page size agnostic)
+      endif
+  endif
+endif
+.KATI_READONLY := TARGET_PAGE_SIZE_AGNOSTIC
 
 # Pruned directory options used when using findleaves.py
 # See envsetup.mk for a description of SCAN_EXCLUDE_DIRS
