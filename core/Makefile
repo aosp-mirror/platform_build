@@ -5733,11 +5733,11 @@ $(BUILT_TARGET_FILES_DIR): intermediates := $(intermediates)
 
 # $(1): Directory to copy
 # $(2): Location to copy it to
-# The "ls -A" is to prevent "acp s/* d" from failing if s is empty.
+# The "ls -A" is to skip if $(1) is empty.
 define package_files-copy-root
   if [ -d "$(strip $(1))" -a "$$(ls -A $(1))" ]; then \
     mkdir -p $(2) && \
-    $(ACP) -rd $(strip $(1))/* $(2); \
+    $(ACP) -rd $(strip $(1))/. $(strip $(2))/; \
   fi
 endef
 
