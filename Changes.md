@@ -1,4 +1,15 @@
-# Build System Changes for Android.mk Writers
+# Build System Changes for Android.mk/Android.bp Writers
+
+## Partitions are no longer affected by previous builds
+
+Partition builds used to include everything in their staging directories, and building an
+individual module will install it to the staging directory. Thus, previously, `m mymodule` followed
+by `m` would cause `mymodule` to be presinstalled on the device, even if it wasn't listed in
+`PRODUCT_PACKAGES`.
+
+This behavior has been changed, and now the partition images only include what they'd have if you
+did a clean build. This behavior can be disabled by setting the
+`BUILD_BROKEN_INCORRECT_PARTITION_IMAGES` environment variable.
 
 ## Perform validation of Soong plugins
 
@@ -29,6 +40,7 @@ overridden by setting the `BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES` product conf
 variable to `true`.
 
 Python 2 is slated for complete removal in V.
+
 ## Stop referencing sysprop_library directly from cc modules
 
 For the migration to Bazel, we are no longer mapping sysprop_library targets
