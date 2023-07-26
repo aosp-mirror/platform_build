@@ -8,7 +8,6 @@ flag {
     name: "enabled_ro"
     namespace: "aconfig_test"
     description: "This flag is ENABLED + READ_ONLY"
-    bug: "789"
     bug: "abc"
 }
 
@@ -19,7 +18,8 @@ flag {
     name: "enabled_rw"
     namespace: "aconfig_test"
     description: "This flag is ENABLED + READ_WRITE"
-    # no bug field: bug is not mandatory
+    # for bug fields, the empty string is a discouraged but valid value
+    bug: ""
 }
 
 # This flag's final value is calculated from:
