@@ -99,6 +99,17 @@ ifdef LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 
   $(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_res_package))
 
+  my_transitive_res_packages := $(intermediates.COMMON)/transitive-res-packages
+  $(my_transitive_res_packages): PRIVATE_TRANSITIVE_RES_PACKAGES := $(filter-out $(LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE),$(LOCAL_SOONG_TRANSITIVE_RES_PACKAGES))
+  $(my_transitive_res_packages):
+	@echo Write transitive resource package list $@
+	rm -f $@
+	touch $@
+	$(foreach f,$(PRIVATE_TRANSITIVE_RES_PACKAGES),\
+	  echo "$f" >> $@; )
+
+  $(call add-dependency,$(my_res_package),$(my_transitive_res_packages))
+
   my_proguard_flags := $(intermediates.COMMON)/export_proguard_flags
   $(my_proguard_flags): $(LOCAL_SOONG_EXPORT_PROGUARD_FLAGS)
 	@echo "Export proguard flags: $@"
