@@ -436,10 +436,24 @@ else
   TARGET_MAX_PAGE_SIZE_SUPPORTED := 4096
   # When VSR vendor API level >= 34, binary alignment will be 65536.
   ifeq ($(call math_gt_or_eq,$(vsr_vendor_api_level),34),true)
+    ifeq ($(TARGET_ARCH),arm64)
       TARGET_MAX_PAGE_SIZE_SUPPORTED := 65536
+    endif
+    ifeq ($(TARGET_ARCH),arm)
+      TARGET_MAX_PAGE_SIZE_SUPPORTED := 65536
+    endif
   endif
 endif
 .KATI_READONLY := TARGET_MAX_PAGE_SIZE_SUPPORTED
+
+# Check that TARGET_MAX_PAGE_SIZE_SUPPORTED is greater than 4096 only for ARM arch.
+ifneq ($(TARGET_MAX_PAGE_SIZE_SUPPORTED),4096)
+  ifneq ($(TARGET_ARCH),arm64)
+    ifneq ($(TARGET_ARCH),arm)
+      $(error TARGET_MAX_PAGE_SIZE_SUPPORTED=$(TARGET_MAX_PAGE_SIZE_SUPPORTED) is greater than 4096. Only supported in ARM arch)
+    endif
+  endif
+endif
 
 # Boolean variable determining if AOSP is page size agnostic. This means
 # that AOSP can use a kernel configured with 4k/16k/64k PAGE SIZES.
