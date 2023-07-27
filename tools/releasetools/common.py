@@ -1429,7 +1429,7 @@ def ResolveAVBSigningPathArgs(split_args):
       if os.path.exists(new_path):
         return new_path
     raise ExternalError(
-        "Failed to find {}".format(new_path))
+        "Failed to find {}".format(path))
 
   if not split_args:
     return split_args
