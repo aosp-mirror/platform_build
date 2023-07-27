@@ -35,8 +35,15 @@ pub struct Input {
 impl Input {
     fn try_parse_flags(&mut self) -> Result<ProtoParsedFlags> {
         let mut buffer = Vec::new();
-        self.reader.read_to_end(&mut buffer)?;
+        self.reader
+            .read_to_end(&mut buffer)
+            .with_context(|| format!("failed to read {}", self.source))?;
         crate::protos::parsed_flags::try_from_binary_proto(&buffer)
+            .with_context(|| self.error_context())
+    }
+
+    fn error_context(&self) -> String {
+        format!("failed to parse {}", self.source)
     }
 }
 
@@ -53,20 +60,23 @@ pub fn parse_flags(package: &str, declarations: Vec<Input>, values: Vec<Input>) 
 
     for mut input in declarations {
         let mut contents = String::new();
-        input.reader.read_to_string(&mut contents)?;
+        input
+            .reader
+            .read_to_string(&mut contents)
+            .with_context(|| format!("failed to read {}", input.source))?;
 
         let flag_declarations = crate::protos::flag_declarations::try_from_text_proto(&contents)
-            .with_context(|| format!("Failed to parse {}", input.source))?;
+            .with_context(|| input.error_context())?;
         ensure!(
             package == flag_declarations.package(),
-            "Failed to parse {}: expected package {}, got {}",
+            "failed to parse {}: expected package {}, got {}",
             input.source,
             package,
             flag_declarations.package()
         );
         for mut flag_declaration in flag_declarations.flag.into_iter() {
             crate::protos::flag_declaration::verify_fields(&flag_declaration)
-                .with_context(|| format!("Failed to parse {}", input.source))?;
+                .with_context(|| input.error_context())?;
 
             // create ParsedFlag using FlagDeclaration and default values
             let mut parsed_flag = ProtoParsedFlag::new();
@@ -101,12 +111,15 @@ pub fn parse_flags(package: &str, declarations: Vec<Input>, values: Vec<Input>) 
 
     for mut input in values {
         let mut contents = String::new();
-        input.reader.read_to_string(&mut contents)?;
+        input
+            .reader
+            .read_to_string(&mut contents)
+            .with_context(|| format!("failed to read {}", input.source))?;
         let flag_values = crate::protos::flag_values::try_from_text_proto(&contents)
-            .with_context(|| format!("Failed to parse {}", input.source))?;
+            .with_context(|| input.error_context())?;
         for flag_value in flag_values.flag_value.into_iter() {
             crate::protos::flag_value::verify_fields(&flag_value)
-                .with_context(|| format!("Failed to parse {}", input.source))?;
+                .with_context(|| input.error_context())?;
 
             let Some(parsed_flag) = parsed_flags
                 .parsed_flag
