@@ -92,8 +92,7 @@ pub mod flag_declaration {
         ensure!(codegen::is_valid_name_ident(pdf.name()), "bad flag declaration: bad name");
         ensure!(codegen::is_valid_name_ident(pdf.namespace()), "bad flag declaration: bad name");
         ensure!(!pdf.description().is_empty(), "bad flag declaration: empty description");
-
-        // ProtoFlagDeclaration.bug: Vec<String>: may be empty, no checks needed
+        ensure!(pdf.bug.len() == 1, "bad flag declaration: exactly one bug required");
 
         Ok(())
     }
@@ -195,8 +194,7 @@ pub mod parsed_flag {
         for tp in pf.trace.iter() {
             super::tracepoint::verify_fields(tp)?;
         }
-
-        // ProtoParsedFlag.bug: Vec<String>: may be empty, no checks needed
+        ensure!(pf.bug.len() == 1, "bad flag declaration: exactly one bug required");
 
         Ok(())
     }
@@ -279,12 +277,12 @@ flag {
     namespace: "first_ns"
     description: "This is the description of the first flag."
     bug: "123"
-    bug: "abc"
 }
 flag {
     name: "second"
     namespace: "second_ns"
     description: "This is the description of the second flag."
+    bug: "abc"
 }
 "#,
         )
@@ -294,14 +292,12 @@ flag {
         assert_eq!(first.name(), "first");
         assert_eq!(first.namespace(), "first_ns");
         assert_eq!(first.description(), "This is the description of the first flag.");
-        assert_eq!(first.bug.len(), 2);
-        assert_eq!(first.bug[0], "123");
-        assert_eq!(first.bug[1], "abc");
+        assert_eq!(first.bug, vec!["123"]);
         let second = flag_declarations.flag.iter().find(|pf| pf.name() == "second").unwrap();
         assert_eq!(second.name(), "second");
         assert_eq!(second.namespace(), "second_ns");
         assert_eq!(second.description(), "This is the description of the second flag.");
-        assert_eq!(second.bug.len(), 0);
+        assert_eq!(second.bug, vec!["abc"]);
 
         // bad input: missing package in flag declarations
         let error = flag_declarations::try_from_text_proto(
@@ -376,6 +372,36 @@ flag {
         )
         .unwrap_err();
         assert!(format!("{:?}", error).contains("bad flag declaration: bad name"));
+
+        // bad input: no bug entries in flag declaration
+        let error = flag_declarations::try_from_text_proto(
+            r#"
+package: "com.foo.bar"
+flag {
+    name: "first"
+    namespace: "first_ns"
+    description: "This is the description of the first flag."
+}
+"#,
+        )
+        .unwrap_err();
+        assert!(format!("{:?}", error).contains("bad flag declaration: exactly one bug required"));
+
+        // bad input: multiple bug entries in flag declaration
+        let error = flag_declarations::try_from_text_proto(
+            r#"
+package: "com.foo.bar"
+flag {
+    name: "first"
+    namespace: "first_ns"
+    description: "This is the description of the first flag."
+    bug: "123"
+    bug: "abc"
+}
+"#,
+        )
+        .unwrap_err();
+        assert!(format!("{:?}", error).contains("bad flag declaration: exactly one bug required"));
     }
 
     #[test]
@@ -482,6 +508,7 @@ parsed_flag {
     name: "first"
     namespace: "first_ns"
     description: "This is the description of the first flag."
+    bug: "SOME_BUG"
     state: DISABLED
     permission: READ_ONLY
     trace {
@@ -495,6 +522,7 @@ parsed_flag {
     name: "second"
     namespace: "second_ns"
     description: "This is the description of the second flag."
+    bug: "SOME_BUG"
     state: ENABLED
     permission: READ_WRITE
     trace {
@@ -516,6 +544,7 @@ parsed_flag {
         assert_eq!(second.name(), "second");
         assert_eq!(second.namespace(), "second_ns");
         assert_eq!(second.description(), "This is the description of the second flag.");
+        assert_eq!(second.bug, vec!["SOME_BUG"]);
         assert_eq!(second.state(), ProtoFlagState::ENABLED);
         assert_eq!(second.permission(), ProtoFlagPermission::READ_WRITE);
         assert_eq!(2, second.trace.len());
@@ -569,6 +598,7 @@ parsed_flag {
     name: "first"
     namespace: "first_ns"
     description: "This is the description of the first flag."
+    bug: ""
     state: DISABLED
     permission: READ_ONLY
     trace {
@@ -582,6 +612,7 @@ parsed_flag {
     name: "second"
     namespace: "second_ns"
     description: "This is the description of the second flag."
+    bug: ""
     state: ENABLED
     permission: READ_WRITE
     trace {
@@ -604,6 +635,7 @@ parsed_flag {
     name: "bbb"
     namespace: "first_ns"
     description: "This is the description of the first flag."
+    bug: ""
     state: DISABLED
     permission: READ_ONLY
     trace {
@@ -617,6 +649,7 @@ parsed_flag {
     name: "aaa"
     namespace: "second_ns"
     description: "This is the description of the second flag."
+    bug: ""
     state: ENABLED
     permission: READ_WRITE
     trace {
@@ -639,6 +672,7 @@ parsed_flag {
     name: "bar"
     namespace: "first_ns"
     description: "This is the description of the first flag."
+    bug: ""
     state: DISABLED
     permission: READ_ONLY
     trace {
@@ -652,6 +686,7 @@ parsed_flag {
     name: "bar"
     namespace: "second_ns"
     description: "This is the description of the second flag."
+    bug: ""
     state: ENABLED
     permission: READ_WRITE
     trace {
@@ -673,6 +708,7 @@ parsed_flag {
     name: "bar"
     namespace: "first_ns"
     description: "This is the description of the first flag."
+    bug: "b/12345678"
     state: DISABLED
     permission: READ_ONLY
     trace {
@@ -703,6 +739,7 @@ parsed_flag {
     name: "first"
     namespace: "first_ns"
     description: "This is the description of the first flag."
+    bug: "a"
     state: DISABLED
     permission: READ_ONLY
     trace {
@@ -716,6 +753,7 @@ parsed_flag {
     name: "second"
     namespace: "second_ns"
     description: "This is the description of the second flag."
+    bug: "b"
     state: ENABLED
     permission: READ_WRITE
     trace {
@@ -733,6 +771,7 @@ parsed_flag {
     name: "first"
     namespace: "first_ns"
     description: "This is the description of the first flag."
+    bug: "a"
     state: DISABLED
     permission: READ_ONLY
     trace {
@@ -749,6 +788,7 @@ parsed_flag {
     package: "com.second"
     name: "second"
     namespace: "second_ns"
+    bug: "b"
     description: "This is the description of the second flag."
     state: ENABLED
     permission: READ_WRITE
