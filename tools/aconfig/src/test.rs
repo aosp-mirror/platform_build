@@ -61,7 +61,6 @@ parsed_flag {
   name: "enabled_ro"
   namespace: "aconfig_test"
   description: "This flag is ENABLED + READ_ONLY"
-  bug: "789"
   bug: "abc"
   state: ENABLED
   permission: READ_ONLY
@@ -86,6 +85,7 @@ parsed_flag {
   name: "enabled_rw"
   namespace: "aconfig_test"
   description: "This flag is ENABLED + READ_WRITE"
+  bug: ""
   state: ENABLED
   permission: READ_WRITE
   trace {
