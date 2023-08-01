@@ -460,48 +460,51 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
   target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
   target_zip = zipfile.ZipFile(target_file, 'w', allowZip64=True)
 
-  with zipfile.ZipFile(input_file, 'r', allowZip64=True) as input_zip:
-    infolist = input_zip.infolist()
+  fileslist = []
+  for (root, dirs, files) in os.walk(input_file):
+    root = root.lstrip(input_file).lstrip("/")
+    fileslist.extend([os.path.join(root, d) for d in dirs])
+    fileslist.extend([os.path.join(root, d) for d in files])
 
-  input_tmp = common.UnzipTemp(input_file, UNZIP_PATTERN)
-  for info in infolist:
-    unzipped_file = os.path.join(input_tmp, *info.filename.split('/'))
-    if info.filename == 'IMAGES/system_other.img':
+  input_tmp = input_file
+  for filename in fileslist:
+    unzipped_file = os.path.join(input_tmp, *filename.split('/'))
+    if filename == 'IMAGES/system_other.img':
       common.ZipWrite(target_zip, unzipped_file, arcname='IMAGES/system.img')
 
     # Primary images and friends need to be skipped explicitly.
-    elif info.filename in ('IMAGES/system.img',
-                           'IMAGES/system.map'):
+    elif filename in ('IMAGES/system.img',
+                      'IMAGES/system.map'):
       pass
 
     # Copy images that are not in SECONDARY_PAYLOAD_SKIPPED_IMAGES.
-    elif info.filename.startswith(('IMAGES/', 'RADIO/')):
-      image_name = os.path.basename(info.filename)
+    elif filename.startswith(('IMAGES/', 'RADIO/')):
+      image_name = os.path.basename(filename)
       if image_name not in ['{}.img'.format(partition) for partition in
                             SECONDARY_PAYLOAD_SKIPPED_IMAGES]:
-        common.ZipWrite(target_zip, unzipped_file, arcname=info.filename)
+        common.ZipWrite(target_zip, unzipped_file, arcname=filename)
 
     # Skip copying the postinstall config if requested.
-    elif skip_postinstall and info.filename == POSTINSTALL_CONFIG:
+    elif skip_postinstall and filename == POSTINSTALL_CONFIG:
       pass
 
-    elif info.filename.startswith('META/'):
+    elif filename.startswith('META/'):
       # Remove the unnecessary partitions for secondary images from the
       # ab_partitions file.
-      if info.filename == AB_PARTITIONS:
+      if filename == AB_PARTITIONS:
         with open(unzipped_file) as f:
           partition_list = f.read().splitlines()
         partition_list = [partition for partition in partition_list if partition
                           and partition not in SECONDARY_PAYLOAD_SKIPPED_IMAGES]
-        common.ZipWriteStr(target_zip, info.filename,
+        common.ZipWriteStr(target_zip, filename,
                            '\n'.join(partition_list))
       # Remove the unnecessary partitions from the dynamic partitions list.
-      elif (info.filename == 'META/misc_info.txt' or
-            info.filename == DYNAMIC_PARTITION_INFO):
+      elif (filename == 'META/misc_info.txt' or
+            filename == DYNAMIC_PARTITION_INFO):
         modified_info = GetInfoForSecondaryImages(unzipped_file)
-        common.ZipWriteStr(target_zip, info.filename, modified_info)
+        common.ZipWriteStr(target_zip, filename, modified_info)
       else:
-        common.ZipWrite(target_zip, unzipped_file, arcname=info.filename)
+        common.ZipWrite(target_zip, unzipped_file, arcname=filename)
 
   common.ZipClose(target_zip)
 
