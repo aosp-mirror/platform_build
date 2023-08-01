@@ -147,7 +147,7 @@ Non-A/B OTA specific options
 A/B OTA specific options
 
   --disable_fec_computation
-      Disable the on device FEC data computation for incremental updates.
+      Disable the on device FEC data computation for incremental updates. OTA will be larger but installation will be faster.
 
   --include_secondary
       Additionally include the payload for secondary slot images (default:
@@ -224,7 +224,7 @@ A/B OTA specific options
       wait time in recovery.
 
   --enable_vabc_xor
-      Enable the VABC xor feature. Will reduce space requirements for OTA
+      Enable the VABC xor feature. Will reduce space requirements for OTA, but OTA installation will be slower.
 
   --force_minor_version
       Override the update_engine minor version for delta generation.
@@ -233,7 +233,10 @@ A/B OTA specific options
       A colon ':' separated list of compressors. Allowed values are bz2 and brotli.
 
   --enable_zucchini
-      Whether to enable to zucchini feature. Will generate smaller OTA but uses more memory.
+      Whether to enable to zucchini feature. Will generate smaller OTA but uses more memory, OTA generation will take longer.
+
+  --enable_puffdiff
+      Whether to enable to puffdiff feature. Will generate smaller OTA but uses more memory, OTA generation will take longer.
 
   --enable_lz4diff
       Whether to enable lz4diff feature. Will generate smaller OTA for EROFS but
@@ -320,6 +323,7 @@ OPTIONS.enable_vabc_xor = True
 OPTIONS.force_minor_version = None
 OPTIONS.compressor_types = None
 OPTIONS.enable_zucchini = True
+OPTIONS.enable_puffdiff = None
 OPTIONS.enable_lz4diff = False
 OPTIONS.vabc_compression_param = None
 OPTIONS.security_patch_level = None
@@ -994,6 +998,9 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
 
   additional_args += ["--enable_zucchini=" +
                       str(OPTIONS.enable_zucchini).lower()]
+  if OPTIONS.enable_puffdiff is not None:
+    additional_args += ["--enable_puffdiff=" +
+                        str(OPTIONS.enable_puffdiff).lower()]
 
   if not ota_utils.IsLz4diffCompatible(source_file, target_file):
     logger.warning(
@@ -1193,6 +1200,9 @@ def main(argv):
     elif o == "--enable_zucchini":
       assert a.lower() in ["true", "false"]
       OPTIONS.enable_zucchini = a.lower() != "false"
+    elif o == "--enable_puffdiff":
+      assert a.lower() in ["true", "false"]
+      OPTIONS.enable_puffdiff = a.lower() != "false"
     elif o == "--enable_lz4diff":
       assert a.lower() in ["true", "false"]
       OPTIONS.enable_lz4diff = a.lower() != "false"
@@ -1254,6 +1264,7 @@ def main(argv):
                                  "force_minor_version=",
                                  "compressor_types=",
                                  "enable_zucchini=",
+                                 "enable_puffdiff=",
                                  "enable_lz4diff=",
                                  "vabc_compression_param=",
                                  "security_patch_level=",
