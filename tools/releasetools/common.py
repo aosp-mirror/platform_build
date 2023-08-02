@@ -96,7 +96,6 @@ class Options(object):
     self.cache_size = None
     self.stash_threshold = 0.8
     self.logfile = None
-    self.host_tools = {}
     self.sepolicy_name = 'sepolicy.apex'
 
 
@@ -225,23 +224,15 @@ def InitLogging():
   logging.config.dictConfig(config)
 
 
-def SetHostToolLocation(tool_name, location):
-  OPTIONS.host_tools[tool_name] = location
-
-
 def FindHostToolPath(tool_name):
   """Finds the path to the host tool.
 
   Args:
     tool_name: name of the tool to find
   Returns:
-    path to the tool if found under either one of the host_tools map or under
-    the same directory as this binary is located at. If not found, tool_name
-    is returned.
+    path to the tool if found under the same directory as this binary is located at. If not found,
+    tool_name is returned.
   """
-  if tool_name in OPTIONS.host_tools:
-    return OPTIONS.host_tools[tool_name]
-
   my_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
   tool_path = os.path.join(my_dir, tool_name)
   if os.path.exists(tool_path):
