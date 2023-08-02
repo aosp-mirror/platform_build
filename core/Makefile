@@ -3355,6 +3355,10 @@ systemimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,systemimage)
 BUILT_SYSTEMIMAGE := $(systemimage_intermediates)/system.img
 
+# Used by the bazel sandwich to request the staging dir be built
+$(systemimage_intermediates)/staging_dir.stamp: $(FULL_SYSTEMIMAGE_DEPS)
+	touch $@
+
 # $(1): output file
 define build-systemimage-target
   @echo "Target system fs image: $(1)"
