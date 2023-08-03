@@ -62,8 +62,8 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
               invocations of 'm' etc.
 - tapas:      tapas [<App1> <App2> ...] [arm|x86|arm64|x86_64] [eng|userdebug|user]
               Sets up the build environment for building unbundled apps (APKs).
-- banchan:    banchan <module1> [<module2> ...] [arm|x86|arm64|x86_64|arm64_only|x86_64only] \
-                      [eng|userdebug|user]
+- banchan:    banchan <module1> [<module2> ...] \
+                      [arm|x86|arm64|riscv64|x86_64|arm64_only|x86_64only] [eng|userdebug|user]
               Sets up the build environment for building unbundled modules (APEXes).
 - croot:      Changes directory to the top of the tree, or a subdirectory thereof.
 - m:          Makes from the top of the tree.
@@ -952,9 +952,9 @@ function tapas()
 function banchan()
 {
     local showHelp="$(echo $* | xargs -n 1 echo | \grep -E '^(help)$' | xargs)"
-    local product="$(echo $* | xargs -n 1 echo | \grep -E '^(.*_)?(arm|x86|arm64|x86_64|arm64only|x86_64only)$' | xargs)"
+    local product="$(echo $* | xargs -n 1 echo | \grep -E '^(.*_)?(arm|x86|arm64|riscv64|x86_64|arm64only|x86_64only)$' | xargs)"
     local variant="$(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$' | xargs)"
-    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|(.*_)?(arm|x86|arm64|x86_64))$' | xargs)"
+    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|(.*_)?(arm|x86|arm64|riscv64|x86_64))$' | xargs)"
 
     if [ "$showHelp" != "" ]; then
       $(gettop)/build/make/banchanHelp.sh
@@ -980,6 +980,7 @@ function banchan()
       arm)    product=module_arm;;
       x86)    product=module_x86;;
       arm64)  product=module_arm64;;
+      riscv64) product=module_riscv64;;
       x86_64) product=module_x86_64;;
       arm64only)  product=module_arm64only;;
       x86_64only) product=module_x86_64only;;
@@ -1072,6 +1073,10 @@ function cproj()
     done
     \cd $HERE
     echo "can't find Android.mk"
+}
+
+function adb() {
+   command adb "${@}"
 }
 
 # simplified version of ps; output in the form
@@ -1355,53 +1360,6 @@ esac
 function getprebuilt
 {
     get_abs_build_var ANDROID_PREBUILTS
-}
-
-function tracedmdump()
-{
-    local T=$(gettop)
-    if [ ! "$T" ]; then
-        echo "Couldn't locate the top of the tree.  Try setting TOP."
-        return
-    fi
-    local prebuiltdir=$(getprebuilt)
-    local arch=$(gettargetarch)
-    local KERNEL=$T/prebuilts/qemu-kernel/$arch/vmlinux-qemu
-
-    local TRACE=$1
-    if [ ! "$TRACE" ] ; then
-        echo "usage:  tracedmdump  tracename"
-        return
-    fi
-
-    if [ ! -r "$KERNEL" ] ; then
-        echo "Error: cannot find kernel: '$KERNEL'"
-        return
-    fi
-
-    local BASETRACE=$(basename $TRACE)
-    if [ "$BASETRACE" = "$TRACE" ] ; then
-        TRACE=$ANDROID_PRODUCT_OUT/traces/$TRACE
-    fi
-
-    echo "post-processing traces..."
-    rm -f $TRACE/qtrace.dexlist
-    post_trace $TRACE
-    if [ $? -ne 0 ]; then
-        echo "***"
-        echo "*** Error: malformed trace.  Did you remember to exit the emulator?"
-        echo "***"
-        return
-    fi
-    echo "generating dexlist output..."
-    /bin/ls $ANDROID_PRODUCT_OUT/system/framework/*.jar $ANDROID_PRODUCT_OUT/system/app/*.apk $ANDROID_PRODUCT_OUT/data/app/*.apk 2>/dev/null | xargs dexlist > $TRACE/qtrace.dexlist
-    echo "generating dmtrace data..."
-    q2dm -r $ANDROID_PRODUCT_OUT/symbols $TRACE $KERNEL $TRACE/dmtrace || return
-    echo "generating html file..."
-    dmtracedump -h $TRACE/dmtrace >| $TRACE/dmtrace.html || return
-    echo "done, see $TRACE/dmtrace.html for details"
-    echo "or run:"
-    echo "    traceview $TRACE/dmtrace"
 }
 
 # communicate with a running device or emulator, set up necessary state,

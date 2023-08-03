@@ -16,7 +16,7 @@
 
 //! `aconfig` is a build time tool to manage build time configurations, such as feature flags.
 
-use anyhow::{anyhow, bail, ensure, Result};
+use anyhow::{anyhow, bail, Context, Result};
 use clap::{builder::ArgAction, builder::EnumValueParser, Arg, ArgMatches, Command};
 use core::any::Any;
 use std::fs;
@@ -60,12 +60,24 @@ fn cli() -> Command {
         .subcommand(
             Command::new("create-cpp-lib")
                 .arg(Arg::new("cache").long("cache").required(true))
-                .arg(Arg::new("out").long("out").required(true)),
+                .arg(Arg::new("out").long("out").required(true))
+                .arg(
+                    Arg::new("mode")
+                        .long("mode")
+                        .value_parser(EnumValueParser::<commands::CodegenMode>::new())
+                        .default_value("production"),
+                ),
         )
         .subcommand(
             Command::new("create-rust-lib")
                 .arg(Arg::new("cache").long("cache").required(true))
-                .arg(Arg::new("out").long("out").required(true)),
+                .arg(Arg::new("out").long("out").required(true))
+                .arg(
+                    Arg::new("mode")
+                        .long("mode")
+                        .value_parser(EnumValueParser::<commands::CodegenMode>::new())
+                        .default_value("production"),
+                ),
         )
         .subcommand(
             Command::new("create-device-config-defaults")
@@ -117,26 +129,27 @@ fn open_single_file(matches: &ArgMatches, arg_name: &str) -> Result<Input> {
 }
 
 fn write_output_file_realtive_to_dir(root: &Path, output_file: &OutputFile) -> Result<()> {
-    ensure!(
-        root.is_dir(),
-        "output directory {} does not exist or is not a directory",
-        root.display()
-    );
     let path = root.join(output_file.path.clone());
     let parent = path
         .parent()
         .ok_or(anyhow!("unable to locate parent of output file {}", path.display()))?;
-    fs::create_dir_all(parent)?;
-    let mut file = fs::File::create(path)?;
-    file.write_all(&output_file.contents)?;
+    fs::create_dir_all(parent)
+        .with_context(|| format!("failed to create directory {}", parent.display()))?;
+    let mut file = fs::File::create(path.clone())
+        .with_context(|| format!("failed to open {}", path.display()))?;
+    file.write_all(&output_file.contents)
+        .with_context(|| format!("failed to write to {}", path.display()))?;
     Ok(())
 }
 
 fn write_output_to_file_or_stdout(path: &str, data: &[u8]) -> Result<()> {
     if path == "-" {
-        io::stdout().write_all(data)?;
+        io::stdout().write_all(data).context("failed to write to stdout")?;
     } else {
-        fs::File::create(path)?.write_all(data)?;
+        fs::File::create(path)
+            .with_context(|| format!("failed to open {}", path))?
+            .write_all(data)
+            .with_context(|| format!("failed to write to {}", path))?;
     }
     Ok(())
 }
@@ -148,14 +161,16 @@ fn main() -> Result<()> {
             let package = get_required_arg::<String>(sub_matches, "package")?;
             let declarations = open_zero_or_more_files(sub_matches, "declarations")?;
             let values = open_zero_or_more_files(sub_matches, "values")?;
-            let output = commands::parse_flags(package, declarations, values)?;
+            let output = commands::parse_flags(package, declarations, values)
+                .context("failed to create cache")?;
             let path = get_required_arg::<String>(sub_matches, "cache")?;
             write_output_to_file_or_stdout(path, &output)?;
         }
         Some(("create-java-lib", sub_matches)) => {
             let cache = open_single_file(sub_matches, "cache")?;
             let mode = get_required_arg::<CodegenMode>(sub_matches, "mode")?;
-            let generated_files = commands::create_java_lib(cache, *mode)?;
+            let generated_files =
+                commands::create_java_lib(cache, *mode).context("failed to create java lib")?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
             generated_files
                 .iter()
@@ -163,31 +178,40 @@ fn main() -> Result<()> {
         }
         Some(("create-cpp-lib", sub_matches)) => {
             let cache = open_single_file(sub_matches, "cache")?;
-            let generated_file = commands::create_cpp_lib(cache)?;
+            let mode = get_required_arg::<CodegenMode>(sub_matches, "mode")?;
+            let generated_files =
+                commands::create_cpp_lib(cache, *mode).context("failed to create cpp lib")?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
-            write_output_file_realtive_to_dir(&dir, &generated_file)?;
+            generated_files
+                .iter()
+                .try_for_each(|file| write_output_file_realtive_to_dir(&dir, file))?;
         }
         Some(("create-rust-lib", sub_matches)) => {
             let cache = open_single_file(sub_matches, "cache")?;
-            let generated_file = commands::create_rust_lib(cache)?;
+            let mode = get_required_arg::<CodegenMode>(sub_matches, "mode")?;
+            let generated_file =
+                commands::create_rust_lib(cache, *mode).context("failed to create rust lib")?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
             write_output_file_realtive_to_dir(&dir, &generated_file)?;
         }
         Some(("create-device-config-defaults", sub_matches)) => {
             let cache = open_single_file(sub_matches, "cache")?;
-            let output = commands::create_device_config_defaults(cache)?;
+            let output = commands::create_device_config_defaults(cache)
+                .context("failed to create device config defaults")?;
             let path = get_required_arg::<String>(sub_matches, "out")?;
             write_output_to_file_or_stdout(path, &output)?;
         }
         Some(("create-device-config-sysprops", sub_matches)) => {
             let cache = open_single_file(sub_matches, "cache")?;
-            let output = commands::create_device_config_sysprops(cache)?;
+            let output = commands::create_device_config_sysprops(cache)
+                .context("failed to create device config sysprops")?;
             let path = get_required_arg::<String>(sub_matches, "out")?;
             write_output_to_file_or_stdout(path, &output)?;
         }
         Some(("dump", sub_matches)) => {
             let input = open_zero_or_more_files(sub_matches, "cache")?;
-            let format = get_required_arg::<DumpFormat>(sub_matches, "format")?;
+            let format = get_required_arg::<DumpFormat>(sub_matches, "format")
+                .context("failed to dump previously parsed flags")?;
             let output = commands::dump_parsed_flags(input, *format)?;
             let path = get_required_arg::<String>(sub_matches, "out")?;
             write_output_to_file_or_stdout(path, &output)?;

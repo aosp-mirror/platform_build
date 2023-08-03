@@ -50,7 +50,8 @@ $(art_host_tests_zip) : $(COMPATIBILITY.art-host-tests.FILES) $(my_host_shared_l
 	grep $(TARGET_OUT_TESTCASES) $(PRIVATE_INTERMEDIATES_DIR)/list > $(PRIVATE_INTERMEDIATES_DIR)/target.list || true
 	$(hide) $(SOONG_ZIP) -d -o $@ -P host -C $(HOST_OUT) -l $(PRIVATE_INTERMEDIATES_DIR)/host.list \
 	  -P target -C $(PRODUCT_OUT) -l $(PRIVATE_INTERMEDIATES_DIR)/target.list \
-	  -P host/testcases -C $(HOST_OUT) -l $(PRIVATE_INTERMEDIATES_DIR)/shared-libs.list
+	  -P host/testcases -C $(HOST_OUT) -l $(PRIVATE_INTERMEDIATES_DIR)/shared-libs.list \
+	  -sha256
 	grep -e .*\\.config$$ $(PRIVATE_INTERMEDIATES_DIR)/host.list > $(PRIVATE_INTERMEDIATES_DIR)/host-test-configs.list || true
 	grep -e .*\\.config$$ $(PRIVATE_INTERMEDIATES_DIR)/target.list > $(PRIVATE_INTERMEDIATES_DIR)/target-test-configs.list || true
 	$(hide) $(SOONG_ZIP) -d -o $(PRIVATE_art_host_tests_configs_zip) \

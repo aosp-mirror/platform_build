@@ -68,6 +68,8 @@ $(my_res_resources_flat) $(my_overlay_resources_flat) $(my_resources_flata) $(my
 # support for it.
 my_static_library_resources := $(foreach l, $(call reverse-list,$(LOCAL_STATIC_ANDROID_LIBRARIES) $(LOCAL_STATIC_JAVA_AAR_LIBRARIES)),\
   $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/package-res.apk)
+my_static_library_transitive_resource_packages_lists := $(foreach l, $(call reverse-list,$(LOCAL_STATIC_ANDROID_LIBRARIES) $(LOCAL_STATIC_JAVA_AAR_LIBRARIES)),\
+  $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/transitive-res-packages)
 my_static_library_extra_packages := $(foreach l, $(call reverse-list,$(LOCAL_STATIC_ANDROID_LIBRARIES) $(LOCAL_STATIC_JAVA_AAR_LIBRARIES)),\
   $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/extra_packages)
 my_shared_library_resources := $(foreach l, $(LOCAL_SHARED_ANDROID_LIBRARIES),\
@@ -95,6 +97,7 @@ $(my_res_package): PRIVATE_ASSET_DIRS := $(my_asset_dirs)
 $(my_res_package): PRIVATE_JAVA_GEN_DIR := $(intermediates.COMMON)/aapt2
 $(my_res_package): PRIVATE_SRCJAR := $(my_srcjar)
 $(my_res_package): PRIVATE_STATIC_LIBRARY_EXTRA_PACKAGES := $(my_static_library_extra_packages)
+$(my_res_package): PRIVATE_STATIC_LIBRARY_TRANSITIVE_RES_PACKAGES_LISTS := $(my_static_library_transitive_resource_packages_lists)
 $(my_res_package): PRIVATE_AAPT_EXTRA_PACKAGES := $(aapt_extra_packages)
 $(my_res_package): .KATI_IMPLICIT_OUTPUTS := $(my_srcjar) $(aapt_extra_packages)
 
@@ -117,7 +120,7 @@ ifdef proguard_options_file
 $(my_res_package): .KATI_IMPLICIT_OUTPUTS += $(proguard_options_file)
 endif
 
-$(my_res_package): $(full_android_manifest) $(my_static_library_resources) $(my_shared_library_resources)
+$(my_res_package): $(full_android_manifest) $(my_static_library_resources) $(my_static_library_transitive_resource_packages_lists) $(my_shared_library_resources)
 $(my_res_package): $(my_full_asset_paths)
 $(my_res_package): $(my_res_resources_flat) $(my_overlay_resources_flat) \
   $(my_resources_flata) $(my_static_library_resources) $(my_static_library_extra_packages) \

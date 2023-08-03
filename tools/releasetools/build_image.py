@@ -683,7 +683,9 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   d = {}
   TryParseFingerprint(glob_dict)
 
-  d["timestamp"] = FIXED_FILE_TIMESTAMP
+  # Set fixed timestamp for building the OTA package.
+  if "use_fixed_timestamp" in glob_dict:
+    d["timestamp"] = FIXED_FILE_TIMESTAMP
   if "build.prop" in glob_dict:
     timestamp = glob_dict["build.prop"].GetProp("ro.build.date.utc")
     if timestamp:
