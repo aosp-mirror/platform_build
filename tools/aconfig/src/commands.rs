@@ -35,8 +35,15 @@ pub struct Input {
 impl Input {
     fn try_parse_flags(&mut self) -> Result<ProtoParsedFlags> {
         let mut buffer = Vec::new();
-        self.reader.read_to_end(&mut buffer)?;
+        self.reader
+            .read_to_end(&mut buffer)
+            .with_context(|| format!("failed to read {}", self.source))?;
         crate::protos::parsed_flags::try_from_binary_proto(&buffer)
+            .with_context(|| self.error_context())
+    }
+
+    fn error_context(&self) -> String {
+        format!("failed to parse {}", self.source)
     }
 }
 
@@ -53,20 +60,23 @@ pub fn parse_flags(package: &str, declarations: Vec<Input>, values: Vec<Input>) 
 
     for mut input in declarations {
         let mut contents = String::new();
-        input.reader.read_to_string(&mut contents)?;
+        input
+            .reader
+            .read_to_string(&mut contents)
+            .with_context(|| format!("failed to read {}", input.source))?;
 
         let flag_declarations = crate::protos::flag_declarations::try_from_text_proto(&contents)
-            .with_context(|| format!("Failed to parse {}", input.source))?;
+            .with_context(|| input.error_context())?;
         ensure!(
             package == flag_declarations.package(),
-            "Failed to parse {}: expected package {}, got {}",
+            "failed to parse {}: expected package {}, got {}",
             input.source,
             package,
             flag_declarations.package()
         );
         for mut flag_declaration in flag_declarations.flag.into_iter() {
             crate::protos::flag_declaration::verify_fields(&flag_declaration)
-                .with_context(|| format!("Failed to parse {}", input.source))?;
+                .with_context(|| input.error_context())?;
 
             // create ParsedFlag using FlagDeclaration and default values
             let mut parsed_flag = ProtoParsedFlag::new();
@@ -101,14 +111,21 @@ pub fn parse_flags(package: &str, declarations: Vec<Input>, values: Vec<Input>) 
 
     for mut input in values {
         let mut contents = String::new();
-        input.reader.read_to_string(&mut contents)?;
+        input
+            .reader
+            .read_to_string(&mut contents)
+            .with_context(|| format!("failed to read {}", input.source))?;
         let flag_values = crate::protos::flag_values::try_from_text_proto(&contents)
-            .with_context(|| format!("Failed to parse {}", input.source))?;
+            .with_context(|| input.error_context())?;
         for flag_value in flag_values.flag_value.into_iter() {
             crate::protos::flag_value::verify_fields(&flag_value)
-                .with_context(|| format!("Failed to parse {}", input.source))?;
+                .with_context(|| input.error_context())?;
 
-            let Some(parsed_flag) = parsed_flags.parsed_flag.iter_mut().find(|pf| pf.package() == flag_value.package() && pf.name() == flag_value.name()) else {
+            let Some(parsed_flag) = parsed_flags
+                .parsed_flag
+                .iter_mut()
+                .find(|pf| pf.package() == flag_value.package() && pf.name() == flag_value.name())
+            else {
                 // (silently) skip unknown flags
                 continue;
             };
@@ -123,6 +140,8 @@ pub fn parse_flags(package: &str, declarations: Vec<Input>, values: Vec<Input>) 
         }
     }
 
+    // Create a sorted parsed_flags
+    crate::protos::parsed_flags::sort_parsed_flags(&mut parsed_flags);
     crate::protos::parsed_flags::verify_fields(&parsed_flags)?;
     let mut output = Vec::new();
     parsed_flags.write_to_vec(&mut output)?;
@@ -143,20 +162,20 @@ pub fn create_java_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Ve
     generate_java_code(package, parsed_flags.parsed_flag.iter(), codegen_mode)
 }
 
-pub fn create_cpp_lib(mut input: Input) -> Result<OutputFile> {
+pub fn create_cpp_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec<OutputFile>> {
     let parsed_flags = input.try_parse_flags()?;
     let Some(package) = find_unique_package(&parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
-    generate_cpp_code(package, parsed_flags.parsed_flag.iter())
+    generate_cpp_code(package, parsed_flags.parsed_flag.iter(), codegen_mode)
 }
 
-pub fn create_rust_lib(mut input: Input) -> Result<OutputFile> {
+pub fn create_rust_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<OutputFile> {
     let parsed_flags = input.try_parse_flags()?;
     let Some(package) = find_unique_package(&parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
-    generate_rust_code(package, parsed_flags.parsed_flag.iter())
+    generate_rust_code(package, parsed_flags.parsed_flag.iter(), codegen_mode)
 }
 
 pub fn create_device_config_defaults(mut input: Input) -> Result<Vec<u8>> {
@@ -207,7 +226,7 @@ pub fn create_device_config_sysprops(mut input: Input) -> Result<Vec<u8>> {
 #[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
 pub enum DumpFormat {
     Text,
-    Debug,
+    Verbose,
     Protobuf,
     Textproto,
 }
@@ -223,18 +242,27 @@ pub fn dump_parsed_flags(mut input: Vec<Input>, format: DumpFormat) -> Result<Ve
         DumpFormat::Text => {
             for parsed_flag in parsed_flags.parsed_flag.into_iter() {
                 let line = format!(
-                    "{}/{}: {:?} {:?}\n",
+                    "{}/{}: {:?} + {:?}\n",
                     parsed_flag.package(),
                     parsed_flag.name(),
-                    parsed_flag.state(),
-                    parsed_flag.permission()
+                    parsed_flag.permission(),
+                    parsed_flag.state()
                 );
                 output.extend_from_slice(line.as_bytes());
             }
         }
-        DumpFormat::Debug => {
+        DumpFormat::Verbose => {
             for parsed_flag in parsed_flags.parsed_flag.into_iter() {
-                let line = format!("{:#?}\n", parsed_flag);
+                let sources: Vec<_> =
+                    parsed_flag.trace.iter().map(|tracepoint| tracepoint.source()).collect();
+                let line = format!(
+                    "{}/{}: {:?} + {:?} ({})\n",
+                    parsed_flag.package(),
+                    parsed_flag.name(),
+                    parsed_flag.permission(),
+                    parsed_flag.state(),
+                    sources.join(", ")
+                );
                 output.extend_from_slice(line.as_bytes());
             }
         }
@@ -320,7 +348,7 @@ mod tests {
         let input = parse_test_flags_as_input();
         let bytes = dump_parsed_flags(vec![input], DumpFormat::Text).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
-        assert!(text.contains("com.android.aconfig.test/disabled_ro: DISABLED READ_ONLY"));
+        assert!(text.contains("com.android.aconfig.test/disabled_ro: READ_ONLY + DISABLED"));
     }
 
     #[test]

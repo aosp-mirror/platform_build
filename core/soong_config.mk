@@ -40,6 +40,7 @@ $(call add_json_str,  Platform_preview_sdk_version,      $(PLATFORM_PREVIEW_SDK_
 $(call add_json_str,  Platform_base_os,                  $(PLATFORM_BASE_OS))
 $(call add_json_str,  Platform_version_last_stable,      $(PLATFORM_VERSION_LAST_STABLE))
 $(call add_json_str,  Platform_version_known_codenames,  $(PLATFORM_VERSION_KNOWN_CODENAMES))
+$(call add_json_bool, Release_aidl_use_unfrozen,         $(RELEASE_AIDL_USE_UNFROZEN))
 
 $(call add_json_str,  Platform_min_supported_target_sdk_version, $(PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION))
 
@@ -150,6 +151,7 @@ $(call add_json_bool, Malloc_zero_contents,              $(call invert_bool,$(fi
 $(call add_json_bool, Malloc_pattern_fill_contents,      $(MALLOC_PATTERN_FILL_CONTENTS))
 $(call add_json_str,  Override_rs_driver,                $(OVERRIDE_RS_DRIVER))
 $(call add_json_str,  DeviceMaxPageSizeSupported,        $(TARGET_MAX_PAGE_SIZE_SUPPORTED))
+$(call add_json_bool, Device_page_size_agnostic,         $(filter true,$(TARGET_PAGE_SIZE_AGNOSTIC)))
 
 $(call add_json_bool, UncompressPrivAppDex,              $(call invert_bool,$(filter true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS))))
 $(call add_json_list, ModulesLoadedByPrivilegedModules,  $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES))
@@ -235,6 +237,7 @@ $(call add_json_bool, WithDexpreopt,                     $(filter true,$(WITH_DE
 $(call add_json_list, ManifestPackageNameOverrides,      $(PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES))
 $(call add_json_list, PackageNameOverrides,              $(PRODUCT_PACKAGE_NAME_OVERRIDES))
 $(call add_json_list, CertificateOverrides,              $(PRODUCT_CERTIFICATE_OVERRIDES))
+$(call add_json_list, ConfiguredJarLocationOverrides,    $(PRODUCT_CONFIGURED_JAR_LOCATION_OVERRIDES))
 
 $(call add_json_str, ApexGlobalMinSdkVersionOverride,    $(APEX_GLOBAL_MIN_SDK_VERSION_OVERRIDE))
 
@@ -317,6 +320,8 @@ $(call add_json_list, BuildVersionTags,    $(BUILD_VERSION_TAGS))
 
 $(call add_json_str, ReleaseVersion,    $(_RELEASE_VERSION))
 $(call add_json_list, ReleaseAconfigValueSets,    $(RELEASE_ACONFIG_VALUE_SETS))
+
+$(call add_json_bool, KeepVndk, $(filter true,$(KEEP_VNDK)))
 
 $(call json_end)
 

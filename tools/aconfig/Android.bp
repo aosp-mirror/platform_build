@@ -2,6 +2,28 @@ package {
     default_applicable_licenses: ["Android-Apache-2.0"],
 }
 
+// proto libraries for consumers of `aconfig dump --format=protobuf` output
+
+java_library {
+    name: "libaconfig_java_proto_lite",
+    host_supported: true,
+    srcs: ["protos/aconfig.proto"],
+    static_libs: ["libprotobuf-java-lite"],
+    proto: {
+        type: "lite",
+    },
+    sdk_version: "current",
+}
+
+java_library_host {
+    name: "libaconfig_java_proto_full",
+    srcs: ["protos/aconfig.proto"],
+    static_libs: ["libprotobuf-java-full"],
+    proto: {
+        type: "full",
+    },
+}
+
 // host binary: aconfig
 
 rust_protobuf_host {
@@ -45,7 +67,7 @@ rust_test_host {
     ],
 }
 
-// integration tests: java
+// integration tests: general
 
 aconfig_declarations {
     name: "aconfig.test.flags",
@@ -69,8 +91,10 @@ aconfig_value_set {
     ],
 }
 
+// integration tests: java
+
 java_aconfig_library {
-    name: "aconfig_test_java",
+    name: "aconfig_test_java_library",
     aconfig_declarations: "aconfig.test.flags",
 }
 
@@ -82,9 +106,30 @@ android_test {
     manifest: "tests/AndroidManifest.xml",
     certificate: "platform",
     static_libs: [
+        "aconfig_test_java_library",
         "androidx.test.rules",
         "testng",
-        "aconfig_test_java",
     ],
     test_suites: ["device-tests"],
+}
+
+// integration tests: C++
+
+cc_aconfig_library {
+    name: "aconfig_test_cpp_library",
+    aconfig_declarations: "aconfig.test.flags",
+}
+
+cc_test {
+    name: "aconfig.test.cpp",
+    srcs: [
+        "tests/aconfig_test.cpp",
+    ],
+    static_libs: [
+        "aconfig_test_cpp_library",
+        "libgmock",
+    ],
+    shared_libs: [
+        "server_configurable_flags",
+    ],
 }

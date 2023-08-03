@@ -233,8 +233,9 @@ mod tests {
         let expected_featureflagsimpl_content = r#"
         package com.android.aconfig.test;
         import static java.util.stream.Collectors.toMap;
-        import java.util.stream.Stream;
         import java.util.HashMap;
+        import java.util.Map;
+        import java.util.stream.Stream;
         public final class FeatureFlagsImpl implements FeatureFlags {
             @Override
             public boolean disabledRo() {
@@ -257,6 +258,11 @@ mod tests {
                     throw new IllegalArgumentException("no such flag" + flagName);
                 }
                 this.mFlagMap.put(flagName, value);
+            }
+            public void resetAll() {
+                for (Map.Entry entry : mFlagMap.entrySet()) {
+                    entry.setValue(null);
+                }
             }
             private boolean getFlag(String flagName) {
                 Boolean value = this.mFlagMap.get(flagName);
