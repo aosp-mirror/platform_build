@@ -578,7 +578,9 @@ ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 
       ALL_VINTF_MANIFEST_FRAGMENTS_LIST += $(my_vintf_new_pairs)
 
-      $(my_all_targets) : $(my_vintf_new_installed)
+      $(my_all_targets) : $(my_vintf_installed)
+      # Install fragments together with the target
+      $(LOCAL_INSTALLED_MODULE) : | $(my_vintf_installed)
     endif # my_vintf_fragments
 
     # Rule to install the module's companion init.rc.
@@ -615,6 +617,8 @@ ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
       ALL_INIT_RC_INSTALLED_PAIRS += $(my_init_rc_new_pairs)
 
       $(my_all_targets) : $(my_init_rc_installed)
+      # Install init_rc together with the target
+      $(LOCAL_INSTALLED_MODULE) : | $(my_init_rc_installed)
     endif # my_init_rc
 
   endif # !LOCAL_IS_HOST_MODULE
@@ -975,6 +979,11 @@ ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
       $(my_init_rc_pairs) \
       $(my_test_data_pairs) \
       $(my_vintf_pairs))
+  # Store the list of vintf/init_rc as order-only dependencies
+  ALL_MODULES.$(my_register_name).ORDERONLY_INSTALLED := \
+    $(strip $(ALL_MODULES.$(my_register_name).ORDERONLY_INSTALLED) \
+      $(my_init_rc_installed) \
+      $(my_vintf_installed))
 else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   ALL_MODULES.$(my_register_name).INSTALLED := \
     $(strip $(ALL_MODULES.$(my_register_name).INSTALLED) \
@@ -984,6 +993,10 @@ else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
     $(strip $(ALL_MODULES.$(my_register_name).BUILT_INSTALLED) \
     $(LOCAL_BUILT_MODULE):$(LOCAL_INSTALLED_MODULE) \
     $(my_init_rc_pairs) $(my_test_data_pairs) $(my_vintf_pairs))
+  ALL_MODULES.$(my_register_name).ORDERONLY_INSTALLED := \
+    $(strip $(ALL_MODULES.$(my_register_name).ORDERONLY_INSTALLED) \
+      $(my_init_rc_installed) \
+      $(my_vintf_installed))
 endif
 ifdef LOCAL_PICKUP_FILES
 # Files or directories ready to pick up by the build system
@@ -1044,6 +1057,10 @@ endif
 ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS := \
   $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS) \
   $(filter-out $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS),$(my_supported_variant))
+
+ALL_MODULES.$(my_register_name).ACONFIG_FILES := \
+    $(ALL_MODULES.$(my_register_name).ACONFIG_FILES) $(LOCAL_ACONFIG_FILES)
+
 
 ##########################################################################
 ## When compiling against API imported module, use API import stub

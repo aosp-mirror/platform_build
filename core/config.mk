@@ -342,6 +342,23 @@ else
 JAVA_TMPDIR_ARG :=
 endif
 
+# These build broken variables are intended to be set in a buildspec file,
+# while other build broken flags are expected to be set in a board config.
+# These are build broken variables that are expected to apply across board
+# configs, generally for cross-cutting features.
+
+# Build broken variables that should be treated as booleans
+_build_broken_bool_vars := \
+  BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES \
+
+# Build broken variables that should be treated as lists
+_build_broken_list_vars := \
+  BUILD_BROKEN_PLUGIN_VALIDATION \
+
+_build_broken_var_names := $(_build_broken_bool_vars)
+_build_broken_var_names += $(_build_broken_list_vars)
+$(foreach v,$(_build_broken_var_names),$(eval $(v) :=))
+
 # ###############################################################
 # Include sub-configuration files
 # ###############################################################
@@ -370,6 +387,13 @@ endif
 # Define most of the global variables.  These are the ones that
 # are specific to the user's build configuration.
 include $(BUILD_SYSTEM)/envsetup.mk
+
+
+$(foreach var,$(_build_broken_bool_vars), \
+  $(if $(filter-out true false,$($(var))), \
+    $(error Valid values of $(var) are "true", "false", and "". Not "$($(var))")))
+
+.KATI_READONLY := $(_build_broken_var_names)
 
 # Returns true if it is a low memory device, otherwise it returns false.
 define is-low-mem-device
@@ -401,6 +425,7 @@ ifdef PRODUCT_SHIPPING_API_LEVEL
 endif
 
 # Set TARGET_MAX_PAGE_SIZE_SUPPORTED.
+# TARGET_MAX_PAGE_SIZE_SUPPORTED indicates the alignment of the ELF segments.
 ifdef PRODUCT_MAX_PAGE_SIZE_SUPPORTED
   TARGET_MAX_PAGE_SIZE_SUPPORTED := $(PRODUCT_MAX_PAGE_SIZE_SUPPORTED)
 else ifeq ($(strip $(call is-low-mem-device)),true)
@@ -411,10 +436,37 @@ else
   TARGET_MAX_PAGE_SIZE_SUPPORTED := 4096
   # When VSR vendor API level >= 34, binary alignment will be 65536.
   ifeq ($(call math_gt_or_eq,$(vsr_vendor_api_level),34),true)
+    ifeq ($(TARGET_ARCH),arm64)
       TARGET_MAX_PAGE_SIZE_SUPPORTED := 65536
+    endif
+    ifeq ($(TARGET_ARCH),arm)
+      TARGET_MAX_PAGE_SIZE_SUPPORTED := 65536
+    endif
   endif
 endif
 .KATI_READONLY := TARGET_MAX_PAGE_SIZE_SUPPORTED
+
+# Check that TARGET_MAX_PAGE_SIZE_SUPPORTED is greater than 4096 only for ARM arch.
+ifneq ($(TARGET_MAX_PAGE_SIZE_SUPPORTED),4096)
+  ifneq ($(TARGET_ARCH),arm64)
+    ifneq ($(TARGET_ARCH),arm)
+      $(error TARGET_MAX_PAGE_SIZE_SUPPORTED=$(TARGET_MAX_PAGE_SIZE_SUPPORTED) is greater than 4096. Only supported in ARM arch)
+    endif
+  endif
+endif
+
+# Boolean variable determining if AOSP is page size agnostic. This means
+# that AOSP can use a kernel configured with 4k/16k/64k PAGE SIZES.
+TARGET_PAGE_SIZE_AGNOSTIC := false
+ifdef PRODUCT_PAGE_SIZE_AGNOSTIC
+  TARGET_PAGE_SIZE_AGNOSTIC := $(PRODUCT_PAGE_SIZE_AGNOSTIC)
+  ifeq ($(TARGET_PAGE_SIZE_AGNOSTIC),true)
+      ifneq ($(TARGET_MAX_PAGE_SIZE_SUPPORTED),65536)
+          $(error TARGET_MAX_PAGE_SIZE_SUPPORTED has to be 65536 to support page size agnostic)
+      endif
+  endif
+endif
+.KATI_READONLY := TARGET_PAGE_SIZE_AGNOSTIC
 
 # Pruned directory options used when using findleaves.py
 # See envsetup.mk for a description of SCAN_EXCLUDE_DIRS
@@ -625,6 +677,7 @@ FILESLIST := $(HOST_OUT_EXECUTABLES)/fileslist
 FILESLIST_UTIL :=$= build/make/tools/fileslist_util.py
 HOST_INIT_VERIFIER := $(HOST_OUT_EXECUTABLES)/host_init_verifier
 XMLLINT := $(HOST_OUT_EXECUTABLES)/xmllint
+ACONFIG := $(HOST_OUT_EXECUTABLES)/aconfig
 
 # SOONG_ZIP is exported by Soong, but needs to be defined early for
 # $OUT/dexpreopt.global.  It will be verified against the Soong version.
@@ -645,10 +698,11 @@ else
 # For non-supported hosts, do not generate breakpad symbols.
 BREAKPAD_GENERATE_SYMBOLS := false
 endif
+GZIP := prebuilts/build-tools/path/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/gzip
 PROTOC := $(HOST_OUT_EXECUTABLES)/aprotoc$(HOST_EXECUTABLE_SUFFIX)
 NANOPB_SRCS := $(HOST_OUT_EXECUTABLES)/protoc-gen-nanopb
 MKBOOTFS := $(HOST_OUT_EXECUTABLES)/mkbootfs$(HOST_EXECUTABLE_SUFFIX)
-MINIGZIP := $(HOST_OUT_EXECUTABLES)/minigzip$(HOST_EXECUTABLE_SUFFIX)
+MINIGZIP := $(GZIP)
 LZ4 := $(HOST_OUT_EXECUTABLES)/lz4$(HOST_EXECUTABLE_SUFFIX)
 GENERATE_GKI_CERTIFICATE := $(HOST_OUT_EXECUTABLES)/generate_gki_certificate$(HOST_EXECUTABLE_SUFFIX)
 ifeq (,$(strip $(BOARD_CUSTOM_MKBOOTIMG)))
@@ -722,7 +776,7 @@ EXTRACT_KERNEL := build/make/tools/extract_kernel.py
 # Path to tools.jar
 HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA8_HOME)/lib/tools.jar
 
-APICHECK_COMMAND := $(JAVA) -Xmx4g -jar $(APICHECK) --no-banner
+APICHECK_COMMAND := $(JAVA) -Xmx4g -jar $(APICHECK)
 
 # Boolean variable determining if the allow list for compatible properties is enabled
 PRODUCT_COMPATIBLE_PROPERTY := true
@@ -776,6 +830,9 @@ $(KATI_obsolete_var $(foreach req,$(requirements),$(req)_OVERRIDE) \
     ,This should be referenced without the _OVERRIDE suffix.)
 
 requirements :=
+
+# Set default value of KEEP_VNDK.
+KEEP_VNDK ?= true
 
 # BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED can be true only if early-mount of
 # partitions is supported. But the early-mount must be supported for full

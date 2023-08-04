@@ -517,12 +517,14 @@ def AddPvmfw(output_zip):
   return img.name
 
 
-def AddCustomImages(output_zip, partition_name):
-  """Adds and signs custom images in IMAGES/.
+def AddCustomImages(output_zip, partition_name, image_list):
+  """Adds and signs avb custom images as needed in IMAGES/.
 
   Args:
     output_zip: The output zip file (needs to be already open), or None to
         write images to OPTIONS.input_tmp/.
+    partition_name: The custom image partition name.
+    image_list: The image list of the custom image partition.
 
   Uses the image under IMAGES/ if it already exists. Otherwise looks for the
   image under PREBUILT_IMAGES/, signs it as needed, and returns the image name.
@@ -531,19 +533,20 @@ def AddCustomImages(output_zip, partition_name):
     AssertionError: If image can't be found.
   """
 
+  builder = None
   key_path = OPTIONS.info_dict.get("avb_{}_key_path".format(partition_name))
-  algorithm = OPTIONS.info_dict.get("avb_{}_algorithm".format(partition_name))
-  extra_args = OPTIONS.info_dict.get(
-      "avb_{}_add_hashtree_footer_args".format(partition_name))
-  partition_size = OPTIONS.info_dict.get(
-      "avb_{}_partition_size".format(partition_name))
+  if key_path is not None:
+    algorithm = OPTIONS.info_dict.get("avb_{}_algorithm".format(partition_name))
+    extra_args = OPTIONS.info_dict.get(
+        "avb_{}_add_hashtree_footer_args".format(partition_name))
+    partition_size = OPTIONS.info_dict.get(
+        "avb_{}_partition_size".format(partition_name))
 
-  builder = verity_utils.CreateCustomImageBuilder(
-      OPTIONS.info_dict, partition_name, partition_size,
-      key_path, algorithm, extra_args)
+    builder = verity_utils.CreateCustomImageBuilder(
+        OPTIONS.info_dict, partition_name, partition_size,
+        key_path, algorithm, extra_args)
 
-  for img_name in OPTIONS.info_dict.get(
-          "avb_{}_image_list".format(partition_name)).split():
+  for img_name in image_list:
     custom_image = OutputFile(
         output_zip, OPTIONS.input_tmp, "IMAGES", img_name)
     if os.path.exists(custom_image.name):
@@ -682,34 +685,6 @@ def AddVBMeta(output_zip, partitions, name, needed_partitions):
   common.BuildVBMeta(img.name, partitions, name, needed_partitions)
   img.Write()
   return img.name
-
-
-def AddPartitionTable(output_zip):
-  """Create a partition table image and store it in output_zip."""
-
-  img = OutputFile(
-      output_zip, OPTIONS.input_tmp, "IMAGES", "partition-table.img")
-  bpt = OutputFile(
-      output_zip, OPTIONS.input_tmp, "META", "partition-table.bpt")
-
-  # use BPTTOOL from environ, or "bpttool" if empty or not set.
-  bpttool = os.getenv("BPTTOOL") or "bpttool"
-  cmd = [bpttool, "make_table", "--output_json", bpt.name,
-         "--output_gpt", img.name]
-  input_files_str = OPTIONS.info_dict["board_bpt_input_files"]
-  input_files = input_files_str.split()
-  for i in input_files:
-    cmd.extend(["--input", i])
-  disk_size = OPTIONS.info_dict.get("board_bpt_disk_size")
-  if disk_size:
-    cmd.extend(["--disk_size", disk_size])
-  args = OPTIONS.info_dict.get("board_bpt_make_table_args")
-  if args:
-    cmd.extend(shlex.split(args))
-  common.RunAndCheckOutput(cmd)
-
-  img.Write()
-  bpt.Write()
 
 
 def AddCache(output_zip):
@@ -1087,10 +1062,6 @@ def AddImagesToTargetFiles(filename):
     banner("cache")
     AddCache(output_zip)
 
-  if OPTIONS.info_dict.get("board_bpt_enable") == "true":
-    banner("partition-table")
-    AddPartitionTable(output_zip)
-
   add_partition("dtbo",
                 OPTIONS.info_dict.get("has_dtbo") == "true", AddDtbo, [])
   add_partition("pvmfw",
@@ -1098,18 +1069,29 @@ def AddImagesToTargetFiles(filename):
 
   # Custom images.
   custom_partitions = OPTIONS.info_dict.get(
-      "avb_custom_images_partition_list", "").strip().split()
+      "custom_images_partition_list", "").strip().split()
   for partition_name in custom_partitions:
     partition_name = partition_name.strip()
     banner("custom images for " + partition_name)
-    partitions[partition_name] = AddCustomImages(output_zip, partition_name)
+    image_list = OPTIONS.info_dict.get(
+          "{}_image_list".format(partition_name)).split()
+    partitions[partition_name] = AddCustomImages(output_zip, partition_name, image_list)
+
+  avb_custom_partitions = OPTIONS.info_dict.get(
+      "avb_custom_images_partition_list", "").strip().split()
+  for partition_name in avb_custom_partitions:
+    partition_name = partition_name.strip()
+    banner("avb custom images for " + partition_name)
+    image_list = OPTIONS.info_dict.get(
+          "avb_{}_image_list".format(partition_name)).split()
+    partitions[partition_name] = AddCustomImages(output_zip, partition_name, image_list)
 
   if OPTIONS.info_dict.get("avb_enable") == "true":
     # vbmeta_partitions includes the partitions that should be included into
     # top-level vbmeta.img, which are the ones that are not included in any
     # chained VBMeta image plus the chained VBMeta images themselves.
-    # Currently custom_partitions are all chained to VBMeta image.
-    vbmeta_partitions = common.AVB_PARTITIONS[:] + tuple(custom_partitions)
+    # Currently avb_custom_partitions are all chained to VBMeta image.
+    vbmeta_partitions = common.AVB_PARTITIONS[:] + tuple(avb_custom_partitions)
 
     vbmeta_system = OPTIONS.info_dict.get("avb_vbmeta_system", "").strip()
     if vbmeta_system:
