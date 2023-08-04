@@ -218,6 +218,12 @@ ifdef BOARD_VNDK_VERSION
   else
     ADDITIONAL_VENDOR_PROPERTIES := ro.vndk.version=$(BOARD_VNDK_VERSION)
   endif
+
+  # TODO(b/290159430): ro.vndk.deprecate is a temporal variable for deprecating VNDK.
+  # This variable will be removed once ro.vndk.version can be removed.
+  ifneq ($(KEEP_VNDK),true)
+    ADDITIONAL_SYSTEM_PROPERTIES += ro.vndk.deprecate=true
+  endif
 endif
 
 # Add cpu properties for bionic and ART.
@@ -810,12 +816,14 @@ $(call add-all-host-cross-to-host-cross-required-modules-deps)
 
 # Sets up dependencies such that whenever a target module is installed,
 # any other target modules listed in $(ALL_MODULES.$(m).REQUIRED_FROM_TARGET) will also be installed
+# This doesn't apply to ORDERONLY_INSTALLED items.
 define add-all-target-to-target-required-modules-deps
 $(foreach m,$(ALL_MODULES), \
   $(eval r := $(ALL_MODULES.$(m).REQUIRED_FROM_TARGET)) \
   $(if $(r), \
     $(eval r := $(call module-installed-files,$(r))) \
     $(eval t_m := $(filter $(TARGET_OUT_ROOT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
+    $(eval t_m := $(filter-out $(ALL_MODULES.$(m).ORDERONLY_INSTALLED), $(ALL_MODULES.$(m).INSTALLED))) \
     $(eval t_r := $(filter $(TARGET_OUT_ROOT)/%, $(r))) \
     $(eval t_r := $(filter-out $(t_m), $(t_r))) \
     $(if $(t_m), $(eval $(call add-required-deps, $(t_m),$(t_r)))) \
@@ -1356,6 +1364,7 @@ else ifdef FULL_BUILD
   product_host_FILES := $(call host-installed-files,$(INTERNAL_PRODUCT))
   product_target_FILES := $(call product-installed-files, $(INTERNAL_PRODUCT))
   # WARNING: The product_MODULES variable is depended on by external files.
+  # It contains the list of register names that will be installed on the device
   product_MODULES := $(_pif_modules)
 
   # Verify the artifact path requirements made by included products.

@@ -92,8 +92,7 @@ pub mod flag_declaration {
         ensure!(codegen::is_valid_name_ident(pdf.name()), "bad flag declaration: bad name");
         ensure!(codegen::is_valid_name_ident(pdf.namespace()), "bad flag declaration: bad name");
         ensure!(!pdf.description().is_empty(), "bad flag declaration: empty description");
-
-        // ProtoFlagDeclaration.bug: Vec<String>: may be empty, no checks needed
+        ensure!(pdf.bug.len() == 1, "bad flag declaration: exactly one bug required");
 
         Ok(())
     }
@@ -195,10 +194,14 @@ pub mod parsed_flag {
         for tp in pf.trace.iter() {
             super::tracepoint::verify_fields(tp)?;
         }
-
-        // ProtoParsedFlag.bug: Vec<String>: may be empty, no checks needed
+        ensure!(pf.bug.len() == 1, "bad flag declaration: exactly one bug required");
 
         Ok(())
+    }
+
+    pub fn path_to_declaration(pf: &ProtoParsedFlag) -> &str {
+        debug_assert!(!pf.trace.is_empty());
+        pf.trace[0].source()
     }
 }
 
@@ -214,6 +217,8 @@ pub mod parsed_flags {
     }
 
     pub fn verify_fields(pf: &ProtoParsedFlags) -> Result<()> {
+        use crate::protos::parsed_flag::path_to_declaration;
+
         let mut previous: Option<&ProtoParsedFlag> = None;
         for parsed_flag in pf.parsed_flag.iter() {
             if let Some(prev) = previous {
@@ -221,7 +226,12 @@ pub mod parsed_flags {
                 let b = create_sorting_key(parsed_flag);
                 match a.cmp(&b) {
                     Ordering::Less => {}
-                    Ordering::Equal => bail!("bad parsed flags: duplicate flag {}", a),
+                    Ordering::Equal => bail!(
+                        "bad parsed flags: duplicate flag {} (defined in {} and {})",
+                        a,
+                        path_to_declaration(prev),
+                        path_to_declaration(parsed_flag)
+                    ),
                     Ordering::Greater => {
                         bail!("bad parsed flags: not sorted: {} comes before {}", a, b)
                     }
@@ -241,6 +251,10 @@ pub mod parsed_flags {
         merged.parsed_flag.sort_by_cached_key(create_sorting_key);
         verify_fields(&merged)?;
         Ok(merged)
+    }
+
+    pub fn sort_parsed_flags(pf: &mut ProtoParsedFlags) {
+        pf.parsed_flag.sort_by_key(create_sorting_key);
     }
 
     fn create_sorting_key(pf: &ProtoParsedFlag) -> String {
@@ -263,12 +277,12 @@ flag {
     namespace: "first_ns"
     description: "This is the description of the first flag."
     bug: "123"
-    bug: "abc"
 }
 flag {
     name: "second"
     namespace: "second_ns"
     description: "This is the description of the second flag."
+    bug: "abc"
 }
 "#,
         )
@@ -278,14 +292,12 @@ flag {
         assert_eq!(first.name(), "first");
         assert_eq!(first.namespace(), "first_ns");
         assert_eq!(first.description(), "This is the description of the first flag.");
-        assert_eq!(first.bug.len(), 2);
-        assert_eq!(first.bug[0], "123");
-        assert_eq!(first.bug[1], "abc");
+        assert_eq!(first.bug, vec!["123"]);
         let second = flag_declarations.flag.iter().find(|pf| pf.name() == "second").unwrap();
         assert_eq!(second.name(), "second");
         assert_eq!(second.namespace(), "second_ns");
         assert_eq!(second.description(), "This is the description of the second flag.");
-        assert_eq!(second.bug.len(), 0);
+        assert_eq!(second.bug, vec!["abc"]);
 
         // bad input: missing package in flag declarations
         let error = flag_declarations::try_from_text_proto(
@@ -360,6 +372,36 @@ flag {
         )
         .unwrap_err();
         assert!(format!("{:?}", error).contains("bad flag declaration: bad name"));
+
+        // bad input: no bug entries in flag declaration
+        let error = flag_declarations::try_from_text_proto(
+            r#"
+package: "com.foo.bar"
+flag {
+    name: "first"
+    namespace: "first_ns"
+    description: "This is the description of the first flag."
+}
+"#,
+        )
+        .unwrap_err();
+        assert!(format!("{:?}", error).contains("bad flag declaration: exactly one bug required"));
+
+        // bad input: multiple bug entries in flag declaration
+        let error = flag_declarations::try_from_text_proto(
+            r#"
+package: "com.foo.bar"
+flag {
+    name: "first"
+    namespace: "first_ns"
+    description: "This is the description of the first flag."
+    bug: "123"
+    bug: "abc"
+}
+"#,
+        )
+        .unwrap_err();
+        assert!(format!("{:?}", error).contains("bad flag declaration: exactly one bug required"));
     }
 
     #[test]
@@ -466,6 +508,7 @@ parsed_flag {
     name: "first"
     namespace: "first_ns"
     description: "This is the description of the first flag."
+    bug: "SOME_BUG"
     state: DISABLED
     permission: READ_ONLY
     trace {
@@ -479,6 +522,7 @@ parsed_flag {
     name: "second"
     namespace: "second_ns"
     description: "This is the description of the second flag."
+    bug: "SOME_BUG"
     state: ENABLED
     permission: READ_WRITE
     trace {
@@ -500,6 +544,7 @@ parsed_flag {
         assert_eq!(second.name(), "second");
         assert_eq!(second.namespace(), "second_ns");
         assert_eq!(second.description(), "This is the description of the second flag.");
+        assert_eq!(second.bug, vec!["SOME_BUG"]);
         assert_eq!(second.state(), ProtoFlagState::ENABLED);
         assert_eq!(second.permission(), ProtoFlagPermission::READ_WRITE);
         assert_eq!(2, second.trace.len());
@@ -553,6 +598,7 @@ parsed_flag {
     name: "first"
     namespace: "first_ns"
     description: "This is the description of the first flag."
+    bug: ""
     state: DISABLED
     permission: READ_ONLY
     trace {
@@ -566,6 +612,7 @@ parsed_flag {
     name: "second"
     namespace: "second_ns"
     description: "This is the description of the second flag."
+    bug: ""
     state: ENABLED
     permission: READ_WRITE
     trace {
@@ -588,6 +635,7 @@ parsed_flag {
     name: "bbb"
     namespace: "first_ns"
     description: "This is the description of the first flag."
+    bug: ""
     state: DISABLED
     permission: READ_ONLY
     trace {
@@ -601,6 +649,7 @@ parsed_flag {
     name: "aaa"
     namespace: "second_ns"
     description: "This is the description of the second flag."
+    bug: ""
     state: ENABLED
     permission: READ_WRITE
     trace {
@@ -623,6 +672,7 @@ parsed_flag {
     name: "bar"
     namespace: "first_ns"
     description: "This is the description of the first flag."
+    bug: ""
     state: DISABLED
     permission: READ_ONLY
     trace {
@@ -636,6 +686,7 @@ parsed_flag {
     name: "bar"
     namespace: "second_ns"
     description: "This is the description of the second flag."
+    bug: ""
     state: ENABLED
     permission: READ_WRITE
     trace {
@@ -646,7 +697,38 @@ parsed_flag {
 }
 "#;
         let error = try_from_binary_proto_from_text_proto(text_proto).unwrap_err();
-        assert_eq!(format!("{:?}", error), "bad parsed flags: duplicate flag com.foo.bar");
+        assert_eq!(format!("{:?}", error), "bad parsed flags: duplicate flag com.foo.bar (defined in flags.declarations and flags.declarations)");
+    }
+
+    #[test]
+    fn test_parsed_flag_path_to_declaration() {
+        let text_proto = r#"
+parsed_flag {
+    package: "com.foo"
+    name: "bar"
+    namespace: "first_ns"
+    description: "This is the description of the first flag."
+    bug: "b/12345678"
+    state: DISABLED
+    permission: READ_ONLY
+    trace {
+        source: "flags.declarations"
+        state: DISABLED
+        permission: READ_ONLY
+    }
+    trace {
+        source: "flags.values"
+        state: ENABLED
+        permission: READ_ONLY
+    }
+}
+"#;
+        let parsed_flags = try_from_binary_proto_from_text_proto(text_proto).unwrap();
+        let parsed_flag = &parsed_flags.parsed_flag[0];
+        assert_eq!(
+            crate::protos::parsed_flag::path_to_declaration(parsed_flag),
+            "flags.declarations"
+        );
     }
 
     #[test]
@@ -657,6 +739,7 @@ parsed_flag {
     name: "first"
     namespace: "first_ns"
     description: "This is the description of the first flag."
+    bug: "a"
     state: DISABLED
     permission: READ_ONLY
     trace {
@@ -670,6 +753,7 @@ parsed_flag {
     name: "second"
     namespace: "second_ns"
     description: "This is the description of the second flag."
+    bug: "b"
     state: ENABLED
     permission: READ_WRITE
     trace {
@@ -687,6 +771,7 @@ parsed_flag {
     name: "first"
     namespace: "first_ns"
     description: "This is the description of the first flag."
+    bug: "a"
     state: DISABLED
     permission: READ_ONLY
     trace {
@@ -703,6 +788,7 @@ parsed_flag {
     package: "com.second"
     name: "second"
     namespace: "second_ns"
+    bug: "b"
     description: "This is the description of the second flag."
     state: ENABLED
     permission: READ_WRITE
@@ -717,7 +803,7 @@ parsed_flag {
 
         // bad cases
         let error = parsed_flags::merge(vec![first.clone(), first.clone()]).unwrap_err();
-        assert_eq!(format!("{:?}", error), "bad parsed flags: duplicate flag com.first.first");
+        assert_eq!(format!("{:?}", error), "bad parsed flags: duplicate flag com.first.first (defined in flags.declarations and flags.declarations)");
 
         // valid cases
         assert!(parsed_flags::merge(vec![]).unwrap().parsed_flag.is_empty());
