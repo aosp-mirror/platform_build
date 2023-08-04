@@ -247,7 +247,7 @@ A/B OTA specific options
       older SPL.
 
   --vabc_compression_param
-      Compression algorithm to be used for VABC. Available options: gz, brotli, none
+      Compression algorithm to be used for VABC. Available options: gz, lz4, zstd, brotli, none
 
   --security_patch_level
       Override the security patch level in target files
