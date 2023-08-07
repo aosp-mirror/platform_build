@@ -29,5 +29,16 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
             "Method is not implemented.");
     }
 {{ endfor- }}
+    @Override
+    public void setFlag(String flagName, boolean value) \{
+        throw new UnsupportedOperationException(
+            "Method is not implemented.");
+    }
+
+    @Override
+    public void resetAll() \{
+        throw new UnsupportedOperationException(
+            "Method is not implemented.");
+    }
 }
 {{ endif }}

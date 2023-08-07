@@ -13,6 +13,7 @@ public class FakeFeatureFlagsImpl implements FeatureFlags \{
         return getFlag(Flags.FLAG_{item.flag_name_constant_suffix});
     }
 {{ endfor}}
+    @Override
     public void setFlag(String flagName, boolean value) \{
         if (!this.mFlagMap.containsKey(flagName)) \{
             throw new IllegalArgumentException("no such flag" + flagName);
@@ -20,6 +21,7 @@ public class FakeFeatureFlagsImpl implements FeatureFlags \{
         this.mFlagMap.put(flagName, value);
     }
 
+    @Override
     public void resetAll() \{
         for (Map.Entry entry : mFlagMap.entrySet()) \{
             entry.setValue(null);
