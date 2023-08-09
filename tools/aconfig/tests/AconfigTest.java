@@ -8,11 +8,15 @@ import static com.android.aconfig.test.Flags.enabledRo;
 import static com.android.aconfig.test.Flags.enabledRw;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import com.android.aconfig.test.FakeFeatureFlagsImpl;
+import com.android.aconfig.test.FeatureFlags;
 
 @RunWith(JUnit4.class)
 public final class AconfigTest {
@@ -42,5 +46,11 @@ public final class AconfigTest {
         // TODO: change to assertTrue(enabledRw()) when the build supports reading tests/*.values
         // (currently all flags are assigned the default READ_ONLY + DISABLED)
         assertFalse(enabledRw());
+    }
+
+    @Test
+    public void testFakeFeatureFlagsImplNotImpl() {
+        FeatureFlags featureFlags = new FakeFeatureFlagsImpl();
+        assertThrows(UnsupportedOperationException.class, () -> featureFlags.enabledRw());
     }
 }
