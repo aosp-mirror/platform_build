@@ -107,6 +107,7 @@ required_flags_files := \
 		))
 
 ALL_DEFAULT_INSTALLED_MODULES += $(required_flags_files)
+ALL_FLAGS_FILES := $(required_flags_files)
 
 # TODO: Remove
 .PHONY: flag-files
