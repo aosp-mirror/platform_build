@@ -247,7 +247,9 @@ A/B OTA specific options
       older SPL.
 
   --vabc_compression_param
-      Compression algorithm to be used for VABC. Available options: gz, lz4, zstd, brotli, none
+      Compression algorithm to be used for VABC. Available options: gz, lz4, zstd, brotli, none. 
+      Compression level can be specified by appending ",$LEVEL" to option. 
+      e.g. --vabc_compression_param=gz,9 specifies level 9 compression with gz algorithm
 
   --security_patch_level
       Override the security patch level in target files
@@ -1210,7 +1212,13 @@ def main(argv):
       assert a.lower() in ["true", "false"]
       OPTIONS.enable_lz4diff = a.lower() != "false"
     elif o == "--vabc_compression_param":
+      words = a.split(",")
+      assert len(words) >= 1 and len(words) <= 2
       OPTIONS.vabc_compression_param = a.lower()
+      if len(words) == 2:
+        if not words[1].isdigit():
+          raise ValueError("Cannot parse value %r for option $COMPRESSION_LEVEL - only "
+                         "integers are allowed." % words[1])
     elif o == "--security_patch_level":
       OPTIONS.security_patch_level = a
     elif o in ("--max_threads"):
