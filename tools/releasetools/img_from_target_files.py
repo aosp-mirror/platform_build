@@ -65,6 +65,7 @@ OPTIONS.retrofit_dap = None
 OPTIONS.build_super = None
 OPTIONS.sparse_userimages = None
 OPTIONS.use_fastboot_info = False
+OPTIONS.build_super_image = None
 
 def LoadOptions(input_file):
   """Loads information from input_file to OPTIONS.
@@ -174,7 +175,13 @@ def RebuildAndWriteSuperImages(input_file, output_file):
   input_tmp = common.UnzipTemp(input_file)
 
   super_file = common.MakeTempFile('super_', '.img')
-  BuildSuperImage(input_tmp, super_file)
+
+  # Allow overriding the BUILD_SUPER_IMAGE binary
+  if OPTIONS.build_super_image:
+    command = [OPTIONS.build_super_image, input_tmp, super_file]
+    common.RunAndCheckOutput(command)
+  else:
+    BuildSuperImage(input_tmp, super_file)
 
   logger.info('Writing super.img to archive...')
   with zipfile.ZipFile(
@@ -231,6 +238,8 @@ def main(argv):
       OPTIONS.bootable_only = True
     elif o == '--additional':
       OPTIONS.additional_entries.append(a)
+    elif o == '--build_super_image':
+      OPTIONS.build_super_image = a
     else:
       return False
     return True
@@ -240,6 +249,7 @@ def main(argv):
                              extra_long_opts=[
                                  'additional=',
                                  'bootable_zip',
+                                 'build_super_image=',
                              ],
                              extra_option_handler=option_handler)
   if len(args) != 2:
