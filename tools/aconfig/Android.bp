@@ -152,3 +152,19 @@ cc_test {
         "server_configurable_flags",
     ],
 }
+
+rust_aconfig_library {
+    name: "libaconfig_test_rust_library",
+    crate_name: "aconfig_test_rust_library",
+    aconfig_declarations: "aconfig.test.flags",
+}
+
+rust_test {
+    name: "aconfig.test.rust",
+    srcs: [
+        "tests/aconfig_test.rs"
+    ],
+    rustlibs: [
+        "libaconfig_test_rust_library",
+    ],
+}
