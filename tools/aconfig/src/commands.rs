@@ -52,10 +52,15 @@ pub struct OutputFile {
     pub contents: Vec<u8>,
 }
 
-const DEFAULT_FLAG_STATE: ProtoFlagState = ProtoFlagState::DISABLED;
-const DEFAULT_FLAG_PERMISSION: ProtoFlagPermission = ProtoFlagPermission::READ_WRITE;
+pub const DEFAULT_FLAG_STATE: ProtoFlagState = ProtoFlagState::DISABLED;
+pub const DEFAULT_FLAG_PERMISSION: ProtoFlagPermission = ProtoFlagPermission::READ_WRITE;
 
-pub fn parse_flags(package: &str, declarations: Vec<Input>, values: Vec<Input>) -> Result<Vec<u8>> {
+pub fn parse_flags(
+    package: &str,
+    declarations: Vec<Input>,
+    values: Vec<Input>,
+    default_permission: ProtoFlagPermission,
+) -> Result<Vec<u8>> {
     let mut parsed_flags = ProtoParsedFlags::new();
 
     for mut input in declarations {
@@ -86,11 +91,11 @@ pub fn parse_flags(package: &str, declarations: Vec<Input>, values: Vec<Input>) 
             parsed_flag.set_description(flag_declaration.take_description());
             parsed_flag.bug.append(&mut flag_declaration.bug);
             parsed_flag.set_state(DEFAULT_FLAG_STATE);
-            parsed_flag.set_permission(DEFAULT_FLAG_PERMISSION);
+            parsed_flag.set_permission(default_permission);
             let mut tracepoint = ProtoTracepoint::new();
             tracepoint.set_source(input.source.clone());
             tracepoint.set_state(DEFAULT_FLAG_STATE);
-            tracepoint.set_permission(DEFAULT_FLAG_PERMISSION);
+            tracepoint.set_permission(default_permission);
             parsed_flag.trace.push(tracepoint);
 
             // verify ParsedFlag looks reasonable
@@ -325,6 +330,36 @@ mod tests {
             assert_eq!(pf.state(), last.state());
             assert_eq!(pf.permission(), last.permission());
         }
+    }
+
+    #[test]
+    fn test_parse_flags_setting_default() {
+        let first_flag = r#"
+        package: "com.first"
+        flag {
+            name: "first"
+            namespace: "first_ns"
+            description: "This is the description of the first flag."
+            bug: "123"
+        }
+        "#;
+        let declaration =
+            vec![Input { source: "momery".to_string(), reader: Box::new(first_flag.as_bytes()) }];
+        let value: Vec<Input> = vec![];
+
+        let flags_bytes = crate::commands::parse_flags(
+            "com.first",
+            declaration,
+            value,
+            ProtoFlagPermission::READ_ONLY,
+        )
+        .unwrap();
+        let parsed_flags =
+            crate::protos::parsed_flags::try_from_binary_proto(&flags_bytes).unwrap();
+        assert_eq!(1, parsed_flags.parsed_flag.len());
+        let parsed_flag = parsed_flags.parsed_flag.first().unwrap();
+        assert_eq!(ProtoFlagState::DISABLED, parsed_flag.state());
+        assert_eq!(ProtoFlagPermission::READ_ONLY, parsed_flag.permission());
     }
 
     #[test]
