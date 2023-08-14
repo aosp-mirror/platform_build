@@ -76,6 +76,12 @@ ifneq ($(TARGET_RELEASE),)
 ifeq ($(filter $(_all_release_configs), $(TARGET_RELEASE)),)
     $(error No release config found for TARGET_RELEASE: $(TARGET_RELEASE). Available releases are: $(_all_release_configs))
 else
+# TODO(b/294161396): Remove this logic
+ifeq ($(TARGET_RELEASE),next)
+ifndef TESTING_TARGET_RELEASE_NEXT
+   $(error "next" releases are not supported yet.  b/294161396)
+endif
+endif
     # Choose flag files
     # Don't sort this, use it in the order they gave us.
     flag_value_files := $(_all_release_configs.$(TARGET_RELEASE).FILES)
