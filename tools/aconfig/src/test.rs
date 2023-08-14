@@ -118,6 +118,7 @@ parsed_flag {
                     reader: Box::new(include_bytes!("../tests/second.values").as_slice()),
                 },
             ],
+            crate::commands::DEFAULT_FLAG_PERMISSION,
         )
         .unwrap();
         crate::protos::parsed_flags::try_from_binary_proto(&bytes).unwrap()
