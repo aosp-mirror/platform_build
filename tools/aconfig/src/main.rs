@@ -44,6 +44,14 @@ fn cli() -> Command {
                 .arg(Arg::new("package").long("package").required(true))
                 .arg(Arg::new("declarations").long("declarations").action(ArgAction::Append))
                 .arg(Arg::new("values").long("values").action(ArgAction::Append))
+                .arg(
+                    Arg::new("default-permission")
+                        .long("default-permission")
+                        .value_parser(protos::flag_permission::parse_from_str)
+                        .default_value(protos::flag_permission::to_string(
+                            &commands::DEFAULT_FLAG_PERMISSION,
+                        )),
+                )
                 .arg(Arg::new("cache").long("cache").required(true)),
         )
         .subcommand(
@@ -161,7 +169,9 @@ fn main() -> Result<()> {
             let package = get_required_arg::<String>(sub_matches, "package")?;
             let declarations = open_zero_or_more_files(sub_matches, "declarations")?;
             let values = open_zero_or_more_files(sub_matches, "values")?;
-            let output = commands::parse_flags(package, declarations, values)
+            let default_permission =
+                get_required_arg::<protos::ProtoFlagPermission>(sub_matches, "default-permission")?;
+            let output = commands::parse_flags(package, declarations, values, *default_permission)
                 .context("failed to create cache")?;
             let path = get_required_arg::<String>(sub_matches, "cache")?;
             write_output_to_file_or_stdout(path, &output)?;
