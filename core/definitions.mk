@@ -1547,10 +1547,10 @@ endef
 #
 # You must call this with $(eval).
 define define-aidl-java-rule
-define-aidl-java-rule-src := $(patsubst %.aidl,%.java,$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
-$$(define-aidl-java-rule-src) : $(call clean-path,$(LOCAL_PATH)/$(1)) $(AIDL)
+define_aidl_java_rule_src := $(patsubst %.aidl,%.java,$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
+$$(define_aidl_java_rule_src) : $(call clean-path,$(LOCAL_PATH)/$(1)) $(AIDL)
 	$$(transform-aidl-to-java)
-$(3) += $$(define-aidl-java-rule-src)
+$(3) += $$(define_aidl_java_rule_src)
 endef
 
 ## Given a .aidl file path generate the rule to compile it a .cpp file.
@@ -1560,10 +1560,10 @@ endef
 #
 # You must call this with $(eval).
 define define-aidl-cpp-rule
-define-aidl-cpp-rule-src := $(patsubst %.aidl,%$(LOCAL_CPP_EXTENSION),$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
-$$(define-aidl-cpp-rule-src) : $(call clean-path,$(LOCAL_PATH)/$(1)) $(AIDL_CPP)
+define_aidl_cpp_rule_src := $(patsubst %.aidl,%$(LOCAL_CPP_EXTENSION),$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
+$$(define_aidl_cpp_rule_src) : $(call clean-path,$(LOCAL_PATH)/$(1)) $(AIDL_CPP)
 	$$(transform-aidl-to-cpp)
-$(3) += $$(define-aidl-cpp-rule-src)
+$(3) += $$(define_aidl_cpp_rule_src)
 endef
 
 ###########################################################
@@ -1585,10 +1585,10 @@ endef
 #
 # You must call this with $(eval).
 define define-vts-cpp-rule
-define-vts-cpp-rule-src := $(patsubst %.vts,%$(LOCAL_CPP_EXTENSION),$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
-$$(define-vts-cpp-rule-src) : $(LOCAL_PATH)/$(1) $(VTSC)
+define_vts_cpp_rule_src := $(patsubst %.vts,%$(LOCAL_CPP_EXTENSION),$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
+$$(define_vts_cpp_rule_src) : $(LOCAL_PATH)/$(1) $(VTSC)
 	$$(transform-vts-to-cpp)
-$(3) += $$(define-vts-cpp-rule-src)
+$(3) += $$(define_vts_cpp_rule_src)
 endef
 
 ###########################################################
