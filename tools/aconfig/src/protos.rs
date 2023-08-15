@@ -156,6 +156,26 @@ pub mod flag_values {
     }
 }
 
+pub mod flag_permission {
+    use super::*;
+    use anyhow::bail;
+
+    pub fn parse_from_str(permission: &str) -> Result<ProtoFlagPermission> {
+        match permission.to_ascii_lowercase().as_str() {
+            "read_write" => Ok(ProtoFlagPermission::READ_WRITE),
+            "read_only" => Ok(ProtoFlagPermission::READ_ONLY),
+            _ => bail!("Permission needs to be read_only or read_write."),
+        }
+    }
+
+    pub fn to_string(permission: &ProtoFlagPermission) -> &str {
+        match permission {
+            ProtoFlagPermission::READ_WRITE => "read_write",
+            ProtoFlagPermission::READ_ONLY => "read_only",
+        }
+    }
+}
+
 pub mod tracepoint {
     use super::*;
     use anyhow::ensure;
