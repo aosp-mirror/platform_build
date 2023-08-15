@@ -5323,6 +5323,7 @@ INTERNAL_OTATOOLS_MODULES := \
   toybox \
   tune2fs \
   unpack_bootimg \
+  update_device \
   update_host_simulator \
   validate_target_files \
   verity_signer \
