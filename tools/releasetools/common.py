@@ -462,6 +462,10 @@ class BuildInfo(object):
     return system_prop and system_prop.GetProp("ro.build.version.release") == "11"
 
   @property
+  def vabc_compression_param(self):
+    return self.get("virtual_ab_compression_method", "")
+
+  @property
   def vendor_api_level(self):
     vendor_prop = self.info_dict.get("vendor.build.prop")
     if not vendor_prop:

@@ -270,7 +270,7 @@ import care_map_pb2
 import common
 import ota_utils
 from ota_utils import (UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata,
-                       PayloadGenerator, SECURITY_PATCH_LEVEL_PROP_NAME, CopyTargetFilesDir)
+                       PayloadGenerator, SECURITY_PATCH_LEVEL_PROP_NAME, CopyTargetFilesDir, VABC_COMPRESSION_PARAM_SUPPORT)
 from common import DoesInputFileContain, IsSparseImage
 import target_files_diff
 from check_target_files_vintf import CheckVintfIfTrebleEnabled
@@ -865,6 +865,10 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     if not source_info.is_vabc or not target_info.is_vabc:
       logger.info("Either source or target does not support VABC, disabling.")
       OPTIONS.disable_vabc = True
+    if source_info.vabc_compression_param != target_info.vabc_compression_param:
+      logger.info("Source build and target build use different compression methods {} vs {}, default to source builds parameter {}".format(
+          source_info.vabc_compression_param, target_info.vabc_compression_param, source_info.vabc_compression_param))
+      OPTIONS.vabc_compression_param = source_info.vabc_compression_param
 
     # Virtual AB Compression was introduced in Androd S.
     # Later, we backported VABC to Android R. But verity support was not
@@ -879,6 +883,22 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
         "META/ab_partitions.txt is required for ab_update."
     target_info = common.BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
     source_info = None
+    if target_info.vabc_compression_param:
+      minimum_api_level_required = VABC_COMPRESSION_PARAM_SUPPORT[
+          target_info.vabc_compression_param]
+      if target_info.vendor_api_level < minimum_api_level_required:
+        logger.warning(
+            "This full OTA is configured to use VABC compression algorithm"
+            " {}, which is supported since"
+            " Android API level {}, but device is "
+            "launched with {} . If this full OTA is"
+            " served to a device running old build, OTA might fail due to "
+            "unsupported compression parameter. For safety, gz is used because "
+            "it's supported since day 1.".format(
+                target_info.vabc_compression_param,
+                minimum_api_level_required,
+                target_info.vendor_api_level))
+        OPTIONS.vabc_compression_param = "gz"
 
   if OPTIONS.partial == []:
     logger.info(
