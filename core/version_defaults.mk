@@ -52,6 +52,8 @@ PLATFORM_VERSION_LAST_STABLE := 14
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
+# Note that this may be overridden by RELEASE_VERSION_CODENAME_REL in
+# version_util.mk.
 PLATFORM_VERSION_CODENAME.UP1A := UpsideDownCake
 PLATFORM_VERSION_CODENAME.VP1A := VanillaIceCream
 
