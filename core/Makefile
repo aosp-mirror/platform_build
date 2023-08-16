@@ -4173,7 +4173,7 @@ pvmfwimage: $(INSTALLED_PVMFWIMAGE_TARGET)
 
 INSTALLED_PVMFWIMAGE_TARGET := $(PRODUCT_OUT)/pvmfw.img
 INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET := $(PRODUCT_OUT)/pvmfw_embedded.avbpubkey
-INSTALLED_PVMFW_BINARY_TARGET := $(call module-installed-files,pvmfw_bin)
+INSTALLED_PVMFW_BINARY_TARGET := $(call module-target-built-files,pvmfw_bin)
 INTERNAL_PVMFWIMAGE_FILES := $(call module-target-built-files,pvmfw_img)
 INTERNAL_PVMFW_EMBEDDED_AVBKEY := $(call module-target-built-files,pvmfw_embedded_key)
 INTERNAL_PVMFW_SYMBOL := $(TARGET_OUT_EXECUTABLES_UNSTRIPPED)/pvmfw
@@ -5323,6 +5323,7 @@ INTERNAL_OTATOOLS_MODULES := \
   toybox \
   tune2fs \
   unpack_bootimg \
+  update_device \
   update_host_simulator \
   validate_target_files \
   verity_signer \
@@ -6889,6 +6890,14 @@ $(JACOCO_REPORT_CLASSES_ALL) :
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
   $(JACOCO_REPORT_CLASSES_ALL): $(INTERNAL_ALLIMAGES_FILES)
 endif
+
+# This is not ideal, but it is difficult to correctly figure out the actual jacoco report
+# jars we need to add here as dependencies, so we add the device-tests as a dependency when
+# the env variable is set and this should guarantee thaat all the jacoco report jars are ready
+# when we package the final report jar here.
+ifeq ($(JACOCO_PACKAGING_INCLUDE_DEVICE_TESTS),true)
+  $(JACOCO_REPORT_CLASSES_ALL): $(COMPATIBILITY.device-tests.FILES)
+endif
 endif # EMMA_INSTRUMENT=true
 
 
@@ -7118,6 +7127,7 @@ $(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(IMG_FROM_TARG
 	PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$(dir $(ZIP2ZIP)):$$PATH \
 	    $(IMG_FROM_TARGET_FILES) \
 	        --additional IMAGES/VerifiedBootParams.textproto:VerifiedBootParams.textproto \
+	        --build_super_image $(BUILD_SUPER_IMAGE) \
 	        $(BUILT_TARGET_FILES_PACKAGE) $@
 
 $(call declare-1p-container,$(INTERNAL_UPDATE_PACKAGE_TARGET),)

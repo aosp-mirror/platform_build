@@ -56,6 +56,12 @@ MAX_PLATFORM_VERSION :=
 # unreleased API level targetable by this branch, not just those that are valid
 # lunch targets for this branch.
 
+# Release config flag to override the current version to REL.  Note that the
+# codename can also be locked to REL by setting it in versino_defaults.mk.
+ifneq ($(RELEASE_PLATFORM_VERSION_CODENAME_REL),)
+  PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION) := REL
+endif
+
 PLATFORM_VERSION_CODENAME := $(PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION))
 ifndef PLATFORM_VERSION_CODENAME
   # PLATFORM_VERSION_CODENAME falls back to TARGET_PLATFORM_VERSION

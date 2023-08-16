@@ -47,9 +47,13 @@ where
         "FeatureFlags.java",
         include_str!("../templates/FeatureFlags.java.template"),
     )?;
+    template.add_template(
+        "FakeFeatureFlagsImpl.java",
+        include_str!("../templates/FakeFeatureFlagsImpl.java.template"),
+    )?;
 
     let path: PathBuf = package.split('.').collect();
-    ["Flags.java", "FeatureFlagsImpl.java", "FeatureFlags.java"]
+    ["Flags.java", "FeatureFlags.java", "FeatureFlagsImpl.java", "FakeFeatureFlagsImpl.java"]
         .iter()
         .map(|file| {
             Ok(OutputFile {
@@ -112,14 +116,14 @@ mod tests {
     use super::*;
     use std::collections::HashMap;
 
-    const EXPECTED_FEATUREFLAGS_CONTENT: &str = r#"
+    const EXPECTED_FEATUREFLAGS_COMMON_CONTENT: &str = r#"
     package com.android.aconfig.test;
     public interface FeatureFlags {
         boolean disabledRo();
         boolean disabledRw();
         boolean enabledRo();
         boolean enabledRw();
-    }"#;
+    "#;
 
     const EXPECTED_FLAG_COMMON_CONTENT: &str = r#"
     package com.android.aconfig.test;
@@ -143,6 +147,29 @@ mod tests {
         }
     "#;
 
+    const EXPECTED_METHOD_NOT_IMPL_COMMON_CONTENT: &str = r#"
+        @Override
+        public boolean disabledRo() {
+            throw new UnsupportedOperationException(
+                "Method is not implemented.");
+        }
+        @Override
+        public boolean disabledRw() {
+            throw new UnsupportedOperationException(
+                "Method is not implemented.");
+        }
+        @Override
+        public boolean enabledRo() {
+            throw new UnsupportedOperationException(
+                "Method is not implemented.");
+        }
+        @Override
+        public boolean enabledRw() {
+            throw new UnsupportedOperationException(
+                "Method is not implemented.");
+        }
+    "#;
+
     #[test]
     fn test_generate_java_code_production() {
         let parsed_flags = crate::test::parse_test_flags();
@@ -152,11 +179,22 @@ mod tests {
             CodegenMode::Production,
         )
         .unwrap();
+        let expect_featureflags_content = EXPECTED_FEATUREFLAGS_COMMON_CONTENT.to_string()
+            + r#"
+        }"#;
         let expect_flags_content = EXPECTED_FLAG_COMMON_CONTENT.to_string()
             + r#"
             private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
         }"#;
-        let expected_featureflagsimpl_content = r#"
+        let expect_fakefeatureflagsimpl_content = r#"
+        package com.android.aconfig.test;
+        public class FakeFeatureFlagsImpl implements FeatureFlags {"#
+            .to_owned()
+            + EXPECTED_METHOD_NOT_IMPL_COMMON_CONTENT
+            + r#"
+        }
+        "#;
+        let expect_featureflagsimpl_content = r#"
         package com.android.aconfig.test;
         import android.provider.DeviceConfig;
         public final class FeatureFlagsImpl implements FeatureFlags {
@@ -188,8 +226,12 @@ mod tests {
         "#;
         let mut file_set = HashMap::from([
             ("com/android/aconfig/test/Flags.java", expect_flags_content.as_str()),
-            ("com/android/aconfig/test/FeatureFlagsImpl.java", expected_featureflagsimpl_content),
-            ("com/android/aconfig/test/FeatureFlags.java", EXPECTED_FEATUREFLAGS_CONTENT),
+            ("com/android/aconfig/test/FeatureFlagsImpl.java", expect_featureflagsimpl_content),
+            ("com/android/aconfig/test/FeatureFlags.java", expect_featureflags_content.as_str()),
+            (
+                "com/android/aconfig/test/FakeFeatureFlagsImpl.java",
+                expect_fakefeatureflagsimpl_content.as_str(),
+            ),
         ]);
 
         for file in generated_files {
@@ -219,24 +261,47 @@ mod tests {
             CodegenMode::Test,
         )
         .unwrap();
+        let expect_featureflags_content = EXPECTED_FEATUREFLAGS_COMMON_CONTENT.to_string()
+            + r#"
+            public void setFlag(String flagName, boolean value);
+            public void resetAll();
+        }"#;
         let expect_flags_content = EXPECTED_FLAG_COMMON_CONTENT.to_string()
             + r#"
-            public static void setFeatureFlagsImpl(FeatureFlags featureFlags) {
+            public static void setFeatureFlags(FeatureFlags featureFlags) {
                 Flags.FEATURE_FLAGS = featureFlags;
             }
-            public static void unsetFeatureFlagsImpl() {
+            public static void unsetFeatureFlags() {
                 Flags.FEATURE_FLAGS = null;
             }
             private static FeatureFlags FEATURE_FLAGS;
         }
         "#;
-        let expected_featureflagsimpl_content = r#"
+        let expect_featureflagsimpl_content = r#"
+        package com.android.aconfig.test;
+        public final class FeatureFlagsImpl implements FeatureFlags {"#
+            .to_owned()
+            + EXPECTED_METHOD_NOT_IMPL_COMMON_CONTENT
+            + r#"
+            @Override
+            public void setFlag(String flagName, boolean value) {
+                throw new UnsupportedOperationException(
+                    "Method is not implemented.");
+            }
+            @Override
+            public void resetAll() {
+                throw new UnsupportedOperationException(
+                    "Method is not implemented.");
+            }
+        }
+        "#;
+        let expect_fakefeatureflagsimpl_content = r#"
         package com.android.aconfig.test;
         import static java.util.stream.Collectors.toMap;
         import java.util.HashMap;
         import java.util.Map;
         import java.util.stream.Stream;
-        public final class FeatureFlagsImpl implements FeatureFlags {
+        public class FakeFeatureFlagsImpl implements FeatureFlags {
             @Override
             public boolean disabledRo() {
                 return getFlag(Flags.FLAG_DISABLED_RO);
@@ -253,12 +318,14 @@ mod tests {
             public boolean enabledRw() {
                 return getFlag(Flags.FLAG_ENABLED_RW);
             }
+            @Override
             public void setFlag(String flagName, boolean value) {
                 if (!this.mFlagMap.containsKey(flagName)) {
                     throw new IllegalArgumentException("no such flag" + flagName);
                 }
                 this.mFlagMap.put(flagName, value);
             }
+            @Override
             public void resetAll() {
                 for (Map.Entry entry : mFlagMap.entrySet()) {
                     entry.setValue(null);
@@ -284,10 +351,18 @@ mod tests {
                 );
         }
         "#;
+
         let mut file_set = HashMap::from([
             ("com/android/aconfig/test/Flags.java", expect_flags_content.as_str()),
-            ("com/android/aconfig/test/FeatureFlagsImpl.java", expected_featureflagsimpl_content),
-            ("com/android/aconfig/test/FeatureFlags.java", EXPECTED_FEATUREFLAGS_CONTENT),
+            ("com/android/aconfig/test/FeatureFlags.java", expect_featureflags_content.as_str()),
+            (
+                "com/android/aconfig/test/FeatureFlagsImpl.java",
+                expect_featureflagsimpl_content.as_str(),
+            ),
+            (
+                "com/android/aconfig/test/FakeFeatureFlagsImpl.java",
+                expect_fakefeatureflagsimpl_content,
+            ),
         ]);
 
         for file in generated_files {
