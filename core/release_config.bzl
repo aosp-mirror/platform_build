@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+load("//build/bazel/utils:schema_validation.bzl", "validate")
+
 # Partitions that get build system flag summaries
 _flag_partitions = [
     "product",
@@ -28,6 +30,48 @@ VENDOR = ["vendor"]
 
 _valid_types = ["NoneType", "bool", "list", "string", "int"]
 
+_all_flags_schema = {
+    "type": "list",
+    "of": {
+        "type": "dict",
+        "required_keys": {
+            "name": {"type": "string"},
+            "partitions": {
+                "type": "list",
+                "of": {
+                    "type": "string",
+                    "choices": _flag_partitions + ["all"],
+                },
+                "unique": True,
+            },
+            "default": {
+                "or": [
+                    {"type": t}
+                    for t in _valid_types
+                ],
+            },
+            "declared_in": {"type": "string"},
+        },
+    },
+}
+
+_all_values_schema = {
+    "type": "list",
+    "of": {
+        "type": "dict",
+        "required_keys": {
+            "name": {"type": "string"},
+            "value": {
+                "or": [
+                    {"type": t}
+                    for t in _valid_types
+                ],
+            },
+            "set_in": {"type": "string"},
+        },
+    },
+}
+
 def flag(name, partitions, default):
     "Declare a flag."
     if not partitions:
@@ -41,16 +85,15 @@ def flag(name, partitions, default):
             if len(partitions) > 1:
                 fail("\"all\" can't be combined with other partitions: " + str(partitions))
         elif partition not in _flag_partitions:
-            fail("Invalid partition: " + partition + ", allowed partitions: "
-                    + str(_flag_partitions))
+            fail("Invalid partition: " + partition + ", allowed partitions: " +
+                 str(_flag_partitions))
     if type(default) not in _valid_types:
         fail("Invalid type of default for flag \"" + name + "\" (" + type(default) + ")")
     return {
         "name": name,
         "partitions": partitions,
-        "default": default
+        "default": default,
     }
-
 
 def value(name, value):
     "Define the flag value for a particular configuration."
@@ -58,7 +101,6 @@ def value(name, value):
         "name": name,
         "value": value,
     }
-
 
 def _format_value(val):
     "Format the starlark type correctly for make"
@@ -69,9 +111,11 @@ def _format_value(val):
     else:
         return val
 
-
 def release_config(all_flags, all_values):
     "Return the make variables that should be set for this release config."
+    validate(all_flags, _all_flags_schema)
+    validate(all_values, _all_values_schema)
+
     # Validate flags
     flag_names = []
     for flag in all_flags:
@@ -84,6 +128,8 @@ def release_config(all_flags, all_values):
     for flag in all_flags:
         for partition in flag["partitions"]:
             if partition == "all":
+                if len(flag["partitions"]) > 1:
+                    fail("\"all\" can't be combined with other partitions: " + str(flag["partitions"]))
                 for partition in _flag_partitions:
                     partitions.setdefault(partition, []).append(flag["name"])
             else:
@@ -107,8 +153,6 @@ def release_config(all_flags, all_values):
         if flag["name"] in values:
             val = values[flag["name"]]["value"]
             set_in = values[flag["name"]]["set_in"]
-            if type(val) not in _valid_types:
-                fail("Invalid type of value for flag \"" + flag["name"] + "\" (" + type(val) + ")")
         else:
             val = flag["default"]
             set_in = flag["declared_in"]
@@ -121,4 +165,3 @@ def release_config(all_flags, all_values):
         result["_ALL_RELEASE_FLAGS." + flag["name"] + ".SET_IN"] = set_in
 
     return result
-
