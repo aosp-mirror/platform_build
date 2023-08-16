@@ -101,7 +101,7 @@ java_aconfig_library {
 android_test {
     name: "aconfig.test.java",
     srcs: [
-        "tests/**/*.java",
+        "tests/AconfigTest.java",
     ],
     manifest: "tests/AndroidManifest.xml",
     certificate: "platform",
@@ -111,6 +111,25 @@ android_test {
         "testng",
     ],
     test_suites: ["device-tests"],
+}
+
+java_aconfig_library {
+    name: "aconfig_host_test_java_library",
+    aconfig_declarations: "aconfig.test.flags",
+    host_supported: true,
+    test: true,
+}
+
+java_test_host {
+    name: "AconfigJavaHostTest",
+    srcs: [
+        "tests/AconfigHostTest.java",
+    ],
+    static_libs: [
+        "aconfig_host_test_java_library",
+        "junit",
+    ],
+    test_suites: ["general-tests"],
 }
 
 // integration tests: C++
@@ -131,5 +150,21 @@ cc_test {
     ],
     shared_libs: [
         "server_configurable_flags",
+    ],
+}
+
+rust_aconfig_library {
+    name: "libaconfig_test_rust_library",
+    crate_name: "aconfig_test_rust_library",
+    aconfig_declarations: "aconfig.test.flags",
+}
+
+rust_test {
+    name: "aconfig.test.rust",
+    srcs: [
+        "tests/aconfig_test.rs"
+    ],
+    rustlibs: [
+        "libaconfig_test_rust_library",
     ],
 }
