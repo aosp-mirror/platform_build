@@ -289,7 +289,7 @@ namespace com::android::aconfig::test {
 
             virtual bool disabled_rw() override {
                 return server_configurable_flags::GetServerConfigurableFlag(
-                    "aconfig_test",
+                    "aconfig_flags.aconfig_test",
                     "com.android.aconfig.test.disabled_rw",
                     "false") == "true";
             }
@@ -300,7 +300,7 @@ namespace com::android::aconfig::test {
 
             virtual bool enabled_rw() override {
                 return server_configurable_flags::GetServerConfigurableFlag(
-                    "aconfig_test",
+                    "aconfig_flags.aconfig_test",
                     "com.android.aconfig.test.enabled_rw",
                     "true") == "true";
             }
@@ -363,7 +363,7 @@ namespace com::android::aconfig::test {
                       return it->second;
                 } else {
                   return server_configurable_flags::GetServerConfigurableFlag(
-                      "aconfig_test",
+                      "aconfig_flags.aconfig_test",
                       "com.android.aconfig.test.disabled_rw",
                       "false") == "true";
                 }
@@ -392,7 +392,7 @@ namespace com::android::aconfig::test {
                       return it->second;
                 } else {
                   return server_configurable_flags::GetServerConfigurableFlag(
-                      "aconfig_test",
+                      "aconfig_flags.aconfig_test",
                       "com.android.aconfig.test.enabled_rw",
                       "true") == "true";
                 }
