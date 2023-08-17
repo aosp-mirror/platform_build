@@ -51,6 +51,19 @@ SECURITY_PATCH_LEVEL_PROP_NAME = "ro.build.version.security_patch"
 TARGET_FILES_IMAGES_SUBDIR = ["IMAGES", "PREBUILT_IMAGES", "RADIO"]
 
 
+# Key is the compression algorithm, value is minimum API level required to
+# use this compression algorithm for VABC OTA on device.
+VABC_COMPRESSION_PARAM_SUPPORT = {
+    "gz": 31,
+    "brotli": 31,
+    "none": 31,
+    # lz4 support is added in Android U
+    "lz4": 34,
+    # zstd support is added in Android V
+    "zstd": 35,
+}
+
+
 def FinalizeMetadata(metadata, input_file, output_file, needed_property_files=None, package_key=None, pw=None):
   """Finalizes the metadata and signs an A/B OTA package.
 
@@ -727,6 +740,7 @@ def ExtractTargetFiles(path: str):
     logger.info("target files %s is already extracted", path)
     return path
   extracted_dir = common.MakeTempDir("target_files")
+  logger.info(f"Extracting target files {path} to {extracted_dir}")
   common.UnzipToDir(path, extracted_dir, UNZIP_PATTERN + [""])
   for subdir in TARGET_FILES_IMAGES_SUBDIR:
     image_dir = os.path.join(extracted_dir, subdir)
@@ -850,7 +864,7 @@ class PayloadGenerator(object):
       cmd.extend(["--dynamic_partition_info_file", dynamic_partition_info])
 
     apex_info = os.path.join(
-      target_dir, "META", "apex_info.pb")
+        target_dir, "META", "apex_info.pb")
     if os.path.exists(apex_info):
       cmd.extend(["--apex_info_file", apex_info])
 
