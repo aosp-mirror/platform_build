@@ -49,7 +49,7 @@ TEST(Align, Unaligned) {
   const std::string src = GetTestPath("unaligned.zip");
   const std::string dst = GetTempPath("unaligned_out.zip");
 
-  int processed = process(src.c_str(), dst.c_str(), 4, true, false, 4096);
+  int processed = process(src.c_str(), dst.c_str(), 4, true, false, false);
   ASSERT_EQ(0, processed);
 
   int verified = verify(dst.c_str(), 4, true, false);
@@ -61,14 +61,14 @@ TEST(Align, DoubleAligment) {
   const std::string tmp = GetTempPath("da_aligned.zip");
   const std::string dst = GetTempPath("da_d_aligner.zip");
 
-  int processed = process(src.c_str(), tmp.c_str(), 4, true, false, 4096);
+  int processed = process(src.c_str(), tmp.c_str(), 4, true, false, false);
   ASSERT_EQ(0, processed);
 
   int verified = verify(tmp.c_str(), 4, true, false);
   ASSERT_EQ(0, verified);
 
   // Align the result of the previous run. Essentially double aligning.
-  processed = process(tmp.c_str(), dst.c_str(), 4, true, false, 4096);
+  processed = process(tmp.c_str(), dst.c_str(), 4, true, false, false);
   ASSERT_EQ(0, processed);
 
   verified = verify(dst.c_str(), 4, true, false);
@@ -91,7 +91,7 @@ TEST(Align, Holes) {
   const std::string src = GetTestPath("holes.zip");
   const std::string dst = GetTempPath("holes_out.zip");
 
-  int processed = process(src.c_str(), dst.c_str(), 4, true, false, 4096);
+  int processed = process(src.c_str(), dst.c_str(), 4, true, false, true);
   ASSERT_EQ(0, processed);
 
   int verified = verify(dst.c_str(), 4, false, true);
@@ -103,7 +103,7 @@ TEST(Align, DifferenteOrders) {
   const std::string src = GetTestPath("diffOrders.zip");
   const std::string dst = GetTempPath("diffOrders_out.zip");
 
-  int processed = process(src.c_str(), dst.c_str(), 4, true, false, 4096);
+  int processed = process(src.c_str(), dst.c_str(), 4, true, false, true);
   ASSERT_EQ(0, processed);
 
   int verified = verify(dst.c_str(), 4, false, true);
@@ -120,7 +120,7 @@ TEST(Align, DirectoryEntry) {
   const std::string src = GetTestPath("archiveWithOneDirectoryEntry.zip");
   const std::string dst = GetTempPath("archiveWithOneDirectoryEntry_out.zip");
 
-  int processed = process(src.c_str(), dst.c_str(), 4, true, false, 4096);
+  int processed = process(src.c_str(), dst.c_str(), 4, true, false, true);
   ASSERT_EQ(0, processed);
   ASSERT_EQ(true, sameContent(src, dst));
 
