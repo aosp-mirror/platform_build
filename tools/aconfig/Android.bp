@@ -160,11 +160,28 @@ rust_aconfig_library {
 }
 
 rust_test {
-    name: "aconfig.test.rust",
+    name: "aconfig.prod_mode.test.rust",
     srcs: [
-        "tests/aconfig_test.rs"
+        "tests/aconfig_prod_mode_test.rs"
     ],
     rustlibs: [
         "libaconfig_test_rust_library",
+    ],
+}
+
+rust_aconfig_library {
+    name: "libaconfig_test_rust_library_with_test_mode",
+    crate_name: "aconfig_test_rust_library",
+    aconfig_declarations: "aconfig.test.flags",
+    test: true,
+}
+
+rust_test {
+    name: "aconfig.test_mode.test.rust",
+    srcs: [
+        "tests/aconfig_test_mode_test.rs"
+    ],
+    rustlibs: [
+        "libaconfig_test_rust_library_with_test_mode",
     ],
 }
