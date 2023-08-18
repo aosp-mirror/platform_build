@@ -1050,16 +1050,30 @@ TARGET_OUT_RAMDISK_16K := $(PRODUCT_OUT)/ramdisk_16k
 BUILT_RAMDISK_16K_TARGET := $(PRODUCT_OUT)/ramdisk_16k.img
 RAMDISK_16K_STAGING_DIR := $(call intermediates-dir-for,PACKAGING,depmod_ramdisk_16k)
 
-$(BUILT_RAMDISK_16K_TARGET): $(DEPMOD) $(MKBOOTFS)
-$(BUILT_RAMDISK_16K_TARGET): $(call copy-many-files,$(foreach file,$(BOARD_KERNEL_MODULES_16K),$(file):$(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0/$(notdir $(file))))
+$(foreach \
+  file,\
+  $(BOARD_KERNEL_MODULES_16K),\
+  $(eval \
+    $(call copy-and-strip-kernel-module,\
+      $(file),\
+      $(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0/$(notdir $(file)) \
+    ) \
+  ) \
+)
+
+$(BUILT_RAMDISK_16K_TARGET): $(DEPMOD) $(MKBOOTFS) $(EXTRACT_KERNEL) $(COMPRESSION_COMMAND_DEPS)
+$(BUILT_RAMDISK_16K_TARGET): $(foreach file,$(BOARD_KERNEL_MODULES_16K),$(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0/$(notdir $(file)))
 	$(DEPMOD) -b $(RAMDISK_16K_STAGING_DIR) 0.0
 	for MODULE in $(BOARD_KERNEL_MODULES_16K); do \
 		basename $$MODULE >> $(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0/modules.load ; \
 	done;
-	mkdir -p $(TARGET_OUT_RAMDISK_16K)/lib
 	rm -rf $(TARGET_OUT_RAMDISK_16K)/lib/modules
-	cp -r $(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0 $(TARGET_OUT_RAMDISK_16K)/lib/modules
-	$(MKBOOTFS) $(TARGET_OUT_RAMDISK_16K) > $@
+	mkdir -p $(TARGET_OUT_RAMDISK_16K)/lib/modules
+	KERNEL_RELEASE=`$(EXTRACT_KERNEL) --input $(BOARD_KERNEL_PATH_16K) --output-release /dev/stdout` ;\
+	IS_16K_KERNEL=`$(EXTRACT_KERNEL) --input $(BOARD_KERNEL_PATH_16K) --output-config /dev/stdout` ;\
+	if [[ "$$IS_16K_KERNEL" == *"CONFIG_ARM64_16K_PAGES"* ]]; then SUFFIX=_16k; fi ;\
+	cp -r $(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0 $(TARGET_OUT_RAMDISK_16K)/lib/modules/$$KERNEL_RELEASE$$SUFFIX
+	$(MKBOOTFS) $(TARGET_OUT_RAMDISK_16K) | $(COMPRESSION_COMMAND) > $@
 
 # Builds a ramdisk using modules defined in BOARD_KERNEL_MODULES_16K
 ramdisk_16k: $(BUILT_RAMDISK_16K_TARGET)
