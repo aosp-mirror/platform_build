@@ -103,6 +103,11 @@ PRODUCT_PACKAGES += \
     libaudiopolicyengineconfigurable \
     libpolicy-subsystem
 
+
+ifneq ($(KEEP_VNDK),true)
+PRODUCT_PACKAGES += llndk.libraries.txt
+endif
+
 # Include all zygote init scripts. "ro.zygote" will select one of them.
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.zygote32.rc:system/etc/init/hw/init.zygote32.rc \
