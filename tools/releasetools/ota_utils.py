@@ -50,6 +50,19 @@ UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'OTA/*',
 SECURITY_PATCH_LEVEL_PROP_NAME = "ro.build.version.security_patch"
 
 
+# Key is the compression algorithm, value is minimum API level required to
+# use this compression algorithm for VABC OTA on device.
+VABC_COMPRESSION_PARAM_SUPPORT = {
+    "gz": 31,
+    "brotli": 31,
+    "none": 31,
+    # lz4 support is added in Android U
+    "lz4": 34,
+    # zstd support is added in Android V
+    "zstd": 35,
+}
+
+
 def FinalizeMetadata(metadata, input_file, output_file, needed_property_files=None, package_key=None, pw=None):
   """Finalizes the metadata and signs an A/B OTA package.
 
