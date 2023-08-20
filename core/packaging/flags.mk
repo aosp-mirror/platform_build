@@ -75,7 +75,7 @@ $(foreach partition, $(_FLAG_PARTITIONS), \
 define generate-partition-aconfig-flag-file
 $(eval $(strip $(1)): PRIVATE_OUT := $(strip $(1)))
 $(eval $(strip $(1)): PRIVATE_IN := $(strip $(3)))
-$(strip $(1)): $(ACONFIG)
+$(strip $(1)): $(ACONFIG) $(strip $(3))
 	mkdir -p $$(dir $$(PRIVATE_OUT))
 	$$(if $$(PRIVATE_IN), \
 		$$(ACONFIG) dump --format textproto --out $$(PRIVATE_OUT) \
