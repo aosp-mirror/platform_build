@@ -965,6 +965,9 @@ ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
       $(my_init_rc_installed) \
       $(my_installed_test_data) \
       $(my_vintf_installed))
+
+  ALL_MODULES.$(my_register_name).INSTALLED_SYMLINKS := $(LOCAL_SOONG_INSTALL_SYMLINKS)
+
   # Store the list of colon-separated pairs of the built and installed locations
   # of files provided by this module.  Used by custom packaging rules like
   # package-modules.mk that need to copy the built files to a custom install
