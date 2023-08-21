@@ -47,9 +47,21 @@ define generate-common-build-props
         echo "ro.product.$(1).model=$(PRODUCT_MODEL)" >> $(2);\
         echo "ro.product.$(1).name=$(TARGET_PRODUCT)" >> $(2);\
         # Attestation specific properties for AOSP/GSI build running on device.
-        echo "ro.product.model_for_attestation=$(PRODUCT_MODEL_FOR_ATTESTATION)" >> $(2);\
-        echo "ro.product.brand_for_attestation=$(PRODUCT_BRAND_FOR_ATTESTATION)" >> $(2);\
-        echo "ro.product.name_for_attestation=$(PRODUCT_NAME_FOR_ATTESTATION)" >> $(2);\
+        if [ -n "$(strip $(PRODUCT_MODEL_FOR_ATTESTATION))" ]; then \
+            echo "ro.product.model_for_attestation=$(PRODUCT_MODEL_FOR_ATTESTATION)" >> $(2);\
+        fi; \
+        if [ -n "$(strip $(PRODUCT_BRAND_FOR_ATTESTATION))" ]; then \
+            echo "ro.product.brand_for_attestation=$(PRODUCT_BRAND_FOR_ATTESTATION)" >> $(2);\
+        fi; \
+        if [ -n "$(strip $(PRODUCT_NAME_FOR_ATTESTATION))" ]; then \
+            echo "ro.product.name_for_attestation=$(PRODUCT_NAME_FOR_ATTESTATION)" >> $(2);\
+        fi; \
+        if [ -n "$(strip $(PRODUCT_DEVICE_FOR_ATTESTATION))" ]; then \
+            echo "ro.product.device_for_attestation=$(PRODUCT_DEVICE_FOR_ATTESTATION)" >> $(2);\
+        fi; \
+        if [ -n "$(strip $(PRODUCT_MANUFACTURER_FOR_ATTESTATION))" ]; then \
+            echo "ro.product.manufacturer_for_attestation=$(PRODUCT_MANUFACTURER_FOR_ATTESTATION)" >> $(2);\
+        fi; \
     )\
     $(if $(filter true,$(ZYGOTE_FORCE_64)),\
         $(if $(filter vendor,$(1)),\
