@@ -131,6 +131,8 @@ public:
 
     virtual bool disabled_rw() = 0;
 
+    virtual bool enabled_fixed_ro() = 0;
+
     virtual bool enabled_ro() = 0;
 
     virtual bool enabled_rw() = 0;
@@ -144,6 +146,10 @@ inline bool disabled_ro() {
 
 inline bool disabled_rw() {
     return provider_->disabled_rw();
+}
+
+inline bool enabled_fixed_ro() {
+    return true;
 }
 
 inline bool enabled_ro() {
@@ -162,6 +168,8 @@ extern "C" {
 bool com_android_aconfig_test_disabled_ro();
 
 bool com_android_aconfig_test_disabled_rw();
+
+bool com_android_aconfig_test_enabled_fixed_ro();
 
 bool com_android_aconfig_test_enabled_ro();
 
@@ -194,6 +202,10 @@ public:
 
     virtual void disabled_rw(bool val) = 0;
 
+    virtual bool enabled_fixed_ro() = 0;
+
+    virtual void enabled_fixed_ro(bool val) = 0;
+
     virtual bool enabled_ro() = 0;
 
     virtual void enabled_ro(bool val) = 0;
@@ -221,6 +233,14 @@ inline bool disabled_rw() {
 
 inline void disabled_rw(bool val) {
     provider_->disabled_rw(val);
+}
+
+inline bool enabled_fixed_ro() {
+    return provider_->enabled_fixed_ro();
+}
+
+inline void enabled_fixed_ro(bool val) {
+    provider_->enabled_fixed_ro(val);
 }
 
 inline bool enabled_ro() {
@@ -255,6 +275,10 @@ void set_com_android_aconfig_test_disabled_ro(bool val);
 bool com_android_aconfig_test_disabled_rw();
 
 void set_com_android_aconfig_test_disabled_rw(bool val);
+
+bool com_android_aconfig_test_enabled_fixed_ro();
+
+void set_com_android_aconfig_test_enabled_fixed_ro(bool val);
 
 bool com_android_aconfig_test_enabled_ro();
 
@@ -294,6 +318,10 @@ namespace com::android::aconfig::test {
                     "false") == "true";
             }
 
+            virtual bool enabled_fixed_ro() override {
+                return true;
+            }
+
             virtual bool enabled_ro() override {
                 return true;
             }
@@ -317,6 +345,10 @@ bool com_android_aconfig_test_disabled_ro() {
 
 bool com_android_aconfig_test_disabled_rw() {
     return com::android::aconfig::test::disabled_rw();
+}
+
+bool com_android_aconfig_test_enabled_fixed_ro() {
+    return true;
 }
 
 bool com_android_aconfig_test_enabled_ro() {
@@ -373,6 +405,19 @@ namespace com::android::aconfig::test {
                 overrides_["disabled_rw"] = val;
             }
 
+            virtual bool enabled_fixed_ro() override {
+                auto it = overrides_.find("enabled_fixed_ro");
+                  if (it != overrides_.end()) {
+                      return it->second;
+                } else {
+                  return true;
+                }
+            }
+
+            virtual void enabled_fixed_ro(bool val) override {
+                overrides_["enabled_fixed_ro"] = val;
+            }
+
             virtual bool enabled_ro() override {
                 auto it = overrides_.find("enabled_ro");
                   if (it != overrides_.end()) {
@@ -402,7 +447,6 @@ namespace com::android::aconfig::test {
                 overrides_["enabled_rw"] = val;
             }
 
-
             virtual void reset_flags() override {
                 overrides_.clear();
             }
@@ -429,6 +473,16 @@ bool com_android_aconfig_test_disabled_rw() {
 void set_com_android_aconfig_test_disabled_rw(bool val) {
     com::android::aconfig::test::disabled_rw(val);
 }
+
+
+bool com_android_aconfig_test_enabled_fixed_ro() {
+    return com::android::aconfig::test::enabled_fixed_ro();
+}
+
+void set_com_android_aconfig_test_enabled_fixed_ro(bool val) {
+    com::android::aconfig::test::enabled_fixed_ro(val);
+}
+
 
 bool com_android_aconfig_test_enabled_ro() {
     return com::android::aconfig::test::enabled_ro();
