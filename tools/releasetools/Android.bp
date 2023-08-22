@@ -344,6 +344,7 @@ python_binary_host {
     },
     srcs: [
         "merge_ota.py",
+        "ota_signing_utils.py",
     ],
     libs: [
         "ota_metadata_proto",
@@ -493,6 +494,26 @@ python_binary_host {
 }
 
 python_binary_host {
+    name: "ota_from_raw_img",
+    srcs: [
+        "ota_from_raw_img.py",
+        "ota_signing_utils.py",
+    ],
+    main: "ota_from_raw_img.py",
+    defaults: [
+        "releasetools_binary_defaults",
+    ],
+    required: [
+        "delta_generator",
+    ],
+    libs: [
+        "ota_metadata_proto",
+        "releasetools_common",
+        "ota_utils_lib",
+    ],
+}
+
+python_binary_host {
     name: "ota_package_parser",
     defaults: ["releasetools_binary_defaults"],
     srcs: [
@@ -590,6 +611,7 @@ python_defaults {
         "sign_target_files_apks.py",
         "validate_target_files.py",
         "merge_ota.py",
+        "ota_signing_utils.py",
         ":releasetools_merge_sources",
         ":releasetools_merge_tests",
 
