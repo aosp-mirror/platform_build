@@ -1096,6 +1096,16 @@ $(eval $(call copy-one-file,$(BOARD_KERNEL_PATH_16K),$(BUILT_KERNEL_16K_TARGET))
 kernel_16k: $(BUILT_KERNEL_16K_TARGET)
 .PHONY: kernel_16k
 
+BUILT_BOOTIMAGE_16K_TARGET := $(PRODUCT_OUT)/boot_16k.img
+
+$(BUILT_BOOTIMAGE_16K_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH) $(INTERNAL_GKI_CERTIFICATE_DEPS)
+	$(call pretty,"Target boot 16k image: $@")
+	$(call build_boot_from_kernel_avb_enabled,$@,$(BUILT_KERNEL_16K_TARGET))
+
+
+bootimage_16k: $(BUILT_BOOTIMAGE_16K_TARGET)
+.PHONY: bootimage_16k
+
 endif
 
 
@@ -1292,9 +1302,10 @@ $(foreach b,$(INSTALLED_BOOTIMAGE_TARGET), $(eval $(call add-dependency,$(b),$(c
 
 ifeq (true,$(BOARD_AVB_ENABLE))
 
-# $1: boot image target
-define build_boot_board_avb_enabled
-  $(eval kernel := $(call bootimage-to-kernel,$(1)))
+# $1: output boot image target
+# $2: input path to kernel binary
+define build_boot_from_kernel_avb_enabled
+  $(eval kernel := $(2))
   $(MKBOOTIMG) --kernel $(kernel) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1)
   $(if $(BOARD_GKI_SIGNING_KEY_PATH), \
     $(eval boot_signature := $(call intermediates-dir-for,PACKAGING,generic_boot)/$(notdir $(1)).boot_signature) \
@@ -1311,6 +1322,12 @@ define build_boot_board_avb_enabled
           $(call get-partition-size-argument,$(call get-bootimage-partition-size,$(1),boot)) \
           --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
           $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
+endef
+
+# $1: boot image target
+define build_boot_board_avb_enabled
+  $(eval kernel := $(call bootimage-to-kernel,$(1)))
+  $(call build_boot_from_kernel_avb_enabled,$(1),$(kernel))
 endef
 
 $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH) $(INTERNAL_GKI_CERTIFICATE_DEPS)
