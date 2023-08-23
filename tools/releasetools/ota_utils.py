@@ -934,9 +934,9 @@ class PayloadGenerator(object):
     # 4. Dump the signed payload properties.
     properties_file = common.MakeTempFile(prefix="payload-properties-",
                                           suffix=".txt")
-    cmd = ["brillo_update_payload", "properties",
-           "--payload", self.payload_file,
-           "--properties_file", properties_file]
+    cmd = ["delta_generator",
+           "--in_file=" + self.payload_file,
+           "--properties_file=" + properties_file]
     self._Run(cmd)
 
     if self.secondary:
