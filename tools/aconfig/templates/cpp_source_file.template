@@ -23,7 +23,7 @@ namespace {cpp_namespace} \{
             } else \{
               {{ if item.readwrite- }}
               return server_configurable_flags::GetServerConfigurableFlag(
-                  "{item.device_config_namespace}",
+                  "aconfig_flags.{item.device_config_namespace}",
                   "{item.device_config_flag}",
                   "{item.default_value}") == "true";
               {{ -else- }}
@@ -50,7 +50,7 @@ namespace {cpp_namespace} \{
         virtual bool {item.flag_name}() override \{
             {{ if item.readwrite- }}
             return server_configurable_flags::GetServerConfigurableFlag(
-                "{item.device_config_namespace}",
+                "aconfig_flags.{item.device_config_namespace}",
                 "{item.device_config_flag}",
                 "{item.default_value}") == "true";
             {{ -else- }}
