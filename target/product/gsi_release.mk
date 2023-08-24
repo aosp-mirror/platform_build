@@ -32,11 +32,7 @@ BUILDING_GSI := true
 # and the vndk apex's compat symlinks
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     system/product/% \
-    system/system_ext/% \
-    system/lib/vndk-29 \
-    system/lib/vndk-sp-29 \
-    system/lib64/vndk-29 \
-    system/lib64/vndk-sp-29
+    system/system_ext/%
 
 # GSI should always support up-to-date platform features.
 # Keep this value at the latest API level to ensure latest build system
