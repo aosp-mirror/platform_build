@@ -103,7 +103,7 @@ impl FlagProvider {
     /// query flag disabled_rw
     pub fn disabled_rw(&self) -> bool {
         flags_rust::GetServerConfigurableFlag(
-            "aconfig_test",
+            "aconfig_flags.aconfig_test",
             "com.android.aconfig.test.disabled_rw",
             "false") == "true"
     }
@@ -116,7 +116,7 @@ impl FlagProvider {
     /// query flag enabled_rw
     pub fn enabled_rw(&self) -> bool {
         flags_rust::GetServerConfigurableFlag(
-            "aconfig_test",
+            "aconfig_flags.aconfig_test",
             "com.android.aconfig.test.enabled_rw",
             "true") == "true"
     }
@@ -178,7 +178,7 @@ impl FlagProvider {
     pub fn disabled_rw(&self) -> bool {
         self.overrides.get("disabled_rw").copied().unwrap_or(
             flags_rust::GetServerConfigurableFlag(
-                "aconfig_test",
+                "aconfig_flags.aconfig_test",
                 "com.android.aconfig.test.disabled_rw",
                 "false") == "true"
         )
@@ -205,7 +205,7 @@ impl FlagProvider {
     pub fn enabled_rw(&self) -> bool {
         self.overrides.get("enabled_rw").copied().unwrap_or(
             flags_rust::GetServerConfigurableFlag(
-                "aconfig_test",
+                "aconfig_flags.aconfig_test",
                 "com.android.aconfig.test.enabled_rw",
                 "true") == "true"
         )

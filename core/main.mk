@@ -1720,8 +1720,10 @@ else ifneq ($(TARGET_BUILD_APPS),)
     unbundled_build_modules := $(sort $(TARGET_BUILD_APPS))
   endif
 
-  # Dist the installed files if they exist.
-  apps_only_installed_files := $(foreach m,$(unbundled_build_modules),$(ALL_MODULES.$(m).INSTALLED))
+  # Dist the installed files if they exist, except the installed symlinks. dist-for-goals emits
+  # `cp src dest` commands, which will fail to copy dangling symlinks.
+  apps_only_installed_files := $(foreach m,$(unbundled_build_modules),\
+    $(filter-out $(ALL_MODULES.$(m).INSTALLED_SYMLINKS),$(ALL_MODULES.$(m).INSTALLED)))
   $(call dist-for-goals,apps_only, $(apps_only_installed_files))
 
   # Dist the bundle files if they exist.
