@@ -1208,6 +1208,29 @@ define get-partition-size-argument
   $(if $(1),--partition_size $(1),--dynamic_partition_size)
 endef
 
+# $1: output boot image target
+# $2: input path to kernel binary
+define build_boot_from_kernel_avb_enabled
+  $(eval kernel := $(2))
+  $(MKBOOTIMG) --kernel $(kernel) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1)
+  $(if $(BOARD_GKI_SIGNING_KEY_PATH), \
+    $(eval boot_signature := $(call intermediates-dir-for,PACKAGING,generic_boot)/$(notdir $(1)).boot_signature) \
+    $(eval kernel_signature := $(call intermediates-dir-for,PACKAGING,generic_kernel)/$(notdir $(kernel)).boot_signature) \
+    $(call generate_generic_boot_image_certificate,$(1),$(boot_signature),boot,$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)) $(newline) \
+    $(call generate_generic_boot_image_certificate,$(kernel),$(kernel_signature),generic_kernel,$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)) $(newline) \
+    cat $(kernel_signature) >> $(boot_signature) $(newline) \
+    $(call assert-max-image-size,$(boot_signature),16 << 10) $(newline) \
+    truncate -s $$(( 16 << 10 )) $(boot_signature) $(newline) \
+    cat "$(boot_signature)" >> $(1))
+  $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(call get-bootimage-partition-size,$(1),boot)))
+  $(AVBTOOL) add_hash_footer \
+          --image $(1) \
+          $(call get-partition-size-argument,$(call get-bootimage-partition-size,$(1),boot)) \
+          --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
+          $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
+endef
+
+
 ifndef BOARD_PREBUILT_BOOTIMAGE
 
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
@@ -1308,28 +1331,6 @@ endif # TARGET_BOOTIMAGE_USE_EXT2
 $(foreach b,$(INSTALLED_BOOTIMAGE_TARGET), $(eval $(call add-dependency,$(b),$(call bootimage-to-kernel,$(b)))))
 
 ifeq (true,$(BOARD_AVB_ENABLE))
-
-# $1: output boot image target
-# $2: input path to kernel binary
-define build_boot_from_kernel_avb_enabled
-  $(eval kernel := $(2))
-  $(MKBOOTIMG) --kernel $(kernel) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1)
-  $(if $(BOARD_GKI_SIGNING_KEY_PATH), \
-    $(eval boot_signature := $(call intermediates-dir-for,PACKAGING,generic_boot)/$(notdir $(1)).boot_signature) \
-    $(eval kernel_signature := $(call intermediates-dir-for,PACKAGING,generic_kernel)/$(notdir $(kernel)).boot_signature) \
-    $(call generate_generic_boot_image_certificate,$(1),$(boot_signature),boot,$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)) $(newline) \
-    $(call generate_generic_boot_image_certificate,$(kernel),$(kernel_signature),generic_kernel,$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)) $(newline) \
-    cat $(kernel_signature) >> $(boot_signature) $(newline) \
-    $(call assert-max-image-size,$(boot_signature),16 << 10) $(newline) \
-    truncate -s $$(( 16 << 10 )) $(boot_signature) $(newline) \
-    cat "$(boot_signature)" >> $(1))
-  $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(call get-bootimage-partition-size,$(1),boot)))
-  $(AVBTOOL) add_hash_footer \
-          --image $(1) \
-          $(call get-partition-size-argument,$(call get-bootimage-partition-size,$(1),boot)) \
-          --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
-          $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
-endef
 
 # $1: boot image target
 define build_boot_board_avb_enabled
