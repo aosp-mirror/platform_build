@@ -1077,7 +1077,7 @@ $(BUILT_RAMDISK_16K_TARGET): $(foreach file,$(BOARD_KERNEL_MODULES_16K),$(RAMDIS
 	mkdir -p $(TARGET_OUT_RAMDISK_16K)/lib/modules
 	KERNEL_RELEASE=`$(EXTRACT_KERNEL) --input $(BOARD_KERNEL_PATH_16K) --output-release /dev/stdout` ;\
 	IS_16K_KERNEL=`$(EXTRACT_KERNEL) --input $(BOARD_KERNEL_PATH_16K) --output-config /dev/stdout` ;\
-	if [[ "$$IS_16K_KERNEL" == *"CONFIG_ARM64_16K_PAGES"* ]]; then SUFFIX=_16k; fi ;\
+	if [[ "$$IS_16K_KERNEL" == *"CONFIG_ARM64_16K_PAGES=y"* ]]; then SUFFIX=_16k; fi ;\
 	cp -r $(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0 $(TARGET_OUT_RAMDISK_16K)/lib/modules/$$KERNEL_RELEASE$$SUFFIX
 	$(MKBOOTFS) $(TARGET_OUT_RAMDISK_16K) | $(COMPRESSION_COMMAND) > $@
 
