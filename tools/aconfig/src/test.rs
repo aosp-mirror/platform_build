@@ -41,6 +41,7 @@ parsed_flag {
     state: DISABLED
     permission: READ_ONLY
   }
+  is_fixed_read_only: false
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -55,6 +56,27 @@ parsed_flag {
     state: DISABLED
     permission: READ_WRITE
   }
+  is_fixed_read_only: false
+}
+parsed_flag {
+  package: "com.android.aconfig.test"
+  name: "enabled_fixed_ro"
+  namespace: "aconfig_test"
+  description: "This flag is fixed READ_ONLY + ENABLED"
+  bug: ""
+  state: ENABLED
+  permission: READ_ONLY
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_ONLY
+  }
+  trace {
+    source: "tests/first.values"
+    state: ENABLED
+    permission: READ_ONLY
+  }
+  is_fixed_read_only: true
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -79,6 +101,7 @@ parsed_flag {
     state: ENABLED
     permission: READ_ONLY
   }
+  is_fixed_read_only: false
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -98,6 +121,7 @@ parsed_flag {
     state: ENABLED
     permission: READ_WRITE
   }
+  is_fixed_read_only: false
 }
 "#;
 

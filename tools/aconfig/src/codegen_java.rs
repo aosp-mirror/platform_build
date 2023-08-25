@@ -121,6 +121,7 @@ mod tests {
     public interface FeatureFlags {
         boolean disabledRo();
         boolean disabledRw();
+        boolean enabledFixedRo();
         boolean enabledRo();
         boolean enabledRw();
     "#;
@@ -130,6 +131,7 @@ mod tests {
     public final class Flags {
         public static final String FLAG_DISABLED_RO = "com.android.aconfig.test.disabled_ro";
         public static final String FLAG_DISABLED_RW = "com.android.aconfig.test.disabled_rw";
+        public static final String FLAG_ENABLED_FIXED_RO = "com.android.aconfig.test.enabled_fixed_ro";
         public static final String FLAG_ENABLED_RO = "com.android.aconfig.test.enabled_ro";
         public static final String FLAG_ENABLED_RW = "com.android.aconfig.test.enabled_rw";
 
@@ -138,6 +140,9 @@ mod tests {
         }
         public static boolean disabledRw() {
             return FEATURE_FLAGS.disabledRw();
+        }
+        public static boolean enabledFixedRo() {
+            return FEATURE_FLAGS.enabledFixedRo();
         }
         public static boolean enabledRo() {
             return FEATURE_FLAGS.enabledRo();
@@ -155,6 +160,11 @@ mod tests {
         }
         @Override
         public boolean disabledRw() {
+            throw new UnsupportedOperationException(
+                "Method is not implemented.");
+        }
+        @Override
+        public boolean enabledFixedRo() {
             throw new UnsupportedOperationException(
                 "Method is not implemented.");
         }
@@ -209,6 +219,10 @@ mod tests {
                     "com.android.aconfig.test.disabled_rw",
                     false
                 );
+            }
+            @Override
+            public boolean enabledFixedRo() {
+                return true;
             }
             @Override
             public boolean enabledRo() {
@@ -311,6 +325,10 @@ mod tests {
                 return getFlag(Flags.FLAG_DISABLED_RW);
             }
             @Override
+            public boolean enabledFixedRo() {
+                return getFlag(Flags.FLAG_ENABLED_FIXED_RO);
+            }
+            @Override
             public boolean enabledRo() {
                 return getFlag(Flags.FLAG_ENABLED_RO);
             }
@@ -341,6 +359,7 @@ mod tests {
             private HashMap<String, Boolean> mFlagMap = Stream.of(
                     Flags.FLAG_DISABLED_RO,
                     Flags.FLAG_DISABLED_RW,
+                    Flags.FLAG_ENABLED_FIXED_RO,
                     Flags.FLAG_ENABLED_RO,
                     Flags.FLAG_ENABLED_RW
                 )

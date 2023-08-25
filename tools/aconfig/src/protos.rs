@@ -303,6 +303,7 @@ flag {
     namespace: "second_ns"
     description: "This is the description of the second flag."
     bug: "abc"
+    is_fixed_read_only: true
 }
 "#,
         )
@@ -313,11 +314,13 @@ flag {
         assert_eq!(first.namespace(), "first_ns");
         assert_eq!(first.description(), "This is the description of the first flag.");
         assert_eq!(first.bug, vec!["123"]);
+        assert!(!first.is_fixed_read_only());
         let second = flag_declarations.flag.iter().find(|pf| pf.name() == "second").unwrap();
         assert_eq!(second.name(), "second");
         assert_eq!(second.namespace(), "second_ns");
         assert_eq!(second.description(), "This is the description of the second flag.");
         assert_eq!(second.bug, vec!["abc"]);
+        assert!(second.is_fixed_read_only());
 
         // bad input: missing package in flag declarations
         let error = flag_declarations::try_from_text_proto(
@@ -555,6 +558,7 @@ parsed_flag {
         state: ENABLED
         permission: READ_WRITE
     }
+    is_fixed_read_only: true
 }
 "#;
         let parsed_flags = try_from_binary_proto_from_text_proto(text_proto).unwrap();
@@ -574,6 +578,7 @@ parsed_flag {
         assert_eq!(second.trace[1].source(), "flags.values");
         assert_eq!(second.trace[1].state(), ProtoFlagState::ENABLED);
         assert_eq!(second.trace[1].permission(), ProtoFlagPermission::READ_WRITE);
+        assert!(second.is_fixed_read_only());
 
         // valid input: empty
         let parsed_flags = try_from_binary_proto_from_text_proto("").unwrap();
