@@ -39,6 +39,7 @@ message flag_declaration {
   optional string namespace = 2;
   optional string description = 3;
   repeated string bug = 4;
+  optional bool is_fixed_read_only = 5;
 };
 
 message flag_declarations {
@@ -75,6 +76,7 @@ message parsed_flag {
   optional flag_state state = 6;
   optional flag_permission permission = 7;
   repeated tracepoint trace = 8;
+  optional bool is_fixed_read_only = 9;
 }
 
 message parsed_flags {
