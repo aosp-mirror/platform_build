@@ -363,6 +363,10 @@ $(foreach vendor_ramdisk_fragment,$(BOARD_VENDOR_RAMDISK_FRAGMENTS), \
 )
 INTERNAL_VENDOR_RAMDISK_FRAGMENTS += $(BOARD_VENDOR_RAMDISK_FRAGMENTS)
 
+ifneq ($(BOARD_KERNEL_MODULES_16K),)
+INTERNAL_VENDOR_RAMDISK_FRAGMENTS += 16K
+endif
+
 # Strip the list in case of any whitespace.
 INTERNAL_VENDOR_RAMDISK_FRAGMENTS := \
   $(strip $(INTERNAL_VENDOR_RAMDISK_FRAGMENTS))
@@ -1050,16 +1054,32 @@ TARGET_OUT_RAMDISK_16K := $(PRODUCT_OUT)/ramdisk_16k
 BUILT_RAMDISK_16K_TARGET := $(PRODUCT_OUT)/ramdisk_16k.img
 RAMDISK_16K_STAGING_DIR := $(call intermediates-dir-for,PACKAGING,depmod_ramdisk_16k)
 
-$(BUILT_RAMDISK_16K_TARGET): $(DEPMOD) $(MKBOOTFS)
-$(BUILT_RAMDISK_16K_TARGET): $(call copy-many-files,$(foreach file,$(BOARD_KERNEL_MODULES_16K),$(file):$(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0/$(notdir $(file))))
+$(foreach \
+  file,\
+  $(BOARD_KERNEL_MODULES_16K),\
+  $(eval \
+    $(call copy-and-strip-kernel-module,\
+      $(file),\
+      $(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0/$(notdir $(file)) \
+    ) \
+  ) \
+)
+
+BOARD_VENDOR_RAMDISK_FRAGMENT.16K.PREBUILT := $(BUILT_RAMDISK_16K_TARGET)
+
+$(BUILT_RAMDISK_16K_TARGET): $(DEPMOD) $(MKBOOTFS) $(EXTRACT_KERNEL) $(COMPRESSION_COMMAND_DEPS)
+$(BUILT_RAMDISK_16K_TARGET): $(foreach file,$(BOARD_KERNEL_MODULES_16K),$(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0/$(notdir $(file)))
 	$(DEPMOD) -b $(RAMDISK_16K_STAGING_DIR) 0.0
 	for MODULE in $(BOARD_KERNEL_MODULES_16K); do \
 		basename $$MODULE >> $(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0/modules.load ; \
 	done;
-	mkdir -p $(TARGET_OUT_RAMDISK_16K)/lib
 	rm -rf $(TARGET_OUT_RAMDISK_16K)/lib/modules
-	cp -r $(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0 $(TARGET_OUT_RAMDISK_16K)/lib/modules
-	$(MKBOOTFS) $(TARGET_OUT_RAMDISK_16K) > $@
+	mkdir -p $(TARGET_OUT_RAMDISK_16K)/lib/modules
+	KERNEL_RELEASE=`$(EXTRACT_KERNEL) --tools lz4:$(LZ4) --input $(BOARD_KERNEL_PATH_16K) --output-release` ;\
+	IS_16K_KERNEL=`$(EXTRACT_KERNEL) --tools lz4:$(LZ4) --input $(BOARD_KERNEL_PATH_16K) --output-config` ;\
+	if [[ "$$IS_16K_KERNEL" == *"CONFIG_ARM64_16K_PAGES=y"* ]]; then SUFFIX=_16k; fi ;\
+	cp -r $(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0 $(TARGET_OUT_RAMDISK_16K)/lib/modules/$$KERNEL_RELEASE$$SUFFIX
+	$(MKBOOTFS) $(TARGET_OUT_RAMDISK_16K) | $(COMPRESSION_COMMAND) > $@
 
 # Builds a ramdisk using modules defined in BOARD_KERNEL_MODULES_16K
 ramdisk_16k: $(BUILT_RAMDISK_16K_TARGET)
@@ -1075,6 +1095,23 @@ $(eval $(call copy-one-file,$(BOARD_KERNEL_PATH_16K),$(BUILT_KERNEL_16K_TARGET))
 # Copies BOARD_KERNEL_PATH_16K to output directory as is
 kernel_16k: $(BUILT_KERNEL_16K_TARGET)
 .PHONY: kernel_16k
+
+BUILT_BOOTIMAGE_16K_TARGET := $(PRODUCT_OUT)/boot_16k.img
+
+$(BUILT_BOOTIMAGE_16K_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH) $(INTERNAL_GKI_CERTIFICATE_DEPS)
+	$(call pretty,"Target boot 16k image: $@")
+	$(call build_boot_from_kernel_avb_enabled,$@,$(BUILT_KERNEL_16K_TARGET))
+
+
+bootimage_16k: $(BUILT_BOOTIMAGE_16K_TARGET)
+.PHONY: bootimage_16k
+
+BUILT_BOOT_OTA_PACKAGE_16K := $(PRODUCT_OUT)/boot_ota_16k.zip
+$(BUILT_BOOT_OTA_PACKAGE_16K): $(OTA_FROM_RAW_IMG) $(BUILT_BOOTIMAGE_16K_TARGET)
+	$(OTA_FROM_RAW_IMG) --path $(HOST_OUT) --partition_name boot --output $@ $(BUILT_BOOTIMAGE_16K_TARGET)
+
+boototapackage_16k: $(BUILT_BOOT_OTA_PACKAGE_16K)
+.PHONY: boototapackage_16k
 
 endif
 
@@ -1170,6 +1207,29 @@ endef
 define get-partition-size-argument
   $(if $(1),--partition_size $(1),--dynamic_partition_size)
 endef
+
+# $1: output boot image target
+# $2: input path to kernel binary
+define build_boot_from_kernel_avb_enabled
+  $(eval kernel := $(2))
+  $(MKBOOTIMG) --kernel $(kernel) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1)
+  $(if $(BOARD_GKI_SIGNING_KEY_PATH), \
+    $(eval boot_signature := $(call intermediates-dir-for,PACKAGING,generic_boot)/$(notdir $(1)).boot_signature) \
+    $(eval kernel_signature := $(call intermediates-dir-for,PACKAGING,generic_kernel)/$(notdir $(kernel)).boot_signature) \
+    $(call generate_generic_boot_image_certificate,$(1),$(boot_signature),boot,$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)) $(newline) \
+    $(call generate_generic_boot_image_certificate,$(kernel),$(kernel_signature),generic_kernel,$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)) $(newline) \
+    cat $(kernel_signature) >> $(boot_signature) $(newline) \
+    $(call assert-max-image-size,$(boot_signature),16 << 10) $(newline) \
+    truncate -s $$(( 16 << 10 )) $(boot_signature) $(newline) \
+    cat "$(boot_signature)" >> $(1))
+  $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(call get-bootimage-partition-size,$(1),boot)))
+  $(AVBTOOL) add_hash_footer \
+          --image $(1) \
+          $(call get-partition-size-argument,$(call get-bootimage-partition-size,$(1),boot)) \
+          --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
+          $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
+endef
+
 
 ifndef BOARD_PREBUILT_BOOTIMAGE
 
@@ -1275,22 +1335,7 @@ ifeq (true,$(BOARD_AVB_ENABLE))
 # $1: boot image target
 define build_boot_board_avb_enabled
   $(eval kernel := $(call bootimage-to-kernel,$(1)))
-  $(MKBOOTIMG) --kernel $(kernel) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1)
-  $(if $(BOARD_GKI_SIGNING_KEY_PATH), \
-    $(eval boot_signature := $(call intermediates-dir-for,PACKAGING,generic_boot)/$(notdir $(1)).boot_signature) \
-    $(eval kernel_signature := $(call intermediates-dir-for,PACKAGING,generic_kernel)/$(notdir $(kernel)).boot_signature) \
-    $(call generate_generic_boot_image_certificate,$(1),$(boot_signature),boot,$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)) $(newline) \
-    $(call generate_generic_boot_image_certificate,$(kernel),$(kernel_signature),generic_kernel,$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)) $(newline) \
-    cat $(kernel_signature) >> $(boot_signature) $(newline) \
-    $(call assert-max-image-size,$(boot_signature),16 << 10) $(newline) \
-    truncate -s $$(( 16 << 10 )) $(boot_signature) $(newline) \
-    cat "$(boot_signature)" >> $(1))
-  $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(call get-bootimage-partition-size,$(1),boot)))
-  $(AVBTOOL) add_hash_footer \
-          --image $(1) \
-          $(call get-partition-size-argument,$(call get-bootimage-partition-size,$(1),boot)) \
-          --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
-          $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
+  $(call build_boot_from_kernel_avb_enabled,$(1),$(kernel))
 endef
 
 $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH) $(INTERNAL_GKI_CERTIFICATE_DEPS)

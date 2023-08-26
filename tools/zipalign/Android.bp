@@ -70,6 +70,7 @@ cc_test_host {
         "libgmock",
     ],
     data: [
+         "tests/data/apkWithUncompressedSharedLibs.zip",
          "tests/data/archiveWithOneDirectoryEntry.zip",
          "tests/data/diffOrders.zip",
          "tests/data/holes.zip",

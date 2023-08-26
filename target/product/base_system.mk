@@ -55,6 +55,7 @@ PRODUCT_PACKAGES += \
     com.android.btservices \
     com.android.configinfrastructure \
     com.android.conscrypt \
+    com.android.crashrecovery \
     com.android.devicelock \
     com.android.extservices \
     com.android.healthfitness \
@@ -73,7 +74,6 @@ PRODUCT_PACKAGES += \
     com.android.scheduling \
     com.android.sdkext \
     com.android.tethering \
-    com.android.threadnetwork \
     com.android.tzdata \
     com.android.uwb \
     com.android.virt \
@@ -96,6 +96,7 @@ PRODUCT_PACKAGES += \
     ExtShared \
     flags_health_check \
     framework-graphics \
+    framework-location \
     framework-minus-apex \
     framework-minus-apex-install-dependencies \
     framework-res \
@@ -265,6 +266,7 @@ PRODUCT_PACKAGES += \
     services \
     settings \
     SettingsProvider \
+    sfdo \
     sgdisk \
     Shell \
     shell_and_utilities_system \
@@ -396,6 +398,7 @@ PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
+    adevice_fingerprint \
     arping \
     dmuserd \
     idlcli \
