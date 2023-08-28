@@ -5778,9 +5778,6 @@ endif
 ifeq ($(BUILDING_WITH_VSDK),true)
 	$(hide) echo "building_with_vsdk=true" >> $@
 endif
-ifeq ($(TARGET_FLATTEN_APEX),false)
-	$(hide) echo "target_flatten_apex=false" >> $@
-endif
 
 $(call declare-0p-target,$(INSTALLED_FASTBOOT_INFO_TARGET))
 
