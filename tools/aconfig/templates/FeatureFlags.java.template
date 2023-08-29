@@ -4,10 +4,4 @@ public interface FeatureFlags \{
 {{ for item in class_elements}}
     boolean {item.method_name}();
 {{ endfor }}
-
-{{ -if is_test_mode }}
-    public void setFlag(String flagName, boolean value);
-
-    public void resetAll();
-{{ -endif }}
 }
