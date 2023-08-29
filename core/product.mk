@@ -430,6 +430,9 @@ _product_single_value_vars += PRODUCT_ENABLE_UFFD_GC
 # specified we default to COW version 2 in update_engine for backwards compatibility
 _product_single_value_vars += PRODUCT_VIRTUAL_AB_COW_VERSION
 
+# If set, determines whether the build system checks vendor seapp contexts violations.
+_product_single_value_vars += PRODUCT_CHECK_VENDOR_SEAPP_VIOLATIONS
+
 _product_list_vars += PRODUCT_AFDO_PROFILES
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
