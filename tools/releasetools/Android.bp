@@ -165,6 +165,7 @@ python_defaults {
         "ota_utils_lib",
     ],
     required: [
+        "apexd_host",
         "brillo_update_payload",
         "checkvintf",
         "generate_gki_certificate",
@@ -643,6 +644,7 @@ python_defaults {
         },
     },
     required: [
+        "apexd_host",
         "deapexer",
     ],
 }
