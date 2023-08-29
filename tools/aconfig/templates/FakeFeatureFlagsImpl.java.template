@@ -1,27 +1,26 @@
 package {package_name};
-{{ if is_test_mode }}
-import static java.util.stream.Collectors.toMap;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class FakeFeatureFlagsImpl implements FeatureFlags \{
+    public FakeFeatureFlagsImpl() \{
+        resetAll();
+    }
+
 {{ for item in class_elements}}
     @Override
     public boolean {item.method_name}() \{
         return getFlag(Flags.FLAG_{item.flag_name_constant_suffix});
     }
 {{ endfor}}
-    @Override
     public void setFlag(String flagName, boolean value) \{
         if (!this.mFlagMap.containsKey(flagName)) \{
-            throw new IllegalArgumentException("no such flag" + flagName);
+            throw new IllegalArgumentException("no such flag " + flagName);
         }
         this.mFlagMap.put(flagName, value);
     }
 
-    @Override
     public void resetAll() \{
         for (Map.Entry entry : mFlagMap.entrySet()) \{
             entry.setValue(null);
@@ -36,26 +35,11 @@ public class FakeFeatureFlagsImpl implements FeatureFlags \{
         return value;
     }
 
-    private HashMap<String, Boolean> mFlagMap = Stream.of(
+    private Map<String, Boolean> mFlagMap = new HashMap<>(
+        Map.of(
             {{-for item in class_elements}}
-            Flags.FLAG_{item.flag_name_constant_suffix}{{ if not @last }},{{ endif }}
+            Flags.FLAG_{item.flag_name_constant_suffix}, false{{ if not @last }},{{ endif }}
             {{ -endfor }}
         )
-        .collect(
-            HashMap::new,
-            (map, elem) -> map.put(elem, null),
-            HashMap::putAll
-        );
+    );
 }
-{{ else }}
-{#- Generate only stub if in prod mode #}
-public class FakeFeatureFlagsImpl implements FeatureFlags \{
-{{ for item in class_elements}}
-    @Override
-    public boolean {item.method_name}() \{
-        throw new UnsupportedOperationException(
-            "Method is not implemented.");
-    }
-{{ endfor}}
-}
-{{ endif }}
