@@ -572,6 +572,32 @@ ifdef PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS
       $(PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS))
 endif
 
+# Get the board API level.
+board_api_level := $(PLATFORM_SDK_VERSION)
+ifdef BOARD_API_LEVEL
+  board_api_level := $(BOARD_API_LEVEL)
+else ifdef BOARD_SHIPPING_API_LEVEL
+  # Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
+  board_api_level := $(BOARD_SHIPPING_API_LEVEL)
+endif
+
+# Calculate the VSR vendor API level.
+VSR_VENDOR_API_LEVEL := $(board_api_level)
+
+ifdef PRODUCT_SHIPPING_API_LEVEL
+  VSR_VENDOR_API_LEVEL := $(call math_min,$(PRODUCT_SHIPPING_API_LEVEL),$(board_api_level))
+endif
+.KATI_READONLY := VSR_VENDOR_API_LEVEL
+
+# Boolean variable determining if vendor seapp contexts is enforced
+CHECK_VENDOR_SEAPP_VIOLATIONS := false
+ifneq ($(call math_gt,$(VSR_VENDOR_API_LEVEL),34),)
+  CHECK_VENDOR_SEAPP_VIOLATIONS := true
+else ifneq ($(PRODUCT_CHECK_VENDOR_SEAPP_VIOLATIONS),)
+  CHECK_VENDOR_SEAPP_VIOLATIONS := $(PRODUCT_CHECK_VENDOR_SEAPP_VIOLATIONS)
+endif
+.KATI_READONLY := CHECK_VENDOR_SEAPP_VIOLATIONS
+
 define product-overrides-config
 $$(foreach rule,$$(PRODUCT_$(1)_OVERRIDES),\
     $$(if $$(filter 2,$$(words $$(subst :,$$(space),$$(rule)))),,\
