@@ -468,8 +468,6 @@ ifdef LOCAL_DEX_PREOPT
 	rsync --checksum $(PRIVATE_STAGING) $@
 
   my_dexpreopt_script := $(intermediates)/dexpreopt.sh
-  my_dexpreopt_zip := $(intermediates)/dexpreopt.zip
-  DEXPREOPT.$(LOCAL_MODULE).POST_INSTALLED_DEXPREOPT_ZIP := $(my_dexpreopt_zip)
   .KATI_RESTAT: $(my_dexpreopt_script)
   $(my_dexpreopt_script): PRIVATE_MODULE := $(LOCAL_MODULE)
   $(my_dexpreopt_script): PRIVATE_GLOBAL_SOONG_CONFIG := $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE)
@@ -499,38 +497,67 @@ ifdef LOCAL_DEX_PREOPT
     my_dexpreopt_deps += $(intermediates)/enforce_uses_libraries.status
   endif
 
+  # We need to add all the installed files to ALL_MODULES.$(my_register_name).INSTALLED in order
+  # for the build system to properly track installed files. (for sbom, installclean, etc)
+  # We install all the files in a zip file generated at execution time, which means we have to guess
+  # what's going to be in that zip file before it's created. We then check at executation time that
+  # our guess is correct.
+  # _system_other corresponds to OdexOnSystemOtherByName() in soong.
+  # The other paths correspond to dexpreoptCommand()
+  _dexlocation := $(patsubst $(PRODUCT_OUT)/%,%,$(LOCAL_INSTALLED_MODULE))
+  _dexname := $(basename $(notdir $(_dexlocation)))
+  _system_other := $(strip $(if $(strip $(BOARD_USES_SYSTEM_OTHER_ODEX)), \
+    $(if $(strip $(SANITIZE_LITE)),, \
+      $(if $(filter $(_dexname),$(PRODUCT_DEXPREOPT_SPEED_APPS))$(filter $(_dexname),$(PRODUCT_SYSTEM_SERVER_APPS)),, \
+        $(if $(strip $(foreach myfilter,$(SYSTEM_OTHER_ODEX_FILTER),$(filter system/$(myfilter),$(_dexlocation)))), \
+          system_other/)))))
+  # _dexdir has a trailing /
+  _dexdir := $(_system_other)$(dir $(_dexlocation))
+  my_dexpreopt_zip_contents := $(sort \
+    $(foreach arch,$(my_dexpreopt_archs), \
+      $(_dexdir)oat/$(arch)/$(_dexname).odex \
+      $(_dexdir)oat/$(arch)/$(_dexname).vdex \
+      $(if $(filter false,$(LOCAL_DEX_PREOPT_APP_IMAGE)),, \
+        $(if $(my_process_profile)$(filter true,$(LOCAL_DEX_PREOPT_APP_IMAGE)), \
+          $(_dexdir)oat/$(arch)/$(_dexname).art))) \
+    $(if $(my_process_profile),$(_dexlocation).prof))
+  _dexlocation :=
+  _dexdir :=
+  _dexname :=
+  _system_other :=
+
+  my_dexpreopt_zip := $(intermediates)/dexpreopt.zip
+  DEXPREOPT.$(LOCAL_MODULE).POST_INSTALLED_DEXPREOPT_ZIP := $(my_dexpreopt_zip)
   $(my_dexpreopt_zip): PRIVATE_MODULE := $(LOCAL_MODULE)
   $(my_dexpreopt_zip): $(my_dexpreopt_deps)
   $(my_dexpreopt_zip): | $(DEXPREOPT_GEN_DEPS)
   $(my_dexpreopt_zip): .KATI_DEPFILE := $(my_dexpreopt_zip).d
   $(my_dexpreopt_zip): PRIVATE_DEX := $(my_dex_jar)
   $(my_dexpreopt_zip): PRIVATE_SCRIPT := $(my_dexpreopt_script)
+  $(my_dexpreopt_zip): PRIVATE_ZIP_CONTENTS := $(my_dexpreopt_zip_contents)
   $(my_dexpreopt_zip): $(my_dexpreopt_script)
 	@echo "$(PRIVATE_MODULE) dexpreopt"
+	rm -f $@
+	echo -n > $@.contents
+	$(foreach f,$(PRIVATE_ZIP_CONTENTS),echo "$(f)" >> $@.contents$(newline))
 	bash $(PRIVATE_SCRIPT) $(PRIVATE_DEX) $@
+	if ! diff <(zipinfo -1 $@ | sort) $@.contents >&2; then \
+	  echo "Contents of $@ did not match what make was expecting." >&2 && exit 1; \
+	fi
 
-  ifdef LOCAL_POST_INSTALL_CMD
-    # Add a shell command separator
-    LOCAL_POST_INSTALL_CMD += &&
-  endif
+  $(foreach installed_dex_file,$(my_dexpreopt_zip_contents),\
+    $(eval $(PRODUCT_OUT)/$(installed_dex_file): $(my_dexpreopt_zip) \
+$(newline)	unzip -qoDD -d $(PRODUCT_OUT) $(my_dexpreopt_zip) $(installed_dex_file)))
 
-  LOCAL_POST_INSTALL_CMD += \
-    for i in $$(zipinfo -1 $(my_dexpreopt_zip)); \
-      do mkdir -p $(PRODUCT_OUT)/$$(dirname $$i); \
-    done && \
-    ( unzip -qoDD -d $(PRODUCT_OUT) $(my_dexpreopt_zip) 2>&1 | grep -v "zipfile is empty"; exit $${PIPESTATUS[0]} ) || \
-      ( code=$$?; if [ $$code -ne 0 -a $$code -ne 1 ]; then exit $$code; fi )
-
-  $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
-  $(LOCAL_INSTALLED_MODULE): $(my_dexpreopt_zip)
-
-  $(my_all_targets): $(my_dexpreopt_zip)
+  ALL_MODULES.$(my_register_name).INSTALLED += $(addprefix $(PRODUCT_OUT)/,$(my_dexpreopt_zip_contents))
 
   my_dexpreopt_config :=
+  my_dexpreopt_config_for_postprocessing :=
+  my_dexpreopt_jar_copy :=
   my_dexpreopt_product_packages :=
   my_dexpreopt_script :=
   my_dexpreopt_zip :=
-  my_dexpreopt_config_for_postprocessing :=
+  my_dexpreopt_zip_contents :=
 endif # LOCAL_DEX_PREOPT
 endif # my_create_dexpreopt_config
 
