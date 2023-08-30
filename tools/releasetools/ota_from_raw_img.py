@@ -58,6 +58,8 @@ def main(argv):
                       help="Partition names to install the images, default to basename of the image(no file name extension)")
   parser.add_argument('--output', type=str,
                       help='Paths to output merged ota', required=True)
+  parser.add_argument('--max_timestamp', type=int,
+                      help='Maximum build timestamp allowed to install this OTA')
   parser.add_argument("-v", action="store_true",
                       help="Enable verbose logging", dest="verbose")
   AddSigningArgumentParse(parser)
@@ -74,6 +76,8 @@ def main(argv):
     cmd.append("--partition_names=" + ",".join(args.partition_names))
     cmd.append("--new_partitions=" + ",".join(args.images))
     cmd.append("--out_file=" + unsigned_payload.name)
+    if args.max_timestamp:
+      cmd.append("--max_timestamp=" + str(args.max_timestamp))
     logger.info("Running %s", cmd)
 
     subprocess.run(cmd)
