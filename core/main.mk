@@ -1232,9 +1232,7 @@ define auto-included-modules
 
 endef
 
-# Lists most of the files a particular product installs, including:
-# - PRODUCT_PACKAGES, and their LOCAL_REQUIRED_MODULES
-# - PRODUCT_COPY_FILES
+# Lists the modules particular product installs.
 # The base list of modules to build for this product is specified
 # by the appropriate product definition file, which was included
 # by product_config.mk.
@@ -1246,8 +1244,7 @@ endef
 # Name resolution for LOCAL_REQUIRED_MODULES:
 #   See the select-bitness-of-required-modules definition.
 # $(1): product makefile
-
-define product-installed-files
+define product-installed-modules
   $(eval _pif_modules := \
     $(call get-product-var,$(1),PRODUCT_PACKAGES) \
     $(if $(filter eng,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_ENG)) \
@@ -1264,7 +1261,14 @@ define product-installed-files
   $(eval ### Resolve the :32 :64 module name) \
   $(eval _pif_modules := $(sort $(call resolve-bitness-for-modules,TARGET,$(_pif_modules)))) \
   $(call expand-required-modules,_pif_modules,$(_pif_modules),$(_pif_overrides)) \
-  $(filter-out $(HOST_OUT_ROOT)/%,$(call module-installed-files, $(_pif_modules))) \
+  $(_pif_modules)
+endef
+
+# Lists most of the files a particular product installs.
+# It gives all the installed files for all modules returned by product-installed-modules,
+# and also includes PRODUCT_COPY_FILES.
+define product-installed-files
+  $(filter-out $(HOST_OUT_ROOT)/%,$(call module-installed-files, $(call product-installed-modules,$(1)))) \
   $(call resolve-product-relative-paths,\
     $(foreach cf,$(call get-product-var,$(1),PRODUCT_COPY_FILES),$(call word-colon,2,$(cf))))
 endef
@@ -1435,6 +1439,16 @@ ifdef is_sdk_build
   $(foreach m, $(PRODUCT_PACKAGES_TESTS), \
     $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
       $(warning $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES_TESTS has nothing to install!)))
+endif
+
+ifneq ($(TARGET_BUILD_APPS),)
+  # If this build is just for apps, only build apps and not the full system by default.
+  ifneq ($(filter all,$(TARGET_BUILD_APPS)),)
+    # If they used the magic goal "all" then build all apps in the source tree.
+    unbundled_build_modules := $(foreach m,$(sort $(ALL_MODULES)),$(if $(filter APPS,$(ALL_MODULES.$(m).CLASS)),$(m)))
+  else
+    unbundled_build_modules := $(sort $(TARGET_BUILD_APPS))
+  endif
 endif
 
 # build/make/core/Makefile contains extra stuff that we don't want to pollute this
@@ -1711,14 +1725,6 @@ ifeq ($(HOST_OS),darwin)
 
 else ifneq ($(TARGET_BUILD_APPS),)
   # If this build is just for apps, only build apps and not the full system by default.
-
-  unbundled_build_modules :=
-  ifneq ($(filter all,$(TARGET_BUILD_APPS)),)
-    # If they used the magic goal "all" then build all apps in the source tree.
-    unbundled_build_modules := $(foreach m,$(sort $(ALL_MODULES)),$(if $(filter APPS,$(ALL_MODULES.$(m).CLASS)),$(m)))
-  else
-    unbundled_build_modules := $(sort $(TARGET_BUILD_APPS))
-  endif
 
   # Dist the installed files if they exist, except the installed symlinks. dist-for-goals emits
   # `cp src dest` commands, which will fail to copy dangling symlinks.
