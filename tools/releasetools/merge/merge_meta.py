@@ -124,10 +124,10 @@ def MergeMetaFiles(temp_dir, merged_dir):
         merged_meta_dir=merged_meta_dir,
         file_name=file_name)
 
-  MergeUpdateEngineConfig(
-      framework_meta_dir,
-      vendor_meta_dir, merged_meta_dir,
-  )
+  if OPTIONS.merged_misc_info.get('ab_update') == 'true':
+    MergeUpdateEngineConfig(
+        framework_meta_dir,
+        vendor_meta_dir, merged_meta_dir)
 
   # Write the now-finalized OPTIONS.merged_misc_info.
   merge_utils.WriteSortedData(
