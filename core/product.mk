@@ -47,6 +47,13 @@ _product_list_vars += PRODUCT_PACKAGES
 _product_list_vars += PRODUCT_PACKAGES_DEBUG
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_ASAN
 _product_list_vars += PRODUCT_PACKAGES_ARM64
+
+# packages that are added to PRODUCT_PACKAGES based on the PRODUCT_SHIPPING_API_LEVEL
+# These are only added if the shipping API level is that level or lower
+_product_list_vars += PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29
+_product_list_vars += PRODUCT_PACKAGES_SHIPPING_API_LEVEL_33
+_product_list_vars += PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34
+
 # Packages included only for eng/userdebug builds, when building with EMMA_INSTRUMENT=true
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE
 _product_list_vars += PRODUCT_PACKAGES_ENG
