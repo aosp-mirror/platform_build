@@ -527,7 +527,6 @@ ifdef LOCAL_DEX_PREOPT
   _system_other :=
 
   my_dexpreopt_zip := $(intermediates)/dexpreopt.zip
-  DEXPREOPT.$(LOCAL_MODULE).POST_INSTALLED_DEXPREOPT_ZIP := $(my_dexpreopt_zip)
   $(my_dexpreopt_zip): PRIVATE_MODULE := $(LOCAL_MODULE)
   $(my_dexpreopt_zip): $(my_dexpreopt_deps)
   $(my_dexpreopt_zip): | $(DEXPREOPT_GEN_DEPS)
@@ -550,6 +549,11 @@ ifdef LOCAL_DEX_PREOPT
 $(newline)	unzip -qoDD -d $(PRODUCT_OUT) $(my_dexpreopt_zip) $(installed_dex_file)))
 
   ALL_MODULES.$(my_register_name).INSTALLED += $(addprefix $(PRODUCT_OUT)/,$(my_dexpreopt_zip_contents))
+
+  # Normally this happens in sbom.mk, which is included from base_rules.mk. But since
+  # dex_preopt_odex_install.mk is included after base_rules.mk, it misses these odex files.
+  $(foreach installed_file,$(addprefix $(PRODUCT_OUT)/,$(my_dexpreopt_zip_contents)), \
+    $(eval ALL_INSTALLED_FILES.$(installed_file) := $(my_register_name)))
 
   my_dexpreopt_config :=
   my_dexpreopt_config_for_postprocessing :=
