@@ -47,6 +47,13 @@ _product_list_vars += PRODUCT_PACKAGES
 _product_list_vars += PRODUCT_PACKAGES_DEBUG
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_ASAN
 _product_list_vars += PRODUCT_PACKAGES_ARM64
+
+# packages that are added to PRODUCT_PACKAGES based on the PRODUCT_SHIPPING_API_LEVEL
+# These are only added if the shipping API level is that level or lower
+_product_list_vars += PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29
+_product_list_vars += PRODUCT_PACKAGES_SHIPPING_API_LEVEL_33
+_product_list_vars += PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34
+
 # Packages included only for eng/userdebug builds, when building with EMMA_INSTRUMENT=true
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE
 _product_list_vars += PRODUCT_PACKAGES_ENG
@@ -429,6 +436,9 @@ _product_single_value_vars += PRODUCT_ENABLE_UFFD_GC
 # Specifies COW version to be used by update_engine and libsnapshot. If this value is not
 # specified we default to COW version 2 in update_engine for backwards compatibility
 _product_single_value_vars += PRODUCT_VIRTUAL_AB_COW_VERSION
+
+# If set, determines whether the build system checks vendor seapp contexts violations.
+_product_single_value_vars += PRODUCT_CHECK_VENDOR_SEAPP_VIOLATIONS
 
 _product_list_vars += PRODUCT_AFDO_PROFILES
 

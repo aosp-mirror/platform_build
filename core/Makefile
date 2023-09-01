@@ -1075,9 +1075,9 @@ $(BUILT_RAMDISK_16K_TARGET): $(foreach file,$(BOARD_KERNEL_MODULES_16K),$(RAMDIS
 	done;
 	rm -rf $(TARGET_OUT_RAMDISK_16K)/lib/modules
 	mkdir -p $(TARGET_OUT_RAMDISK_16K)/lib/modules
-	KERNEL_RELEASE=`$(EXTRACT_KERNEL) --input $(BOARD_KERNEL_PATH_16K) --output-release /dev/stdout` ;\
-	IS_16K_KERNEL=`$(EXTRACT_KERNEL) --input $(BOARD_KERNEL_PATH_16K) --output-config /dev/stdout` ;\
-	if [[ "$$IS_16K_KERNEL" == *"CONFIG_ARM64_16K_PAGES"* ]]; then SUFFIX=_16k; fi ;\
+	KERNEL_RELEASE=`$(EXTRACT_KERNEL) --tools lz4:$(LZ4) --input $(BOARD_KERNEL_PATH_16K) --output-release` ;\
+	IS_16K_KERNEL=`$(EXTRACT_KERNEL) --tools lz4:$(LZ4) --input $(BOARD_KERNEL_PATH_16K) --output-config` ;\
+	if [[ "$$IS_16K_KERNEL" == *"CONFIG_ARM64_16K_PAGES=y"* ]]; then SUFFIX=_16k; fi ;\
 	cp -r $(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0 $(TARGET_OUT_RAMDISK_16K)/lib/modules/$$KERNEL_RELEASE$$SUFFIX
 	$(MKBOOTFS) $(TARGET_OUT_RAMDISK_16K) | $(COMPRESSION_COMMAND) > $@
 
@@ -1105,6 +1105,18 @@ $(BUILT_BOOTIMAGE_16K_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILE
 
 bootimage_16k: $(BUILT_BOOTIMAGE_16K_TARGET)
 .PHONY: bootimage_16k
+
+BUILT_BOOT_OTA_PACKAGE_16K := $(PRODUCT_OUT)/boot_ota_16k.zip
+$(BUILT_BOOT_OTA_PACKAGE_16K): $(OTA_FROM_RAW_IMG) $(BUILT_BOOTIMAGE_16K_TARGET) $(DEFAULT_SYSTEM_DEV_CERTIFICATE).pk8
+	$(OTA_FROM_RAW_IMG) --package_key $(DEFAULT_SYSTEM_DEV_CERTIFICATE) \
+                      --max_timestamp `cat $(BUILD_DATETIME_FILE)` \
+                      --path $(HOST_OUT) \
+                      --partition_name boot \
+                      --output $@ \
+                      $(BUILT_BOOTIMAGE_16K_TARGET)
+
+boototapackage_16k: $(BUILT_BOOT_OTA_PACKAGE_16K)
+.PHONY: boototapackage_16k
 
 endif
 
@@ -1200,6 +1212,29 @@ endef
 define get-partition-size-argument
   $(if $(1),--partition_size $(1),--dynamic_partition_size)
 endef
+
+# $1: output boot image target
+# $2: input path to kernel binary
+define build_boot_from_kernel_avb_enabled
+  $(eval kernel := $(2))
+  $(MKBOOTIMG) --kernel $(kernel) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1)
+  $(if $(BOARD_GKI_SIGNING_KEY_PATH), \
+    $(eval boot_signature := $(call intermediates-dir-for,PACKAGING,generic_boot)/$(notdir $(1)).boot_signature) \
+    $(eval kernel_signature := $(call intermediates-dir-for,PACKAGING,generic_kernel)/$(notdir $(kernel)).boot_signature) \
+    $(call generate_generic_boot_image_certificate,$(1),$(boot_signature),boot,$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)) $(newline) \
+    $(call generate_generic_boot_image_certificate,$(kernel),$(kernel_signature),generic_kernel,$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)) $(newline) \
+    cat $(kernel_signature) >> $(boot_signature) $(newline) \
+    $(call assert-max-image-size,$(boot_signature),16 << 10) $(newline) \
+    truncate -s $$(( 16 << 10 )) $(boot_signature) $(newline) \
+    cat "$(boot_signature)" >> $(1))
+  $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(call get-bootimage-partition-size,$(1),boot)))
+  $(AVBTOOL) add_hash_footer \
+          --image $(1) \
+          $(call get-partition-size-argument,$(call get-bootimage-partition-size,$(1),boot)) \
+          --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
+          $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
+endef
+
 
 ifndef BOARD_PREBUILT_BOOTIMAGE
 
@@ -1301,28 +1336,6 @@ endif # TARGET_BOOTIMAGE_USE_EXT2
 $(foreach b,$(INSTALLED_BOOTIMAGE_TARGET), $(eval $(call add-dependency,$(b),$(call bootimage-to-kernel,$(b)))))
 
 ifeq (true,$(BOARD_AVB_ENABLE))
-
-# $1: output boot image target
-# $2: input path to kernel binary
-define build_boot_from_kernel_avb_enabled
-  $(eval kernel := $(2))
-  $(MKBOOTIMG) --kernel $(kernel) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1)
-  $(if $(BOARD_GKI_SIGNING_KEY_PATH), \
-    $(eval boot_signature := $(call intermediates-dir-for,PACKAGING,generic_boot)/$(notdir $(1)).boot_signature) \
-    $(eval kernel_signature := $(call intermediates-dir-for,PACKAGING,generic_kernel)/$(notdir $(kernel)).boot_signature) \
-    $(call generate_generic_boot_image_certificate,$(1),$(boot_signature),boot,$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)) $(newline) \
-    $(call generate_generic_boot_image_certificate,$(kernel),$(kernel_signature),generic_kernel,$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)) $(newline) \
-    cat $(kernel_signature) >> $(boot_signature) $(newline) \
-    $(call assert-max-image-size,$(boot_signature),16 << 10) $(newline) \
-    truncate -s $$(( 16 << 10 )) $(boot_signature) $(newline) \
-    cat "$(boot_signature)" >> $(1))
-  $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(call get-bootimage-partition-size,$(1),boot)))
-  $(AVBTOOL) add_hash_footer \
-          --image $(1) \
-          $(call get-partition-size-argument,$(call get-bootimage-partition-size,$(1),boot)) \
-          --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
-          $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
-endef
 
 # $1: boot image target
 define build_boot_board_avb_enabled
@@ -3315,6 +3328,12 @@ ifdef BOARD_USES_SYSTEM_EXTIMAGE
   INTERNAL_SYSTEMIMAGE_FILES += $(_systemext_symlink)
   ALL_DEFAULT_INSTALLED_MODULES += $(_systemext_symlink)
 endif
+
+# Create symlink /system/bin/hwservicemanager -> /system/system_ext/bin/hwservicemanager
+# Old vendor libraries (like libhidlbase) may require /system/bin/hwservicemanager to be present
+$(call symlink-file,$(TARGET_OUT_SYSTEM_EXT)/bin/hwservicemanager,/system/system_ext/bin/hwservicemanager, $(TARGET_OUT)/bin/hwservicemanager)
+INTERNAL_SYSTEMIMAGE_FILES += \
+    $(TARGET_OUT)/bin/hwservicemanager
 
 # -----------------------------------------------------------------
 # system_dlkm partition image
@@ -5766,9 +5785,6 @@ ifneq ($(BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST),)
 endif
 ifeq ($(BUILDING_WITH_VSDK),true)
 	$(hide) echo "building_with_vsdk=true" >> $@
-endif
-ifeq ($(TARGET_FLATTEN_APEX),false)
-	$(hide) echo "target_flatten_apex=false" >> $@
 endif
 
 $(call declare-0p-target,$(INSTALLED_FASTBOOT_INFO_TARGET))
