@@ -2183,10 +2183,7 @@ endif  # TARGET_BUILD_APPS
 
 metadata_list := $(OUT_DIR)/.module_paths/METADATA.list
 metadata_files := $(subst $(newline),$(space),$(file <$(metadata_list)))
-# (TODO: b/272358583 find another way of always rebuilding this target)
-# Remove the sbom-metadata.csv whenever makefile is evaluated
-$(shell rm $(PRODUCT_OUT)/sbom-metadata.csv >/dev/null 2>&1)
-$(PRODUCT_OUT)/sbom-metadata.csv: $(installed_files) $(metadata_list) $(metadata_files)
+$(PRODUCT_OUT)/sbom-metadata.csv:
 	rm -f $@
 	echo installed_file,module_path,soong_module_type,is_prebuilt_make_module,product_copy_files,kernel_module_copy_files,is_platform_generated,build_output_path,static_libraries,whole_static_libraries,is_static_lib >> $@
 	$(eval _all_static_libs :=)
@@ -2197,7 +2194,6 @@ $(PRODUCT_OUT)/sbom-metadata.csv: $(installed_files) $(metadata_list) $(metadata
 	  $(eval _module_path := $(strip $(sort $(ALL_MODULES.$(_module_name).PATH)))) \
 	  $(eval _soong_module_type := $(strip $(sort $(ALL_MODULES.$(_module_name).SOONG_MODULE_TYPE)))) \
 	  $(eval _is_prebuilt_make_module := $(ALL_MODULES.$(_module_name).IS_PREBUILT_MAKE_MODULE)) \
-	  $(eval _post_installed_dexpreopt_zip := $(DEXPREOPT.$(_module_name).POST_INSTALLED_DEXPREOPT_ZIP)) \
 	  $(eval _product_copy_files := $(sort $(filter %:$(_path_on_device),$(product_copy_files_without_owner)))) \
 	  $(eval _kernel_module_copy_files := $(sort $(filter %$(_path_on_device),$(KERNEL_MODULE_COPY_FILES)))) \
 	  $(eval _is_build_prop := $(call is-build-prop,$f)) \
@@ -2218,9 +2214,6 @@ $(PRODUCT_OUT)/sbom-metadata.csv: $(installed_files) $(metadata_list) $(metadata
 	  $(foreach l,$(_static_libs),$(eval _all_static_libs += $l:$(strip $(sort $(ALL_MODULES.$l.PATH))):$(strip $(sort $(ALL_MODULES.$l.SOONG_MODULE_TYPE))):$(ALL_STATIC_LIBRARIES.$l.BUILT_FILE))) \
 	  $(foreach l,$(_whole_static_libs),$(eval _all_static_libs += $l:$(strip $(sort $(ALL_MODULES.$l.PATH))):$(strip $(sort $(ALL_MODULES.$l.SOONG_MODULE_TYPE))):$(ALL_STATIC_LIBRARIES.$l.BUILT_FILE))) \
 	  echo /$(_path_on_device),$(_module_path),$(_soong_module_type),$(_is_prebuilt_make_module),$(_product_copy_files),$(_kernel_module_copy_files),$(_is_platform_generated),$(_build_output_path),$(_static_libs),$(_whole_static_libs), >> $@; \
-	  $(if $(_post_installed_dexpreopt_zip), \
-	  for i in $$(zipinfo -1 $(_post_installed_dexpreopt_zip)); do echo /$$i$(comma)$(_module_path)$(comma)$(_soong_module_type)$(comma)$(_is_prebuilt_make_module)$(comma)$(_product_copy_files)$(comma)$(_kernel_module_copy_files)$(comma)$(_is_platform_generated)$(comma)$(PRODUCT_OUT)/$$i$(comma)$(_static_libs)$(comma)$(_whole_static_libs)$(comma) >> $@ ; done ; \
-	  ) \
 	)
 	$(foreach l,$(sort $(_all_static_libs)), \
 	  $(eval _lib_stem := $(call word-colon,1,$l)) \
@@ -2233,11 +2226,17 @@ $(PRODUCT_OUT)/sbom-metadata.csv: $(installed_files) $(metadata_list) $(metadata
 	  echo $(_lib_stem).a,$(_module_path),$(_soong_module_type),,,,,$(_built_file),$(_static_libs),$(_whole_static_libs),$(_is_static_lib) >> $@; \
 	)
 
+# (TODO: b/272358583 find another way of always rebuilding sbom.spdx)
+# Remove the always_dirty_file.txt whenever the makefile is evaluated
+$(shell rm -f $(PRODUCT_OUT)/always_dirty_file.txt)
+$(PRODUCT_OUT)/always_dirty_file.txt:
+	touch $@
+
 .PHONY: sbom
 ifeq ($(TARGET_BUILD_APPS),)
 sbom: $(PRODUCT_OUT)/sbom.spdx.json
 $(PRODUCT_OUT)/sbom.spdx.json: $(PRODUCT_OUT)/sbom.spdx
-$(PRODUCT_OUT)/sbom.spdx: $(PRODUCT_OUT)/sbom-metadata.csv $(GEN_SBOM)
+$(PRODUCT_OUT)/sbom.spdx: $(PRODUCT_OUT)/sbom-metadata.csv $(GEN_SBOM) $(installed_files) $(metadata_list) $(metadata_files) $(PRODUCT_OUT)/always_dirty_file.txt
 	rm -rf $@
 	$(GEN_SBOM) --output_file $@ --metadata $(PRODUCT_OUT)/sbom-metadata.csv --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr "$(PRODUCT_MANUFACTURER)" --json
 
@@ -2256,7 +2255,7 @@ $(eval _soong_module_type := $(strip $(sort $(ALL_MODULES.$(_module_name).SOONG_
 $(eval _dep_modules := $(filter %.$(_module_name),$(ALL_MODULES)) $(filter %.$(_module_name)$(TARGET_2ND_ARCH_MODULE_SUFFIX),$(ALL_MODULES)))
 $(eval _is_apex := $(filter %.apex,$(3)))
 
-$(4): $(3) $(metadata_list) $(metadata_files)
+$(4):
 	rm -rf $$@
 	echo installed_file,module_path,soong_module_type,is_prebuilt_make_module,product_copy_files,kernel_module_copy_files,is_platform_generated,build_output_path,static_libraries,whole_static_libraries,is_static_lib >> $$@
 	echo /$(_path_on_device),$(_module_path),$(_soong_module_type),,,,,$(3),,, >> $$@
@@ -2265,7 +2264,7 @@ $(4): $(3) $(metadata_list) $(metadata_files)
 	    echo $(patsubst $(PRODUCT_OUT)/apex/$(_module_name)/%,%,$(ALL_MODULES.$m.INSTALLED)),$(sort $(ALL_MODULES.$m.PATH)),$(sort $(ALL_MODULES.$m.SOONG_MODULE_TYPE)),,,,,$(strip $(ALL_MODULES.$m.BUILT)),,, >> $$@;))
 
 $(2): $(1)
-$(1): $(4) $(GEN_SBOM)
+$(1): $(4) $(3) $(GEN_SBOM) $(installed_files) $(metadata_list) $(metadata_files)
 	rm -rf $$@
 	$(GEN_SBOM) --output_file $$@ --metadata $(4) --build_version $$(BUILD_FINGERPRINT_FROM_FILE) --product_mfr "$(PRODUCT_MANUFACTURER)" --json $(if $(filter %.apk,$(3)),--unbundled_apk,--unbundled_apex)
 endef
