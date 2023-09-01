@@ -206,17 +206,8 @@ $(call add_json_list, NamespacesToExport,                $(PRODUCT_SOONG_NAMESPA
 
 $(call add_json_list, PgoAdditionalProfileDirs,          $(PGO_ADDITIONAL_PROFILE_DIRS))
 
-$(call add_json_list, BoardPlatVendorPolicy,             $(BOARD_PLAT_VENDOR_POLICY))
-$(call add_json_list, BoardReqdMaskPolicy,               $(BOARD_REQD_MASK_POLICY))
-$(call add_json_list, BoardSystemExtPublicPrebuiltDirs,  $(BOARD_SYSTEM_EXT_PUBLIC_PREBUILT_DIRS))
-$(call add_json_list, BoardSystemExtPrivatePrebuiltDirs, $(BOARD_SYSTEM_EXT_PRIVATE_PREBUILT_DIRS))
-$(call add_json_list, BoardProductPublicPrebuiltDirs,    $(BOARD_PRODUCT_PUBLIC_PREBUILT_DIRS))
-$(call add_json_list, BoardProductPrivatePrebuiltDirs,   $(BOARD_PRODUCT_PRIVATE_PREBUILT_DIRS))
 $(call add_json_list, BoardVendorSepolicyDirs,           $(BOARD_VENDOR_SEPOLICY_DIRS) $(BOARD_SEPOLICY_DIRS))
 $(call add_json_list, BoardOdmSepolicyDirs,              $(BOARD_ODM_SEPOLICY_DIRS))
-$(call add_json_list, BoardVendorDlkmSepolicyDirs,       $(BOARD_VENDOR_DLKM_SEPOLICY_DIRS))
-$(call add_json_list, BoardOdmDlkmSepolicyDirs,          $(BOARD_ODM_DLKM_SEPOLICY_DIRS))
-$(call add_json_list, BoardSystemDlkmSepolicyDirs,       $(BOARD_SYSTEM_DLKM_SEPOLICY_DIRS))
 $(call add_json_list, SystemExtPublicSepolicyDirs,       $(SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS))
 $(call add_json_list, SystemExtPrivateSepolicyDirs,      $(SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS))
 $(call add_json_list, BoardSepolicyM4Defs,               $(BOARD_SEPOLICY_M4DEFS))
