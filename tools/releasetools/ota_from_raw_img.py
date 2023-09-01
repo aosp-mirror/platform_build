@@ -71,16 +71,22 @@ def main(argv):
   if not args.partition_names:
     args.partition_names = [os.path.os.path.splitext(os.path.basename(path))[
         0] for path in args.images]
-  with tempfile.NamedTemporaryFile() as unsigned_payload:
+  with tempfile.NamedTemporaryFile() as unsigned_payload, tempfile.NamedTemporaryFile() as dynamic_partition_info_file:
+    dynamic_partition_info_file.writelines(
+        [b"virtual_ab=true\n", b"super_partition_groups=\n"])
+    dynamic_partition_info_file.flush()
     cmd = [ResolveBinaryPath("delta_generator", args.search_path)]
     cmd.append("--partition_names=" + ",".join(args.partition_names))
+    cmd.append("--dynamic_partition_info_file=" +
+               dynamic_partition_info_file.name)
     cmd.append("--new_partitions=" + ",".join(args.images))
     cmd.append("--out_file=" + unsigned_payload.name)
+    cmd.append("--is_partial_update")
     if args.max_timestamp:
       cmd.append("--max_timestamp=" + str(args.max_timestamp))
     logger.info("Running %s", cmd)
 
-    subprocess.run(cmd)
+    subprocess.check_call(cmd)
     generator = PayloadGenerator()
     generator.payload_file = unsigned_payload.name
     logger.info("Payload size: %d", os.path.getsize(generator.payload_file))
