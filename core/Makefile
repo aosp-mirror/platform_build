@@ -6588,6 +6588,14 @@ $(JACOCO_REPORT_CLASSES_ALL) :
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
   $(JACOCO_REPORT_CLASSES_ALL): $(INTERNAL_ALLIMAGES_FILES)
 endif
+
+# This is not ideal, but it is difficult to correctly figure out the actual jacoco report
+# jars we need to add here as dependencies, so we add the device-tests as a dependency when
+# the env variable is set and this should guarantee thaat all the jacoco report jars are ready
+# when we package the final report jar here.
+ifeq ($(JACOCO_PACKAGING_INCLUDE_DEVICE_TESTS),true)
+  $(JACOCO_REPORT_CLASSES_ALL): $(COMPATIBILITY.device-tests.FILES)
+endif
 endif # EMMA_INSTRUMENT=true
 
 
