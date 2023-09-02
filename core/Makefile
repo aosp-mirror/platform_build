@@ -1098,7 +1098,9 @@ kernel_16k: $(BUILT_KERNEL_16K_TARGET)
 
 BUILT_BOOTIMAGE_16K_TARGET := $(PRODUCT_OUT)/boot_16k.img
 
-$(BUILT_BOOTIMAGE_16K_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH) $(INTERNAL_GKI_CERTIFICATE_DEPS)
+BOARD_KERNEL_16K_BOOTIMAGE_PARTITION_SIZE := $(BOARD_BOOTIMAGE_PARTITION_SIZE)
+
+$(BUILT_BOOTIMAGE_16K_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH) $(INTERNAL_GKI_CERTIFICATE_DEPS) $(BUILT_KERNEL_16K_TARGET)
 	$(call pretty,"Target boot 16k image: $@")
 	$(call build_boot_from_kernel_avb_enabled,$@,$(BUILT_KERNEL_16K_TARGET))
 
@@ -6965,29 +6967,34 @@ endif # EMMA_INSTRUMENT=true
 # finding the appropriate dictionary to deobfuscate a stack trace frame.
 #
 
-# The path to the zip file containing proguard dictionaries.
-PROGUARD_DICT_ZIP := $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-dict.zip
-# The path to the zip file containing mappings from dictionary hashes to filenames.
-PROGUARD_DICT_MAPPING := $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-dict-mapping.textproto
-.KATI_READONLY := PROGUARD_DICT_ZIP PROGUARD_DICT_MAPPING
-# For apps_only build we'll establish the dependency later in build/make/core/main.mk.
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
-$(PROGUARD_DICT_ZIP): $(INTERNAL_ALLIMAGES_FILES) $(updater_dep)
+  _proguard_dict_zip_modules := $(call product-installed-modules,$(INTERNAL_PRODUCT))
+else
+  _proguard_dict_zip_modules := $(unbundled_build_modules)
 endif
-$(PROGUARD_DICT_ZIP): PRIVATE_PACKAGING_DIR := $(call intermediates-dir-for,PACKAGING,proguard_dictionary)
-$(PROGUARD_DICT_ZIP): PRIVATE_MAPPING_PACKAGING_DIR := $(call intermediates-dir-for,PACKAGING,proguard_dictionary_mapping)
-$(PROGUARD_DICT_ZIP): PRIVATE_LIST_FILE := $(call intermediates-dir-for,PACKAGING,proguard_dictionary_filelist)/filelist
-$(PROGUARD_DICT_ZIP): $(SOONG_ZIP) $(SYMBOLS_MAP)
+
+# The path to the zip file containing proguard dictionaries.
+PROGUARD_DICT_ZIP :=$= $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-dict.zip
+$(PROGUARD_DICT_ZIP): PRIVATE_SOONG_ZIP_ARGUMENTS := $(foreach m,$(_proguard_dict_zip_modules),$(ALL_MODULES.$(m).PROGUARD_DICTIONARY_SOONG_ZIP_ARGUMENTS))
+$(PROGUARD_DICT_ZIP): $(SOONG_ZIP) $(foreach m,$(_proguard_dict_zip_modules),$(ALL_MODULES.$(m).PROGUARD_DICTIONARY_FILES))
 	@echo "Packaging Proguard obfuscation dictionary files."
-	rm -rf $@ $(PRIVATE_LIST_FILE)
-	mkdir -p $(PRIVATE_PACKAGING_DIR) $(PRIVATE_MAPPING_PACKAGING_DIR) $(dir $(PRIVATE_LIST_FILE))
-	# Zip all of the files in the proguard dictionary directory.
-	$(SOONG_ZIP) --ignore_missing_files -d -o $@ -C $(PRIVATE_PACKAGING_DIR) -D $(PRIVATE_PACKAGING_DIR)
-	# Find all of the files in the proguard dictionary mapping directory and merge them into the mapping textproto.
-	# Strip the PRIVATE_PACKAGING_DIR off the filenames to match soong_zip's -C argument.
-	$(hide) find -L $(PRIVATE_MAPPING_PACKAGING_DIR) -type f | sort >$(PRIVATE_LIST_FILE)
-	$(SYMBOLS_MAP) -merge $(PROGUARD_DICT_MAPPING) -strip_prefix $(PRIVATE_PACKAGING_DIR)/ -ignore_missing_files @$(PRIVATE_LIST_FILE)
-$(PROGUARD_DICT_ZIP): .KATI_IMPLICIT_OUTPUTS := $(PROGUARD_DICT_MAPPING)
+	# Zip all of the files in PROGUARD_DICTIONARY_FILES.
+	echo -n > $@.tmparglist
+	$(foreach arg,$(PRIVATE_SOONG_ZIP_ARGUMENTS),printf "%s\n" "$(arg)" >> $@.tmparglist$(newline))
+	$(SOONG_ZIP) -d -o $@ @$@.tmparglist
+	rm -f $@.tmparglist
+
+# The path to the zip file containing mappings from dictionary hashes to filenames.
+PROGUARD_DICT_MAPPING :=$= $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-dict-mapping.textproto
+_proguard_dict_mapping_files := $(foreach m,$(_proguard_dict_zip_modules),$(ALL_MODULES.$(m).PROGUARD_DICTIONARY_MAPPING))
+$(PROGUARD_DICT_MAPPING): PRIVATE_MAPPING_FILES := $(_proguard_dict_mapping_files)
+$(PROGUARD_DICT_MAPPING): $(SYMBOLS_MAP) $(_proguard_dict_mapping_files)
+	@echo "Packaging Proguard obfuscation dictionary mapping files."
+	# Merge all the mapping files together
+	echo -n > $@.tmparglist
+	$(foreach mf,$(PRIVATE_MAPPING_FILES),echo "$(mf)" >> $@.tmparglist$(newline))
+	$(SYMBOLS_MAP) -merge $(PROGUARD_DICT_MAPPING) @$@.tmparglist
+	rm -f $@.tmparglist
 
 $(call declare-1p-container,$(PROGUARD_DICT_ZIP),)
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
@@ -6997,31 +7004,19 @@ endif
 #------------------------------------------------------------------
 # A zip of Proguard usage files.
 #
-PROGUARD_USAGE_ZIP := $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-usage.zip
-# For apps_only build we'll establish the dependency later in build/make/core/main.mk.
-ifeq (,$(TARGET_BUILD_UNBUNDLED))
-$(PROGUARD_USAGE_ZIP): \
-    $(INSTALLED_SYSTEMIMAGE_TARGET) \
-    $(INSTALLED_RAMDISK_TARGET) \
-    $(INSTALLED_BOOTIMAGE_TARGET) \
-    $(INSTALLED_INIT_BOOT_IMAGE_TARGET) \
-    $(INSTALLED_USERDATAIMAGE_TARGET) \
-    $(INSTALLED_VENDORIMAGE_TARGET) \
-    $(INSTALLED_PRODUCTIMAGE_TARGET) \
-    $(INSTALLED_SYSTEM_EXTIMAGE_TARGET) \
-    $(INSTALLED_ODMIMAGE_TARGET) \
-    $(INSTALLED_VENDOR_DLKMIMAGE_TARGET) \
-    $(INSTALLED_ODM_DLKMIMAGE_TARGET) \
-    $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET) \
-    $(updater_dep)
-endif
-$(PROGUARD_USAGE_ZIP): PRIVATE_LIST_FILE := $(call intermediates-dir-for,PACKAGING,proguard_usage.zip)/filelist
-$(PROGUARD_USAGE_ZIP): PRIVATE_PACKAGING_DIR := $(call intermediates-dir-for,PACKAGING,proguard_usage)
-$(PROGUARD_USAGE_ZIP): $(MERGE_ZIPS)
+PROGUARD_USAGE_ZIP :=$= $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-usage.zip
+_proguard_usage_zips := $(foreach m,$(_proguard_dict_zip_modules),$(ALL_MODULES.$(m).PROGUARD_USAGE_ZIP))
+$(PROGUARD_USAGE_ZIP): PRIVATE_ZIPS := $(_proguard_usage_zips)
+$(PROGUARD_USAGE_ZIP): $(MERGE_ZIPS) $(_proguard_usage_zips)
 	@echo "Packaging Proguard usage files."
-	mkdir -p $(dir $@) $(PRIVATE_PACKAGING_DIR) $(dir $(PRIVATE_LIST_FILE))
-	find $(PRIVATE_PACKAGING_DIR) -name proguard_usage.zip > $(PRIVATE_LIST_FILE)
-	$(MERGE_ZIPS) $@ @$(PRIVATE_LIST_FILE)
+	echo -n > $@.tmparglist
+	$(foreach z,$(PRIVATE_ZIPS),echo "$(z)" >> $@.tmparglist$(newline))
+	$(MERGE_ZIPS) $@ @$@.tmparglist
+	rm -rf $@.tmparglist
+
+_proguard_dict_mapping_files :=
+_proguard_usage_zips :=
+_proguard_dict_zip_modules :=
 
 $(call declare-1p-container,$(PROGUARD_USAGE_ZIP),)
 ifeq (,$(TARGET_BUILD_UNBUNDLED))

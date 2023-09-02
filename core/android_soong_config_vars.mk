@@ -29,10 +29,6 @@ $(call add_soong_config_namespace,ANDROID)
 $(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_MEDIASERVER)
 $(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_DRMSERVER)
 $(call add_soong_config_var,ANDROID,TARGET_ENABLE_MEDIADRM_64)
-$(call add_soong_config_var,ANDROID,IS_TARGET_MIXED_SEPOLICY)
-ifeq ($(IS_TARGET_MIXED_SEPOLICY),true)
-$(call add_soong_config_var_value,ANDROID,MIXED_SEPOLICY_VERSION,$(BOARD_SEPOLICY_VERS))
-endif
 $(call add_soong_config_var,ANDROID,BOARD_USES_ODMIMAGE)
 $(call add_soong_config_var,ANDROID,BOARD_USES_RECOVERY_AS_BOOT)
 $(call add_soong_config_var,ANDROID,PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT)
@@ -157,6 +153,8 @@ endif
 ifdef PRODUCT_AVF_KERNEL_MODULES_ENABLED
 $(call add_soong_config_var_value,ANDROID,avf_kernel_modules_enabled,$(PRODUCT_AVF_KERNEL_MODULES_ENABLED))
 endif
+
+$(call add_soong_config_var_value,ANDROID,release_avf_enable_multi_tenant_microdroid_vm,$(RELEASE_AVF_ENABLE_MULTI_TENANT_MICRODROID_VM))
 
 # Enable system_server optimizations by default unless explicitly set or if
 # there may be dependent runtime jars.
