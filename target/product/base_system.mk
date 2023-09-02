@@ -353,6 +353,7 @@ endif
 PRODUCT_HOST_PACKAGES += \
     BugReport \
     adb \
+    adevice \
     art-tools \
     atest \
     bcc \
