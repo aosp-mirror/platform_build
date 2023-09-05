@@ -138,6 +138,7 @@ VNDK-core: libwifi-system-iface.so
 VNDK-core: libxml2.so
 VNDK-core: libyuv.so
 VNDK-core: libziparchive.so
+VNDK-core: server_configurable_flags.so
 VNDK-private: libblas.so
 VNDK-private: libcompiler_rt.so
 VNDK-private: libft2.so
@@ -208,3 +209,4 @@ VNDK-product: libxml2.so
 VNDK-product: libyuv.so
 VNDK-product: libz.so
 VNDK-product: libziparchive.so
+VNDK-product: server_configurable_flags.so
