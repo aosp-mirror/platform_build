@@ -143,12 +143,12 @@ pub fn create_java_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Ve
     generate_java_code(package, parsed_flags.parsed_flag.iter(), codegen_mode)
 }
 
-pub fn create_cpp_lib(mut input: Input) -> Result<OutputFile> {
+pub fn create_cpp_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec<OutputFile>> {
     let parsed_flags = input.try_parse_flags()?;
     let Some(package) = find_unique_package(&parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
-    generate_cpp_code(package, parsed_flags.parsed_flag.iter())
+    generate_cpp_code(package, parsed_flags.parsed_flag.iter(), codegen_mode)
 }
 
 pub fn create_rust_lib(mut input: Input) -> Result<OutputFile> {
