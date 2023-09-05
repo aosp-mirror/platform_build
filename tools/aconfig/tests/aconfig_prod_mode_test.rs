@@ -1,3 +1,4 @@
+#[cfg(not(feature = "cargo"))]
 #[test]
 fn test_flags() {
     assert!(!aconfig_test_rust_library::disabled_ro());
