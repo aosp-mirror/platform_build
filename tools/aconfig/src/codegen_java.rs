@@ -119,9 +119,12 @@ mod tests {
     const EXPECTED_FEATUREFLAGS_COMMON_CONTENT: &str = r#"
     package com.android.aconfig.test;
     public interface FeatureFlags {
+        @com.android.aconfig.annotations.AssumeFalseForR8
         boolean disabledRo();
         boolean disabledRw();
+        @com.android.aconfig.annotations.AssumeTrueForR8
         boolean enabledFixedRo();
+        @com.android.aconfig.annotations.AssumeTrueForR8
         boolean enabledRo();
         boolean enabledRw();
     }
@@ -136,15 +139,18 @@ mod tests {
         public static final String FLAG_ENABLED_RO = "com.android.aconfig.test.enabled_ro";
         public static final String FLAG_ENABLED_RW = "com.android.aconfig.test.enabled_rw";
 
+        @com.android.aconfig.annotations.AssumeFalseForR8
         public static boolean disabledRo() {
             return FEATURE_FLAGS.disabledRo();
         }
         public static boolean disabledRw() {
             return FEATURE_FLAGS.disabledRw();
         }
+        @com.android.aconfig.annotations.AssumeTrueForR8
         public static boolean enabledFixedRo() {
             return FEATURE_FLAGS.enabledFixedRo();
         }
+        @com.android.aconfig.annotations.AssumeTrueForR8
         public static boolean enabledRo() {
             return FEATURE_FLAGS.enabledRo();
         }

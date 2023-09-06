@@ -2,6 +2,13 @@ package {package_name};
 
 public interface FeatureFlags \{
 {{ for item in class_elements}}
+{{ -if not item.is_read_write }}
+{{ -if item.default_value }}
+    @com.android.aconfig.annotations.AssumeTrueForR8
+{{ -else }}
+    @com.android.aconfig.annotations.AssumeFalseForR8
+{{ -endif- }}
+{{ endif }}
     boolean {item.method_name}();
 {{ endfor }}
 }
