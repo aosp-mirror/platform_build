@@ -1438,6 +1438,28 @@ endif # BOARD_PREBUILT_BOOTIMAGE
 
 endif # my_installed_prebuilt_gki_apex not defined
 
+ifneq ($(BOARD_KERNEL_PATH_16K),)
+BUILT_BOOT_OTA_PACKAGE_4K := $(PRODUCT_OUT)/boot_ota_4k.zip
+$(BUILT_BOOT_OTA_PACKAGE_4K): $(OTA_FROM_RAW_IMG) $(INSTALLED_BOOTIMAGE_TARGET) $(DEFAULT_SYSTEM_DEV_CERTIFICATE).pk8
+	$(OTA_FROM_RAW_IMG) --package_key $(DEFAULT_SYSTEM_DEV_CERTIFICATE) \
+                      --max_timestamp `cat $(BUILD_DATETIME_FILE)` \
+                      --path $(HOST_OUT) \
+                      --partition_name boot \
+                      --output $@ \
+                      $(INSTALLED_BOOTIMAGE_TARGET)
+
+boototapackage_4k: $(BUILT_BOOT_OTA_PACKAGE_4K)
+.PHONY: boototapackage_4k
+
+$(eval $(call copy-one-file,$(BUILT_BOOT_OTA_PACKAGE_4K),$(TARGET_OUT)/boot_otas/boot_ota_4k.zip))
+$(eval $(call copy-one-file,$(BUILT_BOOT_OTA_PACKAGE_16K),$(TARGET_OUT)/boot_otas/boot_ota_16k.zip))
+
+ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT)/boot_otas/boot_ota_4k.zip
+ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT)/boot_otas/boot_ota_16k.zip
+
+
+endif
+
 my_apex_extracted_boot_image :=
 my_installed_prebuilt_gki_apex :=
 
