@@ -18,6 +18,8 @@
 // Access to entries in a Zip archive.
 //
 
+#define _POSIX_THREAD_SAFE_FUNCTIONS  // For mingw localtime_r().
+
 #define LOG_TAG "zip"
 
 #include "ZipEntry.h"
@@ -354,31 +356,20 @@ time_t ZipEntry::getModWhen(void) const
  */
 void ZipEntry::setModWhen(time_t when)
 {
-#if !defined(_WIN32)
-    struct tm tmResult;
-#endif
-    time_t even;
-    uint16_t zdate, ztime;
-
-    struct tm* ptm;
-
     /* round up to an even number of seconds */
-    even = (when & 1) ? (when + 1) : when;
+    time_t even = (when & 1) ? (when + 1) : when;
 
     /* expand */
-#if !defined(_WIN32)
-    ptm = localtime_r(&even, &tmResult);
-#else
-    ptm = localtime(&even);
-#endif
+    struct tm tmResult;
+    struct tm* ptm = localtime_r(&even, &tmResult);
 
     int year;
     year = ptm->tm_year;
     if (year < 80)
         year = 80;
 
-    zdate = (year - 80) << 9 | (ptm->tm_mon+1) << 5 | ptm->tm_mday;
-    ztime = ptm->tm_hour << 11 | ptm->tm_min << 5 | ptm->tm_sec >> 1;
+    uint16_t zdate = (year - 80) << 9 | (ptm->tm_mon+1) << 5 | ptm->tm_mday;
+    uint16_t ztime = ptm->tm_hour << 11 | ptm->tm_min << 5 | ptm->tm_sec >> 1;
 
     mCDE.mLastModFileTime = mLFH.mLastModFileTime = ztime;
     mCDE.mLastModFileDate = mLFH.mLastModFileDate = zdate;
