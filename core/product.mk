@@ -261,6 +261,9 @@ _product_list_vars += PRODUCT_CFI_EXCLUDE_PATHS
 # Whether any paths should have HWASan enabled for components
 _product_list_vars += PRODUCT_HWASAN_INCLUDE_PATHS
 
+# Whether any paths are excluded from sanitization when SANITIZE_TARGET=hwaddress
+_product_list_vars += PRODUCT_HWASAN_EXCLUDE_PATHS
+
 # Whether any paths should have Memtag_heap enabled for components
 _product_list_vars += PRODUCT_MEMTAG_HEAP_ASYNC_INCLUDE_PATHS
 _product_list_vars += PRODUCT_MEMTAG_HEAP_ASYNC_DEFAULT_INCLUDE_PATHS
