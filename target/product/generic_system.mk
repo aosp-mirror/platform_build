@@ -132,6 +132,10 @@ PRODUCT_SYSTEM_DEVICE := generic
 
 _base_mk_allowed_list :=
 
+# TODO(b/299166571) Remove this after the artifact path requirements checker picks up
+# hwservicemanager correctly.
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += $(TARGET_COPY_OUT_SYSTEM)/bin/hwservicemanager
+
 _my_allowed_list := $(_base_mk_allowed_list)
 
 # For mainline, system.img should be mounted at /, so we include ROOT here.
