@@ -3425,13 +3425,21 @@ $(eval $(call declare-0p-target,$(INSTALLED_FILES_JSON)))
 .PHONY: installed-file-list
 installed-file-list: $(INSTALLED_FILES_FILE)
 
-systemimage_intermediates := \
-    $(call intermediates-dir-for,PACKAGING,systemimage)
-BUILT_SYSTEMIMAGE := $(systemimage_intermediates)/system.img
+systemimage_intermediates :=$= $(call intermediates-dir-for,PACKAGING,systemimage)
+BUILT_SYSTEMIMAGE :=$= $(systemimage_intermediates)/system.img
+
 
 # Used by the bazel sandwich to request the staging dir be built
 $(systemimage_intermediates)/staging_dir.stamp: $(FULL_SYSTEMIMAGE_DEPS)
 	touch $@
+
+define write-file-lines
+$(1):
+	@echo Writing $$@
+	rm -f $$@
+	echo -n > $$@
+	$$(foreach f,$(2),echo "$$(f)" >> $$@$$(newline))
+endef
 
 # $(1): output file
 define build-systemimage-target
@@ -3441,16 +3449,19 @@ define build-systemimage-target
       skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          --input-directory-filter-file $(systemimage_intermediates)/file_list.txt \
           $(TARGET_OUT) $(systemimage_intermediates)/system_image_info.txt $(1) $(TARGET_OUT) \
           || ( mkdir -p $${DIST_DIR}; \
                cp $(INSTALLED_FILES_FILE) $${DIST_DIR}/installed-files-rescued.txt; \
                exit 1 )
 endef
 
+$(eval $(call write-file-lines,$(systemimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT)/,,$(filter $(TARGET_OUT)/%,$(FULL_SYSTEMIMAGE_DEPS)))))
+
 ifeq ($(BOARD_AVB_ENABLE),true)
 $(BUILT_SYSTEMIMAGE): $(BOARD_AVB_SYSTEM_KEY_PATH)
 endif
-$(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE)
+$(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE) $(systemimage_intermediates)/file_list.txt
 	$(call build-systemimage-target,$@)
 
 $(call declare-1p-container,$(BUILT_SYSTEMIMAGE),system/extras)
@@ -3506,7 +3517,7 @@ SYSTEM_NOTICE_DEPS += $(INSTALLED_SYSTEMIMAGE_TARGET)
 
 .PHONY: systemimage-nodeps snod
 systemimage-nodeps snod: $(filter-out systemimage-nodeps snod,$(MAKECMDGOALS)) \
-	            | $(INTERNAL_USERIMAGES_DEPS)
+	            | $(INTERNAL_USERIMAGES_DEPS) $(systemimage_intermediates)/file_list.txt
 	@echo "make $@: ignoring dependencies"
 	$(call build-systemimage-target,$(INSTALLED_SYSTEMIMAGE_TARGET))
 	$(hide) $(call assert-max-image-size,$(INSTALLED_SYSTEMIMAGE_TARGET),$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))
@@ -3547,6 +3558,7 @@ define build-userdataimage-target
   $(call generate-image-prop-dictionary, $(userdataimage_intermediates)/userdata_image_info.txt,userdata,skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          --input-directory-filter-file $(userdataimage_intermediates)/file_list.txt \
           $(TARGET_OUT_DATA) $(userdataimage_intermediates)/userdata_image_info.txt \
           $(INSTALLED_USERDATAIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_USERDATAIMAGE_TARGET),$(BOARD_USERDATAIMAGE_PARTITION_SIZE))
@@ -3557,7 +3569,10 @@ INSTALLED_USERDATAIMAGE_TARGET := $(BUILT_USERDATAIMAGE_TARGET)
 INSTALLED_USERDATAIMAGE_TARGET_DEPS := \
     $(INTERNAL_USERIMAGES_DEPS) \
     $(INTERNAL_USERDATAIMAGE_FILES)
-$(INSTALLED_USERDATAIMAGE_TARGET): $(INSTALLED_USERDATAIMAGE_TARGET_DEPS)
+
+$(eval $(call write-file-lines,$(userdataimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_DATA)/,,$(filter $(TARGET_OUT_DATA)/%,$(INSTALLED_USERDATAIMAGE_TARGET_DEPS)))))
+
+$(INSTALLED_USERDATAIMAGE_TARGET): $(INSTALLED_USERDATAIMAGE_TARGET_DEPS) $(userdataimage_intermediates)/file_list.txt
 	$(build-userdataimage-target)
 
 $(call declare-1p-container,$(INSTALLED_USERDATAIMAGE_TARGET),)
@@ -3566,7 +3581,7 @@ $(call declare-container-license-deps,$(INSTALLED_USERDATAIMAGE_TARGET),$(INSTAL
 UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_USERDATAIMAGE_TARGET)
 
 .PHONY: userdataimage-nodeps
-userdataimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
+userdataimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS) $(userdataimage_intermediates)/file_list.txt
 	$(build-userdataimage-target)
 
 endif # BUILDING_USERDATA_IMAGE
@@ -3602,14 +3617,17 @@ define build-cacheimage-target
   $(call generate-image-prop-dictionary, $(cacheimage_intermediates)/cache_image_info.txt,cache,skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          --input-directory-filter-file $(cacheimage_intermediates)/file_list.txt \
           $(TARGET_OUT_CACHE) $(cacheimage_intermediates)/cache_image_info.txt \
           $(INSTALLED_CACHEIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_CACHEIMAGE_TARGET),$(BOARD_CACHEIMAGE_PARTITION_SIZE))
 endef
 
+$(eval $(call write-file-lines,$(cacheimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_CACHE)/,,$(filter $(TARGET_OUT_CACHE)/%,$(INTERNAL_CACHEIMAGE_FILES)))))
+
 # We just build this directly to the install location.
 INSTALLED_CACHEIMAGE_TARGET := $(BUILT_CACHEIMAGE_TARGET)
-$(INSTALLED_CACHEIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_CACHEIMAGE_FILES)
+$(INSTALLED_CACHEIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_CACHEIMAGE_FILES) $(cacheimage_intermediates)/file_list.txt
 	$(build-cacheimage-target)
 
 $(call declare-1p-container,$(INSTALLED_CACHEIMAGE_TARGET),)
@@ -3618,7 +3636,7 @@ $(call declare-container-license-deps,$(INSTALLED_CACHEIMAGE_TARGET),$(INTERNAL_
 UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_CACHEIMAGE_TARGET)
 
 .PHONY: cacheimage-nodeps
-cacheimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
+cacheimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS) $(cacheimage_intermediates)/file_list.txt
 	$(build-cacheimage-target)
 
 else # BUILDING_CACHE_IMAGE
@@ -3683,16 +3701,19 @@ define build-systemotherimage-target
   $(call generate-image-prop-dictionary, $(systemotherimage_intermediates)/system_other_image_info.txt,system,skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          --input-directory-filter-file $(systemotherimage_intermediates)/file_list.txt \
           $(TARGET_OUT_SYSTEM_OTHER) $(systemotherimage_intermediates)/system_other_image_info.txt \
           $(INSTALLED_SYSTEMOTHERIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_SYSTEMOTHERIMAGE_TARGET),$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))
 endef
 
+$(eval $(call write-file-lines,$(systemotherimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_SYSTEM_OTHER)/,,$(filter $(TARGET_OUT_SYSTEM_OTHER)/%,$(INTERNAL_SYSTEMOTHERIMAGE_FILES)))))
+
 # We just build this directly to the install location.
 INSTALLED_SYSTEMOTHERIMAGE_TARGET := $(BUILT_SYSTEMOTHERIMAGE_TARGET)
 ifneq (true,$(SANITIZE_LITE))
 # Only create system_other when not building the second stage of a SANITIZE_LITE build.
-$(INSTALLED_SYSTEMOTHERIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_SYSTEMOTHERIMAGE_FILES) $(INSTALLED_FILES_FILE_SYSTEMOTHER)
+$(INSTALLED_SYSTEMOTHERIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_SYSTEMOTHERIMAGE_FILES) $(INSTALLED_FILES_FILE_SYSTEMOTHER) $(systemotherimage_intermediates)/file_list.txt
 	$(build-systemotherimage-target)
 
 $(call declare-1p-container,$(INSTALLED_SYSTEMOTHERIMAGE_TARGET),)
@@ -3702,7 +3723,7 @@ UNMOUNTED_NOTICE_DEPS += $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)
 endif
 
 .PHONY: systemotherimage-nodeps
-systemotherimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
+systemotherimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS) $(systemotherimage_intermediates)/file_list.txt
 	$(build-systemotherimage-target)
 
 endif # BUILDING_SYSTEM_OTHER_IMAGE
@@ -3783,10 +3804,13 @@ define build-vendorimage-target
   $(call generate-image-prop-dictionary, $(vendorimage_intermediates)/vendor_image_info.txt,vendor,skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          --input-directory-filter-file $(vendorimage_intermediates)/file_list.txt \
           $(TARGET_OUT_VENDOR) $(vendorimage_intermediates)/vendor_image_info.txt \
           $(INSTALLED_VENDORIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_VENDORIMAGE_TARGET) $(RECOVERY_FROM_BOOT_PATCH),$(BOARD_VENDORIMAGE_PARTITION_SIZE))
 endef
+
+$(eval $(call write-file-lines,$(vendorimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_VENDOR)/,,$(filter $(TARGET_OUT_VENDOR)/%,$(INTERNAL_VENDORIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_VENDORIMAGE_TARGET := $(BUILT_VENDORIMAGE_TARGET)
@@ -3794,7 +3818,8 @@ $(INSTALLED_VENDORIMAGE_TARGET): \
     $(INTERNAL_USERIMAGES_DEPS) \
     $(INTERNAL_VENDORIMAGE_FILES) \
     $(INSTALLED_FILES_FILE_VENDOR) \
-    $(RECOVERY_FROM_BOOT_PATCH)
+    $(RECOVERY_FROM_BOOT_PATCH) \
+    $(vendorimage_intermediates)/file_list.txt
 	$(build-vendorimage-target)
 
 VENDOR_NOTICE_DEPS += $(INSTALLED_VENDORIMAGE_TARGET)
@@ -3803,7 +3828,7 @@ $(call declare-container-license-metadata,$(INSTALLED_VENDORIMAGE_TARGET),legacy
 $(call declare-container-license-deps,$(INSTALLED_VENDORIMAGE_TARGET),$(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_VENDORIMAGE_FILES) $(RECOVERY_FROM_BOOT_PATH),$(PRODUCT_OUT)/:/)
 
 .PHONY: vendorimage-nodeps vnod
-vendorimage-nodeps vnod: | $(INTERNAL_USERIMAGES_DEPS)
+vendorimage-nodeps vnod: | $(INTERNAL_USERIMAGES_DEPS) $(vendorimage_intermediates)/file_list.txt
 	$(build-vendorimage-target)
 
 .PHONY: sync_vendor
@@ -3849,17 +3874,21 @@ define build-productimage-target
   $(call generate-image-prop-dictionary, $(productimage_intermediates)/product_image_info.txt,product,skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          --input-directory-filter-file $(productimage_intermediates)/file_list.txt \
           $(TARGET_OUT_PRODUCT) $(productimage_intermediates)/product_image_info.txt \
           $(INSTALLED_PRODUCTIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_PRODUCTIMAGE_TARGET),$(BOARD_PRODUCTIMAGE_PARTITION_SIZE))
 endef
+
+$(eval $(call write-file-lines,$(productimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_PRODUCT)/,,$(filter $(TARGET_OUT_PRODUCT)/%,$(INTERNAL_PRODUCTIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_PRODUCTIMAGE_TARGET := $(BUILT_PRODUCTIMAGE_TARGET)
 $(INSTALLED_PRODUCTIMAGE_TARGET): \
     $(INTERNAL_USERIMAGES_DEPS) \
     $(INTERNAL_PRODUCTIMAGE_FILES) \
-    $(INSTALLED_FILES_FILE_PRODUCT)
+    $(INSTALLED_FILES_FILE_PRODUCT) \
+    $(productimage_intermediates)/file_list.txt
 	$(build-productimage-target)
 
 PRODUCT_NOTICE_DEPS += $(INSTALLED_PRODUCTIMAGE_TARGET)
@@ -3868,7 +3897,7 @@ $(call declare-1p-container,$(INSTALLED_PRODUCTIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_PRODUCTIMAGE_TARGET),$(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_PRODUCTIMAGE_FILES) $(INSTALLED_FILES_FILE_PRODUCT),$(PRODUCT_OUT)/:/)
 
 .PHONY: productimage-nodeps pnod
-productimage-nodeps pnod: | $(INTERNAL_USERIMAGES_DEPS)
+productimage-nodeps pnod: | $(INTERNAL_USERIMAGES_DEPS) $(productimage_intermediates)/file_list.txt
 	$(build-productimage-target)
 
 .PHONY: sync_product
@@ -3910,6 +3939,7 @@ define build-system_extimage-target
   $(call generate-image-prop-dictionary, $(system_extimage_intermediates)/system_ext_image_info.txt,system_ext, skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          --input-directory-filter-file $(system_extimage_intermediates)/file_list.txt \
           $(TARGET_OUT_SYSTEM_EXT) \
           $(system_extimage_intermediates)/system_ext_image_info.txt \
           $(INSTALLED_SYSTEM_EXTIMAGE_TARGET) \
@@ -3917,12 +3947,15 @@ define build-system_extimage-target
   $(call assert-max-image-size,$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET),$(BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE))
 endef
 
+$(eval $(call write-file-lines,$(system_extimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_SYSTEM_EXT)/,,$(filter $(TARGET_OUT_SYSTEM_EXT)/%,$(INTERNAL_SYSTEM_EXTIMAGE_FILES)))))
+
 # We just build this directly to the install location.
 INSTALLED_SYSTEM_EXTIMAGE_TARGET := $(BUILT_SYSTEM_EXTIMAGE_TARGET)
 $(INSTALLED_SYSTEM_EXTIMAGE_TARGET): \
     $(INTERNAL_USERIMAGES_DEPS) \
     $(INTERNAL_SYSTEM_EXTIMAGE_FILES) \
-    $(INSTALLED_FILES_FILE_SYSTEM_EXT)
+    $(INSTALLED_FILES_FILE_SYSTEM_EXT) \
+    $(system_extimage_intermediates)/file_list.txt
 	$(build-system_extimage-target)
 
 SYSTEM_EXT_NOTICE_DEPS += $(INSTALLED_SYSTEM_EXTIMAGE_TARGET)
@@ -3931,7 +3964,7 @@ $(call declare-1p-container,$(INSTALLED_SYSTEM_EXTIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_SYSTEM_EXTIMAGE_TARGET),$(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_SYSTEM_EXTIMAGE_FILES) $(INSTALLED_FILES_FILE_SYSTEM_EXT),$(PRODUCT_OUT)/:/)
 
 .PHONY: systemextimage-nodeps senod
-systemextimage-nodeps senod: | $(INTERNAL_USERIMAGES_DEPS)
+systemextimage-nodeps senod: | $(INTERNAL_USERIMAGES_DEPS) $(system_extimage_intermediates)/file_list.txt
 	$(build-system_extimage-target)
 
 .PHONY: sync_system_ext
@@ -3994,17 +4027,21 @@ define build-odmimage-target
 	  skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          --input-directory-filter-file $(odmimage_intermediates)/file_list.txt \
           $(TARGET_OUT_ODM) $(odmimage_intermediates)/odm_image_info.txt \
           $(INSTALLED_ODMIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_ODMIMAGE_TARGET),$(BOARD_ODMIMAGE_PARTITION_SIZE))
 endef
+
+$(eval $(call write-file-lines,$(odmimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_ODM)/,,$(filter $(TARGET_OUT_ODM)/%,$(INTERNAL_ODMIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_ODMIMAGE_TARGET := $(BUILT_ODMIMAGE_TARGET)
 $(INSTALLED_ODMIMAGE_TARGET): \
     $(INTERNAL_USERIMAGES_DEPS) \
     $(INTERNAL_ODMIMAGE_FILES) \
-    $(INSTALLED_FILES_FILE_ODM)
+    $(INSTALLED_FILES_FILE_ODM) \
+    $(odmimage_intermediates)/file_list.txt
 	$(build-odmimage-target)
 
 ODM_NOTICE_DEPS += $(INSTALLED_ODMIMAGE_TARGET)
@@ -4013,7 +4050,7 @@ $(call declare-1p-container,$(INSTALLED_ODMIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_ODMIMAGE_TARGET),$(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_ODMIMAGE_FILES) $(INSTALLED_FILES_FILE_ODM),$(PRODUCT_OUT)/:/)
 
 .PHONY: odmimage-nodeps onod
-odmimage-nodeps onod: | $(INTERNAL_USERIMAGES_DEPS)
+odmimage-nodeps onod: | $(INTERNAL_USERIMAGES_DEPS) $(odmimage_intermediates)/file_list.txt
 	$(build-odmimage-target)
 
 .PHONY: sync_odm
@@ -4056,17 +4093,21 @@ define build-vendor_dlkmimage-target
 	  vendor_dlkm, skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          --input-directory-filter-file $(vendor_dlkmimage_intermediates)/file_list.txt \
           $(TARGET_OUT_VENDOR_DLKM) $(vendor_dlkmimage_intermediates)/vendor_dlkm_image_info.txt \
           $(INSTALLED_VENDOR_DLKMIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_VENDOR_DLKMIMAGE_TARGET),$(BOARD_VENDOR_DLKMIMAGE_PARTITION_SIZE))
 endef
+
+$(eval $(call write-file-lines,$(vendor_dlkmimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_VENDOR_DLKM)/,,$(filter $(TARGET_OUT_VENDOR_DLKM)/%,$(INTERNAL_VENDOR_DLKMIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_VENDOR_DLKMIMAGE_TARGET := $(BUILT_VENDOR_DLKMIMAGE_TARGET)
 $(INSTALLED_VENDOR_DLKMIMAGE_TARGET): \
     $(INTERNAL_USERIMAGES_DEPS) \
     $(INTERNAL_VENDOR_DLKMIMAGE_FILES) \
-    $(INSTALLED_FILES_FILE_VENDOR_DLKM)
+    $(INSTALLED_FILES_FILE_VENDOR_DLKM) \
+    $(vendor_dlkmimage_intermediates)/file_list.txt
 	$(build-vendor_dlkmimage-target)
 
 VENDOR_DLKM_NOTICE_DEPS += $(INSTALLED_VENDOR_DLKMIMAGE_TARGET)
@@ -4075,7 +4116,7 @@ $(call declare-1p-container,$(INSTALLED_VENDOR_DLKMIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_VENDOR_DLKMIMAGE_TARGET),$(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_VENDOR_DLKMIMAGE_FILES) $(INSTALLED_FILES_FILE_VENDOR_DLKM),$(PRODUCT_OUT)/:/)
 
 .PHONY: vendor_dlkmimage-nodeps vdnod
-vendor_dlkmimage-nodeps vdnod: | $(INTERNAL_USERIMAGES_DEPS)
+vendor_dlkmimage-nodeps vdnod: | $(INTERNAL_USERIMAGES_DEPS) $(vendor_dlkmimage_intermediates)/file_list.txt
 	$(build-vendor_dlkmimage-target)
 
 .PHONY: sync_vendor_dlkm
@@ -4118,17 +4159,21 @@ define build-odm_dlkmimage-target
 	  odm_dlkm, skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          --input-directory-filter-file $(odm_dlkmimage_intermediates)/file_list.txt \
           $(TARGET_OUT_ODM_DLKM) $(odm_dlkmimage_intermediates)/odm_dlkm_image_info.txt \
           $(INSTALLED_ODM_DLKMIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_ODM_DLKMIMAGE_TARGET),$(BOARD_ODM_DLKMIMAGE_PARTITION_SIZE))
 endef
+
+$(eval $(call write-file-lines,$(odm_dlkmimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_ODM_DLKM)/,,$(filter $(TARGET_OUT_ODM_DLKM)/%,$(INTERNAL_ODM_DLKMIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_ODM_DLKMIMAGE_TARGET := $(BUILT_ODM_DLKMIMAGE_TARGET)
 $(INSTALLED_ODM_DLKMIMAGE_TARGET): \
     $(INTERNAL_USERIMAGES_DEPS) \
     $(INTERNAL_ODM_DLKMIMAGE_FILES) \
-    $(INSTALLED_FILES_FILE_ODM_DLKM)
+    $(INSTALLED_FILES_FILE_ODM_DLKM) \
+    $(odm_dlkmimage_intermediates)/file_list.txt
 	$(build-odm_dlkmimage-target)
 
 ODM_DLKM_NOTICE_DEPS += $(INSTALLED_ODM_DLKMIMAGE_TARGET)
@@ -4137,7 +4182,7 @@ $(call declare-1p-container,$(INSTALLED_ODM_DLKMIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_ODM_DLKMIMAGE_TARGET),$(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_ODM_DLKMIMAGE_FILES) $(INSTALLED_FILES_FILE_ODM_DLKM),$(PRODUCT_OUT)/:/)
 
 .PHONY: odm_dlkmimage-nodeps odnod
-odm_dlkmimage-nodeps odnod: | $(INTERNAL_USERIMAGES_DEPS)
+odm_dlkmimage-nodeps odnod: | $(INTERNAL_USERIMAGES_DEPS) $(odm_dlkmimage_intermediates)/file_list.txt
 	$(build-odm_dlkmimage-target)
 
 .PHONY: sync_odm_dlkm
@@ -4182,17 +4227,21 @@ define build-system_dlkmimage-target
 	  system_dlkm, skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          --input-directory-filter-file $(system_dlkmimage_intermediates)/file_list.txt \
           $(TARGET_OUT_SYSTEM_DLKM) $(system_dlkmimage_intermediates)/system_dlkm_image_info.txt \
           $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_SYSTEM_DLKMIMAGE_TARGET),$(BOARD_SYSTEM_DLKMIMAGE_PARTITION_SIZE))
 endef
+
+$(eval $(call write-file-lines,$(system_dlkmimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_SYSTEM_DLKM)/,,$(filter $(TARGET_OUT_SYSTEM_DLKM)/%,$(INTERNAL_SYSTEM_DLKMIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_SYSTEM_DLKMIMAGE_TARGET := $(BUILT_SYSTEM_DLKMIMAGE_TARGET)
 $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET): \
     $(INTERNAL_USERIMAGES_DEPS) \
     $(INTERNAL_SYSTEM_DLKMIMAGE_FILES) \
-    $(INSTALLED_FILES_FILE_SYSTEM_DLKM)
+    $(INSTALLED_FILES_FILE_SYSTEM_DLKM) \
+    $(system_dlkmimage_intermediates)/file_list.txt
 	$(build-system_dlkmimage-target)
 
 SYSTEM_DLKM_NOTICE_DEPS += $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET)
@@ -4201,7 +4250,7 @@ $(call declare-1p-container,$(INSTALLED_SYSTEM_DLKMIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_SYSTEM_DLKMIMAGE_TARGET),$(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_SYSTEM_DLKMIMAGE_FILES) $(INSTALLED_FILES_FILE_SYSTEM_DLKM),$(PRODUCT_OUT)/:/)
 
 .PHONY: system_dlkmimage-nodeps sdnod
-system_dlkmimage-nodeps sdnod: | $(INTERNAL_USERIMAGES_DEPS)
+system_dlkmimage-nodeps sdnod: | $(INTERNAL_USERIMAGES_DEPS) $(system_dlkmimage_intermediates)/file_list.txt
 	$(build-system_dlkmimage-target)
 
 .PHONY: sync_system_dlkm
