@@ -363,13 +363,22 @@ void ZipEntry::setModWhen(time_t when)
     struct tm tmResult;
     struct tm* ptm = localtime_r(&even, &tmResult);
 
-    int year;
-    year = ptm->tm_year;
-    if (year < 80)
-        year = 80;
+    // The earliest valid time for ZIP file entries is 1980-01-01. See:
+    // https://users.cs.jmu.edu/buchhofp/forensics/formats/pkzip.html.
+    // Set any time before 1980 to 1980-01-01.
+    if (ptm->tm_year < 80) {
+        ptm->tm_year = 80;
+        ptm->tm_mon = 0;
+        ptm->tm_mday = 1;
+        ptm->tm_hour = 0;
+        ptm->tm_min = 0;
+        ptm->tm_sec = 0;
+    }
 
-    uint16_t zdate = (year - 80) << 9 | (ptm->tm_mon+1) << 5 | ptm->tm_mday;
-    uint16_t ztime = ptm->tm_hour << 11 | ptm->tm_min << 5 | ptm->tm_sec >> 1;
+    uint16_t zdate = static_cast<uint16_t>(
+        (ptm->tm_year - 80) << 9 | (ptm->tm_mon + 1) << 5 | ptm->tm_mday);
+    uint16_t ztime = static_cast<uint16_t>(
+        ptm->tm_hour << 11 | ptm->tm_min << 5 | ptm->tm_sec >> 1);
 
     mCDE.mLastModFileTime = mLFH.mLastModFileTime = ztime;
     mCDE.mLastModFileDate = mLFH.mLastModFileDate = zdate;
