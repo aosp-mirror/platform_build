@@ -85,16 +85,15 @@ def flag(name, partitions, default):
             if len(partitions) > 1:
                 fail("\"all\" can't be combined with other partitions: " + str(partitions))
         elif partition not in _flag_partitions:
-            fail("Invalid partition: " + partition + ", allowed partitions: "
-                    + str(_flag_partitions))
+            fail("Invalid partition: " + partition + ", allowed partitions: " +
+                 str(_flag_partitions))
     if type(default) not in _valid_types:
         fail("Invalid type of default for flag \"" + name + "\" (" + type(default) + ")")
     return {
         "name": name,
         "partitions": partitions,
-        "default": default
+        "default": default,
     }
-
 
 def value(name, value):
     "Define the flag value for a particular configuration."
@@ -102,7 +101,6 @@ def value(name, value):
         "name": name,
         "value": value,
     }
-
 
 def _format_value(val):
     "Format the starlark type correctly for make"
@@ -112,7 +110,6 @@ def _format_value(val):
         return "true" if val else ""
     else:
         return val
-
 
 def release_config(all_flags, all_values):
     "Return the make variables that should be set for this release config."
@@ -168,4 +165,3 @@ def release_config(all_flags, all_values):
         result["_ALL_RELEASE_FLAGS." + flag["name"] + ".SET_IN"] = set_in
 
     return result
-
