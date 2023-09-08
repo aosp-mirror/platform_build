@@ -84,6 +84,7 @@ def main(argv):
     cmd.append("--is_partial_update")
     if args.max_timestamp:
       cmd.append("--max_timestamp=" + str(args.max_timestamp))
+      cmd.append("--partition_timestamps=boot:" + str(args.max_timestamp))
     logger.info("Running %s", cmd)
 
     subprocess.check_call(cmd)
