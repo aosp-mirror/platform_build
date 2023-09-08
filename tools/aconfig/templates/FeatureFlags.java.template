@@ -1,5 +1,6 @@
 package {package_name};
 
+/** @hide */
 public interface FeatureFlags \{
 {{ for item in class_elements}}
 {{ -if not item.is_read_write }}
