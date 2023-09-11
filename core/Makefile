@@ -4979,6 +4979,50 @@ INTERNAL_ALLIMAGES_FILES := \
     $(INTERNAL_PVMFWIMAGE_FILES) \
 
 # -----------------------------------------------------------------
+# Run apex_sepolicy_tests for all installed APEXes
+
+ifeq (,$(TARGET_BUILD_UNBUNDLED))
+intermediate := $(call intermediates-dir-for,PACKAGING,apex_sepolicy_tests)
+apex_dirs := \
+  $(TARGET_OUT)/apex/% \
+  $(TARGET_OUT_SYSTEM_EXT)/apex/% \
+  $(TARGET_OUT_VENDOR)/apex/% \
+  $(TARGET_OUT_PRODUCT)/apex/% \
+
+apex_files := $(sort $(filter $(apex_dirs), $(INTERNAL_ALLIMAGES_FILES)))
+apex_dirs :=
+
+# $1: apex file
+# $2: output file
+define _run_apex_sepolicy_tests
+$2: $1 \
+    $(HOST_OUT_EXECUTABLES)/apex_sepolicy_tests \
+    $(HOST_OUT_EXECUTABLES)/deapexer \
+    $(HOST_OUT_EXECUTABLES)/debugfs_static
+	@rm -rf $$@
+	@mkdir -p $(dir $$@)
+	$(HOST_OUT_EXECUTABLES)/apex_sepolicy_tests --all -f <($(HOST_OUT_EXECUTABLES)/deapexer --debugfs_path $(HOST_OUT_EXECUTABLES)/debugfs_static list -Z $$<)
+	@touch $$@
+endef
+
+# $1: apex file list
+define run_apex_sepolicy_tests
+$(foreach apex_file,$1, \
+  $(eval passfile := $(patsubst $(PRODUCT_OUT)/%,$(intermediate)/%.pass,$(apex_file))) \
+  $(eval $(call _run_apex_sepolicy_tests,$(apex_file),$(passfile))) \
+  $(passfile))
+endef
+
+.PHONY: run_apex_sepolicy_tests
+run_apex_sepolicy_tests: $(call run_apex_sepolicy_tests,$(apex_files))
+
+droid_targets: run_apex_sepolicy_tests
+
+apex_files :=
+intermediate :=
+endif # TARGET_BUILD_UNBUNDLED
+
+# -----------------------------------------------------------------
 # Check VINTF of build
 
 # Note: vendor_dlkm, odm_dlkm, and system_dlkm does not have VINTF files.
