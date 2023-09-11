@@ -282,7 +282,7 @@ mod tests {
                 None,
                 crate::test::first_significant_code_diff(
                     file_set.get(file_path).unwrap(),
-                    &String::from_utf8(file.contents.clone()).unwrap()
+                    &String::from_utf8(file.contents).unwrap()
                 ),
                 "File {} content is not correct",
                 file_path
@@ -362,7 +362,7 @@ mod tests {
                 None,
                 crate::test::first_significant_code_diff(
                     file_set.get(file_path).unwrap(),
-                    &String::from_utf8(file.contents.clone()).unwrap()
+                    &String::from_utf8(file.contents).unwrap()
                 ),
                 "File {} content is not correct",
                 file_path
