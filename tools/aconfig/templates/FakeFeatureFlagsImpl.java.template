@@ -3,6 +3,7 @@ package {package_name};
 import java.util.HashMap;
 import java.util.Map;
 
+/** @hide */
 public class FakeFeatureFlagsImpl implements FeatureFlags \{
     public FakeFeatureFlagsImpl() \{
         resetAll();
