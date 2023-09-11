@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2011 The Android Open Source Project
 #
@@ -22,9 +22,9 @@ Usage:  build_image input_directory properties_file output_image \\
             target_output_directory
 """
 
-from __future__ import print_function
 import datetime
 
+import argparse
 import glob
 import logging
 import os
@@ -34,6 +34,7 @@ import shlex
 import shutil
 import sys
 import uuid
+import tempfile
 
 import common
 import verity_utils
@@ -919,27 +920,69 @@ def BuildVBMeta(in_dir, glob_dict, output_path):
   common.BuildVBMeta(output_path, partitions, name, vbmeta_partitions)
 
 
-def main(argv):
-  args = common.ParseOptions(argv, __doc__)
+def BuildImageOrVBMeta(input_directory, target_out, glob_dict, image_properties, out_file):
+  try:
+    if "vbmeta" in os.path.basename(out_file):
+      OPTIONS.info_dict = glob_dict
+      BuildVBMeta(input_directory, glob_dict, out_file)
+    else:
+      BuildImage(input_directory, image_properties, out_file, target_out)
+  except:
+    logger.error("Failed to build %s from %s", out_file, input_directory)
+    raise
 
-  if len(args) != 4:
-    print(__doc__)
-    sys.exit(1)
+
+def CopyInputDirectory(src, dst, filter_file):
+  with open(filter_file, 'r') as f:
+    for line in f:
+      line = line.strip()
+      if not line:
+        return
+      if line != os.path.normpath(line):
+        sys.exit(f"{line}: not normalized")
+      if line.startswith("../") or line.startswith('/'):
+        sys.exit(f"{line}: escapes staging directory by starting with ../ or /")
+      full_src = os.path.join(src, line)
+      full_dst = os.path.join(dst, line)
+      if os.path.isdir(full_src):
+        os.makedirs(full_dst, exist_ok=True)
+      else:
+        os.makedirs(os.path.dirname(full_dst), exist_ok=True)
+        os.link(full_src, full_dst, follow_symlinks=False)
+
+
+def main(argv):
+  parser = argparse.ArgumentParser(
+    description="Builds output_image from the given input_directory and properties_file, and "
+    "writes the image to target_output_directory.")
+  parser.add_argument("--input-directory-filter-file",
+    help="the path to a file that contains a list of all files in the input_directory. If this "
+    "option is provided, all files under the input_directory that are not listed in this file will "
+    "be deleted before building the image. This is to work around the fact that building a module "
+    "will install in by default, so there could be files in the input_directory that are not "
+    "actually supposed to be part of the partition. The paths in this file must be relative to "
+    "input_directory.")
+  parser.add_argument("input_directory",
+    help="the staging directory to be converted to an image file")
+  parser.add_argument("properties_file",
+    help="a file containing the 'global dictionary' of properties that affect how the image is "
+    "built")
+  parser.add_argument("out_file",
+    help="the output file to write")
+  parser.add_argument("target_out",
+    help="the path to $(TARGET_OUT). Certain tools will use this to look through multiple staging "
+    "directories for fs config files.")
+  args = parser.parse_args()
 
   common.InitLogging()
 
-  in_dir = args[0]
-  glob_dict_file = args[1]
-  out_file = args[2]
-  target_out = args[3]
-
-  glob_dict = LoadGlobalDict(glob_dict_file)
+  glob_dict = LoadGlobalDict(args.properties_file)
   if "mount_point" in glob_dict:
     # The caller knows the mount point and provides a dictionary needed by
     # BuildImage().
     image_properties = glob_dict
   else:
-    image_filename = os.path.basename(out_file)
+    image_filename = os.path.basename(args.out_file)
     mount_point = ""
     if image_filename == "system.img":
       mount_point = "system"
@@ -974,15 +1017,12 @@ def main(argv):
     if "vbmeta" != mount_point:
       image_properties = ImagePropFromGlobalDict(glob_dict, mount_point)
 
-  try:
-    if "vbmeta" in os.path.basename(out_file):
-      OPTIONS.info_dict = glob_dict
-      BuildVBMeta(in_dir, glob_dict, out_file)
-    else:
-      BuildImage(in_dir, image_properties, out_file, target_out)
-  except:
-    logger.error("Failed to build %s from %s", out_file, in_dir)
-    raise
+  if args.input_directory_filter_file and not os.environ.get("BUILD_BROKEN_INCORRECT_PARTITION_IMAGES"):
+    with tempfile.TemporaryDirectory(dir=os.path.dirname(args.input_directory)) as new_input_directory:
+      CopyInputDirectory(args.input_directory, new_input_directory, args.input_directory_filter_file)
+      BuildImageOrVBMeta(new_input_directory, args.target_out, glob_dict, image_properties, args.out_file)
+  else:
+    BuildImageOrVBMeta(args.input_directory, args.target_out, glob_dict, image_properties, args.out_file)
 
 
 if __name__ == '__main__':
