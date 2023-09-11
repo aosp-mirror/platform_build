@@ -3,7 +3,6 @@ package {package_name};
 {{ if is_read_write- }}
 import android.provider.DeviceConfig;
 {{ endif }}
-/** @hide */
 public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ for item in class_elements}}
     @Override
@@ -22,7 +21,6 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
 }
 {{ else }}
 {#- Generate only stub if in test mode #}
-/** @hide */
 public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ for item in class_elements}}
     @Override
