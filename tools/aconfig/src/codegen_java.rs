@@ -118,6 +118,7 @@ mod tests {
 
     const EXPECTED_FEATUREFLAGS_COMMON_CONTENT: &str = r#"
     package com.android.aconfig.test;
+    /** @hide */
     public interface FeatureFlags {
         @com.android.aconfig.annotations.AssumeFalseForR8
         boolean disabledRo();
@@ -132,6 +133,7 @@ mod tests {
 
     const EXPECTED_FLAG_COMMON_CONTENT: &str = r#"
     package com.android.aconfig.test;
+    /** @hide */
     public final class Flags {
         public static final String FLAG_DISABLED_RO = "com.android.aconfig.test.disabled_ro";
         public static final String FLAG_DISABLED_RW = "com.android.aconfig.test.disabled_rw";
@@ -163,6 +165,7 @@ mod tests {
     package com.android.aconfig.test;
     import java.util.HashMap;
     import java.util.Map;
+    /** @hide */
     public class FakeFeatureFlagsImpl implements FeatureFlags {
         public FakeFeatureFlagsImpl() {
             resetAll();
@@ -234,6 +237,7 @@ mod tests {
         let expect_featureflagsimpl_content = r#"
         package com.android.aconfig.test;
         import android.provider.DeviceConfig;
+        /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
             @Override
             public boolean disabledRo() {
@@ -282,7 +286,7 @@ mod tests {
                 None,
                 crate::test::first_significant_code_diff(
                     file_set.get(file_path).unwrap(),
-                    &String::from_utf8(file.contents.clone()).unwrap()
+                    &String::from_utf8(file.contents).unwrap()
                 ),
                 "File {} content is not correct",
                 file_path
@@ -316,6 +320,7 @@ mod tests {
         "#;
         let expect_featureflagsimpl_content = r#"
         package com.android.aconfig.test;
+        /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
             @Override
             public boolean disabledRo() {
@@ -362,7 +367,7 @@ mod tests {
                 None,
                 crate::test::first_significant_code_diff(
                     file_set.get(file_path).unwrap(),
-                    &String::from_utf8(file.contents.clone()).unwrap()
+                    &String::from_utf8(file.contents).unwrap()
                 ),
                 "File {} content is not correct",
                 file_path
