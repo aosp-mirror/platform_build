@@ -177,23 +177,23 @@ mod tests {
         }
         @Override
         public boolean disabledRo() {
-            return getFlag(Flags.FLAG_DISABLED_RO);
+            return getValue(Flags.FLAG_DISABLED_RO);
         }
         @Override
         public boolean disabledRw() {
-            return getFlag(Flags.FLAG_DISABLED_RW);
+            return getValue(Flags.FLAG_DISABLED_RW);
         }
         @Override
         public boolean enabledFixedRo() {
-            return getFlag(Flags.FLAG_ENABLED_FIXED_RO);
+            return getValue(Flags.FLAG_ENABLED_FIXED_RO);
         }
         @Override
         public boolean enabledRo() {
-            return getFlag(Flags.FLAG_ENABLED_RO);
+            return getValue(Flags.FLAG_ENABLED_RO);
         }
         @Override
         public boolean enabledRw() {
-            return getFlag(Flags.FLAG_ENABLED_RW);
+            return getValue(Flags.FLAG_ENABLED_RW);
         }
         public void setFlag(String flagName, boolean value) {
             if (!this.mFlagMap.containsKey(flagName)) {
@@ -206,7 +206,7 @@ mod tests {
                 entry.setValue(null);
             }
         }
-        private boolean getFlag(String flagName) {
+        private boolean getValue(String flagName) {
             Boolean value = this.mFlagMap.get(flagName);
             if (value == null) {
                 throw new IllegalArgumentException(flagName + " is not set");
@@ -250,7 +250,7 @@ mod tests {
             }
             @Override
             public boolean disabledRw() {
-                return DeviceConfig.getBoolean(
+                return getValue(
                     "aconfig_test",
                     "com.android.aconfig.test.disabled_rw",
                     false
@@ -266,11 +266,32 @@ mod tests {
             }
             @Override
             public boolean enabledRw() {
-                return DeviceConfig.getBoolean(
+                return getValue(
                     "aconfig_test",
                     "com.android.aconfig.test.enabled_rw",
                     true
                 );
+            }
+            private boolean getValue(String nameSpace,
+                String flagName, boolean defaultValue) {
+                boolean value = defaultValue;
+                try {
+                    value = DeviceConfig.getBoolean(
+                        nameSpace,
+                        flagName,
+                        defaultValue
+                    );
+                } catch (NullPointerException e) {
+                    throw new RuntimeException(
+                        "Cannot read value of flag " + flagName + " from DeviceConfig. " +
+                        "It could be that the code using flag executed " +
+                        "before SettingsProvider initialization. " +
+                        "Please use fixed read-only flag by adding " +
+                        "is_fixed_read_only: true in flag declaration.",
+                        e
+                    );
+                }
+                return value;
             }
         }
         "#;
