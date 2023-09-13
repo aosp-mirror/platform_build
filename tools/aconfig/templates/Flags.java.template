@@ -3,6 +3,7 @@ package {package_name};
 /** @hide */
 public final class Flags \{
 {{- for item in class_elements}}
+    /** @hide */
     public static final String FLAG_{item.flag_name_constant_suffix} = "{item.device_config_flag}";
 {{- endfor }}
 {{ for item in class_elements}}
