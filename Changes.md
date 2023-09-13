@@ -11,6 +11,10 @@ This behavior has been changed, and now the partition images only include what t
 did a clean build. This behavior can be disabled by setting the
 `BUILD_BROKEN_INCORRECT_PARTITION_IMAGES` environment variable or board config variable.
 
+Manually adding make rules that build to the staging directories without going through the make
+module system will not be compatible with this change. This includes many usages of
+`LOCAL_POST_INSTALL_CMD`.
+
 ## Perform validation of Soong plugins
 
 Each Soong plugin will require manual work to migrate to Bazel. In order to
