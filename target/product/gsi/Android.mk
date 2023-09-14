@@ -1,5 +1,14 @@
 LOCAL_PATH:= $(call my-dir)
 
+# VNDK will not be frozen if the PLATFORM_VNDK_VERSION is a codename or greater than 34
+ifeq ($(call math_is_number,$(PLATFORM_VNDK_VERSION)),)
+UNFROZEN_VNDK := true
+else
+ifeq ($(call math_gt,$(PLATFORM_VNDK_VERSION),34),true)
+UNFROZEN_VNDK := true
+endif
+endif
+
 #####################################################################
 # list of vndk libraries from the source code.
 INTERNAL_VNDK_LIB_LIST := $(SOONG_VNDK_LIBRARIES_FILE)
@@ -9,10 +18,14 @@ INTERNAL_VNDK_LIB_LIST := $(SOONG_VNDK_LIBRARIES_FILE)
 # TODO(b/62012285): the lib list should be stored somewhere under
 # /prebuilts/vndk
 ifeq (REL,$(PLATFORM_VERSION_CODENAME))
+ifndef UNFROZEN_VNDK
 LATEST_VNDK_LIB_LIST := $(LOCAL_PATH)/$(PLATFORM_VNDK_VERSION).txt
 ifeq ($(wildcard $(LATEST_VNDK_LIB_LIST)),)
 $(error $(LATEST_VNDK_LIB_LIST) file not found. Please copy "$(LOCAL_PATH)/current.txt" to "$(LATEST_VNDK_LIB_LIST)" and commit a CL for release branch)
 endif
+else # UNFROZEN_VNDK
+LATEST_VNDK_LIB_LIST := $(LOCAL_PATH)/current.txt
+endif # UNFROZEN_VNDK
 else
 LATEST_VNDK_LIB_LIST := $(LOCAL_PATH)/current.txt
 endif
