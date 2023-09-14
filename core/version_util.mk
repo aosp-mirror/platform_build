@@ -169,17 +169,14 @@ endif
 
 ifndef PLATFORM_VNDK_VERSION
   # This is the definition of the VNDK version for the current VNDK libraries.
-  # The version is only available when PLATFORM_VERSION_CODENAME == REL.
-  # Otherwise, it will be set to a CODENAME version. The ABI is allowed to be
-  # changed only before the Android version is released. Once
-  # PLATFORM_VNDK_VERSION is set to actual version, the ABI for this version
-  # will be frozon and emit build errors if any ABI for the VNDK libs are
-  # changed.
-  # After that the snapshot of the VNDK with this version will be generated.
-  #
-  # The VNDK version follows PLATFORM_SDK_VERSION.
+  # With trunk stable, VNDK will not be frozen but deprecated.
+  # This version will be removed with the VNDK deprecation.
   ifeq (REL,$(PLATFORM_VERSION_CODENAME))
-    PLATFORM_VNDK_VERSION := $(PLATFORM_SDK_VERSION)
+    ifdef RELEASE_PLATFORM_VNDK_VERSION
+      PLATFORM_VNDK_VERSION := $(RELEASE_PLATFORM_VNDK_VERSION)
+    else
+      PLATFORM_VNDK_VERSION := $(PLATFORM_SDK_VERSION)
+    endif
   else
     PLATFORM_VNDK_VERSION := $(PLATFORM_VERSION_CODENAME)
   endif
