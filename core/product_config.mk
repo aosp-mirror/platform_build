@@ -282,7 +282,11 @@ current_product_makefile :=
 
 #############################################################################
 # Check product include tag allowlist
-BLUEPRINT_INCLUDE_TAGS_ALLOWLIST := com.android.mainline_go com.android.mainline
+BLUEPRINT_INCLUDE_TAGS_ALLOWLIST := \
+  com.android.mainline_go \
+  com.android.mainline \
+  mainline_module_prebuilt_nightly \
+  mainline_module_prebuilt_monthly_release
 .KATI_READONLY := BLUEPRINT_INCLUDE_TAGS_ALLOWLIST
 $(foreach include_tag,$(PRODUCT_INCLUDE_TAGS), \
 	$(if $(filter $(include_tag),$(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST)),,\
@@ -293,7 +297,8 @@ ifeq (, $(PRODUCT_INCLUDE_TAGS))
 # we still analyse it.
 # This means that in setups where we two have two prebuilts of module_sdk, we need a "default" to use in analysis
 # This should be a no-op in aosp and internal since no Android.bp file contains blueprint_package_includes
-PRODUCT_INCLUDE_TAGS += com.android.mainline # Use the big android one by default
+# Use the big android one and main-based prebuilts by default
+PRODUCT_INCLUDE_TAGS += com.android.mainline mainline_module_prebuilt_nightly
 endif
 
 #############################################################################
