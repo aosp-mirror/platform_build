@@ -2006,6 +2006,11 @@ function source_vendorsetup() {
             fi
         done
     done
+
+    if [[ "${PWD}" == /google/cog/* ]]; then
+        f="build/make/cogsetup.sh"
+        echo "including $f"; . "$T/$f"
+    fi
 }
 
 function showcommands() {
