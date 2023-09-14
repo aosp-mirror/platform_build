@@ -2,6 +2,9 @@
 {{ if readwrite }}
 #include <server_configurable_flags/get_flags.h>
 {{ endif }}
+{{ if for_test }}
+#include <unordered_map>
+{{ endif }}
 
 namespace {cpp_namespace} \{
 
