@@ -364,6 +364,7 @@ bool com_android_aconfig_test_enabled_rw() {
     const TEST_SOURCE_FILE_EXPECTED: &str = r#"
 #include "com_android_aconfig_test.h"
 #include <server_configurable_flags/get_flags.h>
+#include <unordered_map>
 
 namespace com::android::aconfig::test {
 
