@@ -12,7 +12,7 @@ public class FakeFeatureFlagsImpl implements FeatureFlags \{
 {{ for item in class_elements}}
     @Override
     public boolean {item.method_name}() \{
-        return getFlag(Flags.FLAG_{item.flag_name_constant_suffix});
+        return getValue(Flags.FLAG_{item.flag_name_constant_suffix});
     }
 {{ endfor}}
     public void setFlag(String flagName, boolean value) \{
@@ -28,7 +28,7 @@ public class FakeFeatureFlagsImpl implements FeatureFlags \{
         }
     }
 
-    private boolean getFlag(String flagName) \{
+    private boolean getValue(String flagName) \{
         Boolean value = this.mFlagMap.get(flagName);
         if (value == null) \{
             throw new IllegalArgumentException(flagName + " is not set");
