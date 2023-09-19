@@ -90,8 +90,8 @@ DEXPREOPT_INFIX := $(if $(filter true,$(DEX_PREOPT_WITH_UPDATABLE_BCP)),mainline
 # The input variables are written by build/soong/java/dexpreopt_bootjars.go. Examples can be found
 # at the bottom of build/soong/java/dexpreopt_config_testing.go.
 dexpreopt_root_dir := $(dir $(patsubst %/,%,$(dir $(firstword $(bootclasspath_jars)))))
-booclasspath_arg := $(subst $(space),:,$(patsubst $(dexpreopt_root_dir)%,%,$(DEXPREOPT_BOOTCLASSPATH_DEX_FILES)))
-booclasspath_locations_arg := $(subst $(space),:,$(DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS))
+bootclasspath_arg := $(subst $(space),:,$(patsubst $(dexpreopt_root_dir)%,%,$(DEXPREOPT_BOOTCLASSPATH_DEX_FILES)))
+bootclasspath_locations_arg := $(subst $(space),:,$(DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS))
 boot_images := $(subst :,$(space),$(DEXPREOPT_IMAGE_LOCATIONS_ON_DEVICE$(DEXPREOPT_INFIX)))
 boot_image_arg := $(subst $(space),:,$(patsubst /%,%,$(boot_images)))
 dex2oat_extra_args := $(if $(filter true,$(ENABLE_UFFD_GC)),--runtime-arg -Xgc:CMC)
@@ -99,8 +99,8 @@ dex2oat_extra_args := $(if $(filter true,$(ENABLE_UFFD_GC)),--runtime-arg -Xgc:C
 boot_zip_metadata_txt := $(dir $(boot_zip))boot_zip/METADATA.txt
 $(boot_zip_metadata_txt):
 	rm -f $@
-	echo "booclasspath = $(booclasspath_arg)" >> $@
-	echo "booclasspath-locations = $(booclasspath_locations_arg)" >> $@
+	echo "bootclasspath = $(bootclasspath_arg)" >> $@
+	echo "bootclasspath-locations = $(bootclasspath_locations_arg)" >> $@
 	echo "boot-image = $(boot_image_arg)" >> $@
 	echo "extra-args = $(dex2oat_extra_args)" >> $@
 
