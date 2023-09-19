@@ -26,3 +26,10 @@ py_binary(
     python_version = "PY3",
     visibility = ["//visibility:public"],
 )
+
+py_binary(
+    name = "auto_gen_test_config",
+    srcs = ["auto_gen_test_config.py"],
+    python_version = "PY3",
+    visibility = ["//visibility:public"],
+)
