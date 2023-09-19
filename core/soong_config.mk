@@ -319,6 +319,10 @@ $(call add_json_bool, KeepVndk, $(filter true,$(KEEP_VNDK)))
 
 $(call add_json_bool, CheckVendorSeappViolations, $(filter true,$(CHECK_VENDOR_SEAPP_VIOLATIONS)))
 
+$(call add_json_map, PartitionVars)
+  $(call add_json_str,  ProductDirectory,    $(dir $(INTERNAL_PRODUCT)))
+$(call end_json_map)
+
 $(call json_end)
 
 $(file >$(SOONG_VARIABLES).tmp,$(json_contents))
