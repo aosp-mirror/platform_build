@@ -17,6 +17,7 @@
 """A tool to generate TradeFed test config file.
 """
 
+import argparse
 import re
 import os
 import shutil
@@ -43,20 +44,28 @@ def main(argv):
   Returns:
     0 if no error, otherwise 1.
   """
-  if len(argv) != 4 and len(argv) != 6:
-    sys.stderr.write(
-        f'Invalid arguments: {argv}. The script requires 4 arguments for file paths: '
-        'target_config, android_manifest (or the xmltree dump), empty_config, '
-        'instrumentation_test_config_template, '
-        'and 2 optional arguments for extra configs: '
-        '--extra-configs \'EXTRA_CONFIGS\'.\n')
-    return 1
 
-  target_config = argv[0]
-  android_manifest = argv[1]
-  empty_config = argv[2]
-  instrumentation_test_config_template = argv[3]
-  extra_configs = '\n'.join(argv[5].split('\\n')) if len(argv) == 6 else ''
+  parser = argparse.ArgumentParser()
+  parser.add_argument(
+      "target_config",
+      help="Path to the generated output config.")
+  parser.add_argument(
+      "android_manifest",
+      help="Path to AndroidManifest.xml or output of 'aapt2 dump xmltree' with .xmltree extension.")
+  parser.add_argument(
+      "empty_config",
+      help="Path to the empty config template.")
+  parser.add_argument(
+      "instrumentation_test_config_template",
+      help="Path to the instrumentation test config template.")
+  parser.add_argument("--extra-configs", default="")
+  args = parser.parse_args(argv)
+
+  target_config = args.target_config
+  android_manifest = args.android_manifest
+  empty_config = args.empty_config
+  instrumentation_test_config_template = args.instrumentation_test_config_template
+  extra_configs = '\n'.join(args.extra_configs.split('\\n'))
 
   module = os.path.splitext(os.path.basename(target_config))[0]
 
@@ -70,7 +79,7 @@ def main(argv):
       #                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
       pattern = re.compile(r"\(Raw:\s\"(.*)\"\)$")
       curr_element = None
-      for line in manifest.readlines():
+      for line in manifest:
         curr_line = line.strip()
         if curr_line.startswith("E:"):
           # e.g. "E: instrumentation (line=9)"
