@@ -5137,40 +5137,48 @@ BUILT_KERNEL_VERSION_FILE := $(intermediates)/kernel_version.txt
 
 my_board_extracted_kernel :=
 
-# BOARD_KERNEL_CONFIG_FILE and BOARD_KERNEL_VERSION can be used to override the values extracted
-# from INSTALLED_KERNEL_TARGET.
-ifdef BOARD_KERNEL_CONFIG_FILE
-ifdef BOARD_KERNEL_VERSION
-$(BUILT_KERNEL_CONFIGS_FILE): $(BOARD_KERNEL_CONFIG_FILE)
-	cp $< $@
-$(BUILT_KERNEL_VERSION_FILE):
-	echo $(BOARD_KERNEL_VERSION) > $@
-
-$(call declare-license-metadata,$(BUILT_KERNEL_CONFIGS_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
-$(call declare-license-metadata,$(BUILT_KERNEL_VERSION_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
-
-my_board_extracted_kernel := true
-endif # BOARD_KERNEL_VERSION
-endif # BOARD_KERNEL_CONFIG_FILE
-
-ifneq ($(my_board_extracted_kernel),true)
 # Tools for decompression that is not in PATH.
 # Check $(EXTRACT_KERNEL) for decompression algorithms supported by the script.
 # Algorithms that are in the script but not in this list will be found in PATH.
 my_decompress_tools := \
     lz4:$(HOST_OUT_EXECUTABLES)/lz4 \
 
-endif # my_board_extracted_kernel
+
+# BOARD_KERNEL_CONFIG_FILE and BOARD_KERNEL_VERSION can be used to override the values extracted
+# from INSTALLED_KERNEL_TARGET.
+ifdef BOARD_KERNEL_VERSION
+$(BUILT_KERNEL_VERSION_FILE): PRIVATE_DECOMPRESS_TOOLS := $(my_decompress_tools)
+$(BUILT_KERNEL_VERSION_FILE): $(foreach pair,$(my_decompress_tools),$(call word-colon,2,$(pair)))
+$(BUILT_KERNEL_VERSION_FILE): $(EXTRACT_KERNEL) $(firstword $(INSTALLED_KERNEL_TARGET))
+	KERNEL_RELEASE=`$(EXTRACT_KERNEL) --tools $(PRIVATE_DECOMPRESS_TOOLS) --input $(firstword $(INSTALLED_KERNEL_TARGET)) \
+	  --output-release` ;\
+  if [ "$$KERNEL_RELEASE" != '$(BOARD_KERNEL_VERSION)' ]; then \
+    echo "Specified kernel version '$(BOARD_KERNEL_VERSION)' does not match actual kernel version '$$KERNEL_RELEASE' " ; exit 1; fi;
+	echo '$(BOARD_KERNEL_VERSION)' > $@
+
+ifdef BOARD_KERNEL_CONFIG_FILE
+$(BUILT_KERNEL_CONFIGS_FILE): $(BOARD_KERNEL_CONFIG_FILE)
+	cp $< $@
+
+$(call declare-license-metadata,$(BUILT_KERNEL_CONFIGS_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
+$(call declare-license-metadata,$(BUILT_KERNEL_VERSION_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
+
+my_board_extracted_kernel := true
+endif # BOARD_KERNEL_CONFIG_FILE
+endif # BOARD_KERNEL_VERSION
+
 
 ifneq ($(my_board_extracted_kernel),true)
 ifdef INSTALLED_KERNEL_TARGET
+ifndef BOARD_KERNEL_VERSION
 $(BUILT_KERNEL_CONFIGS_FILE): .KATI_IMPLICIT_OUTPUTS := $(BUILT_KERNEL_VERSION_FILE)
+endif
 $(BUILT_KERNEL_CONFIGS_FILE): PRIVATE_DECOMPRESS_TOOLS := $(my_decompress_tools)
 $(BUILT_KERNEL_CONFIGS_FILE): $(foreach pair,$(my_decompress_tools),$(call word-colon,2,$(pair)))
 $(BUILT_KERNEL_CONFIGS_FILE): $(EXTRACT_KERNEL) $(firstword $(INSTALLED_KERNEL_TARGET))
 	$< --tools $(PRIVATE_DECOMPRESS_TOOLS) --input $(firstword $(INSTALLED_KERNEL_TARGET)) \
 	  --output-configs $@ \
-	  --output-release $(BUILT_KERNEL_VERSION_FILE)
+	  $(if $(BOARD_KERNEL_VERSION),,--output-release $(BUILT_KERNEL_VERSION_FILE))
 
 $(call declare-license-metadata,$(BUILT_KERNEL_CONFIGS_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
 
