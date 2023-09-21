@@ -103,9 +103,14 @@ impl FlagProvider {
     /// query flag disabled_rw
     pub fn disabled_rw(&self) -> bool {
         flags_rust::GetServerConfigurableFlag(
-            "aconfig_test",
+            "aconfig_flags.aconfig_test",
             "com.android.aconfig.test.disabled_rw",
             "false") == "true"
+    }
+
+    /// query flag enabled_fixed_ro
+    pub fn enabled_fixed_ro(&self) -> bool {
+        true
     }
 
     /// query flag enabled_ro
@@ -116,7 +121,7 @@ impl FlagProvider {
     /// query flag enabled_rw
     pub fn enabled_rw(&self) -> bool {
         flags_rust::GetServerConfigurableFlag(
-            "aconfig_test",
+            "aconfig_flags.aconfig_test",
             "com.android.aconfig.test.enabled_rw",
             "true") == "true"
     }
@@ -135,6 +140,12 @@ pub fn disabled_ro() -> bool {
 #[inline(always)]
 pub fn disabled_rw() -> bool {
     PROVIDER.disabled_rw()
+}
+
+/// query flag enabled_fixed_ro
+#[inline(always)]
+pub fn enabled_fixed_ro() -> bool {
+    true
 }
 
 /// query flag enabled_ro
@@ -178,7 +189,7 @@ impl FlagProvider {
     pub fn disabled_rw(&self) -> bool {
         self.overrides.get("disabled_rw").copied().unwrap_or(
             flags_rust::GetServerConfigurableFlag(
-                "aconfig_test",
+                "aconfig_flags.aconfig_test",
                 "com.android.aconfig.test.disabled_rw",
                 "false") == "true"
         )
@@ -187,6 +198,18 @@ impl FlagProvider {
     /// set flag disabled_rw
     pub fn set_disabled_rw(&mut self, val: bool) {
         self.overrides.insert("disabled_rw", val);
+    }
+
+    /// query flag enabled_fixed_ro
+    pub fn enabled_fixed_ro(&self) -> bool {
+        self.overrides.get("enabled_fixed_ro").copied().unwrap_or(
+            true
+        )
+    }
+
+    /// set flag enabled_fixed_ro
+    pub fn set_enabled_fixed_ro(&mut self, val: bool) {
+        self.overrides.insert("enabled_fixed_ro", val);
     }
 
     /// query flag enabled_ro
@@ -205,7 +228,7 @@ impl FlagProvider {
     pub fn enabled_rw(&self) -> bool {
         self.overrides.get("enabled_rw").copied().unwrap_or(
             flags_rust::GetServerConfigurableFlag(
-                "aconfig_test",
+                "aconfig_flags.aconfig_test",
                 "com.android.aconfig.test.enabled_rw",
                 "true") == "true"
         )
@@ -249,6 +272,18 @@ pub fn disabled_rw() -> bool {
 #[inline(always)]
 pub fn set_disabled_rw(val: bool) {
     PROVIDER.lock().unwrap().set_disabled_rw(val);
+}
+
+/// query flag enabled_fixed_ro
+#[inline(always)]
+pub fn enabled_fixed_ro() -> bool {
+    PROVIDER.lock().unwrap().enabled_fixed_ro()
+}
+
+/// set flag enabled_fixed_ro
+#[inline(always)]
+pub fn set_enabled_fixed_ro(val: bool) {
+    PROVIDER.lock().unwrap().set_enabled_fixed_ro(val);
 }
 
 /// query flag enabled_ro

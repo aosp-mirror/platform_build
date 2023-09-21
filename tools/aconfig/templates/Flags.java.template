@@ -1,10 +1,19 @@
 package {package_name};
 
+/** @hide */
 public final class Flags \{
 {{- for item in class_elements}}
+    /** @hide */
     public static final String FLAG_{item.flag_name_constant_suffix} = "{item.device_config_flag}";
 {{- endfor }}
 {{ for item in class_elements}}
+{{ -if not item.is_read_write }}
+{{ -if item.default_value }}
+    @com.android.aconfig.annotations.AssumeTrueForR8
+{{ -else }}
+    @com.android.aconfig.annotations.AssumeFalseForR8
+{{ -endif- }}
+{{ endif }}
     public static boolean {item.method_name}() \{
         return FEATURE_FLAGS.{item.method_name}();
     }
@@ -17,7 +26,7 @@ public final class Flags \{
     public static void unsetFeatureFlags() \{
         Flags.FEATURE_FLAGS = null;
     }
-{{ endif}}
+{{ endif }}
     private static FeatureFlags FEATURE_FLAGS{{ -if not is_test_mode }} = new FeatureFlagsImpl(){{ -endif- }};
 
 }

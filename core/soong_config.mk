@@ -115,6 +115,7 @@ $(call add_json_list, CFIExcludePaths,                   $(CFI_EXCLUDE_PATHS) $(
 $(call add_json_list, CFIIncludePaths,                   $(CFI_INCLUDE_PATHS) $(PRODUCT_CFI_INCLUDE_PATHS))
 $(call add_json_list, IntegerOverflowExcludePaths,       $(INTEGER_OVERFLOW_EXCLUDE_PATHS) $(PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS))
 $(call add_json_list, HWASanIncludePaths,                $(HWASAN_INCLUDE_PATHS) $(PRODUCT_HWASAN_INCLUDE_PATHS))
+$(call add_json_list, HWASanExcludePaths,                $(HWASAN_EXCLUDE_PATHS) $(PRODUCT_HWASAN_EXCLUDE_PATHS))
 
 $(call add_json_list, MemtagHeapExcludePaths,            $(MEMTAG_HEAP_EXCLUDE_PATHS) $(PRODUCT_MEMTAG_HEAP_EXCLUDE_PATHS))
 $(call add_json_list, MemtagHeapAsyncIncludePaths,       $(MEMTAG_HEAP_ASYNC_INCLUDE_PATHS) $(PRODUCT_MEMTAG_HEAP_ASYNC_INCLUDE_PATHS) $(if $(filter true,$(PRODUCT_MEMTAG_HEAP_SKIP_DEFAULT_PATHS)),,$(PRODUCT_MEMTAG_HEAP_ASYNC_DEFAULT_INCLUDE_PATHS)))
@@ -206,17 +207,8 @@ $(call add_json_list, NamespacesToExport,                $(PRODUCT_SOONG_NAMESPA
 
 $(call add_json_list, PgoAdditionalProfileDirs,          $(PGO_ADDITIONAL_PROFILE_DIRS))
 
-$(call add_json_list, BoardPlatVendorPolicy,             $(BOARD_PLAT_VENDOR_POLICY))
-$(call add_json_list, BoardReqdMaskPolicy,               $(BOARD_REQD_MASK_POLICY))
-$(call add_json_list, BoardSystemExtPublicPrebuiltDirs,  $(BOARD_SYSTEM_EXT_PUBLIC_PREBUILT_DIRS))
-$(call add_json_list, BoardSystemExtPrivatePrebuiltDirs, $(BOARD_SYSTEM_EXT_PRIVATE_PREBUILT_DIRS))
-$(call add_json_list, BoardProductPublicPrebuiltDirs,    $(BOARD_PRODUCT_PUBLIC_PREBUILT_DIRS))
-$(call add_json_list, BoardProductPrivatePrebuiltDirs,   $(BOARD_PRODUCT_PRIVATE_PREBUILT_DIRS))
 $(call add_json_list, BoardVendorSepolicyDirs,           $(BOARD_VENDOR_SEPOLICY_DIRS) $(BOARD_SEPOLICY_DIRS))
 $(call add_json_list, BoardOdmSepolicyDirs,              $(BOARD_ODM_SEPOLICY_DIRS))
-$(call add_json_list, BoardVendorDlkmSepolicyDirs,       $(BOARD_VENDOR_DLKM_SEPOLICY_DIRS))
-$(call add_json_list, BoardOdmDlkmSepolicyDirs,          $(BOARD_ODM_DLKM_SEPOLICY_DIRS))
-$(call add_json_list, BoardSystemDlkmSepolicyDirs,       $(BOARD_SYSTEM_DLKM_SEPOLICY_DIRS))
 $(call add_json_list, SystemExtPublicSepolicyDirs,       $(SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS))
 $(call add_json_list, SystemExtPrivateSepolicyDirs,      $(SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS))
 $(call add_json_list, BoardSepolicyM4Defs,               $(BOARD_SEPOLICY_M4DEFS))
@@ -283,16 +275,17 @@ $(call add_json_str,  PrebuiltHiddenApiDir, $(BOARD_PREBUILT_HIDDENAPI_DIR))
 
 $(call add_json_str,  ShippingApiLevel, $(PRODUCT_SHIPPING_API_LEVEL))
 
-$(call add_json_list, BuildBrokenPluginValidation,        $(BUILD_BROKEN_PLUGIN_VALIDATION))
-$(call add_json_bool, BuildBrokenClangProperty,           $(filter true,$(BUILD_BROKEN_CLANG_PROPERTY)))
-$(call add_json_bool, BuildBrokenClangAsFlags,            $(filter true,$(BUILD_BROKEN_CLANG_ASFLAGS)))
-$(call add_json_bool, BuildBrokenClangCFlags,             $(filter true,$(BUILD_BROKEN_CLANG_CFLAGS)))
-$(call add_json_bool, GenruleSandboxing,                  $(filter true,$(GENRULE_SANDBOXING)))
-$(call add_json_bool, BuildBrokenEnforceSyspropOwner,     $(filter true,$(BUILD_BROKEN_ENFORCE_SYSPROP_OWNER)))
-$(call add_json_bool, BuildBrokenTrebleSyspropNeverallow, $(filter true,$(BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW)))
-$(call add_json_bool, BuildBrokenUsesSoongPython2Modules, $(filter true,$(BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES)))
-$(call add_json_bool, BuildBrokenVendorPropertyNamespace, $(filter true,$(BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE)))
-$(call add_json_list, BuildBrokenInputDirModules, $(BUILD_BROKEN_INPUT_DIR_MODULES))
+$(call add_json_list, BuildBrokenPluginValidation,         $(BUILD_BROKEN_PLUGIN_VALIDATION))
+$(call add_json_bool, BuildBrokenClangProperty,            $(filter true,$(BUILD_BROKEN_CLANG_PROPERTY)))
+$(call add_json_bool, BuildBrokenClangAsFlags,             $(filter true,$(BUILD_BROKEN_CLANG_ASFLAGS)))
+$(call add_json_bool, BuildBrokenClangCFlags,              $(filter true,$(BUILD_BROKEN_CLANG_CFLAGS)))
+$(call add_json_bool, GenruleSandboxing,                   $(filter true,$(GENRULE_SANDBOXING)))
+$(call add_json_bool, BuildBrokenEnforceSyspropOwner,      $(filter true,$(BUILD_BROKEN_ENFORCE_SYSPROP_OWNER)))
+$(call add_json_bool, BuildBrokenTrebleSyspropNeverallow,  $(filter true,$(BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW)))
+$(call add_json_bool, BuildBrokenUsesSoongPython2Modules,  $(filter true,$(BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES)))
+$(call add_json_bool, BuildBrokenVendorPropertyNamespace,  $(filter true,$(BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE)))
+$(call add_json_bool, BuildBrokenIncorrectPartitionImages, $(filter true,$(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES)))
+$(call add_json_list, BuildBrokenInputDirModules,          $(BUILD_BROKEN_INPUT_DIR_MODULES))
 
 $(call add_json_list, BuildWarningBadOptionalUsesLibsAllowlist,    $(BUILD_WARNING_BAD_OPTIONAL_USES_LIBS_ALLOWLIST))
 
@@ -319,10 +312,16 @@ $(call add_json_str,  ProductBrand,        $(PRODUCT_BRAND))
 $(call add_json_list, BuildVersionTags,    $(BUILD_VERSION_TAGS))
 
 $(call add_json_str, ReleaseVersion,    $(_RELEASE_VERSION))
-$(call add_json_list, ReleaseAconfigValueSets,    $(RELEASE_ACONFIG_VALUE_SETS))
+$(call add_json_str, ReleaseAconfigValueSets,    $(RELEASE_ACONFIG_VALUE_SETS))
 $(call add_json_str, ReleaseAconfigFlagDefaultPermission,    $(RELEASE_ACONFIG_FLAG_DEFAULT_PERMISSION))
 
 $(call add_json_bool, KeepVndk, $(filter true,$(KEEP_VNDK)))
+
+$(call add_json_bool, CheckVendorSeappViolations, $(filter true,$(CHECK_VENDOR_SEAPP_VIOLATIONS)))
+
+$(call add_json_map, PartitionVars)
+  $(call add_json_str,  ProductDirectory,    $(dir $(INTERNAL_PRODUCT)))
+$(call end_json_map)
 
 $(call json_end)
 

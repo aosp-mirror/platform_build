@@ -215,6 +215,17 @@ pub mod parsed_flag {
             super::tracepoint::verify_fields(tp)?;
         }
         ensure!(pf.bug.len() == 1, "bad flag declaration: exactly one bug required");
+        if pf.is_fixed_read_only() {
+            ensure!(
+                pf.permission() == ProtoFlagPermission::READ_ONLY,
+                "bad parsed flag: flag is is_fixed_read_only but permission is not READ_ONLY"
+            );
+            for tp in pf.trace.iter() {
+                ensure!(tp.permission() == ProtoFlagPermission::READ_ONLY,
+                "bad parsed flag: flag is is_fixed_read_only but a tracepoint's permission is not READ_ONLY"
+                );
+            }
+        }
 
         Ok(())
     }
@@ -303,6 +314,7 @@ flag {
     namespace: "second_ns"
     description: "This is the description of the second flag."
     bug: "abc"
+    is_fixed_read_only: true
 }
 "#,
         )
@@ -313,11 +325,13 @@ flag {
         assert_eq!(first.namespace(), "first_ns");
         assert_eq!(first.description(), "This is the description of the first flag.");
         assert_eq!(first.bug, vec!["123"]);
+        assert!(!first.is_fixed_read_only());
         let second = flag_declarations.flag.iter().find(|pf| pf.name() == "second").unwrap();
         assert_eq!(second.name(), "second");
         assert_eq!(second.namespace(), "second_ns");
         assert_eq!(second.description(), "This is the description of the second flag.");
         assert_eq!(second.bug, vec!["abc"]);
+        assert!(second.is_fixed_read_only());
 
         // bad input: missing package in flag declarations
         let error = flag_declarations::try_from_text_proto(
@@ -544,7 +558,7 @@ parsed_flag {
     description: "This is the description of the second flag."
     bug: "SOME_BUG"
     state: ENABLED
-    permission: READ_WRITE
+    permission: READ_ONLY
     trace {
         source: "flags.declarations"
         state: DISABLED
@@ -553,8 +567,9 @@ parsed_flag {
     trace {
         source: "flags.values"
         state: ENABLED
-        permission: READ_WRITE
+        permission: READ_ONLY
     }
+    is_fixed_read_only: true
 }
 "#;
         let parsed_flags = try_from_binary_proto_from_text_proto(text_proto).unwrap();
@@ -566,14 +581,15 @@ parsed_flag {
         assert_eq!(second.description(), "This is the description of the second flag.");
         assert_eq!(second.bug, vec!["SOME_BUG"]);
         assert_eq!(second.state(), ProtoFlagState::ENABLED);
-        assert_eq!(second.permission(), ProtoFlagPermission::READ_WRITE);
+        assert_eq!(second.permission(), ProtoFlagPermission::READ_ONLY);
         assert_eq!(2, second.trace.len());
         assert_eq!(second.trace[0].source(), "flags.declarations");
         assert_eq!(second.trace[0].state(), ProtoFlagState::DISABLED);
         assert_eq!(second.trace[0].permission(), ProtoFlagPermission::READ_ONLY);
         assert_eq!(second.trace[1].source(), "flags.values");
         assert_eq!(second.trace[1].state(), ProtoFlagState::ENABLED);
-        assert_eq!(second.trace[1].permission(), ProtoFlagPermission::READ_WRITE);
+        assert_eq!(second.trace[1].permission(), ProtoFlagPermission::READ_ONLY);
+        assert!(second.is_fixed_read_only());
 
         // valid input: empty
         let parsed_flags = try_from_binary_proto_from_text_proto("").unwrap();

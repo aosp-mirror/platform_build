@@ -91,11 +91,17 @@ pub fn parse_flags(
             parsed_flag.set_description(flag_declaration.take_description());
             parsed_flag.bug.append(&mut flag_declaration.bug);
             parsed_flag.set_state(DEFAULT_FLAG_STATE);
-            parsed_flag.set_permission(default_permission);
+            let flag_permission = if flag_declaration.is_fixed_read_only() {
+                ProtoFlagPermission::READ_ONLY
+            } else {
+                default_permission
+            };
+            parsed_flag.set_permission(flag_permission);
+            parsed_flag.set_is_fixed_read_only(flag_declaration.is_fixed_read_only());
             let mut tracepoint = ProtoTracepoint::new();
             tracepoint.set_source(input.source.clone());
             tracepoint.set_state(DEFAULT_FLAG_STATE);
-            tracepoint.set_permission(default_permission);
+            tracepoint.set_permission(flag_permission);
             parsed_flag.trace.push(tracepoint);
 
             // verify ParsedFlag looks reasonable
@@ -134,6 +140,13 @@ pub fn parse_flags(
                 // (silently) skip unknown flags
                 continue;
             };
+
+            ensure!(
+                !parsed_flag.is_fixed_read_only()
+                    || flag_value.permission() == ProtoFlagPermission::READ_ONLY,
+                "failed to set permission of flag {}, since this flag is fixed read only flag",
+                flag_value.name()
+            );
 
             parsed_flag.set_state(flag_value.state());
             parsed_flag.set_permission(flag_value.permission());
@@ -310,6 +323,7 @@ mod tests {
         assert_eq!(ProtoFlagState::ENABLED, enabled_ro.state());
         assert_eq!(ProtoFlagPermission::READ_ONLY, enabled_ro.permission());
         assert_eq!(3, enabled_ro.trace.len());
+        assert!(!enabled_ro.is_fixed_read_only());
         assert_eq!("tests/test.aconfig", enabled_ro.trace[0].source());
         assert_eq!(ProtoFlagState::DISABLED, enabled_ro.trace[0].state());
         assert_eq!(ProtoFlagPermission::READ_WRITE, enabled_ro.trace[0].permission());
@@ -320,8 +334,11 @@ mod tests {
         assert_eq!(ProtoFlagState::ENABLED, enabled_ro.trace[2].state());
         assert_eq!(ProtoFlagPermission::READ_ONLY, enabled_ro.trace[2].permission());
 
-        assert_eq!(4, parsed_flags.parsed_flag.len());
+        assert_eq!(5, parsed_flags.parsed_flag.len());
         for pf in parsed_flags.parsed_flag.iter() {
+            if pf.name() == "enabled_fixed_ro" {
+                continue;
+            }
             let first = pf.trace.first().unwrap();
             assert_eq!(DEFAULT_FLAG_STATE, first.state());
             assert_eq!(DEFAULT_FLAG_PERMISSION, first.permission());
@@ -330,6 +347,15 @@ mod tests {
             assert_eq!(pf.state(), last.state());
             assert_eq!(pf.permission(), last.permission());
         }
+
+        let enabled_fixed_ro =
+            parsed_flags.parsed_flag.iter().find(|pf| pf.name() == "enabled_fixed_ro").unwrap();
+        assert!(enabled_fixed_ro.is_fixed_read_only());
+        assert_eq!(ProtoFlagState::ENABLED, enabled_fixed_ro.state());
+        assert_eq!(ProtoFlagPermission::READ_ONLY, enabled_fixed_ro.permission());
+        assert_eq!(2, enabled_fixed_ro.trace.len());
+        assert_eq!(ProtoFlagPermission::READ_ONLY, enabled_fixed_ro.trace[0].permission());
+        assert_eq!(ProtoFlagPermission::READ_ONLY, enabled_fixed_ro.trace[1].permission());
     }
 
     #[test]
@@ -360,6 +386,46 @@ mod tests {
         let parsed_flag = parsed_flags.parsed_flag.first().unwrap();
         assert_eq!(ProtoFlagState::DISABLED, parsed_flag.state());
         assert_eq!(ProtoFlagPermission::READ_ONLY, parsed_flag.permission());
+    }
+
+    #[test]
+    fn test_parse_flags_override_fixed_read_only() {
+        let first_flag = r#"
+        package: "com.first"
+        flag {
+            name: "first"
+            namespace: "first_ns"
+            description: "This is the description of the first flag."
+            bug: "123"
+            is_fixed_read_only: true
+        }
+        "#;
+        let declaration =
+            vec![Input { source: "memory".to_string(), reader: Box::new(first_flag.as_bytes()) }];
+
+        let first_flag_value = r#"
+        flag_value {
+            package: "com.first"
+            name: "first"
+            state: DISABLED
+            permission: READ_WRITE
+        }
+        "#;
+        let value = vec![Input {
+            source: "memory".to_string(),
+            reader: Box::new(first_flag_value.as_bytes()),
+        }];
+        let error = crate::commands::parse_flags(
+            "com.first",
+            declaration,
+            value,
+            ProtoFlagPermission::READ_WRITE,
+        )
+        .unwrap_err();
+        assert_eq!(
+            format!("{:?}", error),
+            "failed to set permission of flag first, since this flag is fixed read only flag"
+        );
     }
 
     #[test]

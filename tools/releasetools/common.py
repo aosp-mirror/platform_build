@@ -194,7 +194,7 @@ def InitLogging():
           '': {
               'handlers': ['default'],
               'propagate': True,
-              'level': 'INFO',
+              'level': 'WARNING',
           }
       }
   }
@@ -448,6 +448,10 @@ class BuildInfo(object):
   def is_android_r(self):
     system_prop = self.info_dict.get("system.build.prop")
     return system_prop and system_prop.GetProp("ro.build.version.release") == "11"
+
+  @property
+  def vabc_compression_param(self):
+    return self.get("virtual_ab_compression_method", "")
 
   @property
   def vendor_api_level(self):

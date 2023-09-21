@@ -51,6 +51,19 @@ SECURITY_PATCH_LEVEL_PROP_NAME = "ro.build.version.security_patch"
 TARGET_FILES_IMAGES_SUBDIR = ["IMAGES", "PREBUILT_IMAGES", "RADIO"]
 
 
+# Key is the compression algorithm, value is minimum API level required to
+# use this compression algorithm for VABC OTA on device.
+VABC_COMPRESSION_PARAM_SUPPORT = {
+    "gz": 31,
+    "brotli": 31,
+    "none": 31,
+    # lz4 support is added in Android U
+    "lz4": 34,
+    # zstd support is added in Android V
+    "zstd": 35,
+}
+
+
 def FinalizeMetadata(metadata, input_file, output_file, needed_property_files=None, package_key=None, pw=None):
   """Finalizes the metadata and signs an A/B OTA package.
 
@@ -727,6 +740,7 @@ def ExtractTargetFiles(path: str):
     logger.info("target files %s is already extracted", path)
     return path
   extracted_dir = common.MakeTempDir("target_files")
+  logger.info(f"Extracting target files {path} to {extracted_dir}")
   common.UnzipToDir(path, extracted_dir, UNZIP_PATTERN + [""])
   for subdir in TARGET_FILES_IMAGES_SUBDIR:
     image_dir = os.path.join(extracted_dir, subdir)
@@ -850,7 +864,7 @@ class PayloadGenerator(object):
       cmd.extend(["--dynamic_partition_info_file", dynamic_partition_info])
 
     apex_info = os.path.join(
-      target_dir, "META", "apex_info.pb")
+        target_dir, "META", "apex_info.pb")
     if os.path.exists(apex_info):
       cmd.extend(["--apex_info_file", apex_info])
 
@@ -883,30 +897,7 @@ class PayloadGenerator(object):
     """
     assert isinstance(payload_signer, PayloadSigner)
 
-    # 1. Generate hashes of the payload and metadata files.
-    payload_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
-    metadata_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
-    cmd = ["brillo_update_payload", "hash",
-           "--unsigned_payload", self.payload_file,
-           "--signature_size", str(payload_signer.maximum_signature_size),
-           "--metadata_hash_file", metadata_sig_file,
-           "--payload_hash_file", payload_sig_file]
-    self._Run(cmd)
-
-    # 2. Sign the hashes.
-    signed_payload_sig_file = payload_signer.SignHashFile(payload_sig_file)
-    signed_metadata_sig_file = payload_signer.SignHashFile(metadata_sig_file)
-
-    # 3. Insert the signatures back into the payload file.
-    signed_payload_file = common.MakeTempFile(prefix="signed-payload-",
-                                              suffix=".bin")
-    cmd = ["brillo_update_payload", "sign",
-           "--unsigned_payload", self.payload_file,
-           "--payload", signed_payload_file,
-           "--signature_size", str(payload_signer.maximum_signature_size),
-           "--metadata_signature_file", signed_metadata_sig_file,
-           "--payload_signature_file", signed_payload_sig_file]
-    self._Run(cmd)
+    signed_payload_file = payload_signer.SignPayload(self.payload_file)
 
     self.payload_file = signed_payload_file
 
@@ -920,9 +911,9 @@ class PayloadGenerator(object):
     # 4. Dump the signed payload properties.
     properties_file = common.MakeTempFile(prefix="payload-properties-",
                                           suffix=".txt")
-    cmd = ["brillo_update_payload", "properties",
-           "--payload", self.payload_file,
-           "--properties_file", properties_file]
+    cmd = ["delta_generator",
+           "--in_file=" + self.payload_file,
+           "--properties_file=" + properties_file]
     self._Run(cmd)
 
     if self.secondary:

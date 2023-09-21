@@ -29,10 +29,6 @@ $(call add_soong_config_namespace,ANDROID)
 $(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_MEDIASERVER)
 $(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_DRMSERVER)
 $(call add_soong_config_var,ANDROID,TARGET_ENABLE_MEDIADRM_64)
-$(call add_soong_config_var,ANDROID,IS_TARGET_MIXED_SEPOLICY)
-ifeq ($(IS_TARGET_MIXED_SEPOLICY),true)
-$(call add_soong_config_var_value,ANDROID,MIXED_SEPOLICY_VERSION,$(BOARD_SEPOLICY_VERS))
-endif
 $(call add_soong_config_var,ANDROID,BOARD_USES_ODMIMAGE)
 $(call add_soong_config_var,ANDROID,BOARD_USES_RECOVERY_AS_BOOT)
 $(call add_soong_config_var,ANDROID,PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT)
@@ -146,8 +142,8 @@ endif
 SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
 
-# Disable Compose in SystemUI by default.
-SYSTEMUI_USE_COMPOSE ?= false
+# Enable Compose in SystemUI by default.
+SYSTEMUI_USE_COMPOSE ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_USE_COMPOSE)
 
 ifdef PRODUCT_AVF_ENABLED
@@ -157,6 +153,14 @@ endif
 ifdef PRODUCT_AVF_KERNEL_MODULES_ENABLED
 $(call add_soong_config_var_value,ANDROID,avf_kernel_modules_enabled,$(PRODUCT_AVF_KERNEL_MODULES_ENABLED))
 endif
+
+$(call add_soong_config_var_value,ANDROID,release_avf_allow_preinstalled_apps,$(RELEASE_AVF_ALLOW_PREINSTALLED_APPS))
+$(call add_soong_config_var_value,ANDROID,release_avf_enable_device_assignment,$(RELEASE_AVF_ENABLE_DEVICE_ASSIGNMENT))
+$(call add_soong_config_var_value,ANDROID,release_avf_enable_dice_changes,$(RELEASE_AVF_ENABLE_DICE_CHANGES))
+$(call add_soong_config_var_value,ANDROID,release_avf_enable_llpvm_changes,$(RELEASE_AVF_ENABLE_LLPVM_CHANGES))
+$(call add_soong_config_var_value,ANDROID,release_avf_enable_multi_tenant_microdroid_vm,$(RELEASE_AVF_ENABLE_MULTI_TENANT_MICRODROID_VM))
+$(call add_soong_config_var_value,ANDROID,release_avf_enable_remote_attestation,$(RELEASE_AVF_ENABLE_REMOTE_ATTESTATION))
+$(call add_soong_config_var_value,ANDROID,release_avf_enable_vendor_modules,$(RELEASE_AVF_ENABLE_VENDOR_MODULES))
 
 # Enable system_server optimizations by default unless explicitly set or if
 # there may be dependent runtime jars.
