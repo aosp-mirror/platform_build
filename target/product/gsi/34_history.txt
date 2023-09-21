@@ -1,2 +1,0 @@
-+LLNDK: libapexsupport.so
--VNDK-core: libdiskconfig.so
