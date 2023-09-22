@@ -260,7 +260,7 @@ pub fn dump_parsed_flags(mut input: Vec<Input>, format: DumpFormat) -> Result<Ve
         DumpFormat::Text => {
             for parsed_flag in parsed_flags.parsed_flag.into_iter() {
                 let line = format!(
-                    "{}/{}: {:?} + {:?}\n",
+                    "{}.{}: {:?} + {:?}\n",
                     parsed_flag.package(),
                     parsed_flag.name(),
                     parsed_flag.permission(),
@@ -274,7 +274,7 @@ pub fn dump_parsed_flags(mut input: Vec<Input>, format: DumpFormat) -> Result<Ve
                 let sources: Vec<_> =
                     parsed_flag.trace.iter().map(|tracepoint| tracepoint.source()).collect();
                 let line = format!(
-                    "{}/{}: {:?} + {:?} ({})\n",
+                    "{}.{}: {:?} + {:?} ({})\n",
                     parsed_flag.package(),
                     parsed_flag.name(),
                     parsed_flag.permission(),
@@ -449,7 +449,7 @@ mod tests {
         let input = parse_test_flags_as_input();
         let bytes = dump_parsed_flags(vec![input], DumpFormat::Text).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
-        assert!(text.contains("com.android.aconfig.test/disabled_ro: READ_ONLY + DISABLED"));
+        assert!(text.contains("com.android.aconfig.test.disabled_ro: READ_ONLY + DISABLED"));
     }
 
     #[test]
