@@ -188,8 +188,7 @@ LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
 LOCAL_LICENSE_CONDITIONS := notice
 LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 # Filter LLNDK libs moved to APEX to avoid pulling them into /system/LIB
-LOCAL_REQUIRED_MODULES := \
-    $(filter-out $(LLNDK_MOVED_TO_APEX_LIBRARIES),$(LLNDK_LIBRARIES))
+LOCAL_REQUIRED_MODULES := llndk_in_system
 
 ifneq ($(TARGET_SKIP_CURRENT_VNDK),true)
 LOCAL_REQUIRED_MODULES += \
@@ -224,6 +223,21 @@ LOCAL_REQUIRED_MODULES := $(foreach vndk_ver,$(_vndk_versions),com.android.vndk.
 include $(BUILD_PHONY_PACKAGE)
 
 _vndk_versions :=
+
+#####################################################################
+# Define Phony module to install LLNDK modules which are installed in
+# the system image
+include $(CLEAR_VARS)
+LOCAL_MODULE := llndk_in_system
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
+
+# Filter LLNDK libs moved to APEX to avoid pulling them into /system/LIB
+LOCAL_REQUIRED_MODULES := \
+    $(filter-out $(LLNDK_MOVED_TO_APEX_LIBRARIES),$(LLNDK_LIBRARIES))
+
+include $(BUILD_PHONY_PACKAGE)
 
 #####################################################################
 # skip_mount.cfg, read by init to skip mounting some partitions when GSI is used.
