@@ -1,0 +1,16 @@
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+rust_binary {
+    name: "printflags",
+    edition: "2021",
+    clippy_lints: "android",
+    lints: "android",
+    srcs: ["src/main.rs"],
+    rustlibs: [
+        "libaconfig_protos",
+        "libanyhow",
+        "libprotobuf",
+    ],
+}
