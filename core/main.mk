@@ -220,7 +220,7 @@ ADDITIONAL_SYSTEM_PROPERTIES += ro.postinstall.fstab.prefix=/system
 # property_overrides_split_enabled is true. Otherwise it will be installed in
 # /system/build.prop
 ifdef BOARD_VNDK_VERSION
-  ifneq ($(KEEP_VNDK),false)
+  ifeq ($(KEEP_VNDK),true)
   ifeq ($(BOARD_VNDK_VERSION),current)
     ADDITIONAL_VENDOR_PROPERTIES := ro.vndk.version=$(PLATFORM_VNDK_VERSION)
   else
@@ -339,7 +339,7 @@ endif
 # modules. It uses the version in PRODUCT_PRODUCT_VNDK_VERSION. If the value
 # is "current", use PLATFORM_VNDK_VERSION.
 ifdef PRODUCT_PRODUCT_VNDK_VERSION
-ifneq ($(KEEP_VNDK),false)
+ifeq ($(KEEP_VNDK),true)
 ifeq ($(PRODUCT_PRODUCT_VNDK_VERSION),current)
 ADDITIONAL_PRODUCT_PROPERTIES += ro.product.vndk.version=$(PLATFORM_VNDK_VERSION)
 else
