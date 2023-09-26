@@ -16,3 +16,5 @@
 PRODUCT_NAME := mainline_sdk
 PRODUCT_BRAND := Android
 PRODUCT_DEVICE := mainline_sdk
+
+PRODUCT_NEXT_RELEASE_HIDE_FLAGGED_API := true
