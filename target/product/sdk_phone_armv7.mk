@@ -62,3 +62,5 @@ PRODUCT_MODEL := Android SDK built for arm
 # RadioConfigLib), which makes it impossible to translate their module names to
 # library name, so the check fails.
 PRODUCT_BROKEN_VERIFY_USES_LIBRARIES := true
+
+PRODUCT_NEXT_RELEASE_HIDE_FLAGGED_API := true
