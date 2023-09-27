@@ -831,6 +831,10 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   """Generates an Android OTA package that has A/B update payload."""
   # If input target_files are directories, create a copy so that we can modify
   # them directly
+  target_info = common.BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
+  if OPTIONS.disable_vabc and target_info.is_release_key:
+    raise ValueError("Disabling VABC on release-key builds is not supported.")
+
   target_file = ExtractOrCopyTargetFiles(target_file)
   if source_file is not None:
     source_file = ExtractOrCopyTargetFiles(source_file)
@@ -874,7 +878,6 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   else:
     assert "ab_partitions" in OPTIONS.info_dict, \
         "META/ab_partitions.txt is required for ab_update."
-    target_info = common.BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
     source_info = None
     if target_info.vabc_compression_param:
       minimum_api_level_required = VABC_COMPRESSION_PARAM_SUPPORT[
