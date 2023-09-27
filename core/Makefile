@@ -5952,6 +5952,20 @@ define package_files-copy-root
   fi
 endef
 
+# This is the same as the non-hermetic version, but also accepts a list of files in the directory
+# to copy. It will only copy those files. This is so that we don't copy extra files that could've
+# been built in the staging directories by prior builds.
+# $(1): Directory to copy
+# $(2): Location to copy it to
+# $(3): A list of files in the $(1) directory, only these files will be copied
+define package_files-copy-root-hermetic
+  $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),
+    $(call package_files-copy-root,$(1),$(2)),
+    $(foreach f,$(filter $(strip $(1))/%,$(3)), \
+      mkdir -p $(strip $(2))/$(dir $(patsubst $(strip $(1))/%,%,$(f)))$(newline) \
+      $(ACP) -d $(f) $(strip $(2))/$(patsubst $(strip $(1))/%,%,$(f))$(newline)))
+endef
+
 built_ota_tools :=
 
 # We can't build static executables when SANITIZE_TARGET=address
@@ -6301,7 +6315,7 @@ $(BUILT_TARGET_FILES_DIR): \
 	    $(BUILT_KERNEL_VERSION_FILE) \
 	    | $(ACP)
 	@echo "Building target files: $@"
-	$(hide) rm -rf $@ $@.list $(zip_root)
+	$(hide) rm -rf $@ $(zip_root)
 	$(hide) mkdir -p $(dir $@) $(zip_root)
 ifneq (,$(INSTALLED_RECOVERYIMAGE_TARGET)$(filter true,$(BOARD_USES_RECOVERY_AS_BOOT))$(filter true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT)))
 	@# Components of the recovery image
@@ -6428,8 +6442,8 @@ endif
 endif # INSTALLED_VENDOR_BOOTIMAGE_TARGET
 ifdef BUILDING_SYSTEM_IMAGE
 	@# Contents of the system image
-	$(hide) $(call package_files-copy-root, \
-	    $(SYSTEMIMAGE_SOURCE_DIR),$(zip_root)/SYSTEM)
+	$(hide) $(call package_files-copy-root-hermetic, \
+	    $(SYSTEMIMAGE_SOURCE_DIR),$(zip_root)/SYSTEM,$(FULL_SYSTEMIMAGE_DEPS))
 else ifdef INSTALLED_BUILD_PROP_TARGET
 	@# Copy the system build.prop even if not building a system image
 	@# because add_img_to_target_files may need it to build other partition
@@ -6439,48 +6453,48 @@ else ifdef INSTALLED_BUILD_PROP_TARGET
 endif
 ifdef BUILDING_USERDATA_IMAGE
 	@# Contents of the data image
-	$(hide) $(call package_files-copy-root, \
-	    $(TARGET_OUT_DATA),$(zip_root)/DATA)
+	$(hide) $(call package_files-copy-root-hermetic, \
+	    $(TARGET_OUT_DATA),$(zip_root)/DATA,$(INSTALLED_USERDATAIMAGE_TARGET_DEPS))
 endif
 ifdef BUILDING_VENDOR_IMAGE
 	@# Contents of the vendor image
-	$(hide) $(call package_files-copy-root, \
-	    $(TARGET_OUT_VENDOR),$(zip_root)/VENDOR)
+	$(hide) $(call package_files-copy-root-hermetic, \
+	    $(TARGET_OUT_VENDOR),$(zip_root)/VENDOR,$(INTERNAL_VENDORIMAGE_FILES))
 endif
 ifdef BUILDING_PRODUCT_IMAGE
 	@# Contents of the product image
-	$(hide) $(call package_files-copy-root, \
-	    $(TARGET_OUT_PRODUCT),$(zip_root)/PRODUCT)
+	$(hide) $(call package_files-copy-root-hermetic, \
+	    $(TARGET_OUT_PRODUCT),$(zip_root)/PRODUCT,$(INTERNAL_PRODUCTIMAGE_FILES))
 endif
 ifdef BUILDING_SYSTEM_EXT_IMAGE
 	@# Contents of the system_ext image
-	$(hide) $(call package_files-copy-root, \
-	    $(TARGET_OUT_SYSTEM_EXT),$(zip_root)/SYSTEM_EXT)
+	$(hide) $(call package_files-copy-root-hermetic, \
+	    $(TARGET_OUT_SYSTEM_EXT),$(zip_root)/SYSTEM_EXT,$(INTERNAL_SYSTEM_EXTIMAGE_FILES))
 endif
 ifdef BUILDING_ODM_IMAGE
 	@# Contents of the odm image
-	$(hide) $(call package_files-copy-root, \
-	    $(TARGET_OUT_ODM),$(zip_root)/ODM)
+	$(hide) $(call package_files-copy-root-hermetic, \
+	    $(TARGET_OUT_ODM),$(zip_root)/ODM,$(INTERNAL_ODMIMAGE_FILES))
 endif
 ifdef BUILDING_VENDOR_DLKM_IMAGE
 	@# Contents of the vendor_dlkm image
-	$(hide) $(call package_files-copy-root, \
-	    $(TARGET_OUT_VENDOR_DLKM),$(zip_root)/VENDOR_DLKM)
+	$(hide) $(call package_files-copy-root-hermetic, \
+	    $(TARGET_OUT_VENDOR_DLKM),$(zip_root)/VENDOR_DLKM,$(INTERNAL_VENDOR_DLKMIMAGE_FILES))
 endif
 ifdef BUILDING_ODM_DLKM_IMAGE
 	@# Contents of the odm_dlkm image
-	$(hide) $(call package_files-copy-root, \
-	    $(TARGET_OUT_ODM_DLKM),$(zip_root)/ODM_DLKM)
+	$(hide) $(call package_files-copy-root-hermetic, \
+	    $(TARGET_OUT_ODM_DLKM),$(zip_root)/ODM_DLKM,$(INTERNAL_ODM_DLKMIMAGE_FILES))
 endif
 ifdef BUILDING_SYSTEM_DLKM_IMAGE
 	@# Contents of the system_dlkm image
-	$(hide) $(call package_files-copy-root, \
-	    $(TARGET_OUT_SYSTEM_DLKM),$(zip_root)/SYSTEM_DLKM)
+	$(hide) $(call package_files-copy-root-hermetic, \
+	    $(TARGET_OUT_SYSTEM_DLKM),$(zip_root)/SYSTEM_DLKM,$(INTERNAL_SYSTEM_DLKMIMAGE_FILES))
 endif
 ifdef BUILDING_SYSTEM_OTHER_IMAGE
 	@# Contents of the system_other image
-	$(hide) $(call package_files-copy-root, \
-	    $(TARGET_OUT_SYSTEM_OTHER),$(zip_root)/SYSTEM_OTHER)
+	$(hide) $(call package_files-copy-root-hermetic, \
+	    $(TARGET_OUT_SYSTEM_OTHER),$(zip_root)/SYSTEM_OTHER,$(INTERNAL_SYSTEMOTHERIMAGE_FILES))
 endif
 	@# Extra contents of the OTA package
 	$(hide) mkdir -p $(zip_root)/OTA
@@ -6569,7 +6583,8 @@ endif
 endif
 ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
 	@# If breakpad symbols have been generated, add them to the zip.
-	$(hide) cp -R $(TARGET_OUT_BREAKPAD) $(zip_root)/BREAKPAD
+	$(call package_files-copy-root, \
+	    $(TARGET_OUT_BREAKPAD),$(zip_root)/BREAKPAD)
 endif
 ifdef BOARD_PREBUILT_VENDORIMAGE
 	$(hide) mkdir -p $(zip_root)/IMAGES
