@@ -235,6 +235,7 @@ PRODUCT_PACKAGES += \
     pm \
     pppd \
     preinstalled-packages-platform.xml \
+    printflags \
     privapp-permissions-platform.xml \
     prng_seeder \
     racoon \
