@@ -450,6 +450,11 @@ class BuildInfo(object):
     return system_prop and system_prop.GetProp("ro.build.version.release") == "11"
 
   @property
+  def is_release_key(self):
+    system_prop = self.info_dict.get("build.prop")
+    return system_prop and system_prop.GetProp("ro.build.tags") == "release-key"
+
+  @property
   def vabc_compression_param(self):
     return self.get("virtual_ab_compression_method", "")
 
