@@ -344,6 +344,11 @@ $(call add_json_map, PartitionVarsForBazelMigrationOnlyDoNotUse)
     $(call add_json_str, ProductBaseFsPath, $(PRODUCT_$(image_type)_BASE_FS_PATH)) \
     $(call add_json_str, ProductHeadroom, $(PRODUCT_$(image_type)_HEADROOM)) \
     $(call add_json_str, ProductVerityPartition, $(PRODUCT_$(image_type)_VERITY_PARTITION)) \
+    $(call add_json_str, BoardAvbAddHashtreeFooterArgs, $(BOARD_AVB_$(image_type)_ADD_HASHTREE_FOOTER_ARGS)) \
+    $(call add_json_str, BoardAvbKeyPath, $(BOARD_AVB_$(image_type)_KEY_PATH)) \
+    $(call add_json_str, BoardAvbAlgorithm, $(BOARD_AVB_$(image_type)_ALGORITHM)) \
+    $(call add_json_str, BoardAvbRollbackIndex, $(BOARD_AVB_$(image_type)_ROLLBACK_INDEX)) \
+    $(call add_json_str, BoardAvbRollbackIndexLocation, $(BOARD_AVB_$(image_type)_ROLLBACK_INDEX_LOCATION)) \
     $(call end_json_map) \
   )
   $(call end_json_map)
@@ -370,6 +375,8 @@ $(call add_json_map, PartitionVarsForBazelMigrationOnlyDoNotUse)
   $(call add_json_bool, BoardBuildGkiBootImageWithoutRamdisk, $(filter true,$(BOARD_BUILD_GKI_BOOT_IMAGE_WITHOUT_RAMDISK)))
   $(call add_json_bool, ProductUseDynamicPartitionSize, $(filter true,$(PRODUCT_USE_DYNAMIC_PARTITION_SIZE)))
   $(call add_json_bool, CopyImagesForTargetFilesZip, $(filter true,$(COPY_IMAGES_FOR_TARGET_FILES_ZIP)))
+
+  $(call add_json_bool, BoardAvbEnable, $(filter true,$(BOARD_AVB_ENABLE)))
 $(call end_json_map)
 
 $(call add_json_bool, NextReleaseHideFlaggedApi, $(filter true,$(PRODUCT_NEXT_RELEASE_HIDE_FLAGGED_API)))
