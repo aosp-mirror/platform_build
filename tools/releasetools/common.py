@@ -39,6 +39,7 @@ import tempfile
 import threading
 import time
 import zipfile
+from dataclasses import dataclass
 from genericpath import isdir
 from hashlib import sha1, sha256
 
@@ -142,6 +143,19 @@ PARTITIONS_WITH_BUILD_PROP = PARTITIONS_WITH_CARE_MAP + ['boot', 'init_boot']
 # See sysprop.mk. If file is moved, add new search paths here; don't remove
 # existing search paths.
 RAMDISK_BUILD_PROP_REL_PATHS = ['system/etc/ramdisk/build.prop']
+
+
+@dataclass
+class AvbChainedPartitionArg:
+  """The required arguments for avbtool --chain_partition."""
+  partition: str
+  rollback_index_location: int
+  pubkey_path: str
+
+  def to_string(self):
+    """Convert to string command arguments."""
+    return '{}:{}:{}'.format(
+        self.partition, self.rollback_index_location, self.pubkey_path)
 
 
 class ErrorCode(object):
@@ -1452,7 +1466,7 @@ def ResolveAVBSigningPathArgs(split_args):
 
 
 def GetAvbPartitionArg(partition, image, info_dict=None):
-  """Returns the VBMeta arguments for partition.
+  """Returns the VBMeta arguments for one partition.
 
   It sets up the VBMeta argument by including the partition descriptor from the
   given 'image', or by configuring the partition as a chained partition.
@@ -1464,7 +1478,7 @@ def GetAvbPartitionArg(partition, image, info_dict=None):
         OPTIONS.info_dict if None has been given.
 
   Returns:
-    A list of VBMeta arguments.
+    A list of VBMeta arguments for one partition.
   """
   if info_dict is None:
     info_dict = OPTIONS.info_dict
@@ -1487,6 +1501,61 @@ def GetAvbPartitionArg(partition, image, info_dict=None):
   return [AVB_ARG_NAME_CHAIN_PARTITION, chained_partition_arg]
 
 
+def GetAvbPartitionsArg(partitions,
+                        resolve_rollback_index_location_conflict=False,
+                        info_dict=None):
+  """Returns the VBMeta arguments for all AVB partitions.
+
+  It sets up the VBMeta argument by calling GetAvbPartitionArg of all
+  partitions.
+
+  Args:
+    partitions: A dict of all AVB partitions.
+    resolve_rollback_index_location_conflict: If true, resolve conflicting avb
+        rollback index locations by assigning the smallest unused value.
+    info_dict: A dict returned by common.LoadInfoDict().
+
+  Returns:
+    A list of VBMeta arguments for all partitions.
+  """
+  # An AVB partition will be linked into a vbmeta partition by either
+  # AVB_ARG_NAME_INCLUDE_DESC_FROM_IMG or AVB_ARG_NAME_CHAIN_PARTITION, there
+  # should be no other cases.
+  valid_args = {
+      AVB_ARG_NAME_INCLUDE_DESC_FROM_IMG: [],
+      AVB_ARG_NAME_CHAIN_PARTITION: []
+  }
+
+  for partition, path in partitions.items():
+    avb_partition_arg = GetAvbPartitionArg(partition, path, info_dict)
+    if not avb_partition_arg:
+      continue
+    arg_name, arg_value = avb_partition_arg
+    assert arg_name in valid_args
+    valid_args[arg_name].append(arg_value)
+
+  # Copy the arguments for non-chained AVB partitions directly without
+  # intervention.
+  avb_args = []
+  for image in valid_args[AVB_ARG_NAME_INCLUDE_DESC_FROM_IMG]:
+    avb_args.extend([AVB_ARG_NAME_INCLUDE_DESC_FROM_IMG, image])
+
+  # Handle chained AVB partitions. The rollback index location might be
+  # adjusted if two partitions use the same value. This may happen when mixing
+  # a shared system image with other vendor images.
+  used_index_loc = set()
+  for chained_partition_arg in valid_args[AVB_ARG_NAME_CHAIN_PARTITION]:
+    if resolve_rollback_index_location_conflict:
+      while chained_partition_arg.rollback_index_location in used_index_loc:
+        chained_partition_arg.rollback_index_location += 1
+
+    used_index_loc.add(chained_partition_arg.rollback_index_location)
+    avb_args.extend([AVB_ARG_NAME_CHAIN_PARTITION,
+                     chained_partition_arg.to_string()])
+
+  return avb_args
+
+
 def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   """Constructs and returns the arg to build or verify a chained partition.
 
@@ -1498,8 +1567,8 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
         the key listed in info_dict.
 
   Returns:
-    A string of form "partition:rollback_index_location:key" that can be used to
-    build or verify vbmeta image.
+    An AvbChainedPartitionArg object with rollback_index_location and
+    pubkey_path that can be used to build or verify vbmeta image.
   """
   if key is None:
     key = info_dict["avb_" + partition + "_key_path"]
@@ -1507,7 +1576,10 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   pubkey_path = ExtractAvbPublicKey(info_dict["avb_avbtool"], key)
   rollback_index_location = info_dict[
       "avb_" + partition + "_rollback_index_location"]
-  return "{}:{}:{}".format(partition, rollback_index_location, pubkey_path)
+  return AvbChainedPartitionArg(
+      partition=partition,
+      rollback_index_location=int(rollback_index_location),
+      pubkey_path=pubkey_path)
 
 
 def _HasGkiCertificationArgs():
@@ -1554,7 +1626,8 @@ def _GenerateGkiCertificate(image, image_name):
   return data
 
 
-def BuildVBMeta(image_path, partitions, name, needed_partitions):
+def BuildVBMeta(image_path, partitions, name, needed_partitions,
+                resolve_rollback_index_location_conflict=False):
   """Creates a VBMeta image.
 
   It generates the requested VBMeta image. The requested image could be for
@@ -1569,6 +1642,8 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
     name: Name of the VBMeta partition, e.g. 'vbmeta', 'vbmeta_system'.
     needed_partitions: Partitions whose descriptors should be included into the
         generated VBMeta image.
+    resolve_rollback_index_location_conflict: If true, resolve conflicting avb
+        rollback index locations by assigning the smallest unused value.
 
   Raises:
     AssertionError: On invalid input args.
@@ -1582,6 +1657,7 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
   custom_avb_partitions = ["vbmeta_" + part for part in OPTIONS.info_dict.get(
       "avb_custom_vbmeta_images_partition_list", "").strip().split()]
 
+  avb_partitions = {}
   for partition, path in partitions.items():
     if partition not in needed_partitions:
       continue
@@ -1592,7 +1668,9 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
         'Unknown partition: {}'.format(partition)
     assert os.path.exists(path), \
         'Failed to find {} for {}'.format(path, partition)
-    cmd.extend(GetAvbPartitionArg(partition, path))
+    avb_partitions[partition] = path
+  cmd.extend(GetAvbPartitionsArg(avb_partitions,
+                                 resolve_rollback_index_location_conflict))
 
   args = OPTIONS.info_dict.get("avb_{}_args".format(name))
   if args and args.strip():
