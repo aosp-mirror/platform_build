@@ -214,12 +214,12 @@ mod tests {
             return value;
         }
         private Map<String, Boolean> mFlagMap = new HashMap<>(
-            Map.of(
-                Flags.FLAG_DISABLED_RO, false,
-                Flags.FLAG_DISABLED_RW, false,
-                Flags.FLAG_ENABLED_FIXED_RO, false,
-                Flags.FLAG_ENABLED_RO, false,
-                Flags.FLAG_ENABLED_RW, false
+            Map.ofEntries(
+                Map.entry(Flags.FLAG_DISABLED_RO, false),
+                Map.entry(Flags.FLAG_DISABLED_RW, false),
+                Map.entry(Flags.FLAG_ENABLED_FIXED_RO, false),
+                Map.entry(Flags.FLAG_ENABLED_RO, false),
+                Map.entry(Flags.FLAG_ENABLED_RW, false)
             )
         );
     }
