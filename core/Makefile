@@ -1233,6 +1233,7 @@ define build_boot_from_kernel_avb_enabled
   $(AVBTOOL) add_hash_footer \
           --image $(1) \
           $(call get-partition-size-argument,$(call get-bootimage-partition-size,$(1),boot)) \
+          --salt `sha256sum "$(kernel)" | cut -d " " -f 1` \
           --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
           $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
 endef
