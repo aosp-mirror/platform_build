@@ -28,9 +28,8 @@
 
 BUILDING_GSI := true
 
-# Exclude all files under system/product and system/system_ext,
-# and the vndk apex's compat symlinks
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
+    system/etc/init/config \
     system/product/% \
     system/system_ext/%
 
