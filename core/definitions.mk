@@ -147,6 +147,10 @@ define true-or-empty
 $(filter true, $(1))
 endef
 
+define boolean-not
+$(if $(filter true,$(1)),,true)
+endef
+
 ###########################################################
 ## Rule for touching GCNO files.
 ###########################################################
@@ -1547,10 +1551,10 @@ endef
 #
 # You must call this with $(eval).
 define define-aidl-java-rule
-define-aidl-java-rule-src := $(patsubst %.aidl,%.java,$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
-$$(define-aidl-java-rule-src) : $(call clean-path,$(LOCAL_PATH)/$(1)) $(AIDL)
+define_aidl_java_rule_src := $(patsubst %.aidl,%.java,$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
+$$(define_aidl_java_rule_src) : $(call clean-path,$(LOCAL_PATH)/$(1)) $(AIDL)
 	$$(transform-aidl-to-java)
-$(3) += $$(define-aidl-java-rule-src)
+$(3) += $$(define_aidl_java_rule_src)
 endef
 
 ## Given a .aidl file path generate the rule to compile it a .cpp file.
@@ -1560,10 +1564,10 @@ endef
 #
 # You must call this with $(eval).
 define define-aidl-cpp-rule
-define-aidl-cpp-rule-src := $(patsubst %.aidl,%$(LOCAL_CPP_EXTENSION),$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
-$$(define-aidl-cpp-rule-src) : $(call clean-path,$(LOCAL_PATH)/$(1)) $(AIDL_CPP)
+define_aidl_cpp_rule_src := $(patsubst %.aidl,%$(LOCAL_CPP_EXTENSION),$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
+$$(define_aidl_cpp_rule_src) : $(call clean-path,$(LOCAL_PATH)/$(1)) $(AIDL_CPP)
 	$$(transform-aidl-to-cpp)
-$(3) += $$(define-aidl-cpp-rule-src)
+$(3) += $$(define_aidl_cpp_rule_src)
 endef
 
 ###########################################################
@@ -1585,10 +1589,10 @@ endef
 #
 # You must call this with $(eval).
 define define-vts-cpp-rule
-define-vts-cpp-rule-src := $(patsubst %.vts,%$(LOCAL_CPP_EXTENSION),$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
-$$(define-vts-cpp-rule-src) : $(LOCAL_PATH)/$(1) $(VTSC)
+define_vts_cpp_rule_src := $(patsubst %.vts,%$(LOCAL_CPP_EXTENSION),$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
+$$(define_vts_cpp_rule_src) : $(LOCAL_PATH)/$(1) $(VTSC)
 	$$(transform-vts-to-cpp)
-$(3) += $$(define-vts-cpp-rule-src)
+$(3) += $$(define_vts_cpp_rule_src)
 endef
 
 ###########################################################
@@ -2377,6 +2381,7 @@ rm -rf $(PRIVATE_JAVA_GEN_DIR)
 mkdir -p $(PRIVATE_JAVA_GEN_DIR)
 $(call dump-words-to-file,$(PRIVATE_RES_FLAT),$(dir $@)aapt2-flat-list)
 $(call dump-words-to-file,$(PRIVATE_OVERLAY_FLAT),$(dir $@)aapt2-flat-overlay-list)
+cat $(PRIVATE_STATIC_LIBRARY_TRANSITIVE_RES_PACKAGES_LISTS) | sort -u | tr '\n' ' ' > $(dir $@)aapt2-transitive-overlay-list
 $(hide) $(AAPT2) link -o $@ \
   $(PRIVATE_AAPT_FLAGS) \
   $(if $(PRIVATE_STATIC_LIBRARY_EXTRA_PACKAGES),$$(cat $(PRIVATE_STATIC_LIBRARY_EXTRA_PACKAGES))) \
@@ -2396,6 +2401,7 @@ $(hide) $(AAPT2) link -o $@ \
   $(addprefix --rename-manifest-package ,$(PRIVATE_MANIFEST_PACKAGE_NAME)) \
   $(addprefix --rename-instrumentation-target-package ,$(PRIVATE_MANIFEST_INSTRUMENTATION_FOR)) \
   -R \@$(dir $@)aapt2-flat-overlay-list \
+  -R \@$(dir $@)aapt2-transitive-overlay-list \
   \@$(dir $@)aapt2-flat-list
 $(SOONG_ZIP) -o $(PRIVATE_SRCJAR) -C $(PRIVATE_JAVA_GEN_DIR) -D $(PRIVATE_JAVA_GEN_DIR)
 $(EXTRACT_JAR_PACKAGES) -i $(PRIVATE_SRCJAR) -o $(PRIVATE_AAPT_EXTRA_PACKAGES) --prefix '--extra-packages '
@@ -2941,7 +2947,7 @@ endef
 define compress-package
 $(hide) \
   mv $@ $@.uncompressed; \
-  $(MINIGZIP) -9 -c $@.uncompressed > $@.compressed; \
+  $(GZIP) -9 -c $@.uncompressed > $@.compressed; \
   rm -f $@.uncompressed; \
   mv $@.compressed $@;
 endef
@@ -3201,8 +3207,9 @@ endef
 define copy-vintf-manifest-checked
 $(2): $(1) $(HOST_OUT_EXECUTABLES)/assemble_vintf
 	@echo "Copy xml: $$@"
-	$(hide) $(HOST_OUT_EXECUTABLES)/assemble_vintf -i $$< >/dev/null  # Don't print the xml file to stdout.
-	$$(copy-file-to-target)
+	$(hide) mkdir -p "$$(dir $$@)"
+	$(hide) VINTF_IGNORE_TARGET_FCM_VERSION=true\
+		$(HOST_OUT_EXECUTABLES)/assemble_vintf -i $$< -o $$@
 endef
 
 # Copies many vintf manifest files checked.
@@ -3415,6 +3422,10 @@ endef
 # $(2): path in symbols directory
 # $(3): file type (elf or r8)
 # $(4): path in the mappings directory
+#
+# Regarding the restats at the end: I think you should only need to use KATI_RESTAT on $(2), but
+# there appears to be a bug in kati where it was not adding restat=true in the ninja file unless we
+# also added 4 to KATI_RESTAT.
 define _copy-symbols-file-with-mapping
 $(2): .KATI_IMPLICIT_OUTPUTS := $(4)
 $(2): $(SYMBOLS_MAP)
@@ -3423,16 +3434,7 @@ $(2): $(1)
 	$$(copy-file-to-target)
 	$(SYMBOLS_MAP) -$(strip $(3)) $(2) -write_if_changed $(4)
 .KATI_RESTAT: $(2)
-endef
-
-# Returns the directory to copy proguard dictionaries into
-define local-proguard-dictionary-directory
-$(call intermediates-dir-for,PACKAGING,proguard_dictionary)/out/target/common/obj/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates
-endef
-
-# Returns the directory to copy proguard dictionary mappings into
-define local-proguard-dictionary-mapping-directory
-$(call intermediates-dir-for,PACKAGING,proguard_dictionary_mapping)/out/target/common/obj/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates
+.KATI_RESTAT: $(4)
 endef
 
 

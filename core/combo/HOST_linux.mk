@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# Configuration for builds hosted on linux-x86.
+# Configuration for builds hosted on linux.
 # Included by combo/select.mk
 
 define $(combo_var_prefix)transform-shared-lib-to-toc

@@ -10,6 +10,12 @@
 # and RuntimeVisibleTypeAnnotations, as well as associated defaults.
 -keepattributes RuntimeVisible*Annotation*,AnnotationDefault
 
+# With R8 full mode, certain attributes are only kept when matched with an
+# explicit keep rule for that target, even with a global -keepattributes rule.
+# As such, we can add the global keep rule here with minimal cost while
+# simplifying incremental development.
+-keepattributes Exceptions
+
 # For enumeration classes, see http://proguard.sourceforge.net/manual/examples.html#enumerations
 -keepclassmembers enum * {
     public static **[] values();

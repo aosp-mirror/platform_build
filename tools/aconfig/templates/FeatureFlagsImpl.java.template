@@ -1,65 +1,58 @@
 package {package_name};
-{{ -if is_test_mode }}
-import static java.util.stream.Collectors.toMap;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Stream;
-{{ else}}
+{{ if not is_test_mode }}
 {{ if is_read_write- }}
 import android.provider.DeviceConfig;
-{{ -endif- }}
 {{ endif }}
+/** @hide */
 public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ for item in class_elements}}
     @Override
     public boolean {item.method_name}() \{
-        {{ -if not is_test_mode- }}
-        {{ if item.is_read_write }}
-        return DeviceConfig.getBoolean(
+    {{ -if item.is_read_write }}
+        return getValue(
             "{item.device_config_namespace}",
             "{item.device_config_flag}",
             {item.default_value}
         );
-        {{ -else }}
+    {{ else }}
         return {item.default_value};
-        {{ -endif- }}
-        {{ else }}
-        return getFlag(Flags.FLAG_{item.flag_name_constant_suffix});
-        {{ -endif }}
+    {{ endif- }}
     }
-{{ endfor- }}
-{{ if is_test_mode }}
-    public void setFlag(String flagName, boolean value) \{
-        if (!this.mFlagMap.containsKey(flagName)) \{
-            throw new IllegalArgumentException("no such flag" + flagName);
-        }
-        this.mFlagMap.put(flagName, value);
-    }
-
-    public void resetAll() \{
-        for (Map.Entry entry : mFlagMap.entrySet()) \{
-            entry.setValue(null);
-        }
-    }
-
-    private boolean getFlag(String flagName) \{
-        Boolean value = this.mFlagMap.get(flagName);
-        if (value == null) \{
-            throw new IllegalArgumentException(flagName + " is not set");
+{{ endfor }}
+{{ if is_read_write- }}
+    private boolean getValue(String nameSpace,
+        String flagName, boolean defaultValue) \{
+        boolean value = defaultValue;
+        try \{
+            value = DeviceConfig.getBoolean(
+                nameSpace,
+                flagName,
+                defaultValue
+            );
+        } catch (NullPointerException e) \{
+            throw new RuntimeException(
+                "Cannot read value of flag " + flagName + " from DeviceConfig. " +
+                "It could be that the code using flag executed " +
+                "before SettingsProvider initialization. " +
+                "Please use fixed read-only flag by adding " +
+                "is_fixed_read_only: true in flag declaration.",
+                e
+            );
         }
         return value;
     }
-
-    private HashMap<String, Boolean> mFlagMap = Stream.of(
-            {{-for item in class_elements}}
-            Flags.FLAG_{item.flag_name_constant_suffix}{{ if not @last }},{{ endif }}
-            {{ -endfor }}
-        )
-        .collect(
-            HashMap::new,
-            (map, elem) -> map.put(elem, null),
-            HashMap::putAll
-        );
-{{ -endif }}
+{{ endif- }}
 }
+{{ else }}
+{#- Generate only stub if in test mode #}
+/** @hide */
+public final class FeatureFlagsImpl implements FeatureFlags \{
+{{ for item in class_elements}}
+    @Override
+    public boolean {item.method_name}() \{
+        throw new UnsupportedOperationException(
+            "Method is not implemented.");
+    }
+{{ endfor }}
+}
+{{ endif }}

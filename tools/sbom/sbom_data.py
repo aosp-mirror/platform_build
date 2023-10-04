@@ -133,7 +133,7 @@ class Document:
       checksums = []
       for file in self.files:
         if file.id in package.file_ids:
-          checksums.append(file.checksum)
+          checksums.append(file.checksum.split(': ')[1])
       checksums.sort()
       h = hashlib.sha1()
       h.update(''.join(checksums).encode(encoding='utf-8'))

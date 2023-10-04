@@ -102,6 +102,11 @@ PRODUCT_PACKAGES += \
     libaudiopolicyengineconfigurable \
     libpolicy-subsystem
 
+
+ifneq ($(KEEP_VNDK),true)
+PRODUCT_PACKAGES += llndk.libraries.txt
+endif
+
 # Include all zygote init scripts. "ro.zygote" will select one of them.
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.zygote32.rc:system/etc/init/hw/init.zygote32.rc \
@@ -125,6 +130,10 @@ PRODUCT_SYSTEM_MODEL := mainline
 PRODUCT_SYSTEM_DEVICE := generic
 
 _base_mk_allowed_list :=
+
+# TODO(b/299166571) Remove this after the artifact path requirements checker picks up
+# hwservicemanager correctly.
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += $(TARGET_COPY_OUT_SYSTEM)/bin/hwservicemanager
 
 _my_allowed_list := $(_base_mk_allowed_list)
 

@@ -47,9 +47,13 @@ where
         "FeatureFlags.java",
         include_str!("../templates/FeatureFlags.java.template"),
     )?;
+    template.add_template(
+        "FakeFeatureFlagsImpl.java",
+        include_str!("../templates/FakeFeatureFlagsImpl.java.template"),
+    )?;
 
     let path: PathBuf = package.split('.').collect();
-    ["Flags.java", "FeatureFlagsImpl.java", "FeatureFlags.java"]
+    ["Flags.java", "FeatureFlags.java", "FeatureFlagsImpl.java", "FakeFeatureFlagsImpl.java"]
         .iter()
         .map(|file| {
             Ok(OutputFile {
@@ -112,35 +116,113 @@ mod tests {
     use super::*;
     use std::collections::HashMap;
 
-    const EXPECTED_FEATUREFLAGS_CONTENT: &str = r#"
+    const EXPECTED_FEATUREFLAGS_COMMON_CONTENT: &str = r#"
     package com.android.aconfig.test;
+    /** @hide */
     public interface FeatureFlags {
+        @com.android.aconfig.annotations.AssumeFalseForR8
         boolean disabledRo();
         boolean disabledRw();
+        @com.android.aconfig.annotations.AssumeTrueForR8
+        boolean enabledFixedRo();
+        @com.android.aconfig.annotations.AssumeTrueForR8
         boolean enabledRo();
         boolean enabledRw();
-    }"#;
+    }
+    "#;
 
     const EXPECTED_FLAG_COMMON_CONTENT: &str = r#"
     package com.android.aconfig.test;
+    /** @hide */
     public final class Flags {
+        /** @hide */
         public static final String FLAG_DISABLED_RO = "com.android.aconfig.test.disabled_ro";
+        /** @hide */
         public static final String FLAG_DISABLED_RW = "com.android.aconfig.test.disabled_rw";
+        /** @hide */
+        public static final String FLAG_ENABLED_FIXED_RO = "com.android.aconfig.test.enabled_fixed_ro";
+        /** @hide */
         public static final String FLAG_ENABLED_RO = "com.android.aconfig.test.enabled_ro";
+        /** @hide */
         public static final String FLAG_ENABLED_RW = "com.android.aconfig.test.enabled_rw";
 
+        @com.android.aconfig.annotations.AssumeFalseForR8
         public static boolean disabledRo() {
             return FEATURE_FLAGS.disabledRo();
         }
         public static boolean disabledRw() {
             return FEATURE_FLAGS.disabledRw();
         }
+        @com.android.aconfig.annotations.AssumeTrueForR8
+        public static boolean enabledFixedRo() {
+            return FEATURE_FLAGS.enabledFixedRo();
+        }
+        @com.android.aconfig.annotations.AssumeTrueForR8
         public static boolean enabledRo() {
             return FEATURE_FLAGS.enabledRo();
         }
         public static boolean enabledRw() {
             return FEATURE_FLAGS.enabledRw();
         }
+    "#;
+
+    const EXPECTED_FAKEFEATUREFLAGSIMPL_CONTENT: &str = r#"
+    package com.android.aconfig.test;
+    import java.util.HashMap;
+    import java.util.Map;
+    /** @hide */
+    public class FakeFeatureFlagsImpl implements FeatureFlags {
+        public FakeFeatureFlagsImpl() {
+            resetAll();
+        }
+        @Override
+        public boolean disabledRo() {
+            return getValue(Flags.FLAG_DISABLED_RO);
+        }
+        @Override
+        public boolean disabledRw() {
+            return getValue(Flags.FLAG_DISABLED_RW);
+        }
+        @Override
+        public boolean enabledFixedRo() {
+            return getValue(Flags.FLAG_ENABLED_FIXED_RO);
+        }
+        @Override
+        public boolean enabledRo() {
+            return getValue(Flags.FLAG_ENABLED_RO);
+        }
+        @Override
+        public boolean enabledRw() {
+            return getValue(Flags.FLAG_ENABLED_RW);
+        }
+        public void setFlag(String flagName, boolean value) {
+            if (!this.mFlagMap.containsKey(flagName)) {
+                throw new IllegalArgumentException("no such flag " + flagName);
+            }
+            this.mFlagMap.put(flagName, value);
+        }
+        public void resetAll() {
+            for (Map.Entry entry : mFlagMap.entrySet()) {
+                entry.setValue(null);
+            }
+        }
+        private boolean getValue(String flagName) {
+            Boolean value = this.mFlagMap.get(flagName);
+            if (value == null) {
+                throw new IllegalArgumentException(flagName + " is not set");
+            }
+            return value;
+        }
+        private Map<String, Boolean> mFlagMap = new HashMap<>(
+            Map.ofEntries(
+                Map.entry(Flags.FLAG_DISABLED_RO, false),
+                Map.entry(Flags.FLAG_DISABLED_RW, false),
+                Map.entry(Flags.FLAG_ENABLED_FIXED_RO, false),
+                Map.entry(Flags.FLAG_ENABLED_RO, false),
+                Map.entry(Flags.FLAG_ENABLED_RW, false)
+            )
+        );
+    }
     "#;
 
     #[test]
@@ -156,9 +238,11 @@ mod tests {
             + r#"
             private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
         }"#;
-        let expected_featureflagsimpl_content = r#"
+
+        let expect_featureflagsimpl_content = r#"
         package com.android.aconfig.test;
         import android.provider.DeviceConfig;
+        /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
             @Override
             public boolean disabledRo() {
@@ -166,11 +250,15 @@ mod tests {
             }
             @Override
             public boolean disabledRw() {
-                return DeviceConfig.getBoolean(
+                return getValue(
                     "aconfig_test",
                     "com.android.aconfig.test.disabled_rw",
                     false
                 );
+            }
+            @Override
+            public boolean enabledFixedRo() {
+                return true;
             }
             @Override
             public boolean enabledRo() {
@@ -178,18 +266,43 @@ mod tests {
             }
             @Override
             public boolean enabledRw() {
-                return DeviceConfig.getBoolean(
+                return getValue(
                     "aconfig_test",
                     "com.android.aconfig.test.enabled_rw",
                     true
                 );
             }
+            private boolean getValue(String nameSpace,
+                String flagName, boolean defaultValue) {
+                boolean value = defaultValue;
+                try {
+                    value = DeviceConfig.getBoolean(
+                        nameSpace,
+                        flagName,
+                        defaultValue
+                    );
+                } catch (NullPointerException e) {
+                    throw new RuntimeException(
+                        "Cannot read value of flag " + flagName + " from DeviceConfig. " +
+                        "It could be that the code using flag executed " +
+                        "before SettingsProvider initialization. " +
+                        "Please use fixed read-only flag by adding " +
+                        "is_fixed_read_only: true in flag declaration.",
+                        e
+                    );
+                }
+                return value;
+            }
         }
         "#;
         let mut file_set = HashMap::from([
             ("com/android/aconfig/test/Flags.java", expect_flags_content.as_str()),
-            ("com/android/aconfig/test/FeatureFlagsImpl.java", expected_featureflagsimpl_content),
-            ("com/android/aconfig/test/FeatureFlags.java", EXPECTED_FEATUREFLAGS_CONTENT),
+            ("com/android/aconfig/test/FeatureFlagsImpl.java", expect_featureflagsimpl_content),
+            ("com/android/aconfig/test/FeatureFlags.java", EXPECTED_FEATUREFLAGS_COMMON_CONTENT),
+            (
+                "com/android/aconfig/test/FakeFeatureFlagsImpl.java",
+                EXPECTED_FAKEFEATUREFLAGSIMPL_CONTENT,
+            ),
         ]);
 
         for file in generated_files {
@@ -199,7 +312,7 @@ mod tests {
                 None,
                 crate::test::first_significant_code_diff(
                     file_set.get(file_path).unwrap(),
-                    &String::from_utf8(file.contents.clone()).unwrap()
+                    &String::from_utf8(file.contents).unwrap()
                 ),
                 "File {} content is not correct",
                 file_path
@@ -219,75 +332,58 @@ mod tests {
             CodegenMode::Test,
         )
         .unwrap();
+
         let expect_flags_content = EXPECTED_FLAG_COMMON_CONTENT.to_string()
             + r#"
-            public static void setFeatureFlagsImpl(FeatureFlags featureFlags) {
+            public static void setFeatureFlags(FeatureFlags featureFlags) {
                 Flags.FEATURE_FLAGS = featureFlags;
             }
-            public static void unsetFeatureFlagsImpl() {
+            public static void unsetFeatureFlags() {
                 Flags.FEATURE_FLAGS = null;
             }
             private static FeatureFlags FEATURE_FLAGS;
         }
         "#;
-        let expected_featureflagsimpl_content = r#"
+        let expect_featureflagsimpl_content = r#"
         package com.android.aconfig.test;
-        import static java.util.stream.Collectors.toMap;
-        import java.util.HashMap;
-        import java.util.Map;
-        import java.util.stream.Stream;
+        /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
             @Override
             public boolean disabledRo() {
-                return getFlag(Flags.FLAG_DISABLED_RO);
+                throw new UnsupportedOperationException(
+                    "Method is not implemented.");
             }
             @Override
             public boolean disabledRw() {
-                return getFlag(Flags.FLAG_DISABLED_RW);
+                throw new UnsupportedOperationException(
+                    "Method is not implemented.");
+            }
+            @Override
+            public boolean enabledFixedRo() {
+                throw new UnsupportedOperationException(
+                    "Method is not implemented.");
             }
             @Override
             public boolean enabledRo() {
-                return getFlag(Flags.FLAG_ENABLED_RO);
+                throw new UnsupportedOperationException(
+                    "Method is not implemented.");
             }
             @Override
             public boolean enabledRw() {
-                return getFlag(Flags.FLAG_ENABLED_RW);
+                throw new UnsupportedOperationException(
+                    "Method is not implemented.");
             }
-            public void setFlag(String flagName, boolean value) {
-                if (!this.mFlagMap.containsKey(flagName)) {
-                    throw new IllegalArgumentException("no such flag" + flagName);
-                }
-                this.mFlagMap.put(flagName, value);
-            }
-            public void resetAll() {
-                for (Map.Entry entry : mFlagMap.entrySet()) {
-                    entry.setValue(null);
-                }
-            }
-            private boolean getFlag(String flagName) {
-                Boolean value = this.mFlagMap.get(flagName);
-                if (value == null) {
-                    throw new IllegalArgumentException(flagName + " is not set");
-                }
-                return value;
-            }
-            private HashMap<String, Boolean> mFlagMap = Stream.of(
-                    Flags.FLAG_DISABLED_RO,
-                    Flags.FLAG_DISABLED_RW,
-                    Flags.FLAG_ENABLED_RO,
-                    Flags.FLAG_ENABLED_RW
-                )
-                .collect(
-                    HashMap::new,
-                    (map, elem) -> map.put(elem, null),
-                    HashMap::putAll
-                );
         }
         "#;
+
         let mut file_set = HashMap::from([
             ("com/android/aconfig/test/Flags.java", expect_flags_content.as_str()),
-            ("com/android/aconfig/test/FeatureFlagsImpl.java", expected_featureflagsimpl_content),
-            ("com/android/aconfig/test/FeatureFlags.java", EXPECTED_FEATUREFLAGS_CONTENT),
+            ("com/android/aconfig/test/FeatureFlags.java", EXPECTED_FEATUREFLAGS_COMMON_CONTENT),
+            ("com/android/aconfig/test/FeatureFlagsImpl.java", expect_featureflagsimpl_content),
+            (
+                "com/android/aconfig/test/FakeFeatureFlagsImpl.java",
+                EXPECTED_FAKEFEATUREFLAGSIMPL_CONTENT,
+            ),
         ]);
 
         for file in generated_files {
@@ -297,7 +393,7 @@ mod tests {
                 None,
                 crate::test::first_significant_code_diff(
                     file_set.get(file_path).unwrap(),
-                    &String::from_utf8(file.contents.clone()).unwrap()
+                    &String::from_utf8(file.contents).unwrap()
                 ),
                 "File {} content is not correct",
                 file_path

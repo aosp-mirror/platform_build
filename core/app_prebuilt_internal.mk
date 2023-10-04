@@ -227,7 +227,7 @@ endif
 $(built_module): PRIVATE_EMBEDDED_JNI_LIBS := $(embedded_prebuilt_jni_libs)
 
 ifdef LOCAL_COMPRESSED_MODULE
-$(built_module) : $(MINIGZIP)
+$(built_module) : $(GZIP)
 endif
 
 ifeq ($(module_run_appcompat),true)

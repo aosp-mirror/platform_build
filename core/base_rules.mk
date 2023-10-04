@@ -521,10 +521,6 @@ ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
   # copy of the intermediates for now, as some rules that collect intermediates may expect
   # them to exist.
   $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
-
-  $(foreach symlink, $(LOCAL_SOONG_INSTALL_SYMLINKS), \
-    $(call declare-0p-target,$(symlink)))
-  $(my_all_targets) : | $(LOCAL_SOONG_INSTALL_SYMLINKS)
 else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
   $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
@@ -545,6 +541,15 @@ else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   $(my_all_targets) : | $(my_installed_symlinks)
 
 endif # !LOCAL_UNINSTALLABLE_MODULE
+
+# Add dependencies on LOCAL_SOONG_INSTALL_SYMLINKS if we're installing any kind of module, not just
+# ones that set LOCAL_SOONG_INSTALLED_MODULE. This is so we can have a soong module that only
+# installs symlinks (e.g. install_symlink). We can't set LOCAL_SOONG_INSTALLED_MODULE to a symlink
+# because cp commands will fail on symlinks.
+ifneq (,$(or $(LOCAL_SOONG_INSTALLED_MODULE),$(call boolean-not,$(LOCAL_UNINSTALLABLE_MODULE))))
+  $(foreach symlink, $(LOCAL_SOONG_INSTALL_SYMLINKS), $(call declare-0p-target,$(symlink)))
+  $(my_all_targets) : | $(LOCAL_SOONG_INSTALL_SYMLINKS)
+endif
 
 ###########################################################
 ## VINTF manifest fragment and init.rc goals
@@ -578,7 +583,9 @@ ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 
       ALL_VINTF_MANIFEST_FRAGMENTS_LIST += $(my_vintf_new_pairs)
 
-      $(my_all_targets) : $(my_vintf_new_installed)
+      $(my_all_targets) : $(my_vintf_installed)
+      # Install fragments together with the target
+      $(LOCAL_INSTALLED_MODULE) : | $(my_vintf_installed)
     endif # my_vintf_fragments
 
     # Rule to install the module's companion init.rc.
@@ -615,6 +622,8 @@ ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
       ALL_INIT_RC_INSTALLED_PAIRS += $(my_init_rc_new_pairs)
 
       $(my_all_targets) : $(my_init_rc_installed)
+      # Install init_rc together with the target
+      $(LOCAL_INSTALLED_MODULE) : | $(my_init_rc_installed)
     endif # my_init_rc
 
   endif # !LOCAL_IS_HOST_MODULE
@@ -961,6 +970,9 @@ ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
       $(my_init_rc_installed) \
       $(my_installed_test_data) \
       $(my_vintf_installed))
+
+  ALL_MODULES.$(my_register_name).INSTALLED_SYMLINKS := $(LOCAL_SOONG_INSTALL_SYMLINKS)
+
   # Store the list of colon-separated pairs of the built and installed locations
   # of files provided by this module.  Used by custom packaging rules like
   # package-modules.mk that need to copy the built files to a custom install
@@ -975,6 +987,11 @@ ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
       $(my_init_rc_pairs) \
       $(my_test_data_pairs) \
       $(my_vintf_pairs))
+  # Store the list of vintf/init_rc as order-only dependencies
+  ALL_MODULES.$(my_register_name).ORDERONLY_INSTALLED := \
+    $(strip $(ALL_MODULES.$(my_register_name).ORDERONLY_INSTALLED) \
+      $(my_init_rc_installed) \
+      $(my_vintf_installed))
 else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   ALL_MODULES.$(my_register_name).INSTALLED := \
     $(strip $(ALL_MODULES.$(my_register_name).INSTALLED) \
@@ -984,7 +1001,21 @@ else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
     $(strip $(ALL_MODULES.$(my_register_name).BUILT_INSTALLED) \
     $(LOCAL_BUILT_MODULE):$(LOCAL_INSTALLED_MODULE) \
     $(my_init_rc_pairs) $(my_test_data_pairs) $(my_vintf_pairs))
+  ALL_MODULES.$(my_register_name).ORDERONLY_INSTALLED := \
+    $(strip $(ALL_MODULES.$(my_register_name).ORDERONLY_INSTALLED) \
+      $(my_init_rc_installed) \
+      $(my_vintf_installed))
 endif
+
+# Mark LOCAL_SOONG_INSTALL_SYMLINKS as installed if we're installing any kind of module, not just
+# ones that set LOCAL_SOONG_INSTALLED_MODULE. This is so we can have a soong module that only
+# installs symlinks (e.g. installed_symlink). We can't set LOCAL_SOONG_INSTALLED_MODULE to a symlink
+# because cp commands will fail on symlinks.
+ifneq (,$(or $(LOCAL_SOONG_INSTALLED_MODULE),$(call boolean-not,$(LOCAL_UNINSTALLABLE_MODULE))))
+  ALL_MODULES.$(my_register_name).INSTALLED += $(LOCAL_SOONG_INSTALL_SYMLINKS)
+  ALL_MODULES.$(my_register_name).INSTALLED_SYMLINKS := $(LOCAL_SOONG_INSTALL_SYMLINKS)
+endif
+
 ifdef LOCAL_PICKUP_FILES
 # Files or directories ready to pick up by the build system
 # when $(LOCAL_BUILT_MODULE) is done.
@@ -1044,6 +1075,10 @@ endif
 ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS := \
   $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS) \
   $(filter-out $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS),$(my_supported_variant))
+
+ALL_MODULES.$(my_register_name).ACONFIG_FILES := \
+    $(ALL_MODULES.$(my_register_name).ACONFIG_FILES) $(LOCAL_ACONFIG_FILES)
+
 
 ##########################################################################
 ## When compiling against API imported module, use API import stub

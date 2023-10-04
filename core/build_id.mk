@@ -18,4 +18,4 @@
 # (like "CRB01").  It must be a single word, and is
 # capitalized by convention.
 
-BUILD_ID=AOSP.MASTER
+BUILD_ID=AOSP.MAIN

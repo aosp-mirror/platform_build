@@ -47,9 +47,21 @@ define generate-common-build-props
         echo "ro.product.$(1).model=$(PRODUCT_MODEL)" >> $(2);\
         echo "ro.product.$(1).name=$(TARGET_PRODUCT)" >> $(2);\
         # Attestation specific properties for AOSP/GSI build running on device.
-        echo "ro.product.model_for_attestation=$(PRODUCT_MODEL_FOR_ATTESTATION)" >> $(2);\
-        echo "ro.product.brand_for_attestation=$(PRODUCT_BRAND_FOR_ATTESTATION)" >> $(2);\
-        echo "ro.product.name_for_attestation=$(PRODUCT_NAME_FOR_ATTESTATION)" >> $(2);\
+        if [ -n "$(strip $(PRODUCT_MODEL_FOR_ATTESTATION))" ]; then \
+            echo "ro.product.model_for_attestation=$(PRODUCT_MODEL_FOR_ATTESTATION)" >> $(2);\
+        fi; \
+        if [ -n "$(strip $(PRODUCT_BRAND_FOR_ATTESTATION))" ]; then \
+            echo "ro.product.brand_for_attestation=$(PRODUCT_BRAND_FOR_ATTESTATION)" >> $(2);\
+        fi; \
+        if [ -n "$(strip $(PRODUCT_NAME_FOR_ATTESTATION))" ]; then \
+            echo "ro.product.name_for_attestation=$(PRODUCT_NAME_FOR_ATTESTATION)" >> $(2);\
+        fi; \
+        if [ -n "$(strip $(PRODUCT_DEVICE_FOR_ATTESTATION))" ]; then \
+            echo "ro.product.device_for_attestation=$(PRODUCT_DEVICE_FOR_ATTESTATION)" >> $(2);\
+        fi; \
+        if [ -n "$(strip $(PRODUCT_MANUFACTURER_FOR_ATTESTATION))" ]; then \
+            echo "ro.product.manufacturer_for_attestation=$(PRODUCT_MANUFACTURER_FOR_ATTESTATION)" >> $(2);\
+        fi; \
     )\
     $(if $(filter true,$(ZYGOTE_FORCE_64)),\
         $(if $(filter vendor,$(1)),\
@@ -66,9 +78,12 @@ define generate-common-build-props
     )\
     echo "ro.$(1).build.date=`$(DATE_FROM_FILE)`" >> $(2);\
     echo "ro.$(1).build.date.utc=`$(DATE_FROM_FILE) +%s`" >> $(2);\
-    echo "ro.$(1).build.fingerprint=$(BUILD_FINGERPRINT_FROM_FILE)" >> $(2);\
-    echo "ro.$(1).build.id=$(BUILD_ID)" >> $(2);\
-    echo "ro.$(1).build.tags=$(BUILD_VERSION_TAGS)" >> $(2);\
+    # Allow optional assignments for ARC forward-declarations (b/249168657)
+    # TODO: Remove any tag-related inconsistencies once the goals from
+    # go/arc-android-sigprop-changes have been achieved.
+    echo "ro.$(1).build.fingerprint?=$(BUILD_FINGERPRINT_FROM_FILE)" >> $(2);\
+    echo "ro.$(1).build.id?=$(BUILD_ID)" >> $(2);\
+    echo "ro.$(1).build.tags?=$(BUILD_VERSION_TAGS)" >> $(2);\
     echo "ro.$(1).build.type=$(TARGET_BUILD_VARIANT)" >> $(2);\
     echo "ro.$(1).build.version.incremental=$(BUILD_NUMBER_FROM_FILE)" >> $(2);\
     echo "ro.$(1).build.version.release=$(PLATFORM_VERSION_LAST_STABLE)" >> $(2);\
@@ -171,15 +186,8 @@ BUILD_VERSION_TAGS := $(subst $(space),$(comma),$(sort $(BUILD_VERSION_TAGS)))
 # BUILD_FINGERPRINT is used used to uniquely identify the combined build and
 # product; used by the OTA server.
 ifeq (,$(strip $(BUILD_FINGERPRINT)))
-  ifeq ($(strip $(HAS_BUILD_NUMBER)),false)
-    BF_BUILD_NUMBER := $(BUILD_USERNAME)$$($(DATE_FROM_FILE) +%m%d%H%M)
-  else
-    BF_BUILD_NUMBER := $(BUILD_NUMBER_FROM_FILE)
-  endif
-  BUILD_FINGERPRINT := $(PRODUCT_BRAND)/$(TARGET_PRODUCT)/$(TARGET_DEVICE):$(PLATFORM_VERSION)/$(BUILD_ID)/$(BF_BUILD_NUMBER):$(TARGET_BUILD_VARIANT)/$(BUILD_VERSION_TAGS)
+  BUILD_FINGERPRINT := $(PRODUCT_BRAND)/$(TARGET_PRODUCT)/$(TARGET_DEVICE):$(PLATFORM_VERSION)/$(BUILD_ID)/$(BUILD_NUMBER_FROM_FILE):$(TARGET_BUILD_VARIANT)/$(BUILD_VERSION_TAGS)
 endif
-# unset it for safety.
-BF_BUILD_NUMBER :=
 
 BUILD_FINGERPRINT_FILE := $(PRODUCT_OUT)/build_fingerprint.txt
 ifneq (,$(shell mkdir -p $(PRODUCT_OUT) && echo $(BUILD_FINGERPRINT) >$(BUILD_FINGERPRINT_FILE) && grep " " $(BUILD_FINGERPRINT_FILE)))
