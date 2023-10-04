@@ -37,9 +37,10 @@ public class FakeFeatureFlagsImpl implements FeatureFlags \{
     }
 
     private Map<String, Boolean> mFlagMap = new HashMap<>(
-        Map.of(
+        Map.ofEntries(
             {{-for item in class_elements}}
-            Flags.FLAG_{item.flag_name_constant_suffix}, false{{ if not @last }},{{ endif }}
+            Map.entry(Flags.FLAG_{item.flag_name_constant_suffix}, false)
+            {{ -if not @last }},{{ endif }}
             {{ -endfor }}
         )
     );
