@@ -430,7 +430,8 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
         key_file = options.get(key_name, info_dict[key_name])
         chained_partition_arg = common.GetAvbChainedPartitionArg(
             partition, info_dict, key_file)
-        cmd.extend(['--expected_chain_partition', chained_partition_arg])
+        cmd.extend(['--expected_chain_partition',
+                    chained_partition_arg.to_string()])
 
     # Handle the boot image with a non-default name, e.g. boot-5.4.img
     boot_images = info_dict.get("boot_images")
