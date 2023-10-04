@@ -240,32 +240,6 @@ LOCAL_REQUIRED_MODULES := \
 include $(BUILD_PHONY_PACKAGE)
 
 #####################################################################
-# skip_mount.cfg, read by init to skip mounting some partitions when GSI is used.
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := gsi_skip_mount.cfg
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-LOCAL_LICENSE_CONDITIONS := notice
-LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_MODULE_STEM := skip_mount.cfg
-LOCAL_SRC_FILES := $(LOCAL_MODULE)
-LOCAL_MODULE_CLASS := ETC
-LOCAL_SYSTEM_EXT_MODULE := true
-LOCAL_MODULE_RELATIVE_PATH := init/config
-
-# Adds a symlink under /system/etc/init/config pointing to /system/system_ext/etc/init/config
-# because first-stage init in Android 10.0 will read the skip_mount.cfg from /system/etc/* after
-# chroot /system.
-# TODO: remove this symlink when no need to support new GSI on Android 10.
-# The actual file needs to be under /system/system_ext because it's GSI-specific and does not
-# belong to core CSI.
-LOCAL_POST_INSTALL_CMD := \
-    mkdir -p $(TARGET_OUT)/etc/init; \
-    ln -sf /system/system_ext/etc/init/config $(TARGET_OUT)/etc/init/config
-
-include $(BUILD_PREBUILT)
-
-#####################################################################
 # init.gsi.rc, GSI-specific init script.
 
 include $(CLEAR_VARS)
