@@ -1410,7 +1410,7 @@ def RunHostInitVerifier(product_out, partition_map):
   return RunAndCheckOutput(cmd)
 
 
-def AppendAVBSigningArgs(cmd, partition):
+def AppendAVBSigningArgs(cmd, partition, avb_salt=None):
   """Append signing arguments for avbtool."""
   # e.g., "--key path/to/signing_key --algorithm SHA256_RSA4096"
   key_path = ResolveAVBSigningPathArgs(
@@ -1418,7 +1418,8 @@ def AppendAVBSigningArgs(cmd, partition):
   algorithm = OPTIONS.info_dict.get("avb_" + partition + "_algorithm")
   if key_path and algorithm:
     cmd.extend(["--key", key_path, "--algorithm", algorithm])
-  avb_salt = OPTIONS.info_dict.get("avb_salt")
+  if avb_salt is None:
+    avb_salt = OPTIONS.info_dict.get("avb_salt")
   # make_vbmeta_image doesn't like "--salt" (and it's not needed).
   if avb_salt and not partition.startswith("vbmeta"):
     cmd.extend(["--salt", avb_salt])
@@ -1825,7 +1826,11 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file,
     cmd = [avbtool, "add_hash_footer", "--image", img.name,
            "--partition_size", str(part_size), "--partition_name",
            partition_name]
-    AppendAVBSigningArgs(cmd, partition_name)
+    salt = None
+    if kernel_path is not None:
+      with open(kernel_path, "rb") as fp:
+        salt = sha256(fp.read()).hexdigest()
+    AppendAVBSigningArgs(cmd, partition_name, salt)
     args = info_dict.get("avb_" + partition_name + "_add_hash_footer_args")
     if args and args.strip():
       split_args = ResolveAVBSigningPathArgs(shlex.split(args))
