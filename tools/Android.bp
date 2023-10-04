@@ -82,3 +82,17 @@ python_binary_host {
       }
     }
 }
+
+python_test_host {
+    name: "auto_gen_test_config_test",
+    main: "auto_gen_test_config_test.py",
+    srcs: [
+        "auto_gen_test_config.py",
+        "auto_gen_test_config_test.py",
+    ],
+    auto_gen_config: true,
+    test_suites: ["general-tests"],
+    test_options: {
+        unit_test: true,
+    },
+}

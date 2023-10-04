@@ -144,9 +144,6 @@ _board_strip_list += BOARD_AVB_PVMFW_KEY_PATH
 _board_strip_list += BOARD_AVB_PVMFW_ALGORITHM
 _board_strip_list += BOARD_AVB_PVMFW_ROLLBACK_INDEX_LOCATION
 _board_strip_list += BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST
-_board_strip_list += BOARD_BPT_DISK_SIZE
-_board_strip_list += BOARD_BPT_INPUT_FILES
-_board_strip_list += BOARD_BPT_MAKE_TABLE_ARGS
 _board_strip_list += BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX_LOCATION
 _board_strip_list += BOARD_AVB_VBMETA_VENDOR_ALGORITHM
 _board_strip_list += BOARD_AVB_VBMETA_VENDOR_KEY_PATH
@@ -174,7 +171,6 @@ _board_strip_list += ODM_MANIFEST_SKUS
 
 
 _build_broken_var_list := \
-  BUILD_BROKEN_PLUGIN_VALIDATION \
   BUILD_BROKEN_CLANG_PROPERTY \
   BUILD_BROKEN_CLANG_ASFLAGS \
   BUILD_BROKEN_CLANG_CFLAGS \
@@ -189,9 +185,9 @@ _build_broken_var_list := \
   BUILD_BROKEN_PREBUILT_ELF_FILES \
   BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW \
   BUILD_BROKEN_USES_NETWORK \
-  BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES \
   BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE \
   BUILD_BROKEN_VINTF_PRODUCT_COPY_FILES \
+  BUILD_BROKEN_INCORRECT_PARTITION_IMAGES \
 
 _build_broken_var_list += \
   $(foreach m,$(AVAILABLE_BUILD_MODULE_TYPES) \
@@ -975,24 +971,6 @@ ifneq ($(BOARD_VNDK_VERSION),current)
   $(call check_vndk_version,$(BOARD_VNDK_VERSION))
 endif
 TARGET_VENDOR_TEST_SUFFIX := /vendor
-
-###########################################
-# APEXes are by default not flattened, i.e. updatable.
-#
-# APEX flattening can also be forcibly enabled (resp. disabled) by
-# setting OVERRIDE_TARGET_FLATTEN_APEX to true (resp. false), e.g. by
-# setting the OVERRIDE_TARGET_FLATTEN_APEX environment variable.
-ifdef OVERRIDE_TARGET_FLATTEN_APEX
-  TARGET_FLATTEN_APEX := $(OVERRIDE_TARGET_FLATTEN_APEX)
-endif
-
-# TODO(b/278826656) Remove the following message
-ifeq (true,$(TARGET_FLATTEN_APEX))
-  $(warning ********************************************************************************)
-  $(warning Flattened APEX will be deprecated soon. Please stop using flattened APEX and use)
-  $(warning "image" APEX instead.)
-  $(warning ********************************************************************************)
-endif
 
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
 ifdef PRODUCT_EXTRA_VNDK_VERSIONS

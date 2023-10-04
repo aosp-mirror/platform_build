@@ -46,7 +46,8 @@ PRODUCT_HOST_PACKAGES += \
 
 # Base modules and settings for the vendor partition.
 PRODUCT_PACKAGES += \
-    android.hardware.cas-service.example \
+    android.hidl.memory@1.0-impl.vendor \
+    com.android.hardware.cas \
     boringssl_self_test_vendor \
     dumpsys_vendor \
     fs_config_files_nonsystem \

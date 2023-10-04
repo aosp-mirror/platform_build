@@ -209,7 +209,9 @@ def create_merged_package(temp_dir):
   # After this function completes successfully, all the files we need to create
   # the output target files package are in place.
   merge_meta.MergeMetaFiles(
-      temp_dir=temp_dir, merged_dir=output_target_files_temp_dir)
+      temp_dir=temp_dir,
+      merged_dir=output_target_files_temp_dir,
+      framework_partitions=OPTIONS.framework_partition_set)
 
   merge_dexopt.MergeDexopt(
       temp_dir=temp_dir, output_target_files_dir=output_target_files_temp_dir)

@@ -19,11 +19,9 @@ PRODUCT_PACKAGES += \
     abx \
     adbd_system_api \
     am \
-    android.hidl.allocator@1.0-service \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
     android.hidl.memory@1.0-impl \
-    android.hidl.memory@1.0-impl.vendor \
     android.system.suspend-service \
     android.test.base \
     android.test.mock \
@@ -70,7 +68,6 @@ PRODUCT_PACKAGES += \
     com.android.scheduling \
     com.android.sdkext \
     com.android.tethering \
-    com.android.threadnetwork \
     com.android.tzdata \
     com.android.uwb \
     com.android.virt \
@@ -89,7 +86,6 @@ PRODUCT_PACKAGES += \
     dump.erofs \
     dumpstate \
     dumpsys \
-    DynamicSystemInstallationService \
     e2fsck \
     ExtShared \
     flags_health_check \
@@ -110,7 +106,6 @@ PRODUCT_PACKAGES += \
     gatekeeperd \
     gpuservice \
     hid \
-    hwservicemanager \
     idmap2 \
     idmap2d \
     ime \
@@ -240,6 +235,7 @@ PRODUCT_PACKAGES += \
     pm \
     pppd \
     preinstalled-packages-platform.xml \
+    printflags \
     privapp-permissions-platform.xml \
     prng_seeder \
     racoon \
@@ -298,10 +294,25 @@ ifneq ($(PRODUCT_IS_ATV),true)
 
 endif
 
+# Product does not support Dynamic System Update
+ifneq ($(PRODUCT_NO_DYNAMIC_SYSTEM_UPDATE),true)
+    PRODUCT_PACKAGES += \
+        DynamicSystemInstallationService \
+
+endif
+
 # VINTF data for system image
 PRODUCT_PACKAGES += \
     system_manifest.xml \
     system_compatibility_matrix.xml \
+
+HIDL_SUPPORT_SERVICES := \
+    hwservicemanager \
+    android.hidl.allocator@1.0-service \
+
+# Base modules when shipping api level is less than or equal to 34
+PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34 += \
+    $(HIDL_SUPPORT_SERVICES) \
 
 PRODUCT_PACKAGES_ARM64 := libclang_rt.hwasan \
  libclang_rt.hwasan.bootstrap \
@@ -333,6 +344,7 @@ endif
 PRODUCT_HOST_PACKAGES += \
     BugReport \
     adb \
+    adevice \
     art-tools \
     atest \
     bcc \
@@ -348,7 +360,6 @@ PRODUCT_HOST_PACKAGES += \
     incident_report \
     ld.mc \
     lpdump \
-    minigzip \
     mke2fs \
     mkfs.erofs \
     resize2fs \
@@ -381,6 +392,7 @@ PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
+    adevice_fingerprint \
     arping \
     dmuserd \
     idlcli \
@@ -427,3 +439,6 @@ PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/dirty-image-objects:system/etc/dirty-image-objects)
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
+
+# Use "image" APEXes always.
+$(call inherit-product,$(SRC_TARGET_DIR)/product/updatable_apex.mk)

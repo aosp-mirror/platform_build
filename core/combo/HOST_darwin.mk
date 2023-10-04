@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# Configuration for Darwin (Mac OS X) on x86_64.
+# Configuration for Darwin (Mac OS X).
 # Included by combo/select.mk
 
 define $(combo_var_prefix)transform-shared-lib-to-toc

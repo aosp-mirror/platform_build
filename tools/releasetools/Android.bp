@@ -165,10 +165,10 @@ python_defaults {
         "ota_utils_lib",
     ],
     required: [
+        "apexd_host",
         "brillo_update_payload",
         "checkvintf",
         "generate_gki_certificate",
-        "minigzip",
         "lz4",
         "toybox",
         "unpack_bootimg",
@@ -244,7 +244,6 @@ python_library_host {
         "bsdiff",
         "generate_gki_certificate",
         "imgdiff",
-        "minigzip",
         "lz4",
         "mkbootfs",
         "signapk",
@@ -310,7 +309,6 @@ python_defaults {
         "deapexer",
         "generate_gki_certificate",
         "imgdiff",
-        "minigzip",
         "lz4",
         "mkbootfs",
         "signapk",
@@ -347,6 +345,7 @@ python_binary_host {
     },
     srcs: [
         "merge_ota.py",
+        "ota_signing_utils.py",
     ],
     libs: [
         "ota_metadata_proto",
@@ -496,6 +495,26 @@ python_binary_host {
 }
 
 python_binary_host {
+    name: "ota_from_raw_img",
+    srcs: [
+        "ota_from_raw_img.py",
+        "ota_signing_utils.py",
+    ],
+    main: "ota_from_raw_img.py",
+    defaults: [
+        "releasetools_binary_defaults",
+    ],
+    required: [
+        "delta_generator",
+    ],
+    libs: [
+        "ota_metadata_proto",
+        "releasetools_common",
+        "ota_utils_lib",
+    ],
+}
+
+python_binary_host {
     name: "ota_package_parser",
     defaults: ["releasetools_binary_defaults"],
     srcs: [
@@ -593,6 +612,7 @@ python_defaults {
         "sign_target_files_apks.py",
         "validate_target_files.py",
         "merge_ota.py",
+        "ota_signing_utils.py",
         ":releasetools_merge_sources",
         ":releasetools_merge_tests",
 
@@ -624,6 +644,7 @@ python_defaults {
         },
     },
     required: [
+        "apexd_host",
         "deapexer",
     ],
 }

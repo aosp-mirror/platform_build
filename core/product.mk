@@ -33,6 +33,10 @@ _product_single_value_vars += PRODUCT_MODEL_FOR_ATTESTATION
 # 4096, 16384 and 65536.
 _product_single_value_vars += PRODUCT_MAX_PAGE_SIZE_SUPPORTED
 
+# Indicates that AOSP can use a kernel configured with 4k/16k/64k page sizes.
+# The possible values are true or false.
+_product_single_value_vars += PRODUCT_PAGE_SIZE_AGNOSTIC
+
 # The resource configuration options to use for this product.
 _product_list_vars += PRODUCT_LOCALES
 _product_list_vars += PRODUCT_AAPT_CONFIG
@@ -43,6 +47,13 @@ _product_list_vars += PRODUCT_PACKAGES
 _product_list_vars += PRODUCT_PACKAGES_DEBUG
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_ASAN
 _product_list_vars += PRODUCT_PACKAGES_ARM64
+
+# packages that are added to PRODUCT_PACKAGES based on the PRODUCT_SHIPPING_API_LEVEL
+# These are only added if the shipping API level is that level or lower
+_product_list_vars += PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29
+_product_list_vars += PRODUCT_PACKAGES_SHIPPING_API_LEVEL_33
+_product_list_vars += PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34
+
 # Packages included only for eng/userdebug builds, when building with EMMA_INSTRUMENT=true
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE
 _product_list_vars += PRODUCT_PACKAGES_ENG
@@ -146,6 +157,9 @@ _product_list_vars += PRODUCT_BOOT_JARS
 # PRODUCT_BOOT_JARS, so that device-specific jars go after common jars.
 _product_list_vars += PRODUCT_BOOT_JARS_EXTRA
 
+# List of jars to be included in the ART boot image for testing.
+_product_list_vars += PRODUCT_TEST_ONLY_ART_BOOT_IMAGE_JARS
+
 _product_single_value_vars += PRODUCT_SUPPORTS_VBOOT
 _product_list_vars += PRODUCT_SYSTEM_SERVER_APPS
 # List of system_server classpath jars on the platform.
@@ -247,6 +261,9 @@ _product_list_vars += PRODUCT_CFI_EXCLUDE_PATHS
 # Whether any paths should have HWASan enabled for components
 _product_list_vars += PRODUCT_HWASAN_INCLUDE_PATHS
 
+# Whether any paths are excluded from sanitization when SANITIZE_TARGET=hwaddress
+_product_list_vars += PRODUCT_HWASAN_EXCLUDE_PATHS
+
 # Whether any paths should have Memtag_heap enabled for components
 _product_list_vars += PRODUCT_MEMTAG_HEAP_ASYNC_INCLUDE_PATHS
 _product_list_vars += PRODUCT_MEMTAG_HEAP_ASYNC_DEFAULT_INCLUDE_PATHS
@@ -316,6 +333,10 @@ _product_single_value_vars += PRODUCT_BUILD_GENERIC_OTA_PACKAGE
 _product_list_vars += PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES
 _product_list_vars += PRODUCT_PACKAGE_NAME_OVERRIDES
 _product_list_vars += PRODUCT_CERTIFICATE_OVERRIDES
+
+# Overrides the (apex, jar) pairs above when determining the on-device location. The format is:
+# <old_apex>:<old_jar>:<new_apex>:<new_jar>
+_product_list_vars += PRODUCT_CONFIGURED_JAR_LOCATION_OVERRIDES
 
 # Controls for whether different partitions are built for the current product.
 _product_single_value_vars += PRODUCT_BUILD_SYSTEM_IMAGE
@@ -419,7 +440,12 @@ _product_single_value_vars += PRODUCT_ENABLE_UFFD_GC
 # specified we default to COW version 2 in update_engine for backwards compatibility
 _product_single_value_vars += PRODUCT_VIRTUAL_AB_COW_VERSION
 
+# If set, determines whether the build system checks vendor seapp contexts violations.
+_product_single_value_vars += PRODUCT_CHECK_VENDOR_SEAPP_VIOLATIONS
+
 _product_list_vars += PRODUCT_AFDO_PROFILES
+
+_product_single_value_vars += PRODUCT_NEXT_RELEASE_HIDE_FLAGGED_API
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)

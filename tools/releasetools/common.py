@@ -20,7 +20,6 @@ import copy
 import datetime
 import errno
 import fnmatch
-from genericpath import isdir
 import getopt
 import getpass
 import gzip
@@ -34,12 +33,13 @@ import re
 import shlex
 import shutil
 import subprocess
-import sys
 import stat
+import sys
 import tempfile
 import threading
 import time
 import zipfile
+from genericpath import isdir
 from hashlib import sha1, sha256
 
 import images
@@ -96,7 +96,6 @@ class Options(object):
     self.cache_size = None
     self.stash_threshold = 0.8
     self.logfile = None
-    self.host_tools = {}
     self.sepolicy_name = 'sepolicy.apex'
 
 
@@ -113,12 +112,17 @@ SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 # descriptor into vbmeta.img. When adding a new entry here, the
 # AVB_FOOTER_ARGS_BY_PARTITION in sign_target_files_apks need to be updated
 # accordingly.
-AVB_PARTITIONS = ('boot', 'init_boot', 'dtbo', 'odm', 'product', 'pvmfw', 'recovery',
-                  'system', 'system_ext', 'vendor', 'vendor_boot', 'vendor_kernel_boot',
-                  'vendor_dlkm', 'odm_dlkm', 'system_dlkm')
+AVB_PARTITIONS = ('boot', 'init_boot', 'dtbo', 'odm', 'product', 'pvmfw',
+                  'recovery', 'system', 'system_ext', 'vendor', 'vendor_boot',
+                  'vendor_kernel_boot', 'vendor_dlkm', 'odm_dlkm',
+                  'system_dlkm')
 
 # Chained VBMeta partitions.
 AVB_VBMETA_PARTITIONS = ('vbmeta_system', 'vbmeta_vendor')
+
+# avbtool arguments name
+AVB_ARG_NAME_INCLUDE_DESC_FROM_IMG = '--include_descriptors_from_image'
+AVB_ARG_NAME_CHAIN_PARTITION = '--chain_partition'
 
 # Partitions that should have their care_map added to META/care_map.pb
 PARTITIONS_WITH_CARE_MAP = [
@@ -195,7 +199,7 @@ def InitLogging():
           '': {
               'handlers': ['default'],
               'propagate': True,
-              'level': 'INFO',
+              'level': 'WARNING',
           }
       }
   }
@@ -225,23 +229,15 @@ def InitLogging():
   logging.config.dictConfig(config)
 
 
-def SetHostToolLocation(tool_name, location):
-  OPTIONS.host_tools[tool_name] = location
-
-
 def FindHostToolPath(tool_name):
   """Finds the path to the host tool.
 
   Args:
     tool_name: name of the tool to find
   Returns:
-    path to the tool if found under either one of the host_tools map or under
-    the same directory as this binary is located at. If not found, tool_name
-    is returned.
+    path to the tool if found under the same directory as this binary is located at. If not found,
+    tool_name is returned.
   """
-  if tool_name in OPTIONS.host_tools:
-    return OPTIONS.host_tools[tool_name]
-
   my_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
   tool_path = os.path.join(my_dir, tool_name)
   if os.path.exists(tool_path):
@@ -457,6 +453,15 @@ class BuildInfo(object):
   def is_android_r(self):
     system_prop = self.info_dict.get("system.build.prop")
     return system_prop and system_prop.GetProp("ro.build.version.release") == "11"
+
+  @property
+  def is_release_key(self):
+    system_prop = self.info_dict.get("build.prop")
+    return system_prop and system_prop.GetProp("ro.build.tags") == "release-key"
+
+  @property
+  def vabc_compression_param(self):
+    return self.get("virtual_ab_compression_method", "")
 
   @property
   def vendor_api_level(self):
@@ -985,7 +990,7 @@ class PartitionBuildProps(object):
         each of the variables.
     ramdisk_format: If name is "boot", the format of ramdisk inside the
         boot image. Otherwise, its value is ignored.
-        Use lz4 to decompress by default. If its value is gzip, use minigzip.
+        Use lz4 to decompress by default. If its value is gzip, use gzip.
   """
 
   def __init__(self, input_file, name, placeholder_values=None):
@@ -1429,7 +1434,7 @@ def ResolveAVBSigningPathArgs(split_args):
       if os.path.exists(new_path):
         return new_path
     raise ExternalError(
-        "Failed to find {}".format(new_path))
+        "Failed to find {}".format(path))
 
   if not split_args:
     return split_args
@@ -1467,7 +1472,7 @@ def GetAvbPartitionArg(partition, image, info_dict=None):
   # Check if chain partition is used.
   key_path = info_dict.get("avb_" + partition + "_key_path")
   if not key_path:
-    return ["--include_descriptors_from_image", image]
+    return [AVB_ARG_NAME_INCLUDE_DESC_FROM_IMG, image]
 
   # For a non-A/B device, we don't chain /recovery nor include its descriptor
   # into vbmeta.img. The recovery image will be configured on an independent
@@ -1479,7 +1484,7 @@ def GetAvbPartitionArg(partition, image, info_dict=None):
 
   # Otherwise chain the partition into vbmeta.
   chained_partition_arg = GetAvbChainedPartitionArg(partition, info_dict)
-  return ["--chain_partition", chained_partition_arg]
+  return [AVB_ARG_NAME_CHAIN_PARTITION, chained_partition_arg]
 
 
 def GetAvbChainedPartitionArg(partition, info_dict, key=None):
@@ -1598,7 +1603,7 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions):
       # same location when running this script (we have the input target_files
       # zip only). For such cases, we additionally scan other locations (e.g.
       # IMAGES/, RADIO/, etc) before bailing out.
-      if arg == '--include_descriptors_from_image':
+      if arg == AVB_ARG_NAME_INCLUDE_DESC_FROM_IMG:
         chained_image = split_args[index + 1]
         if os.path.exists(chained_image):
           continue
@@ -1638,9 +1643,9 @@ def _MakeRamdisk(sourcedir, fs_config_file=None,
     p2 = Run(["lz4", "-l", "-12", "--favor-decSpeed"], stdin=p1.stdout,
              stdout=ramdisk_img.file.fileno())
   elif ramdisk_format == RamdiskFormat.GZ:
-    p2 = Run(["minigzip"], stdin=p1.stdout, stdout=ramdisk_img.file.fileno())
+    p2 = Run(["gzip"], stdin=p1.stdout, stdout=ramdisk_img.file.fileno())
   else:
-    raise ValueError("Only support lz4 or minigzip ramdisk format.")
+    raise ValueError("Only support lz4 or gzip ramdisk format.")
 
   p2.wait()
   p1.wait()
@@ -2120,20 +2125,33 @@ def UnzipSingleFile(input_zip: zipfile.ZipFile, info: zipfile.ZipInfo, dirname: 
   # According to https://stackoverflow.com/questions/434641/how-do-i-set-permissions-attributes-on-a-file-in-a-zip-file-using-pythons-zip/6297838#6297838
   # higher bits of |external_attr| are unix file permission and types
   unix_filetype = info.external_attr >> 16
+  file_perm = unix_filetype & 0o777
 
   def CheckMask(a, mask):
     return (a & mask) == mask
 
   def IsSymlink(a):
     return CheckMask(a, stat.S_IFLNK)
+
+  def IsDir(a):
+    return CheckMask(a, stat.S_IFDIR)
   # python3.11 zipfile implementation doesn't handle symlink correctly
   if not IsSymlink(unix_filetype):
-    return input_zip.extract(info, dirname)
+    target = input_zip.extract(info, dirname)
+    # We want to ensure that the file is at least read/writable by owner and readable by all users
+    if IsDir(unix_filetype):
+      os.chmod(target, file_perm | 0o755)
+    else:
+      os.chmod(target, file_perm | 0o644)
+    return target
   if dirname is None:
     dirname = os.getcwd()
   target = os.path.join(dirname, info.filename)
   os.makedirs(os.path.dirname(target), exist_ok=True)
+  if os.path.exists(target):
+    os.unlink(target)
   os.symlink(input_zip.read(info).decode(), target)
+  return target
 
 
 def UnzipToDir(filename, dirname, patterns=None):
@@ -2425,8 +2443,9 @@ def GetMinSdkVersion(apk_name):
             apk_name, proc.returncode, stdoutdata, stderrdata))
 
   for line in stdoutdata.split("\n"):
-    # Looking for lines such as sdkVersion:'23' or sdkVersion:'M'.
-    m = re.match(r'sdkVersion:\'([^\']*)\'', line)
+    # Due to ag/24161708, looking for lines such as minSdkVersion:'23',minSdkVersion:'M'
+    # or sdkVersion:'23', sdkVersion:'M'.
+    m = re.match(r'(?:minSdkVersion|sdkVersion):\'([^\']*)\'', line)
     if m:
       return m.group(1)
   raise ExternalError("No minSdkVersion returned by aapt2")
@@ -4075,7 +4094,7 @@ def GetBootImageBuildProp(boot_img, ramdisk_format=RamdiskFormat.LZ4):
   Get build.prop from ramdisk within the boot image
 
   Args:
-    boot_img: the boot image file. Ramdisk must be compressed with lz4 or minigzip format.
+    boot_img: the boot image file. Ramdisk must be compressed with lz4 or gzip format.
 
   Return:
     An extracted file that stores properties in the boot image.
@@ -4094,11 +4113,11 @@ def GetBootImageBuildProp(boot_img, ramdisk_format=RamdiskFormat.LZ4):
     elif ramdisk_format == RamdiskFormat.GZ:
       with open(ramdisk, 'rb') as input_stream:
         with open(uncompressed_ramdisk, 'wb') as output_stream:
-          p2 = Run(['minigzip', '-d'], stdin=input_stream.fileno(),
+          p2 = Run(['gzip', '-d'], stdin=input_stream.fileno(),
                    stdout=output_stream.fileno())
           p2.wait()
     else:
-      logger.error('Only support lz4 or minigzip ramdisk format.')
+      logger.error('Only support lz4 or gzip ramdisk format.')
       return None
 
     abs_uncompressed_ramdisk = os.path.abspath(uncompressed_ramdisk)

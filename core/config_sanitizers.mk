@@ -65,6 +65,18 @@ ifneq ($(filter memtag_heap, $(my_global_sanitize)),)
   endif
 endif
 
+# Disable global HWASan in excluded paths
+ifneq ($(filter hwaddress, $(my_global_sanitize)),)
+  combined_exclude_paths := $(HWASAN_EXCLUDE_PATHS) \
+                            $(PRODUCT_HWASAN_EXCLUDE_PATHS)
+
+  ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_exclude_paths)),\
+         $(filter $(dir)%,$(LOCAL_PATH)))),)
+    my_global_sanitize := $(filter-out hwaddress,$(my_global_sanitize))
+    my_global_sanitize_diag := $(filter-out hwaddress,$(my_global_sanitize_diag))
+  endif
+endif
+
 ifneq ($(my_global_sanitize),)
   my_sanitize := $(my_global_sanitize) $(my_sanitize)
 endif
@@ -413,7 +425,6 @@ ifneq ($(filter cfi,$(my_sanitize)),)
     my_cflags += -fvisibility=default
   endif
   my_ldflags += $(CFI_EXTRA_LDFLAGS)
-  my_arflags += --plugin $(LLVM_PREBUILTS_PATH)/../lib64/LLVMgold.so
 
   ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
         my_ldflags := $(filter-out -fsanitize-cfi-cross-dso,$(my_ldflags))

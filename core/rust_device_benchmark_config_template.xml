@@ -16,7 +16,7 @@
 <!-- This test config file is auto-generated. -->
 <configuration description="Config to run {MODULE} rust benchmark tests.">
     <target_preparer class="com.android.tradefed.targetprep.PushFilePreparer">
-        <option name="cleanup" value="false" />
+        <option name="cleanup" value="true" />
         <option name="push" value="{MODULE}->/data/local/tmp/{MODULE}" />
     </target_preparer>
 

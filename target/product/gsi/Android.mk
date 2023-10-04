@@ -1,5 +1,14 @@
 LOCAL_PATH:= $(call my-dir)
 
+# VNDK will not be frozen if the PLATFORM_VNDK_VERSION is a codename or greater than 34
+ifeq ($(call math_is_number,$(PLATFORM_VNDK_VERSION)),)
+UNFROZEN_VNDK := true
+else
+ifeq ($(call math_gt,$(PLATFORM_VNDK_VERSION),34),true)
+UNFROZEN_VNDK := true
+endif
+endif
+
 #####################################################################
 # list of vndk libraries from the source code.
 INTERNAL_VNDK_LIB_LIST := $(SOONG_VNDK_LIBRARIES_FILE)
@@ -9,10 +18,14 @@ INTERNAL_VNDK_LIB_LIST := $(SOONG_VNDK_LIBRARIES_FILE)
 # TODO(b/62012285): the lib list should be stored somewhere under
 # /prebuilts/vndk
 ifeq (REL,$(PLATFORM_VERSION_CODENAME))
+ifndef UNFROZEN_VNDK
 LATEST_VNDK_LIB_LIST := $(LOCAL_PATH)/$(PLATFORM_VNDK_VERSION).txt
 ifeq ($(wildcard $(LATEST_VNDK_LIB_LIST)),)
 $(error $(LATEST_VNDK_LIB_LIST) file not found. Please copy "$(LOCAL_PATH)/current.txt" to "$(LATEST_VNDK_LIB_LIST)" and commit a CL for release branch)
 endif
+else # UNFROZEN_VNDK
+LATEST_VNDK_LIB_LIST := $(LOCAL_PATH)/current.txt
+endif # UNFROZEN_VNDK
 else
 LATEST_VNDK_LIB_LIST := $(LOCAL_PATH)/current.txt
 endif
@@ -175,8 +188,7 @@ LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
 LOCAL_LICENSE_CONDITIONS := notice
 LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 # Filter LLNDK libs moved to APEX to avoid pulling them into /system/LIB
-LOCAL_REQUIRED_MODULES := \
-    $(filter-out $(LLNDK_MOVED_TO_APEX_LIBRARIES),$(LLNDK_LIBRARIES))
+LOCAL_REQUIRED_MODULES := llndk_in_system
 
 ifneq ($(TARGET_SKIP_CURRENT_VNDK),true)
 LOCAL_REQUIRED_MODULES += \
@@ -195,7 +207,10 @@ include $(BUILD_PHONY_PACKAGE)
 include $(CLEAR_VARS)
 _vndk_versions :=
 ifeq ($(filter com.android.vndk.current.on_vendor, $(PRODUCT_PACKAGES)),)
-	_vndk_versions += $(PRODUCT_EXTRA_VNDK_VERSIONS)
+	_vndk_versions += $(if $(call math_is_number,$(PLATFORM_VNDK_VERSION)),\
+		$(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),\
+			$(if $(call math_lt,$(vndk_ver),$(PLATFORM_VNDK_VERSION)),$(vndk_ver))),\
+		$(PRODUCT_EXTRA_VNDK_VERSIONS))
 endif
 ifneq ($(BOARD_VNDK_VERSION),current)
 	_vndk_versions += $(BOARD_VNDK_VERSION)
@@ -210,30 +225,19 @@ include $(BUILD_PHONY_PACKAGE)
 _vndk_versions :=
 
 #####################################################################
-# skip_mount.cfg, read by init to skip mounting some partitions when GSI is used.
-
+# Define Phony module to install LLNDK modules which are installed in
+# the system image
 include $(CLEAR_VARS)
-LOCAL_MODULE := gsi_skip_mount.cfg
+LOCAL_MODULE := llndk_in_system
 LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
 LOCAL_LICENSE_CONDITIONS := notice
 LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_MODULE_STEM := skip_mount.cfg
-LOCAL_SRC_FILES := $(LOCAL_MODULE)
-LOCAL_MODULE_CLASS := ETC
-LOCAL_SYSTEM_EXT_MODULE := true
-LOCAL_MODULE_RELATIVE_PATH := init/config
 
-# Adds a symlink under /system/etc/init/config pointing to /system/system_ext/etc/init/config
-# because first-stage init in Android 10.0 will read the skip_mount.cfg from /system/etc/* after
-# chroot /system.
-# TODO: remove this symlink when no need to support new GSI on Android 10.
-# The actual file needs to be under /system/system_ext because it's GSI-specific and does not
-# belong to core CSI.
-LOCAL_POST_INSTALL_CMD := \
-    mkdir -p $(TARGET_OUT)/etc/init; \
-    ln -sf /system/system_ext/etc/init/config $(TARGET_OUT)/etc/init/config
+# Filter LLNDK libs moved to APEX to avoid pulling them into /system/LIB
+LOCAL_REQUIRED_MODULES := \
+    $(filter-out $(LLNDK_MOVED_TO_APEX_LIBRARIES),$(LLNDK_LIBRARIES))
 
-include $(BUILD_PREBUILT)
+include $(BUILD_PHONY_PACKAGE)
 
 #####################################################################
 # init.gsi.rc, GSI-specific init script.
