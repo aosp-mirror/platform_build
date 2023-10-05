@@ -755,12 +755,10 @@ def ExtractTargetFiles(path: str):
 
 
 def LocatePartitionPath(target_files_dir: str, partition: str, allow_empty):
-  path = os.path.join(target_files_dir, "RADIO", partition + ".img")
-  if os.path.exists(path):
-    return path
-  path = os.path.join(target_files_dir, "IMAGES", partition + ".img")
-  if os.path.exists(path):
-    return path
+  for subdir in TARGET_FILES_IMAGES_SUBDIR:
+    path = os.path.join(target_files_dir, subdir, partition + ".img")
+    if os.path.exists(path):
+      return path
   if allow_empty:
     return ""
   raise common.ExternalError(
@@ -773,12 +771,10 @@ def GetPartitionImages(target_files_dir: str, ab_partitions, allow_empty=True):
 
 
 def LocatePartitionMap(target_files_dir: str, partition: str):
-  path = os.path.join(target_files_dir, "RADIO", partition + ".map")
-  if os.path.exists(path):
-    return path
-  path = os.path.join(target_files_dir, "IMAGES", partition + ".map")
-  if os.path.exists(path):
-    return path
+  for subdir in TARGET_FILES_IMAGES_SUBDIR:
+    path = os.path.join(target_files_dir, subdir, partition + ".map")
+    if os.path.exists(path):
+      return path
   return ""
 
 
@@ -1061,7 +1057,7 @@ def CopyTargetFilesDir(input_dir):
     if common.IsSparseImage(src):
       return common.UnsparseImage(src, dst)
     else:
-      return os.link(src, dst)
+      return os.symlink(os.path.realpath(src), dst)
 
   for subdir in TARGET_FILES_IMAGES_SUBDIR:
     if not os.path.exists(os.path.join(input_dir, subdir)):

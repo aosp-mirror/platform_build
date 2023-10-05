@@ -1098,7 +1098,9 @@ kernel_16k: $(BUILT_KERNEL_16K_TARGET)
 
 BUILT_BOOTIMAGE_16K_TARGET := $(PRODUCT_OUT)/boot_16k.img
 
-$(BUILT_BOOTIMAGE_16K_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH) $(INTERNAL_GKI_CERTIFICATE_DEPS)
+BOARD_KERNEL_16K_BOOTIMAGE_PARTITION_SIZE := $(BOARD_BOOTIMAGE_PARTITION_SIZE)
+
+$(BUILT_BOOTIMAGE_16K_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH) $(INTERNAL_GKI_CERTIFICATE_DEPS) $(BUILT_KERNEL_16K_TARGET)
 	$(call pretty,"Target boot 16k image: $@")
 	$(call build_boot_from_kernel_avb_enabled,$@,$(BUILT_KERNEL_16K_TARGET))
 
@@ -1231,6 +1233,7 @@ define build_boot_from_kernel_avb_enabled
   $(AVBTOOL) add_hash_footer \
           --image $(1) \
           $(call get-partition-size-argument,$(call get-bootimage-partition-size,$(1),boot)) \
+          --salt `sha256sum "$(kernel)" | cut -d " " -f 1` \
           --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
           $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
 endef
@@ -1435,6 +1438,28 @@ endif # BOARD_AVB_ENABLE
 endif # BOARD_PREBUILT_BOOTIMAGE
 
 endif # my_installed_prebuilt_gki_apex not defined
+
+ifneq ($(BOARD_KERNEL_PATH_16K),)
+BUILT_BOOT_OTA_PACKAGE_4K := $(PRODUCT_OUT)/boot_ota_4k.zip
+$(BUILT_BOOT_OTA_PACKAGE_4K): $(OTA_FROM_RAW_IMG) $(INSTALLED_BOOTIMAGE_TARGET) $(DEFAULT_SYSTEM_DEV_CERTIFICATE).pk8
+	$(OTA_FROM_RAW_IMG) --package_key $(DEFAULT_SYSTEM_DEV_CERTIFICATE) \
+                      --max_timestamp `cat $(BUILD_DATETIME_FILE)` \
+                      --path $(HOST_OUT) \
+                      --partition_name boot \
+                      --output $@ \
+                      $(INSTALLED_BOOTIMAGE_TARGET)
+
+boototapackage_4k: $(BUILT_BOOT_OTA_PACKAGE_4K)
+.PHONY: boototapackage_4k
+
+$(eval $(call copy-one-file,$(BUILT_BOOT_OTA_PACKAGE_4K),$(TARGET_OUT)/boot_otas/boot_ota_4k.zip))
+$(eval $(call copy-one-file,$(BUILT_BOOT_OTA_PACKAGE_16K),$(TARGET_OUT)/boot_otas/boot_ota_16k.zip))
+
+ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT)/boot_otas/boot_ota_4k.zip
+ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT)/boot_otas/boot_ota_16k.zip
+
+
+endif
 
 my_apex_extracted_boot_image :=
 my_installed_prebuilt_gki_apex :=
@@ -2186,73 +2211,71 @@ $(if $(PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot_key=$(PRODUCT_VBOOT_SIGNING_K
 $(if $(PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot_subkey=$(PRODUCT_VBOOT_SIGNING_SUBKEY)" >> $(1))
 $(if $(PRODUCT_SUPPORTS_VBOOT),$(hide) echo "futility=$(notdir $(FUTILITY))" >> $(1))
 $(if $(PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot_signer_cmd=$(VBOOT_SIGNER)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_avbtool=$(notdir $(AVBTOOL))" >> $(1))
-$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_system_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_system_add_hashtree_footer_args=$(BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),\
-    $(if $(BOARD_AVB_SYSTEM_KEY_PATH),\
-        $(hide) echo "avb_system_key_path=$(BOARD_AVB_SYSTEM_KEY_PATH)" >> $(1)
-        $(hide) echo "avb_system_algorithm=$(BOARD_AVB_SYSTEM_ALGORITHM)" >> $(1)
-        $(hide) echo "avb_system_rollback_index_location=$(BOARD_AVB_SYSTEM_ROLLBACK_INDEX_LOCATION)" >> $(1)))
-$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_system_other_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_system_other_add_hashtree_footer_args=$(BOARD_AVB_SYSTEM_OTHER_ADD_HASHTREE_FOOTER_ARGS)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),\
+$(if $(BOARD_AVB_ENABLE), \
+  $(hide) echo "avb_avbtool=$(notdir $(AVBTOOL))" >> $(1)$(newline) \
+  $(if $(filter $(2),system), \
+    $(hide) echo "avb_system_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1)$(newline) \
+    $(hide) echo "avb_system_add_hashtree_footer_args=$(BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS)" >> $(1)$(newline) \
+    $(if $(BOARD_AVB_SYSTEM_KEY_PATH), \
+      $(hide) echo "avb_system_key_path=$(BOARD_AVB_SYSTEM_KEY_PATH)" >> $(1)$(newline) \
+      $(hide) echo "avb_system_algorithm=$(BOARD_AVB_SYSTEM_ALGORITHM)" >> $(1)$(newline) \
+      $(hide) echo "avb_system_rollback_index_location=$(BOARD_AVB_SYSTEM_ROLLBACK_INDEX_LOCATION)" >> $(1)$(newline))) \
+  $(if $(filter $(2),system_other), \
+    $(hide) echo "avb_system_other_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1)$(newline) \
+    $(hide) echo "avb_system_other_add_hashtree_footer_args=$(BOARD_AVB_SYSTEM_OTHER_ADD_HASHTREE_FOOTER_ARGS)" >> $(1)$(newline) \
     $(if $(BOARD_AVB_SYSTEM_OTHER_KEY_PATH),\
-        $(hide) echo "avb_system_other_key_path=$(BOARD_AVB_SYSTEM_OTHER_KEY_PATH)" >> $(1)
-        $(hide) echo "avb_system_other_algorithm=$(BOARD_AVB_SYSTEM_OTHER_ALGORITHM)" >> $(1)))
-$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_vendor_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_vendor_add_hashtree_footer_args=$(BOARD_AVB_VENDOR_ADD_HASHTREE_FOOTER_ARGS)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),\
+      $(hide) echo "avb_system_other_key_path=$(BOARD_AVB_SYSTEM_OTHER_KEY_PATH)" >> $(1)$(newline) \
+      $(hide) echo "avb_system_other_algorithm=$(BOARD_AVB_SYSTEM_OTHER_ALGORITHM)" >> $(1)$(newline))) \
+  $(if $(filter $(2),vendor), \
+    $(hide) echo "avb_vendor_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1)$(newline) \
+    $(hide) echo "avb_vendor_add_hashtree_footer_args=$(BOARD_AVB_VENDOR_ADD_HASHTREE_FOOTER_ARGS)" >> $(1)$(newline) \
     $(if $(BOARD_AVB_VENDOR_KEY_PATH),\
-        $(hide) echo "avb_vendor_key_path=$(BOARD_AVB_VENDOR_KEY_PATH)" >> $(1)
-        $(hide) echo "avb_vendor_algorithm=$(BOARD_AVB_VENDOR_ALGORITHM)" >> $(1)
-        $(hide) echo "avb_vendor_rollback_index_location=$(BOARD_AVB_VENDOR_ROLLBACK_INDEX_LOCATION)" >> $(1)))
-$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_product_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_product_add_hashtree_footer_args=$(BOARD_AVB_PRODUCT_ADD_HASHTREE_FOOTER_ARGS)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),\
+      $(hide) echo "avb_vendor_key_path=$(BOARD_AVB_VENDOR_KEY_PATH)" >> $(1)$(newline) \
+      $(hide) echo "avb_vendor_algorithm=$(BOARD_AVB_VENDOR_ALGORITHM)" >> $(1)$(newline) \
+      $(hide) echo "avb_vendor_rollback_index_location=$(BOARD_AVB_VENDOR_ROLLBACK_INDEX_LOCATION)" >> $(1)$(newline))) \
+  $(if $(filter $(2),product), \
+    $(hide) echo "avb_product_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1)$(newline) \
+    $(hide) echo "avb_product_add_hashtree_footer_args=$(BOARD_AVB_PRODUCT_ADD_HASHTREE_FOOTER_ARGS)" >> $(1)$(newline) \
     $(if $(BOARD_AVB_PRODUCT_KEY_PATH),\
-        $(hide) echo "avb_product_key_path=$(BOARD_AVB_PRODUCT_KEY_PATH)" >> $(1)
-        $(hide) echo "avb_product_algorithm=$(BOARD_AVB_PRODUCT_ALGORITHM)" >> $(1)
-        $(hide) echo "avb_product_rollback_index_location=$(BOARD_AVB_PRODUCT_ROLLBACK_INDEX_LOCATION)" >> $(1)))
-$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_system_ext_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),\
-    $(hide) echo "avb_system_ext_add_hashtree_footer_args=$(BOARD_AVB_SYSTEM_EXT_ADD_HASHTREE_FOOTER_ARGS)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),\
+      $(hide) echo "avb_product_key_path=$(BOARD_AVB_PRODUCT_KEY_PATH)" >> $(1)$(newline) \
+      $(hide) echo "avb_product_algorithm=$(BOARD_AVB_PRODUCT_ALGORITHM)" >> $(1)$(newline) \
+      $(hide) echo "avb_product_rollback_index_location=$(BOARD_AVB_PRODUCT_ROLLBACK_INDEX_LOCATION)" >> $(1)$(newline))) \
+  $(if $(filter $(2),system_ext), \
+    $(hide) echo "avb_system_ext_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1)$(newline) \
+    $(hide) echo "avb_system_ext_add_hashtree_footer_args=$(BOARD_AVB_SYSTEM_EXT_ADD_HASHTREE_FOOTER_ARGS)" >> $(1)$(newline) \
     $(if $(BOARD_AVB_SYSTEM_EXT_KEY_PATH),\
-        $(hide) echo "avb_system_ext_key_path=$(BOARD_AVB_SYSTEM_EXT_KEY_PATH)" >> $(1)
-        $(hide) echo "avb_system_ext_algorithm=$(BOARD_AVB_SYSTEM_EXT_ALGORITHM)" >> $(1)
-        $(hide) echo "avb_system_ext_rollback_index_location=$(BOARD_AVB_SYSTEM_EXT_ROLLBACK_INDEX_LOCATION)" >> $(1)))
-$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_odm_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_odm_add_hashtree_footer_args=$(BOARD_AVB_ODM_ADD_HASHTREE_FOOTER_ARGS)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),\
+      $(hide) echo "avb_system_ext_key_path=$(BOARD_AVB_SYSTEM_EXT_KEY_PATH)" >> $(1)$(newline) \
+      $(hide) echo "avb_system_ext_algorithm=$(BOARD_AVB_SYSTEM_EXT_ALGORITHM)" >> $(1)$(newline) \
+      $(hide) echo "avb_system_ext_rollback_index_location=$(BOARD_AVB_SYSTEM_EXT_ROLLBACK_INDEX_LOCATION)" >> $(1)$(newline))) \
+  $(if $(filter $(2),odm), \
+    $(hide) echo "avb_odm_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1)$(newline) \
+    $(hide) echo "avb_odm_add_hashtree_footer_args=$(BOARD_AVB_ODM_ADD_HASHTREE_FOOTER_ARGS)" >> $(1)$(newline) \
     $(if $(BOARD_AVB_ODM_KEY_PATH),\
-        $(hide) echo "avb_odm_key_path=$(BOARD_AVB_ODM_KEY_PATH)" >> $(1)
-        $(hide) echo "avb_odm_algorithm=$(BOARD_AVB_ODM_ALGORITHM)" >> $(1)
-        $(hide) echo "avb_odm_rollback_index_location=$(BOARD_AVB_ODM_ROLLBACK_INDEX_LOCATION)" >> $(1)))
-$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_vendor_dlkm_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),\
-    $(hide) echo "avb_vendor_dlkm_add_hashtree_footer_args=$(BOARD_AVB_VENDOR_DLKM_ADD_HASHTREE_FOOTER_ARGS)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),\
+      $(hide) echo "avb_odm_key_path=$(BOARD_AVB_ODM_KEY_PATH)" >> $(1)$(newline) \
+      $(hide) echo "avb_odm_algorithm=$(BOARD_AVB_ODM_ALGORITHM)" >> $(1)$(newline) \
+      $(hide) echo "avb_odm_rollback_index_location=$(BOARD_AVB_ODM_ROLLBACK_INDEX_LOCATION)" >> $(1)$(newline))) \
+  $(if $(filter $(2),vendor_dlkm), \
+    $(hide) echo "avb_vendor_dlkm_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1)$(newline) \
+    $(hide) echo "avb_vendor_dlkm_add_hashtree_footer_args=$(BOARD_AVB_VENDOR_DLKM_ADD_HASHTREE_FOOTER_ARGS)" >> $(1)$(newline) \
     $(if $(BOARD_AVB_VENDOR_DLKM_KEY_PATH),\
-        $(hide) echo "avb_vendor_dlkm_key_path=$(BOARD_AVB_VENDOR_DLKM_KEY_PATH)" >> $(1)
-        $(hide) echo "avb_vendor_dlkm_algorithm=$(BOARD_AVB_VENDOR_DLKM_ALGORITHM)" >> $(1)
-        $(hide) echo "avb_vendor_dlkm_rollback_index_location=$(BOARD_AVB_VENDOR_DLKM_ROLLBACK_INDEX_LOCATION)" >> $(1)))
-$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_odm_dlkm_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),\
-    $(hide) echo "avb_odm_dlkm_add_hashtree_footer_args=$(BOARD_AVB_ODM_DLKM_ADD_HASHTREE_FOOTER_ARGS)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),\
+      $(hide) echo "avb_vendor_dlkm_key_path=$(BOARD_AVB_VENDOR_DLKM_KEY_PATH)" >> $(1)$(newline) \
+      $(hide) echo "avb_vendor_dlkm_algorithm=$(BOARD_AVB_VENDOR_DLKM_ALGORITHM)" >> $(1)$(newline) \
+      $(hide) echo "avb_vendor_dlkm_rollback_index_location=$(BOARD_AVB_VENDOR_DLKM_ROLLBACK_INDEX_LOCATION)" >> $(1)$(newline))) \
+  $(if $(filter $(2),odm_dlkm), \
+    $(hide) echo "avb_odm_dlkm_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1)$(newline) \
+    $(hide) echo "avb_odm_dlkm_add_hashtree_footer_args=$(BOARD_AVB_ODM_DLKM_ADD_HASHTREE_FOOTER_ARGS)" >> $(1)$(newline) \
     $(if $(BOARD_AVB_ODM_DLKM_KEY_PATH),\
-        $(hide) echo "avb_odm_dlkm_key_path=$(BOARD_AVB_ODM_DLKM_KEY_PATH)" >> $(1)
-        $(hide) echo "avb_odm_dlkm_algorithm=$(BOARD_AVB_ODM_DLKM_ALGORITHM)" >> $(1)
-        $(hide) echo "avb_odm_dlkm_rollback_index_location=$(BOARD_AVB_ODM_DLKM_ROLLBACK_INDEX_LOCATION)" >> $(1)))
-$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_system_dlkm_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),\
-    $(hide) echo "avb_system_dlkm_add_hashtree_footer_args=$(BOARD_AVB_SYSTEM_DLKM_ADD_HASHTREE_FOOTER_ARGS)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),\
+      $(hide) echo "avb_odm_dlkm_key_path=$(BOARD_AVB_ODM_DLKM_KEY_PATH)" >> $(1)$(newline) \
+      $(hide) echo "avb_odm_dlkm_algorithm=$(BOARD_AVB_ODM_DLKM_ALGORITHM)" >> $(1)$(newline) \
+      $(hide) echo "avb_odm_dlkm_rollback_index_location=$(BOARD_AVB_ODM_DLKM_ROLLBACK_INDEX_LOCATION)" >> $(1)$(newline))) \
+  $(if $(filter $(2),system_dlkm), \
+    $(hide) echo "avb_system_dlkm_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1)$(newline) \
+    $(hide) echo "avb_system_dlkm_add_hashtree_footer_args=$(BOARD_AVB_SYSTEM_DLKM_ADD_HASHTREE_FOOTER_ARGS)" >> $(1)$(newline) \
     $(if $(BOARD_AVB_SYSTEM_DLKM_KEY_PATH),\
-        $(hide) echo "avb_system_dlkm_key_path=$(BOARD_AVB_SYSTEM_DLKM_KEY_PATH)" >> $(1)
-        $(hide) echo "avb_system_dlkm_algorithm=$(BOARD_AVB_SYSTEM_DLKM_ALGORITHM)" >> $(1)
-        $(hide) echo "avb_system_dlkm_rollback_index_location=$(BOARD_SYSTEM_SYSTEM_DLKM_ROLLBACK_INDEX_LOCATION)" >> $(1)))
+      $(hide) echo "avb_system_dlkm_key_path=$(BOARD_AVB_SYSTEM_DLKM_KEY_PATH)" >> $(1)$(newline) \
+      $(hide) echo "avb_system_dlkm_algorithm=$(BOARD_AVB_SYSTEM_DLKM_ALGORITHM)" >> $(1)$(newline) \
+      $(hide) echo "avb_system_dlkm_rollback_index_location=$(BOARD_SYSTEM_SYSTEM_DLKM_ROLLBACK_INDEX_LOCATION)" >> $(1)$(newline))) \
+)
 $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
     $(hide) echo "recovery_as_boot=true" >> $(1))
 $(if $(filter true,$(BOARD_BUILD_GKI_BOOT_IMAGE_WITHOUT_RAMDISK)),\
@@ -2263,6 +2286,7 @@ $(if $(filter true,$(PRODUCT_USE_DYNAMIC_PARTITION_SIZE)),\
 $(if $(COPY_IMAGES_FOR_TARGET_FILES_ZIP),\
     $(hide) echo "use_fixed_timestamp=true" >> $(1))
 $(if $(3),$(hide) $(foreach kv,$(3),echo "$(kv)" >> $(1);))
+$(hide) sort -o $(1) $(1)
 endef
 
 # $(1): the path of the output dictionary file
@@ -3329,12 +3353,6 @@ ifdef BOARD_USES_SYSTEM_EXTIMAGE
   ALL_DEFAULT_INSTALLED_MODULES += $(_systemext_symlink)
 endif
 
-# Create symlink /system/bin/hwservicemanager -> /system/system_ext/bin/hwservicemanager
-# Old vendor libraries (like libhidlbase) may require /system/bin/hwservicemanager to be present
-$(call symlink-file,$(TARGET_OUT_SYSTEM_EXT)/bin/hwservicemanager,/system/system_ext/bin/hwservicemanager, $(TARGET_OUT)/bin/hwservicemanager)
-INTERNAL_SYSTEMIMAGE_FILES += \
-    $(TARGET_OUT)/bin/hwservicemanager
-
 # -----------------------------------------------------------------
 # system_dlkm partition image
 
@@ -3407,13 +3425,21 @@ $(eval $(call declare-0p-target,$(INSTALLED_FILES_JSON)))
 .PHONY: installed-file-list
 installed-file-list: $(INSTALLED_FILES_FILE)
 
-systemimage_intermediates := \
-    $(call intermediates-dir-for,PACKAGING,systemimage)
-BUILT_SYSTEMIMAGE := $(systemimage_intermediates)/system.img
+systemimage_intermediates :=$= $(call intermediates-dir-for,PACKAGING,systemimage)
+BUILT_SYSTEMIMAGE :=$= $(systemimage_intermediates)/system.img
+
 
 # Used by the bazel sandwich to request the staging dir be built
 $(systemimage_intermediates)/staging_dir.stamp: $(FULL_SYSTEMIMAGE_DEPS)
 	touch $@
+
+define write-file-lines
+$(1):
+	@echo Writing $$@
+	rm -f $$@
+	echo -n > $$@
+	$$(foreach f,$(2),echo "$$(f)" >> $$@$$(newline))
+endef
 
 # $(1): output file
 define build-systemimage-target
@@ -3423,16 +3449,19 @@ define build-systemimage-target
       skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(systemimage_intermediates)/file_list.txt) \
           $(TARGET_OUT) $(systemimage_intermediates)/system_image_info.txt $(1) $(TARGET_OUT) \
           || ( mkdir -p $${DIST_DIR}; \
                cp $(INSTALLED_FILES_FILE) $${DIST_DIR}/installed-files-rescued.txt; \
                exit 1 )
 endef
 
+$(eval $(call write-file-lines,$(systemimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT)/,,$(filter $(TARGET_OUT)/%,$(FULL_SYSTEMIMAGE_DEPS)))))
+
 ifeq ($(BOARD_AVB_ENABLE),true)
 $(BUILT_SYSTEMIMAGE): $(BOARD_AVB_SYSTEM_KEY_PATH)
 endif
-$(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE)
+$(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE) $(systemimage_intermediates)/file_list.txt
 	$(call build-systemimage-target,$@)
 
 $(call declare-1p-container,$(BUILT_SYSTEMIMAGE),system/extras)
@@ -3488,7 +3517,7 @@ SYSTEM_NOTICE_DEPS += $(INSTALLED_SYSTEMIMAGE_TARGET)
 
 .PHONY: systemimage-nodeps snod
 systemimage-nodeps snod: $(filter-out systemimage-nodeps snod,$(MAKECMDGOALS)) \
-	            | $(INTERNAL_USERIMAGES_DEPS)
+	            | $(INTERNAL_USERIMAGES_DEPS) $(systemimage_intermediates)/file_list.txt
 	@echo "make $@: ignoring dependencies"
 	$(call build-systemimage-target,$(INSTALLED_SYSTEMIMAGE_TARGET))
 	$(hide) $(call assert-max-image-size,$(INSTALLED_SYSTEMIMAGE_TARGET),$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))
@@ -3529,6 +3558,7 @@ define build-userdataimage-target
   $(call generate-image-prop-dictionary, $(userdataimage_intermediates)/userdata_image_info.txt,userdata,skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(userdataimage_intermediates)/file_list.txt) \
           $(TARGET_OUT_DATA) $(userdataimage_intermediates)/userdata_image_info.txt \
           $(INSTALLED_USERDATAIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_USERDATAIMAGE_TARGET),$(BOARD_USERDATAIMAGE_PARTITION_SIZE))
@@ -3539,7 +3569,10 @@ INSTALLED_USERDATAIMAGE_TARGET := $(BUILT_USERDATAIMAGE_TARGET)
 INSTALLED_USERDATAIMAGE_TARGET_DEPS := \
     $(INTERNAL_USERIMAGES_DEPS) \
     $(INTERNAL_USERDATAIMAGE_FILES)
-$(INSTALLED_USERDATAIMAGE_TARGET): $(INSTALLED_USERDATAIMAGE_TARGET_DEPS)
+
+$(eval $(call write-file-lines,$(userdataimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_DATA)/,,$(filter $(TARGET_OUT_DATA)/%,$(INSTALLED_USERDATAIMAGE_TARGET_DEPS)))))
+
+$(INSTALLED_USERDATAIMAGE_TARGET): $(INSTALLED_USERDATAIMAGE_TARGET_DEPS) $(userdataimage_intermediates)/file_list.txt
 	$(build-userdataimage-target)
 
 $(call declare-1p-container,$(INSTALLED_USERDATAIMAGE_TARGET),)
@@ -3548,7 +3581,7 @@ $(call declare-container-license-deps,$(INSTALLED_USERDATAIMAGE_TARGET),$(INSTAL
 UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_USERDATAIMAGE_TARGET)
 
 .PHONY: userdataimage-nodeps
-userdataimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
+userdataimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS) $(userdataimage_intermediates)/file_list.txt
 	$(build-userdataimage-target)
 
 endif # BUILDING_USERDATA_IMAGE
@@ -3584,14 +3617,17 @@ define build-cacheimage-target
   $(call generate-image-prop-dictionary, $(cacheimage_intermediates)/cache_image_info.txt,cache,skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(cacheimage_intermediates)/file_list.txt) \
           $(TARGET_OUT_CACHE) $(cacheimage_intermediates)/cache_image_info.txt \
           $(INSTALLED_CACHEIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_CACHEIMAGE_TARGET),$(BOARD_CACHEIMAGE_PARTITION_SIZE))
 endef
 
+$(eval $(call write-file-lines,$(cacheimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_CACHE)/,,$(filter $(TARGET_OUT_CACHE)/%,$(INTERNAL_CACHEIMAGE_FILES)))))
+
 # We just build this directly to the install location.
 INSTALLED_CACHEIMAGE_TARGET := $(BUILT_CACHEIMAGE_TARGET)
-$(INSTALLED_CACHEIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_CACHEIMAGE_FILES)
+$(INSTALLED_CACHEIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_CACHEIMAGE_FILES) $(cacheimage_intermediates)/file_list.txt
 	$(build-cacheimage-target)
 
 $(call declare-1p-container,$(INSTALLED_CACHEIMAGE_TARGET),)
@@ -3600,7 +3636,7 @@ $(call declare-container-license-deps,$(INSTALLED_CACHEIMAGE_TARGET),$(INTERNAL_
 UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_CACHEIMAGE_TARGET)
 
 .PHONY: cacheimage-nodeps
-cacheimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
+cacheimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS) $(cacheimage_intermediates)/file_list.txt
 	$(build-cacheimage-target)
 
 else # BUILDING_CACHE_IMAGE
@@ -3665,16 +3701,19 @@ define build-systemotherimage-target
   $(call generate-image-prop-dictionary, $(systemotherimage_intermediates)/system_other_image_info.txt,system,skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(systemotherimage_intermediates)/file_list.txt) \
           $(TARGET_OUT_SYSTEM_OTHER) $(systemotherimage_intermediates)/system_other_image_info.txt \
           $(INSTALLED_SYSTEMOTHERIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_SYSTEMOTHERIMAGE_TARGET),$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))
 endef
 
+$(eval $(call write-file-lines,$(systemotherimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_SYSTEM_OTHER)/,,$(filter $(TARGET_OUT_SYSTEM_OTHER)/%,$(INTERNAL_SYSTEMOTHERIMAGE_FILES)))))
+
 # We just build this directly to the install location.
 INSTALLED_SYSTEMOTHERIMAGE_TARGET := $(BUILT_SYSTEMOTHERIMAGE_TARGET)
 ifneq (true,$(SANITIZE_LITE))
 # Only create system_other when not building the second stage of a SANITIZE_LITE build.
-$(INSTALLED_SYSTEMOTHERIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_SYSTEMOTHERIMAGE_FILES) $(INSTALLED_FILES_FILE_SYSTEMOTHER)
+$(INSTALLED_SYSTEMOTHERIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_SYSTEMOTHERIMAGE_FILES) $(INSTALLED_FILES_FILE_SYSTEMOTHER) $(systemotherimage_intermediates)/file_list.txt
 	$(build-systemotherimage-target)
 
 $(call declare-1p-container,$(INSTALLED_SYSTEMOTHERIMAGE_TARGET),)
@@ -3684,7 +3723,7 @@ UNMOUNTED_NOTICE_DEPS += $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)
 endif
 
 .PHONY: systemotherimage-nodeps
-systemotherimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
+systemotherimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS) $(systemotherimage_intermediates)/file_list.txt
 	$(build-systemotherimage-target)
 
 endif # BUILDING_SYSTEM_OTHER_IMAGE
@@ -3765,10 +3804,13 @@ define build-vendorimage-target
   $(call generate-image-prop-dictionary, $(vendorimage_intermediates)/vendor_image_info.txt,vendor,skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(vendorimage_intermediates)/file_list.txt) \
           $(TARGET_OUT_VENDOR) $(vendorimage_intermediates)/vendor_image_info.txt \
           $(INSTALLED_VENDORIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_VENDORIMAGE_TARGET) $(RECOVERY_FROM_BOOT_PATCH),$(BOARD_VENDORIMAGE_PARTITION_SIZE))
 endef
+
+$(eval $(call write-file-lines,$(vendorimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_VENDOR)/,,$(filter $(TARGET_OUT_VENDOR)/%,$(INTERNAL_VENDORIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_VENDORIMAGE_TARGET := $(BUILT_VENDORIMAGE_TARGET)
@@ -3776,7 +3818,8 @@ $(INSTALLED_VENDORIMAGE_TARGET): \
     $(INTERNAL_USERIMAGES_DEPS) \
     $(INTERNAL_VENDORIMAGE_FILES) \
     $(INSTALLED_FILES_FILE_VENDOR) \
-    $(RECOVERY_FROM_BOOT_PATCH)
+    $(RECOVERY_FROM_BOOT_PATCH) \
+    $(vendorimage_intermediates)/file_list.txt
 	$(build-vendorimage-target)
 
 VENDOR_NOTICE_DEPS += $(INSTALLED_VENDORIMAGE_TARGET)
@@ -3785,7 +3828,7 @@ $(call declare-container-license-metadata,$(INSTALLED_VENDORIMAGE_TARGET),legacy
 $(call declare-container-license-deps,$(INSTALLED_VENDORIMAGE_TARGET),$(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_VENDORIMAGE_FILES) $(RECOVERY_FROM_BOOT_PATH),$(PRODUCT_OUT)/:/)
 
 .PHONY: vendorimage-nodeps vnod
-vendorimage-nodeps vnod: | $(INTERNAL_USERIMAGES_DEPS)
+vendorimage-nodeps vnod: | $(INTERNAL_USERIMAGES_DEPS) $(vendorimage_intermediates)/file_list.txt
 	$(build-vendorimage-target)
 
 .PHONY: sync_vendor
@@ -3831,17 +3874,21 @@ define build-productimage-target
   $(call generate-image-prop-dictionary, $(productimage_intermediates)/product_image_info.txt,product,skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(productimage_intermediates)/file_list.txt) \
           $(TARGET_OUT_PRODUCT) $(productimage_intermediates)/product_image_info.txt \
           $(INSTALLED_PRODUCTIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_PRODUCTIMAGE_TARGET),$(BOARD_PRODUCTIMAGE_PARTITION_SIZE))
 endef
+
+$(eval $(call write-file-lines,$(productimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_PRODUCT)/,,$(filter $(TARGET_OUT_PRODUCT)/%,$(INTERNAL_PRODUCTIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_PRODUCTIMAGE_TARGET := $(BUILT_PRODUCTIMAGE_TARGET)
 $(INSTALLED_PRODUCTIMAGE_TARGET): \
     $(INTERNAL_USERIMAGES_DEPS) \
     $(INTERNAL_PRODUCTIMAGE_FILES) \
-    $(INSTALLED_FILES_FILE_PRODUCT)
+    $(INSTALLED_FILES_FILE_PRODUCT) \
+    $(productimage_intermediates)/file_list.txt
 	$(build-productimage-target)
 
 PRODUCT_NOTICE_DEPS += $(INSTALLED_PRODUCTIMAGE_TARGET)
@@ -3850,7 +3897,7 @@ $(call declare-1p-container,$(INSTALLED_PRODUCTIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_PRODUCTIMAGE_TARGET),$(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_PRODUCTIMAGE_FILES) $(INSTALLED_FILES_FILE_PRODUCT),$(PRODUCT_OUT)/:/)
 
 .PHONY: productimage-nodeps pnod
-productimage-nodeps pnod: | $(INTERNAL_USERIMAGES_DEPS)
+productimage-nodeps pnod: | $(INTERNAL_USERIMAGES_DEPS) $(productimage_intermediates)/file_list.txt
 	$(build-productimage-target)
 
 .PHONY: sync_product
@@ -3892,6 +3939,7 @@ define build-system_extimage-target
   $(call generate-image-prop-dictionary, $(system_extimage_intermediates)/system_ext_image_info.txt,system_ext, skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(system_extimage_intermediates)/file_list.txt) \
           $(TARGET_OUT_SYSTEM_EXT) \
           $(system_extimage_intermediates)/system_ext_image_info.txt \
           $(INSTALLED_SYSTEM_EXTIMAGE_TARGET) \
@@ -3899,12 +3947,15 @@ define build-system_extimage-target
   $(call assert-max-image-size,$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET),$(BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE))
 endef
 
+$(eval $(call write-file-lines,$(system_extimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_SYSTEM_EXT)/,,$(filter $(TARGET_OUT_SYSTEM_EXT)/%,$(INTERNAL_SYSTEM_EXTIMAGE_FILES)))))
+
 # We just build this directly to the install location.
 INSTALLED_SYSTEM_EXTIMAGE_TARGET := $(BUILT_SYSTEM_EXTIMAGE_TARGET)
 $(INSTALLED_SYSTEM_EXTIMAGE_TARGET): \
     $(INTERNAL_USERIMAGES_DEPS) \
     $(INTERNAL_SYSTEM_EXTIMAGE_FILES) \
-    $(INSTALLED_FILES_FILE_SYSTEM_EXT)
+    $(INSTALLED_FILES_FILE_SYSTEM_EXT) \
+    $(system_extimage_intermediates)/file_list.txt
 	$(build-system_extimage-target)
 
 SYSTEM_EXT_NOTICE_DEPS += $(INSTALLED_SYSTEM_EXTIMAGE_TARGET)
@@ -3913,7 +3964,7 @@ $(call declare-1p-container,$(INSTALLED_SYSTEM_EXTIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_SYSTEM_EXTIMAGE_TARGET),$(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_SYSTEM_EXTIMAGE_FILES) $(INSTALLED_FILES_FILE_SYSTEM_EXT),$(PRODUCT_OUT)/:/)
 
 .PHONY: systemextimage-nodeps senod
-systemextimage-nodeps senod: | $(INTERNAL_USERIMAGES_DEPS)
+systemextimage-nodeps senod: | $(INTERNAL_USERIMAGES_DEPS) $(system_extimage_intermediates)/file_list.txt
 	$(build-system_extimage-target)
 
 .PHONY: sync_system_ext
@@ -3976,17 +4027,21 @@ define build-odmimage-target
 	  skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(odmimage_intermediates)/file_list.txt) \
           $(TARGET_OUT_ODM) $(odmimage_intermediates)/odm_image_info.txt \
           $(INSTALLED_ODMIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_ODMIMAGE_TARGET),$(BOARD_ODMIMAGE_PARTITION_SIZE))
 endef
+
+$(eval $(call write-file-lines,$(odmimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_ODM)/,,$(filter $(TARGET_OUT_ODM)/%,$(INTERNAL_ODMIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_ODMIMAGE_TARGET := $(BUILT_ODMIMAGE_TARGET)
 $(INSTALLED_ODMIMAGE_TARGET): \
     $(INTERNAL_USERIMAGES_DEPS) \
     $(INTERNAL_ODMIMAGE_FILES) \
-    $(INSTALLED_FILES_FILE_ODM)
+    $(INSTALLED_FILES_FILE_ODM) \
+    $(odmimage_intermediates)/file_list.txt
 	$(build-odmimage-target)
 
 ODM_NOTICE_DEPS += $(INSTALLED_ODMIMAGE_TARGET)
@@ -3995,7 +4050,7 @@ $(call declare-1p-container,$(INSTALLED_ODMIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_ODMIMAGE_TARGET),$(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_ODMIMAGE_FILES) $(INSTALLED_FILES_FILE_ODM),$(PRODUCT_OUT)/:/)
 
 .PHONY: odmimage-nodeps onod
-odmimage-nodeps onod: | $(INTERNAL_USERIMAGES_DEPS)
+odmimage-nodeps onod: | $(INTERNAL_USERIMAGES_DEPS) $(odmimage_intermediates)/file_list.txt
 	$(build-odmimage-target)
 
 .PHONY: sync_odm
@@ -4038,17 +4093,21 @@ define build-vendor_dlkmimage-target
 	  vendor_dlkm, skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(vendor_dlkmimage_intermediates)/file_list.txt) \
           $(TARGET_OUT_VENDOR_DLKM) $(vendor_dlkmimage_intermediates)/vendor_dlkm_image_info.txt \
           $(INSTALLED_VENDOR_DLKMIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_VENDOR_DLKMIMAGE_TARGET),$(BOARD_VENDOR_DLKMIMAGE_PARTITION_SIZE))
 endef
+
+$(eval $(call write-file-lines,$(vendor_dlkmimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_VENDOR_DLKM)/,,$(filter $(TARGET_OUT_VENDOR_DLKM)/%,$(INTERNAL_VENDOR_DLKMIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_VENDOR_DLKMIMAGE_TARGET := $(BUILT_VENDOR_DLKMIMAGE_TARGET)
 $(INSTALLED_VENDOR_DLKMIMAGE_TARGET): \
     $(INTERNAL_USERIMAGES_DEPS) \
     $(INTERNAL_VENDOR_DLKMIMAGE_FILES) \
-    $(INSTALLED_FILES_FILE_VENDOR_DLKM)
+    $(INSTALLED_FILES_FILE_VENDOR_DLKM) \
+    $(vendor_dlkmimage_intermediates)/file_list.txt
 	$(build-vendor_dlkmimage-target)
 
 VENDOR_DLKM_NOTICE_DEPS += $(INSTALLED_VENDOR_DLKMIMAGE_TARGET)
@@ -4057,7 +4116,7 @@ $(call declare-1p-container,$(INSTALLED_VENDOR_DLKMIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_VENDOR_DLKMIMAGE_TARGET),$(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_VENDOR_DLKMIMAGE_FILES) $(INSTALLED_FILES_FILE_VENDOR_DLKM),$(PRODUCT_OUT)/:/)
 
 .PHONY: vendor_dlkmimage-nodeps vdnod
-vendor_dlkmimage-nodeps vdnod: | $(INTERNAL_USERIMAGES_DEPS)
+vendor_dlkmimage-nodeps vdnod: | $(INTERNAL_USERIMAGES_DEPS) $(vendor_dlkmimage_intermediates)/file_list.txt
 	$(build-vendor_dlkmimage-target)
 
 .PHONY: sync_vendor_dlkm
@@ -4100,17 +4159,21 @@ define build-odm_dlkmimage-target
 	  odm_dlkm, skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(odm_dlkmimage_intermediates)/file_list.txt) \
           $(TARGET_OUT_ODM_DLKM) $(odm_dlkmimage_intermediates)/odm_dlkm_image_info.txt \
           $(INSTALLED_ODM_DLKMIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_ODM_DLKMIMAGE_TARGET),$(BOARD_ODM_DLKMIMAGE_PARTITION_SIZE))
 endef
+
+$(eval $(call write-file-lines,$(odm_dlkmimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_ODM_DLKM)/,,$(filter $(TARGET_OUT_ODM_DLKM)/%,$(INTERNAL_ODM_DLKMIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_ODM_DLKMIMAGE_TARGET := $(BUILT_ODM_DLKMIMAGE_TARGET)
 $(INSTALLED_ODM_DLKMIMAGE_TARGET): \
     $(INTERNAL_USERIMAGES_DEPS) \
     $(INTERNAL_ODM_DLKMIMAGE_FILES) \
-    $(INSTALLED_FILES_FILE_ODM_DLKM)
+    $(INSTALLED_FILES_FILE_ODM_DLKM) \
+    $(odm_dlkmimage_intermediates)/file_list.txt
 	$(build-odm_dlkmimage-target)
 
 ODM_DLKM_NOTICE_DEPS += $(INSTALLED_ODM_DLKMIMAGE_TARGET)
@@ -4119,7 +4182,7 @@ $(call declare-1p-container,$(INSTALLED_ODM_DLKMIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_ODM_DLKMIMAGE_TARGET),$(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_ODM_DLKMIMAGE_FILES) $(INSTALLED_FILES_FILE_ODM_DLKM),$(PRODUCT_OUT)/:/)
 
 .PHONY: odm_dlkmimage-nodeps odnod
-odm_dlkmimage-nodeps odnod: | $(INTERNAL_USERIMAGES_DEPS)
+odm_dlkmimage-nodeps odnod: | $(INTERNAL_USERIMAGES_DEPS) $(odm_dlkmimage_intermediates)/file_list.txt
 	$(build-odm_dlkmimage-target)
 
 .PHONY: sync_odm_dlkm
@@ -4164,17 +4227,21 @@ define build-system_dlkmimage-target
 	  system_dlkm, skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
+          $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(system_dlkmimage_intermediates)/file_list.txt) \
           $(TARGET_OUT_SYSTEM_DLKM) $(system_dlkmimage_intermediates)/system_dlkm_image_info.txt \
           $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_SYSTEM_DLKMIMAGE_TARGET),$(BOARD_SYSTEM_DLKMIMAGE_PARTITION_SIZE))
 endef
+
+$(eval $(call write-file-lines,$(system_dlkmimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_SYSTEM_DLKM)/,,$(filter $(TARGET_OUT_SYSTEM_DLKM)/%,$(INTERNAL_SYSTEM_DLKMIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_SYSTEM_DLKMIMAGE_TARGET := $(BUILT_SYSTEM_DLKMIMAGE_TARGET)
 $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET): \
     $(INTERNAL_USERIMAGES_DEPS) \
     $(INTERNAL_SYSTEM_DLKMIMAGE_FILES) \
-    $(INSTALLED_FILES_FILE_SYSTEM_DLKM)
+    $(INSTALLED_FILES_FILE_SYSTEM_DLKM) \
+    $(system_dlkmimage_intermediates)/file_list.txt
 	$(build-system_dlkmimage-target)
 
 SYSTEM_DLKM_NOTICE_DEPS += $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET)
@@ -4183,7 +4250,7 @@ $(call declare-1p-container,$(INSTALLED_SYSTEM_DLKMIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_SYSTEM_DLKMIMAGE_TARGET),$(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_SYSTEM_DLKMIMAGE_FILES) $(INSTALLED_FILES_FILE_SYSTEM_DLKM),$(PRODUCT_OUT)/:/)
 
 .PHONY: system_dlkmimage-nodeps sdnod
-system_dlkmimage-nodeps sdnod: | $(INTERNAL_USERIMAGES_DEPS)
+system_dlkmimage-nodeps sdnod: | $(INTERNAL_USERIMAGES_DEPS) $(system_dlkmimage_intermediates)/file_list.txt
 	$(build-system_dlkmimage-target)
 
 .PHONY: sync_system_dlkm
@@ -4912,6 +4979,50 @@ INTERNAL_ALLIMAGES_FILES := \
     $(INTERNAL_PVMFWIMAGE_FILES) \
 
 # -----------------------------------------------------------------
+# Run apex_sepolicy_tests for all installed APEXes
+
+ifeq (,$(TARGET_BUILD_UNBUNDLED))
+intermediate := $(call intermediates-dir-for,PACKAGING,apex_sepolicy_tests)
+apex_dirs := \
+  $(TARGET_OUT)/apex/% \
+  $(TARGET_OUT_SYSTEM_EXT)/apex/% \
+  $(TARGET_OUT_VENDOR)/apex/% \
+  $(TARGET_OUT_PRODUCT)/apex/% \
+
+apex_files := $(sort $(filter $(apex_dirs), $(INTERNAL_ALLIMAGES_FILES)))
+apex_dirs :=
+
+# $1: apex file
+# $2: output file
+define _run_apex_sepolicy_tests
+$2: $1 \
+    $(HOST_OUT_EXECUTABLES)/apex_sepolicy_tests \
+    $(HOST_OUT_EXECUTABLES)/deapexer \
+    $(HOST_OUT_EXECUTABLES)/debugfs_static
+	@rm -rf $$@
+	@mkdir -p $(dir $$@)
+	$(HOST_OUT_EXECUTABLES)/apex_sepolicy_tests --all -f <($(HOST_OUT_EXECUTABLES)/deapexer --debugfs_path $(HOST_OUT_EXECUTABLES)/debugfs_static list -Z $$<)
+	@touch $$@
+endef
+
+# $1: apex file list
+define run_apex_sepolicy_tests
+$(foreach apex_file,$1, \
+  $(eval passfile := $(patsubst $(PRODUCT_OUT)/%,$(intermediate)/%.pass,$(apex_file))) \
+  $(eval $(call _run_apex_sepolicy_tests,$(apex_file),$(passfile))) \
+  $(passfile))
+endef
+
+.PHONY: run_apex_sepolicy_tests
+run_apex_sepolicy_tests: $(call run_apex_sepolicy_tests,$(apex_files))
+
+droid_targets: run_apex_sepolicy_tests
+
+apex_files :=
+intermediate :=
+endif # TARGET_BUILD_UNBUNDLED
+
+# -----------------------------------------------------------------
 # Check VINTF of build
 
 # Note: vendor_dlkm, odm_dlkm, and system_dlkm does not have VINTF files.
@@ -5026,40 +5137,48 @@ BUILT_KERNEL_VERSION_FILE := $(intermediates)/kernel_version.txt
 
 my_board_extracted_kernel :=
 
-# BOARD_KERNEL_CONFIG_FILE and BOARD_KERNEL_VERSION can be used to override the values extracted
-# from INSTALLED_KERNEL_TARGET.
-ifdef BOARD_KERNEL_CONFIG_FILE
-ifdef BOARD_KERNEL_VERSION
-$(BUILT_KERNEL_CONFIGS_FILE): $(BOARD_KERNEL_CONFIG_FILE)
-	cp $< $@
-$(BUILT_KERNEL_VERSION_FILE):
-	echo $(BOARD_KERNEL_VERSION) > $@
-
-$(call declare-license-metadata,$(BUILT_KERNEL_CONFIGS_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
-$(call declare-license-metadata,$(BUILT_KERNEL_VERSION_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
-
-my_board_extracted_kernel := true
-endif # BOARD_KERNEL_VERSION
-endif # BOARD_KERNEL_CONFIG_FILE
-
-ifneq ($(my_board_extracted_kernel),true)
 # Tools for decompression that is not in PATH.
 # Check $(EXTRACT_KERNEL) for decompression algorithms supported by the script.
 # Algorithms that are in the script but not in this list will be found in PATH.
 my_decompress_tools := \
     lz4:$(HOST_OUT_EXECUTABLES)/lz4 \
 
-endif # my_board_extracted_kernel
+
+# BOARD_KERNEL_CONFIG_FILE and BOARD_KERNEL_VERSION can be used to override the values extracted
+# from INSTALLED_KERNEL_TARGET.
+ifdef BOARD_KERNEL_VERSION
+$(BUILT_KERNEL_VERSION_FILE): PRIVATE_DECOMPRESS_TOOLS := $(my_decompress_tools)
+$(BUILT_KERNEL_VERSION_FILE): $(foreach pair,$(my_decompress_tools),$(call word-colon,2,$(pair)))
+$(BUILT_KERNEL_VERSION_FILE): $(EXTRACT_KERNEL) $(firstword $(INSTALLED_KERNEL_TARGET))
+	KERNEL_RELEASE=`$(EXTRACT_KERNEL) --tools $(PRIVATE_DECOMPRESS_TOOLS) --input $(firstword $(INSTALLED_KERNEL_TARGET)) \
+	  --output-release` ;\
+  if [ "$$KERNEL_RELEASE" != '$(BOARD_KERNEL_VERSION)' ]; then \
+    echo "Specified kernel version '$(BOARD_KERNEL_VERSION)' does not match actual kernel version '$$KERNEL_RELEASE' " ; exit 1; fi;
+	echo '$(BOARD_KERNEL_VERSION)' > $@
+
+ifdef BOARD_KERNEL_CONFIG_FILE
+$(BUILT_KERNEL_CONFIGS_FILE): $(BOARD_KERNEL_CONFIG_FILE)
+	cp $< $@
+
+$(call declare-license-metadata,$(BUILT_KERNEL_CONFIGS_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
+$(call declare-license-metadata,$(BUILT_KERNEL_VERSION_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
+
+my_board_extracted_kernel := true
+endif # BOARD_KERNEL_CONFIG_FILE
+endif # BOARD_KERNEL_VERSION
+
 
 ifneq ($(my_board_extracted_kernel),true)
 ifdef INSTALLED_KERNEL_TARGET
+ifndef BOARD_KERNEL_VERSION
 $(BUILT_KERNEL_CONFIGS_FILE): .KATI_IMPLICIT_OUTPUTS := $(BUILT_KERNEL_VERSION_FILE)
+endif
 $(BUILT_KERNEL_CONFIGS_FILE): PRIVATE_DECOMPRESS_TOOLS := $(my_decompress_tools)
 $(BUILT_KERNEL_CONFIGS_FILE): $(foreach pair,$(my_decompress_tools),$(call word-colon,2,$(pair)))
 $(BUILT_KERNEL_CONFIGS_FILE): $(EXTRACT_KERNEL) $(firstword $(INSTALLED_KERNEL_TARGET))
 	$< --tools $(PRIVATE_DECOMPRESS_TOOLS) --input $(firstword $(INSTALLED_KERNEL_TARGET)) \
 	  --output-configs $@ \
-	  --output-release $(BUILT_KERNEL_VERSION_FILE)
+	  $(if $(BOARD_KERNEL_VERSION),,--output-release $(BUILT_KERNEL_VERSION_FILE))
 
 $(call declare-license-metadata,$(BUILT_KERNEL_CONFIGS_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
 
@@ -5521,7 +5640,7 @@ ifneq (,$(strip $(BOARD_AVB_VBMETA_SYSTEM)))
 	$(hide) echo "flash vbmeta_system" >> $@
 endif
 ifneq (,$(strip $(BOARD_AVB_VBMETA_VENDOR)))
-	$(hide) echo "flash --apply-vbmeta vbmeta_vendor" >> $@
+	$(hide) echo "flash vbmeta_vendor" >> $@
 endif
 ifneq (,$(strip $(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)))
 	$(hide) $(foreach partition,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS), \
@@ -6962,29 +7081,34 @@ endif # EMMA_INSTRUMENT=true
 # finding the appropriate dictionary to deobfuscate a stack trace frame.
 #
 
-# The path to the zip file containing proguard dictionaries.
-PROGUARD_DICT_ZIP := $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-dict.zip
-# The path to the zip file containing mappings from dictionary hashes to filenames.
-PROGUARD_DICT_MAPPING := $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-dict-mapping.textproto
-.KATI_READONLY := PROGUARD_DICT_ZIP PROGUARD_DICT_MAPPING
-# For apps_only build we'll establish the dependency later in build/make/core/main.mk.
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
-$(PROGUARD_DICT_ZIP): $(INTERNAL_ALLIMAGES_FILES) $(updater_dep)
+  _proguard_dict_zip_modules := $(call product-installed-modules,$(INTERNAL_PRODUCT))
+else
+  _proguard_dict_zip_modules := $(unbundled_build_modules)
 endif
-$(PROGUARD_DICT_ZIP): PRIVATE_PACKAGING_DIR := $(call intermediates-dir-for,PACKAGING,proguard_dictionary)
-$(PROGUARD_DICT_ZIP): PRIVATE_MAPPING_PACKAGING_DIR := $(call intermediates-dir-for,PACKAGING,proguard_dictionary_mapping)
-$(PROGUARD_DICT_ZIP): PRIVATE_LIST_FILE := $(call intermediates-dir-for,PACKAGING,proguard_dictionary_filelist)/filelist
-$(PROGUARD_DICT_ZIP): $(SOONG_ZIP) $(SYMBOLS_MAP)
+
+# The path to the zip file containing proguard dictionaries.
+PROGUARD_DICT_ZIP :=$= $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-dict.zip
+$(PROGUARD_DICT_ZIP): PRIVATE_SOONG_ZIP_ARGUMENTS := $(foreach m,$(_proguard_dict_zip_modules),$(ALL_MODULES.$(m).PROGUARD_DICTIONARY_SOONG_ZIP_ARGUMENTS))
+$(PROGUARD_DICT_ZIP): $(SOONG_ZIP) $(foreach m,$(_proguard_dict_zip_modules),$(ALL_MODULES.$(m).PROGUARD_DICTIONARY_FILES))
 	@echo "Packaging Proguard obfuscation dictionary files."
-	rm -rf $@ $(PRIVATE_LIST_FILE)
-	mkdir -p $(PRIVATE_PACKAGING_DIR) $(PRIVATE_MAPPING_PACKAGING_DIR) $(dir $(PRIVATE_LIST_FILE))
-	# Zip all of the files in the proguard dictionary directory.
-	$(SOONG_ZIP) --ignore_missing_files -d -o $@ -C $(PRIVATE_PACKAGING_DIR) -D $(PRIVATE_PACKAGING_DIR)
-	# Find all of the files in the proguard dictionary mapping directory and merge them into the mapping textproto.
-	# Strip the PRIVATE_PACKAGING_DIR off the filenames to match soong_zip's -C argument.
-	$(hide) find -L $(PRIVATE_MAPPING_PACKAGING_DIR) -type f | sort >$(PRIVATE_LIST_FILE)
-	$(SYMBOLS_MAP) -merge $(PROGUARD_DICT_MAPPING) -strip_prefix $(PRIVATE_PACKAGING_DIR)/ -ignore_missing_files @$(PRIVATE_LIST_FILE)
-$(PROGUARD_DICT_ZIP): .KATI_IMPLICIT_OUTPUTS := $(PROGUARD_DICT_MAPPING)
+	# Zip all of the files in PROGUARD_DICTIONARY_FILES.
+	echo -n > $@.tmparglist
+	$(foreach arg,$(PRIVATE_SOONG_ZIP_ARGUMENTS),printf "%s\n" "$(arg)" >> $@.tmparglist$(newline))
+	$(SOONG_ZIP) -d -o $@ @$@.tmparglist
+	rm -f $@.tmparglist
+
+# The path to the zip file containing mappings from dictionary hashes to filenames.
+PROGUARD_DICT_MAPPING :=$= $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-dict-mapping.textproto
+_proguard_dict_mapping_files := $(foreach m,$(_proguard_dict_zip_modules),$(ALL_MODULES.$(m).PROGUARD_DICTIONARY_MAPPING))
+$(PROGUARD_DICT_MAPPING): PRIVATE_MAPPING_FILES := $(_proguard_dict_mapping_files)
+$(PROGUARD_DICT_MAPPING): $(SYMBOLS_MAP) $(_proguard_dict_mapping_files)
+	@echo "Packaging Proguard obfuscation dictionary mapping files."
+	# Merge all the mapping files together
+	echo -n > $@.tmparglist
+	$(foreach mf,$(PRIVATE_MAPPING_FILES),echo "$(mf)" >> $@.tmparglist$(newline))
+	$(SYMBOLS_MAP) -merge $(PROGUARD_DICT_MAPPING) @$@.tmparglist
+	rm -f $@.tmparglist
 
 $(call declare-1p-container,$(PROGUARD_DICT_ZIP),)
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
@@ -6994,31 +7118,19 @@ endif
 #------------------------------------------------------------------
 # A zip of Proguard usage files.
 #
-PROGUARD_USAGE_ZIP := $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-usage.zip
-# For apps_only build we'll establish the dependency later in build/make/core/main.mk.
-ifeq (,$(TARGET_BUILD_UNBUNDLED))
-$(PROGUARD_USAGE_ZIP): \
-    $(INSTALLED_SYSTEMIMAGE_TARGET) \
-    $(INSTALLED_RAMDISK_TARGET) \
-    $(INSTALLED_BOOTIMAGE_TARGET) \
-    $(INSTALLED_INIT_BOOT_IMAGE_TARGET) \
-    $(INSTALLED_USERDATAIMAGE_TARGET) \
-    $(INSTALLED_VENDORIMAGE_TARGET) \
-    $(INSTALLED_PRODUCTIMAGE_TARGET) \
-    $(INSTALLED_SYSTEM_EXTIMAGE_TARGET) \
-    $(INSTALLED_ODMIMAGE_TARGET) \
-    $(INSTALLED_VENDOR_DLKMIMAGE_TARGET) \
-    $(INSTALLED_ODM_DLKMIMAGE_TARGET) \
-    $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET) \
-    $(updater_dep)
-endif
-$(PROGUARD_USAGE_ZIP): PRIVATE_LIST_FILE := $(call intermediates-dir-for,PACKAGING,proguard_usage.zip)/filelist
-$(PROGUARD_USAGE_ZIP): PRIVATE_PACKAGING_DIR := $(call intermediates-dir-for,PACKAGING,proguard_usage)
-$(PROGUARD_USAGE_ZIP): $(MERGE_ZIPS)
+PROGUARD_USAGE_ZIP :=$= $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-usage.zip
+_proguard_usage_zips := $(foreach m,$(_proguard_dict_zip_modules),$(ALL_MODULES.$(m).PROGUARD_USAGE_ZIP))
+$(PROGUARD_USAGE_ZIP): PRIVATE_ZIPS := $(_proguard_usage_zips)
+$(PROGUARD_USAGE_ZIP): $(MERGE_ZIPS) $(_proguard_usage_zips)
 	@echo "Packaging Proguard usage files."
-	mkdir -p $(dir $@) $(PRIVATE_PACKAGING_DIR) $(dir $(PRIVATE_LIST_FILE))
-	find $(PRIVATE_PACKAGING_DIR) -name proguard_usage.zip > $(PRIVATE_LIST_FILE)
-	$(MERGE_ZIPS) $@ @$(PRIVATE_LIST_FILE)
+	echo -n > $@.tmparglist
+	$(foreach z,$(PRIVATE_ZIPS),echo "$(z)" >> $@.tmparglist$(newline))
+	$(MERGE_ZIPS) $@ @$@.tmparglist
+	rm -rf $@.tmparglist
+
+_proguard_dict_mapping_files :=
+_proguard_usage_zips :=
+_proguard_dict_zip_modules :=
 
 $(call declare-1p-container,$(PROGUARD_USAGE_ZIP),)
 ifeq (,$(TARGET_BUILD_UNBUNDLED))

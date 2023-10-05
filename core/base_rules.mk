@@ -521,10 +521,6 @@ ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
   # copy of the intermediates for now, as some rules that collect intermediates may expect
   # them to exist.
   $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
-
-  $(foreach symlink, $(LOCAL_SOONG_INSTALL_SYMLINKS), \
-    $(call declare-0p-target,$(symlink)))
-  $(my_all_targets) : | $(LOCAL_SOONG_INSTALL_SYMLINKS)
 else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
   $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
@@ -545,6 +541,15 @@ else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   $(my_all_targets) : | $(my_installed_symlinks)
 
 endif # !LOCAL_UNINSTALLABLE_MODULE
+
+# Add dependencies on LOCAL_SOONG_INSTALL_SYMLINKS if we're installing any kind of module, not just
+# ones that set LOCAL_SOONG_INSTALLED_MODULE. This is so we can have a soong module that only
+# installs symlinks (e.g. install_symlink). We can't set LOCAL_SOONG_INSTALLED_MODULE to a symlink
+# because cp commands will fail on symlinks.
+ifneq (,$(or $(LOCAL_SOONG_INSTALLED_MODULE),$(call boolean-not,$(LOCAL_UNINSTALLABLE_MODULE))))
+  $(foreach symlink, $(LOCAL_SOONG_INSTALL_SYMLINKS), $(call declare-0p-target,$(symlink)))
+  $(my_all_targets) : | $(LOCAL_SOONG_INSTALL_SYMLINKS)
+endif
 
 ###########################################################
 ## VINTF manifest fragment and init.rc goals
@@ -1001,6 +1006,16 @@ else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
       $(my_init_rc_installed) \
       $(my_vintf_installed))
 endif
+
+# Mark LOCAL_SOONG_INSTALL_SYMLINKS as installed if we're installing any kind of module, not just
+# ones that set LOCAL_SOONG_INSTALLED_MODULE. This is so we can have a soong module that only
+# installs symlinks (e.g. installed_symlink). We can't set LOCAL_SOONG_INSTALLED_MODULE to a symlink
+# because cp commands will fail on symlinks.
+ifneq (,$(or $(LOCAL_SOONG_INSTALLED_MODULE),$(call boolean-not,$(LOCAL_UNINSTALLABLE_MODULE))))
+  ALL_MODULES.$(my_register_name).INSTALLED += $(LOCAL_SOONG_INSTALL_SYMLINKS)
+  ALL_MODULES.$(my_register_name).INSTALLED_SYMLINKS := $(LOCAL_SOONG_INSTALL_SYMLINKS)
+endif
+
 ifdef LOCAL_PICKUP_FILES
 # Files or directories ready to pick up by the build system
 # when $(LOCAL_BUILT_MODULE) is done.

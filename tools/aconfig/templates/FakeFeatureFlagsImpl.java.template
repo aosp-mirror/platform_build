@@ -3,6 +3,7 @@ package {package_name};
 import java.util.HashMap;
 import java.util.Map;
 
+/** @hide */
 public class FakeFeatureFlagsImpl implements FeatureFlags \{
     public FakeFeatureFlagsImpl() \{
         resetAll();
@@ -11,7 +12,7 @@ public class FakeFeatureFlagsImpl implements FeatureFlags \{
 {{ for item in class_elements}}
     @Override
     public boolean {item.method_name}() \{
-        return getFlag(Flags.FLAG_{item.flag_name_constant_suffix});
+        return getValue(Flags.FLAG_{item.flag_name_constant_suffix});
     }
 {{ endfor}}
     public void setFlag(String flagName, boolean value) \{
@@ -27,7 +28,7 @@ public class FakeFeatureFlagsImpl implements FeatureFlags \{
         }
     }
 
-    private boolean getFlag(String flagName) \{
+    private boolean getValue(String flagName) \{
         Boolean value = this.mFlagMap.get(flagName);
         if (value == null) \{
             throw new IllegalArgumentException(flagName + " is not set");
@@ -36,9 +37,10 @@ public class FakeFeatureFlagsImpl implements FeatureFlags \{
     }
 
     private Map<String, Boolean> mFlagMap = new HashMap<>(
-        Map.of(
+        Map.ofEntries(
             {{-for item in class_elements}}
-            Flags.FLAG_{item.flag_name_constant_suffix}, false{{ if not @last }},{{ endif }}
+            Map.entry(Flags.FLAG_{item.flag_name_constant_suffix}, false)
+            {{ -if not @last }},{{ endif }}
             {{ -endfor }}
         )
     );

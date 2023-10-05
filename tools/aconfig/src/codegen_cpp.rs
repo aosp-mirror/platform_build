@@ -38,9 +38,9 @@ where
     let cpp_namespace = package.replace('.', "::");
     ensure!(codegen::is_valid_name_ident(&header));
     let context = Context {
-        header: header.clone(),
-        cpp_namespace,
-        package: package.to_string(),
+        header: &header,
+        cpp_namespace: &cpp_namespace,
+        package,
         readwrite,
         for_test: codegen_mode == CodegenMode::Test,
         class_elements,
@@ -77,10 +77,10 @@ pub struct FileSpec<'a> {
 }
 
 #[derive(Serialize)]
-pub struct Context {
-    pub header: String,
-    pub cpp_namespace: String,
-    pub package: String,
+pub struct Context<'a> {
+    pub header: &'a str,
+    pub cpp_namespace: &'a str,
+    pub package: &'a str,
     pub readwrite: bool,
     pub for_test: bool,
     pub class_elements: Vec<ClassElement>,
@@ -364,6 +364,7 @@ bool com_android_aconfig_test_enabled_rw() {
     const TEST_SOURCE_FILE_EXPECTED: &str = r#"
 #include "com_android_aconfig_test.h"
 #include <server_configurable_flags/get_flags.h>
+#include <unordered_map>
 
 namespace com::android::aconfig::test {
 
@@ -517,7 +518,7 @@ void com_android_aconfig_test_reset_flags() {
         for file in generated {
             generated_files_map.insert(
                 String::from(file.path.to_str().unwrap()),
-                String::from_utf8(file.contents.clone()).unwrap(),
+                String::from_utf8(file.contents).unwrap(),
             );
         }
 

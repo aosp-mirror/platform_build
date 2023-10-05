@@ -51,4 +51,13 @@
     @**android**.annotation*.Keep <init>(...);
 }
 
+# Keep Dalvik optimization annotations. These annotations are special in that
+# 1) we want them preserved for visibility with ART, but 2) they don't have
+# RUNTIME retention. These minimal keep rules ensure they're not stripped by R8.
+# TODO(b/215417388): Export this rule from the owning library, core-libart,
+# via export_proguard_flags_files.
+-keepclassmembers,allowshrinking,allowoptimization,allowobfuscation,allowaccessmodification class * {
+    @dalvik.annotation.optimization.** *;
+}
+
 -include proguard_basic_keeps.flags

@@ -53,8 +53,6 @@ PARTITION_TAG_PATTERN = re.compile(r'partition="(.*?)"')
 MODULE_KEY_PATTERN = re.compile(r'name="(.+)\.(apex|apk)"')
 
 
-
-
 def MergeUpdateEngineConfig(input_metadir1, input_metadir2, merged_meta_dir):
   UPDATE_ENGINE_CONFIG_NAME = "update_engine_config.txt"
   config1_path = os.path.join(
@@ -74,7 +72,7 @@ def MergeUpdateEngineConfig(input_metadir1, input_metadir2, merged_meta_dir):
         merged_meta_dir, UPDATE_ENGINE_CONFIG_NAME))
 
 
-def MergeMetaFiles(temp_dir, merged_dir):
+def MergeMetaFiles(temp_dir, merged_dir, framework_partitions):
   """Merges various files in META/*."""
 
   framework_meta_dir = os.path.join(temp_dir, 'framework_meta', 'META')
@@ -114,7 +112,8 @@ def MergeMetaFiles(temp_dir, merged_dir):
     MergeAbPartitions(
         framework_meta_dir=framework_meta_dir,
         vendor_meta_dir=vendor_meta_dir,
-        merged_meta_dir=merged_meta_dir)
+        merged_meta_dir=merged_meta_dir,
+        framework_partitions=framework_partitions)
     UpdateCareMapImageSizeProps(images_dir=os.path.join(merged_dir, 'IMAGES'))
 
   for file_name in ('apkcerts.txt', 'apexkeys.txt'):
@@ -135,13 +134,22 @@ def MergeMetaFiles(temp_dir, merged_dir):
       path=os.path.join(merged_meta_dir, 'misc_info.txt'))
 
 
-def MergeAbPartitions(framework_meta_dir, vendor_meta_dir, merged_meta_dir):
+def MergeAbPartitions(framework_meta_dir, vendor_meta_dir, merged_meta_dir,
+                      framework_partitions):
   """Merges META/ab_partitions.txt.
 
   The output contains the union of the partition names.
   """
   with open(os.path.join(framework_meta_dir, 'ab_partitions.txt')) as f:
-    framework_ab_partitions = f.read().splitlines()
+    # Filter out some partitions here to support the case that the
+    # ab_partitions.txt of framework-target-files has non-framework partitions.
+    # This case happens when we use a complete merged target files package as
+    # the framework-target-files.
+    framework_ab_partitions = [
+        partition
+        for partition in f.read().splitlines()
+        if partition in framework_partitions
+    ]
 
   with open(os.path.join(vendor_meta_dir, 'ab_partitions.txt')) as f:
     vendor_ab_partitions = f.read().splitlines()

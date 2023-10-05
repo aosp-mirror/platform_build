@@ -22,7 +22,6 @@ PRODUCT_PACKAGES += \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
     android.hidl.memory@1.0-impl \
-    android.hidl.memory@1.0-impl.vendor \
     android.system.suspend-service \
     android.test.base \
     android.test.mock \
@@ -236,6 +235,7 @@ PRODUCT_PACKAGES += \
     pm \
     pppd \
     preinstalled-packages-platform.xml \
+    printflags \
     privapp-permissions-platform.xml \
     prng_seeder \
     racoon \
@@ -344,6 +344,7 @@ endif
 PRODUCT_HOST_PACKAGES += \
     BugReport \
     adb \
+    adevice \
     art-tools \
     atest \
     bcc \

@@ -921,14 +921,6 @@ ifndef BOARD_SEPOLICY_VERS
 BOARD_SEPOLICY_VERS := $(PLATFORM_SEPOLICY_VERSION)
 endif
 
-ifeq ($(BOARD_SEPOLICY_VERS),$(PLATFORM_SEPOLICY_VERSION))
-IS_TARGET_MIXED_SEPOLICY :=
-else
-IS_TARGET_MIXED_SEPOLICY := true
-endif
-
-.KATI_READONLY := IS_TARGET_MIXED_SEPOLICY
-
 # A list of SEPolicy versions, besides PLATFORM_SEPOLICY_VERSION, that the framework supports.
 PLATFORM_SEPOLICY_COMPAT_VERSIONS := $(filter-out $(PLATFORM_SEPOLICY_VERSION), \
     29.0 \
@@ -1232,8 +1224,12 @@ TARGET_AVAILABLE_SDK_VERSIONS := $(patsubst %/test,test_%,$(TARGET_AVAILABLE_SDK
 TARGET_AVAILABLE_SDK_VERSIONS := $(filter-out %/module-lib %/system-server,$(TARGET_AVAILABLE_SDK_VERSIONS))
 TARGET_AVAIALBLE_SDK_VERSIONS := $(call numerically_sort,$(TARGET_AVAILABLE_SDK_VERSIONS))
 
-TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT := $(call numbers_less_than,24,$(TARGET_AVAILABLE_SDK_VERSIONS))
-TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT := $(call numbers_less_than,30,$(TARGET_AVAILABLE_SDK_VERSIONS))
+TARGET_SDK_VERSIONS_WITHOUT_JAVA_1_8_SUPPORT := $(call numbers_less_than,24,$(TARGET_AVAILABLE_SDK_VERSIONS))
+TARGET_SDK_VERSIONS_WITHOUT_JAVA_1_9_SUPPORT := $(call numbers_less_than,30,$(TARGET_AVAILABLE_SDK_VERSIONS))
+TARGET_SDK_VERSIONS_WITHOUT_JAVA_11_SUPPORT := $(call numbers_less_than,32,$(TARGET_AVAILABLE_SDK_VERSIONS))
+TARGET_SDK_VERSIONS_WITHOUT_JAVA_17_SUPPORT := $(call numbers_less_than,34,$(TARGET_AVAILABLE_SDK_VERSIONS))
+
+JAVA_LANGUAGE_VERSIONS_WITHOUT_SYSTEM_MODULES := 1.7 1.8
 
 # This is the standard way to name a directory containing prebuilt target
 # objects. E.g., prebuilt/$(TARGET_PREBUILT_TAG)/libc.so
@@ -1307,9 +1303,8 @@ include $(BUILD_SYSTEM)/ninja_config.mk
 include $(BUILD_SYSTEM)/soong_config.mk
 endif
 
--include external/linux-kselftest/android/kselftest_test_list.mk
 -include external/ltp/android/ltp_package_list.mk
-DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages) $(kselftest_modules)
+DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages)
 .KATI_READONLY := DEFAULT_DATA_OUT_MODULES
 
 include $(BUILD_SYSTEM)/dumpvar.mk

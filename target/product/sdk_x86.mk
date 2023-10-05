@@ -22,3 +22,5 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_default.mk)
 PRODUCT_NAME := sdk_x86_64
 PRODUCT_BRAND := Android
 PRODUCT_DEVICE := mainline_x86
+
+PRODUCT_NEXT_RELEASE_HIDE_FLAGGED_API := true

@@ -147,6 +147,10 @@ define true-or-empty
 $(filter true, $(1))
 endef
 
+define boolean-not
+$(if $(filter true,$(1)),,true)
+endef
+
 ###########################################################
 ## Rule for touching GCNO files.
 ###########################################################
@@ -3418,6 +3422,10 @@ endef
 # $(2): path in symbols directory
 # $(3): file type (elf or r8)
 # $(4): path in the mappings directory
+#
+# Regarding the restats at the end: I think you should only need to use KATI_RESTAT on $(2), but
+# there appears to be a bug in kati where it was not adding restat=true in the ninja file unless we
+# also added 4 to KATI_RESTAT.
 define _copy-symbols-file-with-mapping
 $(2): .KATI_IMPLICIT_OUTPUTS := $(4)
 $(2): $(SYMBOLS_MAP)
@@ -3426,16 +3434,7 @@ $(2): $(1)
 	$$(copy-file-to-target)
 	$(SYMBOLS_MAP) -$(strip $(3)) $(2) -write_if_changed $(4)
 .KATI_RESTAT: $(2)
-endef
-
-# Returns the directory to copy proguard dictionaries into
-define local-proguard-dictionary-directory
-$(call intermediates-dir-for,PACKAGING,proguard_dictionary)/out/target/common/obj/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates
-endef
-
-# Returns the directory to copy proguard dictionary mappings into
-define local-proguard-dictionary-mapping-directory
-$(call intermediates-dir-for,PACKAGING,proguard_dictionary_mapping)/out/target/common/obj/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates
+.KATI_RESTAT: $(4)
 endef
 
 
