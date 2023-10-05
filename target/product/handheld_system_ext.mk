@@ -22,6 +22,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/media_system_ext.mk)
 
 # /system_ext packages
 PRODUCT_PACKAGES += \
+    AccessibilityMenu \
     Launcher3QuickStep \
     Provision \
     Settings \
