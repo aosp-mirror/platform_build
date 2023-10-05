@@ -79,23 +79,12 @@ PLATFORM_VERSION_ALL_CODENAMES :=
 # Build a list of all active code names. Avoid duplicates, and stop when we
 # reach a codename that matches PLATFORM_VERSION_CODENAME (anything beyond
 # that is not included in our build).
-#
-# REL is filtered out of the list. The codename of the current release is
-# replaced by "REL" when the build is configured as a release rather than a
-# preview. For example, PLATFORM_VERSION_CODENAME.UpsideDownCake will be "REL"
-# rather than UpsideDownCake in a -next target when the upcoming release is
-# UpsideDownCake. "REL" shouldn't really be treated as a codename though. It's a
-# placeholder to indicate that the build is a release and so doesn't really have
-# a codename. The list of all codenames ends up in
-# ro.build.version.all_codenames, and also ends up feeding the logic for stub
-# generation in soong, neither of which are places that should include REL.
 _versions_in_target := \
   $(call find_and_earlier,$(ALL_VERSIONS),$(TARGET_PLATFORM_VERSION))
 $(foreach version,$(_versions_in_target),\
   $(eval _codename := $(PLATFORM_VERSION_CODENAME.$(version)))\
-  $(if $(filter REL,$(_codename)),,\
-      $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_CODENAMES)),,\
-        $(eval PLATFORM_VERSION_ALL_CODENAMES += $(_codename)))))
+  $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_CODENAMES)),,\
+    $(eval PLATFORM_VERSION_ALL_CODENAMES += $(_codename))))
 
 # And the list of actually all the codenames that are in preview. The
 # ALL_CODENAMES variable is sort of a lie for historical reasons and only
