@@ -296,6 +296,8 @@ PRODUCT_PACKAGES += \
     wifi.rc \
     wm \
 
+PRODUCT_PACKAGES += $(RELEASE_PACKAGE_VIRTUAL_CAMERA)
+
 # These packages are not used on Android TV
 ifneq ($(PRODUCT_IS_ATV),true)
   PRODUCT_PACKAGES += \
