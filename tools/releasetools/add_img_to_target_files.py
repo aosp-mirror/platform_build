@@ -42,6 +42,10 @@ Usage:  add_img_to_target_files [flag] target_files
   --is_signing
       Skip building & adding the images for "userdata" and "cache" if we
       are signing the target files.
+
+  --avb-resolve-rollback-index-location-conflict
+      If provided, resolve the conflict AVB rollback index location when
+      necessary.
 """
 
 from __future__ import print_function
@@ -81,6 +85,7 @@ OPTIONS.add_missing = False
 OPTIONS.rebuild_recovery = False
 OPTIONS.replace_updated_files_list = []
 OPTIONS.is_signing = False
+OPTIONS.avb_resolve_rollback_index_location_conflict = False
 
 
 def ParseAvbFooter(img_path) -> avbtool.AvbFooter:
@@ -682,7 +687,8 @@ def AddVBMeta(output_zip, partitions, name, needed_partitions):
     logger.info("%s.img already exists; not rebuilding...", name)
     return img.name
 
-  common.BuildVBMeta(img.name, partitions, name, needed_partitions)
+  common.BuildVBMeta(img.name, partitions, name, needed_partitions,
+                     OPTIONS.avb_resolve_rollback_index_location_conflict)
   img.Write()
   return img.name
 
@@ -1224,6 +1230,8 @@ def main(argv):
                        " please switch to AVB")
     elif o == "--is_signing":
       OPTIONS.is_signing = True
+    elif o == "--avb_resolve_rollback_index_location_conflict":
+      OPTIONS.avb_resolve_rollback_index_location_conflict = True
     else:
       return False
     return True
@@ -1233,7 +1241,8 @@ def main(argv):
       extra_long_opts=["add_missing", "rebuild_recovery",
                        "replace_verity_public_key=",
                        "replace_verity_private_key=",
-                       "is_signing"],
+                       "is_signing",
+                       "avb_resolve_rollback_index_location_conflict"],
       extra_option_handler=option_handler)
 
   if len(args) != 1:
