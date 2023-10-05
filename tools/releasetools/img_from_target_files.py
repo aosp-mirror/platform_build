@@ -64,7 +64,7 @@ OPTIONS.super_device_list = None
 OPTIONS.retrofit_dap = None
 OPTIONS.build_super = None
 OPTIONS.sparse_userimages = None
-OPTIONS.use_fastboot_info = False
+OPTIONS.use_fastboot_info = True
 OPTIONS.build_super_image = None
 
 def LoadOptions(input_file):

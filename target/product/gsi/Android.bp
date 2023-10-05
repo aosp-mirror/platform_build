@@ -23,3 +23,26 @@ filegroup {
         "*.txt",
     ],
 }
+
+prebuilt_etc {
+    name: "gsi_skip_mount.cfg",
+    filename: "skip_mount.cfg",
+    src: "gsi_skip_mount.cfg",
+
+    system_ext_specific: true,
+    relative_install_path: "init/config",
+
+    required: ["gsi_skip_mount_compat_symlink"],
+}
+
+// Adds a symlink under /system/etc/init/config pointing to /system/system_ext/etc/init/config
+// because first-stage init in Android 10.0 will read the skip_mount.cfg from /system/etc/* after
+// chroot /system.
+// TODO: remove this symlink when no need to support new GSI on Android 10.
+// The actual file needs to be under /system/system_ext because it's GSI-specific and does not
+// belong to core CSI.
+install_symlink {
+    name: "gsi_skip_mount_compat_symlink",
+    installed_location: "etc/init/config",
+    symlink_target: "/system/system_ext/etc/init/config",
+}

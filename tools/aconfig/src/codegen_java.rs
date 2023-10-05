@@ -118,10 +118,14 @@ mod tests {
 
     const EXPECTED_FEATUREFLAGS_COMMON_CONTENT: &str = r#"
     package com.android.aconfig.test;
+    /** @hide */
     public interface FeatureFlags {
+        @com.android.aconfig.annotations.AssumeFalseForR8
         boolean disabledRo();
         boolean disabledRw();
+        @com.android.aconfig.annotations.AssumeTrueForR8
         boolean enabledFixedRo();
+        @com.android.aconfig.annotations.AssumeTrueForR8
         boolean enabledRo();
         boolean enabledRw();
     }
@@ -129,22 +133,31 @@ mod tests {
 
     const EXPECTED_FLAG_COMMON_CONTENT: &str = r#"
     package com.android.aconfig.test;
+    /** @hide */
     public final class Flags {
+        /** @hide */
         public static final String FLAG_DISABLED_RO = "com.android.aconfig.test.disabled_ro";
+        /** @hide */
         public static final String FLAG_DISABLED_RW = "com.android.aconfig.test.disabled_rw";
+        /** @hide */
         public static final String FLAG_ENABLED_FIXED_RO = "com.android.aconfig.test.enabled_fixed_ro";
+        /** @hide */
         public static final String FLAG_ENABLED_RO = "com.android.aconfig.test.enabled_ro";
+        /** @hide */
         public static final String FLAG_ENABLED_RW = "com.android.aconfig.test.enabled_rw";
 
+        @com.android.aconfig.annotations.AssumeFalseForR8
         public static boolean disabledRo() {
             return FEATURE_FLAGS.disabledRo();
         }
         public static boolean disabledRw() {
             return FEATURE_FLAGS.disabledRw();
         }
+        @com.android.aconfig.annotations.AssumeTrueForR8
         public static boolean enabledFixedRo() {
             return FEATURE_FLAGS.enabledFixedRo();
         }
+        @com.android.aconfig.annotations.AssumeTrueForR8
         public static boolean enabledRo() {
             return FEATURE_FLAGS.enabledRo();
         }
@@ -157,29 +170,30 @@ mod tests {
     package com.android.aconfig.test;
     import java.util.HashMap;
     import java.util.Map;
+    /** @hide */
     public class FakeFeatureFlagsImpl implements FeatureFlags {
         public FakeFeatureFlagsImpl() {
             resetAll();
         }
         @Override
         public boolean disabledRo() {
-            return getFlag(Flags.FLAG_DISABLED_RO);
+            return getValue(Flags.FLAG_DISABLED_RO);
         }
         @Override
         public boolean disabledRw() {
-            return getFlag(Flags.FLAG_DISABLED_RW);
+            return getValue(Flags.FLAG_DISABLED_RW);
         }
         @Override
         public boolean enabledFixedRo() {
-            return getFlag(Flags.FLAG_ENABLED_FIXED_RO);
+            return getValue(Flags.FLAG_ENABLED_FIXED_RO);
         }
         @Override
         public boolean enabledRo() {
-            return getFlag(Flags.FLAG_ENABLED_RO);
+            return getValue(Flags.FLAG_ENABLED_RO);
         }
         @Override
         public boolean enabledRw() {
-            return getFlag(Flags.FLAG_ENABLED_RW);
+            return getValue(Flags.FLAG_ENABLED_RW);
         }
         public void setFlag(String flagName, boolean value) {
             if (!this.mFlagMap.containsKey(flagName)) {
@@ -192,7 +206,7 @@ mod tests {
                 entry.setValue(null);
             }
         }
-        private boolean getFlag(String flagName) {
+        private boolean getValue(String flagName) {
             Boolean value = this.mFlagMap.get(flagName);
             if (value == null) {
                 throw new IllegalArgumentException(flagName + " is not set");
@@ -200,12 +214,12 @@ mod tests {
             return value;
         }
         private Map<String, Boolean> mFlagMap = new HashMap<>(
-            Map.of(
-                Flags.FLAG_DISABLED_RO, false,
-                Flags.FLAG_DISABLED_RW, false,
-                Flags.FLAG_ENABLED_FIXED_RO, false,
-                Flags.FLAG_ENABLED_RO, false,
-                Flags.FLAG_ENABLED_RW, false
+            Map.ofEntries(
+                Map.entry(Flags.FLAG_DISABLED_RO, false),
+                Map.entry(Flags.FLAG_DISABLED_RW, false),
+                Map.entry(Flags.FLAG_ENABLED_FIXED_RO, false),
+                Map.entry(Flags.FLAG_ENABLED_RO, false),
+                Map.entry(Flags.FLAG_ENABLED_RW, false)
             )
         );
     }
@@ -228,6 +242,7 @@ mod tests {
         let expect_featureflagsimpl_content = r#"
         package com.android.aconfig.test;
         import android.provider.DeviceConfig;
+        /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
             @Override
             public boolean disabledRo() {
@@ -235,7 +250,7 @@ mod tests {
             }
             @Override
             public boolean disabledRw() {
-                return DeviceConfig.getBoolean(
+                return getValue(
                     "aconfig_test",
                     "com.android.aconfig.test.disabled_rw",
                     false
@@ -251,11 +266,32 @@ mod tests {
             }
             @Override
             public boolean enabledRw() {
-                return DeviceConfig.getBoolean(
+                return getValue(
                     "aconfig_test",
                     "com.android.aconfig.test.enabled_rw",
                     true
                 );
+            }
+            private boolean getValue(String nameSpace,
+                String flagName, boolean defaultValue) {
+                boolean value = defaultValue;
+                try {
+                    value = DeviceConfig.getBoolean(
+                        nameSpace,
+                        flagName,
+                        defaultValue
+                    );
+                } catch (NullPointerException e) {
+                    throw new RuntimeException(
+                        "Cannot read value of flag " + flagName + " from DeviceConfig. " +
+                        "It could be that the code using flag executed " +
+                        "before SettingsProvider initialization. " +
+                        "Please use fixed read-only flag by adding " +
+                        "is_fixed_read_only: true in flag declaration.",
+                        e
+                    );
+                }
+                return value;
             }
         }
         "#;
@@ -276,7 +312,7 @@ mod tests {
                 None,
                 crate::test::first_significant_code_diff(
                     file_set.get(file_path).unwrap(),
-                    &String::from_utf8(file.contents.clone()).unwrap()
+                    &String::from_utf8(file.contents).unwrap()
                 ),
                 "File {} content is not correct",
                 file_path
@@ -310,6 +346,7 @@ mod tests {
         "#;
         let expect_featureflagsimpl_content = r#"
         package com.android.aconfig.test;
+        /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
             @Override
             public boolean disabledRo() {
@@ -356,7 +393,7 @@ mod tests {
                 None,
                 crate::test::first_significant_code_diff(
                     file_set.get(file_path).unwrap(),
-                    &String::from_utf8(file.contents.clone()).unwrap()
+                    &String::from_utf8(file.contents).unwrap()
                 ),
                 "File {} content is not correct",
                 file_path

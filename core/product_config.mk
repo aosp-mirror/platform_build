@@ -282,7 +282,11 @@ current_product_makefile :=
 
 #############################################################################
 # Check product include tag allowlist
-BLUEPRINT_INCLUDE_TAGS_ALLOWLIST := com.android.mainline_go com.android.mainline
+BLUEPRINT_INCLUDE_TAGS_ALLOWLIST := \
+  com.android.mainline_go \
+  com.android.mainline \
+  mainline_module_prebuilt_nightly \
+  mainline_module_prebuilt_monthly_release
 .KATI_READONLY := BLUEPRINT_INCLUDE_TAGS_ALLOWLIST
 $(foreach include_tag,$(PRODUCT_INCLUDE_TAGS), \
 	$(if $(filter $(include_tag),$(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST)),,\
@@ -293,7 +297,8 @@ ifeq (, $(PRODUCT_INCLUDE_TAGS))
 # we still analyse it.
 # This means that in setups where we two have two prebuilts of module_sdk, we need a "default" to use in analysis
 # This should be a no-op in aosp and internal since no Android.bp file contains blueprint_package_includes
-PRODUCT_INCLUDE_TAGS += com.android.mainline # Use the big android one by default
+# Use the big android one and main-based prebuilts by default
+PRODUCT_INCLUDE_TAGS += com.android.mainline mainline_module_prebuilt_nightly
 endif
 
 #############################################################################
@@ -546,29 +551,11 @@ endif
 
 $(KATI_obsolete_var OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE,Use PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE instead)
 
-# If build command defines PRODUCT_USE_PRODUCT_VNDK_OVERRIDE as `false`,
-# PRODUCT_PRODUCT_VNDK_VERSION will not be defined automatically.
-# PRODUCT_USE_PRODUCT_VNDK_OVERRIDE can be used for testing only.
-PRODUCT_USE_PRODUCT_VNDK := false
-ifneq ($(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE),)
-  PRODUCT_USE_PRODUCT_VNDK := $(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE)
-else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
-  # No shipping level defined. Enforce the product interface by default.
-  PRODUCT_USE_PRODUCT_VNDK := true
-else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),29),true)
-  # Enforce product interface for VNDK if PRODUCT_SHIPPING_API_LEVEL is greater
-  # than 29.
-  PRODUCT_USE_PRODUCT_VNDK := true
+# From Android V, Define PRODUCT_PRODUCT_VNDK_VERSION as current by default.
+# This is required to make all devices have product variants.
+ifndef PRODUCT_PRODUCT_VNDK_VERSION
+  PRODUCT_PRODUCT_VNDK_VERSION := current
 endif
-
-ifeq ($(PRODUCT_USE_PRODUCT_VNDK),true)
-  ifndef PRODUCT_PRODUCT_VNDK_VERSION
-    PRODUCT_PRODUCT_VNDK_VERSION := current
-  endif
-endif
-
-$(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
-$(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK_OVERRIDE,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
 
 ifdef PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS
     $(error PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS is deprecated, consider using RRO for \

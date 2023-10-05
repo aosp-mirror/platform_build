@@ -3,12 +3,13 @@ package {package_name};
 {{ if is_read_write- }}
 import android.provider.DeviceConfig;
 {{ endif }}
+/** @hide */
 public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ for item in class_elements}}
     @Override
     public boolean {item.method_name}() \{
     {{ -if item.is_read_write }}
-        return DeviceConfig.getBoolean(
+        return getValue(
             "{item.device_config_namespace}",
             "{item.device_config_flag}",
             {item.default_value}
@@ -18,9 +19,33 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
     {{ endif- }}
     }
 {{ endfor }}
+{{ if is_read_write- }}
+    private boolean getValue(String nameSpace,
+        String flagName, boolean defaultValue) \{
+        boolean value = defaultValue;
+        try \{
+            value = DeviceConfig.getBoolean(
+                nameSpace,
+                flagName,
+                defaultValue
+            );
+        } catch (NullPointerException e) \{
+            throw new RuntimeException(
+                "Cannot read value of flag " + flagName + " from DeviceConfig. " +
+                "It could be that the code using flag executed " +
+                "before SettingsProvider initialization. " +
+                "Please use fixed read-only flag by adding " +
+                "is_fixed_read_only: true in flag declaration.",
+                e
+            );
+        }
+        return value;
+    }
+{{ endif- }}
 }
 {{ else }}
 {#- Generate only stub if in test mode #}
+/** @hide */
 public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ for item in class_elements}}
     @Override
