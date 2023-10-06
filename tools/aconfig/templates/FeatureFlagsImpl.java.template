@@ -1,4 +1,6 @@
 package {package_name};
+// TODO(b/303773055): Remove the annotation after access issue is resolved.
+import android.compat.annotation.UnsupportedAppUsage;
 {{ if not is_test_mode }}
 {{ if is_read_write- }}
 import android.provider.DeviceConfig;
@@ -7,6 +9,7 @@ import android.provider.DeviceConfig;
 public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ for item in class_elements}}
     @Override
+    @UnsupportedAppUsage
     public boolean {item.method_name}() \{
     {{ -if item.is_read_write }}
         return getValue(
@@ -49,6 +52,7 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
 public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ for item in class_elements}}
     @Override
+    @UnsupportedAppUsage
     public boolean {item.method_name}() \{
         throw new UnsupportedOperationException(
             "Method is not implemented.");
