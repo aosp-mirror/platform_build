@@ -188,7 +188,7 @@ ifndef PLATFORM_SYSTEMSDK_MIN_VERSION
   # to the public SDK where platform essentially supports all previous SDK versions,
   # platform supports only a few number of recent system SDK versions as some of
   # old system APIs are gradually deprecated, removed and then deleted.
-  PLATFORM_SYSTEMSDK_MIN_VERSION := 28
+  PLATFORM_SYSTEMSDK_MIN_VERSION := 29
 endif
 .KATI_READONLY := PLATFORM_SYSTEMSDK_MIN_VERSION
 
@@ -258,6 +258,6 @@ ifndef PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION
   # Used to set minimum supported target sdk version. Apps targeting sdk
   # version lower than the set value will result in a warning being shown
   # when any activity from the app is started.
-  PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION := 23
+  PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION := 28
 endif
 .KATI_READONLY := PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION
