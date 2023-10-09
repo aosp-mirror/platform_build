@@ -17,6 +17,12 @@
 # This is a simple product that uses configures the minimum amount
 # needed to build the SDK (without the emulator).
 
+# In order to build the bootclasspath sources, the bootclasspath needs to
+# be setup via default_art_config.mk. The sources only really make sense
+# together with a device (e.g. the emulator). So if the SDK sources change
+# to be built with the device, this could be removed.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/default_art_config.mk)
+
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_default.mk)
 
 PRODUCT_NAME := sdk
