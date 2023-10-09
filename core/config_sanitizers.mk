@@ -404,7 +404,6 @@ ifneq ($(my_sanitize),)
     my_ldflags += -fsanitize=$(fsanitize_arg)
   else
     my_cflags += -fsanitize-trap=all
-    my_cflags += -ftrap-function=abort
     ifneq ($(filter address thread,$(my_sanitize)),)
       my_cflags += -fno-sanitize-trap=address,thread
       my_shared_libraries += libdl
