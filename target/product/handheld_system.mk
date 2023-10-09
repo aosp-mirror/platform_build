@@ -40,6 +40,7 @@ PRODUCT_PACKAGES += \
     BuiltInPrintService \
     CalendarProvider \
     cameraserver \
+    com.android.nfcservices \
     CameraExtensionsProxy \
     CaptivePortalLogin \
     CertInstaller \
@@ -55,7 +56,6 @@ PRODUCT_PACKAGES += \
     MmsService \
     MtpService \
     MusicFX \
-    NfcNci \
     PacProcessor \
     PrintRecommendationService \
     PrintSpooler \
