@@ -36,12 +36,7 @@ $(call add_soong_config_var,ANDROID,PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT)
 # Default behavior for the tree wrt building modules or using prebuilts. This
 # can always be overridden by setting the environment variable
 # MODULE_BUILD_FROM_SOURCE.
-BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := $(RELEASE_DEFAULT_MODULE_BUILD_FROM_SOURCE)
-# TODO(b/301454934): The value from build flag is set to empty when use `False`
-# The condition below can be removed after the issue get sorted.
-ifeq (,$(BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE))
-  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := false
-endif
+BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := false
 
 ifneq ($(SANITIZE_TARGET)$(EMMA_INSTRUMENT_FRAMEWORK),)
   # Always use sources when building the framework with Java coverage or
