@@ -14,8 +14,19 @@
 # limitations under the License.
 #
 
-# Don't modify this file - It's just an alias!
+# This is a simple product that uses configures the minimum amount
+# needed to build the SDK (without the emulator).
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/sdk_x86.mk)
+# In order to build the bootclasspath sources, the bootclasspath needs to
+# be setup via default_art_config.mk. The sources only really make sense
+# together with a device (e.g. the emulator). So if the SDK sources change
+# to be built with the device, this could be removed.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/default_art_config.mk)
+
+$(call inherit-product, $(SRC_TARGET_DIR)/product/languages_default.mk)
 
 PRODUCT_NAME := sdk
+PRODUCT_BRAND := Android
+PRODUCT_DEVICE := mainline_x86
+
+PRODUCT_NEXT_RELEASE_HIDE_FLAGGED_API := true
