@@ -896,7 +896,7 @@ BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
 # is made which breaks compatibility with the previous platform sepolicy version,
 # not just on every increase in PLATFORM_SDK_VERSION.  The minor version should
 # be reset to 0 on every bump of the PLATFORM_SDK_VERSION.
-sepolicy_major_vers := 33
+sepolicy_major_vers := 34
 sepolicy_minor_vers := 0
 
 ifneq ($(sepolicy_major_vers), $(PLATFORM_SDK_VERSION))
@@ -1303,9 +1303,8 @@ include $(BUILD_SYSTEM)/ninja_config.mk
 include $(BUILD_SYSTEM)/soong_config.mk
 endif
 
--include external/linux-kselftest/android/kselftest_test_list.mk
 -include external/ltp/android/ltp_package_list.mk
-DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages) $(kselftest_modules)
+DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages)
 .KATI_READONLY := DEFAULT_DATA_OUT_MODULES
 
 include $(BUILD_SYSTEM)/dumpvar.mk

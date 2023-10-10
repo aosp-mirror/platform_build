@@ -79,23 +79,12 @@ PLATFORM_VERSION_ALL_CODENAMES :=
 # Build a list of all active code names. Avoid duplicates, and stop when we
 # reach a codename that matches PLATFORM_VERSION_CODENAME (anything beyond
 # that is not included in our build).
-#
-# REL is filtered out of the list. The codename of the current release is
-# replaced by "REL" when the build is configured as a release rather than a
-# preview. For example, PLATFORM_VERSION_CODENAME.UpsideDownCake will be "REL"
-# rather than UpsideDownCake in a -next target when the upcoming release is
-# UpsideDownCake. "REL" shouldn't really be treated as a codename though. It's a
-# placeholder to indicate that the build is a release and so doesn't really have
-# a codename. The list of all codenames ends up in
-# ro.build.version.all_codenames, and also ends up feeding the logic for stub
-# generation in soong, neither of which are places that should include REL.
 _versions_in_target := \
   $(call find_and_earlier,$(ALL_VERSIONS),$(TARGET_PLATFORM_VERSION))
 $(foreach version,$(_versions_in_target),\
   $(eval _codename := $(PLATFORM_VERSION_CODENAME.$(version)))\
-  $(if $(filter REL,$(_codename)),,\
-      $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_CODENAMES)),,\
-        $(eval PLATFORM_VERSION_ALL_CODENAMES += $(_codename)))))
+  $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_CODENAMES)),,\
+    $(eval PLATFORM_VERSION_ALL_CODENAMES += $(_codename))))
 
 # And the list of actually all the codenames that are in preview. The
 # ALL_CODENAMES variable is sort of a lie for historical reasons and only
@@ -103,11 +92,21 @@ $(foreach version,$(_versions_in_target),\
 # this variable also includes future codenames. For example, while AOSP is still
 # merging into U, but V development has started, ALL_CODENAMES will only be U,
 # but ALL_PREVIEW_CODENAMES will be U and V.
+#
+# REL is filtered out of the list. The codename of the current release is
+# replaced by "REL" when the build is configured as a release rather than a
+# preview. For example, PLATFORM_VERSION_CODENAME.UpsideDownCake will be "REL"
+# rather than UpsideDownCake in a -next target when the upcoming release is
+# UpsideDownCake. "REL" is a codename (and android.os.Build relies on this:
+# https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/os/Build.java;l=484-487;drc=316e3d16c9f34212f3beace7695289651d15a071),
+# so it should be in PLATFORM_VERSION_ALL_CODENAMES, but it definitely is not a
+# preview codename.
 PLATFORM_VERSION_ALL_PREVIEW_CODENAMES :=
 $(foreach version,$(ALL_VERSIONS),\
   $(eval _codename := $(PLATFORM_VERSION_CODENAME.$(version)))\
-  $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_PREVIEW_CODENAMES)),,\
-    $(eval PLATFORM_VERSION_ALL_PREVIEW_CODENAMES += $(_codename))))
+  $(if $(filter REL,$(_codename)),,\
+      $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_PREVIEW_CODENAMES)),,\
+        $(eval PLATFORM_VERSION_ALL_PREVIEW_CODENAMES += $(_codename)))))
 
 # And convert from space separated to comma separated.
 PLATFORM_VERSION_ALL_CODENAMES := \
@@ -199,7 +198,7 @@ ifndef PLATFORM_SYSTEMSDK_MIN_VERSION
   # to the public SDK where platform essentially supports all previous SDK versions,
   # platform supports only a few number of recent system SDK versions as some of
   # old system APIs are gradually deprecated, removed and then deleted.
-  PLATFORM_SYSTEMSDK_MIN_VERSION := 28
+  PLATFORM_SYSTEMSDK_MIN_VERSION := 29
 endif
 .KATI_READONLY := PLATFORM_SYSTEMSDK_MIN_VERSION
 
@@ -269,6 +268,6 @@ ifndef PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION
   # Used to set minimum supported target sdk version. Apps targeting sdk
   # version lower than the set value will result in a warning being shown
   # when any activity from the app is started.
-  PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION := 23
+  PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION := 28
 endif
 .KATI_READONLY := PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION
