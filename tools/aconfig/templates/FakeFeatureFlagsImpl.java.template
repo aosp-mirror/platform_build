@@ -1,4 +1,6 @@
 package {package_name};
+// TODO(b/303773055): Remove the annotation after access issue is resolved.
+import android.compat.annotation.UnsupportedAppUsage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +13,7 @@ public class FakeFeatureFlagsImpl implements FeatureFlags \{
 
 {{ for item in class_elements}}
     @Override
+    @UnsupportedAppUsage
     public boolean {item.method_name}() \{
         return getValue(Flags.FLAG_{item.flag_name_constant_suffix});
     }
