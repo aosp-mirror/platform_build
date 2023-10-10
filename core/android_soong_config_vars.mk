@@ -87,9 +87,9 @@ endif
 
 ifneq (,$(MODULE_BUILD_FROM_SOURCE))
   # Keep an explicit setting.
-else ifeq (,$(filter docs sdk win_sdk sdk_addon,$(MAKECMDGOALS))$(findstring com.google.android.conscrypt,$(PRODUCT_PACKAGES)))
+else ifeq (,$(filter docs sdk win_sdk sdk_addon,$(MAKECMDGOALS))$(findstring com.google.android.conscrypt,$(PRODUCT_PACKAGES))$(findstring com.google.android.go.conscrypt,$(PRODUCT_PACKAGES)))
   # Prebuilt module SDKs require prebuilt modules to work, and currently
-  # prebuilt modules are only provided for com.google.android.xxx. If we can't
+  # prebuilt modules are only provided for com.google.android(.go)?.xxx. If we can't
   # find one of them in PRODUCT_PACKAGES then assume com.android.xxx are in use,
   # and disable prebuilt SDKs. In particular this applies to AOSP builds.
   #
