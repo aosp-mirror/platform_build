@@ -827,6 +827,15 @@ def ExtractOrCopyTargetFiles(target_file):
     return ExtractTargetFiles(target_file)
 
 
+def ValidateCompressinParam(target_info):
+  vabc_compression_param = OPTIONS.vabc_compression_param
+  if vabc_compression_param:
+    minimum_api_level_required = VABC_COMPRESSION_PARAM_SUPPORT[vabc_compression_param]
+    if target_info.vendor_api_level < minimum_api_level_required:
+      raise ValueError("Specified VABC compression param {} is only supported for API level >= {}, device is on API level {}".format(
+          vabc_compression_param, minimum_api_level_required, target_info.vendor_api_level))
+
+
 def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   """Generates an Android OTA package that has A/B update payload."""
   # If input target_files are directories, create a copy so that we can modify
@@ -834,6 +843,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   target_info = common.BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
   if OPTIONS.disable_vabc and target_info.is_release_key:
     raise ValueError("Disabling VABC on release-key builds is not supported.")
+  ValidateCompressinParam(target_info)
+  vabc_compression_param = target_info.vabc_compression_param
 
   target_file = ExtractOrCopyTargetFiles(target_file)
   if source_file is not None:
@@ -862,10 +873,11 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     if not source_info.is_vabc or not target_info.is_vabc:
       logger.info("Either source or target does not support VABC, disabling.")
       OPTIONS.disable_vabc = True
-    if source_info.vabc_compression_param != target_info.vabc_compression_param:
+    if OPTIONS.vabc_compression_param is None and \
+            source_info.vabc_compression_param != target_info.vabc_compression_param:
       logger.info("Source build and target build use different compression methods {} vs {}, default to source builds parameter {}".format(
           source_info.vabc_compression_param, target_info.vabc_compression_param, source_info.vabc_compression_param))
-      OPTIONS.vabc_compression_param = source_info.vabc_compression_param
+      vabc_compression_param = source_info.vabc_compression_param
 
     # Virtual AB Compression was introduced in Androd S.
     # Later, we backported VABC to Android R. But verity support was not
@@ -879,9 +891,9 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     assert "ab_partitions" in OPTIONS.info_dict, \
         "META/ab_partitions.txt is required for ab_update."
     source_info = None
-    if target_info.vabc_compression_param:
+    if OPTIONS.vabc_compression_param is None and vabc_compression_param:
       minimum_api_level_required = VABC_COMPRESSION_PARAM_SUPPORT[
-          target_info.vabc_compression_param]
+          vabc_compression_param]
       if target_info.vendor_api_level < minimum_api_level_required:
         logger.warning(
             "This full OTA is configured to use VABC compression algorithm"
@@ -891,10 +903,10 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
             " served to a device running old build, OTA might fail due to "
             "unsupported compression parameter. For safety, gz is used because "
             "it's supported since day 1.".format(
-                target_info.vabc_compression_param,
+                vabc_compression_param,
                 minimum_api_level_required,
                 target_info.vendor_api_level))
-        OPTIONS.vabc_compression_param = "gz"
+        vabc_compression_param = "gz"
 
   if OPTIONS.partial == []:
     logger.info(
@@ -950,6 +962,9 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
       logger.error("VABC XOR not supported on this vendor, disabling")
       OPTIONS.enable_vabc_xor = False
 
+  if OPTIONS.vabc_compression_param:
+    vabc_compression_param = OPTIONS.vabc_compression_param
+
   additional_args = []
 
   # Prepare custom images.
@@ -964,9 +979,9 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   elif OPTIONS.partial:
     target_file = GetTargetFilesZipForPartialUpdates(target_file,
                                                      OPTIONS.partial)
-  if OPTIONS.vabc_compression_param:
+  if vabc_compression_param != target_info.vabc_compression_param:
     target_file = GetTargetFilesZipForCustomVABCCompression(
-        target_file, OPTIONS.vabc_compression_param)
+        target_file, vabc_compression_param)
   if OPTIONS.skip_postinstall:
     target_file = GetTargetFilesZipWithoutPostinstallConfig(target_file)
   # Target_file may have been modified, reparse ab_partitions
