@@ -365,6 +365,7 @@ bool com_android_aconfig_test_enabled_rw() {
 #include "com_android_aconfig_test.h"
 #include <server_configurable_flags/get_flags.h>
 #include <unordered_map>
+#include <string>
 
 namespace com::android::aconfig::test {
 
