@@ -36,12 +36,29 @@ $(call add_soong_config_var,ANDROID,PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT)
 # Default behavior for the tree wrt building modules or using prebuilts. This
 # can always be overridden by setting the environment variable
 # MODULE_BUILD_FROM_SOURCE.
-BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := $(RELEASE_DEFAULT_MODULE_BUILD_FROM_SOURCE)
+# TODO(b/301454934): The value from build flag is set to empty when use `False`
+# The condition below can be removed after the issue get sorted.
+ifeq (,$(BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE))
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := false
+endif
 
 ifneq ($(SANITIZE_TARGET)$(EMMA_INSTRUMENT_FRAMEWORK),)
   # Always use sources when building the framework with Java coverage or
   # sanitized builds as they both require purpose built prebuilts which we do
   # not provide.
+  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+endif
+
+ifneq ($(CLANG_COVERAGE)$(NATIVE_COVERAGE_PATHS),)
+  # Always use sources when building with clang coverage and native coverage.
+  # It is possible that there are certain situations when building with coverage
+  # would work with prebuilts, e.g. when the coverage is not being applied to
+  # modules for which we provide prebuilts. Unfortunately, determining that
+  # would require embedding knowledge of which coverage paths affect which
+  # modules here. That would duplicate a lot of information, add yet another
+  # location  module authors have to update and complicate the logic here.
+  # For nowe we will just always build from sources when doing coverage builds.
   BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
 endif
 
