@@ -4,6 +4,7 @@
 {{ endif }}
 {{ if for_test }}
 #include <unordered_map>
+#include <string>
 {{ endif }}
 
 namespace {cpp_namespace} \{
