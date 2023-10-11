@@ -92,11 +92,21 @@ $(foreach version,$(_versions_in_target),\
 # this variable also includes future codenames. For example, while AOSP is still
 # merging into U, but V development has started, ALL_CODENAMES will only be U,
 # but ALL_PREVIEW_CODENAMES will be U and V.
+#
+# REL is filtered out of the list. The codename of the current release is
+# replaced by "REL" when the build is configured as a release rather than a
+# preview. For example, PLATFORM_VERSION_CODENAME.UpsideDownCake will be "REL"
+# rather than UpsideDownCake in a -next target when the upcoming release is
+# UpsideDownCake. "REL" is a codename (and android.os.Build relies on this:
+# https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/os/Build.java;l=484-487;drc=316e3d16c9f34212f3beace7695289651d15a071),
+# so it should be in PLATFORM_VERSION_ALL_CODENAMES, but it definitely is not a
+# preview codename.
 PLATFORM_VERSION_ALL_PREVIEW_CODENAMES :=
 $(foreach version,$(ALL_VERSIONS),\
   $(eval _codename := $(PLATFORM_VERSION_CODENAME.$(version)))\
-  $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_PREVIEW_CODENAMES)),,\
-    $(eval PLATFORM_VERSION_ALL_PREVIEW_CODENAMES += $(_codename))))
+  $(if $(filter REL,$(_codename)),,\
+      $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_PREVIEW_CODENAMES)),,\
+        $(eval PLATFORM_VERSION_ALL_PREVIEW_CODENAMES += $(_codename)))))
 
 # And convert from space separated to comma separated.
 PLATFORM_VERSION_ALL_CODENAMES := \
