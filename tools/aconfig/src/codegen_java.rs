@@ -118,21 +118,30 @@ mod tests {
 
     const EXPECTED_FEATUREFLAGS_COMMON_CONTENT: &str = r#"
     package com.android.aconfig.test;
+    // TODO(b/303773055): Remove the annotation after access issue is resolved.
+    import android.compat.annotation.UnsupportedAppUsage;
     /** @hide */
     public interface FeatureFlags {
         @com.android.aconfig.annotations.AssumeFalseForR8
+        @UnsupportedAppUsage
         boolean disabledRo();
+        @UnsupportedAppUsage
         boolean disabledRw();
         @com.android.aconfig.annotations.AssumeTrueForR8
+        @UnsupportedAppUsage
         boolean enabledFixedRo();
         @com.android.aconfig.annotations.AssumeTrueForR8
+        @UnsupportedAppUsage
         boolean enabledRo();
+        @UnsupportedAppUsage
         boolean enabledRw();
     }
     "#;
 
     const EXPECTED_FLAG_COMMON_CONTENT: &str = r#"
     package com.android.aconfig.test;
+    // TODO(b/303773055): Remove the annotation after access issue is resolved.
+    import android.compat.annotation.UnsupportedAppUsage;
     /** @hide */
     public final class Flags {
         /** @hide */
@@ -147,20 +156,25 @@ mod tests {
         public static final String FLAG_ENABLED_RW = "com.android.aconfig.test.enabled_rw";
 
         @com.android.aconfig.annotations.AssumeFalseForR8
+        @UnsupportedAppUsage
         public static boolean disabledRo() {
             return FEATURE_FLAGS.disabledRo();
         }
+        @UnsupportedAppUsage
         public static boolean disabledRw() {
             return FEATURE_FLAGS.disabledRw();
         }
         @com.android.aconfig.annotations.AssumeTrueForR8
+        @UnsupportedAppUsage
         public static boolean enabledFixedRo() {
             return FEATURE_FLAGS.enabledFixedRo();
         }
         @com.android.aconfig.annotations.AssumeTrueForR8
+        @UnsupportedAppUsage
         public static boolean enabledRo() {
             return FEATURE_FLAGS.enabledRo();
         }
+        @UnsupportedAppUsage
         public static boolean enabledRw() {
             return FEATURE_FLAGS.enabledRw();
         }
@@ -168,6 +182,8 @@ mod tests {
 
     const EXPECTED_FAKEFEATUREFLAGSIMPL_CONTENT: &str = r#"
     package com.android.aconfig.test;
+    // TODO(b/303773055): Remove the annotation after access issue is resolved.
+    import android.compat.annotation.UnsupportedAppUsage;
     import java.util.HashMap;
     import java.util.Map;
     /** @hide */
@@ -176,22 +192,27 @@ mod tests {
             resetAll();
         }
         @Override
+        @UnsupportedAppUsage
         public boolean disabledRo() {
             return getValue(Flags.FLAG_DISABLED_RO);
         }
         @Override
+        @UnsupportedAppUsage
         public boolean disabledRw() {
             return getValue(Flags.FLAG_DISABLED_RW);
         }
         @Override
+        @UnsupportedAppUsage
         public boolean enabledFixedRo() {
             return getValue(Flags.FLAG_ENABLED_FIXED_RO);
         }
         @Override
+        @UnsupportedAppUsage
         public boolean enabledRo() {
             return getValue(Flags.FLAG_ENABLED_RO);
         }
         @Override
+        @UnsupportedAppUsage
         public boolean enabledRw() {
             return getValue(Flags.FLAG_ENABLED_RW);
         }
@@ -241,14 +262,18 @@ mod tests {
 
         let expect_featureflagsimpl_content = r#"
         package com.android.aconfig.test;
+        // TODO(b/303773055): Remove the annotation after access issue is resolved.
+        import android.compat.annotation.UnsupportedAppUsage;
         import android.provider.DeviceConfig;
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
             @Override
+            @UnsupportedAppUsage
             public boolean disabledRo() {
                 return false;
             }
             @Override
+            @UnsupportedAppUsage
             public boolean disabledRw() {
                 return getValue(
                     "aconfig_test",
@@ -257,14 +282,17 @@ mod tests {
                 );
             }
             @Override
+            @UnsupportedAppUsage
             public boolean enabledFixedRo() {
                 return true;
             }
             @Override
+            @UnsupportedAppUsage
             public boolean enabledRo() {
                 return true;
             }
             @Override
+            @UnsupportedAppUsage
             public boolean enabledRw() {
                 return getValue(
                     "aconfig_test",
@@ -346,29 +374,36 @@ mod tests {
         "#;
         let expect_featureflagsimpl_content = r#"
         package com.android.aconfig.test;
+        // TODO(b/303773055): Remove the annotation after access issue is resolved.
+        import android.compat.annotation.UnsupportedAppUsage;
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
             @Override
+            @UnsupportedAppUsage
             public boolean disabledRo() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
             }
             @Override
+            @UnsupportedAppUsage
             public boolean disabledRw() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
             }
             @Override
+            @UnsupportedAppUsage
             public boolean enabledFixedRo() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
             }
             @Override
+            @UnsupportedAppUsage
             public boolean enabledRo() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
             }
             @Override
+            @UnsupportedAppUsage
             public boolean enabledRw() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
