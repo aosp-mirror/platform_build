@@ -45,9 +45,7 @@ function finalize_sdk_rel() {
     git -C "$top/cts" mv hostsidetests/theme/assets/${FINAL_PLATFORM_CODENAME} hostsidetests/theme/assets/${FINAL_PLATFORM_SDK_VERSION}
 
     # system/sepolicy
-    mkdir -p "$top/system/sepolicy/prebuilts/api/${FINAL_PLATFORM_SDK_VERSION}.0/"
-    cp -r "$top/system/sepolicy/public/" "$top/system/sepolicy/prebuilts/api/${FINAL_PLATFORM_SDK_VERSION}.0/"
-    cp -r "$top/system/sepolicy/private/" "$top/system/sepolicy/prebuilts/api/${FINAL_PLATFORM_SDK_VERSION}.0/"
+    system/sepolicy/tools/finalize-sdk-rel.sh "$top" "$FINAL_PLATFORM_SDK_VERSION"
 
     # prebuilts/abi-dumps/ndk
     mkdir -p "$top/prebuilts/abi-dumps/ndk/$FINAL_PLATFORM_SDK_VERSION"
