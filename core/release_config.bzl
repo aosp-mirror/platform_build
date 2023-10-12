@@ -11,6 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""
+Export build flags (with values) to make.
+"""
 
 load("//build/bazel/utils:schema_validation.bzl", "validate")
 
@@ -73,7 +76,16 @@ _all_values_schema = {
 }
 
 def flag(name, partitions, default):
-    "Declare a flag."
+    """Declare a flag.
+
+    Args:
+      name: name of the flag
+      partitions: the partitions where this should be recorded.
+      default: the default value of the flag.
+
+    Returns:
+      A dictionary containing the flag declaration.
+    """
     if not partitions:
         fail("At least 1 partition is required")
     if not name.startswith("RELEASE_"):
@@ -96,14 +108,29 @@ def flag(name, partitions, default):
     }
 
 def value(name, value):
-    "Define the flag value for a particular configuration."
+    """Define the flag value for a particular configuration.
+
+    Args:
+      name: The name of the flag.
+      value: The value for the flag.
+
+    Returns:
+      A dictionary containing the name and value to be used.
+    """
     return {
         "name": name,
         "value": value,
     }
 
 def _format_value(val):
-    "Format the starlark type correctly for make"
+    """Format the starlark type correctly for make.
+
+    Args:
+      val: The value to format
+
+    Returns:
+      The value, formatted correctly for make.
+    """
     if type(val) == "NoneType":
         return ""
     elif type(val) == "bool":
@@ -112,7 +139,15 @@ def _format_value(val):
         return val
 
 def release_config(all_flags, all_values):
-    "Return the make variables that should be set for this release config."
+    """Return the make variables that should be set for this release config.
+
+    Args:
+      all_flags: A list of flag objects (from flag() calls).
+      all_values: A list of value objects (from value() calls).
+
+    Returns:
+      A dictionary of {name: value} variables for make.
+    """
     validate(all_flags, _all_flags_schema)
     validate(all_values, _all_values_schema)
 
