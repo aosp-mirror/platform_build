@@ -18,7 +18,7 @@
 
 use aconfig_protos::aconfig::Flag_state as State;
 use aconfig_protos::aconfig::Parsed_flags as ProtoParsedFlags;
-use anyhow::{bail, Result};
+use anyhow::{bail, Context, Result};
 use regex::Regex;
 use std::collections::HashMap;
 use std::process::Command;
@@ -37,6 +37,19 @@ fn parse_device_config(raw: &str) -> HashMap<String, String> {
         flags.insert(key, value);
     }
     flags
+}
+
+fn xxd(bytes: &[u8]) -> String {
+    let n = 8.min(bytes.len());
+    let mut v = Vec::with_capacity(n);
+    for byte in bytes.iter().take(n) {
+        v.push(format!("{:02x}", byte));
+    }
+    let trailer = match bytes.len() {
+        0..=8 => "",
+        _ => " ..",
+    };
+    format!("[{}{}]", v.join(" "), trailer)
 }
 
 fn main() -> Result<()> {
@@ -60,7 +73,10 @@ fn main() -> Result<()> {
             eprintln!("warning: failed to read {}", path);
             continue;
         };
-        let parsed_flags: ProtoParsedFlags = protobuf::Message::parse_from_bytes(&bytes)?;
+        let parsed_flags: ProtoParsedFlags = protobuf::Message::parse_from_bytes(&bytes)
+            .with_context(|| {
+                format!("failed to parse {} ({}, {} byte(s))", path, xxd(&bytes), bytes.len())
+            })?;
         for flag in parsed_flags.parsed_flag {
             let key = format!("{}/{}.{}", flag.namespace(), flag.package(), flag.name());
             let value = format!("{:?} + {:?} ({})", flag.permission(), flag.state(), partition);
@@ -85,7 +101,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_foo() {
+    fn test_parse_device_config() {
         let input = r#"
 namespace_one/com.foo.bar.flag_one=true
 namespace_one/com.foo.bar.flag_two=false
@@ -106,5 +122,17 @@ namespace_two/android.flag_two=nonsense
         ]);
         let actual = parse_device_config(input);
         assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_xxd() {
+        let input = [0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9];
+        assert_eq!("[]", &xxd(&input[0..0]));
+        assert_eq!("[00]", &xxd(&input[0..1]));
+        assert_eq!("[00 01]", &xxd(&input[0..2]));
+        assert_eq!("[00 01 02 03 04 05 06]", &xxd(&input[0..7]));
+        assert_eq!("[00 01 02 03 04 05 06 07]", &xxd(&input[0..8]));
+        assert_eq!("[00 01 02 03 04 05 06 07 ..]", &xxd(&input[0..9]));
+        assert_eq!("[00 01 02 03 04 05 06 07 ..]", &xxd(&input));
     }
 }
