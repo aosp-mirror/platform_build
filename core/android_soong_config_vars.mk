@@ -133,6 +133,7 @@ INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
   rkpd \
   uwb \
   wifi \
+  mediaprovider \
 
 $(foreach m, $(INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES),\
   $(if $(call soong_config_get,$(m)_module,source_build),,\
