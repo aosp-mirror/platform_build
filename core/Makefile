@@ -3439,22 +3439,12 @@ BUILT_SYSTEMIMAGE :=$= $(systemimage_intermediates)/system.img
 $(systemimage_intermediates)/staging_dir.stamp: $(FULL_SYSTEMIMAGE_DEPS)
 	touch $@
 
-COMPARE_FILE_LIST_TO_STAGING_DIR :=$= $(HOST_OUT_EXECUTABLES)/compare_file_list_to_staging_dir
-# Args:
-# $(1): The output file
-# $(2): The staging directory
-# $(3): The full list of files that should go into the partition.
-define create-partition-file-list
-$(1)-validate: $(1) $(strip $(3)) $(COMPARE_FILE_LIST_TO_STAGING_DIR) $(OUT_DIR)/partitions_were_clean_at_start_of_build.txt
-	rm -f $$@
-	$(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,$(COMPARE_FILE_LIST_TO_STAGING_DIR) $(OUT_DIR)/partitions_were_clean_at_start_of_build.txt $1 $(2))
-	touch $$@
-$(1): .KATI_VALIDATIONS := $(1)-validate
+define write-file-lines
 $(1):
 	@echo Writing $$@
 	rm -f $$@
-	touch $$@
-	$$(foreach f,$(subst $(2)/,,$(filter $(2)/%,$(3))),echo "$$(f)" >> $$@$$(newline))
+	echo -n > $$@
+	$$(foreach f,$(2),echo "$$(f)" >> $$@$$(newline))
 endef
 
 # $(1): output file
@@ -3472,7 +3462,7 @@ define build-systemimage-target
                exit 1 )
 endef
 
-$(eval $(call create-partition-file-list,$(systemimage_intermediates)/file_list.txt,$(TARGET_OUT),$(FULL_SYSTEMIMAGE_DEPS)))
+$(eval $(call write-file-lines,$(systemimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT)/,,$(filter $(TARGET_OUT)/%,$(FULL_SYSTEMIMAGE_DEPS)))))
 
 ifeq ($(BOARD_AVB_ENABLE),true)
 $(BUILT_SYSTEMIMAGE): $(BOARD_AVB_SYSTEM_KEY_PATH)
@@ -3586,7 +3576,7 @@ INSTALLED_USERDATAIMAGE_TARGET_DEPS := \
     $(INTERNAL_USERIMAGES_DEPS) \
     $(INTERNAL_USERDATAIMAGE_FILES)
 
-$(eval $(call create-partition-file-list,$(userdataimage_intermediates)/file_list.txt,$(TARGET_OUT_DATA),$(INSTALLED_USERDATAIMAGE_TARGET_DEPS)))
+$(eval $(call write-file-lines,$(userdataimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_DATA)/,,$(filter $(TARGET_OUT_DATA)/%,$(INSTALLED_USERDATAIMAGE_TARGET_DEPS)))))
 
 $(INSTALLED_USERDATAIMAGE_TARGET): $(INSTALLED_USERDATAIMAGE_TARGET_DEPS) $(userdataimage_intermediates)/file_list.txt
 	$(build-userdataimage-target)
@@ -3639,7 +3629,7 @@ define build-cacheimage-target
   $(call assert-max-image-size,$(INSTALLED_CACHEIMAGE_TARGET),$(BOARD_CACHEIMAGE_PARTITION_SIZE))
 endef
 
-$(eval $(call create-partition-file-list,$(cacheimage_intermediates)/file_list.txt,$(TARGET_OUT_CACHE),$(INTERNAL_CACHEIMAGE_FILES)))
+$(eval $(call write-file-lines,$(cacheimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_CACHE)/,,$(filter $(TARGET_OUT_CACHE)/%,$(INTERNAL_CACHEIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_CACHEIMAGE_TARGET := $(BUILT_CACHEIMAGE_TARGET)
@@ -3723,7 +3713,7 @@ define build-systemotherimage-target
   $(call assert-max-image-size,$(INSTALLED_SYSTEMOTHERIMAGE_TARGET),$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))
 endef
 
-$(eval $(call create-partition-file-list,$(systemotherimage_intermediates)/file_list.txt,$(TARGET_OUT_SYSTEM_OTHER),$(INTERNAL_SYSTEMOTHERIMAGE_FILES)))
+$(eval $(call write-file-lines,$(systemotherimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_SYSTEM_OTHER)/,,$(filter $(TARGET_OUT_SYSTEM_OTHER)/%,$(INTERNAL_SYSTEMOTHERIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_SYSTEMOTHERIMAGE_TARGET := $(BUILT_SYSTEMOTHERIMAGE_TARGET)
@@ -3826,7 +3816,7 @@ define build-vendorimage-target
   $(call assert-max-image-size,$(INSTALLED_VENDORIMAGE_TARGET) $(RECOVERY_FROM_BOOT_PATCH),$(BOARD_VENDORIMAGE_PARTITION_SIZE))
 endef
 
-$(eval $(call create-partition-file-list,$(vendorimage_intermediates)/file_list.txt,$(TARGET_OUT_VENDOR),$(INTERNAL_VENDORIMAGE_FILES)))
+$(eval $(call write-file-lines,$(vendorimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_VENDOR)/,,$(filter $(TARGET_OUT_VENDOR)/%,$(INTERNAL_VENDORIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_VENDORIMAGE_TARGET := $(BUILT_VENDORIMAGE_TARGET)
@@ -3896,7 +3886,7 @@ define build-productimage-target
   $(call assert-max-image-size,$(INSTALLED_PRODUCTIMAGE_TARGET),$(BOARD_PRODUCTIMAGE_PARTITION_SIZE))
 endef
 
-$(eval $(call create-partition-file-list,$(productimage_intermediates)/file_list.txt,$(TARGET_OUT_PRODUCT),$(INTERNAL_PRODUCTIMAGE_FILES)))
+$(eval $(call write-file-lines,$(productimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_PRODUCT)/,,$(filter $(TARGET_OUT_PRODUCT)/%,$(INTERNAL_PRODUCTIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_PRODUCTIMAGE_TARGET := $(BUILT_PRODUCTIMAGE_TARGET)
@@ -3963,7 +3953,7 @@ define build-system_extimage-target
   $(call assert-max-image-size,$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET),$(BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE))
 endef
 
-$(eval $(call create-partition-file-list,$(system_extimage_intermediates)/file_list.txt,$(TARGET_OUT_SYSTEM_EXT),$(INTERNAL_SYSTEM_EXTIMAGE_FILES)))
+$(eval $(call write-file-lines,$(system_extimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_SYSTEM_EXT)/,,$(filter $(TARGET_OUT_SYSTEM_EXT)/%,$(INTERNAL_SYSTEM_EXTIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_SYSTEM_EXTIMAGE_TARGET := $(BUILT_SYSTEM_EXTIMAGE_TARGET)
@@ -4049,7 +4039,7 @@ define build-odmimage-target
   $(call assert-max-image-size,$(INSTALLED_ODMIMAGE_TARGET),$(BOARD_ODMIMAGE_PARTITION_SIZE))
 endef
 
-$(eval $(call create-partition-file-list,$(odmimage_intermediates)/file_list.txt,$(TARGET_OUT_ODM),$(INTERNAL_ODMIMAGE_FILES)))
+$(eval $(call write-file-lines,$(odmimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_ODM)/,,$(filter $(TARGET_OUT_ODM)/%,$(INTERNAL_ODMIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_ODMIMAGE_TARGET := $(BUILT_ODMIMAGE_TARGET)
@@ -4115,7 +4105,7 @@ define build-vendor_dlkmimage-target
   $(call assert-max-image-size,$(INSTALLED_VENDOR_DLKMIMAGE_TARGET),$(BOARD_VENDOR_DLKMIMAGE_PARTITION_SIZE))
 endef
 
-$(eval $(call create-partition-file-list,$(vendor_dlkmimage_intermediates)/file_list.txt,$(TARGET_OUT_VENDOR_DLKM),$(INTERNAL_VENDOR_DLKMIMAGE_FILES)))
+$(eval $(call write-file-lines,$(vendor_dlkmimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_VENDOR_DLKM)/,,$(filter $(TARGET_OUT_VENDOR_DLKM)/%,$(INTERNAL_VENDOR_DLKMIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_VENDOR_DLKMIMAGE_TARGET := $(BUILT_VENDOR_DLKMIMAGE_TARGET)
@@ -4181,7 +4171,7 @@ define build-odm_dlkmimage-target
   $(call assert-max-image-size,$(INSTALLED_ODM_DLKMIMAGE_TARGET),$(BOARD_ODM_DLKMIMAGE_PARTITION_SIZE))
 endef
 
-$(eval $(call create-partition-file-list,$(odm_dlkmimage_intermediates)/file_list.txt,$(TARGET_OUT_ODM_DLKM),$(INTERNAL_ODM_DLKMIMAGE_FILES)))
+$(eval $(call write-file-lines,$(odm_dlkmimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_ODM_DLKM)/,,$(filter $(TARGET_OUT_ODM_DLKM)/%,$(INTERNAL_ODM_DLKMIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_ODM_DLKMIMAGE_TARGET := $(BUILT_ODM_DLKMIMAGE_TARGET)
@@ -4249,7 +4239,7 @@ define build-system_dlkmimage-target
   $(call assert-max-image-size,$(INSTALLED_SYSTEM_DLKMIMAGE_TARGET),$(BOARD_SYSTEM_DLKMIMAGE_PARTITION_SIZE))
 endef
 
-$(eval $(call create-partition-file-list,$(system_dlkmimage_intermediates)/file_list.txt,$(TARGET_OUT_SYSTEM_DLKM),$(INTERNAL_SYSTEM_DLKMIMAGE_FILES)))
+$(eval $(call write-file-lines,$(system_dlkmimage_intermediates)/file_list.txt,$(subst $(TARGET_OUT_SYSTEM_DLKM)/,,$(filter $(TARGET_OUT_SYSTEM_DLKM)/%,$(INTERNAL_SYSTEM_DLKMIMAGE_FILES)))))
 
 # We just build this directly to the install location.
 INSTALLED_SYSTEM_DLKMIMAGE_TARGET := $(BUILT_SYSTEM_DLKMIMAGE_TARGET)
