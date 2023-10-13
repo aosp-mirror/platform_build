@@ -5049,8 +5049,11 @@ APEX_OUT := $(intermediates)/apex
 APEX_INFO_FILE := $(APEX_OUT)/apex-info-list.xml
 
 # apexd_host scans/activates APEX files and writes /apex/apex-info-list.xml
+# Note that `@echo $(PRIVATE_APEX_FILES)` line is added to trigger the rule when the APEX list is changed.
+$(APEX_INFO_FILE): PRIVATE_APEX_FILES := $(apex_files)
 $(APEX_INFO_FILE): $(HOST_OUT_EXECUTABLES)/apexd_host $(apex_files)
 	@echo "Extracting apexes..."
+	@echo $(PRIVATE_APEX_FILES) > /dev/null
 	@rm -rf $(APEX_OUT)
 	@mkdir -p $(APEX_OUT)
 	$< --vendor_path $(TARGET_OUT_VENDOR) \
