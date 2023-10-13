@@ -8,6 +8,7 @@ include $(BUILD_SYSTEM)/dex_preopt_config.mk
 ifndef AFDO_PROFILES
 # Set AFDO_PROFILES
 -include vendor/google_data/pgo_profile/sampling/afdo_profiles.mk
+include toolchain/pgo-profiles/sampling/afdo_profiles.mk
 else
 $(error AFDO_PROFILES can only be set from soong_config.mk. For product-specific fdo_profiles, please use PRODUCT_AFDO_PROFILES)
 endif
