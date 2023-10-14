@@ -2955,7 +2955,7 @@ endef
 ifeq ($(HOST_OS),linux)
 # Runs appcompat and store logs in $(PRODUCT_OUT)/appcompat
 define extract-package
-$(AAPT2) dump resources $@ | awk -F ' |=' '/^Package/{print $$3}' >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log &&
+$(AAPT2) dump resources $@ | awk -F ' |=' '/^Package/{print $$3; exit}' >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log &&
 endef
 define appcompat-header
 $(hide) \
