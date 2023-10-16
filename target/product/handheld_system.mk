@@ -40,9 +40,11 @@ PRODUCT_PACKAGES += \
     BuiltInPrintService \
     CalendarProvider \
     cameraserver \
+    com.android.nfcservices \
     CameraExtensionsProxy \
     CaptivePortalLogin \
     CertInstaller \
+    CredentialManager \
     DocumentsUI \
     DownloadProviderUi \
     EasterEgg \
@@ -55,8 +57,8 @@ PRODUCT_PACKAGES += \
     MmsService \
     MtpService \
     MusicFX \
-    NfcNci \
     PacProcessor \
+    preinstalled-packages-platform-handheld-system.xml \
     PrintRecommendationService \
     PrintSpooler \
     ProxyHandler \
@@ -80,7 +82,8 @@ PRODUCT_SYSTEM_SERVER_APPS += \
     Telecom \
 
 PRODUCT_COPY_FILES += \
-    frameworks/av/media/libeffects/data/audio_effects.conf:system/etc/audio_effects.conf
+    frameworks/av/media/libeffects/data/audio_effects.xml:system/etc/audio_effects.xml \
+    frameworks/native/data/etc/android.software.window_magnification.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/android.software.window_magnification.xml \
 
 PRODUCT_VENDOR_PROPERTIES += \
     ro.carrier?=unknown \

@@ -19,11 +19,9 @@ PRODUCT_PACKAGES += \
     abx \
     adbd_system_api \
     am \
-    android.hidl.allocator@1.0-service \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
     android.hidl.memory@1.0-impl \
-    android.hidl.memory@1.0-impl.vendor \
     android.system.suspend-service \
     android.test.base \
     android.test.mock \
@@ -53,8 +51,11 @@ PRODUCT_PACKAGES += \
     com.android.adservices \
     com.android.appsearch \
     com.android.btservices \
+    com.android.configinfrastructure \
     com.android.conscrypt \
+    com.android.devicelock \
     com.android.extservices \
+    com.android.healthfitness \
     com.android.i18n \
     com.android.ipsec \
     com.android.location.provider \
@@ -70,7 +71,6 @@ PRODUCT_PACKAGES += \
     com.android.scheduling \
     com.android.sdkext \
     com.android.tethering \
-    com.android.threadnetwork \
     com.android.tzdata \
     com.android.uwb \
     com.android.virt \
@@ -109,7 +109,6 @@ PRODUCT_PACKAGES += \
     gatekeeperd \
     gpuservice \
     hid \
-    hwservicemanager \
     idmap2 \
     idmap2d \
     ime \
@@ -120,6 +119,7 @@ PRODUCT_PACKAGES += \
     incident-helper-cmd \
     init.environ.rc \
     init_system \
+    initial-package-stopped-states.xml \
     input \
     installd \
     IntentResolver \
@@ -238,7 +238,9 @@ PRODUCT_PACKAGES += \
     platform.xml \
     pm \
     pppd \
+    preinstalled-packages-asl-files.xml \
     preinstalled-packages-platform.xml \
+    printflags \
     privapp-permissions-platform.xml \
     prng_seeder \
     racoon \
@@ -284,7 +286,6 @@ PRODUCT_PACKAGES += \
     viewcompiler \
     voip-common \
     vold \
-    WallpaperBackup \
     watchdogd \
     wificond \
     wifi.rc \
@@ -309,6 +310,14 @@ PRODUCT_PACKAGES += \
     system_manifest.xml \
     system_compatibility_matrix.xml \
 
+HIDL_SUPPORT_SERVICES := \
+    hwservicemanager \
+    android.hidl.allocator@1.0-service \
+
+# Base modules when shipping api level is less than or equal to 34
+PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34 += \
+    $(HIDL_SUPPORT_SERVICES) \
+
 PRODUCT_PACKAGES_ARM64 := libclang_rt.hwasan \
  libclang_rt.hwasan.bootstrap \
  libc_hwasan \
@@ -330,6 +339,11 @@ ifeq ($(EMMA_INSTRUMENT),true)
   endif # EMMA_INSTRUMENT_STATIC
 endif # EMMA_INSTRUMENT
 
+ifeq (,$(DISABLE_WALLPAPER_BACKUP))
+  PRODUCT_PACKAGES += \
+    WallpaperBackup
+endif
+
 # For testing purposes
 ifeq ($(FORCE_AUDIO_SILENT), true)
     PRODUCT_SYSTEM_PROPERTIES += ro.audio.silent=1
@@ -339,6 +353,7 @@ endif
 PRODUCT_HOST_PACKAGES += \
     BugReport \
     adb \
+    adevice \
     art-tools \
     atest \
     bcc \
@@ -386,6 +401,7 @@ PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
+    adevice_fingerprint \
     arping \
     dmuserd \
     idlcli \
@@ -393,6 +409,7 @@ PRODUCT_PACKAGES_DEBUG := \
     iotop \
     iperf3 \
     iw \
+    layertracegenerator \
     libclang_rt.ubsan_standalone \
     logpersist.start \
     logtagd.rc \
@@ -418,7 +435,11 @@ PRODUCT_PACKAGES_DEBUG := \
 # The set of packages whose code can be loaded by the system server.
 PRODUCT_SYSTEM_SERVER_APPS += \
     SettingsProvider \
+
+ifeq (,$(DISABLE_WALLPAPER_BACKUP))
+  PRODUCT_SYSTEM_SERVER_APPS += \
     WallpaperBackup
+endif
 
 PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE := \
     libdumpcoverage
@@ -432,3 +453,6 @@ PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/dirty-image-objects:system/etc/dirty-image-objects)
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
+
+# Use "image" APEXes always.
+$(call inherit-product,$(SRC_TARGET_DIR)/product/updatable_apex.mk)

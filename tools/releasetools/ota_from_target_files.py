@@ -274,7 +274,7 @@ import zipfile
 import care_map_pb2
 import common
 import ota_utils
-from ota_utils import (UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata,
+from ota_utils import (VABC_COMPRESSION_PARAM_SUPPORT, FinalizeMetadata, GetPackageMetadata,
                        PayloadGenerator, SECURITY_PATCH_LEVEL_PROP_NAME, ExtractTargetFiles, CopyTargetFilesDir)
 from common import DoesInputFileContain, IsSparseImage
 import target_files_diff
@@ -728,47 +728,33 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   return input_file
 
 
-def GetTargetFilesZipForCustomImagesUpdates(input_file, custom_images):
+def GetTargetFilesZipForCustomImagesUpdates(input_file, custom_images: dict):
   """Returns a target-files.zip for custom partitions update.
 
   This function modifies ab_partitions list with the desired custom partitions
   and puts the custom images into the target target-files.zip.
 
   Args:
-    input_file: The input target-files.zip filename.
+    input_file: The input target-files extracted directory
     custom_images: A map of custom partitions and custom images.
 
   Returns:
-    The filename of a target-files.zip which has renamed the custom images in
-    the IMAGES/ to their partition names.
+    The extracted dir of a target-files.zip which has renamed the custom images
+    in the IMAGES/ to their partition names.
   """
+  for custom_image in custom_images.values():
+    if not os.path.exists(os.path.join(input_file, "IMAGES", custom_image)):
+      raise ValueError("Specified custom image {} not found in target files {}, available images are {}",
+                       custom_image, input_file, os.listdir(os.path.join(input_file, "IMAGES")))
 
-  # First pass: use zip2zip to copy the target files contents, excluding
-  # the "custom" images that will be replaced.
-  target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
-  cmd = ['zip2zip', '-i', input_file, '-o', target_file]
-
-  images = {}
   for custom_partition, custom_image in custom_images.items():
     default_custom_image = '{}.img'.format(custom_partition)
     if default_custom_image != custom_image:
-      src = 'IMAGES/' + custom_image
-      dst = 'IMAGES/' + default_custom_image
-      cmd.extend(['-x', dst])
-      images[dst] = src
+      src = os.path.join(input_file, 'IMAGES', custom_image)
+      dst = os.path.join(input_file, 'IMAGES', default_custom_image)
+      os.rename(src, dst)
 
-  common.RunAndCheckOutput(cmd)
-
-  # Second pass: write {custom_image}.img as {custom_partition}.img.
-  with zipfile.ZipFile(input_file, allowZip64=True) as input_zip:
-    with zipfile.ZipFile(target_file, 'a', allowZip64=True) as output_zip:
-      for dst, src in images.items():
-        data = input_zip.read(src)
-        logger.info("Update custom partition '%s'", dst)
-        common.ZipWriteStr(output_zip, dst, data)
-      output_zip.close()
-
-  return target_file
+  return input_file
 
 
 def GeneratePartitionTimestampFlags(partition_state):
@@ -841,10 +827,25 @@ def ExtractOrCopyTargetFiles(target_file):
     return ExtractTargetFiles(target_file)
 
 
+def ValidateCompressinParam(target_info):
+  vabc_compression_param = OPTIONS.vabc_compression_param
+  if vabc_compression_param:
+    minimum_api_level_required = VABC_COMPRESSION_PARAM_SUPPORT[vabc_compression_param]
+    if target_info.vendor_api_level < minimum_api_level_required:
+      raise ValueError("Specified VABC compression param {} is only supported for API level >= {}, device is on API level {}".format(
+          vabc_compression_param, minimum_api_level_required, target_info.vendor_api_level))
+
+
 def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   """Generates an Android OTA package that has A/B update payload."""
   # If input target_files are directories, create a copy so that we can modify
   # them directly
+  target_info = common.BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
+  if OPTIONS.disable_vabc and target_info.is_release_key:
+    raise ValueError("Disabling VABC on release-key builds is not supported.")
+  ValidateCompressinParam(target_info)
+  vabc_compression_param = target_info.vabc_compression_param
+
   target_file = ExtractOrCopyTargetFiles(target_file)
   if source_file is not None:
     source_file = ExtractOrCopyTargetFiles(source_file)
@@ -872,6 +873,11 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     if not source_info.is_vabc or not target_info.is_vabc:
       logger.info("Either source or target does not support VABC, disabling.")
       OPTIONS.disable_vabc = True
+    if OPTIONS.vabc_compression_param is None and \
+            source_info.vabc_compression_param != target_info.vabc_compression_param:
+      logger.info("Source build and target build use different compression methods {} vs {}, default to source builds parameter {}".format(
+          source_info.vabc_compression_param, target_info.vabc_compression_param, source_info.vabc_compression_param))
+      vabc_compression_param = source_info.vabc_compression_param
 
     # Virtual AB Compression was introduced in Androd S.
     # Later, we backported VABC to Android R. But verity support was not
@@ -884,8 +890,23 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   else:
     assert "ab_partitions" in OPTIONS.info_dict, \
         "META/ab_partitions.txt is required for ab_update."
-    target_info = common.BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
     source_info = None
+    if OPTIONS.vabc_compression_param is None and vabc_compression_param:
+      minimum_api_level_required = VABC_COMPRESSION_PARAM_SUPPORT[
+          vabc_compression_param]
+      if target_info.vendor_api_level < minimum_api_level_required:
+        logger.warning(
+            "This full OTA is configured to use VABC compression algorithm"
+            " {}, which is supported since"
+            " Android API level {}, but device is "
+            "launched with {} . If this full OTA is"
+            " served to a device running old build, OTA might fail due to "
+            "unsupported compression parameter. For safety, gz is used because "
+            "it's supported since day 1.".format(
+                vabc_compression_param,
+                minimum_api_level_required,
+                target_info.vendor_api_level))
+        vabc_compression_param = "gz"
 
   if OPTIONS.partial == []:
     logger.info(
@@ -941,6 +962,9 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
       logger.error("VABC XOR not supported on this vendor, disabling")
       OPTIONS.enable_vabc_xor = False
 
+  if OPTIONS.vabc_compression_param:
+    vabc_compression_param = OPTIONS.vabc_compression_param
+
   additional_args = []
 
   # Prepare custom images.
@@ -955,9 +979,9 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   elif OPTIONS.partial:
     target_file = GetTargetFilesZipForPartialUpdates(target_file,
                                                      OPTIONS.partial)
-  if OPTIONS.vabc_compression_param:
+  if vabc_compression_param != target_info.vabc_compression_param:
     target_file = GetTargetFilesZipForCustomVABCCompression(
-        target_file, OPTIONS.vabc_compression_param)
+        target_file, vabc_compression_param)
   if OPTIONS.skip_postinstall:
     target_file = GetTargetFilesZipWithoutPostinstallConfig(target_file)
   # Target_file may have been modified, reparse ab_partitions
@@ -1218,7 +1242,7 @@ def main(argv):
       if len(words) == 2:
         if not words[1].isdigit():
           raise ValueError("Cannot parse value %r for option $COMPRESSION_LEVEL - only "
-                         "integers are allowed." % words[1])
+                           "integers are allowed." % words[1])
     elif o == "--security_patch_level":
       OPTIONS.security_patch_level = a
     elif o in ("--max_threads"):

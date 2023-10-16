@@ -47,6 +47,13 @@ _product_list_vars += PRODUCT_PACKAGES
 _product_list_vars += PRODUCT_PACKAGES_DEBUG
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_ASAN
 _product_list_vars += PRODUCT_PACKAGES_ARM64
+
+# packages that are added to PRODUCT_PACKAGES based on the PRODUCT_SHIPPING_API_LEVEL
+# These are only added if the shipping API level is that level or lower
+_product_list_vars += PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29
+_product_list_vars += PRODUCT_PACKAGES_SHIPPING_API_LEVEL_33
+_product_list_vars += PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34
+
 # Packages included only for eng/userdebug builds, when building with EMMA_INSTRUMENT=true
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE
 _product_list_vars += PRODUCT_PACKAGES_ENG
@@ -254,6 +261,9 @@ _product_list_vars += PRODUCT_CFI_EXCLUDE_PATHS
 # Whether any paths should have HWASan enabled for components
 _product_list_vars += PRODUCT_HWASAN_INCLUDE_PATHS
 
+# Whether any paths are excluded from sanitization when SANITIZE_TARGET=hwaddress
+_product_list_vars += PRODUCT_HWASAN_EXCLUDE_PATHS
+
 # Whether any paths should have Memtag_heap enabled for components
 _product_list_vars += PRODUCT_MEMTAG_HEAP_ASYNC_INCLUDE_PATHS
 _product_list_vars += PRODUCT_MEMTAG_HEAP_ASYNC_DEFAULT_INCLUDE_PATHS
@@ -430,7 +440,12 @@ _product_single_value_vars += PRODUCT_ENABLE_UFFD_GC
 # specified we default to COW version 2 in update_engine for backwards compatibility
 _product_single_value_vars += PRODUCT_VIRTUAL_AB_COW_VERSION
 
+# If set, determines whether the build system checks vendor seapp contexts violations.
+_product_single_value_vars += PRODUCT_CHECK_VENDOR_SEAPP_VIOLATIONS
+
 _product_list_vars += PRODUCT_AFDO_PROFILES
+
+_product_single_value_vars += PRODUCT_NEXT_RELEASE_HIDE_FLAGGED_API
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)

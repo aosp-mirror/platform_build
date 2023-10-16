@@ -56,6 +56,12 @@ MAX_PLATFORM_VERSION :=
 # unreleased API level targetable by this branch, not just those that are valid
 # lunch targets for this branch.
 
+# Release config flag to override the current version to REL.  Note that the
+# codename can also be locked to REL by setting it in versino_defaults.mk.
+ifneq ($(RELEASE_PLATFORM_VERSION_CODENAME_REL),)
+  PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION) := REL
+endif
+
 PLATFORM_VERSION_CODENAME := $(PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION))
 ifndef PLATFORM_VERSION_CODENAME
   # PLATFORM_VERSION_CODENAME falls back to TARGET_PLATFORM_VERSION
@@ -86,11 +92,21 @@ $(foreach version,$(_versions_in_target),\
 # this variable also includes future codenames. For example, while AOSP is still
 # merging into U, but V development has started, ALL_CODENAMES will only be U,
 # but ALL_PREVIEW_CODENAMES will be U and V.
+#
+# REL is filtered out of the list. The codename of the current release is
+# replaced by "REL" when the build is configured as a release rather than a
+# preview. For example, PLATFORM_VERSION_CODENAME.UpsideDownCake will be "REL"
+# rather than UpsideDownCake in a -next target when the upcoming release is
+# UpsideDownCake. "REL" is a codename (and android.os.Build relies on this:
+# https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/os/Build.java;l=484-487;drc=316e3d16c9f34212f3beace7695289651d15a071),
+# so it should be in PLATFORM_VERSION_ALL_CODENAMES, but it definitely is not a
+# preview codename.
 PLATFORM_VERSION_ALL_PREVIEW_CODENAMES :=
 $(foreach version,$(ALL_VERSIONS),\
   $(eval _codename := $(PLATFORM_VERSION_CODENAME.$(version)))\
-  $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_PREVIEW_CODENAMES)),,\
-    $(eval PLATFORM_VERSION_ALL_PREVIEW_CODENAMES += $(_codename))))
+  $(if $(filter REL,$(_codename)),,\
+      $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_PREVIEW_CODENAMES)),,\
+        $(eval PLATFORM_VERSION_ALL_PREVIEW_CODENAMES += $(_codename)))))
 
 # And convert from space separated to comma separated.
 PLATFORM_VERSION_ALL_CODENAMES := \
@@ -163,17 +179,14 @@ endif
 
 ifndef PLATFORM_VNDK_VERSION
   # This is the definition of the VNDK version for the current VNDK libraries.
-  # The version is only available when PLATFORM_VERSION_CODENAME == REL.
-  # Otherwise, it will be set to a CODENAME version. The ABI is allowed to be
-  # changed only before the Android version is released. Once
-  # PLATFORM_VNDK_VERSION is set to actual version, the ABI for this version
-  # will be frozon and emit build errors if any ABI for the VNDK libs are
-  # changed.
-  # After that the snapshot of the VNDK with this version will be generated.
-  #
-  # The VNDK version follows PLATFORM_SDK_VERSION.
+  # With trunk stable, VNDK will not be frozen but deprecated.
+  # This version will be removed with the VNDK deprecation.
   ifeq (REL,$(PLATFORM_VERSION_CODENAME))
-    PLATFORM_VNDK_VERSION := $(PLATFORM_SDK_VERSION)
+    ifdef RELEASE_PLATFORM_VNDK_VERSION
+      PLATFORM_VNDK_VERSION := $(RELEASE_PLATFORM_VNDK_VERSION)
+    else
+      PLATFORM_VNDK_VERSION := $(PLATFORM_SDK_VERSION)
+    endif
   else
     PLATFORM_VNDK_VERSION := $(PLATFORM_VERSION_CODENAME)
   endif
@@ -185,7 +198,7 @@ ifndef PLATFORM_SYSTEMSDK_MIN_VERSION
   # to the public SDK where platform essentially supports all previous SDK versions,
   # platform supports only a few number of recent system SDK versions as some of
   # old system APIs are gradually deprecated, removed and then deleted.
-  PLATFORM_SYSTEMSDK_MIN_VERSION := 28
+  PLATFORM_SYSTEMSDK_MIN_VERSION := 29
 endif
 .KATI_READONLY := PLATFORM_SYSTEMSDK_MIN_VERSION
 
@@ -255,6 +268,6 @@ ifndef PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION
   # Used to set minimum supported target sdk version. Apps targeting sdk
   # version lower than the set value will result in a warning being shown
   # when any activity from the app is started.
-  PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION := 23
+  PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION := 28
 endif
 .KATI_READONLY := PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION

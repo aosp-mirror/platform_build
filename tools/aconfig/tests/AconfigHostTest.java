@@ -17,13 +17,13 @@ public final class AconfigHostTest {
     @Test
     public void testThrowsExceptionIfFlagNotSet() {
         assertThrows(NullPointerException.class, () -> Flags.disabledRo());
-        FeatureFlags featureFlags = new FakeFeatureFlagsImpl();
+        FakeFeatureFlagsImpl featureFlags = new FakeFeatureFlagsImpl();
         assertThrows(IllegalArgumentException.class, () -> featureFlags.disabledRo());
     }
 
     @Test
     public void testSetFlagInFakeFeatureFlagsImpl() {
-        FeatureFlags featureFlags = new FakeFeatureFlagsImpl();
+        FakeFeatureFlagsImpl featureFlags = new FakeFeatureFlagsImpl();
         featureFlags.setFlag(Flags.FLAG_ENABLED_RW, true);
         assertTrue(featureFlags.enabledRw());
         featureFlags.setFlag(Flags.FLAG_ENABLED_RW, false);
@@ -39,14 +39,14 @@ public final class AconfigHostTest {
 
     @Test
     public void testSetFlagWithRandomName() {
-        FeatureFlags featureFlags = new FakeFeatureFlagsImpl();
+        FakeFeatureFlagsImpl featureFlags = new FakeFeatureFlagsImpl();
         assertThrows(IllegalArgumentException.class,
             () -> featureFlags.setFlag("Randome_name", true));
     }
 
     @Test
     public void testResetFlagsInFakeFeatureFlagsImpl() {
-        FeatureFlags featureFlags = new FakeFeatureFlagsImpl();
+        FakeFeatureFlagsImpl featureFlags = new FakeFeatureFlagsImpl();
         featureFlags.setFlag(Flags.FLAG_ENABLED_RO, true);
         assertTrue(featureFlags.enabledRo());
         featureFlags.resetAll();
@@ -59,7 +59,7 @@ public final class AconfigHostTest {
 
     @Test
     public void testFlagsSetFeatureFlags() {
-        FeatureFlags featureFlags = new FakeFeatureFlagsImpl();
+        FakeFeatureFlagsImpl featureFlags = new FakeFeatureFlagsImpl();
         featureFlags.setFlag(Flags.FLAG_ENABLED_RW, true);
         assertThrows(NullPointerException.class, () -> Flags.enabledRw());
         Flags.setFeatureFlags(featureFlags);
@@ -69,7 +69,7 @@ public final class AconfigHostTest {
 
     @Test
     public void testFlagsUnsetFeatureFlags() {
-        FeatureFlags featureFlags = new FakeFeatureFlagsImpl();
+        FakeFeatureFlagsImpl featureFlags = new FakeFeatureFlagsImpl();
         featureFlags.setFlag(Flags.FLAG_ENABLED_RW, true);
         assertThrows(NullPointerException.class, () -> Flags.enabledRw());
         Flags.setFeatureFlags(featureFlags);

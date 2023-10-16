@@ -15,7 +15,7 @@ impl FlagProvider \{
         self.overrides.get("{flag.name}").copied().unwrap_or(
         {{ if flag.readwrite -}}
           flags_rust::GetServerConfigurableFlag(
-            "{flag.device_config_namespace}",
+            "aconfig_flags.{flag.device_config_namespace}",
             "{flag.device_config_flag}",
             "{flag.default_value}") == "true"
         {{ -else- }}

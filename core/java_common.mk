@@ -25,15 +25,19 @@ ifeq (,$(LOCAL_JAVA_LANGUAGE_VERSION))
     # Host modules always default to 1.9
     LOCAL_JAVA_LANGUAGE_VERSION := 1.9
   else
-    ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT)))
+    ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_1_8_SUPPORT)))
       LOCAL_JAVA_LANGUAGE_VERSION := 1.7
-    else ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT)))
+    else ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_1_9_SUPPORT)))
       LOCAL_JAVA_LANGUAGE_VERSION := 1.8
+    else ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_11_SUPPORT)))
+      LOCAL_JAVA_LANGUAGE_VERSION := 1.9
+    else ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_17_SUPPORT)))
+      LOCAL_JAVA_LANGUAGE_VERSION := 11
     else ifneq (,$(LOCAL_SDK_VERSION)$(TARGET_BUILD_USE_PREBUILT_SDKS))
       # TODO(ccross): allow 1.9 for current and unbundled once we have SDK system modules
       LOCAL_JAVA_LANGUAGE_VERSION := 1.8
     else
-      LOCAL_JAVA_LANGUAGE_VERSION := 1.9
+      LOCAL_JAVA_LANGUAGE_VERSION := 17
     endif
   endif
 endif
@@ -410,7 +414,7 @@ endif
 full_java_system_modules_deps :=
 my_system_modules_dir :=
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_USE_SYSTEM_MODULES :=
-ifeq ($(LOCAL_JAVA_LANGUAGE_VERSION),1.9)
+ifeq (,$(filter $(LOCAL_JAVA_LANGUAGE_VERSION),$(JAVA_LANGUAGE_VERSIONS_WITHOUT_SYSTEM_MODULES)))
   $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_USE_SYSTEM_MODULES := true
   ifdef my_system_modules
     ifneq ($(my_system_modules),none)
