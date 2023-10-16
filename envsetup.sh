@@ -1613,8 +1613,8 @@ function allmod() {
 # Return the Bazel label of a Soong module if it is converted with bp2build.
 function bmod()
 (
-    if [ $# -ne 1 ]; then
-        echo "usage: bmod <module>" >&2
+    if [ $# -eq 0 ]; then
+        echo "usage: bmod <module 1> <module 2> ... <module n>" >&2
         return 1
     fi
 
@@ -1631,19 +1631,24 @@ function bmod()
       return 1
     fi
 
-    local target_label=$(python3 -c "import json
-module = '$1'
+    modules=()
+    for m in "$@"; do
+        modules+=("\"$m\",")
+    done
+    local res=$(python3 -c "import json
+modules = [${modules[*]}]
 converted_json='$converted_json'
 bp2build_converted_map = json.load(open(converted_json))
-if module not in bp2build_converted_map:
-    exit(1)
-print(bp2build_converted_map[module] + ':' + module)")
+for module in modules:
+    if module not in bp2build_converted_map:
+        print(module + ' is not converted to Bazel.')
+    else:
+        print(bp2build_converted_map[module] + ':' + module)")
 
-    if [ -z "${target_label}" ]; then
-      echo "$1 is not converted to Bazel." >&2
-      return 1
-    else
-      echo "${target_label}"
+    echo "${res}"
+    unconverted_count=$(echo "${res}" | grep -c "not converted to Bazel")
+    if [[ ${unconverted_count} -ne 0 ]]; then
+        return 1
     fi
 )
 
