@@ -408,22 +408,6 @@ $(if $(findstring ro.config.low_ram=true,$(PRODUCT_VENDOR_PROPERTIES)),true,\
 $(if $(findstring ro.config.low_ram=true,$(PRODUCT_ODM_PROPERTIES)),true,false)))))))))
 endef
 
-# Get the board API level.
-board_api_level := $(PLATFORM_SDK_VERSION)
-ifdef BOARD_API_LEVEL
-  board_api_level := $(BOARD_API_LEVEL)
-else ifdef BOARD_SHIPPING_API_LEVEL
-  # Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
-  board_api_level := $(BOARD_SHIPPING_API_LEVEL)
-endif
-
-# Calculate the VSR vendor API level.
-vsr_vendor_api_level := $(board_api_level)
-
-ifdef PRODUCT_SHIPPING_API_LEVEL
-  vsr_vendor_api_level := $(call math_min,$(PRODUCT_SHIPPING_API_LEVEL),$(board_api_level))
-endif
-
 # Set TARGET_MAX_PAGE_SIZE_SUPPORTED.
 # TARGET_MAX_PAGE_SIZE_SUPPORTED indicates the alignment of the ELF segments.
 ifdef PRODUCT_MAX_PAGE_SIZE_SUPPORTED
@@ -435,7 +419,7 @@ else
   # The default binary alignment for userspace is 4096.
   TARGET_MAX_PAGE_SIZE_SUPPORTED := 4096
   # When VSR vendor API level >= 34, binary alignment will be 65536.
-  ifeq ($(call math_gt_or_eq,$(vsr_vendor_api_level),34),true)
+  ifeq ($(call math_gt_or_eq,$(VSR_VENDOR_API_LEVEL),34),true)
     ifeq ($(TARGET_ARCH),arm64)
       TARGET_MAX_PAGE_SIZE_SUPPORTED := 65536
     endif
@@ -740,6 +724,7 @@ endif
 IMG_FROM_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/img_from_target_files$(HOST_EXECUTABLE_SUFFIX)
 MAKE_RECOVERY_PATCH := $(HOST_OUT_EXECUTABLES)/make_recovery_patch$(HOST_EXECUTABLE_SUFFIX)
 OTA_FROM_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/ota_from_target_files$(HOST_EXECUTABLE_SUFFIX)
+OTA_FROM_RAW_IMG := $(HOST_OUT_EXECUTABLES)/ota_from_raw_img$(HOST_EXECUTABLE_SUFFIX)
 SPARSE_IMG := $(HOST_OUT_EXECUTABLES)/sparse_img$(HOST_EXECUTABLE_SUFFIX)
 CHECK_PARTITION_SIZES := $(HOST_OUT_EXECUTABLES)/check_partition_sizes$(HOST_EXECUTABLE_SUFFIX)
 SYMBOLS_MAP := $(HOST_OUT_EXECUTABLES)/symbols_map
@@ -911,7 +896,7 @@ BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
 # is made which breaks compatibility with the previous platform sepolicy version,
 # not just on every increase in PLATFORM_SDK_VERSION.  The minor version should
 # be reset to 0 on every bump of the PLATFORM_SDK_VERSION.
-sepolicy_major_vers := 33
+sepolicy_major_vers := 34
 sepolicy_minor_vers := 0
 
 ifneq ($(sepolicy_major_vers), $(PLATFORM_SDK_VERSION))
@@ -936,22 +921,15 @@ ifndef BOARD_SEPOLICY_VERS
 BOARD_SEPOLICY_VERS := $(PLATFORM_SEPOLICY_VERSION)
 endif
 
-ifeq ($(BOARD_SEPOLICY_VERS),$(PLATFORM_SEPOLICY_VERSION))
-IS_TARGET_MIXED_SEPOLICY :=
-else
-IS_TARGET_MIXED_SEPOLICY := true
-endif
-
-.KATI_READONLY := IS_TARGET_MIXED_SEPOLICY
-
 # A list of SEPolicy versions, besides PLATFORM_SEPOLICY_VERSION, that the framework supports.
-PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
+PLATFORM_SEPOLICY_COMPAT_VERSIONS := $(filter-out $(PLATFORM_SEPOLICY_VERSION), \
     29.0 \
     30.0 \
     31.0 \
     32.0 \
     33.0 \
     34.0 \
+    )
 
 .KATI_READONLY := \
     PLATFORM_SEPOLICY_COMPAT_VERSIONS \
@@ -1246,8 +1224,12 @@ TARGET_AVAILABLE_SDK_VERSIONS := $(patsubst %/test,test_%,$(TARGET_AVAILABLE_SDK
 TARGET_AVAILABLE_SDK_VERSIONS := $(filter-out %/module-lib %/system-server,$(TARGET_AVAILABLE_SDK_VERSIONS))
 TARGET_AVAIALBLE_SDK_VERSIONS := $(call numerically_sort,$(TARGET_AVAILABLE_SDK_VERSIONS))
 
-TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT := $(call numbers_less_than,24,$(TARGET_AVAILABLE_SDK_VERSIONS))
-TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT := $(call numbers_less_than,30,$(TARGET_AVAILABLE_SDK_VERSIONS))
+TARGET_SDK_VERSIONS_WITHOUT_JAVA_1_8_SUPPORT := $(call numbers_less_than,24,$(TARGET_AVAILABLE_SDK_VERSIONS))
+TARGET_SDK_VERSIONS_WITHOUT_JAVA_1_9_SUPPORT := $(call numbers_less_than,30,$(TARGET_AVAILABLE_SDK_VERSIONS))
+TARGET_SDK_VERSIONS_WITHOUT_JAVA_11_SUPPORT := $(call numbers_less_than,32,$(TARGET_AVAILABLE_SDK_VERSIONS))
+TARGET_SDK_VERSIONS_WITHOUT_JAVA_17_SUPPORT := $(call numbers_less_than,34,$(TARGET_AVAILABLE_SDK_VERSIONS))
+
+JAVA_LANGUAGE_VERSIONS_WITHOUT_SYSTEM_MODULES := 1.7 1.8
 
 # This is the standard way to name a directory containing prebuilt target
 # objects. E.g., prebuilt/$(TARGET_PREBUILT_TAG)/libc.so
@@ -1321,9 +1303,8 @@ include $(BUILD_SYSTEM)/ninja_config.mk
 include $(BUILD_SYSTEM)/soong_config.mk
 endif
 
--include external/linux-kselftest/android/kselftest_test_list.mk
 -include external/ltp/android/ltp_package_list.mk
-DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages) $(kselftest_modules)
+DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages)
 .KATI_READONLY := DEFAULT_DATA_OUT_MODULES
 
 include $(BUILD_SYSTEM)/dumpvar.mk

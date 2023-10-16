@@ -65,6 +65,18 @@ ifneq ($(filter memtag_heap, $(my_global_sanitize)),)
   endif
 endif
 
+# Disable global HWASan in excluded paths
+ifneq ($(filter hwaddress, $(my_global_sanitize)),)
+  combined_exclude_paths := $(HWASAN_EXCLUDE_PATHS) \
+                            $(PRODUCT_HWASAN_EXCLUDE_PATHS)
+
+  ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_exclude_paths)),\
+         $(filter $(dir)%,$(LOCAL_PATH)))),)
+    my_global_sanitize := $(filter-out hwaddress,$(my_global_sanitize))
+    my_global_sanitize_diag := $(filter-out hwaddress,$(my_global_sanitize_diag))
+  endif
+endif
+
 ifneq ($(my_global_sanitize),)
   my_sanitize := $(my_global_sanitize) $(my_sanitize)
 endif
@@ -392,7 +404,6 @@ ifneq ($(my_sanitize),)
     my_ldflags += -fsanitize=$(fsanitize_arg)
   else
     my_cflags += -fsanitize-trap=all
-    my_cflags += -ftrap-function=abort
     ifneq ($(filter address thread,$(my_sanitize)),)
       my_cflags += -fno-sanitize-trap=address,thread
       my_shared_libraries += libdl

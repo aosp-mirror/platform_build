@@ -137,14 +137,14 @@ fn open_single_file(matches: &ArgMatches, arg_name: &str) -> Result<Input> {
 }
 
 fn write_output_file_realtive_to_dir(root: &Path, output_file: &OutputFile) -> Result<()> {
-    let path = root.join(output_file.path.clone());
+    let path = root.join(&output_file.path);
     let parent = path
         .parent()
         .ok_or(anyhow!("unable to locate parent of output file {}", path.display()))?;
     fs::create_dir_all(parent)
         .with_context(|| format!("failed to create directory {}", parent.display()))?;
-    let mut file = fs::File::create(path.clone())
-        .with_context(|| format!("failed to open {}", path.display()))?;
+    let mut file =
+        fs::File::create(&path).with_context(|| format!("failed to open {}", path.display()))?;
     file.write_all(&output_file.contents)
         .with_context(|| format!("failed to write to {}", path.display()))?;
     Ok(())

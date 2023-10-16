@@ -1,9 +1,11 @@
 import static com.android.aconfig.test.Flags.FLAG_DISABLED_RO;
 import static com.android.aconfig.test.Flags.FLAG_DISABLED_RW;
+import static com.android.aconfig.test.Flags.FLAG_ENABLED_FIXED_RO;
 import static com.android.aconfig.test.Flags.FLAG_ENABLED_RO;
 import static com.android.aconfig.test.Flags.FLAG_ENABLED_RW;
 import static com.android.aconfig.test.Flags.disabledRo;
 import static com.android.aconfig.test.Flags.disabledRw;
+import static com.android.aconfig.test.Flags.enabledFixedRo;
 import static com.android.aconfig.test.Flags.enabledRo;
 import static com.android.aconfig.test.Flags.enabledRw;
 import static org.junit.Assert.assertEquals;
@@ -35,6 +37,14 @@ public final class AconfigTest {
     }
 
     @Test
+    public void testEnabledFixedReadOnlyFlag() {
+        assertEquals("com.android.aconfig.test.enabled_fixed_ro", FLAG_ENABLED_FIXED_RO);
+        // TODO: change to assertTrue(enabledFixedRo()) when the build supports reading tests/*.values
+        // (currently all flags are assigned the default READ_ONLY + DISABLED)
+        assertFalse(enabledFixedRo());
+    }
+
+    @Test
     public void testDisabledReadWriteFlag() {
         assertEquals("com.android.aconfig.test.enabled_ro", FLAG_ENABLED_RO);
         assertFalse(disabledRw());
@@ -49,8 +59,9 @@ public final class AconfigTest {
     }
 
     @Test
-    public void testFakeFeatureFlagsImplNotImpl() {
-        FeatureFlags featureFlags = new FakeFeatureFlagsImpl();
-        assertThrows(UnsupportedOperationException.class, () -> featureFlags.enabledRw());
+    public void testFakeFeatureFlagsImplImpled() {
+        FakeFeatureFlagsImpl fakeFeatureFlags = new FakeFeatureFlagsImpl();
+        fakeFeatureFlags.setFlag(FLAG_ENABLED_RW, false);
+        assertFalse(fakeFeatureFlags.enabledRw());
     }
 }

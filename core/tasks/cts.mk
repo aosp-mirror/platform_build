@@ -37,16 +37,18 @@ ifneq (,$(wildcard cts/))
   cts_platform_release_path := cts/tests/tests/os/assets/platform_releases.txt
   cts_platform_release_string := $(shell cat $(cts_platform_release_path))
 
-  ifeq (,$(findstring $(PLATFORM_VERSION),$(cts_platform_version_string)))
-    define error_msg
-      ============================================================
-      Could not find version "$(PLATFORM_VERSION)" in CTS platform version file:
-      $(cts_platform_version_path)
-      Most likely PLATFORM_VERSION in build/core/version_defaults.mk
-      has changed and a new version must be added to this CTS file.
-      ============================================================
-    endef
-    $(error $(error_msg))
+  ifeq ($(RELEASE_PLATFORM_VERSION_CODENAME_REL),)
+    ifeq (,$(findstring $(PLATFORM_VERSION),$(cts_platform_version_string)))
+      define error_msg
+        ============================================================
+        Could not find version "$(PLATFORM_VERSION)" in CTS platform version file:
+        $(cts_platform_version_path)
+        Most likely PLATFORM_VERSION in build/core/version_defaults.mk
+        has changed and a new version must be added to this CTS file.
+        ============================================================
+      endef
+      $(error $(error_msg))
+    endif
   endif
   ifeq (,$(findstring $(PLATFORM_VERSION_LAST_STABLE),$(cts_platform_release_string)))
     define error_msg

@@ -1,6 +1,7 @@
 py_library(
     name = "event_log_tags",
     srcs = ["event_log_tags.py"],
+    imports = ["."],
 )
 
 py_binary(
@@ -22,6 +23,13 @@ py_binary(
 py_binary(
     name = "check_elf_file",
     srcs = ["check_elf_file.py"],
+    python_version = "PY3",
+    visibility = ["//visibility:public"],
+)
+
+py_binary(
+    name = "auto_gen_test_config",
+    srcs = ["auto_gen_test_config.py"],
     python_version = "PY3",
     visibility = ["//visibility:public"],
 )
