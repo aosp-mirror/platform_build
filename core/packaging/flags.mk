@@ -72,42 +72,28 @@ $(foreach partition, $(_FLAG_PARTITIONS), \
 # $(1): built aconfig flags file (out)
 # $(2): installed aconfig flags file (out)
 # $(3): input aconfig files for the partition (in)
-# $(4): file format, passed to `aconfig dump` (in)
-# $(5): text placed in aconfig file when no flags present (out)
 define generate-partition-aconfig-flag-file
 $(eval $(strip $(1)): PRIVATE_OUT := $(strip $(1)))
 $(eval $(strip $(1)): PRIVATE_IN := $(strip $(3)))
 $(strip $(1)): $(ACONFIG) $(strip $(3))
 	mkdir -p $$(dir $$(PRIVATE_OUT))
 	$$(if $$(PRIVATE_IN), \
-		$$(ACONFIG) dump --format $(4) --out $$(PRIVATE_OUT) \
+		$$(ACONFIG) dump --format protobuf --out $$(PRIVATE_OUT) \
 			$$(addprefix --cache ,$$(PRIVATE_IN)), \
-		echo $(5) > $$(PRIVATE_OUT) \
+		echo -n > $$(PRIVATE_OUT) \
 	)
 $(call copy-one-file, $(1), $(2))
 endef
 
 
 $(foreach partition, $(_FLAG_PARTITIONS), \
-	$(eval aconfig_flag_summaries_textproto.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/aconfig_flags.textproto) \
 	$(eval aconfig_flag_summaries_protobuf.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/aconfig_flags.pb) \
-	$(eval $(call generate-partition-aconfig-flag-file, \
-				$(TARGET_OUT_FLAGS)/$(partition)/aconfig_flags.textproto, \
-				$(aconfig_flag_summaries_textproto.$(partition)), \
-				$(sort $(foreach m,$(call register-names-for-partition, $(partition)), \
-					$(ALL_MODULES.$(m).ACONFIG_FILES) \
-				)), \
-				textproto, \
-				"# No aconfig flags" \
-	)) \
 	$(eval $(call generate-partition-aconfig-flag-file, \
 				$(TARGET_OUT_FLAGS)/$(partition)/aconfig_flags.pb, \
 				$(aconfig_flag_summaries_protobuf.$(partition)), \
 				$(sort $(foreach m,$(call register-names-for-partition, $(partition)), \
 					$(ALL_MODULES.$(m).ACONFIG_FILES) \
 				)), \
-				protobuf, \
-				"" \
 	)) \
 )
 
@@ -117,7 +103,6 @@ $(foreach partition, $(_FLAG_PARTITIONS), \
 required_flags_files := \
 		$(sort $(foreach partition, $(filter $(IMAGES_TO_BUILD), $(_FLAG_PARTITIONS)), \
 			$(build_flag_summaries.$(partition)) \
-			$(aconfig_flag_summaries_textproto.$(partition)) \
 			$(aconfig_flag_summaries_protobuf.$(partition)) \
 		))
 
@@ -133,7 +118,6 @@ flag-files: $(required_flags_files)
 required_flags_files:=
 $(foreach partition, $(_FLAG_PARTITIONS), \
 	$(eval build_flag_summaries.$(partition):=) \
-	$(eval aconfig_flag_summaries_textproto.$(partition):=) \
 	$(eval aconfig_flag_summaries_protobuf.$(partition):=) \
 )
 

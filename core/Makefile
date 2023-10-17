@@ -1060,11 +1060,32 @@ TARGET_OUT_RAMDISK_16K := $(PRODUCT_OUT)/ramdisk_16k
 BUILT_RAMDISK_16K_TARGET := $(PRODUCT_OUT)/ramdisk_16k.img
 RAMDISK_16K_STAGING_DIR := $(call intermediates-dir-for,PACKAGING,depmod_ramdisk_16k)
 
+ifneq ($(BOARD_SYSTEM_KERNEL_MODULES),)
+SYSTEM_DLKM_MODULE_PATTERNS := $(foreach path,$(BOARD_SYSTEM_KERNEL_MODULES),%/$(notdir $(path)))
+
+endif
+
+# For non-GKI modules, strip them before install. As debug symbols take up
+# significant space.
 $(foreach \
   file,\
-  $(BOARD_KERNEL_MODULES_16K),\
+  $(filter-out $(SYSTEM_DLKM_MODULE_PATTERNS),$(BOARD_KERNEL_MODULES_16K)),\
   $(eval \
     $(call copy-and-strip-kernel-module,\
+      $(file),\
+      $(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0/$(notdir $(file)) \
+    ) \
+  ) \
+)
+
+# For GKI modules, copy as-is without stripping, because stripping would
+# remove the signature of kernel modules, and GKI modules must be signed
+# for kernel to load them.
+$(foreach \
+  file,\
+  $(filter $(SYSTEM_DLKM_MODULE_PATTERNS),$(BOARD_KERNEL_MODULES_16K)),\
+  $(eval \
+    $(call copy-one-file,\
       $(file),\
       $(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0/$(notdir $(file)) \
     ) \
@@ -5049,8 +5070,11 @@ APEX_OUT := $(intermediates)/apex
 APEX_INFO_FILE := $(APEX_OUT)/apex-info-list.xml
 
 # apexd_host scans/activates APEX files and writes /apex/apex-info-list.xml
+# Note that `@echo $(PRIVATE_APEX_FILES)` line is added to trigger the rule when the APEX list is changed.
+$(APEX_INFO_FILE): PRIVATE_APEX_FILES := $(apex_files)
 $(APEX_INFO_FILE): $(HOST_OUT_EXECUTABLES)/apexd_host $(apex_files)
 	@echo "Extracting apexes..."
+	@echo $(PRIVATE_APEX_FILES) > /dev/null
 	@rm -rf $(APEX_OUT)
 	@mkdir -p $(APEX_OUT)
 	$< --vendor_path $(TARGET_OUT_VENDOR) \

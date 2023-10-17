@@ -8,6 +8,7 @@ include $(BUILD_SYSTEM)/dex_preopt_config.mk
 ifndef AFDO_PROFILES
 # Set AFDO_PROFILES
 -include vendor/google_data/pgo_profile/sampling/afdo_profiles.mk
+include toolchain/pgo-profiles/sampling/afdo_profiles.mk
 else
 $(error AFDO_PROFILES can only be set from soong_config.mk. For product-specific fdo_profiles, please use PRODUCT_AFDO_PROFILES)
 endif
@@ -313,7 +314,7 @@ $(call add_json_str,  ProductBrand,        $(PRODUCT_BRAND))
 $(call add_json_list, BuildVersionTags,    $(BUILD_VERSION_TAGS))
 
 $(call add_json_str, ReleaseVersion,    $(_RELEASE_VERSION))
-$(call add_json_str, ReleaseAconfigValueSets,    $(RELEASE_ACONFIG_VALUE_SETS))
+$(call add_json_list, ReleaseAconfigValueSets,    $(RELEASE_ACONFIG_VALUE_SETS))
 $(call add_json_str, ReleaseAconfigFlagDefaultPermission,    $(RELEASE_ACONFIG_FLAG_DEFAULT_PERMISSION))
 
 $(call add_json_bool, ReleaseDefaultModuleBuildFromSource,   $(RELEASE_DEFAULT_MODULE_BUILD_FROM_SOURCE))
