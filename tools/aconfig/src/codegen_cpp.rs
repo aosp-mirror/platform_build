@@ -34,13 +34,17 @@ where
     let class_elements: Vec<ClassElement> =
         parsed_flags_iter.map(|pf| create_class_element(package, pf)).collect();
     let readwrite = class_elements.iter().any(|item| item.readwrite);
+    let has_fixed_read_only = class_elements.iter().any(|item| item.is_fixed_read_only);
     let header = package.replace('.', "_");
+    let package_macro = header.to_uppercase();
     let cpp_namespace = package.replace('.', "::");
     ensure!(codegen::is_valid_name_ident(&header));
     let context = Context {
         header: &header,
+        package_macro: &package_macro,
         cpp_namespace: &cpp_namespace,
         package,
+        has_fixed_read_only,
         readwrite,
         for_test: codegen_mode == CodegenMode::Test,
         class_elements,
@@ -79,8 +83,10 @@ pub struct FileSpec<'a> {
 #[derive(Serialize)]
 pub struct Context<'a> {
     pub header: &'a str,
+    pub package_macro: &'a str,
     pub cpp_namespace: &'a str,
     pub package: &'a str,
+    pub has_fixed_read_only: bool,
     pub readwrite: bool,
     pub for_test: bool,
     pub class_elements: Vec<ClassElement>,
@@ -89,8 +95,10 @@ pub struct Context<'a> {
 #[derive(Serialize)]
 pub struct ClassElement {
     pub readwrite: bool,
+    pub is_fixed_read_only: bool,
     pub default_value: String,
     pub flag_name: String,
+    pub flag_macro: String,
     pub device_config_namespace: String,
     pub device_config_flag: String,
 }
@@ -98,12 +106,14 @@ pub struct ClassElement {
 fn create_class_element(package: &str, pf: &ProtoParsedFlag) -> ClassElement {
     ClassElement {
         readwrite: pf.permission() == ProtoFlagPermission::READ_WRITE,
+        is_fixed_read_only: pf.is_fixed_read_only(),
         default_value: if pf.state() == ProtoFlagState::ENABLED {
             "true".to_string()
         } else {
             "false".to_string()
         },
         flag_name: pf.name().to_string(),
+        flag_macro: pf.name().to_uppercase(),
         device_config_namespace: pf.namespace().to_string(),
         device_config_flag: codegen::create_device_config_ident(package, pf.name())
             .expect("values checked at flag parse time"),
@@ -117,6 +127,14 @@ mod tests {
 
     const EXPORTED_PROD_HEADER_EXPECTED: &str = r#"
 #pragma once
+
+#ifndef COM_ANDROID_ACONFIG_TEST
+#define COM_ANDROID_ACONFIG_TEST(FLAG) COM_ANDROID_ACONFIG_TEST_##FLAG
+#endif
+
+#ifndef COM_ANDROID_ACONFIG_TEST_ENABLED_FIXED_RO
+#define COM_ANDROID_ACONFIG_TEST_ENABLED_FIXED_RO true
+#endif
 
 #ifdef __cplusplus
 
@@ -149,7 +167,7 @@ inline bool disabled_rw() {
 }
 
 inline bool enabled_fixed_ro() {
-    return true;
+    return COM_ANDROID_ACONFIG_TEST_ENABLED_FIXED_RO;
 }
 
 inline bool enabled_ro() {
@@ -319,7 +337,7 @@ namespace com::android::aconfig::test {
             }
 
             virtual bool enabled_fixed_ro() override {
-                return true;
+                return COM_ANDROID_ACONFIG_TEST_ENABLED_FIXED_RO;
             }
 
             virtual bool enabled_ro() override {
@@ -348,7 +366,7 @@ bool com_android_aconfig_test_disabled_rw() {
 }
 
 bool com_android_aconfig_test_enabled_fixed_ro() {
-    return true;
+    return COM_ANDROID_ACONFIG_TEST_ENABLED_FIXED_RO;
 }
 
 bool com_android_aconfig_test_enabled_ro() {

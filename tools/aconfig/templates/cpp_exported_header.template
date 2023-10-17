@@ -1,8 +1,24 @@
 #pragma once
 
+{{ if not for_test- }}
+{{ if has_fixed_read_only- }}
+#ifndef {package_macro}
+#define {package_macro}(FLAG) {package_macro}_##FLAG
+#endif
+{{ for item in class_elements- }}
+{{ if item.is_fixed_read_only- }}
+#ifndef {package_macro}_{item.flag_macro}
+#define {package_macro}_{item.flag_macro} {item.default_value}
+#endif
+{{ endif }}
+{{ -endfor }}
+{{ -endif }}
+{{ -endif }}
+
 #ifdef __cplusplus
 
 #include <memory>
+
 
 namespace {cpp_namespace} \{
 
@@ -15,7 +31,7 @@ public:
     {{ if for_test }}
     virtual void {item.flag_name}(bool val) = 0;
     {{ -endif }}
-    {{ endfor }}
+    {{ -endfor }}
 
     {{ if for_test }}
     virtual void reset_flags() \{}
@@ -29,10 +45,14 @@ inline bool {item.flag_name}() \{
     {{ if for_test }}
     return provider_->{item.flag_name}();
     {{ -else- }}
-    {{ if not item.readwrite- }}
-    return {item.default_value};
-    {{ -else- }}
+    {{ if item.readwrite- }}
     return provider_->{item.flag_name}();
+    {{ -else- }}
+    {{ if item.is_fixed_read_only }}
+    return {package_macro}_{item.flag_macro};
+    {{ -else- }}
+    return {item.default_value};
+    {{ -endif }}
     {{ -endif }}
     {{ -endif }}
 }
@@ -42,7 +62,7 @@ inline void {item.flag_name}(bool val) \{
     provider_->{item.flag_name}(val);
 }
 {{ -endif }}
-{{ endfor }}
+{{ -endfor }}
 
 {{ if for_test }}
 inline void reset_flags() \{
@@ -61,7 +81,7 @@ bool {header}_{item.flag_name}();
 {{ if for_test }}
 void set_{header}_{item.flag_name}(bool val);
 {{ -endif }}
-{{ endfor - }}
+{{ -endfor }}
 
 {{ if for_test }}
 void {header}_reset_flags();
