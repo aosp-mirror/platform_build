@@ -58,7 +58,11 @@ namespace {cpp_namespace} \{
                 "{item.device_config_flag}",
                 "{item.default_value}") == "true";
             {{ -else- }}
-                return {item.default_value};
+            {{ if item.is_fixed_read_only }}
+            return {package_macro}_{item.flag_macro};
+            {{ -else- }}
+            return {item.default_value};
+            {{ -endif }}
             {{ -endif }}
         }
         {{ endfor }}
@@ -79,10 +83,14 @@ bool {header}_{item.flag_name}() \{
     {{ if for_test }}
     return {cpp_namespace}::{item.flag_name}();
     {{ -else- }}
-    {{ if not item.readwrite- }}
-    return {item.default_value};
-    {{ -else- }}
+    {{ if item.readwrite- }}
     return {cpp_namespace}::{item.flag_name}();
+    {{ -else- }}
+    {{ if item.is_fixed_read_only }}
+    return {package_macro}_{item.flag_macro};
+    {{ -else- }}
+    return {item.default_value};
+    {{ -endif }}
     {{ -endif }}
     {{ -endif }}
 }
