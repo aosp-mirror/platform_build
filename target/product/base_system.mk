@@ -53,6 +53,7 @@ PRODUCT_PACKAGES += \
     com.android.btservices \
     com.android.configinfrastructure \
     com.android.conscrypt \
+    com.android.crashrecovery \
     com.android.devicelock \
     com.android.extservices \
     com.android.healthfitness \
