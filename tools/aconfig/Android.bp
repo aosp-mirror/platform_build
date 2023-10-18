@@ -13,10 +13,6 @@ java_library {
         type: "lite",
     },
     sdk_version: "current",
-    min_sdk_version: "UpsideDownCake",
-    apex_available: [
-        "com.android.configinfrastructure"
-    ]
 }
 
 java_library_host {
