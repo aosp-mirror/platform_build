@@ -92,6 +92,8 @@ message ThirdParty {
     SBOMRef sbom_ref = 10;
   }
 
+  // Identifiers for the package.
+  repeated Identifier identifier = 11;
 }
 
 // URL associated with a third-party package.
@@ -278,4 +280,136 @@ message SBOMRef {
   // https://spdx.github.io/spdx-spec/v2.3/package-information/#72-package-spdx-identifier-field or
   // https://spdx.github.io/spdx-spec/v2.3/file-information/#82-file-spdx-identifier-field
   optional string element_id = 3;
+}
+
+// Identifier for a third-package package.
+// See go/tp-metadata-id.
+message Identifier {
+  // The type of the identifier. Either an "ecosystem" value from
+  // https://ossf.github.io/osv-schema/#affectedpackage-field such as "Go",
+  // "npm" or "PyPI". The "value" and "version" fields follow the same rules as
+  // defined in the OSV spec.
+
+  // Or one of:
+  //  - "Git": The "value" field is the URL of the upstream git repository this
+  //  package is retrieved from.
+  //  For example:
+  //   - https://github.com/git/git
+  //   - git://git.kernel.org/pub/scm/git/git
+  //
+  //  Use of a git URL requires that the package "version" value must specify a
+  //  specific git tag or revision. This must not be a branch name.
+  //
+  //  - "SVN": The "value" field is the URL of the upstream SVN repository this
+  //  package is retrieved from.
+  //  For example:
+  //   - http://llvm.org/svn/llvm-project/llvm/
+  //
+  //  Use of an SVN URL requires that the package "version" value must specify
+  //  a specific SVN tag or revision. This must not be a branch name.
+  //
+  //  - "Hg": The "value" field is the URL of the upstream mercurial repository
+  //  this package is retrieved from.
+  //  For example:
+  //   - https://mercurial-scm.org/repo/evolve
+  //
+  //  Use of a mercurial URL requires that the package "version" value must
+  //  specify a specific tag or revision. This must not be a branch name.
+  //
+  //  - "Darcs": the "value" field is the URL of the upstream darcs repository
+  //  this package is retrieved from.
+  //  For example:
+  //   - https://hub.darcs.net/hu.dwim/hu.dwim.util
+  //
+  //  Use of a Darcs URL requires that the package "version" value must
+  //  specify a specific tag or revision. This must not be a branch name.
+  //
+  //  - "Piper": The "value" field is the URL of the upstream piper location.
+  //  This is primarily used when a package is being migrated into third_party
+  //  from elsewhere in Piper, or when a package is being newly developed in
+  //  third_party.
+  //
+  //  - "VCS": This is a generic fallback for an unlisted VCS system. The
+  // "value" field is the URL of the repository for this VCS.
+  //
+  //  - "Archive": The "value" field is the URL of the archive containing the
+  //  source code for the package, for example a zip or tgz file.
+  //
+  //  - "PrebuiltByAlphabet": This type should be used for archives of primarily
+  //  Google-owned source code (may contain non-Google-owned dependencies),
+  //  which has been built using production Google infrastructure, and copied
+  //  into third_party.
+  //
+  //  - "LocalSource": The "value" field is the URL identifying where the local
+  //  copy of the package source code can be found.
+  //  Examples:
+  //   - https://android.googlesource.com/platform/external/apache-http/
+  //
+  //  Typically, the metadata files describing a package reside in the same
+  //  directory as the source code for the package. In a few rare cases where
+  //  they are separate, the LocalSource URL identifies where to find the
+  //  source code. This only describes where to find the local copy of the
+  //  source; there should always be an additional URL describing where the
+  //  package was retrieved from.
+  //
+  //  - "Other": An identifier that does not fit any other type. This may also
+  //  indicate that the Source code was received via email or some other
+  //  out-of-band way. This is most commonly used with commercial software
+  //  received directly from the Vendor. In the case of email, the "value" field
+  //  can be used to provide additional information about how it was received.
+  optional string type = 1;
+
+  // A human readable string to indicate why a third-package package does not
+  // have this identifier type set.
+  // Example:
+  //   identifier {
+  //     type: "PyPI"
+  //     omission_reason: "Only on Git. Not published to PyPI."
+  //   }
+  optional string omission_reason = 2;
+
+  // The value of the package identifier as defined by the "type".
+  // Example:
+  //  identifier {
+  //    type: "PyPI"
+  //    value: "django"
+  //    version: "3.2.8"
+  //  }
+  optional string value = 3;
+
+  // The version associated with this package as defined by the "type".
+  // Example:
+  //  identifier {
+  //    type: "PyPI"
+  //    value: "django"
+  //    version: "3.2.8"
+  //  }
+  optional string version = 4;
+
+  // The closest version associated with this package as defined by the "type".
+  // This should only be set by automated infrastructure by applying automated
+  // heuristics, such as the closest git tag or package version from a package
+  // manifest file (e.g. pom.xml).
+  //
+  // For most identifier types, only one of `version` or `closest_version`
+  // should be set (not both). The exception is source repository types such as
+  // "Git", where `version` will refer to a git commit, and `closest_version`
+  // refers to a git tag.
+  // Example:
+  //  identifier {
+  //    type: "Git",
+  //    value: "https://github.com/my/repo"
+  //    version: "e5fa44f2b31c1fb553b6021e7360d07d5d91ff5e"
+  //    closest_version: "v1.4"
+  //  }
+  optional string closest_version = 5;
+
+  // When `true`, this Identifier represents the location from which the source
+  // code for this package was originally obtained. This should only be set for
+  // *one* Identifier in a third_party package's METADATA.
+
+  // For external packages, this is typically for the Identifier associated
+  // with the version control system or package manager that was used to
+  // check out or download the code.
+  optional bool primary_source = 6;
 }
