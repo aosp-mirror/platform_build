@@ -1,14 +1,5 @@
 # Build System Changes for Android.mk/Android.bp Writers
 
-## Soong genrules are now sandboxed
-
-Previously, soong genrules could access any files in the source tree, without specifying them as
-inputs. This makes them incorrect in incremental builds, and incompatible with RBE and Bazel.
-
-Now, genrules are sandboxed so they can only access their listed srcs. Modules denylisted in
-genrule/allowlists.go are exempt from this. You can also set `BUILD_BROKEN_GENRULE_SANDBOXING`
-in board config to disable this behavior.
-
 ## Partitions are no longer affected by previous builds
 
 Partition builds used to include everything in their staging directories, and building an

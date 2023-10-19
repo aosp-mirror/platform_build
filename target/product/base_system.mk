@@ -301,7 +301,7 @@ PRODUCT_PACKAGES += $(RELEASE_PACKAGE_VIRTUAL_CAMERA)
 # These packages are not used on Android TV
 ifneq ($(PRODUCT_IS_ATV),true)
   PRODUCT_PACKAGES += \
-      SoundPicker \
+      $(RELEASE_PACKAGE_SOUND_PICKER) \
 
 endif
 
