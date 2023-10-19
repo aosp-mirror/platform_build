@@ -230,7 +230,9 @@ LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 
 # Filter LLNDK libs moved to APEX to avoid pulling them into /system/LIB
 LOCAL_REQUIRED_MODULES := \
-    $(filter-out $(LLNDK_MOVED_TO_APEX_LIBRARIES),$(LLNDK_LIBRARIES))
+    $(filter-out $(LLNDK_MOVED_TO_APEX_LIBRARIES),$(LLNDK_LIBRARIES)) \
+    llndk.libraries.txt
+
 
 include $(BUILD_PHONY_PACKAGE)
 
