@@ -381,6 +381,8 @@ $(call add_json_map, PartitionVarsForBazelMigrationOnlyDoNotUse)
   $(call add_json_bool, CopyImagesForTargetFilesZip, $(filter true,$(COPY_IMAGES_FOR_TARGET_FILES_ZIP)))
 
   $(call add_json_bool, BoardAvbEnable, $(filter true,$(BOARD_AVB_ENABLE)))
+
+  $(call add_json_list, ProductPackages, $(sort $(PRODUCT_PACKAGES)))
 $(call end_json_map)
 
 $(call add_json_bool, NextReleaseHideFlaggedApi, $(filter true,$(PRODUCT_NEXT_RELEASE_HIDE_FLAGGED_API)))
