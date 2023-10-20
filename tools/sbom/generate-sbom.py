@@ -82,6 +82,46 @@ SOONG_PREBUILT_MODULE_TYPES = [
   'vndk_prebuilt_shared',
 ]
 
+THIRD_PARTY_IDENTIFIER_TYPES = [
+    # Types defined in metadata_file.proto
+    'Git',
+    'SVN',
+    'Hg',
+    'Darcs',
+    'VCS',
+    'Archive',
+    'PrebuiltByAlphabet',
+    'LocalSource',
+    'Other',
+    # OSV ecosystems defined at https://ossf.github.io/osv-schema/#affectedpackage-field.
+    'Go',
+    'npm',
+    'OSS-Fuzz',
+    'PyPI',
+    'RubyGems',
+    'crates.io',
+    'Hackage',
+    'GHC',
+    'Packagist',
+    'Maven',
+    'NuGet',
+    'Linux',
+    'Debian',
+    'Alpine',
+    'Hex',
+    'Android',
+    'GitHub Actions',
+    'Pub',
+    'ConanCenter',
+    'Rocky Linux',
+    'AlmaLinux',
+    'Bitnami',
+    'Photon OS',
+    'CRAN',
+    'Bioconductor',
+    'SwiftURL'
+]
+
 
 def get_args():
   parser = argparse.ArgumentParser()
@@ -360,6 +400,20 @@ def installed_file_has_metadata(installed_file_metadata, report):
   return True
 
 
+# Validate identifiers in a package's METADATA.
+# 1) Only known identifier type is allowed
+# 2) Only one identifier's primary_source can be true
+def validate_package_metadata(metadata_file_path, package_metadata):
+  primary_source_found = False
+  for identifier in package_metadata.third_party.identifier:
+    if identifier.type not in THIRD_PARTY_IDENTIFIER_TYPES:
+      sys.exit(f'Unknown value of third_party.identifier.type in {metadata_file_path}/METADATA: {identifier.type}.')
+    if primary_source_found and identifier.primary_source:
+      sys.exit(
+        f'Field "primary_source" is set to true in multiple third_party.identifier in {metadata_file_path}/METADATA.')
+    primary_source_found = identifier.primary_source
+
+
 def report_metadata_file(metadata_file_path, installed_file_metadata, report):
   if metadata_file_path:
     report[INFO_METADATA_FOUND_FOR_PACKAGE].append(
@@ -371,6 +425,8 @@ def report_metadata_file(metadata_file_path, installed_file_metadata, report):
     package_metadata = metadata_file_pb2.Metadata()
     with open(metadata_file_path + '/METADATA', 'rt') as f:
       text_format.Parse(f.read(), package_metadata)
+
+    validate_package_metadata(metadata_file_path, package_metadata)
 
     if not metadata_file_path in metadata_file_protos:
       metadata_file_protos[metadata_file_path] = package_metadata
