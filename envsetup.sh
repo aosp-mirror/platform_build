@@ -2054,6 +2054,11 @@ function avbtool() {
     "$ANDROID_SOONG_HOST_OUT"/bin/avbtool $@
 }
 
+function overrideflags() {
+    local T="$(gettop)"
+    (\cd "${T}" && build/make/tools/overrideflags.sh "$@")
+}
+
 validate_current_shell
 set_global_paths
 source_vendorsetup

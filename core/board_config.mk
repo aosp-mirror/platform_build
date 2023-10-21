@@ -188,6 +188,7 @@ _build_broken_var_list := \
   BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE \
   BUILD_BROKEN_VINTF_PRODUCT_COPY_FILES \
   BUILD_BROKEN_INCORRECT_PARTITION_IMAGES \
+  BUILD_BROKEN_GENRULE_SANDBOXING \
 
 _build_broken_var_list += \
   $(foreach m,$(AVAILABLE_BUILD_MODULE_TYPES) \
@@ -223,6 +224,8 @@ else
   board_config_mk := \
     $(strip $(sort $(wildcard \
       $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)/BoardConfig.mk \
+      device/generic/goldfish/board/$(TARGET_DEVICE)/BoardConfig.mk \
+      device/google/cuttlefish/board/$(TARGET_DEVICE)/BoardConfig.mk \
       $(shell test -d device && find -L device -maxdepth 4 -path '*/$(TARGET_DEVICE)/BoardConfig.mk') \
       $(shell test -d vendor && find -L vendor -maxdepth 4 -path '*/$(TARGET_DEVICE)/BoardConfig.mk') \
     )))
