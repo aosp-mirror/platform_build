@@ -14,7 +14,7 @@
 # limitations under the License.
 
 
-source $(cd $(dirname $BASH_SOURCE) &> /dev/null && pwd)/../../make/shell_utils.sh
+source $(cd $(dirname $BASH_SOURCE) &> /dev/null && pwd)/../shell_utils.sh
 require_top
 
 function print_help() {
