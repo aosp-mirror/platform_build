@@ -791,7 +791,7 @@ class PayloadGenerator(object):
   SECONDARY_PAYLOAD_BIN = 'secondary/payload.bin'
   SECONDARY_PAYLOAD_PROPERTIES_TXT = 'secondary/payload_properties.txt'
 
-  def __init__(self, secondary=False, wipe_user_data=False, minor_version=None, is_partial_update=False):
+  def __init__(self, secondary=False, wipe_user_data=False, minor_version=None, is_partial_update=False, spl_downgrade=False):
     """Initializes a Payload instance.
 
     Args:
@@ -803,6 +803,7 @@ class PayloadGenerator(object):
     self.wipe_user_data = wipe_user_data
     self.minor_version = minor_version
     self.is_partial_update = is_partial_update
+    self.spl_downgrade = spl_downgrade
 
   def _Run(self, cmd):  # pylint: disable=no-self-use
     # Don't pipe (buffer) the output if verbose is set. Let
@@ -912,13 +913,15 @@ class PayloadGenerator(object):
            "--properties_file=" + properties_file]
     self._Run(cmd)
 
-    if self.secondary:
-      with open(properties_file, "a") as f:
-        f.write("SWITCH_SLOT_ON_REBOOT=0\n")
 
-    if self.wipe_user_data:
-      with open(properties_file, "a") as f:
+    with open(properties_file, "a") as f:
+      if self.wipe_user_data:
         f.write("POWERWASH=1\n")
+      if self.secondary:
+        f.write("SWITCH_SLOT_ON_REBOOT=0\n")
+      if self.spl_downgrade:
+        f.write("SPL_DOWNGRADE=1\n")
+
 
     self.payload_properties = properties_file
 
