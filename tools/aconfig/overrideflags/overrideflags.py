@@ -28,18 +28,20 @@ import sys
 
 
 _VALUE_LIST_TEMPLATE: str = """
-VALUE_LIST_LIST = [{}]
+ACONFIG_VALUES_LIST_LOCAL = [{}]
 """
 
 _ACONFIG_VALUES_TEMPLATE: str = """
 aconfig_values {{
-    name: "aconfig-local-{}",
+    name: "{}",
     package: "{}",
     srcs: [
         "{}",
     ]
 }}
 """
+
+_ACONFIG_VALUES_NAME_SUFFIX: str = "aconfig-local-override-{}"
 
 _PACKAGE_REGEX = re.compile(r"^package\:\s*\"([\w\d\.]+)\"")
 _ANDROID_BP_FILE_NAME = r"Android.bp"
@@ -61,13 +63,17 @@ def _parse_packages(file: pathlib.Path) -> set[str]:
 
 def _create_android_bp(packages: set[str], file_name: str) -> str:
   android_bp = ""
-  value_list = ",\n    ".join(map(lambda n: "aconfig-local-" + n, packages))
+  value_list = ",\n    ".join(
+      map(f'"{_ACONFIG_VALUES_NAME_SUFFIX}"'.format, packages)
+  )
   if value_list:
     value_list = "\n    " + value_list + "\n"
   android_bp += _VALUE_LIST_TEMPLATE.format(value_list) + "\n"
 
   for package in packages:
-    android_bp += _ACONFIG_VALUES_TEMPLATE.format(package, package, file_name)
+    android_bp += _ACONFIG_VALUES_TEMPLATE.format(
+        _ACONFIG_VALUES_NAME_SUFFIX.format(package), package, file_name
+    )
     android_bp += "\n"
 
   return android_bp
@@ -78,8 +84,18 @@ def _write_android_bp(new_android_bp: str, out: pathlib.Path) -> None:
     out.mkdir(parents=True, exist_ok=True)
 
   output = out.joinpath(_ANDROID_BP_FILE_NAME)
-  with open(output, "w+") as f:
-    f.write(new_android_bp)
+  with open(output, "r+", encoding="utf8") as file:
+    lines = []
+    for line in file:
+      line = line.rstrip("\n")
+      if line.startswith("ACONFIG_VALUES_LIST_LOCAL"):
+        break
+      lines.append(line)
+    # Overwrite the file with the updated contents.
+    file.seek(0)
+    file.truncate()
+    file.write("\n".join(lines))
+    file.write(new_android_bp)
 
 
 def main(args):
