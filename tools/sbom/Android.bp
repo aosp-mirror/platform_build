@@ -77,3 +77,18 @@ python_test_host {
     },
     test_suites: ["general-tests"],
 }
+
+python_binary_host {
+    name: "generate-sbom-framework_res",
+        srcs: [
+            "generate-sbom-framework_res.py",
+        ],
+        version: {
+            py3: {
+                embedded_launcher: true,
+            },
+        },
+        libs: [
+            "sbom_lib",
+        ],
+}
