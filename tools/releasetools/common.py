@@ -75,9 +75,7 @@ class Options(object):
       if "ANDROID_HOST_OUT" in os.environ:
         self.search_path = os.environ["ANDROID_HOST_OUT"]
     self.signapk_shared_library_path = "lib64"   # Relative to search_path
-    self.sign_sepolicy_path = None
     self.extra_signapk_args = []
-    self.extra_sign_sepolicy_args = []
     self.aapt2_path = "aapt2"
     self.java_path = "java"  # Use the one on the path by default.
     self.java_args = ["-Xmx4096m"]  # The default JVM args.
@@ -97,7 +95,6 @@ class Options(object):
     self.cache_size = None
     self.stash_threshold = 0.8
     self.logfile = None
-    self.sepolicy_name = 'sepolicy.apex'
 
 
 OPTIONS = Options()
@@ -2629,38 +2626,6 @@ def SignFile(input_name, output_name, key, password, min_api_level=None,
                                                        proc.returncode, stdoutdata))
 
 
-def SignSePolicy(sepolicy, key, password):
-  """Sign the sepolicy zip, producing an fsverity .fsv_sig and
-  an RSA .sig signature files.
-  """
-
-  if OPTIONS.sign_sepolicy_path is None:
-    logger.info("No sign_sepolicy_path specified, %s was not signed", sepolicy)
-    return False
-
-  java_library_path = os.path.join(
-      OPTIONS.search_path, OPTIONS.signapk_shared_library_path)
-
-  cmd = ([OPTIONS.java_path] + OPTIONS.java_args +
-         ["-Djava.library.path=" + java_library_path,
-          "-jar", os.path.join(OPTIONS.search_path, OPTIONS.sign_sepolicy_path)] +
-         OPTIONS.extra_sign_sepolicy_args)
-
-  cmd.extend([key + OPTIONS.public_key_suffix,
-              key + OPTIONS.private_key_suffix,
-              sepolicy, os.path.dirname(sepolicy)])
-
-  proc = Run(cmd, stdin=subprocess.PIPE)
-  if password is not None:
-    password += "\n"
-  stdoutdata, _ = proc.communicate(password)
-  if proc.returncode != 0:
-    raise ExternalError(
-        "Failed to run sign sepolicy: return code {}:\n{}".format(
-            proc.returncode, stdoutdata))
-  return True
-
-
 def CheckSize(data, target, info_dict):
   """Checks the data string passed against the max size limit.
 
@@ -2836,8 +2801,7 @@ def ParseOptions(argv,
     opts, args = getopt.getopt(
         argv, "hvp:s:x:" + extra_opts,
         ["help", "verbose", "path=", "signapk_path=",
-         "signapk_shared_library_path=", "extra_signapk_args=",
-         "sign_sepolicy_path=", "extra_sign_sepolicy_args=", "aapt2_path=",
+         "signapk_shared_library_path=", "extra_signapk_args=", "aapt2_path=",
          "java_path=", "java_args=", "android_jar_path=", "public_key_suffix=",
          "private_key_suffix=", "boot_signer_path=", "boot_signer_args=",
          "verity_signer_path=", "verity_signer_args=", "device_specific=",
@@ -2861,10 +2825,6 @@ def ParseOptions(argv,
       OPTIONS.signapk_shared_library_path = a
     elif o in ("--extra_signapk_args",):
       OPTIONS.extra_signapk_args = shlex.split(a)
-    elif o in ("--sign_sepolicy_path",):
-      OPTIONS.sign_sepolicy_path = a
-    elif o in ("--extra_sign_sepolicy_args",):
-      OPTIONS.extra_sign_sepolicy_args = shlex.split(a)
     elif o in ("--aapt2_path",):
       OPTIONS.aapt2_path = a
     elif o in ("--java_path",):
