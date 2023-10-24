@@ -51,44 +51,15 @@ endef
 include $(BUILD_SYSTEM)/release_config.mk
 
 # ---------------------------------------------------------------
-# defines ALL_VERSIONS
-$(call run-starlark,build/make/core/all_versions.bzl)
+# Set up version information
+include $(BUILD_SYSTEM)/version_util.mk
 
-# Filters ALL_VERSIONS down to the range [$1, $2], and errors if $1 > $2 or $3 is
-# not in [$1, $2]
-# $(1): min platform version
-# $(2): max platform version
-# $(3): default platform version
-define allowed-platform-versions
-$(strip \
-  $(if $(filter $(ALL_VERSIONS),$(1)),,
-    $(error Invalid MIN_PLATFORM_VERSION '$(1)'))
-  $(if $(filter $(ALL_VERSIONS),$(2)),,
-    $(error Invalid MAX_PLATFORM_VERSION '$(2)'))
-  $(if $(filter $(ALL_VERSIONS),$(3)),,
-    $(error Invalid RELEASE_PLATFORM_VERSION '$(3)'))
+# This used to be calculated, but is now fixed and not expected
+# to change over time anymore. New code attempting to use a
+# variable like IS_AT_LAST_* should instead use a
+# build system flag.
 
-  $(eval allowed_versions_ := $(call find_and_earlier,$(ALL_VERSIONS),$(2)))
-
-  $(if $(filter $(allowed_versions_),$(1)),,
-    $(error MIN_PLATFORM_VERSION '$(1)' must be before MAX_PLATFORM_VERSION '$(2)'))
-
-  $(eval allowed_versions_ := $(1) \
-    $(filter-out $(call find_and_earlier,$(allowed_versions_),$(1)),$(allowed_versions_)))
-
-  $(if $(filter $(allowed_versions_),$(3)),,
-    $(error RELEASE_PLATFORM_VERSION '$(3)' must be between MIN_PLATFORM_VERSION '$(1)' and MAX_PLATFORM_VERSION '$(2)'))
-
-  $(allowed_versions_))
-endef
-
-#$(warning $(call allowed-platform-versions,OPR1,PPR1,OPR1))
-#$(warning $(call allowed-platform-versions,OPM1,PPR1,OPR1))
-
-# Set up version information.
-include $(BUILD_SYSTEM)/version_defaults.mk
-
-ENABLED_VERSIONS := $(call find_and_earlier,$(ALL_VERSIONS),$(TARGET_PLATFORM_VERSION))
+ENABLED_VERSIONS := "OPR1 OPD1 OPD2 OPM1 OPM2 PPR1 PPD1 PPD2 PPM1 PPM2 QPR1 QP1A QP1B QP2A QP2B QD1A QD1B QD2A QD2B QQ1A QQ1B QQ2A QQ2B QQ3A QQ3B RP1A RP1B RP2A RP2B RD1A RD1B RD2A RD2B RQ1A RQ1B RQ2A RQ2B RQ3A RQ3B SP1A SP1B SP2A SP2B SD1A SD1B SD2A SD2B SQ1A SQ1B SQ2A SQ2B SQ3A SQ3B TP1A TP1B TP2A TP2B TD1A TD1B TD2A TD2B TQ1A TQ1B TQ2A TQ2B TQ3A TQ3B UP1A UP1B UP2A UP2B UD1A UD1B UD2A UD2B UQ1A UQ1B UQ2A UQ2B UQ3A UQ3B"
 
 $(foreach v,$(ENABLED_VERSIONS), \
   $(eval IS_AT_LEAST_$(v) := true))
