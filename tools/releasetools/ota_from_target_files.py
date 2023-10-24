@@ -995,7 +995,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   metadata = GetPackageMetadata(target_info, source_info)
   # Generate payload.
   payload = PayloadGenerator(
-      wipe_user_data=OPTIONS.wipe_user_data, minor_version=OPTIONS.force_minor_version, is_partial_update=OPTIONS.partial)
+      wipe_user_data=OPTIONS.wipe_user_data, minor_version=OPTIONS.force_minor_version, is_partial_update=OPTIONS.partial, spl_downgrade=OPTIONS.spl_downgrade)
 
   partition_timestamps_flags = []
   # Enforce a max timestamp this payload can be applied on top of.

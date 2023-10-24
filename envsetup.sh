@@ -2054,6 +2054,16 @@ function avbtool() {
     "$ANDROID_SOONG_HOST_OUT"/bin/avbtool $@
 }
 
+function overrideflags() {
+    local T="$(gettop)"
+    (\cd "${T}" && build/make/tools/overrideflags.sh "$@")
+}
+
+function aninja() {
+    local T="$(gettop)"
+    (\cd "${T}" && prebuilts/build-tools/linux-x86/bin/ninja -f out/combined-${TARGET_PRODUCT}.ninja "$@")
+}
+
 validate_current_shell
 set_global_paths
 source_vendorsetup
