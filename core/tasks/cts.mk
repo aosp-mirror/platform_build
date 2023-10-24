@@ -37,7 +37,7 @@ ifneq (,$(wildcard cts/))
   cts_platform_release_path := cts/tests/tests/os/assets/platform_releases.txt
   cts_platform_release_string := $(shell cat $(cts_platform_release_path))
 
-  ifneq (REL,$(PLATFORM_VERSION_CODENAME))
+  ifeq ($(RELEASE_PLATFORM_VERSION_CODENAME_REL),)
     ifeq (,$(findstring $(PLATFORM_VERSION),$(cts_platform_version_string)))
       define error_msg
         ============================================================
