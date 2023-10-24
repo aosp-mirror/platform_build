@@ -563,6 +563,7 @@ $(foreach mk,$(subdir_makefiles),$(info [$(call inc_and_print,subdir_makefiles_i
 # sources or dependencies for these tools may be missing from the tree.
 ifeq (,$(TARGET_BUILD_UNBUNDLED_IMAGE))
 droid_targets : blueprint_tools
+checkbuild: blueprint_tests
 endif
 
 endif # dont_bother
