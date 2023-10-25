@@ -335,19 +335,6 @@ ADDITIONAL_VENDOR_PROPERTIES += \
     ro.build.ab_update=$(AB_OTA_UPDATER)
 endif
 
-# Set ro.product.vndk.version to know the VNDK version required by product
-# modules. It uses the version in PRODUCT_PRODUCT_VNDK_VERSION. If the value
-# is "current", use PLATFORM_VNDK_VERSION.
-ifdef PRODUCT_PRODUCT_VNDK_VERSION
-ifeq ($(KEEP_VNDK),true)
-ifeq ($(PRODUCT_PRODUCT_VNDK_VERSION),current)
-ADDITIONAL_PRODUCT_PROPERTIES += ro.product.vndk.version=$(PLATFORM_VNDK_VERSION)
-else
-ADDITIONAL_PRODUCT_PROPERTIES += ro.product.vndk.version=$(PRODUCT_PRODUCT_VNDK_VERSION)
-endif
-endif
-endif
-
 ADDITIONAL_PRODUCT_PROPERTIES += ro.build.characteristics=$(TARGET_AAPT_CHARACTERISTICS)
 
 ifeq ($(AB_OTA_UPDATER),true)
