@@ -138,3 +138,16 @@ class Document:
       h = hashlib.sha1()
       h.update(''.join(checksums).encode(encoding='utf-8'))
       package.verification_code = h.hexdigest()
+
+def encode_for_spdxid(s):
+  """Simple encode for string values used in SPDXID which uses the charset of A-Za-Z0-9.-"""
+  result = ''
+  for c in s:
+    if c.isalnum() or c in '.-':
+      result += c
+    elif c in '_@/':
+      result += '-'
+    else:
+      result += '0x' + c.encode('utf-8').hex()
+
+  return result.lstrip('-')
