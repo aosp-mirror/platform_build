@@ -143,26 +143,12 @@ def log(*info):
       print(i)
 
 
-def encode_for_spdxid(s):
-  """Simple encode for string values used in SPDXID which uses the charset of A-Za-Z0-9.-"""
-  result = ''
-  for c in s:
-    if c.isalnum() or c in '.-':
-      result += c
-    elif c in '_@/':
-      result += '-'
-    else:
-      result += '0x' + c.encode('utf-8').hex()
-
-  return result.lstrip('-')
-
-
 def new_package_id(package_name, type):
-  return f'SPDXRef-{type}-{encode_for_spdxid(package_name)}'
+  return f'SPDXRef-{type}-{sbom_data.encode_for_spdxid(package_name)}'
 
 
 def new_file_id(file_path):
-  return f'SPDXRef-{encode_for_spdxid(file_path)}'
+  return f'SPDXRef-{sbom_data.encode_for_spdxid(file_path)}'
 
 
 def checksum(file_path):
