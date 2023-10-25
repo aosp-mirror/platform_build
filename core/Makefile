@@ -7676,7 +7676,7 @@ $(call dist-for-goals,haiku-presubmit,$(SOONG_PRESUBMIT_FUZZ_PACKAGING_ARCH_MODU
 
 # -----------------------------------------------------------------
 # Extract platform fonts used in Layoutlib
-include $(BUILD_SYSTEM)/layoutlib_fonts.mk
+include $(BUILD_SYSTEM)/layoutlib_data.mk
 
 
 # -----------------------------------------------------------------
