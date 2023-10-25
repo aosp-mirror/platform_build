@@ -1,4 +1,4 @@
-# Fonts for layoutlib
+# Data files for layoutlib
 
 FONT_TEMP := $(call intermediates-dir-for,PACKAGING,fonts,HOST,COMMON)
 
@@ -21,13 +21,25 @@ $(fonts_device): $(FONT_TEMP)/%: $(TARGET_OUT)/fonts/%
 	$(hide) mkdir -p $(dir $@)
 	$(hide) cp -vf $< $@
 
-# List of all dependencies - all fonts and configuration files.
-FONT_FILES := $(fonts_device) $(font_config)
+KEYBOARD_TEMP := $(call intermediates-dir-for,PACKAGING,keyboards,HOST,COMMON)
+
+# The key character map files needed for supporting KeyEvent
+keyboards := $(sort $(wildcard frameworks/base/data/keyboards/*.kcm))
+keyboards := $(addprefix $(KEYBOARD_TEMP)/, $(notdir $(keyboards)))
+
+$(keyboards): $(KEYBOARD_TEMP)/%.kcm: frameworks/base/data/keyboards/%.kcm
+	$(hide) mkdir -p $(dir $@)
+	$(hide) cp -vf $< $@
+
+# List of all data files - font files, font configuration files, key character map files
+LAYOUTLIB_FILES := $(fonts_device) $(font_config) $(keyboards)
 
 .PHONY: layoutlib layoutlib-tests
-layoutlib layoutlib-tests: $(FONT_FILES)
+layoutlib layoutlib-tests: $(LAYOUTLIB_FILES)
 
-$(call dist-for-goals, layoutlib, $(foreach m,$(FONT_FILES), $(m):layoutlib_native/fonts/$(notdir $(m))))
+$(call dist-for-goals, layoutlib, $(foreach m,$(fonts_device), $(m):layoutlib_native/fonts/$(notdir $(m))))
+$(call dist-for-goals, layoutlib, $(foreach m,$(font_config), $(m):layoutlib_native/fonts/$(notdir $(m))))
+$(call dist-for-goals, layoutlib, $(foreach m,$(keyboards), $(m):layoutlib_native/keyboards/$(notdir $(m))))
 
 FONT_TEMP :=
 font_config :=
