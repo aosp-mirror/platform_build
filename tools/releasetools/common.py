@@ -210,7 +210,7 @@ def InitLogging():
           '': {
               'handlers': ['default'],
               'propagate': True,
-              'level': 'WARNING',
+              'level': 'NOTSET',
           }
       }
   }

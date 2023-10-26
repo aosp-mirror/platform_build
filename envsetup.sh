@@ -774,7 +774,7 @@ function lunch()
         answer=$1
     else
         print_lunch_menu
-        echo "Which would you like? [aosp_arm-eng]"
+        echo "Which would you like? [aosp_arm-trunk_staging-eng]"
         echo -n "Pick from common choices above (e.g. 13) or specify your own (e.g. aosp_barbet-eng): "
         read answer
         used_lunch_menu=1
@@ -784,7 +784,7 @@ function lunch()
 
     if [ -z "$answer" ]
     then
-        selection=aosp_arm-eng
+        selection=aosp_arm-trunk_staging-eng
     elif (echo -n $answer | grep -q -e "^[0-9][0-9]*$")
     then
         local choices=($(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES))
@@ -2057,6 +2057,11 @@ function avbtool() {
 function overrideflags() {
     local T="$(gettop)"
     (\cd "${T}" && build/make/tools/overrideflags.sh "$@")
+}
+
+function aninja() {
+    local T="$(gettop)"
+    (\cd "${T}" && prebuilts/build-tools/linux-x86/bin/ninja -f out/combined-${TARGET_PRODUCT}.ninja "$@")
 }
 
 validate_current_shell
