@@ -14,119 +14,99 @@
 # limitations under the License.
 #
 
-ALLOWED_VERSIONS := $(call allowed-platform-versions,\
-  $(MIN_PLATFORM_VERSION),\
-  $(MAX_PLATFORM_VERSION),\
-  $(RELEASE_PLATFORM_VERSION))
+
+#
+# Handle various build version information.
+#
+# Guarantees that the following are defined:
+#     PLATFORM_VERSION
+#     PLATFORM_DISPLAY_VERSION
+#     PLATFORM_SDK_VERSION
+#     PLATFORM_SDK_EXTENSION_VERSION
+#     PLATFORM_VERSION_CODENAME
+#     DEFAULT_APP_TARGET_SDK
+#     BUILD_ID
+#     BUILD_NUMBER
+#     PLATFORM_SECURITY_PATCH
+#     PLATFORM_VNDK_VERSION
+#     PLATFORM_SYSTEMSDK_VERSIONS
+#     PLATFORM_VERSION_LAST_STABLE
+#
+
+# Look for an optional file containing overrides of the defaults,
+# but don't cry if we don't find it.  We could just use -include, but
+# the build.prop target also wants INTERNAL_BUILD_ID_MAKEFILE to be set
+# if the file exists.
+#
+INTERNAL_BUILD_ID_MAKEFILE := $(wildcard $(BUILD_SYSTEM)/build_id.mk)
+ifdef INTERNAL_BUILD_ID_MAKEFILE
+  include $(INTERNAL_BUILD_ID_MAKEFILE)
+endif
 
 ifdef TARGET_PLATFORM_VERSION
   $(error Do not set TARGET_PLATFORM_VERSION directly. Use RELEASE_PLATFORM_VERSION. value: $(TARGET_PLATFORM_VERSION))
 endif
-
 TARGET_PLATFORM_VERSION := $(RELEASE_PLATFORM_VERSION)
-
-ifeq (,$(filter $(ALLOWED_VERSIONS), $(TARGET_PLATFORM_VERSION)))
-  $(warning Invalid TARGET_PLATFORM_VERSION '$(TARGET_PLATFORM_VERSION)', must be one of)
-  $(error $(ALLOWED_VERSIONS))
-endif
-ALLOWED_VERSIONS :=
-MIN_PLATFORM_VERSION :=
-MAX_PLATFORM_VERSION :=
-
 .KATI_READONLY := TARGET_PLATFORM_VERSION
 
-# Default versions for each TARGET_PLATFORM_VERSION
-# TODO: PLATFORM_VERSION, PLATFORM_SDK_VERSION, etc. should be conditional
-# on this
-
-# This is the canonical definition of the platform version,
-# which is the version that we reveal to the end user.
-# Update this value when the platform version changes (rather
-# than overriding it somewhere else).  Can be an arbitrary string.
-
-# When you change PLATFORM_VERSION for a given PLATFORM_SDK_VERSION
-# please add that PLATFORM_VERSION as well as clean up obsolete PLATFORM_VERSION's
-# in the following text file:
-# cts/tests/tests/os/assets/platform_versions.txt
-
-# Note that there should be one PLATFORM_VERSION and PLATFORM_VERSION_CODENAME
-# entry for each unreleased API level, regardless of
-# MIN_PLATFORM_VERSION/MAX_PLATFORM_VERSION. PLATFORM_VERSION is used to
-# generate the range of allowed SDK versions, so it must have an entry for every
-# unreleased API level targetable by this branch, not just those that are valid
-# lunch targets for this branch.
-
-# Release config flag to override the current version to REL.  Note that the
-# codename can also be locked to REL by setting it in versino_defaults.mk.
-ifneq ($(RELEASE_PLATFORM_VERSION_CODENAME_REL),)
-  PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION) := REL
+ifdef PLATFORM_SECURITY_PATCH
+  $(error Do not set PLATFORM_SECURITY_PATCH directly. Use RELEASE_PLATFORM_SECURITY_PATCH. value: $(PLATFORM_SECURITY_PATCH))
 endif
+PLATFORM_SECURITY_PATCH := $(RELEASE_PLATFORM_SECURITY_PATCH)
+.KATI_READONLY := PLATFORM_SECURITY_PATCH
 
-PLATFORM_VERSION_CODENAME := $(PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION))
-ifndef PLATFORM_VERSION_CODENAME
-  # PLATFORM_VERSION_CODENAME falls back to TARGET_PLATFORM_VERSION
-  PLATFORM_VERSION_CODENAME := $(TARGET_PLATFORM_VERSION)
+ifdef PLATFORM_SDK_VERSION
+  $(error Do not set PLATFORM_SDK_VERSION directly. Use RELEASE_PLATFORM_SDK_VERSION. value: $(PLATFORM_SDK_VERSION))
 endif
+PLATFORM_SDK_VERSION := $(RELEASE_PLATFORM_SDK_VERSION)
+.KATI_READONLY := PLATFORM_SDK_VERSION
 
-# This is all of the *active* development codenames.
-# This confusing name is needed because
-# all_codenames has been baked into build.prop for ages.
-#
-# Should be either the same as PLATFORM_VERSION_CODENAME or a comma-separated
-# list of additional codenames after PLATFORM_VERSION_CODENAME.
-PLATFORM_VERSION_ALL_CODENAMES :=
-
-# Build a list of all active code names. Avoid duplicates, and stop when we
-# reach a codename that matches PLATFORM_VERSION_CODENAME (anything beyond
-# that is not included in our build).
-_versions_in_target := \
-  $(call find_and_earlier,$(ALL_VERSIONS),$(TARGET_PLATFORM_VERSION))
-$(foreach version,$(_versions_in_target),\
-  $(eval _codename := $(PLATFORM_VERSION_CODENAME.$(version)))\
-  $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_CODENAMES)),,\
-    $(eval PLATFORM_VERSION_ALL_CODENAMES += $(_codename))))
-
-# And the list of actually all the codenames that are in preview. The
-# ALL_CODENAMES variable is sort of a lie for historical reasons and only
-# includes codenames up to and including the currently active codename, whereas
-# this variable also includes future codenames. For example, while AOSP is still
-# merging into U, but V development has started, ALL_CODENAMES will only be U,
-# but ALL_PREVIEW_CODENAMES will be U and V.
-#
-# REL is filtered out of the list. The codename of the current release is
-# replaced by "REL" when the build is configured as a release rather than a
-# preview. For example, PLATFORM_VERSION_CODENAME.UpsideDownCake will be "REL"
-# rather than UpsideDownCake in a -next target when the upcoming release is
-# UpsideDownCake. "REL" is a codename (and android.os.Build relies on this:
-# https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/os/Build.java;l=484-487;drc=316e3d16c9f34212f3beace7695289651d15a071),
-# so it should be in PLATFORM_VERSION_ALL_CODENAMES, but it definitely is not a
-# preview codename.
-PLATFORM_VERSION_ALL_PREVIEW_CODENAMES :=
-$(foreach version,$(ALL_VERSIONS),\
-  $(eval _codename := $(PLATFORM_VERSION_CODENAME.$(version)))\
-  $(if $(filter REL,$(_codename)),,\
-      $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_PREVIEW_CODENAMES)),,\
-        $(eval PLATFORM_VERSION_ALL_PREVIEW_CODENAMES += $(_codename)))))
-
-# And convert from space separated to comma separated.
-PLATFORM_VERSION_ALL_CODENAMES := \
-  $(subst $(space),$(comma),$(strip $(PLATFORM_VERSION_ALL_CODENAMES)))
-PLATFORM_VERSION_ALL_PREVIEW_CODENAMES := \
-  $(subst $(space),$(comma),$(strip $(PLATFORM_VERSION_ALL_PREVIEW_CODENAMES)))
-
-.KATI_READONLY := \
-  PLATFORM_VERSION_CODENAME \
-  PLATFORM_VERSION_ALL_CODENAMES \
-  PLATFORM_VERSION_ALL_PREVIEW_CODENAMES \
-
-ifneq (REL,$(PLATFORM_VERSION_CODENAME))
-  codenames := \
-    $(subst $(comma),$(space),$(strip $(PLATFORM_VERSION_KNOWN_CODENAMES)))
-  ifeq ($(filter $(PLATFORM_VERSION_CODENAME),$(codenames)),)
-    $(error '$(PLATFORM_VERSION_CODENAME)' is not in '$(codenames)'. \
-        Add PLATFORM_VERSION_CODENAME to PLATFORM_VERSION_KNOWN_CODENAMES)
-  endif
+ifdef PLATFORM_SDK_EXTENSION_VERSION
+  $(error Do not set PLATFORM_SDK_EXTENSION_VERSION directly. Use RELEASE_PLATFORM_SDK_EXTENSION_VERSION. value: $(PLATFORM_SDK_EXTENSION_VERSION))
 endif
+PLATFORM_SDK_EXTENSION_VERSION := $(RELEASE_PLATFORM_SDK_EXTENSION_VERSION)
+.KATI_READONLY := PLATFORM_SDK_EXTENSION_VERSION
+
+# This is the sdk extension version that PLATFORM_SDK_VERSION ships with.
+PLATFORM_BASE_SDK_EXTENSION_VERSION := $(PLATFORM_SDK_EXTENSION_VERSION)
+.KATI_READONLY := PLATFORM_BASE_SDK_EXTENSION_VERSION
+
+ifdef PLATFORM_VERSION_CODENAME
+  $(error Do not set PLATFORM_VERSION_CODENAME directly. Use RELEASE_PLATFORM_VERSION. value: $(PLATFORM_VERSION_CODENAME))
+endif
+PLATFORM_VERSION_CODENAME := $(RELEASE_PLATFORM_VERSION_CODENAME)
+.KATI_READONLY := PLATFORM_VERSION_CODENAME
+
+ifdef PLATFORM_VERSION_ALL_CODENAMES
+  $(error Do not set PLATFORM_VERSION_ALL_CODENAMES directly. Use RELEASE_PLATFORM_VERSION_ALL_CODENAMES. value: $(PLATFORM_VERSION_ALL_CODENAMES))
+endif
+PLATFORM_VERSION_ALL_CODENAMES := $(RELEASE_PLATFORM_VERSION_ALL_CODENAMES)
+.KATI_READONLY := PLATFORM_VERSION_ALL_CODENAMES
+
+ifdef PLATFORM_VERSION_ALL_PREVIEW_CODENAMES
+  $(error Do not set PLATFORM_VERSION_ALL_PREVIEW_CODENAMES directly. Use RELEASE_PLATFORM_VERSION_ALL_PREVIEW_CODENAMES. value: $(PLATFORM_VERSION_ALL_PREVIEW_CODENAMES))
+endif
+PLATFORM_VERSION_ALL_PREVIEW_CODENAMES := $(RELEASE_PLATFORM_VERSION_ALL_PREVIEW_CODENAMES)
+.KATI_READONLY := PLATFORM_VERSION_ALL_PREVIEW_CODENAMES
+
+ifdef PLATFORM_VERSION_LAST_STABLE
+  $(error Do not set PLATFORM_VERSION_LAST_STABLE directly. Use RELEASE_PLATFORM_VERSION_LAST_STABLE. value: $(PLATFORM_VERSION_CODENAME))
+endif
+PLATFORM_VERSION_LAST_STABLE := $(RELEASE_PLATFORM_VERSION_LAST_STABLE)
+.KATI_READONLY := PLATFORM_VERSION_LAST_STABLE
+
+
+# This are all known codenames. Should this move into the release config?
+PLATFORM_VERSION_KNOWN_CODENAMES := \
+Base Base11 Cupcake Donut Eclair Eclair01 EclairMr1 Froyo Gingerbread GingerbreadMr1 \
+Honeycomb HoneycombMr1 HoneycombMr2 IceCreamSandwich IceCreamSandwichMr1 \
+JellyBean JellyBeanMr1 JellyBeanMr2 Kitkat KitkatWatch Lollipop LollipopMr1 M N NMr1 O OMr1 P \
+Q R S Sv2 Tiramisu UpsideDownCake VanillaIceCream
+
+# Convert from space separated list to comma separated
+PLATFORM_VERSION_KNOWN_CODENAMES := \
+  $(call normalize-comma-list,$(PLATFORM_VERSION_KNOWN_CODENAMES))
+.KATI_READONLY := PLATFORM_VERSION_KNOWN_CODENAMES
 
 ifndef PLATFORM_VERSION
   ifeq (REL,$(PLATFORM_VERSION_CODENAME))

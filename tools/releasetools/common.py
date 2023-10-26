@@ -210,7 +210,7 @@ def InitLogging():
           '': {
               'handlers': ['default'],
               'propagate': True,
-              'level': 'WARNING',
+              'level': 'NOTSET',
           }
       }
   }
@@ -1947,7 +1947,15 @@ def _SignBootableImage(image_path, prebuilt_name, partition_name,
     cmd = [avbtool, "add_hash_footer", "--image", image_path,
            "--partition_size", str(part_size), "--partition_name",
            partition_name]
-    AppendAVBSigningArgs(cmd, partition_name)
+    # Use sha256 of the kernel as salt for reproducible builds
+    with tempfile.TemporaryDirectory() as tmpdir:
+      RunAndCheckOutput(["unpack_bootimg", "--boot_img", image_path, "--out", tmpdir])
+      for filename in ["kernel", "ramdisk", "vendor_ramdisk00"]:
+        path = os.path.join(tmpdir, filename)
+        if os.path.exists(path) and os.path.getsize(path):
+          with open(path, "rb") as fp:
+            salt = sha256(fp.read()).hexdigest()
+    AppendAVBSigningArgs(cmd, partition_name, salt)
     args = info_dict.get("avb_" + partition_name + "_add_hash_footer_args")
     if args and args.strip():
       split_args = ResolveAVBSigningPathArgs(shlex.split(args))
