@@ -1444,14 +1444,18 @@ INTERNAL_PREBUILT_BOOTIMAGE := $(BOARD_PREBUILT_BOOTIMAGE)
 INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
 
 ifeq ($(BOARD_AVB_ENABLE),true)
-$(INSTALLED_BOOTIMAGE_TARGET): $(INTERNAL_PREBUILT_BOOTIMAGE) $(AVBTOOL) $(BOARD_AVB_BOOT_KEY_PATH)
+$(INSTALLED_BOOTIMAGE_TARGET): PRIVATE_WORKING_DIR := $(call intermediates-dir-for,PACKAGING,prebuilt_bootimg)
+$(INSTALLED_BOOTIMAGE_TARGET): $(INTERNAL_PREBUILT_BOOTIMAGE) $(AVBTOOL) $(BOARD_AVB_BOOT_KEY_PATH) $(UNPACK_BOOTIMG)
 	cp $(INTERNAL_PREBUILT_BOOTIMAGE) $@
+	$(UNPACK_BOOTIMG) --boot_img $(INTERNAL_PREBUILT_BOOTIMAGE) --out $(PRIVATE_WORKING_DIR)
 	chmod +w $@
 	$(AVBTOOL) add_hash_footer \
 	    --image $@ \
+	    --salt `sha256sum $(PRIVATE_WORKING_DIR)/kernel | cut -d " " -f 1` \
 	    $(call get-partition-size-argument,$(BOARD_BOOTIMAGE_PARTITION_SIZE)) \
 	    --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
 	    $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
+
 
 $(call declare-container-license-metadata,$(INSTALLED_BOOTIMAGE_TARGET),SPDX-license-identifier-GPL-2.0-only SPDX-license-identifier-Apache-2.0,restricted notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING build/soong/licenses/LICENSE,"Boot Image",bool)
 $(call declare-container-license-deps,$(INSTALLED_BOOTIMAGE_TARGET),$(INTERNAL_PREBUILT_BOOTIMAGE),$(PRODUCT_OUT)/:/)
@@ -7679,7 +7683,7 @@ $(call dist-for-goals,haiku-presubmit,$(SOONG_PRESUBMIT_FUZZ_PACKAGING_ARCH_MODU
 
 # -----------------------------------------------------------------
 # Extract platform fonts used in Layoutlib
-include $(BUILD_SYSTEM)/layoutlib_fonts.mk
+include $(BUILD_SYSTEM)/layoutlib_data.mk
 
 
 # -----------------------------------------------------------------
