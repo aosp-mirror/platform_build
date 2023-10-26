@@ -1065,6 +1065,18 @@ SYSTEM_DLKM_MODULE_PATTERNS := $(foreach path,$(BOARD_SYSTEM_KERNEL_MODULES),%/$
 
 endif
 
+# BOARD_KERNEL_MODULES_16K might contain duplicate modules under different path.
+# for example, foo/bar/wifi.ko and foo/wifi.ko . To avoid build issues, de-dup
+# module list on basename first.
+BOARD_KERNEL_MODULES_16K := $(foreach \
+  pattern,\
+  $(sort $(foreach \
+    path,\
+    $(BOARD_KERNEL_MODULES_16K),\
+    %/$(notdir $(path)))\
+  ),\
+  $(firstword $(filter $(pattern),$(BOARD_KERNEL_MODULES_16K))) \
+)
 # For non-GKI modules, strip them before install. As debug symbols take up
 # significant space.
 $(foreach \
