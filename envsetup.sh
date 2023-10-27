@@ -205,6 +205,7 @@ function check_product()
         return
     fi
         TARGET_PRODUCT=$1 \
+        TARGET_RELEASE= \
         TARGET_BUILD_VARIANT= \
         TARGET_BUILD_TYPE= \
         TARGET_BUILD_APPS= \
@@ -728,7 +729,7 @@ function print_lunch_menu()
 {
     local uname=$(uname)
     local choices
-    choices=$(TARGET_BUILD_APPS= TARGET_PRODUCT= TARGET_BUILD_VARIANT= get_build_var COMMON_LUNCH_CHOICES 2>/dev/null)
+    choices=$(TARGET_BUILD_APPS= TARGET_PRODUCT= TARGET_RELEASE= TARGET_BUILD_VARIANT= get_build_var COMMON_LUNCH_CHOICES 2>/dev/null)
     local ret=$?
 
     echo
