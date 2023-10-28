@@ -1235,26 +1235,16 @@ def _FindAndLoadRecoveryFstab(info_dict, input_file, read_helper):
   system_root_image = info_dict.get('system_root_image') == 'true'
   if info_dict.get('no_recovery') != 'true':
     recovery_fstab_path = 'RECOVERY/RAMDISK/system/etc/recovery.fstab'
-    if isinstance(input_file, zipfile.ZipFile):
-      if recovery_fstab_path not in input_file.namelist():
-        recovery_fstab_path = 'RECOVERY/RAMDISK/etc/recovery.fstab'
-    else:
-      path = os.path.join(input_file, *recovery_fstab_path.split('/'))
-      if not os.path.exists(path):
-        recovery_fstab_path = 'RECOVERY/RAMDISK/etc/recovery.fstab'
+    if not DoesInputFileContain(input_file, recovery_fstab_path):
+      recovery_fstab_path = 'RECOVERY/RAMDISK/etc/recovery.fstab'
     return LoadRecoveryFSTab(
         read_helper, info_dict['fstab_version'], recovery_fstab_path,
         system_root_image)
 
   if info_dict.get('recovery_as_boot') == 'true':
     recovery_fstab_path = 'BOOT/RAMDISK/system/etc/recovery.fstab'
-    if isinstance(input_file, zipfile.ZipFile):
-      if recovery_fstab_path not in input_file.namelist():
-        recovery_fstab_path = 'BOOT/RAMDISK/etc/recovery.fstab'
-    else:
-      path = os.path.join(input_file, *recovery_fstab_path.split('/'))
-      if not os.path.exists(path):
-        recovery_fstab_path = 'BOOT/RAMDISK/etc/recovery.fstab'
+    if not DoesInputFileContain(input_file, recovery_fstab_path):
+      recovery_fstab_path = 'BOOT/RAMDISK/etc/recovery.fstab'
     return LoadRecoveryFSTab(
         read_helper, info_dict['fstab_version'], recovery_fstab_path,
         system_root_image)
