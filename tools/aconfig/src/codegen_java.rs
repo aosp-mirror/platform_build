@@ -16,6 +16,7 @@
 
 use anyhow::Result;
 use serde::Serialize;
+use std::collections::BTreeSet;
 use std::path::PathBuf;
 use tinytemplate::TinyTemplate;
 
@@ -31,12 +32,19 @@ pub fn generate_java_code<'a, I>(
 where
     I: Iterator<Item = &'a ProtoParsedFlag>,
 {
-    let class_elements: Vec<ClassElement> =
-        parsed_flags_iter.map(|pf| create_class_element(package, pf)).collect();
-    let is_read_write = class_elements.iter().any(|elem| elem.is_read_write);
+    let flag_elements: Vec<FlagElement> =
+        parsed_flags_iter.map(|pf| create_flag_element(package, pf)).collect();
+    let properties_set: BTreeSet<String> =
+        flag_elements.iter().map(|fe| format_property_name(&fe.device_config_namespace)).collect();
+    let is_read_write = flag_elements.iter().any(|elem| elem.is_read_write);
     let is_test_mode = codegen_mode == CodegenMode::Test;
-    let context =
-        Context { class_elements, is_test_mode, is_read_write, package_name: package.to_string() };
+    let context = Context {
+        flag_elements,
+        is_test_mode,
+        is_read_write,
+        properties_set,
+        package_name: package.to_string(),
+    };
     let mut template = TinyTemplate::new();
     template.add_template("Flags.java", include_str!("../templates/Flags.java.template"))?;
     template.add_template(
@@ -66,49 +74,62 @@ where
 
 #[derive(Serialize)]
 struct Context {
-    pub class_elements: Vec<ClassElement>,
+    pub flag_elements: Vec<FlagElement>,
     pub is_test_mode: bool,
     pub is_read_write: bool,
+    pub properties_set: BTreeSet<String>,
     pub package_name: String,
 }
 
 #[derive(Serialize)]
-struct ClassElement {
+struct FlagElement {
     pub default_value: bool,
     pub device_config_namespace: String,
     pub device_config_flag: String,
     pub flag_name_constant_suffix: String,
     pub is_read_write: bool,
     pub method_name: String,
+    pub properties: String,
 }
 
-fn create_class_element(package: &str, pf: &ProtoParsedFlag) -> ClassElement {
+fn create_flag_element(package: &str, pf: &ProtoParsedFlag) -> FlagElement {
     let device_config_flag = codegen::create_device_config_ident(package, pf.name())
         .expect("values checked at flag parse time");
-    ClassElement {
+    FlagElement {
         default_value: pf.state() == ProtoFlagState::ENABLED,
         device_config_namespace: pf.namespace().to_string(),
         device_config_flag,
         flag_name_constant_suffix: pf.name().to_ascii_uppercase(),
         is_read_write: pf.permission() == ProtoFlagPermission::READ_WRITE,
         method_name: format_java_method_name(pf.name()),
+        properties: format_property_name(pf.namespace()),
     }
 }
 
 fn format_java_method_name(flag_name: &str) -> String {
-    flag_name
-        .split('_')
-        .filter(|&word| !word.is_empty())
-        .enumerate()
-        .map(|(index, word)| {
-            if index == 0 {
-                word.to_ascii_lowercase()
-            } else {
-                word[0..1].to_ascii_uppercase() + &word[1..].to_ascii_lowercase()
-            }
-        })
-        .collect::<Vec<String>>()
-        .join("")
+    let splits: Vec<&str> = flag_name.split('_').filter(|&word| !word.is_empty()).collect();
+    if splits.len() == 1 {
+        let name = splits[0];
+        name[0..1].to_ascii_lowercase() + &name[1..]
+    } else {
+        splits
+            .iter()
+            .enumerate()
+            .map(|(index, word)| {
+                if index == 0 {
+                    word.to_ascii_lowercase()
+                } else {
+                    word[0..1].to_ascii_uppercase() + &word[1..].to_ascii_lowercase()
+                }
+            })
+            .collect::<Vec<String>>()
+            .join("")
+    }
+}
+
+fn format_property_name(property_name: &str) -> String {
+    let name = format_java_method_name(property_name);
+    format!("mProperties{}{}", &name[0..1].to_ascii_uppercase(), &name[1..])
 }
 
 #[cfg(test)]
@@ -265,8 +286,10 @@ mod tests {
         // TODO(b/303773055): Remove the annotation after access issue is resolved.
         import android.compat.annotation.UnsupportedAppUsage;
         import android.provider.DeviceConfig;
+        import android.provider.DeviceConfig.Properties;
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
+            private Properties mPropertiesAconfigTest;
             @Override
             @UnsupportedAppUsage
             public boolean disabledRo() {
@@ -275,11 +298,18 @@ mod tests {
             @Override
             @UnsupportedAppUsage
             public boolean disabledRw() {
-                return getValue(
-                    "aconfig_test",
-                    "com.android.aconfig.test.disabled_rw",
-                    false
-                );
+                if (mPropertiesAconfigTest == null) {
+                    mPropertiesAconfigTest =
+                        getProperties(
+                            "aconfig_test",
+                            "com.android.aconfig.test.disabled_rw"
+                        );
+                }
+                return mPropertiesAconfigTest
+                    .getBoolean(
+                        "com.android.aconfig.test.disabled_rw",
+                        false
+                    );
             }
             @Override
             @UnsupportedAppUsage
@@ -294,32 +324,36 @@ mod tests {
             @Override
             @UnsupportedAppUsage
             public boolean enabledRw() {
-                return getValue(
-                    "aconfig_test",
-                    "com.android.aconfig.test.enabled_rw",
-                    true
-                );
-            }
-            private boolean getValue(String nameSpace,
-                String flagName, boolean defaultValue) {
-                boolean value = defaultValue;
-                try {
-                    value = DeviceConfig.getBoolean(
-                        nameSpace,
-                        flagName,
-                        defaultValue
+                if (mPropertiesAconfigTest == null) {
+                    mPropertiesAconfigTest =
+                        getProperties(
+                            "aconfig_test",
+                            "com.android.aconfig.test.enabled_rw"
+                        );
+                }
+                return mPropertiesAconfigTest
+                    .getBoolean(
+                        "com.android.aconfig.test.enabled_rw",
+                        true
                     );
+            }
+            private Properties getProperties(
+                String namespace,
+                String flagName) {
+                Properties properties = null;
+                try {
+                    properties = DeviceConfig.getProperties(namespace);
                 } catch (NullPointerException e) {
                     throw new RuntimeException(
-                        "Cannot read value of flag " + flagName + " from DeviceConfig. " +
-                        "It could be that the code using flag executed " +
-                        "before SettingsProvider initialization. " +
-                        "Please use fixed read-only flag by adding " +
-                        "is_fixed_read_only: true in flag declaration.",
+                        "Cannot read value of flag " + flagName + " from DeviceConfig. "
+                        + "It could be that the code using flag executed "
+                        + "before SettingsProvider initialization. "
+                        + "Please use fixed read-only flag by adding "
+                        + "is_fixed_read_only: true in flag declaration.",
                         e
                     );
                 }
-                return value;
+                return properties;
             }
         }
         "#;
@@ -441,9 +475,45 @@ mod tests {
 
     #[test]
     fn test_format_java_method_name() {
-        let input = "____some_snake___name____";
         let expected = "someSnakeName";
+        let input = "____some_snake___name____";
         let formatted_name = format_java_method_name(input);
+        assert_eq!(expected, formatted_name);
+
+        let input = "someSnakeName";
+        let formatted_name = format_java_method_name(input);
+        assert_eq!(expected, formatted_name);
+
+        let input = "SomeSnakeName";
+        let formatted_name = format_java_method_name(input);
+        assert_eq!(expected, formatted_name);
+
+        let input = "SomeSnakeName_";
+        let formatted_name = format_java_method_name(input);
+        assert_eq!(expected, formatted_name);
+
+        let input = "_SomeSnakeName";
+        let formatted_name = format_java_method_name(input);
+        assert_eq!(expected, formatted_name);
+    }
+
+    #[test]
+    fn test_format_property_name() {
+        let expected = "mPropertiesSomeSnakeName";
+        let input = "____some_snake___name____";
+        let formatted_name = format_property_name(input);
+        assert_eq!(expected, formatted_name);
+
+        let input = "someSnakeName";
+        let formatted_name = format_property_name(input);
+        assert_eq!(expected, formatted_name);
+
+        let input = "SomeSnakeName";
+        let formatted_name = format_property_name(input);
+        assert_eq!(expected, formatted_name);
+
+        let input = "SomeSnakeName_";
+        let formatted_name = format_property_name(input);
         assert_eq!(expected, formatted_name);
     }
 }
