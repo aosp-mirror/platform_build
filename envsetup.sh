@@ -887,6 +887,8 @@ function tapas()
 {
     local showHelp="$(echo $* | xargs -n 1 echo | \grep -E '^(help)$' | xargs)"
     local arch="$(echo $* | xargs -n 1 echo | \grep -E '^(arm|x86|arm64|x86_64)$' | xargs)"
+    # TODO(b/307975293): Expand tapas to take release arguments (and update hmm() usage).
+    local release="trunk_staging"
     local variant="$(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$' | xargs)"
     local density="$(echo $* | xargs -n 1 echo | \grep -E '^(ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi)$' | xargs)"
     local keys="$(echo $* | xargs -n 1 echo | \grep -E '^(devkeys)$' | xargs)"
@@ -900,6 +902,10 @@ function tapas()
 
     if [ $(echo $arch | wc -w) -gt 1 ]; then
         echo "tapas: Error: Multiple build archs supplied: $arch"
+        return
+    fi
+    if [ $(echo $release | wc -w) -gt 1 ]; then
+        echo "tapas: Error: Multiple build releases supplied: $release"
         return
     fi
     if [ $(echo $variant | wc -w) -gt 1 ]; then
@@ -936,6 +942,7 @@ function tapas()
     fi
 
     export TARGET_PRODUCT=$product
+    export TARGET_RELEASE=$release
     export TARGET_BUILD_VARIANT=$variant
     export TARGET_BUILD_DENSITY=$density
     export TARGET_BUILD_TYPE=release
