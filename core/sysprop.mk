@@ -46,7 +46,6 @@ define generate-common-build-props
         echo "ro.product.$(1).manufacturer=$(PRODUCT_MANUFACTURER)" >> $(2);\
         echo "ro.product.$(1).model=$(PRODUCT_MODEL)" >> $(2);\
         echo "ro.product.$(1).name=$(TARGET_PRODUCT)" >> $(2);\
-        # Attestation specific properties for AOSP/GSI build running on device.
         if [ -n "$(strip $(PRODUCT_MODEL_FOR_ATTESTATION))" ]; then \
             echo "ro.product.model_for_attestation=$(PRODUCT_MODEL_FOR_ATTESTATION)" >> $(2);\
         fi; \
