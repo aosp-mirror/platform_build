@@ -67,8 +67,6 @@ PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/mainline_system_x86_arm.mk \
     $(LOCAL_DIR)/ndk.mk \
     $(LOCAL_DIR)/sdk.mk \
-    $(LOCAL_DIR)/sdk_phone_arm64.mk \
-    $(LOCAL_DIR)/sdk_phone_x86_64.mk \
 
 endif
 
