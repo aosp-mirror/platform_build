@@ -4,7 +4,7 @@ import android.compat.annotation.UnsupportedAppUsage;
 
 /** @hide */
 public interface FeatureFlags \{
-{{ for item in flag_elements }}
+{{ for item in class_elements}}
 {{ -if not item.is_read_write }}
 {{ -if item.default_value }}
     @com.android.aconfig.annotations.AssumeTrueForR8
