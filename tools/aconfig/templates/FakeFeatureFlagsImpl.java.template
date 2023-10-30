@@ -11,7 +11,7 @@ public class FakeFeatureFlagsImpl implements FeatureFlags \{
         resetAll();
     }
 
-{{ for item in flag_elements}}
+{{ for item in class_elements}}
     @Override
     @UnsupportedAppUsage
     public boolean {item.method_name}() \{
@@ -41,7 +41,7 @@ public class FakeFeatureFlagsImpl implements FeatureFlags \{
 
     private Map<String, Boolean> mFlagMap = new HashMap<>(
         Map.ofEntries(
-            {{-for item in flag_elements}}
+            {{-for item in class_elements}}
             Map.entry(Flags.FLAG_{item.flag_name_constant_suffix}, false)
             {{ -if not @last }},{{ endif }}
             {{ -endfor }}
