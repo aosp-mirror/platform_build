@@ -20,6 +20,13 @@ import json
 import sbom_data
 import sbom_writers
 
+'''
+This script generates SBOM of framework_res.jar of layoutlib shipped with Android Studio.
+
+The generated SBOM contains some placeholders which should be substituted by release_layoutlib.sh.
+The placeholders include: document name, document namespace, organization, created timestamp and 
+the SHA1 checksum of framework_res.jar.
+'''
 
 def get_args():
   parser = argparse.ArgumentParser()
