@@ -68,9 +68,7 @@ PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/ndk.mk \
     $(LOCAL_DIR)/sdk.mk \
     $(LOCAL_DIR)/sdk_phone_arm64.mk \
-    $(LOCAL_DIR)/sdk_phone_armv7.mk \
     $(LOCAL_DIR)/sdk_phone_x86_64.mk \
-    $(LOCAL_DIR)/sdk_phone_x86.mk \
 
 endif
 
@@ -86,7 +84,7 @@ PRODUCT_MAKEFILES += \
     $(LOCAL_DIR)/module_x86_64only.mk \
 
 COMMON_LUNCH_CHOICES := \
-    aosp_arm64-eng \
-    aosp_arm-eng \
-    aosp_x86_64-eng \
-    aosp_x86-eng \
+    aosp_arm64-trunk_staging-eng \
+    aosp_arm-trunk_staging-eng \
+    aosp_x86_64-trunk_staging-eng \
+    aosp_x86-trunk_staging-eng \

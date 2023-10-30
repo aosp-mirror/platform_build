@@ -56,7 +56,7 @@ cat <<EOF
 Run "m help" for help with the build system itself.
 
 Invoke ". build/envsetup.sh" from your shell to add the following functions to your environment:
-- lunch:      lunch <product_name>-<build_variant>
+- lunch:      lunch <product_name>-<release_type>-<build_variant>
               Selects <product_name> as the product to build, and <build_variant> as the variant to
               build, and stores those selections in the environment to be read by subsequent
               invocations of 'm' etc.
@@ -205,6 +205,7 @@ function check_product()
         return
     fi
         TARGET_PRODUCT=$1 \
+        TARGET_RELEASE= \
         TARGET_BUILD_VARIANT= \
         TARGET_BUILD_TYPE= \
         TARGET_BUILD_APPS= \
@@ -486,7 +487,7 @@ function addcompletions()
 
 function multitree_lunch_help()
 {
-    echo "usage: lunch PRODUCT-VARIANT" 1>&2
+    echo "usage: lunch PRODUCT-RELEASE-VARIANT" 1>&2
     echo "    Set up android build environment based on a product short name and variant" 1>&2
     echo 1>&2
     echo "lunch COMBO_FILE VARIANT" 1>&2
@@ -728,7 +729,7 @@ function print_lunch_menu()
 {
     local uname=$(uname)
     local choices
-    choices=$(TARGET_BUILD_APPS= TARGET_PRODUCT= TARGET_BUILD_VARIANT= get_build_var COMMON_LUNCH_CHOICES 2>/dev/null)
+    choices=$(TARGET_BUILD_APPS= TARGET_PRODUCT= TARGET_RELEASE= TARGET_BUILD_VARIANT= get_build_var COMMON_LUNCH_CHOICES 2>/dev/null)
     local ret=$?
 
     echo
@@ -774,7 +775,7 @@ function lunch()
         answer=$1
     else
         print_lunch_menu
-        echo "Which would you like? [aosp_arm-eng]"
+        echo "Which would you like? [aosp_arm-trunk_staging-eng]"
         echo -n "Pick from common choices above (e.g. 13) or specify your own (e.g. aosp_barbet-eng): "
         read answer
         used_lunch_menu=1
@@ -784,7 +785,7 @@ function lunch()
 
     if [ -z "$answer" ]
     then
-        selection=aosp_arm-eng
+        selection=aosp_arm-trunk_staging-eng
     elif (echo -n $answer | grep -q -e "^[0-9][0-9]*$")
     then
         local choices=($(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES))
@@ -804,26 +805,16 @@ function lunch()
 
     export TARGET_BUILD_APPS=
 
-    # Support either <product>-<variant> or <product>-<release>-<variant>
-    local product release_and_variant release variant
-    product=${selection%%-*} # Trim everything after first dash
-    release_and_variant=${selection#*-} # Trim everything up to first dash
-    if [ "$release_and_variant" != "$selection" ]; then
-        local first=${release_and_variant%%-*} # Trim everything after first dash
-        if [ "$first" != "$release_and_variant" ]; then
-            # There is a 2nd dash, split into release-variant
-            release=$first # Everything up to the dash
-            variant=${release_and_variant#*-} # Trim everything up to dash
-        else
-            # There is not a 2nd dash, default to variant as the second param
-            variant=$first
-        fi
-    fi
+    # This must be <product>-<release>-<variant>
+    local product release variant
+    # Split string on the '-' character.
+    IFS="-" read -r product release variant <<< "$selection"
 
-    if [ -z "$product" ]
+    if [[ -z "$product" ]] || [[ -z "$release" ]] || [[ -z "$variant" ]]
     then
         echo
         echo "Invalid lunch combo: $selection"
+        echo "Valid combos must be of the form <product>-<release>-<variant>"
         return 1
     fi
 
@@ -841,11 +832,8 @@ function lunch()
     fi
     export TARGET_PRODUCT=$(get_build_var TARGET_PRODUCT)
     export TARGET_BUILD_VARIANT=$(get_build_var TARGET_BUILD_VARIANT)
-    if [ -n "$release" ]; then
-      export TARGET_RELEASE=$release
-    else
-      unset TARGET_RELEASE
-    fi
+    export TARGET_RELEASE=$release
+    # Note this is the string "release", not the value of the variable.
     export TARGET_BUILD_TYPE=release
 
     if [ $used_lunch_menu -eq 1 ]; then
@@ -887,6 +875,8 @@ function tapas()
 {
     local showHelp="$(echo $* | xargs -n 1 echo | \grep -E '^(help)$' | xargs)"
     local arch="$(echo $* | xargs -n 1 echo | \grep -E '^(arm|x86|arm64|x86_64)$' | xargs)"
+    # TODO(b/307975293): Expand tapas to take release arguments (and update hmm() usage).
+    local release="trunk_staging"
     local variant="$(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$' | xargs)"
     local density="$(echo $* | xargs -n 1 echo | \grep -E '^(ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi)$' | xargs)"
     local keys="$(echo $* | xargs -n 1 echo | \grep -E '^(devkeys)$' | xargs)"
@@ -900,6 +890,10 @@ function tapas()
 
     if [ $(echo $arch | wc -w) -gt 1 ]; then
         echo "tapas: Error: Multiple build archs supplied: $arch"
+        return
+    fi
+    if [ $(echo $release | wc -w) -gt 1 ]; then
+        echo "tapas: Error: Multiple build releases supplied: $release"
         return
     fi
     if [ $(echo $variant | wc -w) -gt 1 ]; then
@@ -936,6 +930,7 @@ function tapas()
     fi
 
     export TARGET_PRODUCT=$product
+    export TARGET_RELEASE=$release
     export TARGET_BUILD_VARIANT=$variant
     export TARGET_BUILD_DENSITY=$density
     export TARGET_BUILD_TYPE=release
@@ -953,6 +948,8 @@ function banchan()
 {
     local showHelp="$(echo $* | xargs -n 1 echo | \grep -E '^(help)$' | xargs)"
     local product="$(echo $* | xargs -n 1 echo | \grep -E '^(.*_)?(arm|x86|arm64|riscv64|x86_64|arm64only|x86_64only)$' | xargs)"
+    # TODO: Expand banchan to take release arguments (and update hmm() usage).
+    local release="trunk_staging"
     local variant="$(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$' | xargs)"
     local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|(.*_)?(arm|x86|arm64|riscv64|x86_64))$' | xargs)"
 
@@ -965,6 +962,10 @@ function banchan()
         product=arm64
     elif [ $(echo $product | wc -w) -gt 1 ]; then
         echo "banchan: Error: Multiple build archs or products supplied: $products"
+        return
+    fi
+    if [ $(echo $release | wc -w) -gt 1 ]; then
+        echo "banchan: Error: Multiple build releases supplied: $release"
         return
     fi
     if [ $(echo $variant | wc -w) -gt 1 ]; then
@@ -990,6 +991,7 @@ function banchan()
     fi
 
     export TARGET_PRODUCT=$product
+    export TARGET_RELEASE=$release
     export TARGET_BUILD_VARIANT=$variant
     export TARGET_BUILD_DENSITY=alldpi
     export TARGET_BUILD_TYPE=release
@@ -1613,8 +1615,8 @@ function allmod() {
 # Return the Bazel label of a Soong module if it is converted with bp2build.
 function bmod()
 (
-    if [ $# -ne 1 ]; then
-        echo "usage: bmod <module>" >&2
+    if [ $# -eq 0 ]; then
+        echo "usage: bmod <module 1> <module 2> ... <module n>" >&2
         return 1
     fi
 
@@ -1631,19 +1633,24 @@ function bmod()
       return 1
     fi
 
-    local target_label=$(python3 -c "import json
-module = '$1'
+    modules=()
+    for m in "$@"; do
+        modules+=("\"$m\",")
+    done
+    local res=$(python3 -c "import json
+modules = [${modules[*]}]
 converted_json='$converted_json'
 bp2build_converted_map = json.load(open(converted_json))
-if module not in bp2build_converted_map:
-    exit(1)
-print(bp2build_converted_map[module] + ':' + module)")
+for module in modules:
+    if module not in bp2build_converted_map:
+        print(module + ' is not converted to Bazel.')
+    else:
+        print(bp2build_converted_map[module] + ':' + module)")
 
-    if [ -z "${target_label}" ]; then
-      echo "$1 is not converted to Bazel." >&2
-      return 1
-    else
-      echo "${target_label}"
+    echo "${res}"
+    unconverted_count=$(echo "${res}" | grep -c "not converted to Bazel")
+    if [[ ${unconverted_count} -ne 0 ]]; then
+        return 1
     fi
 )
 
@@ -2047,6 +2054,16 @@ function avbtool() {
         m avbtool
     fi
     "$ANDROID_SOONG_HOST_OUT"/bin/avbtool $@
+}
+
+function overrideflags() {
+    local T="$(gettop)"
+    (\cd "${T}" && build/make/tools/overrideflags.sh "$@")
+}
+
+function aninja() {
+    local T="$(gettop)"
+    (\cd "${T}" && prebuilts/build-tools/linux-x86/bin/ninja -f out/combined-${TARGET_PRODUCT}.ninja "$@")
 }
 
 validate_current_shell

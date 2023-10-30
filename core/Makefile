@@ -1065,6 +1065,18 @@ SYSTEM_DLKM_MODULE_PATTERNS := $(foreach path,$(BOARD_SYSTEM_KERNEL_MODULES),%/$
 
 endif
 
+# BOARD_KERNEL_MODULES_16K might contain duplicate modules under different path.
+# for example, foo/bar/wifi.ko and foo/wifi.ko . To avoid build issues, de-dup
+# module list on basename first.
+BOARD_KERNEL_MODULES_16K := $(foreach \
+  pattern,\
+  $(sort $(foreach \
+    path,\
+    $(BOARD_KERNEL_MODULES_16K),\
+    %/$(notdir $(path)))\
+  ),\
+  $(firstword $(filter $(pattern),$(BOARD_KERNEL_MODULES_16K))) \
+)
 # For non-GKI modules, strip them before install. As debug symbols take up
 # significant space.
 $(foreach \
@@ -1444,14 +1456,18 @@ INTERNAL_PREBUILT_BOOTIMAGE := $(BOARD_PREBUILT_BOOTIMAGE)
 INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
 
 ifeq ($(BOARD_AVB_ENABLE),true)
-$(INSTALLED_BOOTIMAGE_TARGET): $(INTERNAL_PREBUILT_BOOTIMAGE) $(AVBTOOL) $(BOARD_AVB_BOOT_KEY_PATH)
+$(INSTALLED_BOOTIMAGE_TARGET): PRIVATE_WORKING_DIR := $(call intermediates-dir-for,PACKAGING,prebuilt_bootimg)
+$(INSTALLED_BOOTIMAGE_TARGET): $(INTERNAL_PREBUILT_BOOTIMAGE) $(AVBTOOL) $(BOARD_AVB_BOOT_KEY_PATH) $(UNPACK_BOOTIMG)
 	cp $(INTERNAL_PREBUILT_BOOTIMAGE) $@
+	$(UNPACK_BOOTIMG) --boot_img $(INTERNAL_PREBUILT_BOOTIMAGE) --out $(PRIVATE_WORKING_DIR)
 	chmod +w $@
 	$(AVBTOOL) add_hash_footer \
 	    --image $@ \
+	    --salt `sha256sum $(PRIVATE_WORKING_DIR)/kernel | cut -d " " -f 1` \
 	    $(call get-partition-size-argument,$(BOARD_BOOTIMAGE_PARTITION_SIZE)) \
 	    --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
 	    $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
+
 
 $(call declare-container-license-metadata,$(INSTALLED_BOOTIMAGE_TARGET),SPDX-license-identifier-GPL-2.0-only SPDX-license-identifier-Apache-2.0,restricted notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING build/soong/licenses/LICENSE,"Boot Image",bool)
 $(call declare-container-license-deps,$(INSTALLED_BOOTIMAGE_TARGET),$(INTERNAL_PREBUILT_BOOTIMAGE),$(PRODUCT_OUT)/:/)
@@ -2131,6 +2147,7 @@ $(eval _var := $(call to-upper,$(1)))
 $(if $(BOARD_$(_var)IMAGE_EROFS_COMPRESSOR),$(hide) echo "$(1)_erofs_compressor=$(BOARD_$(_var)IMAGE_EROFS_COMPRESSOR)" >> $(2))
 $(if $(BOARD_$(_var)IMAGE_EROFS_COMPRESS_HINTS),$(hide) echo "$(1)_erofs_compress_hints=$(BOARD_$(_var)IMAGE_EROFS_COMPRESS_HINTS)" >> $(2))
 $(if $(BOARD_$(_var)IMAGE_EROFS_PCLUSTER_SIZE),$(hide) echo "$(1)_erofs_pcluster_size=$(BOARD_$(_var)IMAGE_EROFS_PCLUSTER_SIZE)" >> $(2))
+$(if $(BOARD_$(_var)IMAGE_EROFS_BLOCKSIZE),$(hide) echo "$(1)_erofs_blocksize=$(BOARD_$(_var)IMAGE_EROFS_BLOCKSIZE)" >> $(2))
 $(if $(BOARD_$(_var)IMAGE_EXTFS_INODE_COUNT),$(hide) echo "$(1)_extfs_inode_count=$(BOARD_$(_var)IMAGE_EXTFS_INODE_COUNT)" >> $(2))
 $(if $(BOARD_$(_var)IMAGE_EXTFS_RSV_PCT),$(hide) echo "$(1)_extfs_rsv_pct=$(BOARD_$(_var)IMAGE_EXTFS_RSV_PCT)" >> $(2))
 $(if $(BOARD_$(_var)IMAGE_F2FS_SLOAD_COMPRESS_FLAGS),$(hide) echo "$(1)_f2fs_sldc_flags=$(BOARD_$(_var)IMAGE_F2FS_SLOAD_COMPRESS_FLAGS)" >> $(2))
@@ -2220,6 +2237,7 @@ $(if $(filter true,$(TARGET_USERIMAGES_SPARSE_F2FS_DISABLED)),,$(hide) echo "f2f
 $(if $(BOARD_EROFS_COMPRESSOR),$(hide) echo "erofs_default_compressor=$(BOARD_EROFS_COMPRESSOR)" >> $(1))
 $(if $(BOARD_EROFS_COMPRESS_HINTS),$(hide) echo "erofs_default_compress_hints=$(BOARD_EROFS_COMPRESS_HINTS)" >> $(1))
 $(if $(BOARD_EROFS_PCLUSTER_SIZE),$(hide) echo "erofs_pcluster_size=$(BOARD_EROFS_PCLUSTER_SIZE)" >> $(1))
+$(if $(BOARD_EROFS_BLOCKSIZE),$(hide) echo "erofs_blocksize=$(BOARD_EROFS_BLOCKSIZE)" >> $(1))
 $(if $(BOARD_EROFS_SHARE_DUP_BLOCKS),$(hide) echo "erofs_share_dup_blocks=$(BOARD_EROFS_SHARE_DUP_BLOCKS)" >> $(1))
 $(if $(BOARD_EROFS_USE_LEGACY_COMPRESSION),$(hide) echo "erofs_use_legacy_compression=$(BOARD_EROFS_USE_LEGACY_COMPRESSION)" >> $(1))
 $(if $(BOARD_EXT4_SHARE_DUP_BLOCKS),$(hide) echo "ext4_share_dup_blocks=$(BOARD_EXT4_SHARE_DUP_BLOCKS)" >> $(1))
@@ -7674,7 +7692,7 @@ $(call dist-for-goals,haiku-presubmit,$(SOONG_PRESUBMIT_FUZZ_PACKAGING_ARCH_MODU
 
 # -----------------------------------------------------------------
 # Extract platform fonts used in Layoutlib
-include $(BUILD_SYSTEM)/layoutlib_fonts.mk
+include $(BUILD_SYSTEM)/layoutlib_data.mk
 
 
 # -----------------------------------------------------------------

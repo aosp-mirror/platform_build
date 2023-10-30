@@ -53,6 +53,7 @@ PRODUCT_PACKAGES += \
     com.android.btservices \
     com.android.configinfrastructure \
     com.android.conscrypt \
+    com.android.crashrecovery \
     com.android.devicelock \
     com.android.extservices \
     com.android.healthfitness \
@@ -94,6 +95,7 @@ PRODUCT_PACKAGES += \
     flags_health_check \
     framework-graphics \
     framework-minus-apex \
+    framework-minus-apex-install-dependencies \
     framework-res \
     framework-sysconfig.xml \
     fsck.erofs \
@@ -294,7 +296,7 @@ PRODUCT_PACKAGES += \
 # These packages are not used on Android TV
 ifneq ($(PRODUCT_IS_ATV),true)
   PRODUCT_PACKAGES += \
-      SoundPicker \
+      $(RELEASE_PACKAGE_SOUND_PICKER) \
 
 endif
 
