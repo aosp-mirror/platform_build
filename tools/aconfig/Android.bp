@@ -15,7 +15,8 @@ java_library {
     sdk_version: "current",
     min_sdk_version: "UpsideDownCake",
     apex_available: [
-        "com.android.configinfrastructure"
+        "com.android.configinfrastructure",
+        "//apex_available:platform",
     ]
 }
 
