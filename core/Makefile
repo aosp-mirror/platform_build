@@ -871,6 +871,9 @@ $(MK2BP_REMAINING_CSV): $(SOONG_CONV_DATA) $(MK2BP_CATALOG_SCRIPT) $(PRODUCT_PAC
 $(call declare-1p-target,$(MK2BP_REMAINING_CSV))
 $(call dist-for-goals,droidcore-unbundled,$(MK2BP_REMAINING_CSV))
 
+.PHONY: mk2bp_remaining
+mk2bp_remaining: $(MK2BP_REMAINING_HTML) $(MK2BP_REMAINING_CSV)
+
 # -----------------------------------------------------------------
 # Modules use -Wno-error, or added default -Wall -Werror
 WALL_WERROR := $(PRODUCT_OUT)/wall_werror.txt
@@ -1065,6 +1068,18 @@ SYSTEM_DLKM_MODULE_PATTERNS := $(foreach path,$(BOARD_SYSTEM_KERNEL_MODULES),%/$
 
 endif
 
+# BOARD_KERNEL_MODULES_16K might contain duplicate modules under different path.
+# for example, foo/bar/wifi.ko and foo/wifi.ko . To avoid build issues, de-dup
+# module list on basename first.
+BOARD_KERNEL_MODULES_16K := $(foreach \
+  pattern,\
+  $(sort $(foreach \
+    path,\
+    $(BOARD_KERNEL_MODULES_16K),\
+    %/$(notdir $(path)))\
+  ),\
+  $(firstword $(filter $(pattern),$(BOARD_KERNEL_MODULES_16K))) \
+)
 # For non-GKI modules, strip them before install. As debug symbols take up
 # significant space.
 $(foreach \

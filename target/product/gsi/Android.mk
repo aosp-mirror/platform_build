@@ -7,7 +7,7 @@ INTERNAL_VNDK_LIB_LIST := $(SOONG_VNDK_LIBRARIES_FILE)
 #####################################################################
 # This is the up-to-date list of vndk libs.
 LATEST_VNDK_LIB_LIST := $(LOCAL_PATH)/current.txt
-UNFROZEN_VNDK :=
+UNFROZEN_VNDK := true
 ifeq (REL,$(PLATFORM_VERSION_CODENAME))
     # Use frozen vndk lib list only if "34 >= PLATFORM_VNDK_VERSION"
     ifeq ($(call math_gt_or_eq,34,$(PLATFORM_VNDK_VERSION)),true)
@@ -15,8 +15,7 @@ ifeq (REL,$(PLATFORM_VERSION_CODENAME))
         ifeq ($(wildcard $(LATEST_VNDK_LIB_LIST)),)
             $(error $(LATEST_VNDK_LIB_LIST) file not found. Please copy "$(LOCAL_PATH)/current.txt" to "$(LATEST_VNDK_LIB_LIST)" and commit a CL for release branch)
         endif
-    else
-        UNFROZEN_VNDK := true
+        UNFROZEN_VNDK :=
     endif
 endif
 
