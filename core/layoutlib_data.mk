@@ -86,6 +86,7 @@ $(call dist-for-goals,layoutlib,$(LAYOUTLIB_RES)/layoutlib-res.zip:layoutlib_nat
 LAYOUTLIB_SBOM := $(call intermediates-dir-for,PACKAGING,layoutlib-sbom,HOST)
 _layoutlib_font_config_files := $(sort $(wildcard frameworks/base/data/fonts/*.xml))
 _layoutlib_fonts_files := $(filter $(TARGET_OUT)/fonts/%.ttf $(TARGET_OUT)/fonts/%.ttc $(TARGET_OUT)/fonts/%.otf, $(INTERNAL_SYSTEMIMAGE_FILES))
+_layoutlib_keyboard_files := $(sort $(wildcard frameworks/base/data/keyboards/*.kcm))
 $(LAYOUTLIB_SBOM)/sbom-metadata.csv:
 	rm -rf $@
 	echo installed_file,module_path,soong_module_type,is_prebuilt_make_module,product_copy_files,kernel_module_copy_files,is_platform_generated,build_output_path,static_libraries,whole_static_libraries,is_static_lib >> $@
@@ -102,6 +103,10 @@ $(LAYOUTLIB_SBOM)/sbom-metadata.csv:
 	  echo data/fonts/$(notdir $f),$(_module_path),$(_soong_module_type),,,,,$f,,, >> $@; \
 	)
 
+	$(foreach f,$(_layoutlib_keyboard_files), \
+	  echo data/keyboards/$(notdir $f),frameworks/base/data/keyboards,prebuilt_etc,,,,,$f,,, >> $@; \
+	)
+
 	$(foreach f,$(LAYOUTLIB_RES_FILES), \
 	  $(eval _path := $(subst frameworks/base/core/res,data,$f)) \
 	  echo $(_path),,,,,,Y,$f,,, >> $@; \
@@ -109,9 +114,9 @@ $(LAYOUTLIB_SBOM)/sbom-metadata.csv:
 
 .PHONY: layoutlib-sbom
 layoutlib-sbom: $(LAYOUTLIB_SBOM)/layoutlib.spdx.json
-$(LAYOUTLIB_SBOM)/layoutlib.spdx.json: $(PRODUCT_OUT)/always_dirty_file.txt $(LAYOUTLIB_SBOM)/sbom-metadata.csv $(_layoutlib_font_config_files) $(_layoutlib_fonts_files) $(LAYOUTLIB_BUILD_PROP)/layoutlib-build.prop $(LAYOUTLIB_RES_FILES)
+$(LAYOUTLIB_SBOM)/layoutlib.spdx.json: $(PRODUCT_OUT)/always_dirty_file.txt $(GEN_SBOM) $(LAYOUTLIB_SBOM)/sbom-metadata.csv $(_layoutlib_font_config_files) $(_layoutlib_fonts_files) $(LAYOUTLIB_BUILD_PROP)/layoutlib-build.prop $(_layoutlib_keyboard_files) $(LAYOUTLIB_RES_FILES)
 	rm -rf $@
-	$(GEN_SBOM) --output_file $@ --metadata $(LAYOUTLIB_SBOM)/sbom-metadata.csv --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr "$(PRODUCT_MANUFACTURER)" --json
+	$(GEN_SBOM) --output_file $@ --metadata $(LAYOUTLIB_SBOM)/sbom-metadata.csv --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr "$(PRODUCT_MANUFACTURER)" --module_name "layoutlib" --json
 
 $(call dist-for-goals,layoutlib,$(LAYOUTLIB_SBOM)/layoutlib.spdx.json:layoutlib_native/sbom/layoutlib.spdx.json)
 

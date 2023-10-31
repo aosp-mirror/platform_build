@@ -130,6 +130,7 @@ def get_args():
   parser.add_argument('--metadata', required=True, help='The SBOM metadata file path.')
   parser.add_argument('--build_version', required=True, help='The build version.')
   parser.add_argument('--product_mfr', required=True, help='The product manufacturer.')
+  parser.add_argument('--module_name', help='The module name. If specified, the generated SBOM is for the module.')
   parser.add_argument('--json', action='store_true', default=False, help='Generated SBOM file in SPDX JSON format')
   parser.add_argument('--unbundled_apk', action='store_true', default=False, help='Generate SBOM for unbundled APKs')
   parser.add_argument('--unbundled_apex', action='store_true', default=False, help='Generate SBOM for unbundled APEXs')
@@ -483,16 +484,25 @@ def main():
   global metadata_file_protos
   metadata_file_protos = {}
 
-  product_package = sbom_data.Package(id=sbom_data.SPDXID_PRODUCT,
-                                      name=sbom_data.PACKAGE_NAME_PRODUCT,
+  product_package_id = sbom_data.SPDXID_PRODUCT
+  product_package_name = sbom_data.PACKAGE_NAME_PRODUCT
+  if args.module_name:
+    # Build SBOM of a module so use the module name instead.
+    product_package_id = f'SPDXRef-{sbom_data.encode_for_spdxid(args.module_name)}'
+    product_package_name = args.module_name
+  product_package = sbom_data.Package(id=product_package_id,
+                                      name=product_package_name,
                                       download_location=sbom_data.VALUE_NONE,
                                       version=args.build_version,
                                       supplier='Organization: ' + args.product_mfr,
                                       files_analyzed=True)
-
-  doc = sbom_data.Document(name=args.build_version,
-                           namespace=f'https://www.google.com/sbom/spdx/android/{args.build_version}',
-                           creators=['Organization: ' + args.product_mfr])
+  doc_name = args.build_version
+  if args.module_name:
+    doc_name = f'{args.build_version}/{args.module_name}'
+  doc = sbom_data.Document(name=doc_name,
+                           namespace=f'https://www.google.com/sbom/spdx/android/{doc_name}',
+                           creators=['Organization: ' + args.product_mfr],
+                           describes=product_package_id)
   if not args.unbundled_apex:
     doc.packages.append(product_package)
 
