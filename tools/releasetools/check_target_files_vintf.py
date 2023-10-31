@@ -31,7 +31,6 @@ import sys
 import zipfile
 
 import common
-from apex_manifest import ParseApexManifest
 
 logger = logging.getLogger(__name__)
 
