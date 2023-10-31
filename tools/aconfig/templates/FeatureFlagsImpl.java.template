@@ -4,45 +4,58 @@ import android.compat.annotation.UnsupportedAppUsage;
 {{ if not is_test_mode }}
 {{ if is_read_write- }}
 import android.provider.DeviceConfig;
+import android.provider.DeviceConfig.Properties;
 {{ endif }}
 /** @hide */
 public final class FeatureFlagsImpl implements FeatureFlags \{
-{{ for item in class_elements}}
+{{ if is_read_write- }}
+{{ for properties in properties_set }}
+    private Properties {properties};
+{{ endfor }}
+{{ endif- }}
+
+{{ for flag in flag_elements }}
     @Override
     @UnsupportedAppUsage
-    public boolean {item.method_name}() \{
-    {{ -if item.is_read_write }}
-        return getValue(
-            "{item.device_config_namespace}",
-            "{item.device_config_flag}",
-            {item.default_value}
-        );
+    public boolean {flag.method_name}() \{
+    {{ -if flag.is_read_write }}
+        if ({flag.properties} == null) \{
+            {flag.properties} =
+                getProperties(
+                    "{flag.device_config_namespace}",
+                    "{flag.device_config_flag}"
+                );
+        }
+        return {flag.properties}
+                .getBoolean(
+                    "{flag.device_config_flag}",
+                    {flag.default_value}
+                );
     {{ else }}
-        return {item.default_value};
+        return {flag.default_value};
     {{ endif- }}
     }
 {{ endfor }}
-{{ if is_read_write- }}
-    private boolean getValue(String nameSpace,
-        String flagName, boolean defaultValue) \{
-        boolean value = defaultValue;
+
+{{ -if is_read_write }}
+    private Properties getProperties(
+            String namespace,
+            String flagName) \{
+        Properties properties = null;
         try \{
-            value = DeviceConfig.getBoolean(
-                nameSpace,
-                flagName,
-                defaultValue
-            );
+            properties = DeviceConfig.getProperties(namespace);
         } catch (NullPointerException e) \{
             throw new RuntimeException(
-                "Cannot read value of flag " + flagName + " from DeviceConfig. " +
-                "It could be that the code using flag executed " +
-                "before SettingsProvider initialization. " +
-                "Please use fixed read-only flag by adding " +
-                "is_fixed_read_only: true in flag declaration.",
+                "Cannot read value of flag " + flagName + " from DeviceConfig. "
+                + "It could be that the code using flag executed "
+                + "before SettingsProvider initialization. "
+                + "Please use fixed read-only flag by adding "
+                + "is_fixed_read_only: true in flag declaration.",
                 e
             );
         }
-        return value;
+
+        return properties;
     }
 {{ endif- }}
 }
@@ -50,10 +63,10 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
 {#- Generate only stub if in test mode #}
 /** @hide */
 public final class FeatureFlagsImpl implements FeatureFlags \{
-{{ for item in class_elements}}
+{{ for flag in flag_elements }}
     @Override
     @UnsupportedAppUsage
-    public boolean {item.method_name}() \{
+    public boolean {flag.method_name}() \{
         throw new UnsupportedOperationException(
             "Method is not implemented.");
     }
