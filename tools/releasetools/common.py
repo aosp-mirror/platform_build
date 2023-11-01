@@ -1908,8 +1908,11 @@ def _SignBootableImage(image_path, prebuilt_name, partition_name,
       for filename in ["kernel", "ramdisk", "vendor_ramdisk00"]:
         path = os.path.join(tmpdir, filename)
         if os.path.exists(path) and os.path.getsize(path):
+          print("Using {} as salt for avb footer of {}".format(
+              filename, partition_name))
           with open(path, "rb") as fp:
             salt = sha256(fp.read()).hexdigest()
+            break
     AppendAVBSigningArgs(cmd, partition_name, salt)
     args = info_dict.get("avb_" + partition_name + "_add_hash_footer_args")
     if args and args.strip():
