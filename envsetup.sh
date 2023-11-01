@@ -1880,6 +1880,10 @@ function _trigger_build()
       >&2 echo "Couldn't locate the top of the tree. Try setting TOP."
       return 1
     fi
+
+    if [[ -z "${ANDROID_QUIET_BUILD:-}" && -n "${ANDROID_BUILD_BANNER}" ]]; then
+      echo "$ANDROID_BUILD_BANNER"
+    fi
 )
 
 function m()
