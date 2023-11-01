@@ -16,6 +16,15 @@ import re
 
 import common
 
+# map recovery.fstab's fs_types to mount/format "partition types"
+PARTITION_TYPES = {
+    "ext4": "EMMC",
+    "emmc": "EMMC",
+    "f2fs": "EMMC",
+    "squashfs": "EMMC",
+    "erofs": "EMMC"
+}
+
 
 class ErrorCode(object):
   """Define error_codes for failures that happen during the actual
@@ -268,7 +277,7 @@ class EdifyGenerator(object):
       if p.context is not None:
         mount_flags = p.context + ("," + mount_flags if mount_flags else "")
       self.script.append('mount("%s", "%s", %s, "%s", "%s");' % (
-          p.fs_type, common.PARTITION_TYPES[p.fs_type],
+          p.fs_type, PARTITION_TYPES[p.fs_type],
           self._GetSlotSuffixDeviceForEntry(p),
           p.mount_point, mount_flags))
       self.mounts.add(p.mount_point)
@@ -304,7 +313,7 @@ class EdifyGenerator(object):
     if fstab:
       p = fstab[partition]
       self.script.append('format("%s", "%s", %s, "%s", "%s");' %
-                         (p.fs_type, common.PARTITION_TYPES[p.fs_type],
+                         (p.fs_type, PARTITION_TYPES[p.fs_type],
                           self._GetSlotSuffixDeviceForEntry(p),
                           p.length, p.mount_point))
 
@@ -418,7 +427,7 @@ class EdifyGenerator(object):
     fstab = self.fstab
     if fstab:
       p = fstab[mount_point]
-      partition_type = common.PARTITION_TYPES[p.fs_type]
+      partition_type = PARTITION_TYPES[p.fs_type]
       device = self._GetSlotSuffixDeviceForEntry(p)
       args = {'device': device, 'fn': fn}
       if partition_type == "EMMC":
