@@ -871,6 +871,9 @@ $(MK2BP_REMAINING_CSV): $(SOONG_CONV_DATA) $(MK2BP_CATALOG_SCRIPT) $(PRODUCT_PAC
 $(call declare-1p-target,$(MK2BP_REMAINING_CSV))
 $(call dist-for-goals,droidcore-unbundled,$(MK2BP_REMAINING_CSV))
 
+.PHONY: mk2bp_remaining
+mk2bp_remaining: $(MK2BP_REMAINING_HTML) $(MK2BP_REMAINING_CSV)
+
 # -----------------------------------------------------------------
 # Modules use -Wno-error, or added default -Wall -Werror
 WALL_WERROR := $(PRODUCT_OUT)/wall_werror.txt

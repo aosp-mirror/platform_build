@@ -66,7 +66,6 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.btservices:framework-bluetooth \
     com.android.configinfrastructure:framework-configinfrastructure \
     com.android.conscrypt:conscrypt \
-    com.android.crashrecovery:framework-crashrecovery \
     com.android.devicelock:framework-devicelock \
     com.android.healthfitness:framework-healthfitness \
     com.android.i18n:core-icu4j \
@@ -95,7 +94,6 @@ PRODUCT_APEX_SYSTEM_SERVER_JARS := \
     com.android.appsearch:service-appsearch \
     com.android.art:service-art \
     com.android.configinfrastructure:service-configinfrastructure \
-    com.android.crashrecovery:service-crashrecovery \
     com.android.healthfitness:service-healthfitness \
     com.android.media:service-media-s \
     com.android.ondevicepersonalization:service-ondevicepersonalization \
