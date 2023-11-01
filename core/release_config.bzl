@@ -55,6 +55,11 @@ _all_flags_schema = {
             },
             "declared_in": {"type": "string"},
         },
+        "optional_keys": {
+            "appends": {
+                "type": "bool",
+            },
+        },
     },
 }
 
@@ -75,17 +80,23 @@ _all_values_schema = {
     },
 }
 
-def flag(name, partitions, default):
+def flag(name, partitions, default, _kwmarker = (), appends = False):
     """Declare a flag.
 
     Args:
       name: name of the flag
       partitions: the partitions where this should be recorded.
       default: the default value of the flag.
+      _kwmarker: Used to detect argument misuse.
+      appends: Whether new values should be append (not replace) the old.
 
     Returns:
       A dictionary containing the flag declaration.
     """
+
+    # If specified, appends must be a keyword value.
+    if _kwmarker != ():
+        fail("Too many positional parameters")
     if not partitions:
         fail("At least 1 partition is required")
     if not name.startswith("RELEASE_"):
@@ -105,6 +116,7 @@ def flag(name, partitions, default):
         "name": name,
         "partitions": partitions,
         "default": default,
+        "appends": appends,
     }
 
 def value(name, value):
@@ -153,10 +165,12 @@ def release_config(all_flags, all_values):
 
     # Validate flags
     flag_names = []
+    flags_dict = {}
     for flag in all_flags:
         if flag["name"] in flag_names:
             fail(flag["declared_in"] + ": Duplicate declaration of flag " + flag["name"])
         flag_names.append(flag["name"])
+        flags_dict[flag["name"]] = flag
 
     # Record which flags go on which partition
     partitions = {}
@@ -170,13 +184,21 @@ def release_config(all_flags, all_values):
             else:
                 partitions.setdefault(partition, []).append(flag["name"])
 
-    # Validate values
-    # TODO(joeo): Disallow duplicate values after we've split AOSP and vendor flags.
+    # Generate final values.
+    # Only declared flags may have a value.
     values = {}
     for value in all_values:
-        if value["name"] not in flag_names:
-            fail(value["set_in"] + ": Value set for undeclared build flag: " + value["name"])
-        values[value["name"]] = value
+        name = value["name"]
+        if name not in flag_names:
+            fail(value["set_in"] + ": Value set for undeclared build flag: " + name)
+        if flags_dict[name]["appends"]:
+            if name in values:
+                values[name]["value"] += " " + value["value"]
+                values[name]["set_in"] += " " + value["set_in"]
+            else:
+                values[name] = value
+        else:
+            values[name] = value
 
     # Collect values
     result = {
