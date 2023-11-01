@@ -26,4 +26,14 @@ public class DeviceConfig {
 	public static boolean getBoolean(String ns, String name, boolean def) {
 		return false;
 	}
+
+	public static Properties getProperties(String namespace, String... names) {
+		return new Properties();
+	}
+
+	public static class Properties {
+		public boolean getBoolean(String name, boolean def) {
+			return false;
+		}
+	}
 }
