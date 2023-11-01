@@ -26,7 +26,7 @@ import shlex
 
 import common
 import edify_generator
-from edify_generator import ErrorCode
+from edify_generator import ErrorCode, PARTITION_TYPES
 from check_target_files_vintf import CheckVintfIfTrebleEnabled, HasPartition
 from common import OPTIONS, Run, MakeTempDir, RunAndCheckOutput, ZipWrite, MakeTempFile
 from ota_utils import UNZIP_PATTERN, FinalizeMetadata, GetPackageMetadata, PropertyFiles
@@ -60,9 +60,9 @@ def GetBlockDifferences(target_zip, source_zip, target_info, source_info,
     # Disable imgdiff because it relies on zlib to produce stable output
     # across different versions, which is often not the case.
     return BlockDifference(name, partition_tgt, partition_src,
-                                  check_first_block,
-                                  version=blockimgdiff_version,
-                                  disable_imgdiff=True)
+                           check_first_block,
+                           version=blockimgdiff_version,
+                           disable_imgdiff=True)
 
   if source_zip:
     # See notes in common.GetUserImage()
@@ -85,7 +85,7 @@ def GetBlockDifferences(target_zip, source_zip, target_info, source_info,
                                 info_dict=target_info,
                                 reset_file_map=True)
       block_diff_dict[partition] = BlockDifference(partition, tgt,
-                                                          src=None)
+                                                   src=None)
     # Incremental OTA update.
     else:
       block_diff_dict[partition] = GetIncrementalBlockDifferenceForPartition(
@@ -413,7 +413,7 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
                           block_diff_dict.values()]
   if updating_boot:
     boot_type, boot_device_expr = GetTypeAndDeviceExpr("/boot",
-                                                              source_info)
+                                                       source_info)
     d = Difference(target_boot, source_boot, "bsdiff")
     _, _, d = d.ComputePatch()
     if d is None:
@@ -1542,16 +1542,6 @@ class DynamicPartitionsDifference(object):
         comment('Move partition %s from default to %s' %
                 (p, u.tgt_group))
         append('move %s %s' % (p, u.tgt_group))
-
-
-# map recovery.fstab's fs_types to mount/format "partition types"
-PARTITION_TYPES = {
-    "ext4": "EMMC",
-    "emmc": "EMMC",
-    "f2fs": "EMMC",
-    "squashfs": "EMMC",
-    "erofs": "EMMC"
-}
 
 
 def GetTypeAndDevice(mount_point, info, check_no_slot=True):
