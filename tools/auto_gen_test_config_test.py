@@ -93,7 +93,7 @@ EXPECTED_JUNIT_TEST_CONFIG = """<?xml version="1.0" encoding="utf-8"?>
     </target_preparer>
 
     <test class="com.android.tradefed.testtype.AndroidJUnitTest" >
-        {EXTRA_TEST_RUNNER_CONFIGS}<option name="package" value="com.android.my.tests.x" />
+        <option name="package" value="com.android.my.tests.x" />
         <option name="runner" value="androidx.test.runner.AndroidJUnitRunner" />
     </test>
 </configuration>
@@ -125,7 +125,7 @@ EXPECTED_INSTRUMENTATION_TEST_CONFIG = """<?xml version="1.0" encoding="utf-8"?>
     </target_preparer>
 
     <test class="com.android.tradefed.testtype.InstrumentationTest" >
-        {EXTRA_TEST_RUNNER_CONFIGS}<option name="package" value="com.android.my.tests.x" />
+        <option name="package" value="com.android.my.tests.x" />
         <option name="runner" value="android.test.InstrumentationTestRunner" />
     </test>
 </configuration>
@@ -178,7 +178,7 @@ INSTRUMENTATION_TEST_CONFIG_TEMPLATE_CONTENT = """<?xml version="1.0" encoding="
     </target_preparer>
 
     <test class="com.android.tradefed.testtype.{TEST_TYPE}" >
-        {EXTRA_TEST_RUNNER_CONFIGS}<option name="package" value="{PACKAGE}" />
+        <option name="package" value="{PACKAGE}" />
         <option name="runner" value="{RUNNER}" />
     </test>
 </configuration>
