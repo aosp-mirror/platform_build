@@ -235,6 +235,9 @@ python_library_host {
         "rangelib.py",
         "sparse_img.py",
     ],
+    data: [
+        ":zip2zip",
+    ],
     // Only the tools that are referenced directly are listed as required modules. For example,
     // `avbtool` is not here, as the script always uses the one from info_dict['avb_avbtool'].
     required: [
@@ -249,7 +252,6 @@ python_library_host {
         "signapk",
         "toybox",
         "unpack_bootimg",
-        "zip2zip",
     ],
 }
 
@@ -481,8 +483,13 @@ python_binary_host {
     defaults: ["releasetools_binary_defaults"],
     srcs: [
         "make_recovery_patch.py",
+        "non_ab_ota.py",
+        "edify_generator.py",
+        "check_target_files_vintf.py",
     ],
     libs: [
+        "ota_utils_lib",
+        "ota_metadata_proto",
         "releasetools_common",
     ],
 }

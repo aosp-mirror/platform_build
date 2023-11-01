@@ -353,6 +353,8 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
     if compress_hints:
       build_command.extend(["--compress-hints", compress_hints])
 
+    build_command.extend(["-b", prop_dict.get("erofs_blocksize", "4096")])
+
     build_command.extend(["--mount-point", prop_dict["mount_point"]])
     if target_out:
       build_command.extend(["--product-out", target_out])
@@ -711,6 +713,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "erofs_default_compressor",
       "erofs_default_compress_hints",
       "erofs_pcluster_size",
+      "erofs_blocksize",
       "erofs_share_dup_blocks",
       "erofs_sparse_flag",
       "erofs_use_legacy_compression",
@@ -762,6 +765,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       (True, "{}_erofs_compressor", "erofs_compressor"),
       (True, "{}_erofs_compress_hints", "erofs_compress_hints"),
       (True, "{}_erofs_pcluster_size", "erofs_pcluster_size"),
+      (True, "{}_erofs_blocksize", "erofs_blocksize"),
       (True, "{}_erofs_share_dup_blocks", "erofs_share_dup_blocks"),
       (True, "{}_extfs_inode_count", "extfs_inode_count"),
       (True, "{}_f2fs_compress", "f2fs_compress"),

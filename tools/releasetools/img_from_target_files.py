@@ -67,6 +67,7 @@ OPTIONS.sparse_userimages = None
 OPTIONS.use_fastboot_info = True
 OPTIONS.build_super_image = None
 
+
 def LoadOptions(input_file):
   """Loads information from input_file to OPTIONS.
 
@@ -105,6 +106,13 @@ def CopyZipEntries(input_file, output_file, entries):
   common.RunAndCheckOutput(cmd)
 
 
+def LocatePartitionEntry(partition_name, namelist):
+  for subdir in ["IMAGES", "PREBUILT_IMAGES", "RADIO"]:
+    entry_name = os.path.join(subdir, partition_name + ".img")
+    if entry_name in namelist:
+      return entry_name
+
+
 def EntriesForUserImages(input_file):
   """Returns the user images entries to be copied.
 
@@ -122,13 +130,18 @@ def EntriesForUserImages(input_file):
   ]
   if OPTIONS.use_fastboot_info:
     entries.append('META/fastboot-info.txt:fastboot-info.txt')
+  ab_partitions = []
   with zipfile.ZipFile(input_file) as input_zip:
     namelist = input_zip.namelist()
+    if "META/ab_partitions.txt" in namelist:
+      ab_partitions = input_zip.read(
+          "META/ab_partitions.txt").decode().strip().split()
   if 'PREBUILT_IMAGES/kernel_16k' in namelist:
     entries.append('PREBUILT_IMAGES/kernel_16k:kernel_16k')
   if 'PREBUILT_IMAGES/ramdisk_16k.img' in namelist:
     entries.append('PREBUILT_IMAGES/ramdisk_16k.img:ramdisk_16k.img')
 
+  visited_partitions = set(OPTIONS.dynamic_partition_list)
   for image_path in [name for name in namelist if name.startswith('IMAGES/')]:
     image = os.path.basename(image_path)
     if OPTIONS.bootable_only and image not in ('boot.img', 'recovery.img', 'bootloader', 'init_boot.img'):
@@ -143,7 +156,14 @@ def EntriesForUserImages(input_file):
         continue
       if image in dynamic_images:
         continue
+    partition_name = image.rstrip(".img")
+    visited_partitions.add(partition_name)
     entries.append('{}:{}'.format(image_path, image))
+  for part in [part for part in ab_partitions if part not in visited_partitions]:
+    entry = LocatePartitionEntry(part, namelist)
+    image = os.path.basename(entry)
+    if entry is not None:
+      entries.append('{}:{}'.format(entry, image))
   return entries
 
 
