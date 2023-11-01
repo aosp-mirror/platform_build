@@ -2619,7 +2619,9 @@ def CheckSize(data, target, info_dict):
     device = p.device
     if "/" in device:
       device = device[device.rfind("/")+1:]
-    limit = info_dict.get(device + "_size")
+    limit = info_dict.get(device + "_size", 0)
+    if isinstance(limit, str):
+      limit = int(limit, 0)
   if not fs_type or not limit:
     return
 
