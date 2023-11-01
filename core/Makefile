@@ -793,9 +793,25 @@ $(call declare-0p-target,$(APKCERTS_FILE))
 .PHONY: apkcerts-list
 apkcerts-list: $(APKCERTS_FILE)
 
+intermediates := $(call intermediates-dir-for,PACKAGING,apexkeys)
+APEX_KEYS_FILE := $(intermediates)/apexkeys.txt
+
+all_apex_keys_files := $(sort $(foreach m,$(call product-installed-modules,$(INTERNAL_PRODUCT)),$(ALL_MODULES.$(m).APEX_KEYS_FILE)))
+$(APEX_KEYS_FILE): $(all_apex_keys_files)
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	$(hide) touch $@
+	$(hide) $(foreach file,$^,cat $(file) >> $@ $(newline))
+all_apex_keys_files :=
+
+$(call declare-0p-target,$(APEX_KEYS_FILE))
+
+.PHONY: apexkeys.txt
+apexkeys.txt: $(APEX_KEYS_FILE)
+
 ifneq (,$(TARGET_BUILD_APPS))
   $(call dist-for-goals, apps_only, $(APKCERTS_FILE):apkcerts.txt)
-  $(call dist-for-goals, apps_only, $(SOONG_APEX_KEYS_FILE):apexkeys.txt)
+  $(call dist-for-goals, apps_only, $(APEX_KEYS_FILE):apexkeys.txt)
 endif
 
 
@@ -6342,7 +6358,7 @@ $(BUILT_TARGET_FILES_DIR): \
 	    $(INSTALLED_MISC_INFO_TARGET) \
 	    $(INSTALLED_FASTBOOT_INFO_TARGET) \
 	    $(APKCERTS_FILE) \
-	    $(SOONG_APEX_KEYS_FILE) \
+	    $(APEX_KEYS_FILE) \
 	    $(SOONG_ZIP) \
 	    $(HOST_OUT_EXECUTABLES)/fs_config \
 	    $(HOST_OUT_EXECUTABLES)/map_file_generator \
@@ -6553,7 +6569,7 @@ endif
 	@# build them.
 	$(hide) mkdir -p $(zip_root)/META
 	$(hide) cp $(APKCERTS_FILE) $(zip_root)/META/apkcerts.txt
-	$(hide) cp $(SOONG_APEX_KEYS_FILE) $(zip_root)/META/apexkeys.txt
+	$(hide) cp $(APEX_KEYS_FILE) $(zip_root)/META/apexkeys.txt
 ifneq ($(tool_extension),)
 	$(hide) cp $(PRIVATE_TOOL_EXTENSION) $(zip_root)/META/
 endif
@@ -6816,7 +6832,7 @@ $(call declare-container-license-deps,$(BUILT_TARGET_FILES_PACKAGE), $(INSTALLED
             $(INSTALLED_MISC_INFO_TARGET) \
             $(INSTALLED_FASTBOOT_INFO_TARGET) \
             $(APKCERTS_FILE) \
-            $(SOONG_APEX_KEYS_FILE) \
+            $(APEX_KEYS_FILE) \
             $(HOST_OUT_EXECUTABLES)/fs_config \
             $(HOST_OUT_EXECUTABLES)/map_file_generator \
             $(ADD_IMG_TO_TARGET_FILES) \
