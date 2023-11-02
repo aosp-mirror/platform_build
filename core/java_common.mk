@@ -194,7 +194,7 @@ endif
 ######################################
 ## PRIVATE java vars
 # LOCAL_SOURCE_FILES_ALL_GENERATED is set only if the module does not have static source files,
-# but generated source files in its LOCAL_INTERMEDIATE_SOURCE_DIR.
+# but generated source files.
 # You have to set up the dependency in some other way.
 need_compile_java := $(strip $(all_java_sources)$(LOCAL_SRCJARS)$(all_res_assets)$(java_resource_sources))$(LOCAL_STATIC_JAVA_LIBRARIES)$(filter true,$(LOCAL_SOURCE_FILES_ALL_GENERATED))
 ifdef need_compile_java
@@ -491,10 +491,6 @@ full_java_header_libs := $(full_shared_java_header_libs) $(full_static_java_head
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ALL_JAVA_LIBRARIES := $(full_java_libs)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ALL_JAVA_HEADER_LIBRARIES := $(full_java_header_libs)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SHARED_JAVA_HEADER_LIBRARIES := $(full_shared_java_header_libs)
-
-ALL_MODULES.$(my_register_name).INTERMEDIATE_SOURCE_DIR := \
-    $(ALL_MODULES.$(my_register_name).INTERMEDIATE_SOURCE_DIR) $(LOCAL_INTERMEDIATE_SOURCE_DIR)
-
 
 ###########################################################
 # Verify that all libraries are safe to use
