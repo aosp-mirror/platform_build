@@ -34,7 +34,7 @@ fi
 # for the build to be executed with RBE.
 function use_rbe() {
   local RBE_BINARIES_DIR="prebuilts/remoteexecution-client/latest"
-  local DOCKER_IMAGE="gcr.io/androidbuild-re-dockerimage/android-build-remoteexec-image@sha256:582efb38f0c229ea39952fff9e132ccbe183e14869b39888010dacf56b360d62"
+  local DOCKER_IMAGE="gcr.io/androidbuild-re-dockerimage/android-build-remoteexec-image@sha256:953fed4a6b2501256a0d17f055dc17884ff71b024e50ade773e0b348a6c303e6"
 
   # Do not set an invocation-ID and let reproxy auto-generate one.
   USE_RBE="true" \
