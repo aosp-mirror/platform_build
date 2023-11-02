@@ -1437,17 +1437,6 @@ built_whole_libraries := \
       $(call intermediates-dir-for, \
         STATIC_LIBRARIES,$(lib),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/$(lib)$(a_suffix))
 
-# We don't care about installed static libraries, since the
-# libraries have already been linked into the module at that point.
-# We do, however, care about the NOTICE files for any static
-# libraries that we use. (see notice_files.mk)
-installed_static_library_notice_file_targets := \
-    $(foreach lib,$(my_static_libraries) $(my_whole_static_libraries), \
-      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-STATIC_LIBRARIES-$(lib))
-
-$(notice_target): | $(installed_static_library_notice_file_targets)
-$(LOCAL_INSTALLED_MODULE): | $(notice_target)
-
 # Default is -fno-rtti.
 ifeq ($(strip $(LOCAL_RTTI_FLAG)),)
 LOCAL_RTTI_FLAG := -fno-rtti

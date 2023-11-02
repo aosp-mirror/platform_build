@@ -1172,9 +1172,6 @@ ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
   $(LOCAL_JAVA_LIBRARIES) \
   $(LOCAL_JNI_SHARED_LIBRARIES))
 
-license_files := $(call find-parent-file,$(LOCAL_PATH),MODULE_LICENSE*)
-ALL_DEPS.$(LOCAL_MODULE).LICENSE := $(sort $(ALL_DEPS.$(LOCAL_MODULE).LICENSE) $(license_files))
-
 ###########################################################
 ## umbrella targets used to verify builds
 ###########################################################
