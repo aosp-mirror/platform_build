@@ -48,20 +48,6 @@ ALL_COPIED_TARGETS:=
 # set of installed targets.
 ALL_DEFAULT_INSTALLED_MODULES:=
 
-# The list of tags that have been defined by
-# LOCAL_MODULE_TAGS.  Each word in this variable maps
-# to a corresponding ALL_MODULE_TAGS.<tagname> variable
-# that contains all of the INSTALLED_MODULEs with that tag.
-ALL_MODULE_TAGS:=
-
-# Similar to ALL_MODULE_TAGS, but contains the short names
-# of all targets for a particular tag.  The top-level variable
-# won't have the list of tags;  ust ALL_MODULE_TAGS to get
-# the list of all known tags.  (This means that this variable
-# will always be empty; it's just here as a placeholder for
-# its sub-variables.)
-ALL_MODULE_NAME_TAGS:=
-
 # Full path to all asm, C, C++, lex and yacc generated C files.
 # These all have an order-only dependency on the copied headers
 ALL_C_CPP_ETC_OBJECTS:=
@@ -1292,38 +1278,6 @@ endif
 # $(1): library name list
 define exported-sdk-libs-files
 $(foreach lib,$(1),$(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/exported-sdk-libs)
-endef
-
-###########################################################
-## MODULE_TAG set operations
-###########################################################
-
-# Given a list of tags, return the targets that specify
-# any of those tags.
-# $(1): tag list
-define modules-for-tag-list
-$(sort $(foreach tag,$(1),$(foreach m,$(ALL_MODULE_NAME_TAGS.$(tag)),$(ALL_MODULES.$(m).INSTALLED))))
-endef
-
-# Same as modules-for-tag-list, but operates on
-# ALL_MODULE_NAME_TAGS.
-# $(1): tag list
-define module-names-for-tag-list
-$(sort $(foreach tag,$(1),$(ALL_MODULE_NAME_TAGS.$(tag))))
-endef
-
-# Given an accept and reject list, find the matching
-# set of targets.  If a target has multiple tags and
-# any of them are rejected, the target is rejected.
-# Reject overrides accept.
-# $(1): list of tags to accept
-# $(2): list of tags to reject
-#TODO(dbort): do $(if $(strip $(1)),$(1),$(ALL_MODULE_TAGS))
-#TODO(jbq): as of 20100106 nobody uses the second parameter
-define get-tagged-modules
-$(filter-out \
-  $(call modules-for-tag-list,$(2)), \
-    $(call modules-for-tag-list,$(1)))
 endef
 
 ###########################################################
