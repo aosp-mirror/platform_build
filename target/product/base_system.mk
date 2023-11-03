@@ -414,6 +414,7 @@ PRODUCT_PACKAGES_DEBUG := \
     libclang_rt.ubsan_standalone \
     logpersist.start \
     logtagd.rc \
+    ot-cli-ftd \
     procrank \
     profcollectd \
     profcollectctl \
