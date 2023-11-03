@@ -52,15 +52,6 @@ config_map_files := $(wildcard build/release/release_config_map.mk) \
         ) \
     )
 
-# PRODUCT_RELEASE_CONFIG_MAPS is set by Soong using an initial run of product
-# config to capture only the list of config maps needed by the build.
-# Keep them in the order provided, but remove duplicates.
-$(foreach map,$(PRODUCT_RELEASE_CONFIG_MAPS), \
-    $(if $(filter $(map),$(config_map_files)),,$(eval config_map_files += $(map))) \
-)
-
-# Declare or extend a release-config.
-#
 # $1 config name
 # $2 release config files
 define declare-release-config
@@ -72,24 +63,10 @@ define declare-release-config
     $(eval _all_release_configs.$(strip $(1)).FILES := $(_all_release_configs.$(strip $(1)).FILES) $(strip $(2)))
 endef
 
-# Include the config map files and populate _flag_declaration_files.
-_flag_declaration_files :=
+# Include the config map files
 $(foreach f, $(config_map_files), \
-    $(eval FLAG_DECLARATION_FILES:= ) \
     $(eval _included := $(f)) \
     $(eval include $(f)) \
-    $(eval _flag_declaration_files += $(FLAG_DECLARATION_FILES)) \
-)
-FLAG_DECLARATION_FILES :=
-
-# Make sure that the flag definitions are included for vendor/google builds.
-# This decouples the change in vendor/google/release/release_config_map.mk
-# from this logic change.
-# TODO: Remove this once the vendor/google FLAG_DECLARATION_FILES change is there.
-$(if $(wildcard vendor/google/release/release_config_map.mk),\
-  $(if $(filter vendor/google/release/build_flags.bzl,$(_flag_declaration_files)),,\
-    $(eval _flag_declaration_files := vendor/google/release/build_flags.bzl $(_flag_declaration_files)) \
-  ) \
 )
 
 # If TARGET_RELEASE is set, fail if there is no matching release config
@@ -101,11 +78,7 @@ ifeq ($(filter $(_all_release_configs), $(TARGET_RELEASE)),)
 else
     # Choose flag files
     # Don't sort this, use it in the order they gave us.
-    # Do allow duplicate entries, retaining only the first usage.
-    flag_value_files :=
-    $(foreach f,$(_all_release_configs.$(TARGET_RELEASE).FILES), \
-      $(if $(filter $(f),$(flag_value_files)),,$(eval flag_value_files += $(f)))\
-    )
+    flag_value_files := $(_all_release_configs.$(TARGET_RELEASE).FILES)
 endif
 else
 # Useful for finding scripts etc that aren't passing or setting TARGET_RELEASE
@@ -148,8 +121,21 @@ config_map_files:=
 # that we chose from the config map above.  Then we run that, and load the
 # results of that into the make environment.
 
-# _flag_declaration_files is the combined list of FLAG_DECLARATION_FILES set by
-# release_config_map.mk files above.
+# If this is a google source tree, restrict it to only the one file
+# which has OWNERS control.  If it isn't let others define their own.
+# TODO: Remove wildcard for build/release one when all branch manifests
+# have updated.
+flag_declaration_files := $(wildcard build/release/build_flags.bzl) \
+    $(if $(wildcard vendor/google/release/build_flags.bzl), \
+        vendor/google/release/build_flags.bzl, \
+        $(sort \
+            $(wildcard device/*/release/build_flags.bzl) \
+            $(wildcard device/*/*/release/build_flags.bzl) \
+            $(wildcard vendor/*/release/build_flags.bzl) \
+            $(wildcard vendor/*/*/release/build_flags.bzl) \
+        ) \
+    )
+
 
 # Because starlark can't find files with $(wildcard), write an entrypoint starlark script that
 # contains the result of the above wildcards for the starlark code to use.
@@ -159,8 +145,8 @@ _c+=$(newline)def add(d, k, v):
 _c+=$(newline)$(space)d = dict(d)
 _c+=$(newline)$(space)d[k] = v
 _c+=$(newline)$(space)return d
-_c+=$(foreach f,$(_flag_declaration_files),$(newline)load("$(f)", flags_$(call filename_to_starlark,$(f)) = "flags"))
-_c+=$(newline)all_flags = [] $(foreach f,$(_flag_declaration_files),+ [add(x, "declared_in", "$(f)") for x in flags_$(call filename_to_starlark,$(f))])
+_c+=$(foreach f,$(flag_declaration_files),$(newline)load("$(f)", flags_$(call filename_to_starlark,$(f)) = "flags"))
+_c+=$(newline)all_flags = [] $(foreach f,$(flag_declaration_files),+ [add(x, "declared_in", "$(f)") for x in flags_$(call filename_to_starlark,$(f))])
 _c+=$(foreach f,$(flag_value_files),$(newline)load("//$(f)", values_$(call filename_to_starlark,$(f)) = "values"))
 _c+=$(newline)all_values = [] $(foreach f,$(flag_value_files),+ [add(x, "set_in", "$(f)") for x in values_$(call filename_to_starlark,$(f))])
 _c+=$(newline)variables_to_export_to_make = release_config(all_flags, all_values)

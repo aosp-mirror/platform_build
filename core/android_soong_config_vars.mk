@@ -198,7 +198,13 @@ else ifneq (platform:services,$(lastword $(PRODUCT_SYSTEM_SERVER_JARS)))
 else
   SYSTEM_OPTIMIZE_JAVA ?= true
 endif
+
+ifeq (true,$(FULL_SYSTEM_OPTIMIZE_JAVA))
+  SYSTEM_OPTIMIZE_JAVA := true
+endif
+
 $(call add_soong_config_var,ANDROID,SYSTEM_OPTIMIZE_JAVA)
+$(call add_soong_config_var,ANDROID,FULL_SYSTEM_OPTIMIZE_JAVA)
 
 # Check for SupplementalApi module.
 ifeq ($(wildcard packages/modules/SupplementalApi),)
