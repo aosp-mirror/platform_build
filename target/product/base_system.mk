@@ -350,6 +350,15 @@ ifeq (,$(DISABLE_WALLPAPER_BACKUP))
     WallpaperBackup
 endif
 
+# Moving angle from vendor to system
+ifeq ($(RELEASE_ANGLE_ON_SYSTEM),true)
+PRODUCT_PACKAGES += \
+    libEGL_angle \
+    libGLESv1_CM_angle \
+    libGLESv2_angle
+$(call soong_config_set,angle,angle_on_system,true)
+endif
+
 # For testing purposes
 ifeq ($(FORCE_AUDIO_SILENT), true)
     PRODUCT_SYSTEM_PROPERTIES += ro.audio.silent=1
