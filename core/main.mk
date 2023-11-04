@@ -1399,28 +1399,7 @@ modules_to_install := $(sort \
 # var to prevent Make from trying to make a sense of it.
 _unused := $(call copy-many-files, $(sort $(ALL_COMPATIBILITY_DIST_FILES)))
 
-# Don't include any GNU General Public License shared objects or static
-# libraries in SDK images.  GPL executables (not static/dynamic libraries)
-# are okay if they don't link against any closed source libraries (directly
-# or indirectly)
-
-# It's ok (and necessary) to build the host tools, but nothing that's
-# going to be installed on the target (including static libraries).
-
 ifdef is_sdk_build
-  target_gnu_MODULES := \
-              $(filter \
-                      $(TARGET_OUT_INTERMEDIATES)/% \
-                      $(TARGET_OUT)/% \
-                      $(TARGET_OUT_DATA)/%, \
-                              $(sort $(call get-tagged-modules,gnu)))
-  target_gnu_MODULES := $(filter-out $(TARGET_OUT_EXECUTABLES)/%,$(target_gnu_MODULES))
-  target_gnu_MODULES := $(filter-out %/libopenjdkjvmti.so,$(target_gnu_MODULES))
-  target_gnu_MODULES := $(filter-out %/libopenjdkjvmtid.so,$(target_gnu_MODULES))
-  $(info Removing from sdk:)$(foreach d,$(target_gnu_MODULES),$(info : $(d)))
-  modules_to_install := \
-              $(filter-out $(target_gnu_MODULES),$(modules_to_install))
-
   # Ensure every module listed in PRODUCT_PACKAGES* gets something installed
   # TODO: Should we do this for all builds and not just the sdk?
   dangling_modules :=
@@ -2007,13 +1986,6 @@ $(LSDUMP_PATHS_FILE):
 
 .PHONY: check-elf-files
 check-elf-files:
-
-#xxx scrape this from ALL_MODULE_NAME_TAGS
-.PHONY: modules
-modules:
-	@echo "Available sub-modules:"
-	@echo "$(call module-names-for-tag-list,$(ALL_MODULE_TAGS))" | \
-	      tr -s ' ' '\n' | sort -u
 
 .PHONY: dump-files
 dump-files:
