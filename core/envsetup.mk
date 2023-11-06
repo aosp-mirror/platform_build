@@ -371,6 +371,8 @@ ifneq ($(TARGET_BUILD_TYPE),debug)
 TARGET_BUILD_TYPE := release
 endif
 
+include $(BUILD_SYSTEM)/product_validation_checks.mk
+
 # ---------------------------------------------------------------
 # figure out the output directories
 
