@@ -69,6 +69,33 @@ inline bool IsAtLeast${FINAL_PLATFORM_CODENAME:0:1}() { return android_get_devic
     rm "$tmpfile"
 }
 
+function bumpSdkExtensionsVersion() {
+    local SDKEXT="packages/modules/SdkExtensions/"
+
+    # This used to call bump_sdk.sh utility.
+    # However due to TS, we have to build the gen_sdk with a correct set of settings.
+
+    # "$top/packages/modules/SdkExtensions/gen_sdk/bump_sdk.sh" ${FINAL_MAINLINE_EXTENSION}
+    # Leave the last commit as a set of modified files.
+    # The code to create a finalization topic will pick it up later.
+    # git -C ${SDKEXT} reset HEAD~1
+
+    local sdk="${FINAL_MAINLINE_EXTENSION}"
+    local modules_arg=
+
+    TARGET_PRODUCT=aosp_arm64 \
+        TARGET_RELEASE=fina_1 \
+        TARGET_BUILD_VARIANT=userdebug \
+        DIST_DIR=out/dist \
+        $top/build/soong/soong_ui.bash --make-mode --soong-only gen_sdk
+
+    ANDROID_BUILD_TOP="$top" out/soong/host/linux-x86/bin/gen_sdk \
+        --database ${SDKEXT}/gen_sdk/extensions_db.textpb \
+        --action new_sdk \
+        --sdk "$sdk" \
+        $modules_arg
+}
+
 function finalize_aidl_vndk_sdk_resources() {
     local top="$(dirname "$0")"/../../../..
     source $top/build/make/tools/finalization/environment.sh
@@ -76,8 +103,8 @@ function finalize_aidl_vndk_sdk_resources() {
     local SDK_CODENAME="public static final int $FINAL_PLATFORM_CODENAME_JAVA = CUR_DEVELOPMENT;"
     local SDK_VERSION="public static final int $FINAL_PLATFORM_CODENAME_JAVA = $FINAL_PLATFORM_SDK_VERSION;"
 
-    # default target to modify tree and build SDK
-    local m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug DIST_DIR=out/dist"
+    # target to modify tree and build VNDK
+    local vndk_m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug DIST_DIR=out/dist"
 
     # The full process can be found at (INTERNAL) go/android-sdk-finalization.
 
@@ -91,14 +118,14 @@ function finalize_aidl_vndk_sdk_resources() {
     cp "$top/development/vndk/tools/definition-tool/datasets/vndk-lib-extra-list-current.txt" \
        "$top/development/vndk/tools/definition-tool/datasets/vndk-lib-extra-list-$FINAL_PLATFORM_SDK_VERSION.txt"
 
-    AIDL_TRANSITIVE_FREEZE=true $m aidl-freeze-api create_reference_dumps
+    AIDL_TRANSITIVE_FREEZE=true $vndk_m aidl-freeze-api create_reference_dumps
 
     # Generate ABI dumps
     ANDROID_BUILD_TOP="$top" out/host/linux-x86/bin/create_reference_dumps
 
     echo "NOTE: THIS INTENTIONALLY MAY FAIL AND REPAIR ITSELF (until 'DONE')"
     # Update new versions of files. See update-vndk-list.sh (which requires envsetup.sh)
-    $m check-vndk-list || \
+    $vndk_m check-vndk-list || \
         { cp $top/out/soong/vndk/vndk.libraries.txt $top/build/make/target/product/gsi/current.txt; }
     echo "DONE: THIS INTENTIONALLY MAY FAIL AND REPAIR ITSELF"
 
@@ -114,9 +141,6 @@ function finalize_aidl_vndk_sdk_resources() {
     sed -i -e 's/Pkg\.Revision.*/Pkg\.Revision=${PLATFORM_SDK_VERSION}.0.0/g' $build_tools_source
 
     # build/make
-    local version_defaults="$top/build/make/core/version_defaults.mk"
-    sed -i -e "s/PLATFORM_SDK_VERSION := .*/PLATFORM_SDK_VERSION := ${FINAL_PLATFORM_SDK_VERSION}/g" $version_defaults
-    sed -i -e "s/PLATFORM_VERSION_LAST_STABLE := .*/PLATFORM_VERSION_LAST_STABLE := ${FINAL_PLATFORM_VERSION}/g" $version_defaults
     sed -i -e "s/sepolicy_major_vers := .*/sepolicy_major_vers := ${FINAL_PLATFORM_SDK_VERSION}/g" "$top/build/make/core/config.mk"
     cp "$top/build/make/target/product/gsi/current.txt" "$top/build/make/target/product/gsi/$FINAL_PLATFORM_SDK_VERSION.txt"
 
@@ -149,18 +173,14 @@ function finalize_aidl_vndk_sdk_resources() {
     sed -i -e "/=.*$((${FINAL_PLATFORM_SDK_VERSION}-1)),/a \\  SDK_${FINAL_PLATFORM_CODENAME_JAVA} = ${FINAL_PLATFORM_SDK_VERSION}," "$top/frameworks/base/tools/aapt2/SdkConstants.h"
 
     # Bump Mainline SDK extension version.
-    local SDKEXT="packages/modules/SdkExtensions/"
-    "$top/packages/modules/SdkExtensions/gen_sdk/bump_sdk.sh" ${FINAL_MAINLINE_EXTENSION}
-    # Leave the last commit as a set of modified files.
-    # The code to create a finalization topic will pick it up later.
-    git -C ${SDKEXT} reset HEAD~1
+    bumpSdkExtensionsVersion
 
-    local version_defaults="$top/build/make/core/version_defaults.mk"
-    sed -i -e "s/PLATFORM_SDK_EXTENSION_VERSION := .*/PLATFORM_SDK_EXTENSION_VERSION := ${FINAL_MAINLINE_EXTENSION}/g" $version_defaults
+    # target to build SDK
+    local sdk_m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_RELEASE=fina_1 TARGET_BUILD_VARIANT=userdebug DIST_DIR=out/dist"
 
     # Force update current.txt
-    $m clobber
-    $m update-api
+    $sdk_m clobber
+    $sdk_m update-api
 }
 
 finalize_aidl_vndk_sdk_resources
