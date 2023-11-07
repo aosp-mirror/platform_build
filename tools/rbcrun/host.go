@@ -31,11 +31,11 @@ import (
 type ExecutionMode int
 const (
 	ExecutionModeRbc ExecutionMode = iota
-	ExecutionModeMake ExecutionMode = iota
+	ExecutionModeScl ExecutionMode = iota
 )
 
 const allowExternalEntrypointKey = "allowExternalEntrypoint"
-const callerDirKey = "callerDir"
+const callingFileKey = "callingFile"
 const executionModeKey = "executionMode"
 const shellKey = "shell"
 
@@ -58,7 +58,7 @@ var rbcBuiltins starlark.StringDict = starlark.StringDict{
 	"rblf_wildcard": starlark.NewBuiltin("rblf_wildcard", wildcard),
 }
 
-var makeBuiltins starlark.StringDict = starlark.StringDict{
+var sclBuiltins starlark.StringDict = starlark.StringDict{
 	"struct":   starlark.NewBuiltin("struct", starlarkstruct.Make),
 	"json": starlarkjson.Module,
 }
@@ -128,7 +128,8 @@ func loader(thread *starlark.Thread, module string) (starlark.StringDict, error)
 			module = module[:pipePos]
 		}
 	}
-	modulePath, err := cleanModuleName(module, thread.Local(callerDirKey).(string), allowExternalEntrypoint)
+	callingFile := thread.Local(callingFileKey).(string)
+	modulePath, err := cleanModuleName(module, filepath.Dir(callingFile), allowExternalEntrypoint)
 	if err != nil {
 		return nil, err
 	}
@@ -150,6 +151,13 @@ func loader(thread *starlark.Thread, module string) (starlark.StringDict, error)
 
 		// Load or return default
 		if mustLoad {
+			if strings.HasSuffix(callingFile, ".scl") && !strings.HasSuffix(modulePath, ".scl") {
+				return nil, fmt.Errorf(".scl files can only load other .scl files: %q loads %q", callingFile, modulePath)
+			}
+			// Switch into scl mode from here on
+			if strings.HasSuffix(modulePath, ".scl") {
+				mode = ExecutionModeScl
+			}
 			childThread := &starlark.Thread{Name: "exec " + module, Load: thread.Load}
 			// Cheating for the sake of testing:
 			// propagate starlarktest's Reporter key, otherwise testing
@@ -161,14 +169,14 @@ func loader(thread *starlark.Thread, module string) (starlark.StringDict, error)
 
 			// Only the entrypoint starlark file allows external loads.
 			childThread.SetLocal(allowExternalEntrypointKey, false)
-			childThread.SetLocal(callerDirKey, filepath.Dir(modulePath))
+			childThread.SetLocal(callingFileKey, modulePath)
 			childThread.SetLocal(executionModeKey, mode)
 			childThread.SetLocal(shellKey, thread.Local(shellKey))
 			if mode == ExecutionModeRbc {
 				globals, err := starlark.ExecFile(childThread, modulePath, nil, rbcBuiltins)
 				e = &modentry{globals, err}
-			} else if mode == ExecutionModeMake {
-				globals, err := starlark.ExecFile(childThread, modulePath, nil, makeBuiltins)
+			} else if mode == ExecutionModeScl {
+				globals, err := starlark.ExecFile(childThread, modulePath, nil, sclBuiltins)
 				e = &modentry{globals, err}
 			} else {
 				return nil, fmt.Errorf("unknown executionMode %d", mode)
@@ -338,7 +346,7 @@ func Run(filename string, src interface{}, mode ExecutionMode, allowExternalEntr
 			if mode == ExecutionModeRbc {
 				// In rbc mode, rblf_log is used to print to stderr
 				fmt.Println(msg)
-			} else if mode == ExecutionModeMake {
+			} else if mode == ExecutionModeScl {
 				fmt.Fprintln(os.Stderr, msg)
 			}
 		},
@@ -365,13 +373,13 @@ func Run(filename string, src interface{}, mode ExecutionMode, allowExternalEntr
 
 	var results starlark.StringDict
 	mainThread.SetLocal(allowExternalEntrypointKey, allowExternalEntrypoint)
-	mainThread.SetLocal(callerDirKey, filepath.Dir(filename))
+	mainThread.SetLocal(callingFileKey, filename)
 	mainThread.SetLocal(executionModeKey, mode)
 	mainThread.SetLocal(shellKey, shellPath)
 	if mode == ExecutionModeRbc {
 		results, err = starlark.ExecFile(mainThread, filename, src, rbcBuiltins)
-	} else if mode == ExecutionModeMake {
-		results, err = starlark.ExecFile(mainThread, filename, src, makeBuiltins)
+	} else if mode == ExecutionModeScl {
+		results, err = starlark.ExecFile(mainThread, filename, src, sclBuiltins)
 	} else {
 		return results, nil, fmt.Errorf("unknown executionMode %d", mode)
 	}
