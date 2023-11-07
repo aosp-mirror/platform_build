@@ -55,13 +55,13 @@ func getMode() rbcrun.ExecutionMode {
 	case "rbc":
 		return rbcrun.ExecutionModeRbc
 	case "make":
-		return rbcrun.ExecutionModeMake
+		return rbcrun.ExecutionModeScl
 	case "":
 		quit("-mode flag is required.")
 	default:
 		quit("Unknown -mode value %q, expected 1 of \"rbc\", \"make\"", *modeFlag)
 	}
-	return rbcrun.ExecutionModeMake
+	return rbcrun.ExecutionModeScl
 }
 
 var makeStringReplacer = strings.NewReplacer("#", "\\#", "$", "$$")
@@ -175,7 +175,7 @@ func main() {
 			quit("%s\n", err)
 		}
 	}
-	if mode == rbcrun.ExecutionModeMake {
+	if mode == rbcrun.ExecutionModeScl {
 		if err := printVarsInMakeFormat(variables); err != nil {
 			quit("%s\n", err)
 		}
