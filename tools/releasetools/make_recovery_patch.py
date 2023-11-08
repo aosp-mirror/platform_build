@@ -21,7 +21,6 @@ import os
 import sys
 
 import common
-from non_ab_ota import MakeRecoveryPatch
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -61,7 +60,7 @@ def main(argv):
                            *fn.split("/")), "wb") as f:
       f.write(data)
 
-  MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img)
+  common.MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img)
 
 
 if __name__ == '__main__':
