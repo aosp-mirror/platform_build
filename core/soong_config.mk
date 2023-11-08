@@ -169,6 +169,11 @@ $(call add_json_list, ApexBootJars,                      $(PRODUCT_APEX_BOOT_JAR
 $(call add_json_bool, VndkUseCoreVariant,                $(TARGET_VNDK_USE_CORE_VARIANT))
 $(call add_json_bool, VndkSnapshotBuildArtifacts,        $(VNDK_SNAPSHOT_BUILD_ARTIFACTS))
 
+$(call add_json_map,  BuildFlags)
+$(foreach flag,$(_ALL_RELEASE_FLAGS),\
+  $(call add_json_str,$(flag),$(_ALL_RELEASE_FLAGS.$(flag).VALUE)))
+$(call end_json_map)
+
 $(call add_json_bool, DirectedVendorSnapshot,            $(DIRECTED_VENDOR_SNAPSHOT))
 $(call add_json_map,  VendorSnapshotModules)
 $(foreach module,$(VENDOR_SNAPSHOT_MODULES),\

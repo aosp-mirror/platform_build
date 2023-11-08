@@ -251,30 +251,6 @@ endif
 
 $(LOCAL_BUILT_MODULE): $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
-# We don't care about installed rlib/static libraries, since the libraries have
-# already been linked into the module at that point. We do, however, care
-# about the NOTICE files for any rlib/static libraries that we use.
-# (see notice_files.mk)
-#
-# Filter out some NDK libraries that are not being exported.
-my_static_libraries := \
-    $(filter-out ndk_libc++_static ndk_libc++abi ndk_libandroid_support ndk_libunwind \
-      ndk_libc++_static.native_bridge ndk_libc++abi.native_bridge \
-      ndk_libandroid_support.native_bridge ndk_libunwind.native_bridge, \
-      $(LOCAL_STATIC_LIBRARIES))
-installed_static_library_notice_file_targets := \
-    $(foreach lib,$(my_static_libraries) $(LOCAL_WHOLE_STATIC_LIBRARIES), \
-      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-STATIC_LIBRARIES-$(lib))
-installed_static_library_notice_file_targets += \
-    $(foreach lib,$(LOCAL_RLIB_LIBRARIES), \
-      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-RLIB_LIBRARIES-$(lib))
-installed_static_library_notice_file_targets += \
-    $(foreach lib,$(LOCAL_PROC_MACRO_LIBRARIES), \
-      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-PROC_MACRO_LIBRARIES-$(lib))
-
-$(notice_target): | $(installed_static_library_notice_file_targets)
-$(LOCAL_INSTALLED_MODULE): | $(notice_target)
-
 # Reinstall shared library dependencies of fuzz targets to /data/fuzz/ (for
 # target) or /data/ (for host).
 ifdef LOCAL_IS_FUZZ_TARGET

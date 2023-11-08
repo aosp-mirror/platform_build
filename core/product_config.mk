@@ -420,6 +420,8 @@ PRODUCT_OTA_PUBLIC_KEYS := $(sort $(PRODUCT_OTA_PUBLIC_KEYS))
 PRODUCT_EXTRA_OTA_KEYS := $(sort $(PRODUCT_EXTRA_OTA_KEYS))
 PRODUCT_EXTRA_RECOVERY_KEYS := $(sort $(PRODUCT_EXTRA_RECOVERY_KEYS))
 
+PRODUCT_VALIDATION_CHECKS := $(sort $(PRODUCT_VALIDATION_CHECKS))
+
 # Resolve and setup per-module dex-preopt configs.
 DEXPREOPT_DISABLED_MODULES :=
 # If a module has multiple setups, the first takes precedence.
