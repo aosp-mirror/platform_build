@@ -29,11 +29,15 @@ known_board_variables := \
   BOARD_VENDOR_SEPOLICY_DIRS BOARD_SEPOLICY_DIRS \
   SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS \
   SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS \
+  PRODUCT_PUBLIC_SEPOLICY_DIRS \
+  PRODUCT_PRIVATE_SEPOLICY_DIRS
 
 known_board_list_variables := \
   BOARD_VENDOR_SEPOLICY_DIRS BOARD_SEPOLICY_DIRS \
   SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS \
   SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS \
+  PRODUCT_PUBLIC_SEPOLICY_DIRS \
+  PRODUCT_PRIVATE_SEPOLICY_DIRS
 
 escape_starlark_string=$(subst ",\",$(subst \,\\,$(1)))
 product_variable_starlark_value=$(if $(filter $(1),$(_product_list_vars) $(known_board_list_variables)),[$(foreach w,$($(1)),"$(call escape_starlark_string,$(w))", )],"$(call escape_starlark_string,$(1))")
