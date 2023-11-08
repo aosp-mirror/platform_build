@@ -83,8 +83,6 @@ LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_stubs_jar) \
     $(java_source_list_file)
 
-LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
-
 ###########################################################
 ## AIDL: Compile .aidl files to .java
 ###########################################################
