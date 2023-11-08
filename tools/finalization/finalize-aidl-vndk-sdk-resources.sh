@@ -103,9 +103,6 @@ function finalize_aidl_vndk_sdk_resources() {
     local SDK_CODENAME="public static final int $FINAL_PLATFORM_CODENAME_JAVA = CUR_DEVELOPMENT;"
     local SDK_VERSION="public static final int $FINAL_PLATFORM_CODENAME_JAVA = $FINAL_PLATFORM_SDK_VERSION;"
 
-    # target to modify tree and build VNDK
-    local vndk_m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug DIST_DIR=out/dist"
-
     # The full process can be found at (INTERNAL) go/android-sdk-finalization.
 
     # apply droidstubs hack to prevent tools from incrementing an API version
@@ -114,20 +111,9 @@ function finalize_aidl_vndk_sdk_resources() {
     # bionic/NDK
     finalize_bionic_ndk
 
-    # VNDK definitions for new SDK version
-    cp "$top/development/vndk/tools/definition-tool/datasets/vndk-lib-extra-list-current.txt" \
-       "$top/development/vndk/tools/definition-tool/datasets/vndk-lib-extra-list-$FINAL_PLATFORM_SDK_VERSION.txt"
-
-    AIDL_TRANSITIVE_FREEZE=true $vndk_m aidl-freeze-api create_reference_dumps
-
-    # Generate ABI dumps
-    ANDROID_BUILD_TOP="$top" out/host/linux-x86/bin/create_reference_dumps
-
-    echo "NOTE: THIS INTENTIONALLY MAY FAIL AND REPAIR ITSELF (until 'DONE')"
-    # Update new versions of files. See update-vndk-list.sh (which requires envsetup.sh)
-    $vndk_m check-vndk-list || \
-        { cp $top/out/soong/vndk/vndk.libraries.txt $top/build/make/target/product/gsi/current.txt; }
-    echo "DONE: THIS INTENTIONALLY MAY FAIL AND REPAIR ITSELF"
+    # pre-finalization build target (trunk)
+    local aidl_m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_RELEASE=trunk TARGET_BUILD_VARIANT=userdebug DIST_DIR=out/dist"
+    AIDL_TRANSITIVE_FREEZE=true $aidl_m aidl-freeze-api
 
     # Finalize SDK
 
