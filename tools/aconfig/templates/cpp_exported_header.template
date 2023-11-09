@@ -18,9 +18,15 @@
 #ifdef __cplusplus
 
 #include <memory>
-
+{{ if not for_test- }}
+#include <vector>
+{{ -endif }}
 
 namespace {cpp_namespace} \{
+
+{{ if not for_test- }}
+extern std::vector<int8_t> cache_;
+{{ -endif }}
 
 class flag_provider_interface \{
 public:
