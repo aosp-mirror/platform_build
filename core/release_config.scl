@@ -15,7 +15,7 @@
 Export build flags (with values) to make.
 """
 
-load("//build/bazel/utils:schema_validation.bzl", "validate")
+load("//build/bazel/utils:schema_validation.scl", "validate")
 
 # Partitions that get build system flag summaries
 _flag_partitions = [

@@ -68,6 +68,11 @@ def main(argv):
   if args.verbose:
     logger.setLevel(logging.INFO)
   logger.info(args)
+  old_imgs = [""] * len(args.images)
+  for (i, img) in enumerate(args.images):
+    if ":" in img:
+      old_imgs[i], args.images[i] = img.split(":", maxsplit=1)
+
   if not args.partition_names:
     args.partition_names = [os.path.os.path.splitext(os.path.basename(path))[
         0] for path in args.images]
@@ -79,6 +84,7 @@ def main(argv):
     cmd.append("--partition_names=" + ",".join(args.partition_names))
     cmd.append("--dynamic_partition_info_file=" +
                dynamic_partition_info_file.name)
+    cmd.append("--old_partitions=" + ",".join(old_imgs))
     cmd.append("--new_partitions=" + ",".join(args.images))
     cmd.append("--out_file=" + unsigned_payload.name)
     cmd.append("--is_partial_update")
