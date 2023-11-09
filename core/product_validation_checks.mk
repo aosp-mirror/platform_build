@@ -29,17 +29,20 @@ known_board_variables := \
   BOARD_VENDOR_SEPOLICY_DIRS BOARD_SEPOLICY_DIRS \
   SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS \
   SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS \
+  PRODUCT_PUBLIC_SEPOLICY_DIRS \
+  PRODUCT_PRIVATE_SEPOLICY_DIRS
 
 known_board_list_variables := \
   BOARD_VENDOR_SEPOLICY_DIRS BOARD_SEPOLICY_DIRS \
   SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS \
   SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS \
+  PRODUCT_PUBLIC_SEPOLICY_DIRS \
+  PRODUCT_PRIVATE_SEPOLICY_DIRS
 
 escape_starlark_string=$(subst ",\",$(subst \,\\,$(1)))
 product_variable_starlark_value=$(if $(filter $(1),$(_product_list_vars) $(known_board_list_variables)),[$(foreach w,$($(1)),"$(call escape_starlark_string,$(w))", )],"$(call escape_starlark_string,$(1))")
 filename_to_starlark=$(subst -,_,$(subst /,_,$(subst .,_,$(1))))
-_c:=load("//build/make/core/release_config.bzl", "release_config")
-_c+=$(foreach f,$(PRODUCT_VALIDATION_CHECKS),$(newline)load("$(f)", validate_product_variables_$(call filename_to_starlark,$(f)) = "validate_product_variables"))
+_c:=$(foreach f,$(PRODUCT_VALIDATION_CHECKS),$(newline)load("$(f)", validate_product_variables_$(call filename_to_starlark,$(f)) = "validate_product_variables"))
 # TODO: we should freeze the context because it contains mutable lists, so that validation checks can't affect each other
 _c+=$(newline)_ctx = struct(
 _c+=$(newline)product_variables = struct(
@@ -49,8 +52,6 @@ _c+=$(newline)board_variables = struct(
 _c+=$(foreach v,$(known_board_variables),$(newline)  $(v) = $(call product_variable_starlark_value,$(v)),)
 _c+=$(newline))
 _c+=$(newline))
-# It's important that we call the function using keyword arguments, so that if we want to add
-# more arguments in the future it's easier.
 _c+=$(foreach f,$(PRODUCT_VALIDATION_CHECKS),$(newline)validate_product_variables_$(call filename_to_starlark,$(f))(_ctx))
 _c+=$(newline)variables_to_export_to_make = {}
 $(KATI_file_no_rerun >$(OUT_DIR)/product_validation_checks_entrypoint.scl,$(_c))

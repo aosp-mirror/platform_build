@@ -19,6 +19,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"go.starlark.net/resolve"
@@ -126,13 +127,62 @@ func TestLoad(t *testing.T) {
 		t.Fatal(err)
 	}
 	thread.SetLocal(allowExternalEntrypointKey, false)
-	thread.SetLocal(callerDirKey, dir)
+	thread.SetLocal(callingFileKey, "testdata/load.star")
 	thread.SetLocal(executionModeKey, ExecutionModeRbc)
 	if _, err := starlark.ExecFile(thread, "testdata/load.star", nil, rbcBuiltins); err != nil {
 		if err, ok := err.(*starlark.EvalError); ok {
 			t.Fatal(err.Backtrace())
 		}
 		t.Fatal(err)
+	}
+}
+
+func TestBzlLoadsScl(t *testing.T) {
+	moduleCache = make(map[string]*modentry)
+	dir := dataDir()
+	if err := os.Chdir(filepath.Dir(dir)); err != nil {
+		t.Fatal(err)
+	}
+	vars, _, err := Run("testdata/bzl_loads_scl.bzl", nil, ExecutionModeScl, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if val, ok := vars["foo"]; !ok {
+		t.Fatalf("Failed to load foo variable")
+	} else if val.(starlark.String) != "bar" {
+		t.Fatalf("Expected \"bar\", got %q", val)
+	}
+}
+
+func TestNonEntrypointBzlLoadsScl(t *testing.T) {
+	moduleCache = make(map[string]*modentry)
+	dir := dataDir()
+	if err := os.Chdir(filepath.Dir(dir)); err != nil {
+		t.Fatal(err)
+	}
+	vars, _, err := Run("testdata/bzl_loads_scl_2.bzl", nil, ExecutionModeScl, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if val, ok := vars["foo"]; !ok {
+		t.Fatalf("Failed to load foo variable")
+	} else if val.(starlark.String) != "bar" {
+		t.Fatalf("Expected \"bar\", got %q", val)
+	}
+}
+
+func TestSclLoadsBzl(t *testing.T) {
+	moduleCache = make(map[string]*modentry)
+	dir := dataDir()
+	if err := os.Chdir(filepath.Dir(dir)); err != nil {
+		t.Fatal(err)
+	}
+	_, _, err := Run("testdata/scl_incorrectly_loads_bzl.scl", nil, ExecutionModeScl, false)
+	if err == nil {
+		t.Fatal("Expected failure")
+	}
+	if !strings.Contains(err.Error(), ".scl files can only load other .scl files") {
+		t.Fatalf("Expected error to contain \".scl files can only load other .scl files\": %q", err.Error())
 	}
 }
 

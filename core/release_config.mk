@@ -82,16 +82,6 @@ $(foreach f, $(config_map_files), \
 )
 FLAG_DECLARATION_FILES :=
 
-# Make sure that the flag definitions are included for vendor/google builds.
-# This decouples the change in vendor/google/release/release_config_map.mk
-# from this logic change.
-# TODO: Remove this once the vendor/google FLAG_DECLARATION_FILES change is there.
-$(if $(wildcard vendor/google/release/release_config_map.mk),\
-  $(if $(filter vendor/google/release/build_flags.bzl,$(_flag_declaration_files)),,\
-    $(eval _flag_declaration_files := vendor/google/release/build_flags.bzl $(_flag_declaration_files)) \
-  ) \
-)
-
 # If TARGET_RELEASE is set, fail if there is no matching release config
 # If it isn't set, no release config files will be included and all flags
 # will get their default values.
