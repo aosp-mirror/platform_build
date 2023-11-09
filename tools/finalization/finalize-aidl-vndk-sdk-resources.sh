@@ -115,6 +115,9 @@ function finalize_aidl_vndk_sdk_resources() {
     local aidl_m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_RELEASE=trunk TARGET_BUILD_VARIANT=userdebug DIST_DIR=out/dist"
     AIDL_TRANSITIVE_FREEZE=true $aidl_m aidl-freeze-api
 
+    # TODO(b/309880485)
+    # Add back create_reference_dumps and $top/build/make/target/product/gsi/current.txt
+
     # Finalize SDK
 
     # frameworks/libs/modules-utils
