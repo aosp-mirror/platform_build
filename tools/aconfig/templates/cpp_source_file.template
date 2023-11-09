@@ -53,10 +53,13 @@ namespace {cpp_namespace} \{
         {{ for item in class_elements}}
         virtual bool {item.flag_name}() override \{
             {{ if item.readwrite- }}
-            return server_configurable_flags::GetServerConfigurableFlag(
-                "aconfig_flags.{item.device_config_namespace}",
-                "{item.device_config_flag}",
-                "{item.default_value}") == "true";
+            if (cache_[{item.readwrite_idx}] == -1) \{
+                cache_[{item.readwrite_idx}] = server_configurable_flags::GetServerConfigurableFlag(
+                    "aconfig_flags.{item.device_config_namespace}",
+                    "{item.device_config_flag}",
+                    "{item.default_value}") == "true";
+            }
+            return cache_[{item.readwrite_idx}];
             {{ -else- }}
             {{ if item.is_fixed_read_only }}
             return {package_macro}_{item.flag_macro};
@@ -68,12 +71,13 @@ namespace {cpp_namespace} \{
         {{ endfor }}
     };
 
+    std::vector<int8_t> cache_ = std::vector<int8_t>({readwrite_count}, -1);
 
 {{ -endif }}
 
-
 std::unique_ptr<flag_provider_interface> provider_ =
     std::make_unique<flag_provider>();
+
 
 }
 

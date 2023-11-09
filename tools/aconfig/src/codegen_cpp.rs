@@ -31,9 +31,10 @@ pub fn generate_cpp_code<'a, I>(
 where
     I: Iterator<Item = &'a ProtoParsedFlag>,
 {
+    let mut readwrite_count = 0;
     let class_elements: Vec<ClassElement> =
-        parsed_flags_iter.map(|pf| create_class_element(package, pf)).collect();
-    let readwrite = class_elements.iter().any(|item| item.readwrite);
+        parsed_flags_iter.map(|pf| create_class_element(package, pf, &mut readwrite_count)).collect();
+    let readwrite = readwrite_count > 0;
     let has_fixed_read_only = class_elements.iter().any(|item| item.is_fixed_read_only);
     let header = package.replace('.', "_");
     let package_macro = header.to_uppercase();
@@ -46,6 +47,7 @@ where
         package,
         has_fixed_read_only,
         readwrite,
+        readwrite_count,
         for_test: codegen_mode == CodegenMode::Test,
         class_elements,
     };
@@ -88,12 +90,14 @@ pub struct Context<'a> {
     pub package: &'a str,
     pub has_fixed_read_only: bool,
     pub readwrite: bool,
+    pub readwrite_count: i32,
     pub for_test: bool,
     pub class_elements: Vec<ClassElement>,
 }
 
 #[derive(Serialize)]
 pub struct ClassElement {
+    pub readwrite_idx: i32,
     pub readwrite: bool,
     pub is_fixed_read_only: bool,
     pub default_value: String,
@@ -103,8 +107,13 @@ pub struct ClassElement {
     pub device_config_flag: String,
 }
 
-fn create_class_element(package: &str, pf: &ProtoParsedFlag) -> ClassElement {
+fn create_class_element(package: &str, pf: &ProtoParsedFlag, rw_count: &mut i32) -> ClassElement {
     ClassElement {
+        readwrite_idx: if pf.permission() == ProtoFlagPermission::READ_WRITE {
+            let index = *rw_count; *rw_count += 1; index
+        } else {
+            -1
+        },
         readwrite: pf.permission() == ProtoFlagPermission::READ_WRITE,
         is_fixed_read_only: pf.is_fixed_read_only(),
         default_value: if pf.state() == ProtoFlagState::ENABLED {
@@ -139,8 +148,12 @@ mod tests {
 #ifdef __cplusplus
 
 #include <memory>
+#include <vector>
 
 namespace com::android::aconfig::test {
+
+extern std::vector<int8_t> cache_;
+
 class flag_provider_interface {
 public:
     virtual ~flag_provider_interface() = default;
@@ -330,10 +343,13 @@ namespace com::android::aconfig::test {
             }
 
             virtual bool disabled_rw() override {
-                return server_configurable_flags::GetServerConfigurableFlag(
-                    "aconfig_flags.aconfig_test",
-                    "com.android.aconfig.test.disabled_rw",
-                    "false") == "true";
+                if (cache_[0] == -1) {
+                    cache_[0] = server_configurable_flags::GetServerConfigurableFlag(
+                        "aconfig_flags.aconfig_test",
+                        "com.android.aconfig.test.disabled_rw",
+                        "false") == "true";
+                }
+                return cache_[0];
             }
 
             virtual bool enabled_fixed_ro() override {
@@ -345,13 +361,18 @@ namespace com::android::aconfig::test {
             }
 
             virtual bool enabled_rw() override {
-                return server_configurable_flags::GetServerConfigurableFlag(
-                    "aconfig_flags.aconfig_test",
-                    "com.android.aconfig.test.enabled_rw",
-                    "true") == "true";
+                if (cache_[1] == -1) {
+                    cache_[1] = server_configurable_flags::GetServerConfigurableFlag(
+                        "aconfig_flags.aconfig_test",
+                        "com.android.aconfig.test.enabled_rw",
+                        "true") == "true";
+                }
+                return cache_[1];
             }
 
     };
+
+    std::vector<int8_t> cache_ = std::vector<int8_t>(2, -1);
 
     std::unique_ptr<flag_provider_interface> provider_ =
         std::make_unique<flag_provider>();
