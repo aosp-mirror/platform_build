@@ -32,10 +32,12 @@ where
 {
     let template_flags: Vec<TemplateParsedFlag> =
         parsed_flags_iter.map(|pf| TemplateParsedFlag::new(package, pf)).collect();
+    let has_readwrite = template_flags.iter().any(|item| item.readwrite);
     let context = TemplateContext {
         package: package.to_string(),
         template_flags,
         modules: package.split('.').map(|s| s.to_string()).collect::<Vec<_>>(),
+        has_readwrite,
     };
     let mut template = TinyTemplate::new();
     template.add_template(
@@ -55,6 +57,7 @@ struct TemplateContext {
     pub package: String,
     pub template_flags: Vec<TemplateParsedFlag>,
     pub modules: Vec<String>,
+    pub has_readwrite: bool,
 }
 
 #[derive(Serialize)]
@@ -94,6 +97,20 @@ mod tests {
 /// flag provider
 pub struct FlagProvider;
 
+lazy_static::lazy_static! {
+    /// flag value cache for disabled_rw
+    static ref CACHED_disabled_rw: bool = flags_rust::GetServerConfigurableFlag(
+        "aconfig_flags.aconfig_test",
+        "com.android.aconfig.test.disabled_rw",
+        "false") == "true";
+
+    /// flag value cache for enabled_rw
+    static ref CACHED_enabled_rw: bool = flags_rust::GetServerConfigurableFlag(
+        "aconfig_flags.aconfig_test",
+        "com.android.aconfig.test.enabled_rw",
+        "true") == "true";
+}
+
 impl FlagProvider {
     /// query flag disabled_ro
     pub fn disabled_ro(&self) -> bool {
@@ -102,10 +119,7 @@ impl FlagProvider {
 
     /// query flag disabled_rw
     pub fn disabled_rw(&self) -> bool {
-        flags_rust::GetServerConfigurableFlag(
-            "aconfig_flags.aconfig_test",
-            "com.android.aconfig.test.disabled_rw",
-            "false") == "true"
+        *CACHED_disabled_rw
     }
 
     /// query flag enabled_fixed_ro
@@ -120,10 +134,7 @@ impl FlagProvider {
 
     /// query flag enabled_rw
     pub fn enabled_rw(&self) -> bool {
-        flags_rust::GetServerConfigurableFlag(
-            "aconfig_flags.aconfig_test",
-            "com.android.aconfig.test.enabled_rw",
-            "true") == "true"
+        *CACHED_enabled_rw
     }
 }
 
