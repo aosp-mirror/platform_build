@@ -186,6 +186,21 @@ func TestSclLoadsBzl(t *testing.T) {
 	}
 }
 
+func TestCantLoadSymlink(t *testing.T) {
+	moduleCache = make(map[string]*modentry)
+	dir := dataDir()
+	if err := os.Chdir(filepath.Dir(dir)); err != nil {
+		t.Fatal(err)
+	}
+	_, _, err := Run("testdata/test_scl_symlink.scl", nil, ExecutionModeScl, false)
+	if err == nil {
+		t.Fatal("Expected failure")
+	}
+	if !strings.Contains(err.Error(), "symlinks to starlark files are not allowed") {
+		t.Fatalf("Expected error to contain \"symlinks to starlark files are not allowed\": %q", err.Error())
+	}
+}
+
 func TestShell(t *testing.T) {
 	exerciseStarlarkTestFile(t, "testdata/shell.star")
 }
