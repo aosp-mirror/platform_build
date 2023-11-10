@@ -144,7 +144,7 @@ config_map_files:=
 # Because starlark can't find files with $(wildcard), write an entrypoint starlark script that
 # contains the result of the above wildcards for the starlark code to use.
 filename_to_starlark=$(subst /,_,$(subst .,_,$(1)))
-_c:=load("//build/make/core/release_config.bzl", "release_config")
+_c:=load("//build/make/core/release_config.scl", "release_config")
 _c+=$(newline)def add(d, k, v):
 _c+=$(newline)$(space)d = dict(d)
 _c+=$(newline)$(space)d[k] = v
@@ -154,7 +154,7 @@ _c+=$(newline)all_flags = [] $(foreach f,$(_flag_declaration_files),+ [add(x, "d
 _c+=$(foreach f,$(flag_value_files),$(newline)load("//$(f)", values_$(call filename_to_starlark,$(f)) = "values"))
 _c+=$(newline)all_values = [] $(foreach f,$(flag_value_files),+ [add(x, "set_in", "$(f)") for x in values_$(call filename_to_starlark,$(f))])
 _c+=$(newline)variables_to_export_to_make = release_config(all_flags, all_values)
-$(file >$(OUT_DIR)/release_config_entrypoint.bzl,$(_c))
+$(file >$(OUT_DIR)/release_config_entrypoint.scl,$(_c))
 _c:=
 filename_to_starlark:=
 
@@ -164,5 +164,5 @@ filename_to_starlark:=
 #
 # We also need to pass --allow_external_entrypoint to rbcrun in case the OUT_DIR is set to something
 # outside of the source tree.
-$(call run-starlark,$(OUT_DIR)/release_config_entrypoint.bzl,$(OUT_DIR)/release_config_entrypoint.bzl,--allow_external_entrypoint)
+$(call run-starlark,$(OUT_DIR)/release_config_entrypoint.scl,$(OUT_DIR)/release_config_entrypoint.scl,--allow_external_entrypoint)
 

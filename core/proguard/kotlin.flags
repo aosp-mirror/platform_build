@@ -1,0 +1,19 @@
+# Ignore missing Kotlin meta-annotations so that Java-only projects can depend
+# on projects that happen to be written in Kotlin but do not have a run-time
+# dependency on the Kotlin standard library. Note these annotations are RUNTIME
+# retention, but we won't need them available in Java-only projects.
+-dontwarn kotlin.Metadata
+-dontwarn kotlin.annotation.AnnotationRetention
+-dontwarn kotlin.annotation.AnnotationTarget
+-dontwarn kotlin.annotation.Retention
+-dontwarn kotlin.annotation.Target
+
+# Kotlin DebugMetadata has no value in release builds, these two rules, will
+# allow AppReduce to strip out DebutMetadata.
+-checkdiscard interface kotlin.coroutines.jvm.internal.DebugMetadata
+-assumenosideeffects class kotlin.coroutines.jvm.internal.DebugMetadataKt {
+  *** getDebugMetadataAnnotation(...);
+}
+-assumevalues class kotlin.coroutines.jvm.internal.DebugMetadataKt {
+  *** getDebugMetadataAnnotation(...) return null;
+}
