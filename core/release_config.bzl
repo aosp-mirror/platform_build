@@ -1,1 +1,0 @@
-release_config.scl
