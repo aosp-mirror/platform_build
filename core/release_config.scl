@@ -80,23 +80,18 @@ _all_values_schema = {
     },
 }
 
-def flag(name, partitions, default, _kwmarker = (), appends = False):
+def flag(name, partitions, default, *, appends = False):
     """Declare a flag.
 
     Args:
       name: name of the flag
       partitions: the partitions where this should be recorded.
       default: the default value of the flag.
-      _kwmarker: Used to detect argument misuse.
       appends: Whether new values should be append (not replace) the old.
 
     Returns:
       A dictionary containing the flag declaration.
     """
-
-    # If specified, appends must be a keyword value.
-    if _kwmarker != ():
-        fail("Too many positional parameters")
     if not partitions:
         fail("At least 1 partition is required")
     if not name.startswith("RELEASE_"):

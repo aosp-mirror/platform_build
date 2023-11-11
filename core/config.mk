@@ -427,10 +427,10 @@ else
 endif
 .KATI_READONLY := TARGET_MAX_PAGE_SIZE_SUPPORTED
 
-# Only arm64 arch supports TARGET_MAX_PAGE_SIZE_SUPPORTED greater than 4096.
+# Only arm64 and x86_64 archs supports TARGET_MAX_PAGE_SIZE_SUPPORTED greater than 4096.
 ifneq ($(TARGET_MAX_PAGE_SIZE_SUPPORTED),4096)
-  ifneq ($(TARGET_ARCH),arm64)
-    $(error TARGET_MAX_PAGE_SIZE_SUPPORTED=$(TARGET_MAX_PAGE_SIZE_SUPPORTED) is greater than 4096. Only supported in arm64 arch)
+  ifeq (,$(filter arm64 x86_64,$(TARGET_ARCH)))
+    $(error TARGET_MAX_PAGE_SIZE_SUPPORTED=$(TARGET_MAX_PAGE_SIZE_SUPPORTED) is greater than 4096. Only supported in arm64 and x86_64 archs)
   endif
 endif
 
