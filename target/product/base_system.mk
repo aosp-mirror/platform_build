@@ -21,6 +21,7 @@ PRODUCT_PACKAGES += \
     am \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
+    android.hidl.memory@1.0-impl \
     android.system.suspend-service \
     android.test.base \
     android.test.mock \
@@ -314,13 +315,6 @@ PRODUCT_PACKAGES += \
 HIDL_SUPPORT_SERVICES := \
     hwservicemanager \
     android.hidl.allocator@1.0-service \
-    android.hidl.memory@1.0-impl \
-
-# TODO(b/299166571) Remove this after the artifact path requirements checker picks up
-# this library correctly with the *SHIPPING_API_LEVEL_34 variable
-PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
-	$(TARGET_COPY_OUT_SYSTEM)/lib/hw/android.hidl.memory@1.0-impl.so \
-	$(TARGET_COPY_OUT_SYSTEM)/lib64/hw/android.hidl.memory@1.0-impl.so \
 
 # Base modules when shipping api level is less than or equal to 34
 PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34 += \
