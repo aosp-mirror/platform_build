@@ -293,16 +293,22 @@ endif
 
 # Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
 # This must not be defined for the non-GRF devices.
+# The values of the GRF properties will be verified by post_process_props.py
 ifdef BOARD_SHIPPING_API_LEVEL
 ADDITIONAL_VENDOR_PROPERTIES += \
     ro.board.first_api_level=$(BOARD_SHIPPING_API_LEVEL)
+endif
 
-# To manually set the vendor API level of the vendor modules, BOARD_API_LEVEL can be used.
-# The values of the GRF properties will be verified by post_process_props.py
+# Build system set BOARD_API_LEVEL to show the api level of the vendor API surface.
+# This must not be altered outside of build system.
 ifdef BOARD_API_LEVEL
 ADDITIONAL_VENDOR_PROPERTIES += \
     ro.board.api_level=$(BOARD_API_LEVEL)
 endif
+# BOARD_API_LEVEL_FROZEN is true when the vendor API surface is frozen.
+ifdef BOARD_API_LEVEL_FROZEN
+ADDITIONAL_VENDOR_PROPERTIES += \
+    ro.board.api_frozen=$(BOARD_API_LEVEL_FROZEN)
 endif
 
 # Set build prop. This prop is read by ota_from_target_files when generating OTA,
