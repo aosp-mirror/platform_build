@@ -143,7 +143,7 @@ func TestBzlLoadsScl(t *testing.T) {
 	if err := os.Chdir(filepath.Dir(dir)); err != nil {
 		t.Fatal(err)
 	}
-	vars, _, err := Run("testdata/bzl_loads_scl.bzl", nil, ExecutionModeScl, false)
+	vars, _, err := Run("testdata/bzl_loads_scl.bzl", nil, ExecutionModeRbc, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -160,7 +160,7 @@ func TestNonEntrypointBzlLoadsScl(t *testing.T) {
 	if err := os.Chdir(filepath.Dir(dir)); err != nil {
 		t.Fatal(err)
 	}
-	vars, _, err := Run("testdata/bzl_loads_scl_2.bzl", nil, ExecutionModeScl, false)
+	vars, _, err := Run("testdata/bzl_loads_scl_2.bzl", nil, ExecutionModeRbc, false)
 	if err != nil {
 		t.Fatal(err)
 	}
