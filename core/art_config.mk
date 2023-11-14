@@ -44,3 +44,17 @@ else
 endif
 
 ADDITIONAL_PRODUCT_PROPERTIES += ro.dalvik.vm.enable_uffd_gc=$(ENABLE_UFFD_GC)
+
+# Create APEX_BOOT_JARS_EXCLUDED which is a list of jars to be removed from
+# ApexBoorJars when built from mainline prebuilts.
+# soong variables indicate whether the prebuilt is enabled:
+# - $(m)_module/source_build for art and TOGGLEABLE_PREBUILT_MODULES
+# - ANDROID/module_build_from_source for other mainline modules
+APEX_BOOT_JARS_EXCLUDED :=
+$(foreach pair, $(PRODUCT_APEX_BOOT_JARS_FOR_SOURCE_BUILD_ONLY),\
+  $(eval m := $(subst com.android.,,$(call word-colon,1,$(pair)))) \
+  $(if $(call soong_config_get,$(m)_module,source_build), \
+    $(if $(filter true,$(call soong_config_get,$(m)_module,source_build)),, \
+      $(eval APEX_BOOT_JARS_EXCLUDED += $(pair))), \
+    $(if $(filter true,$(call soong_config_get,ANDROID,module_build_from_source)),, \
+      $(eval APEX_BOOT_JARS_EXCLUDED += $(pair)))))
