@@ -449,6 +449,8 @@ _product_single_value_vars += PRODUCT_NEXT_RELEASE_HIDE_FLAGGED_API
 
 _product_list_vars += PRODUCT_RELEASE_CONFIG_MAPS
 
+_product_list_vars += PRODUCT_VALIDATION_CHECKS
+
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
 
@@ -546,7 +548,7 @@ endef
 # be cleaned up to not be product variables.
 _readonly_late_variables := \
   DEVICE_PACKAGE_OVERLAYS \
-  WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY \
+  WITH_DEXPREOPT_ART_BOOT_IMG_ONLY \
 
 # Modified internally in the build system
 _readonly_late_variables += \
