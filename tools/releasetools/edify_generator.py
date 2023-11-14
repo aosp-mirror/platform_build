@@ -16,45 +16,6 @@ import re
 
 import common
 
-# map recovery.fstab's fs_types to mount/format "partition types"
-PARTITION_TYPES = {
-    "ext4": "EMMC",
-    "emmc": "EMMC",
-    "f2fs": "EMMC",
-    "squashfs": "EMMC",
-    "erofs": "EMMC"
-}
-
-
-class ErrorCode(object):
-  """Define error_codes for failures that happen during the actual
-  update package installation.
-
-  Error codes 0-999 are reserved for failures before the package
-  installation (i.e. low battery, package verification failure).
-  Detailed code in 'bootable/recovery/error_code.h' """
-
-  SYSTEM_VERIFICATION_FAILURE = 1000
-  SYSTEM_UPDATE_FAILURE = 1001
-  SYSTEM_UNEXPECTED_CONTENTS = 1002
-  SYSTEM_NONZERO_CONTENTS = 1003
-  SYSTEM_RECOVER_FAILURE = 1004
-  VENDOR_VERIFICATION_FAILURE = 2000
-  VENDOR_UPDATE_FAILURE = 2001
-  VENDOR_UNEXPECTED_CONTENTS = 2002
-  VENDOR_NONZERO_CONTENTS = 2003
-  VENDOR_RECOVER_FAILURE = 2004
-  OEM_PROP_MISMATCH = 3000
-  FINGERPRINT_MISMATCH = 3001
-  THUMBPRINT_MISMATCH = 3002
-  OLDER_BUILD = 3003
-  DEVICE_MISMATCH = 3004
-  BAD_PATCH_FILE = 3005
-  INSUFFICIENT_CACHE_SPACE = 3006
-  TUNE_PARTITION_FAILURE = 3007
-  APPLY_PATCH_FAILURE = 3008
-
-
 class EdifyGenerator(object):
   """Class to generate scripts in the 'edify' recovery script language
   used from donut onwards."""
@@ -127,7 +88,7 @@ class EdifyGenerator(object):
         'abort("E{code}: This package expects the value \\"{values}\\" for '
         '\\"{name}\\"; this has value \\"" + '
         '{get_prop_command} + "\\".");').format(
-            code=ErrorCode.OEM_PROP_MISMATCH,
+            code=common.ErrorCode.OEM_PROP_MISMATCH,
             get_prop_command=get_prop_command, name=name,
             values='\\" or \\"'.join(values))
     self.script.append(cmd)
@@ -140,7 +101,7 @@ class EdifyGenerator(object):
                              for i in fp]) +
            ' ||\n    abort("E%d: Package expects build fingerprint of %s; '
            'this device has " + getprop("ro.build.fingerprint") + ".");') % (
-               ErrorCode.FINGERPRINT_MISMATCH, " or ".join(fp))
+               common.ErrorCode.FINGERPRINT_MISMATCH, " or ".join(fp))
     self.script.append(cmd)
 
   def AssertSomeThumbprint(self, *fp):
@@ -151,7 +112,7 @@ class EdifyGenerator(object):
                              for i in fp]) +
            ' ||\n    abort("E%d: Package expects build thumbprint of %s; this '
            'device has " + getprop("ro.build.thumbprint") + ".");') % (
-               ErrorCode.THUMBPRINT_MISMATCH, " or ".join(fp))
+               common.ErrorCode.THUMBPRINT_MISMATCH, " or ".join(fp))
     self.script.append(cmd)
 
   def AssertFingerprintOrThumbprint(self, fp, tp):
@@ -172,14 +133,14 @@ class EdifyGenerator(object):
         ('(!less_than_int(%s, getprop("ro.build.date.utc"))) || '
          'abort("E%d: Can\'t install this package (%s) over newer '
          'build (" + getprop("ro.build.date") + ").");') % (
-             timestamp, ErrorCode.OLDER_BUILD, timestamp_text))
+             timestamp, common.ErrorCode.OLDER_BUILD, timestamp_text))
 
   def AssertDevice(self, device):
     """Assert that the device identifier is the given string."""
     cmd = ('getprop("ro.product.device") == "%s" || '
            'abort("E%d: This package is for \\"%s\\" devices; '
            'this is a \\"" + getprop("ro.product.device") + "\\".");') % (
-               device, ErrorCode.DEVICE_MISMATCH, device)
+               device, common.ErrorCode.DEVICE_MISMATCH, device)
     self.script.append(cmd)
 
   def AssertSomeBootloader(self, *bootloaders):
@@ -246,7 +207,7 @@ class EdifyGenerator(object):
         'unexpected contents."));').format(
             target=target_expr,
             source=source_expr,
-            code=ErrorCode.BAD_PATCH_FILE)))
+            code=common.ErrorCode.BAD_PATCH_FILE)))
 
   def CacheFreeSpaceCheck(self, amount):
     """Check that there's at least 'amount' space that can be made
@@ -255,7 +216,7 @@ class EdifyGenerator(object):
     self.script.append(('apply_patch_space(%d) || abort("E%d: Not enough free '
                         'space on /cache to apply patches.");') % (
                             amount,
-                            ErrorCode.INSUFFICIENT_CACHE_SPACE))
+                            common.ErrorCode.INSUFFICIENT_CACHE_SPACE))
 
   def Mount(self, mount_point, mount_options_by_format=""):
     """Mount the partition with the given mount_point.
@@ -277,7 +238,7 @@ class EdifyGenerator(object):
       if p.context is not None:
         mount_flags = p.context + ("," + mount_flags if mount_flags else "")
       self.script.append('mount("%s", "%s", %s, "%s", "%s");' % (
-          p.fs_type, PARTITION_TYPES[p.fs_type],
+          p.fs_type, common.PARTITION_TYPES[p.fs_type],
           self._GetSlotSuffixDeviceForEntry(p),
           p.mount_point, mount_flags))
       self.mounts.add(p.mount_point)
@@ -303,7 +264,7 @@ class EdifyGenerator(object):
         'tune2fs(' + "".join(['"%s", ' % (i,) for i in options]) +
         '%s) || abort("E%d: Failed to tune partition %s");' % (
             self._GetSlotSuffixDeviceForEntry(p),
-            ErrorCode.TUNE_PARTITION_FAILURE, partition))
+            common.ErrorCode.TUNE_PARTITION_FAILURE, partition))
 
   def FormatPartition(self, partition):
     """Format the given partition, specified by its mount point (eg,
@@ -313,7 +274,7 @@ class EdifyGenerator(object):
     if fstab:
       p = fstab[partition]
       self.script.append('format("%s", "%s", %s, "%s", "%s");' %
-                         (p.fs_type, PARTITION_TYPES[p.fs_type],
+                         (p.fs_type, common.PARTITION_TYPES[p.fs_type],
                           self._GetSlotSuffixDeviceForEntry(p),
                           p.length, p.mount_point))
 
@@ -393,7 +354,7 @@ class EdifyGenerator(object):
             target=target_expr,
             source=source_expr,
             patch=patch_expr,
-            code=ErrorCode.APPLY_PATCH_FAILURE)))
+            code=common.ErrorCode.APPLY_PATCH_FAILURE)))
 
   def _GetSlotSuffixDeviceForEntry(self, entry=None):
     """
@@ -427,7 +388,7 @@ class EdifyGenerator(object):
     fstab = self.fstab
     if fstab:
       p = fstab[mount_point]
-      partition_type = PARTITION_TYPES[p.fs_type]
+      partition_type = common.PARTITION_TYPES[p.fs_type]
       device = self._GetSlotSuffixDeviceForEntry(p)
       args = {'device': device, 'fn': fn}
       if partition_type == "EMMC":

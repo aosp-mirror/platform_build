@@ -776,7 +776,7 @@ function lunch()
     else
         print_lunch_menu
         echo "Which would you like? [aosp_arm-trunk_staging-eng]"
-        echo -n "Pick from common choices above (e.g. 13) or specify your own (e.g. aosp_barbet-eng): "
+        echo -n "Pick from common choices above (e.g. 13) or specify your own (e.g. aosp_barbet-trunk_staging-eng): "
         read answer
         used_lunch_menu=1
     fi
