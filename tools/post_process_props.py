@@ -39,52 +39,24 @@ def mangle_build_prop(prop_list):
         val = val + ",adb"
       prop_list.put("persist.sys.usb.config", val)
 
-def validate_grf_props(prop_list, sdk_version):
+def validate_grf_props(prop_list):
   """Validate GRF properties if exist.
 
-  If ro.board.first_api_level is defined, check if its value is valid for the
-  sdk version. This is only for the release version.
-  Also, validate the value of ro.board.api_level if defined.
+  If ro.board.first_api_level is defined, check if its value is valid.
 
   Returns:
     True if the GRF properties are valid.
   """
   grf_api_level = prop_list.get_value("ro.board.first_api_level")
   board_api_level = prop_list.get_value("ro.board.api_level")
-  platform_version_codename = prop_list.get_value("ro.build.version.codename")
 
-  if not grf_api_level:
-    if board_api_level:
-      sys.stderr.write("error: non-GRF device must not define "
-                       "ro.board.api_level\n")
-      return False
-    # non-GRF device skips the GRF validation test
-    return True
-
-  grf_api_level = int(grf_api_level)
-  if board_api_level:
+  if grf_api_level and board_api_level:
+    grf_api_level = int(grf_api_level)
     board_api_level = int(board_api_level)
     if board_api_level < grf_api_level:
-      sys.stderr.write("error: ro.board.api_level(%d) must be greater than "
+      sys.stderr.write("error: ro.board.api_level(%d) must not be less than "
                        "ro.board.first_api_level(%d)\n"
                        % (board_api_level, grf_api_level))
-      return False
-
-  # skip sdk version validation for dev-stage non-REL devices
-  if platform_version_codename != "REL":
-    return True
-
-  if grf_api_level > sdk_version:
-    sys.stderr.write("error: ro.board.first_api_level(%d) must be less than "
-                     "or equal to ro.build.version.sdk(%d)\n"
-                     % (grf_api_level, sdk_version))
-    return False
-
-  if board_api_level:
-    if board_api_level > sdk_version:
-      sys.stderr.write("error: ro.board.api_level(%d) must be less than or "
-                       "equal to ro.build.version.sdk(%d)\n"
-                       % (board_api_level, sdk_version))
       return False
 
   return True
@@ -271,7 +243,7 @@ def main(argv):
   mangle_build_prop(props)
   if not override_optional_props(props, args.allow_dup):
     sys.exit(1)
-  if not validate_grf_props(props, args.sdk_version):
+  if not validate_grf_props(props):
     sys.exit(1)
   if not validate(props):
     sys.exit(1)
