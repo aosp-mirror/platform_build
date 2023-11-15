@@ -24,7 +24,6 @@ import (
 	"strings"
 
 	"go.starlark.net/starlark"
-	"go.starlark.net/starlarkjson"
 	"go.starlark.net/starlarkstruct"
 )
 
@@ -60,7 +59,6 @@ var rbcBuiltins starlark.StringDict = starlark.StringDict{
 
 var sclBuiltins starlark.StringDict = starlark.StringDict{
 	"struct":   starlark.NewBuiltin("struct", starlarkstruct.Make),
-	"json": starlarkjson.Module,
 }
 
 func isSymlink(filepath string) (bool, error) {
@@ -387,6 +385,10 @@ func Run(filename string, src interface{}, mode ExecutionMode, allowExternalEntr
 		return nil, nil, fmt.Errorf("symlinks to starlark files are not allowed. Instead, load the target file and re-export its symbols: %s", filename)
 	} else if err != nil {
 		return nil, nil, err
+	}
+
+	if mode == ExecutionModeScl && !strings.HasSuffix(filename, ".scl") {
+		return nil, nil, fmt.Errorf("filename must end in .scl: %s", filename)
 	}
 
 	// Add top-level file to cache for cycle detection purposes

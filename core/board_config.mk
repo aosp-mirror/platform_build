@@ -994,6 +994,21 @@ ifneq (,$(_unsupported_systemsdk_versions))
 endif
 
 ###########################################
+# BOARD_API_LEVEL for vendor API surface
+ifdef RELEASE_BOARD_API_LEVEL
+  ifdef BOARD_API_LEVEL
+    $(error BOARD_API_LEVEL must not set manully. The build system automatically sets this value.)
+  endif
+  BOARD_API_LEVEL := $(RELEASE_BOARD_API_LEVEL)
+  .KATI_READONLY := BOARD_API_LEVEL
+
+  ifdef RELEASE_BOARD_API_LEVEL_FROZEN
+    BOARD_API_LEVEL_FROZEN := true
+    .KATI_READONLY := BOARD_API_LEVEL_FROZEN
+  endif
+endif
+
+###########################################
 # Handle BUILD_BROKEN_USES_BUILD_*
 
 $(foreach m,$(DEFAULT_WARNING_BUILD_MODULE_TYPES),\
