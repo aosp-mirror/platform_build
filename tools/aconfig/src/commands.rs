@@ -334,7 +334,7 @@ mod tests {
         assert_eq!(ProtoFlagState::ENABLED, enabled_ro.trace[2].state());
         assert_eq!(ProtoFlagPermission::READ_ONLY, enabled_ro.trace[2].permission());
 
-        assert_eq!(5, parsed_flags.parsed_flag.len());
+        assert_eq!(6, parsed_flags.parsed_flag.len());
         for pf in parsed_flags.parsed_flag.iter() {
             if pf.name() == "enabled_fixed_ro" {
                 continue;
@@ -433,7 +433,7 @@ mod tests {
         let input = parse_test_flags_as_input();
         let bytes = create_device_config_defaults(input).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
-        assert_eq!("aconfig_test:com.android.aconfig.test.disabled_rw=disabled\naconfig_test:com.android.aconfig.test.enabled_rw=enabled\n", text);
+        assert_eq!("aconfig_test:com.android.aconfig.test.disabled_rw=disabled\nother_namespace:com.android.aconfig.test.disabled_rw_2=disabled\naconfig_test:com.android.aconfig.test.enabled_rw=enabled\n", text);
     }
 
     #[test]
@@ -441,7 +441,7 @@ mod tests {
         let input = parse_test_flags_as_input();
         let bytes = create_device_config_sysprops(input).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
-        assert_eq!("persist.device_config.com.android.aconfig.test.disabled_rw=false\npersist.device_config.com.android.aconfig.test.enabled_rw=true\n", text);
+        assert_eq!("persist.device_config.com.android.aconfig.test.disabled_rw=false\npersist.device_config.com.android.aconfig.test.disabled_rw_2=false\npersist.device_config.com.android.aconfig.test.enabled_rw=true\n", text);
     }
 
     #[test]
