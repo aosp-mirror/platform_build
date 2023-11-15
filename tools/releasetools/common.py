@@ -39,17 +39,22 @@ import tempfile
 import threading
 import time
 import zipfile
+
+from typing import Iterable, Callable
 from dataclasses import dataclass
-from genericpath import isdir
 from hashlib import sha1, sha256
 
 import images
-import rangelib
 import sparse_img
 from blockimgdiff import BlockImageDiff
 
 logger = logging.getLogger(__name__)
 
+
+@dataclass
+class OptionHandler:
+  extra_long_opts: Iterable[str]
+  handler: Callable
 
 class Options(object):
 
@@ -2793,12 +2798,19 @@ def Usage(docstring):
 def ParseOptions(argv,
                  docstring,
                  extra_opts="", extra_long_opts=(),
-                 extra_option_handler=None):
+                 extra_option_handler: Iterable[OptionHandler] = None):
   """Parse the options in argv and return any arguments that aren't
   flags.  docstring is the calling module's docstring, to be displayed
   for errors and -h.  extra_opts and extra_long_opts are for flags
   defined by the caller, which are processed by passing them to
   extra_option_handler."""
+  extra_long_opts = list(extra_long_opts)
+  if not isinstance(extra_option_handler, Iterable):
+    extra_option_handler = [extra_option_handler]
+
+  for handler in extra_option_handler:
+    if isinstance(handler, OptionHandler):
+      extra_long_opts.extend(handler.extra_long_opts)
 
   try:
     opts, args = getopt.getopt(
@@ -2860,8 +2872,19 @@ def ParseOptions(argv,
     elif o in ("--logfile",):
       OPTIONS.logfile = a
     else:
-      if extra_option_handler is None or not extra_option_handler(o, a):
-        assert False, "unknown option \"%s\"" % (o,)
+      if extra_option_handler is None:
+        raise ValueError("unknown option \"%s\"" % (o,))
+      success = False
+      for handler in extra_option_handler:
+        if isinstance(handler, OptionHandler):
+          if handler.handler(o, a):
+            success = True
+            break
+        elif handler(o, a):
+          success = True
+      if not success:
+        raise ValueError("unknown option \"%s\"" % (o,))
+
 
   if OPTIONS.search_path:
     os.environ["PATH"] = (os.path.join(OPTIONS.search_path, "bin") +
