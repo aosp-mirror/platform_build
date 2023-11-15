@@ -73,7 +73,7 @@ func readFileToString(filePath string) string {
 	return string(data)
 }
 
-func processProtobuf(
+func processTestSpecProtobuf(
 	filePath string, ownershipMetadataMap *sync.Map, keyLocks *keyToLocksMap,
 	errCh chan error, wg *sync.WaitGroup,
 ) {
@@ -130,10 +130,11 @@ func processProtobuf(
 func main() {
 	inputFile := flag.String("inputFile", "", "Input file path")
 	outputFile := flag.String("outputFile", "", "Output file path")
+	rule := flag.String("rule", "", "Metadata rule (Hint: test_spec or code_metadata)")
 	flag.Parse()
 
-	if *inputFile == "" || *outputFile == "" {
-		fmt.Println("Usage: metadata -inputFile <input file path> -outputFile <output file path>")
+	if *inputFile == "" || *outputFile == "" || *rule == "" {
+		fmt.Println("Usage: metadata -rule <rule> -inputFile <input file path> -outputFile <output file path>")
 		os.Exit(1)
 	}
 
@@ -144,26 +145,33 @@ func main() {
 	errCh := make(chan error, len(filePaths))
 	var wg sync.WaitGroup
 
-	for _, filePath := range filePaths {
-		wg.Add(1)
-		go processProtobuf(filePath, ownershipMetadataMap, keyLocks, errCh, &wg)
+	switch *rule {
+	case "test_spec":
+		for _, filePath := range filePaths {
+			wg.Add(1)
+			go processTestSpecProtobuf(filePath, ownershipMetadataMap, keyLocks, errCh, &wg)
+		}
+
+		wg.Wait()
+		close(errCh)
+
+		for err := range errCh {
+			log.Fatal(err)
+		}
+
+		allKeys := getSortedKeys(ownershipMetadataMap)
+		var allMetadata []*test_spec_proto.TestSpec_OwnershipMetadata
+
+		for _, key := range allKeys {
+			value, _ := ownershipMetadataMap.Load(key)
+			metadataList := value.([]*test_spec_proto.TestSpec_OwnershipMetadata)
+			allMetadata = append(allMetadata, metadataList...)
+		}
+
+		writeOutput(*outputFile, allMetadata)
+		break
+	case "code_metadata":
+	default:
+		log.Fatalf("No specific processing implemented for rule '%s'.\n", *rule)
 	}
-
-	wg.Wait()
-	close(errCh)
-
-	for err := range errCh {
-		log.Fatal(err)
-	}
-
-	allKeys := getSortedKeys(ownershipMetadataMap)
-	var allMetadata []*test_spec_proto.TestSpec_OwnershipMetadata
-
-	for _, key := range allKeys {
-		value, _ := ownershipMetadataMap.Load(key)
-		metadataList := value.([]*test_spec_proto.TestSpec_OwnershipMetadata)
-		allMetadata = append(allMetadata, metadataList...)
-	}
-
-	writeOutput(*outputFile, allMetadata)
 }

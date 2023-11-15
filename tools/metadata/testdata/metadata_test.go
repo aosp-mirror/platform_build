@@ -10,7 +10,7 @@ import (
 
 func TestMetadata(t *testing.T) {
 	cmd := exec.Command(
-		"metadata", "-inputFile", "./inputFiles.txt", "-outputFile",
+		"metadata", "-rule", "test_spec", "-inputFile", "./inputFiles.txt", "-outputFile",
 		"./generatedOutputFile.txt",
 	)
 	stderr, err := cmd.CombinedOutput()
@@ -40,7 +40,7 @@ func TestMetadata(t *testing.T) {
 
 func TestMetadataNegativeCase(t *testing.T) {
 	cmd := exec.Command(
-		"metadata", "-inputFile", "./inputFilesNegativeCase.txt", "-outputFile",
+		"metadata", "-rule", "test_spec", "-inputFile", "./inputFilesNegativeCase.txt", "-outputFile",
 		"./generatedOutputFileNegativeCase.txt",
 	)
 	stderr, err := cmd.CombinedOutput()
