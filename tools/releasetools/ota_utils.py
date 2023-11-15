@@ -37,7 +37,6 @@ OPTIONS.force_non_ab = False
 OPTIONS.wipe_user_data = False
 OPTIONS.downgrade = False
 OPTIONS.key_passwords = {}
-OPTIONS.package_key = None
 OPTIONS.incremental_source = None
 OPTIONS.retrofit_dynamic_partitions = False
 OPTIONS.output_metadata_path = None
