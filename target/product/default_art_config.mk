@@ -57,6 +57,8 @@ PRODUCT_BOOT_JARS += \
     ims-common
 
 # APEX boot jars. Keep the list sorted by module names and then library names.
+# Note: If the existing apex introduces the new jar, also add it to
+# PRODUCT_APEX_BOOT_JARS_FOR_SOURCE_BUILD_ONLY below.
 # Note: core-icu4j is moved back to PRODUCT_BOOT_JARS in product_config.mk at a later stage.
 # Note: For modules available in Q, DO NOT add new entries here.
 PRODUCT_APEX_BOOT_JARS := \
@@ -84,6 +86,12 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.uwb:framework-uwb \
     com.android.virt:framework-virtualization \
     com.android.wifi:framework-wifi \
+
+# TODO(b/308174306): Adjust this after multiple prebuilts version is supported.
+# APEX boot jars that are not in prebuilt apexes.
+# Keep the list sorted by module names and then library names.
+PRODUCT_APEX_BOOT_JARS_FOR_SOURCE_BUILD_ONLY := \
+    com.android.mediaprovider:framework-pdf \
 
 # List of system_server classpath jars delivered via apex.
 # Keep the list sorted by module names and then library names.
