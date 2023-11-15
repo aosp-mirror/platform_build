@@ -27,7 +27,7 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ -for flag in namespace_with_flags.flags }}
 {{ -if flag.is_read_write }}
             {flag.method_name} =
-                properties.getBoolean("{flag.device_config_flag}", {flag.default_value});
+                properties.getBoolean(Flags.FLAG_{flag.flag_name_constant_suffix}, {flag.default_value});
 {{ -endif }}
 {{ -endfor }}
         } catch (NullPointerException e) \{
