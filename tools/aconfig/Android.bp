@@ -58,6 +58,7 @@ rust_defaults {
         "libaconfig_protos",
         "libanyhow",
         "libclap",
+        "libitertools",
         "libprotobuf",
         "libserde",
         "libserde_json",
@@ -131,7 +132,7 @@ java_aconfig_library {
     name: "aconfig_host_test_java_library",
     aconfig_declarations: "aconfig.test.flags",
     host_supported: true,
-    test: true,
+    mode: "test",
 }
 
 java_test_host {
@@ -187,7 +188,7 @@ rust_aconfig_library {
     name: "libaconfig_test_rust_library_with_test_mode",
     crate_name: "aconfig_test_rust_library",
     aconfig_declarations: "aconfig.test.flags",
-    test: true,
+    mode: "test",
 }
 
 rust_test {

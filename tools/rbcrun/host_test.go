@@ -143,7 +143,7 @@ func TestBzlLoadsScl(t *testing.T) {
 	if err := os.Chdir(filepath.Dir(dir)); err != nil {
 		t.Fatal(err)
 	}
-	vars, _, err := Run("testdata/bzl_loads_scl.bzl", nil, ExecutionModeScl, false)
+	vars, _, err := Run("testdata/bzl_loads_scl.bzl", nil, ExecutionModeRbc, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -160,7 +160,7 @@ func TestNonEntrypointBzlLoadsScl(t *testing.T) {
 	if err := os.Chdir(filepath.Dir(dir)); err != nil {
 		t.Fatal(err)
 	}
-	vars, _, err := Run("testdata/bzl_loads_scl_2.bzl", nil, ExecutionModeScl, false)
+	vars, _, err := Run("testdata/bzl_loads_scl_2.bzl", nil, ExecutionModeRbc, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -183,6 +183,21 @@ func TestSclLoadsBzl(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), ".scl files can only load other .scl files") {
 		t.Fatalf("Expected error to contain \".scl files can only load other .scl files\": %q", err.Error())
+	}
+}
+
+func TestCantLoadSymlink(t *testing.T) {
+	moduleCache = make(map[string]*modentry)
+	dir := dataDir()
+	if err := os.Chdir(filepath.Dir(dir)); err != nil {
+		t.Fatal(err)
+	}
+	_, _, err := Run("testdata/test_scl_symlink.scl", nil, ExecutionModeScl, false)
+	if err == nil {
+		t.Fatal("Expected failure")
+	}
+	if !strings.Contains(err.Error(), "symlinks to starlark files are not allowed") {
+		t.Fatalf("Expected error to contain \"symlinks to starlark files are not allowed\": %q", err.Error())
 	}
 }
 

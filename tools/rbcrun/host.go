@@ -24,7 +24,6 @@ import (
 	"strings"
 
 	"go.starlark.net/starlark"
-	"go.starlark.net/starlarkjson"
 	"go.starlark.net/starlarkstruct"
 )
 
@@ -60,7 +59,14 @@ var rbcBuiltins starlark.StringDict = starlark.StringDict{
 
 var sclBuiltins starlark.StringDict = starlark.StringDict{
 	"struct":   starlark.NewBuiltin("struct", starlarkstruct.Make),
-	"json": starlarkjson.Module,
+}
+
+func isSymlink(filepath string) (bool, error) {
+	if info, err := os.Lstat(filepath); err == nil {
+		return info.Mode() & os.ModeSymlink != 0, nil
+	} else {
+		return false, err
+	}
 }
 
 // Takes a module name (the first argument to the load() function) and returns the path
@@ -158,6 +164,13 @@ func loader(thread *starlark.Thread, module string) (starlark.StringDict, error)
 			if strings.HasSuffix(modulePath, ".scl") {
 				mode = ExecutionModeScl
 			}
+
+			if sym, err := isSymlink(modulePath); sym && err == nil {
+				return nil, fmt.Errorf("symlinks to starlark files are not allowed. Instead, load the target file and re-export its symbols: %s", modulePath)
+			} else if err != nil {
+				return nil, err
+			}
+
 			childThread := &starlark.Thread{Name: "exec " + module, Load: thread.Load}
 			// Cheating for the sake of testing:
 			// propagate starlarktest's Reporter key, otherwise testing
@@ -366,6 +379,16 @@ func Run(filename string, src interface{}, mode ExecutionMode, allowExternalEntr
 		}
 	} else {
 		return nil, nil, err
+	}
+
+	if sym, err := isSymlink(filename); sym && err == nil {
+		return nil, nil, fmt.Errorf("symlinks to starlark files are not allowed. Instead, load the target file and re-export its symbols: %s", filename)
+	} else if err != nil {
+		return nil, nil, err
+	}
+
+	if mode == ExecutionModeScl && !strings.HasSuffix(filename, ".scl") {
+		return nil, nil, fmt.Errorf("filename must end in .scl: %s", filename)
 	}
 
 	// Add top-level file to cache for cycle detection purposes
