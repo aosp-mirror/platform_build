@@ -293,16 +293,22 @@ endif
 
 # Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
 # This must not be defined for the non-GRF devices.
+# The values of the GRF properties will be verified by post_process_props.py
 ifdef BOARD_SHIPPING_API_LEVEL
 ADDITIONAL_VENDOR_PROPERTIES += \
     ro.board.first_api_level=$(BOARD_SHIPPING_API_LEVEL)
+endif
 
-# To manually set the vendor API level of the vendor modules, BOARD_API_LEVEL can be used.
-# The values of the GRF properties will be verified by post_process_props.py
+# Build system set BOARD_API_LEVEL to show the api level of the vendor API surface.
+# This must not be altered outside of build system.
 ifdef BOARD_API_LEVEL
 ADDITIONAL_VENDOR_PROPERTIES += \
     ro.board.api_level=$(BOARD_API_LEVEL)
 endif
+# BOARD_API_LEVEL_FROZEN is true when the vendor API surface is frozen.
+ifdef BOARD_API_LEVEL_FROZEN
+ADDITIONAL_VENDOR_PROPERTIES += \
+    ro.board.api_frozen=$(BOARD_API_LEVEL_FROZEN)
 endif
 
 # Set build prop. This prop is read by ota_from_target_files when generating OTA,
@@ -2162,7 +2168,7 @@ metadata_list := $(OUT_DIR)/.module_paths/METADATA.list
 metadata_files := $(subst $(newline),$(space),$(file <$(metadata_list)))
 $(PRODUCT_OUT)/sbom-metadata.csv:
 	rm -f $@
-	echo installed_file,module_path,soong_module_type,is_prebuilt_make_module,product_copy_files,kernel_module_copy_files,is_platform_generated,build_output_path,static_libraries,whole_static_libraries,is_static_lib >> $@
+	echo 'installed_file,module_path,soong_module_type,is_prebuilt_make_module,product_copy_files,kernel_module_copy_files,is_platform_generated,build_output_path,static_libraries,whole_static_libraries,is_static_lib' >> $@
 	$(eval _all_static_libs :=)
 	$(foreach f,$(installed_files),\
 	  $(eval _module_name := $(ALL_INSTALLED_FILES.$f)) \
@@ -2190,7 +2196,7 @@ $(PRODUCT_OUT)/sbom-metadata.csv:
 	  $(eval _whole_static_libs := $(ALL_INSTALLED_FILES.$f.WHOLE_STATIC_LIBRARIES)) \
 	  $(foreach l,$(_static_libs),$(eval _all_static_libs += $l:$(strip $(sort $(ALL_MODULES.$l.PATH))):$(strip $(sort $(ALL_MODULES.$l.SOONG_MODULE_TYPE))):$(ALL_STATIC_LIBRARIES.$l.BUILT_FILE))) \
 	  $(foreach l,$(_whole_static_libs),$(eval _all_static_libs += $l:$(strip $(sort $(ALL_MODULES.$l.PATH))):$(strip $(sort $(ALL_MODULES.$l.SOONG_MODULE_TYPE))):$(ALL_STATIC_LIBRARIES.$l.BUILT_FILE))) \
-	  echo /$(_path_on_device),$(_module_path),$(_soong_module_type),$(_is_prebuilt_make_module),$(_product_copy_files),$(_kernel_module_copy_files),$(_is_platform_generated),$(_build_output_path),$(_static_libs),$(_whole_static_libs), >> $@; \
+	  echo '/$(_path_on_device),$(_module_path),$(_soong_module_type),$(_is_prebuilt_make_module),$(_product_copy_files),$(_kernel_module_copy_files),$(_is_platform_generated),$(_build_output_path),$(_static_libs),$(_whole_static_libs),' >> $@; \
 	)
 	$(foreach l,$(sort $(_all_static_libs)), \
 	  $(eval _lib_stem := $(call word-colon,1,$l)) \
@@ -2200,7 +2206,7 @@ $(PRODUCT_OUT)/sbom-metadata.csv:
 	  $(eval _static_libs := $(ALL_STATIC_LIBRARIES.$l.STATIC_LIBRARIES)) \
 	  $(eval _whole_static_libs := $(ALL_STATIC_LIBRARIES.$l.WHOLE_STATIC_LIBRARIES)) \
 	  $(eval _is_static_lib := Y) \
-	  echo $(_lib_stem).a,$(_module_path),$(_soong_module_type),,,,,$(_built_file),$(_static_libs),$(_whole_static_libs),$(_is_static_lib) >> $@; \
+	  echo '$(_lib_stem).a,$(_module_path),$(_soong_module_type),,,,,$(_built_file),$(_static_libs),$(_whole_static_libs),$(_is_static_lib)' >> $@; \
 	)
 
 # (TODO: b/272358583 find another way of always rebuilding sbom.spdx)

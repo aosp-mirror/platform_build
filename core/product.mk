@@ -548,7 +548,7 @@ endef
 # be cleaned up to not be product variables.
 _readonly_late_variables := \
   DEVICE_PACKAGE_OVERLAYS \
-  WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY \
+  WITH_DEXPREOPT_ART_BOOT_IMG_ONLY \
 
 # Modified internally in the build system
 _readonly_late_variables += \
