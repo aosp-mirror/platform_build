@@ -63,3 +63,27 @@ func TestMetadataNegativeCase(t *testing.T) {
 		)
 	}
 }
+
+func TestEmptyInputFile(t *testing.T) {
+	cmd := exec.Command(
+		"metadata", "-rule", "test_spec", "-inputFile", "./emptyInputFile.txt", "-outputFile",
+		"./generatedEmptyOutputFile.txt",
+	)
+	stderr, err := cmd.CombinedOutput()
+	if err != nil {
+		t.Fatalf("Error running metadata command: %s. Error: %v", stderr, err)
+	}
+
+	// Read the contents of the generated output file
+	generatedOutput, err := ioutil.ReadFile("./generatedEmptyOutputFile.txt")
+	if err != nil {
+		t.Fatalf("Error reading generated output file: %s", err)
+	}
+
+	fmt.Println()
+
+	// Compare the contents
+	if string(generatedOutput) != "\n" {
+		t.Errorf("Generated file contents do not match the expected output")
+	}
+}
