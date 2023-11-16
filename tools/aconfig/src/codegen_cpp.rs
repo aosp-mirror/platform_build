@@ -32,8 +32,9 @@ where
     I: Iterator<Item = &'a ProtoParsedFlag>,
 {
     let mut readwrite_count = 0;
-    let class_elements: Vec<ClassElement> =
-        parsed_flags_iter.map(|pf| create_class_element(package, pf, &mut readwrite_count)).collect();
+    let class_elements: Vec<ClassElement> = parsed_flags_iter
+        .map(|pf| create_class_element(package, pf, &mut readwrite_count))
+        .collect();
     let readwrite = readwrite_count > 0;
     let has_fixed_read_only = class_elements.iter().any(|item| item.is_fixed_read_only);
     let header = package.replace('.', "_");
@@ -110,7 +111,9 @@ pub struct ClassElement {
 fn create_class_element(package: &str, pf: &ProtoParsedFlag, rw_count: &mut i32) -> ClassElement {
     ClassElement {
         readwrite_idx: if pf.permission() == ProtoFlagPermission::READ_WRITE {
-            let index = *rw_count; *rw_count += 1; index
+            let index = *rw_count;
+            *rw_count += 1;
+            index
         } else {
             -1
         },
@@ -162,6 +165,8 @@ public:
 
     virtual bool disabled_rw() = 0;
 
+    virtual bool disabled_rw_2() = 0;
+
     virtual bool enabled_fixed_ro() = 0;
 
     virtual bool enabled_ro() = 0;
@@ -177,6 +182,10 @@ inline bool disabled_ro() {
 
 inline bool disabled_rw() {
     return provider_->disabled_rw();
+}
+
+inline bool disabled_rw_2() {
+    return provider_->disabled_rw_2();
 }
 
 inline bool enabled_fixed_ro() {
@@ -199,6 +208,8 @@ extern "C" {
 bool com_android_aconfig_test_disabled_ro();
 
 bool com_android_aconfig_test_disabled_rw();
+
+bool com_android_aconfig_test_disabled_rw_2();
 
 bool com_android_aconfig_test_enabled_fixed_ro();
 
@@ -233,6 +244,10 @@ public:
 
     virtual void disabled_rw(bool val) = 0;
 
+    virtual bool disabled_rw_2() = 0;
+
+    virtual void disabled_rw_2(bool val) = 0;
+
     virtual bool enabled_fixed_ro() = 0;
 
     virtual void enabled_fixed_ro(bool val) = 0;
@@ -264,6 +279,14 @@ inline bool disabled_rw() {
 
 inline void disabled_rw(bool val) {
     provider_->disabled_rw(val);
+}
+
+inline bool disabled_rw_2() {
+    return provider_->disabled_rw_2();
+}
+
+inline void disabled_rw_2(bool val) {
+    provider_->disabled_rw_2(val);
 }
 
 inline bool enabled_fixed_ro() {
@@ -306,6 +329,10 @@ void set_com_android_aconfig_test_disabled_ro(bool val);
 bool com_android_aconfig_test_disabled_rw();
 
 void set_com_android_aconfig_test_disabled_rw(bool val);
+
+bool com_android_aconfig_test_disabled_rw_2();
+
+void set_com_android_aconfig_test_disabled_rw_2(bool val);
 
 bool com_android_aconfig_test_enabled_fixed_ro();
 
@@ -352,6 +379,16 @@ namespace com::android::aconfig::test {
                 return cache_[0];
             }
 
+            virtual bool disabled_rw_2() override {
+                if (cache_[1] == -1) {
+                    cache_[1] = server_configurable_flags::GetServerConfigurableFlag(
+                        "aconfig_flags.other_namespace",
+                        "com.android.aconfig.test.disabled_rw_2",
+                        "false") == "true";
+                }
+                return cache_[1];
+            }
+
             virtual bool enabled_fixed_ro() override {
                 return COM_ANDROID_ACONFIG_TEST_ENABLED_FIXED_RO;
             }
@@ -361,18 +398,18 @@ namespace com::android::aconfig::test {
             }
 
             virtual bool enabled_rw() override {
-                if (cache_[1] == -1) {
-                    cache_[1] = server_configurable_flags::GetServerConfigurableFlag(
+                if (cache_[2] == -1) {
+                    cache_[2] = server_configurable_flags::GetServerConfigurableFlag(
                         "aconfig_flags.aconfig_test",
                         "com.android.aconfig.test.enabled_rw",
                         "true") == "true";
                 }
-                return cache_[1];
+                return cache_[2];
             }
 
     };
 
-    std::vector<int8_t> cache_ = std::vector<int8_t>(2, -1);
+    std::vector<int8_t> cache_ = std::vector<int8_t>(3, -1);
 
     std::unique_ptr<flag_provider_interface> provider_ =
         std::make_unique<flag_provider>();
@@ -384,6 +421,10 @@ bool com_android_aconfig_test_disabled_ro() {
 
 bool com_android_aconfig_test_disabled_rw() {
     return com::android::aconfig::test::disabled_rw();
+}
+
+bool com_android_aconfig_test_disabled_rw_2() {
+    return com::android::aconfig::test::disabled_rw_2();
 }
 
 bool com_android_aconfig_test_enabled_fixed_ro() {
@@ -444,6 +485,22 @@ namespace com::android::aconfig::test {
 
             virtual void disabled_rw(bool val) override {
                 overrides_["disabled_rw"] = val;
+            }
+
+            virtual bool disabled_rw_2() override {
+                auto it = overrides_.find("disabled_rw_2");
+                  if (it != overrides_.end()) {
+                      return it->second;
+                } else {
+                  return server_configurable_flags::GetServerConfigurableFlag(
+                      "aconfig_flags.other_namespace",
+                      "com.android.aconfig.test.disabled_rw_2",
+                      "false") == "true";
+                }
+            }
+
+            virtual void disabled_rw_2(bool val) override {
+                overrides_["disabled_rw_2"] = val;
             }
 
             virtual bool enabled_fixed_ro() override {
@@ -513,6 +570,15 @@ bool com_android_aconfig_test_disabled_rw() {
 
 void set_com_android_aconfig_test_disabled_rw(bool val) {
     com::android::aconfig::test::disabled_rw(val);
+}
+
+bool com_android_aconfig_test_disabled_rw_2() {
+    return com::android::aconfig::test::disabled_rw_2();
+}
+
+
+void set_com_android_aconfig_test_disabled_rw_2(bool val) {
+    com::android::aconfig::test::disabled_rw_2(val);
 }
 
 

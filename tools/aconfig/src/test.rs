@@ -60,6 +60,26 @@ parsed_flag {
 }
 parsed_flag {
   package: "com.android.aconfig.test"
+  name: "disabled_rw_2"
+  namespace: "other_namespace"
+  description: "This flag is DISABLED + READ_WRITE"
+  bug: "999"
+  state: DISABLED
+  permission: READ_WRITE
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  trace {
+    source: "tests/first.values"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  is_fixed_read_only: false
+}
+parsed_flag {
+  package: "com.android.aconfig.test"
   name: "enabled_fixed_ro"
   namespace: "aconfig_test"
   description: "This flag is fixed READ_ONLY + ENABLED"
