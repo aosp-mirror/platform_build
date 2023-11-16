@@ -15,7 +15,6 @@
  */
 
 use anyhow::Result;
-use itertools::Itertools;
 use serde::Serialize;
 use std::collections::BTreeSet;
 use std::path::PathBuf;
@@ -35,18 +34,12 @@ where
 {
     let flag_elements: Vec<FlagElement> =
         parsed_flags_iter.map(|pf| create_flag_element(package, pf)).collect();
-    let namespace_set: BTreeSet<String> = flag_elements
-        .iter()
-        .unique_by(|f| &f.device_config_namespace)
-        .map(|f| f.device_config_namespace.clone())
-        .collect();
     let properties_set: BTreeSet<String> =
         flag_elements.iter().map(|fe| format_property_name(&fe.device_config_namespace)).collect();
     let is_read_write = flag_elements.iter().any(|elem| elem.is_read_write);
     let is_test_mode = codegen_mode == CodegenMode::Test;
     let context = Context {
         flag_elements,
-        namespace_set,
         is_test_mode,
         is_read_write,
         properties_set,
@@ -82,7 +75,6 @@ where
 #[derive(Serialize)]
 struct Context {
     pub flag_elements: Vec<FlagElement>,
-    pub namespace_set: BTreeSet<String>,
     pub is_test_mode: bool,
     pub is_read_write: bool,
     pub properties_set: BTreeSet<String>,
@@ -297,31 +289,7 @@ mod tests {
         import android.provider.DeviceConfig.Properties;
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
-            private static boolean aconfig_test_is_cached = false;
-            private static boolean disabledRw = false;
-            private static boolean enabledRw = true;
-
-
-            private void load_overrides_aconfig_test() {
-                try {
-                    Properties properties = DeviceConfig.getProperties("aconfig_test");
-                    disabledRw =
-                        properties.getBoolean("com.android.aconfig.test.disabled_rw", false);
-                    enabledRw =
-                        properties.getBoolean("com.android.aconfig.test.enabled_rw", true);
-                } catch (NullPointerException e) {
-                    throw new RuntimeException(
-                        "Cannot read value from namespace aconfig_test "
-                        + "from DeviceConfig. It could be that the code using flag "
-                        + "executed before SettingsProvider initialization. Please use "
-                        + "fixed read-only flag by adding is_fixed_read_only: true in "
-                        + "flag declaration.",
-                        e
-                    );
-                }
-                aconfig_test_is_cached = true;
-            }
-
+            private Properties mPropertiesAconfigTest;
             @Override
             @UnsupportedAppUsage
             public boolean disabledRo() {
@@ -330,10 +298,18 @@ mod tests {
             @Override
             @UnsupportedAppUsage
             public boolean disabledRw() {
-                if (!aconfig_test_is_cached) {
-                    load_overrides_aconfig_test();
+                if (mPropertiesAconfigTest == null) {
+                    mPropertiesAconfigTest =
+                        getProperties(
+                            "aconfig_test",
+                            "com.android.aconfig.test.disabled_rw"
+                        );
                 }
-                return disabledRw;
+                return mPropertiesAconfigTest
+                    .getBoolean(
+                        "com.android.aconfig.test.disabled_rw",
+                        false
+                    );
             }
             @Override
             @UnsupportedAppUsage
@@ -348,10 +324,36 @@ mod tests {
             @Override
             @UnsupportedAppUsage
             public boolean enabledRw() {
-                if (!aconfig_test_is_cached) {
-                    load_overrides_aconfig_test();
+                if (mPropertiesAconfigTest == null) {
+                    mPropertiesAconfigTest =
+                        getProperties(
+                            "aconfig_test",
+                            "com.android.aconfig.test.enabled_rw"
+                        );
                 }
-                return enabledRw;
+                return mPropertiesAconfigTest
+                    .getBoolean(
+                        "com.android.aconfig.test.enabled_rw",
+                        true
+                    );
+            }
+            private Properties getProperties(
+                String namespace,
+                String flagName) {
+                Properties properties = null;
+                try {
+                    properties = DeviceConfig.getProperties(namespace);
+                } catch (NullPointerException e) {
+                    throw new RuntimeException(
+                        "Cannot read value of flag " + flagName + " from DeviceConfig. "
+                        + "It could be that the code using flag executed "
+                        + "before SettingsProvider initialization. "
+                        + "Please use fixed read-only flag by adding "
+                        + "is_fixed_read_only: true in flag declaration.",
+                        e
+                    );
+                }
+                return properties;
             }
         }
         "#;
