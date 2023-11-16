@@ -22,3 +22,5 @@ export FINAL_MAINLINE_EXTENSION='58'
 # 'sdk' - SDK/API is finalized
 # 'rel' - branch is finalized, switched to REL
 export FINAL_STATE='unfinalized'
+
+export BUILD_FROM_SOURCE_STUB=true
