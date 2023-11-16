@@ -8,41 +8,10 @@ import android.provider.DeviceConfig.Properties;
 {{ endif }}
 /** @hide */
 public final class FeatureFlagsImpl implements FeatureFlags \{
-{{- if is_read_write }}
-{{- for namespace in namespace_set }}
-    private static boolean {namespace}_is_cached = false;
-{{- endfor- }}
-
-{{ for flag in flag_elements }}
-{{- if flag.is_read_write }}
-    private static boolean {flag.method_name} = {flag.default_value};
-{{- endif- }}
+{{ if is_read_write- }}
+{{ for properties in properties_set }}
+    private Properties {properties};
 {{ endfor }}
-
-{{ for namespace in namespace_set }}
-    private void load_overrides_{namespace}() \{
-        try \{
-            Properties properties = DeviceConfig.getProperties("{namespace}");
-
-            {{- for flag in flag_elements }}
-            {{- if flag.is_read_write }}
-            {flag.method_name} =
-                properties.getBoolean("{flag.device_config_flag}", {flag.default_value});
-            {{- endif- }}
-            {{ endfor }}
-        } catch (NullPointerException e) \{
-            throw new RuntimeException(
-                "Cannot read value from namespace {namespace} "
-                + "from DeviceConfig. It could be that the code using flag "
-                + "executed before SettingsProvider initialization. Please use "
-                + "fixed read-only flag by adding is_fixed_read_only: true in "
-                + "flag declaration.",
-                e
-            );
-        }
-        {namespace}_is_cached = true;
-    }
-{{ endfor- }}
 {{ endif- }}
 
 {{ for flag in flag_elements }}
@@ -50,15 +19,45 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
     @UnsupportedAppUsage
     public boolean {flag.method_name}() \{
     {{ -if flag.is_read_write }}
-        if (!{flag.device_config_namespace}_is_cached) \{
-            load_overrides_{flag.device_config_namespace}();
+        if ({flag.properties} == null) \{
+            {flag.properties} =
+                getProperties(
+                    "{flag.device_config_namespace}",
+                    "{flag.device_config_flag}"
+                );
         }
-        return {flag.method_name};
+        return {flag.properties}
+                .getBoolean(
+                    "{flag.device_config_flag}",
+                    {flag.default_value}
+                );
     {{ else }}
         return {flag.default_value};
     {{ endif- }}
     }
 {{ endfor }}
+
+{{ -if is_read_write }}
+    private Properties getProperties(
+            String namespace,
+            String flagName) \{
+        Properties properties = null;
+        try \{
+            properties = DeviceConfig.getProperties(namespace);
+        } catch (NullPointerException e) \{
+            throw new RuntimeException(
+                "Cannot read value of flag " + flagName + " from DeviceConfig. "
+                + "It could be that the code using flag executed "
+                + "before SettingsProvider initialization. "
+                + "Please use fixed read-only flag by adding "
+                + "is_fixed_read_only: true in flag declaration.",
+                e
+            );
+        }
+
+        return properties;
+    }
+{{ endif- }}
 }
 {{ else }}
 {#- Generate only stub if in test mode #}
@@ -71,6 +70,6 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
         throw new UnsupportedOperationException(
             "Method is not implemented.");
     }
-{{ endfor- }}
+{{ endfor }}
 }
 {{ endif }}

@@ -129,8 +129,13 @@ ifdef LOCAL_INSTALLED_MODULE
   ifdef LOCAL_SHARED_LIBRARIES
     my_shared_libraries := $(LOCAL_SHARED_LIBRARIES)
     ifdef LOCAL_USE_VNDK
-      my_shared_libraries := $(foreach l,$(my_shared_libraries),\
-        $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+      ifdef LOCAL_USE_VNDK_PRODUCT
+        my_shared_libraries := $(foreach l,$(my_shared_libraries),\
+          $(if $(SPLIT_PRODUCT.SHARED_LIBRARIES.$(l)),$(l).product,$(l)))
+      else
+        my_shared_libraries := $(foreach l,$(my_shared_libraries),\
+          $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+      endif
     endif
     $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += \
       $(my_register_name):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(my_shared_libraries))
@@ -139,8 +144,13 @@ ifdef LOCAL_INSTALLED_MODULE
     my_dylibs := $(LOCAL_DYLIB_LIBRARIES)
     # Treat these as shared library dependencies for installation purposes.
     ifdef LOCAL_USE_VNDK
-      my_dylibs := $(foreach l,$(my_dylibs),\
-        $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+      ifdef LOCAL_USE_VNDK_PRODUCT
+        my_dylibs := $(foreach l,$(my_dylibs),\
+          $(if $(SPLIT_PRODUCT.SHARED_LIBRARIES.$(l)),$(l).product,$(l)))
+      else
+        my_dylibs := $(foreach l,$(my_dylibs),\
+          $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+      endif
     endif
     $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += \
       $(my_register_name):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(my_dylibs))

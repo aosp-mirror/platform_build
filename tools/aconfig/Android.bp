@@ -58,7 +58,6 @@ rust_defaults {
         "libaconfig_protos",
         "libanyhow",
         "libclap",
-        "libitertools",
         "libprotobuf",
         "libserde",
         "libserde_json",
