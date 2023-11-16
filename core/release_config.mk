@@ -82,28 +82,32 @@ $(foreach f, $(config_map_files), \
 )
 FLAG_DECLARATION_FILES :=
 
-# If TARGET_RELEASE is set, fail if there is no matching release config
-# If it isn't set, no release config files will be included and all flags
-# will get their default values.
-ifneq ($(TARGET_RELEASE),)
+ifeq ($(TARGET_RELEASE),)
+    # We allow some internal paths to explicitly set TARGET_RELEASE to the
+    # empty string.  For the most part, 'make' treats unset and empty string as
+    # the same.  But the following line differentiates, and will only assign
+    # if the variable was completely unset.
+    TARGET_RELEASE ?= was_unset
+    ifeq ($(TARGET_RELEASE),was_unset)
+        $(error No release config set for target; please set TARGET_RELEASE, or if building on the command line use 'lunch <target>-<release>-<build_type>', where release is one of: $(_all_release_configs))
+    endif
+    # Instead of leaving this string empty, we want to default to a valid
+    # setting.  Full builds coming through this path is a bug, but in case
+    # of such a bug, we want to at least get consistent, valid results.
+    TARGET_RELEASE = trunk_staging
+endif
+
 ifeq ($(filter $(_all_release_configs), $(TARGET_RELEASE)),)
     $(error No release config found for TARGET_RELEASE: $(TARGET_RELEASE). Available releases are: $(_all_release_configs))
-else
-    # Choose flag files
-    # Don't sort this, use it in the order they gave us.
-    # Do allow duplicate entries, retaining only the first usage.
-    flag_value_files :=
-    $(foreach f,$(_all_release_configs.$(TARGET_RELEASE).FILES), \
-      $(if $(filter $(f),$(flag_value_files)),,$(eval flag_value_files += $(f)))\
-    )
 endif
-else
-# Useful for finding scripts etc that aren't passing or setting TARGET_RELEASE
-ifneq ($(FAIL_IF_NO_RELEASE_CONFIG),)
-    $(error FAIL_IF_NO_RELEASE_CONFIG was set and TARGET_RELEASE was not)
-endif
+
+# Choose flag files
+# Don't sort this, use it in the order they gave us.
+# Do allow duplicate entries, retaining only the first usage.
 flag_value_files :=
-endif
+$(foreach f,$(_all_release_configs.$(TARGET_RELEASE).FILES), \
+  $(if $(filter $(f),$(flag_value_files)),,$(eval flag_value_files += $(f)))\
+)
 
 # Unset variables so they can't use them
 define declare-release-config
