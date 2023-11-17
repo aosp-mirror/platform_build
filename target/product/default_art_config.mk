@@ -73,6 +73,7 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.ipsec:android.net.ipsec.ike \
     com.android.media:updatable-media \
     com.android.mediaprovider:framework-mediaprovider \
+    com.android.mediaprovider:framework-pdf \
     com.android.ondevicepersonalization:framework-ondevicepersonalization \
     com.android.os.statsd:framework-statsd \
     com.android.permission:framework-permission \
