@@ -60,9 +60,9 @@ parsed_flag {
 }
 parsed_flag {
   package: "com.android.aconfig.test"
-  name: "disabled_rw_2"
+  name: "disabled_rw_in_other_namespace"
   namespace: "other_namespace"
-  description: "This flag is DISABLED + READ_WRITE"
+  description: "This flag is DISABLED + READ_WRITE, and is defined in another namespace"
   bug: "999"
   state: DISABLED
   permission: READ_WRITE
