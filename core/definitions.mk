@@ -106,9 +106,6 @@ EXPORTS_LIST :=
 # All modules already converted to Soong
 SOONG_ALREADY_CONV :=
 
-# ALL_DEPS.*.ALL_DEPS keys
-ALL_DEPS.MODULES :=
-
 ###########################################################
 ## Debugging; prints a variable list to stdout
 ###########################################################
