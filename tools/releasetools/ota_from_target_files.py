@@ -265,7 +265,6 @@ import multiprocessing
 import os
 import os.path
 import re
-import shlex
 import shutil
 import subprocess
 import sys
@@ -274,6 +273,7 @@ import zipfile
 import care_map_pb2
 import common
 import ota_utils
+import payload_signer
 from ota_utils import (VABC_COMPRESSION_PARAM_SUPPORT, FinalizeMetadata, GetPackageMetadata,
                        PayloadGenerator, SECURITY_PATCH_LEVEL_PROP_NAME, ExtractTargetFiles, CopyTargetFilesDir)
 from common import DoesInputFileContain, IsSparseImage
@@ -308,9 +308,6 @@ OPTIONS.full_bootloader = False
 OPTIONS.cache_size = None
 OPTIONS.stash_threshold = 0.8
 OPTIONS.log_diff = None
-OPTIONS.payload_signer = None
-OPTIONS.payload_signer_args = []
-OPTIONS.payload_signer_maximum_signature_size = None
 OPTIONS.extracted_input = None
 OPTIONS.skip_postinstall = False
 OPTIONS.skip_compatibility_check = False
@@ -1125,9 +1122,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
 def main(argv):
 
   def option_handler(o, a):
-    if o in ("-k", "--package_key"):
-      OPTIONS.package_key = a
-    elif o in ("-i", "--incremental_from"):
+    if o in ("-i", "--incremental_from"):
       OPTIONS.incremental_source = a
     elif o == "--full_radio":
       OPTIONS.full_radio = True
@@ -1172,17 +1167,6 @@ def main(argv):
                          "a float" % (a, o))
     elif o == "--log_diff":
       OPTIONS.log_diff = a
-    elif o == "--payload_signer":
-      OPTIONS.payload_signer = a
-    elif o == "--payload_signer_args":
-      OPTIONS.payload_signer_args = shlex.split(a)
-    elif o == "--payload_signer_maximum_signature_size":
-      OPTIONS.payload_signer_maximum_signature_size = a
-    elif o == "--payload_signer_key_size":
-      # TODO(Xunchang) remove this option after cleaning up the callers.
-      logger.warning("The option '--payload_signer_key_size' is deprecated."
-                     " Use '--payload_signer_maximum_signature_size' instead.")
-      OPTIONS.payload_signer_maximum_signature_size = a
     elif o == "--extracted_input_target_files":
       OPTIONS.extracted_input = a
     elif o == "--skip_postinstall":
@@ -1258,7 +1242,6 @@ def main(argv):
   args = common.ParseOptions(argv, __doc__,
                              extra_opts="b:k:i:d:e:t:2o:",
                              extra_long_opts=[
-                                 "package_key=",
                                  "incremental_from=",
                                  "full_radio",
                                  "full_bootloader",
@@ -1277,10 +1260,6 @@ def main(argv):
                                  "verify",
                                  "stash_threshold=",
                                  "log_diff=",
-                                 "payload_signer=",
-                                 "payload_signer_args=",
-                                 "payload_signer_maximum_signature_size=",
-                                 "payload_signer_key_size=",
                                  "extracted_input_target_files=",
                                  "skip_postinstall",
                                  "retrofit_dynamic_partitions",
@@ -1304,7 +1283,7 @@ def main(argv):
                                  "vabc_compression_param=",
                                  "security_patch_level=",
                                  "max_threads=",
-                             ], extra_option_handler=option_handler)
+                             ], extra_option_handler=[option_handler, payload_signer.signer_options])
   common.InitLogging()
 
   if len(args) != 2:
