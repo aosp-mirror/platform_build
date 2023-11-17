@@ -73,6 +73,20 @@ func readFileToString(filePath string) string {
 	return string(data)
 }
 
+func writeNewlineToOutputFile(outputFile string) {
+	file, err := os.Create(outputFile)
+	data := "\n"
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	_, err = file.Write([]byte(data))
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func processTestSpecProtobuf(
 	filePath string, ownershipMetadataMap *sync.Map, keyLocks *keyToLocksMap,
 	errCh chan error, wg *sync.WaitGroup,
@@ -140,6 +154,10 @@ func main() {
 
 	inputFileData := strings.TrimRight(readFileToString(*inputFile), "\n")
 	filePaths := strings.Split(inputFileData, "\n")
+	if len(filePaths) == 1 && filePaths[0] == "" {
+		writeNewlineToOutputFile(*outputFile)
+		return
+	}
 	ownershipMetadataMap := &sync.Map{}
 	keyLocks := &keyToLocksMap{}
 	errCh := make(chan error, len(filePaths))
