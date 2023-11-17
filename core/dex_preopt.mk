@@ -58,6 +58,7 @@ my_boot_image_module :=
 # We can do this only if preopt is enabled and if the product uses libart config (which sets the
 # default properties for preopting).
 ifeq ($(WITH_DEXPREOPT), true)
+ifneq ($(WITH_DEXPREOPT_ART_BOOT_IMG_ONLY), true)
 ifeq ($(PRODUCT_USES_DEFAULT_ART_CONFIG), true)
 
 boot_zip := $(PRODUCT_OUT)/boot.zip
@@ -152,4 +153,5 @@ $(call dist-for-goals, droidcore, $(system_server_zip))
 
 endif  #ART_MODULE_BUILD_FROM_SOURCE || MODULE_BUILD_FROM_SOURCE
 endif  #PRODUCT_USES_DEFAULT_ART_CONFIG
+endif  #WITH_DEXPREOPT_ART_BOOT_IMG_ONLY
 endif  #WITH_DEXPREOPT
