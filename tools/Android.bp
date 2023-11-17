@@ -96,3 +96,13 @@ python_test_host {
         unit_test: true,
     },
 }
+
+python_binary_host {
+  name: "characteristics_rro_generator",
+  srcs: ["characteristics_rro_generator.py"],
+  version: {
+    py3: {
+      embedded_launcher: true,
+    },
+  },
+}
