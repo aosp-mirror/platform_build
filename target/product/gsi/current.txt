@@ -34,7 +34,6 @@ VNDK-SP: android.hardware.graphics.mapper@3.0.so
 VNDK-SP: android.hardware.graphics.mapper@4.0.so
 VNDK-SP: android.hardware.renderscript@1.0.so
 VNDK-SP: android.hidl.memory.token@1.0.so
-VNDK-SP: android.hidl.memory@1.0-impl.so
 VNDK-SP: android.hidl.memory@1.0.so
 VNDK-SP: android.hidl.safe_union@1.0.so
 VNDK-SP: libRSCpuRef.so
