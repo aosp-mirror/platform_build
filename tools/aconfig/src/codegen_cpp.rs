@@ -165,7 +165,7 @@ public:
 
     virtual bool disabled_rw() = 0;
 
-    virtual bool disabled_rw_2() = 0;
+    virtual bool disabled_rw_in_other_namespace() = 0;
 
     virtual bool enabled_fixed_ro() = 0;
 
@@ -184,8 +184,8 @@ inline bool disabled_rw() {
     return provider_->disabled_rw();
 }
 
-inline bool disabled_rw_2() {
-    return provider_->disabled_rw_2();
+inline bool disabled_rw_in_other_namespace() {
+    return provider_->disabled_rw_in_other_namespace();
 }
 
 inline bool enabled_fixed_ro() {
@@ -209,7 +209,7 @@ bool com_android_aconfig_test_disabled_ro();
 
 bool com_android_aconfig_test_disabled_rw();
 
-bool com_android_aconfig_test_disabled_rw_2();
+bool com_android_aconfig_test_disabled_rw_in_other_namespace();
 
 bool com_android_aconfig_test_enabled_fixed_ro();
 
@@ -244,9 +244,9 @@ public:
 
     virtual void disabled_rw(bool val) = 0;
 
-    virtual bool disabled_rw_2() = 0;
+    virtual bool disabled_rw_in_other_namespace() = 0;
 
-    virtual void disabled_rw_2(bool val) = 0;
+    virtual void disabled_rw_in_other_namespace(bool val) = 0;
 
     virtual bool enabled_fixed_ro() = 0;
 
@@ -281,12 +281,12 @@ inline void disabled_rw(bool val) {
     provider_->disabled_rw(val);
 }
 
-inline bool disabled_rw_2() {
-    return provider_->disabled_rw_2();
+inline bool disabled_rw_in_other_namespace() {
+    return provider_->disabled_rw_in_other_namespace();
 }
 
-inline void disabled_rw_2(bool val) {
-    provider_->disabled_rw_2(val);
+inline void disabled_rw_in_other_namespace(bool val) {
+    provider_->disabled_rw_in_other_namespace(val);
 }
 
 inline bool enabled_fixed_ro() {
@@ -330,9 +330,9 @@ bool com_android_aconfig_test_disabled_rw();
 
 void set_com_android_aconfig_test_disabled_rw(bool val);
 
-bool com_android_aconfig_test_disabled_rw_2();
+bool com_android_aconfig_test_disabled_rw_in_other_namespace();
 
-void set_com_android_aconfig_test_disabled_rw_2(bool val);
+void set_com_android_aconfig_test_disabled_rw_in_other_namespace(bool val);
 
 bool com_android_aconfig_test_enabled_fixed_ro();
 
@@ -379,11 +379,11 @@ namespace com::android::aconfig::test {
                 return cache_[0];
             }
 
-            virtual bool disabled_rw_2() override {
+            virtual bool disabled_rw_in_other_namespace() override {
                 if (cache_[1] == -1) {
                     cache_[1] = server_configurable_flags::GetServerConfigurableFlag(
                         "aconfig_flags.other_namespace",
-                        "com.android.aconfig.test.disabled_rw_2",
+                        "com.android.aconfig.test.disabled_rw_in_other_namespace",
                         "false") == "true";
                 }
                 return cache_[1];
@@ -423,8 +423,8 @@ bool com_android_aconfig_test_disabled_rw() {
     return com::android::aconfig::test::disabled_rw();
 }
 
-bool com_android_aconfig_test_disabled_rw_2() {
-    return com::android::aconfig::test::disabled_rw_2();
+bool com_android_aconfig_test_disabled_rw_in_other_namespace() {
+    return com::android::aconfig::test::disabled_rw_in_other_namespace();
 }
 
 bool com_android_aconfig_test_enabled_fixed_ro() {
@@ -487,20 +487,20 @@ namespace com::android::aconfig::test {
                 overrides_["disabled_rw"] = val;
             }
 
-            virtual bool disabled_rw_2() override {
-                auto it = overrides_.find("disabled_rw_2");
+            virtual bool disabled_rw_in_other_namespace() override {
+                auto it = overrides_.find("disabled_rw_in_other_namespace");
                   if (it != overrides_.end()) {
                       return it->second;
                 } else {
                   return server_configurable_flags::GetServerConfigurableFlag(
                       "aconfig_flags.other_namespace",
-                      "com.android.aconfig.test.disabled_rw_2",
+                      "com.android.aconfig.test.disabled_rw_in_other_namespace",
                       "false") == "true";
                 }
             }
 
-            virtual void disabled_rw_2(bool val) override {
-                overrides_["disabled_rw_2"] = val;
+            virtual void disabled_rw_in_other_namespace(bool val) override {
+                overrides_["disabled_rw_in_other_namespace"] = val;
             }
 
             virtual bool enabled_fixed_ro() override {
@@ -572,13 +572,13 @@ void set_com_android_aconfig_test_disabled_rw(bool val) {
     com::android::aconfig::test::disabled_rw(val);
 }
 
-bool com_android_aconfig_test_disabled_rw_2() {
-    return com::android::aconfig::test::disabled_rw_2();
+bool com_android_aconfig_test_disabled_rw_in_other_namespace() {
+    return com::android::aconfig::test::disabled_rw_in_other_namespace();
 }
 
 
-void set_com_android_aconfig_test_disabled_rw_2(bool val) {
-    com::android::aconfig::test::disabled_rw_2(val);
+void set_com_android_aconfig_test_disabled_rw_in_other_namespace(bool val) {
+    com::android::aconfig::test::disabled_rw_in_other_namespace(val);
 }
 
 

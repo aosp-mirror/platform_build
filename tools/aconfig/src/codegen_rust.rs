@@ -104,10 +104,10 @@ lazy_static::lazy_static! {
         "com.android.aconfig.test.disabled_rw",
         "false") == "true";
 
-    /// flag value cache for disabled_rw_2
-    static ref CACHED_disabled_rw_2: bool = flags_rust::GetServerConfigurableFlag(
+    /// flag value cache for disabled_rw_in_other_namespace
+    static ref CACHED_disabled_rw_in_other_namespace: bool = flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.other_namespace",
-        "com.android.aconfig.test.disabled_rw_2",
+        "com.android.aconfig.test.disabled_rw_in_other_namespace",
         "false") == "true";
 
     /// flag value cache for enabled_rw
@@ -128,9 +128,9 @@ impl FlagProvider {
         *CACHED_disabled_rw
     }
 
-    /// query flag disabled_rw_2
-    pub fn disabled_rw_2(&self) -> bool {
-        *CACHED_disabled_rw_2
+    /// query flag disabled_rw_in_other_namespace
+    pub fn disabled_rw_in_other_namespace(&self) -> bool {
+        *CACHED_disabled_rw_in_other_namespace
     }
 
     /// query flag enabled_fixed_ro
@@ -164,10 +164,10 @@ pub fn disabled_rw() -> bool {
     PROVIDER.disabled_rw()
 }
 
-/// query flag disabled_rw_2
+/// query flag disabled_rw_in_other_namespace
 #[inline(always)]
-pub fn disabled_rw_2() -> bool {
-    PROVIDER.disabled_rw_2()
+pub fn disabled_rw_in_other_namespace() -> bool {
+    PROVIDER.disabled_rw_in_other_namespace()
 }
 
 /// query flag enabled_fixed_ro
@@ -228,19 +228,19 @@ impl FlagProvider {
         self.overrides.insert("disabled_rw", val);
     }
 
-    /// query flag disabled_rw_2
-    pub fn disabled_rw_2(&self) -> bool {
-        self.overrides.get("disabled_rw_2").copied().unwrap_or(
+    /// query flag disabled_rw_in_other_namespace
+    pub fn disabled_rw_in_other_namespace(&self) -> bool {
+        self.overrides.get("disabled_rw_in_other_namespace").copied().unwrap_or(
             flags_rust::GetServerConfigurableFlag(
                 "aconfig_flags.other_namespace",
-                "com.android.aconfig.test.disabled_rw_2",
+                "com.android.aconfig.test.disabled_rw_in_other_namespace",
                 "false") == "true"
         )
     }
 
-    /// set flag disabled_rw_2
-    pub fn set_disabled_rw_2(&mut self, val: bool) {
-        self.overrides.insert("disabled_rw_2", val);
+    /// set flag disabled_rw_in_other_namespace
+    pub fn set_disabled_rw_in_other_namespace(&mut self, val: bool) {
+        self.overrides.insert("disabled_rw_in_other_namespace", val);
     }
 
     /// query flag enabled_fixed_ro
@@ -317,16 +317,16 @@ pub fn set_disabled_rw(val: bool) {
     PROVIDER.lock().unwrap().set_disabled_rw(val);
 }
 
-/// query flag disabled_rw_2
+/// query flag disabled_rw_in_other_namespace
 #[inline(always)]
-pub fn disabled_rw_2() -> bool {
-    PROVIDER.lock().unwrap().disabled_rw_2()
+pub fn disabled_rw_in_other_namespace() -> bool {
+    PROVIDER.lock().unwrap().disabled_rw_in_other_namespace()
 }
 
-/// set flag disabled_rw_2
+/// set flag disabled_rw_in_other_namespace
 #[inline(always)]
-pub fn set_disabled_rw_2(val: bool) {
-    PROVIDER.lock().unwrap().set_disabled_rw_2(val);
+pub fn set_disabled_rw_in_other_namespace(val: bool) {
+    PROVIDER.lock().unwrap().set_disabled_rw_in_other_namespace(val);
 }
 
 /// query flag enabled_fixed_ro

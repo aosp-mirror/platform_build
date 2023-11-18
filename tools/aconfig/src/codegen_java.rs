@@ -179,7 +179,7 @@ mod tests {
         @UnsupportedAppUsage
         boolean disabledRw();
         @UnsupportedAppUsage
-        boolean disabledRw2();
+        boolean disabledRwInOtherNamespace();
         @com.android.aconfig.annotations.AssumeTrueForR8
         @UnsupportedAppUsage
         boolean enabledFixedRo();
@@ -202,7 +202,7 @@ mod tests {
         /** @hide */
         public static final String FLAG_DISABLED_RW = "com.android.aconfig.test.disabled_rw";
         /** @hide */
-        public static final String FLAG_DISABLED_RW_2 = "com.android.aconfig.test.disabled_rw_2";
+        public static final String FLAG_DISABLED_RW_IN_OTHER_NAMESPACE = "com.android.aconfig.test.disabled_rw_in_other_namespace";
         /** @hide */
         public static final String FLAG_ENABLED_FIXED_RO = "com.android.aconfig.test.enabled_fixed_ro";
         /** @hide */
@@ -220,8 +220,8 @@ mod tests {
             return FEATURE_FLAGS.disabledRw();
         }
         @UnsupportedAppUsage
-        public static boolean disabledRw2() {
-            return FEATURE_FLAGS.disabledRw2();
+        public static boolean disabledRwInOtherNamespace() {
+            return FEATURE_FLAGS.disabledRwInOtherNamespace();
         }
         @com.android.aconfig.annotations.AssumeTrueForR8
         @UnsupportedAppUsage
@@ -262,8 +262,8 @@ mod tests {
         }
         @Override
         @UnsupportedAppUsage
-        public boolean disabledRw2() {
-            return getValue(Flags.FLAG_DISABLED_RW_2);
+        public boolean disabledRwInOtherNamespace() {
+            return getValue(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE);
         }
         @Override
         @UnsupportedAppUsage
@@ -302,7 +302,7 @@ mod tests {
             Map.ofEntries(
                 Map.entry(Flags.FLAG_DISABLED_RO, false),
                 Map.entry(Flags.FLAG_DISABLED_RW, false),
-                Map.entry(Flags.FLAG_DISABLED_RW_2, false),
+                Map.entry(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE, false),
                 Map.entry(Flags.FLAG_ENABLED_FIXED_RO, false),
                 Map.entry(Flags.FLAG_ENABLED_RO, false),
                 Map.entry(Flags.FLAG_ENABLED_RW, false)
@@ -336,7 +336,7 @@ mod tests {
             private static boolean aconfig_test_is_cached = false;
             private static boolean other_namespace_is_cached = false;
             private static boolean disabledRw = false;
-            private static boolean disabledRw2 = false;
+            private static boolean disabledRwInOtherNamespace = false;
             private static boolean enabledRw = true;
 
 
@@ -363,8 +363,8 @@ mod tests {
             private void load_overrides_other_namespace() {
                 try {
                     Properties properties = DeviceConfig.getProperties("other_namespace");
-                    disabledRw2 =
-                        properties.getBoolean("com.android.aconfig.test.disabled_rw_2", false);
+                    disabledRwInOtherNamespace =
+                        properties.getBoolean("com.android.aconfig.test.disabled_rw_in_other_namespace", false);
                 } catch (NullPointerException e) {
                     throw new RuntimeException(
                         "Cannot read value from namespace other_namespace "
@@ -394,11 +394,11 @@ mod tests {
             }
             @Override
             @UnsupportedAppUsage
-            public boolean disabledRw2() {
+            public boolean disabledRwInOtherNamespace() {
                 if (!other_namespace_is_cached) {
                     load_overrides_other_namespace();
                 }
-                return disabledRw2;
+                return disabledRwInOtherNamespace;
             }
             @Override
             @UnsupportedAppUsage
@@ -489,7 +489,7 @@ mod tests {
             }
             @Override
             @UnsupportedAppUsage
-            public boolean disabledRw2() {
+            public boolean disabledRwInOtherNamespace() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
             }
