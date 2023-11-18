@@ -53,8 +53,8 @@ flag {
 }
 
 flag {
-    name: "disabled_rw_2"
+    name: "disabled_rw_in_other_namespace"
     namespace: "other_namespace"
-    description: "This flag is DISABLED + READ_WRITE"
+    description: "This flag is DISABLED + READ_WRITE, and is defined in another namespace"
     bug: "999"
 }
