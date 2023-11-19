@@ -1156,11 +1156,9 @@ INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
 
 ##########################################################
 # Track module-level dependencies.
-# Use $(LOCAL_MODULE) instead of $(my_register_name) to ignore module's bitness.
 # (b/204397180) Unlock RECORD_ALL_DEPS was acknowledged reasonable for better Atest performance.
-ALL_DEPS.MODULES += $(LOCAL_MODULE)
-ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
-  $(ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS) \
+ALL_MODULES.$(my_register_name).ALL_DEPS := \
+  $(ALL_MODULES.$(my_register_name).ALL_DEPS) \
   $(LOCAL_STATIC_LIBRARIES) \
   $(LOCAL_WHOLE_STATIC_LIBRARIES) \
   $(LOCAL_SHARED_LIBRARIES) \
@@ -1170,7 +1168,7 @@ ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
   $(LOCAL_HEADER_LIBRARIES) \
   $(LOCAL_STATIC_JAVA_LIBRARIES) \
   $(LOCAL_JAVA_LIBRARIES) \
-  $(LOCAL_JNI_SHARED_LIBRARIES))
+  $(LOCAL_JNI_SHARED_LIBRARIES)
 
 ###########################################################
 ## umbrella targets used to verify builds
