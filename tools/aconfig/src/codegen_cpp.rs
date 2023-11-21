@@ -151,11 +151,8 @@ mod tests {
 #ifdef __cplusplus
 
 #include <memory>
-#include <vector>
 
 namespace com::android::aconfig::test {
-
-extern std::vector<int8_t> cache_;
 
 class flag_provider_interface {
 public:
@@ -359,6 +356,7 @@ void com_android_aconfig_test_reset_flags();
     const PROD_SOURCE_FILE_EXPECTED: &str = r#"
 #include "com_android_aconfig_test.h"
 #include <server_configurable_flags/get_flags.h>
+#include <vector>
 
 namespace com::android::aconfig::test {
 
@@ -407,9 +405,9 @@ namespace com::android::aconfig::test {
                 return cache_[2];
             }
 
+    private:
+        std::vector<int8_t> cache_ = std::vector<int8_t>(3, -1);
     };
-
-    std::vector<int8_t> cache_ = std::vector<int8_t>(3, -1);
 
     std::unique_ptr<flag_provider_interface> provider_ =
         std::make_unique<flag_provider>();
