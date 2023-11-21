@@ -153,7 +153,7 @@ func main() {
 	}
 
 	inputFileData := strings.TrimRight(readFileToString(*inputFile), "\n")
-	filePaths := strings.Split(inputFileData, "\n")
+	filePaths := strings.Split(inputFileData, " ")
 	if len(filePaths) == 1 && filePaths[0] == "" {
 		writeNewlineToOutputFile(*outputFile)
 		return
