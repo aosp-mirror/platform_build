@@ -21,3 +21,7 @@
 PRODUCT_PACKAGES += \
     CarrierConfig \
     EmergencyInfo \
+
+PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34 += \
+    hwservicemanager \
+    android.hidl.allocator@1.0-service \
