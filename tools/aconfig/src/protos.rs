@@ -308,6 +308,7 @@ flag {
     namespace: "first_ns"
     description: "This is the description of the first flag."
     bug: "123"
+    is_exported: true
 }
 flag {
     name: "second"
@@ -326,12 +327,14 @@ flag {
         assert_eq!(first.description(), "This is the description of the first flag.");
         assert_eq!(first.bug, vec!["123"]);
         assert!(!first.is_fixed_read_only());
+        assert!(first.is_exported());
         let second = flag_declarations.flag.iter().find(|pf| pf.name() == "second").unwrap();
         assert_eq!(second.name(), "second");
         assert_eq!(second.namespace(), "second_ns");
         assert_eq!(second.description(), "This is the description of the second flag.");
         assert_eq!(second.bug, vec!["abc"]);
         assert!(second.is_fixed_read_only());
+        assert!(!second.is_exported());
 
         // bad input: missing package in flag declarations
         let error = flag_declarations::try_from_text_proto(
