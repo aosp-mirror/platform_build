@@ -1271,6 +1271,11 @@ define product-installed-modules
     $(if $(filter asan,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_ASAN)) \
     $(if $(filter java_coverage,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE)) \
     $(if $(filter arm64,$(TARGET_ARCH) $(TARGET_2ND_ARCH)),$(call get-product-var,$(1),PRODUCT_PACKAGES_ARM64)) \
+    $(if $(PRODUCT_SHIPPING_API_LEVEL), \
+      $(if $(call math_gt_or_eq,29,$(PRODUCT_SHIPPING_API_LEVEL)),$(call get-product-var,$(1),PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29)) \
+      $(if $(call math_gt_or_eq,33,$(PRODUCT_SHIPPING_API_LEVEL)),$(call get-product-var,$(1),PRODUCT_PACKAGES_SHIPPING_API_LEVEL_33)) \
+      $(if $(call math_gt_or_eq,34,$(PRODUCT_SHIPPING_API_LEVEL)),$(call get-product-var,$(1),PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34)) \
+    ) \
     $(call auto-included-modules) \
   ) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \
