@@ -578,6 +578,15 @@ else ifneq ($(PRODUCT_CHECK_VENDOR_SEAPP_VIOLATIONS),)
 endif
 .KATI_READONLY := CHECK_VENDOR_SEAPP_VIOLATIONS
 
+# Boolean variable determining if selinux labels of /dev are enforced
+CHECK_DEV_TYPE_VIOLATIONS := false
+ifneq ($(call math_gt,$(VSR_VENDOR_API_LEVEL),35),)
+  CHECK_DEV_TYPE_VIOLATIONS := true
+else ifneq ($(PRODUCT_CHECK_DEV_TYPE_VIOLATIONS),)
+  CHECK_DEV_TYPE_VIOLATIONS := $(PRODUCT_CHECK_DEV_TYPE_VIOLATIONS)
+endif
+.KATI_READONLY := CHECK_DEV_TYPE_VIOLATIONS
+
 define product-overrides-config
 $$(foreach rule,$$(PRODUCT_$(1)_OVERRIDES),\
     $$(if $$(filter 2,$$(words $$(subst :,$$(space),$$(rule)))),,\
