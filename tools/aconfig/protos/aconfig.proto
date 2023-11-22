@@ -46,6 +46,7 @@ message flag_declaration {
 message flag_declarations {
   optional string package = 1;
   repeated flag_declaration flag = 2;
+  optional string container = 3;
 };
 
 message flag_value {
@@ -79,7 +80,7 @@ message parsed_flag {
   repeated tracepoint trace = 8;
   optional bool is_fixed_read_only = 9;
   optional bool is_exported = 10;
-
+  optional string container = 11;
 }
 
 message parsed_flags {
