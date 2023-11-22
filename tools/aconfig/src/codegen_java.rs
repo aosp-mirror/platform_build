@@ -16,6 +16,7 @@
 
 use anyhow::Result;
 use serde::Serialize;
+use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
 use tinytemplate::TinyTemplate;
 
@@ -31,12 +32,21 @@ pub fn generate_java_code<'a, I>(
 where
     I: Iterator<Item = &'a ProtoParsedFlag>,
 {
-    let class_elements: Vec<ClassElement> =
-        parsed_flags_iter.map(|pf| create_class_element(package, pf)).collect();
-    let is_read_write = class_elements.iter().any(|elem| elem.is_read_write);
+    let flag_elements: Vec<FlagElement> =
+        parsed_flags_iter.map(|pf| create_flag_element(package, pf)).collect();
+    let namespace_flags = gen_flags_by_namespace(&flag_elements);
+    let properties_set: BTreeSet<String> =
+        flag_elements.iter().map(|fe| format_property_name(&fe.device_config_namespace)).collect();
+    let is_read_write = flag_elements.iter().any(|elem| elem.is_read_write);
     let is_test_mode = codegen_mode == CodegenMode::Test;
-    let context =
-        Context { class_elements, is_test_mode, is_read_write, package_name: package.to_string() };
+    let context = Context {
+        flag_elements,
+        namespace_flags,
+        is_test_mode,
+        is_read_write,
+        properties_set,
+        package_name: package.to_string(),
+    };
     let mut template = TinyTemplate::new();
     template.add_template("Flags.java", include_str!("../templates/Flags.java.template"))?;
     template.add_template(
@@ -64,51 +74,92 @@ where
         .collect::<Result<Vec<OutputFile>>>()
 }
 
-#[derive(Serialize)]
-struct Context {
-    pub class_elements: Vec<ClassElement>,
-    pub is_test_mode: bool,
-    pub is_read_write: bool,
-    pub package_name: String,
+fn gen_flags_by_namespace(flags: &[FlagElement]) -> Vec<NamespaceFlags> {
+    let mut namespace_to_flag: BTreeMap<String, Vec<FlagElement>> = BTreeMap::new();
+
+    for flag in flags {
+        match namespace_to_flag.get_mut(&flag.device_config_namespace) {
+            Some(flag_list) => flag_list.push(flag.clone()),
+            None => {
+                namespace_to_flag.insert(flag.device_config_namespace.clone(), vec![flag.clone()]);
+            }
+        }
+    }
+
+    namespace_to_flag
+        .iter()
+        .map(|(namespace, flags)| NamespaceFlags {
+            namespace: namespace.to_string(),
+            flags: flags.clone(),
+        })
+        .collect()
 }
 
 #[derive(Serialize)]
-struct ClassElement {
+struct Context {
+    pub flag_elements: Vec<FlagElement>,
+    pub namespace_flags: Vec<NamespaceFlags>,
+    pub is_test_mode: bool,
+    pub is_read_write: bool,
+    pub properties_set: BTreeSet<String>,
+    pub package_name: String,
+}
+
+#[derive(Serialize, Debug)]
+struct NamespaceFlags {
+    pub namespace: String,
+    pub flags: Vec<FlagElement>,
+}
+
+#[derive(Serialize, Clone, Debug)]
+struct FlagElement {
     pub default_value: bool,
     pub device_config_namespace: String,
     pub device_config_flag: String,
     pub flag_name_constant_suffix: String,
     pub is_read_write: bool,
     pub method_name: String,
+    pub properties: String,
 }
 
-fn create_class_element(package: &str, pf: &ProtoParsedFlag) -> ClassElement {
+fn create_flag_element(package: &str, pf: &ProtoParsedFlag) -> FlagElement {
     let device_config_flag = codegen::create_device_config_ident(package, pf.name())
         .expect("values checked at flag parse time");
-    ClassElement {
+    FlagElement {
         default_value: pf.state() == ProtoFlagState::ENABLED,
         device_config_namespace: pf.namespace().to_string(),
         device_config_flag,
         flag_name_constant_suffix: pf.name().to_ascii_uppercase(),
         is_read_write: pf.permission() == ProtoFlagPermission::READ_WRITE,
         method_name: format_java_method_name(pf.name()),
+        properties: format_property_name(pf.namespace()),
     }
 }
 
 fn format_java_method_name(flag_name: &str) -> String {
-    flag_name
-        .split('_')
-        .filter(|&word| !word.is_empty())
-        .enumerate()
-        .map(|(index, word)| {
-            if index == 0 {
-                word.to_ascii_lowercase()
-            } else {
-                word[0..1].to_ascii_uppercase() + &word[1..].to_ascii_lowercase()
-            }
-        })
-        .collect::<Vec<String>>()
-        .join("")
+    let splits: Vec<&str> = flag_name.split('_').filter(|&word| !word.is_empty()).collect();
+    if splits.len() == 1 {
+        let name = splits[0];
+        name[0..1].to_ascii_lowercase() + &name[1..]
+    } else {
+        splits
+            .iter()
+            .enumerate()
+            .map(|(index, word)| {
+                if index == 0 {
+                    word.to_ascii_lowercase()
+                } else {
+                    word[0..1].to_ascii_uppercase() + &word[1..].to_ascii_lowercase()
+                }
+            })
+            .collect::<Vec<String>>()
+            .join("")
+    }
+}
+
+fn format_property_name(property_name: &str) -> String {
+    let name = format_java_method_name(property_name);
+    format!("mProperties{}{}", &name[0..1].to_ascii_uppercase(), &name[1..])
 }
 
 #[cfg(test)]
@@ -127,6 +178,8 @@ mod tests {
         boolean disabledRo();
         @UnsupportedAppUsage
         boolean disabledRw();
+        @UnsupportedAppUsage
+        boolean disabledRwInOtherNamespace();
         @com.android.aconfig.annotations.AssumeTrueForR8
         @UnsupportedAppUsage
         boolean enabledFixedRo();
@@ -149,6 +202,8 @@ mod tests {
         /** @hide */
         public static final String FLAG_DISABLED_RW = "com.android.aconfig.test.disabled_rw";
         /** @hide */
+        public static final String FLAG_DISABLED_RW_IN_OTHER_NAMESPACE = "com.android.aconfig.test.disabled_rw_in_other_namespace";
+        /** @hide */
         public static final String FLAG_ENABLED_FIXED_RO = "com.android.aconfig.test.enabled_fixed_ro";
         /** @hide */
         public static final String FLAG_ENABLED_RO = "com.android.aconfig.test.enabled_ro";
@@ -163,6 +218,10 @@ mod tests {
         @UnsupportedAppUsage
         public static boolean disabledRw() {
             return FEATURE_FLAGS.disabledRw();
+        }
+        @UnsupportedAppUsage
+        public static boolean disabledRwInOtherNamespace() {
+            return FEATURE_FLAGS.disabledRwInOtherNamespace();
         }
         @com.android.aconfig.annotations.AssumeTrueForR8
         @UnsupportedAppUsage
@@ -203,6 +262,11 @@ mod tests {
         }
         @Override
         @UnsupportedAppUsage
+        public boolean disabledRwInOtherNamespace() {
+            return getValue(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE);
+        }
+        @Override
+        @UnsupportedAppUsage
         public boolean enabledFixedRo() {
             return getValue(Flags.FLAG_ENABLED_FIXED_RO);
         }
@@ -238,6 +302,7 @@ mod tests {
             Map.ofEntries(
                 Map.entry(Flags.FLAG_DISABLED_RO, false),
                 Map.entry(Flags.FLAG_DISABLED_RW, false),
+                Map.entry(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE, false),
                 Map.entry(Flags.FLAG_ENABLED_FIXED_RO, false),
                 Map.entry(Flags.FLAG_ENABLED_RO, false),
                 Map.entry(Flags.FLAG_ENABLED_RW, false)
@@ -265,8 +330,55 @@ mod tests {
         // TODO(b/303773055): Remove the annotation after access issue is resolved.
         import android.compat.annotation.UnsupportedAppUsage;
         import android.provider.DeviceConfig;
+        import android.provider.DeviceConfig.Properties;
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
+            private static boolean aconfig_test_is_cached = false;
+            private static boolean other_namespace_is_cached = false;
+            private static boolean disabledRw = false;
+            private static boolean disabledRwInOtherNamespace = false;
+            private static boolean enabledRw = true;
+
+
+            private void load_overrides_aconfig_test() {
+                try {
+                    Properties properties = DeviceConfig.getProperties("aconfig_test");
+                    disabledRw =
+                        properties.getBoolean("com.android.aconfig.test.disabled_rw", false);
+                    enabledRw =
+                        properties.getBoolean("com.android.aconfig.test.enabled_rw", true);
+                } catch (NullPointerException e) {
+                    throw new RuntimeException(
+                        "Cannot read value from namespace aconfig_test "
+                        + "from DeviceConfig. It could be that the code using flag "
+                        + "executed before SettingsProvider initialization. Please use "
+                        + "fixed read-only flag by adding is_fixed_read_only: true in "
+                        + "flag declaration.",
+                        e
+                    );
+                }
+                aconfig_test_is_cached = true;
+            }
+
+            private void load_overrides_other_namespace() {
+                try {
+                    Properties properties = DeviceConfig.getProperties("other_namespace");
+                    disabledRwInOtherNamespace =
+                        properties.getBoolean("com.android.aconfig.test.disabled_rw_in_other_namespace", false);
+                } catch (NullPointerException e) {
+                    throw new RuntimeException(
+                        "Cannot read value from namespace other_namespace "
+                        + "from DeviceConfig. It could be that the code using flag "
+                        + "executed before SettingsProvider initialization. Please use "
+                        + "fixed read-only flag by adding is_fixed_read_only: true in "
+                        + "flag declaration.",
+                        e
+                    );
+                }
+                other_namespace_is_cached = true;
+            }
+
+
             @Override
             @UnsupportedAppUsage
             public boolean disabledRo() {
@@ -275,11 +387,18 @@ mod tests {
             @Override
             @UnsupportedAppUsage
             public boolean disabledRw() {
-                return getValue(
-                    "aconfig_test",
-                    "com.android.aconfig.test.disabled_rw",
-                    false
-                );
+                if (!aconfig_test_is_cached) {
+                    load_overrides_aconfig_test();
+                }
+                return disabledRw;
+            }
+            @Override
+            @UnsupportedAppUsage
+            public boolean disabledRwInOtherNamespace() {
+                if (!other_namespace_is_cached) {
+                    load_overrides_other_namespace();
+                }
+                return disabledRwInOtherNamespace;
             }
             @Override
             @UnsupportedAppUsage
@@ -294,32 +413,10 @@ mod tests {
             @Override
             @UnsupportedAppUsage
             public boolean enabledRw() {
-                return getValue(
-                    "aconfig_test",
-                    "com.android.aconfig.test.enabled_rw",
-                    true
-                );
-            }
-            private boolean getValue(String nameSpace,
-                String flagName, boolean defaultValue) {
-                boolean value = defaultValue;
-                try {
-                    value = DeviceConfig.getBoolean(
-                        nameSpace,
-                        flagName,
-                        defaultValue
-                    );
-                } catch (NullPointerException e) {
-                    throw new RuntimeException(
-                        "Cannot read value of flag " + flagName + " from DeviceConfig. " +
-                        "It could be that the code using flag executed " +
-                        "before SettingsProvider initialization. " +
-                        "Please use fixed read-only flag by adding " +
-                        "is_fixed_read_only: true in flag declaration.",
-                        e
-                    );
+                if (!aconfig_test_is_cached) {
+                    load_overrides_aconfig_test();
                 }
-                return value;
+                return enabledRw;
             }
         }
         "#;
@@ -392,6 +489,12 @@ mod tests {
             }
             @Override
             @UnsupportedAppUsage
+            public boolean disabledRwInOtherNamespace() {
+                throw new UnsupportedOperationException(
+                    "Method is not implemented.");
+            }
+            @Override
+            @UnsupportedAppUsage
             public boolean enabledFixedRo() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
@@ -441,9 +544,45 @@ mod tests {
 
     #[test]
     fn test_format_java_method_name() {
-        let input = "____some_snake___name____";
         let expected = "someSnakeName";
+        let input = "____some_snake___name____";
         let formatted_name = format_java_method_name(input);
+        assert_eq!(expected, formatted_name);
+
+        let input = "someSnakeName";
+        let formatted_name = format_java_method_name(input);
+        assert_eq!(expected, formatted_name);
+
+        let input = "SomeSnakeName";
+        let formatted_name = format_java_method_name(input);
+        assert_eq!(expected, formatted_name);
+
+        let input = "SomeSnakeName_";
+        let formatted_name = format_java_method_name(input);
+        assert_eq!(expected, formatted_name);
+
+        let input = "_SomeSnakeName";
+        let formatted_name = format_java_method_name(input);
+        assert_eq!(expected, formatted_name);
+    }
+
+    #[test]
+    fn test_format_property_name() {
+        let expected = "mPropertiesSomeSnakeName";
+        let input = "____some_snake___name____";
+        let formatted_name = format_property_name(input);
+        assert_eq!(expected, formatted_name);
+
+        let input = "someSnakeName";
+        let formatted_name = format_property_name(input);
+        assert_eq!(expected, formatted_name);
+
+        let input = "SomeSnakeName";
+        let formatted_name = format_property_name(input);
+        assert_eq!(expected, formatted_name);
+
+        let input = "SomeSnakeName_";
+        let formatted_name = format_property_name(input);
         assert_eq!(expected, formatted_name);
     }
 }

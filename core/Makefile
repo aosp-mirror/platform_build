@@ -793,9 +793,25 @@ $(call declare-0p-target,$(APKCERTS_FILE))
 .PHONY: apkcerts-list
 apkcerts-list: $(APKCERTS_FILE)
 
+intermediates := $(call intermediates-dir-for,PACKAGING,apexkeys)
+APEX_KEYS_FILE := $(intermediates)/apexkeys.txt
+
+all_apex_keys_files := $(sort $(foreach m,$(call product-installed-modules,$(INTERNAL_PRODUCT)),$(ALL_MODULES.$(m).APEX_KEYS_FILE)))
+$(APEX_KEYS_FILE): $(all_apex_keys_files)
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	$(hide) touch $@
+	$(hide) $(foreach file,$^,cat $(file) >> $@ $(newline))
+all_apex_keys_files :=
+
+$(call declare-0p-target,$(APEX_KEYS_FILE))
+
+.PHONY: apexkeys.txt
+apexkeys.txt: $(APEX_KEYS_FILE)
+
 ifneq (,$(TARGET_BUILD_APPS))
   $(call dist-for-goals, apps_only, $(APKCERTS_FILE):apkcerts.txt)
-  $(call dist-for-goals, apps_only, $(SOONG_APEX_KEYS_FILE):apexkeys.txt)
+  $(call dist-for-goals, apps_only, $(APEX_KEYS_FILE):apexkeys.txt)
 endif
 
 
@@ -870,6 +886,9 @@ $(MK2BP_REMAINING_CSV): $(SOONG_CONV_DATA) $(MK2BP_CATALOG_SCRIPT) $(PRODUCT_PAC
 		> $@
 $(call declare-1p-target,$(MK2BP_REMAINING_CSV))
 $(call dist-for-goals,droidcore-unbundled,$(MK2BP_REMAINING_CSV))
+
+.PHONY: mk2bp_remaining
+mk2bp_remaining: $(MK2BP_REMAINING_HTML) $(MK2BP_REMAINING_CSV)
 
 # -----------------------------------------------------------------
 # Modules use -Wno-error, or added default -Wall -Werror
@@ -1148,13 +1167,16 @@ bootimage_16k: $(BUILT_BOOTIMAGE_16K_TARGET)
 .PHONY: bootimage_16k
 
 BUILT_BOOT_OTA_PACKAGE_16K := $(PRODUCT_OUT)/boot_ota_16k.zip
-$(BUILT_BOOT_OTA_PACKAGE_16K): $(OTA_FROM_RAW_IMG) $(BUILT_BOOTIMAGE_16K_TARGET) $(DEFAULT_SYSTEM_DEV_CERTIFICATE).pk8
+$(BUILT_BOOT_OTA_PACKAGE_16K): $(OTA_FROM_RAW_IMG) $(BUILT_BOOTIMAGE_16K_TARGET) $(INSTALLED_BOOTIMAGE_TARGET) $(DEFAULT_SYSTEM_DEV_CERTIFICATE).pk8
 	$(OTA_FROM_RAW_IMG) --package_key $(DEFAULT_SYSTEM_DEV_CERTIFICATE) \
                       --max_timestamp `cat $(BUILD_DATETIME_FILE)` \
                       --path $(HOST_OUT) \
                       --partition_name boot \
                       --output $@ \
-                      $(BUILT_BOOTIMAGE_16K_TARGET)
+                      $(if $(BOARD_16K_OTA_USE_INCREMENTAL),\
+                        $(INSTALLED_BOOTIMAGE_TARGET):$(BUILT_BOOTIMAGE_16K_TARGET),\
+                        $(BUILT_BOOTIMAGE_16K_TARGET)\
+                      )
 
 boototapackage_16k: $(BUILT_BOOT_OTA_PACKAGE_16K)
 .PHONY: boototapackage_16k
@@ -1484,13 +1506,16 @@ endif # my_installed_prebuilt_gki_apex not defined
 
 ifneq ($(BOARD_KERNEL_PATH_16K),)
 BUILT_BOOT_OTA_PACKAGE_4K := $(PRODUCT_OUT)/boot_ota_4k.zip
-$(BUILT_BOOT_OTA_PACKAGE_4K): $(OTA_FROM_RAW_IMG) $(INSTALLED_BOOTIMAGE_TARGET) $(DEFAULT_SYSTEM_DEV_CERTIFICATE).pk8
+$(BUILT_BOOT_OTA_PACKAGE_4K): $(OTA_FROM_RAW_IMG) $(INSTALLED_BOOTIMAGE_TARGET) $(BUILT_BOOTIMAGE_16K_TARGET) $(DEFAULT_SYSTEM_DEV_CERTIFICATE).pk8
 	$(OTA_FROM_RAW_IMG) --package_key $(DEFAULT_SYSTEM_DEV_CERTIFICATE) \
                       --max_timestamp `cat $(BUILD_DATETIME_FILE)` \
                       --path $(HOST_OUT) \
                       --partition_name boot \
                       --output $@ \
-                      $(INSTALLED_BOOTIMAGE_TARGET)
+                      $(if $(BOARD_16K_OTA_USE_INCREMENTAL),\
+                        $(BUILT_BOOTIMAGE_16K_TARGET):$(INSTALLED_BOOTIMAGE_TARGET),\
+                        $(INSTALLED_BOOTIMAGE_TARGET)\
+                      )
 
 boototapackage_4k: $(BUILT_BOOT_OTA_PACKAGE_4K)
 .PHONY: boototapackage_4k
@@ -6336,7 +6361,7 @@ $(BUILT_TARGET_FILES_DIR): \
 	    $(INSTALLED_MISC_INFO_TARGET) \
 	    $(INSTALLED_FASTBOOT_INFO_TARGET) \
 	    $(APKCERTS_FILE) \
-	    $(SOONG_APEX_KEYS_FILE) \
+	    $(APEX_KEYS_FILE) \
 	    $(SOONG_ZIP) \
 	    $(HOST_OUT_EXECUTABLES)/fs_config \
 	    $(HOST_OUT_EXECUTABLES)/map_file_generator \
@@ -6547,7 +6572,7 @@ endif
 	@# build them.
 	$(hide) mkdir -p $(zip_root)/META
 	$(hide) cp $(APKCERTS_FILE) $(zip_root)/META/apkcerts.txt
-	$(hide) cp $(SOONG_APEX_KEYS_FILE) $(zip_root)/META/apexkeys.txt
+	$(hide) cp $(APEX_KEYS_FILE) $(zip_root)/META/apexkeys.txt
 ifneq ($(tool_extension),)
 	$(hide) cp $(PRIVATE_TOOL_EXTENSION) $(zip_root)/META/
 endif
@@ -6810,7 +6835,7 @@ $(call declare-container-license-deps,$(BUILT_TARGET_FILES_PACKAGE), $(INSTALLED
             $(INSTALLED_MISC_INFO_TARGET) \
             $(INSTALLED_FASTBOOT_INFO_TARGET) \
             $(APKCERTS_FILE) \
-            $(SOONG_APEX_KEYS_FILE) \
+            $(APEX_KEYS_FILE) \
             $(HOST_OUT_EXECUTABLES)/fs_config \
             $(HOST_OUT_EXECUTABLES)/map_file_generator \
             $(ADD_IMG_TO_TARGET_FILES) \

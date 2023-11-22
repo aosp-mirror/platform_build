@@ -31,9 +31,11 @@ pub fn generate_cpp_code<'a, I>(
 where
     I: Iterator<Item = &'a ProtoParsedFlag>,
 {
-    let class_elements: Vec<ClassElement> =
-        parsed_flags_iter.map(|pf| create_class_element(package, pf)).collect();
-    let readwrite = class_elements.iter().any(|item| item.readwrite);
+    let mut readwrite_count = 0;
+    let class_elements: Vec<ClassElement> = parsed_flags_iter
+        .map(|pf| create_class_element(package, pf, &mut readwrite_count))
+        .collect();
+    let readwrite = readwrite_count > 0;
     let has_fixed_read_only = class_elements.iter().any(|item| item.is_fixed_read_only);
     let header = package.replace('.', "_");
     let package_macro = header.to_uppercase();
@@ -46,6 +48,7 @@ where
         package,
         has_fixed_read_only,
         readwrite,
+        readwrite_count,
         for_test: codegen_mode == CodegenMode::Test,
         class_elements,
     };
@@ -88,12 +91,14 @@ pub struct Context<'a> {
     pub package: &'a str,
     pub has_fixed_read_only: bool,
     pub readwrite: bool,
+    pub readwrite_count: i32,
     pub for_test: bool,
     pub class_elements: Vec<ClassElement>,
 }
 
 #[derive(Serialize)]
 pub struct ClassElement {
+    pub readwrite_idx: i32,
     pub readwrite: bool,
     pub is_fixed_read_only: bool,
     pub default_value: String,
@@ -103,8 +108,15 @@ pub struct ClassElement {
     pub device_config_flag: String,
 }
 
-fn create_class_element(package: &str, pf: &ProtoParsedFlag) -> ClassElement {
+fn create_class_element(package: &str, pf: &ProtoParsedFlag, rw_count: &mut i32) -> ClassElement {
     ClassElement {
+        readwrite_idx: if pf.permission() == ProtoFlagPermission::READ_WRITE {
+            let index = *rw_count;
+            *rw_count += 1;
+            index
+        } else {
+            -1
+        },
         readwrite: pf.permission() == ProtoFlagPermission::READ_WRITE,
         is_fixed_read_only: pf.is_fixed_read_only(),
         default_value: if pf.state() == ProtoFlagState::ENABLED {
@@ -141,6 +153,7 @@ mod tests {
 #include <memory>
 
 namespace com::android::aconfig::test {
+
 class flag_provider_interface {
 public:
     virtual ~flag_provider_interface() = default;
@@ -148,6 +161,8 @@ public:
     virtual bool disabled_ro() = 0;
 
     virtual bool disabled_rw() = 0;
+
+    virtual bool disabled_rw_in_other_namespace() = 0;
 
     virtual bool enabled_fixed_ro() = 0;
 
@@ -164,6 +179,10 @@ inline bool disabled_ro() {
 
 inline bool disabled_rw() {
     return provider_->disabled_rw();
+}
+
+inline bool disabled_rw_in_other_namespace() {
+    return provider_->disabled_rw_in_other_namespace();
 }
 
 inline bool enabled_fixed_ro() {
@@ -186,6 +205,8 @@ extern "C" {
 bool com_android_aconfig_test_disabled_ro();
 
 bool com_android_aconfig_test_disabled_rw();
+
+bool com_android_aconfig_test_disabled_rw_in_other_namespace();
 
 bool com_android_aconfig_test_enabled_fixed_ro();
 
@@ -220,6 +241,10 @@ public:
 
     virtual void disabled_rw(bool val) = 0;
 
+    virtual bool disabled_rw_in_other_namespace() = 0;
+
+    virtual void disabled_rw_in_other_namespace(bool val) = 0;
+
     virtual bool enabled_fixed_ro() = 0;
 
     virtual void enabled_fixed_ro(bool val) = 0;
@@ -251,6 +276,14 @@ inline bool disabled_rw() {
 
 inline void disabled_rw(bool val) {
     provider_->disabled_rw(val);
+}
+
+inline bool disabled_rw_in_other_namespace() {
+    return provider_->disabled_rw_in_other_namespace();
+}
+
+inline void disabled_rw_in_other_namespace(bool val) {
+    provider_->disabled_rw_in_other_namespace(val);
 }
 
 inline bool enabled_fixed_ro() {
@@ -294,6 +327,10 @@ bool com_android_aconfig_test_disabled_rw();
 
 void set_com_android_aconfig_test_disabled_rw(bool val);
 
+bool com_android_aconfig_test_disabled_rw_in_other_namespace();
+
+void set_com_android_aconfig_test_disabled_rw_in_other_namespace(bool val);
+
 bool com_android_aconfig_test_enabled_fixed_ro();
 
 void set_com_android_aconfig_test_enabled_fixed_ro(bool val);
@@ -319,6 +356,7 @@ void com_android_aconfig_test_reset_flags();
     const PROD_SOURCE_FILE_EXPECTED: &str = r#"
 #include "com_android_aconfig_test.h"
 #include <server_configurable_flags/get_flags.h>
+#include <vector>
 
 namespace com::android::aconfig::test {
 
@@ -330,10 +368,23 @@ namespace com::android::aconfig::test {
             }
 
             virtual bool disabled_rw() override {
-                return server_configurable_flags::GetServerConfigurableFlag(
-                    "aconfig_flags.aconfig_test",
-                    "com.android.aconfig.test.disabled_rw",
-                    "false") == "true";
+                if (cache_[0] == -1) {
+                    cache_[0] = server_configurable_flags::GetServerConfigurableFlag(
+                        "aconfig_flags.aconfig_test",
+                        "com.android.aconfig.test.disabled_rw",
+                        "false") == "true";
+                }
+                return cache_[0];
+            }
+
+            virtual bool disabled_rw_in_other_namespace() override {
+                if (cache_[1] == -1) {
+                    cache_[1] = server_configurable_flags::GetServerConfigurableFlag(
+                        "aconfig_flags.other_namespace",
+                        "com.android.aconfig.test.disabled_rw_in_other_namespace",
+                        "false") == "true";
+                }
+                return cache_[1];
             }
 
             virtual bool enabled_fixed_ro() override {
@@ -345,12 +396,17 @@ namespace com::android::aconfig::test {
             }
 
             virtual bool enabled_rw() override {
-                return server_configurable_flags::GetServerConfigurableFlag(
-                    "aconfig_flags.aconfig_test",
-                    "com.android.aconfig.test.enabled_rw",
-                    "true") == "true";
+                if (cache_[2] == -1) {
+                    cache_[2] = server_configurable_flags::GetServerConfigurableFlag(
+                        "aconfig_flags.aconfig_test",
+                        "com.android.aconfig.test.enabled_rw",
+                        "true") == "true";
+                }
+                return cache_[2];
             }
 
+    private:
+        std::vector<int8_t> cache_ = std::vector<int8_t>(3, -1);
     };
 
     std::unique_ptr<flag_provider_interface> provider_ =
@@ -363,6 +419,10 @@ bool com_android_aconfig_test_disabled_ro() {
 
 bool com_android_aconfig_test_disabled_rw() {
     return com::android::aconfig::test::disabled_rw();
+}
+
+bool com_android_aconfig_test_disabled_rw_in_other_namespace() {
+    return com::android::aconfig::test::disabled_rw_in_other_namespace();
 }
 
 bool com_android_aconfig_test_enabled_fixed_ro() {
@@ -423,6 +483,22 @@ namespace com::android::aconfig::test {
 
             virtual void disabled_rw(bool val) override {
                 overrides_["disabled_rw"] = val;
+            }
+
+            virtual bool disabled_rw_in_other_namespace() override {
+                auto it = overrides_.find("disabled_rw_in_other_namespace");
+                  if (it != overrides_.end()) {
+                      return it->second;
+                } else {
+                  return server_configurable_flags::GetServerConfigurableFlag(
+                      "aconfig_flags.other_namespace",
+                      "com.android.aconfig.test.disabled_rw_in_other_namespace",
+                      "false") == "true";
+                }
+            }
+
+            virtual void disabled_rw_in_other_namespace(bool val) override {
+                overrides_["disabled_rw_in_other_namespace"] = val;
             }
 
             virtual bool enabled_fixed_ro() override {
@@ -492,6 +568,15 @@ bool com_android_aconfig_test_disabled_rw() {
 
 void set_com_android_aconfig_test_disabled_rw(bool val) {
     com::android::aconfig::test::disabled_rw(val);
+}
+
+bool com_android_aconfig_test_disabled_rw_in_other_namespace() {
+    return com::android::aconfig::test::disabled_rw_in_other_namespace();
+}
+
+
+void set_com_android_aconfig_test_disabled_rw_in_other_namespace(bool val) {
+    com::android::aconfig::test::disabled_rw_in_other_namespace(val);
 }
 
 

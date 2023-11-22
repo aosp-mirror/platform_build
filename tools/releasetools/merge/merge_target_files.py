@@ -46,6 +46,10 @@ Usage: merge_target_files [args]
       The optional path to a newline-separated config file of items that
       are extracted as-is from the vendor target files package.
 
+  --boot-image-dir-path
+      The input boot image directory path. This path contains IMAGES/boot.img
+      file.
+
   --output-target-files output-target-files-package
       If provided, the output merged target files package. Also a zip archive.
 
@@ -136,6 +140,7 @@ OPTIONS.framework_item_list = []
 OPTIONS.framework_misc_info_keys = []
 OPTIONS.vendor_target_files = None
 OPTIONS.vendor_item_list = []
+OPTIONS.boot_image_dir_path = None
 OPTIONS.output_target_files = None
 OPTIONS.output_dir = None
 OPTIONS.output_item_list = []
@@ -209,6 +214,12 @@ def create_merged_package(temp_dir):
       input_zipfile_or_dir=OPTIONS.vendor_target_files,
       output_dir=output_target_files_temp_dir,
       item_list=OPTIONS.vendor_item_list)
+
+  if OPTIONS.boot_image_dir_path:
+    merge_utils.CollectTargetFiles(
+        input_zipfile_or_dir=OPTIONS.boot_image_dir_path,
+        output_dir=output_target_files_temp_dir,
+        item_list=['IMAGES/boot.img'])
 
   # Perform special case processing on META/* items.
   # After this function completes successfully, all the files we need to create
@@ -539,6 +550,8 @@ def main():
       OPTIONS.vendor_item_list = a
     elif o == '--vendor-item-list':
       OPTIONS.vendor_item_list = a
+    elif o == '--boot-image-dir-path':
+      OPTIONS.boot_image_dir_path = a
     elif o == '--output-target-files':
       OPTIONS.output_target_files = a
     elif o == '--output-dir':
@@ -587,6 +600,7 @@ def main():
           'vendor-target-files=',
           'other-item-list=',
           'vendor-item-list=',
+          'boot-image-dir-path=',
           'output-target-files=',
           'output-dir=',
           'output-item-list=',

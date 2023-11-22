@@ -64,7 +64,7 @@ ifneq ($(filter-out false,$(USE_RBE)),)
     d8_exec_strategy := remote_local_fallback
   endif
 
-  platform := container-image=docker://gcr.io/androidbuild-re-dockerimage/android-build-remoteexec-image@sha256:582efb38f0c229ea39952fff9e132ccbe183e14869b39888010dacf56b360d62
+  platform := container-image=docker://gcr.io/androidbuild-re-dockerimage/android-build-remoteexec-image@sha256:1eb7f64b9e17102b970bd7a1af7daaebdb01c3fb777715899ef462d6c6d01a45
   cxx_platform := $(platform),Pool=$(cxx_pool)
   java_r8_d8_platform := $(platform),Pool=$(java_pool)
 

@@ -202,7 +202,7 @@ _board_strip_readonly_list += $(_build_broken_var_list) \
 
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
-  WITH_DEXPREOPT := true
+  WITH_DEXPREOPT ?= true
 endif
 
 # ###############################################################
@@ -986,6 +986,21 @@ _unsupported_systemsdk_versions := $(filter-out $(PLATFORM_SYSTEMSDK_VERSIONS),$
 ifneq (,$(_unsupported_systemsdk_versions))
   $(error System SDK versions '$(_unsupported_systemsdk_versions)' in BOARD_SYSTEMSDK_VERSIONS are not supported.\
           Supported versions are $(PLATFORM_SYSTEMSDK_VERSIONS))
+endif
+
+###########################################
+# BOARD_API_LEVEL for vendor API surface
+ifdef RELEASE_BOARD_API_LEVEL
+  ifdef BOARD_API_LEVEL
+    $(error BOARD_API_LEVEL must not set manully. The build system automatically sets this value.)
+  endif
+  BOARD_API_LEVEL := $(RELEASE_BOARD_API_LEVEL)
+  .KATI_READONLY := BOARD_API_LEVEL
+
+  ifdef RELEASE_BOARD_API_LEVEL_FROZEN
+    BOARD_API_LEVEL_FROZEN := true
+    .KATI_READONLY := BOARD_API_LEVEL_FROZEN
+  endif
 endif
 
 ###########################################

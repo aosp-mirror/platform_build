@@ -420,6 +420,8 @@ PRODUCT_OTA_PUBLIC_KEYS := $(sort $(PRODUCT_OTA_PUBLIC_KEYS))
 PRODUCT_EXTRA_OTA_KEYS := $(sort $(PRODUCT_EXTRA_OTA_KEYS))
 PRODUCT_EXTRA_RECOVERY_KEYS := $(sort $(PRODUCT_EXTRA_RECOVERY_KEYS))
 
+PRODUCT_VALIDATION_CHECKS := $(sort $(PRODUCT_VALIDATION_CHECKS))
+
 # Resolve and setup per-module dex-preopt configs.
 DEXPREOPT_DISABLED_MODULES :=
 # If a module has multiple setups, the first takes precedence.
@@ -495,18 +497,6 @@ ifeq ($(PRODUCT_SET_DEBUGFS_RESTRICTIONS),)
     ifeq (true,$(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),31))
       PRODUCT_SET_DEBUGFS_RESTRICTIONS := true
     endif
-  endif
-endif
-
-ifdef PRODUCT_SHIPPING_API_LEVEL
-  ifneq (,$(call math_gt_or_eq,29,$(PRODUCT_SHIPPING_API_LEVEL)))
-    PRODUCT_PACKAGES += $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29)
-  endif
-  ifneq (,$(call math_gt_or_eq,33,$(PRODUCT_SHIPPING_API_LEVEL)))
-    PRODUCT_PACKAGES += $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_33)
-  endif
-  ifneq (,$(call math_gt_or_eq,34,$(PRODUCT_SHIPPING_API_LEVEL)))
-    PRODUCT_PACKAGES += $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34)
   endif
 endif
 
@@ -587,6 +577,15 @@ else ifneq ($(PRODUCT_CHECK_VENDOR_SEAPP_VIOLATIONS),)
   CHECK_VENDOR_SEAPP_VIOLATIONS := $(PRODUCT_CHECK_VENDOR_SEAPP_VIOLATIONS)
 endif
 .KATI_READONLY := CHECK_VENDOR_SEAPP_VIOLATIONS
+
+# Boolean variable determining if selinux labels of /dev are enforced
+CHECK_DEV_TYPE_VIOLATIONS := false
+ifneq ($(call math_gt,$(VSR_VENDOR_API_LEVEL),35),)
+  CHECK_DEV_TYPE_VIOLATIONS := true
+else ifneq ($(PRODUCT_CHECK_DEV_TYPE_VIOLATIONS),)
+  CHECK_DEV_TYPE_VIOLATIONS := $(PRODUCT_CHECK_DEV_TYPE_VIOLATIONS)
+endif
+.KATI_READONLY := CHECK_DEV_TYPE_VIOLATIONS
 
 define product-overrides-config
 $$(foreach rule,$$(PRODUCT_$(1)_OVERRIDES),\
