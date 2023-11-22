@@ -98,6 +98,7 @@ pub fn parse_flags(
             };
             parsed_flag.set_permission(flag_permission);
             parsed_flag.set_is_fixed_read_only(flag_declaration.is_fixed_read_only());
+            parsed_flag.set_is_exported(flag_declaration.is_exported());
             let mut tracepoint = ProtoTracepoint::new();
             tracepoint.set_source(input.source.clone());
             tracepoint.set_state(DEFAULT_FLAG_STATE);
