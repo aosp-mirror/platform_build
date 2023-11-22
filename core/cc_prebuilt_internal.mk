@@ -56,9 +56,6 @@ ifneq ($(filter true keep_symbols no_debuglink mini-debug-info,$(my_strip_module
   ifeq ($(filter SHARED_LIBRARIES EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
     $(call pretty-error,Can strip/pack only shared libraries or executables)
   endif
-  ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
-    $(call pretty-error,Cannot strip/pack scripts)
-  endif
   # Set the arch-specific variables to set up the strip rules
   LOCAL_STRIP_MODULE_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) := $(my_strip_module)
   include $(BUILD_SYSTEM)/dynamic_binary.mk

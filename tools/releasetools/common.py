@@ -39,17 +39,22 @@ import tempfile
 import threading
 import time
 import zipfile
+
+from typing import Iterable, Callable
 from dataclasses import dataclass
-from genericpath import isdir
 from hashlib import sha1, sha256
 
 import images
-import rangelib
 import sparse_img
 from blockimgdiff import BlockImageDiff
 
 logger = logging.getLogger(__name__)
 
+
+@dataclass
+class OptionHandler:
+  extra_long_opts: Iterable[str]
+  handler: Callable
 
 class Options(object):
 
@@ -1943,8 +1948,11 @@ def _SignBootableImage(image_path, prebuilt_name, partition_name,
       for filename in ["kernel", "ramdisk", "vendor_ramdisk00"]:
         path = os.path.join(tmpdir, filename)
         if os.path.exists(path) and os.path.getsize(path):
+          print("Using {} as salt for avb footer of {}".format(
+              filename, partition_name))
           with open(path, "rb") as fp:
             salt = sha256(fp.read()).hexdigest()
+            break
     AppendAVBSigningArgs(cmd, partition_name, salt)
     args = info_dict.get("avb_" + partition_name + "_add_hash_footer_args")
     if args and args.strip():
@@ -2651,7 +2659,9 @@ def CheckSize(data, target, info_dict):
     device = p.device
     if "/" in device:
       device = device[device.rfind("/")+1:]
-    limit = info_dict.get(device + "_size")
+    limit = info_dict.get(device + "_size", 0)
+    if isinstance(limit, str):
+      limit = int(limit, 0)
   if not fs_type or not limit:
     return
 
@@ -2788,12 +2798,19 @@ def Usage(docstring):
 def ParseOptions(argv,
                  docstring,
                  extra_opts="", extra_long_opts=(),
-                 extra_option_handler=None):
+                 extra_option_handler: Iterable[OptionHandler] = None):
   """Parse the options in argv and return any arguments that aren't
   flags.  docstring is the calling module's docstring, to be displayed
   for errors and -h.  extra_opts and extra_long_opts are for flags
   defined by the caller, which are processed by passing them to
   extra_option_handler."""
+  extra_long_opts = list(extra_long_opts)
+  if not isinstance(extra_option_handler, Iterable):
+    extra_option_handler = [extra_option_handler]
+
+  for handler in extra_option_handler:
+    if isinstance(handler, OptionHandler):
+      extra_long_opts.extend(handler.extra_long_opts)
 
   try:
     opts, args = getopt.getopt(
@@ -2855,8 +2872,19 @@ def ParseOptions(argv,
     elif o in ("--logfile",):
       OPTIONS.logfile = a
     else:
-      if extra_option_handler is None or not extra_option_handler(o, a):
-        assert False, "unknown option \"%s\"" % (o,)
+      if extra_option_handler is None:
+        raise ValueError("unknown option \"%s\"" % (o,))
+      success = False
+      for handler in extra_option_handler:
+        if isinstance(handler, OptionHandler):
+          if handler.handler(o, a):
+            success = True
+            break
+        elif handler(o, a):
+          success = True
+      if not success:
+        raise ValueError("unknown option \"%s\"" % (o,))
+
 
   if OPTIONS.search_path:
     os.environ["PATH"] = (os.path.join(OPTIONS.search_path, "bin") +

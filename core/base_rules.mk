@@ -124,11 +124,6 @@ include $(BUILD_SYSTEM)/local_vndk.mk
 include $(BUILD_SYSTEM)/local_systemsdk.mk
 include $(BUILD_SYSTEM)/local_current_sdk.mk
 
-my_module_tags := $(LOCAL_MODULE_TAGS)
-ifeq ($(my_host_cross),true)
-  my_module_tags :=
-endif
-
 # Ninja has an implicit dependency on the command being run, and kati will
 # regenerate the ninja manifest if any read makefile changes, so there is no
 # need to have dependencies on makefiles.
@@ -148,46 +143,13 @@ endif
 ## Validate and define fallbacks for input LOCAL_* variables.
 ###########################################################
 
-## Dump a .csv file of all modules and their tags
-#ifneq ($(tag-list-first-time),false)
-#$(shell rm -f tag-list.csv)
-#tag-list-first-time := false
-#endif
-#$(shell echo $(lastword $(filter-out config/% out/%,$(MAKEFILE_LIST))),$(LOCAL_MODULE),$(strip $(LOCAL_MODULE_CLASS)),$(subst $(space),$(comma),$(sort $(my_module_tags))) >> tag-list.csv)
-
 LOCAL_UNINSTALLABLE_MODULE := $(strip $(LOCAL_UNINSTALLABLE_MODULE))
-my_module_tags := $(sort $(my_module_tags))
-ifeq (,$(my_module_tags))
-  my_module_tags := optional
-endif
-
-# User tags are not allowed anymore.  Fail early because it will not be installed
-# like it used to be.
-ifneq ($(filter $(my_module_tags),user),)
-  $(warning *** Module name: $(LOCAL_MODULE))
-  $(warning *** Makefile location: $(LOCAL_MODULE_MAKEFILE))
-  $(warning * )
-  $(warning * Module is attempting to use the 'user' tag.  This)
-  $(warning * used to cause the module to be installed automatically.)
-  $(warning * Now, the module must be listed in the PRODUCT_PACKAGES)
-  $(warning * section of a product makefile to have it installed.)
-  $(warning * )
-  $(error user tag detected on module.)
-endif
-
-my_bad_module_tags := $(filter eng debug,$(my_module_tags))
-ifdef my_bad_module_tags
-  ifeq (true,$(LOCAL_UNINSTALLABLE_MODULE))
-    $(call pretty-warning,LOCAL_MODULE_TAGS := $(my_bad_module_tags) does not do anything for uninstallable modules)
-  endif
-  $(call pretty-error,LOCAL_MODULE_TAGS := $(my_bad_module_tags) is obsolete. See $(CHANGES_URL)#LOCAL_MODULE_TAGS)
-endif
 
 # Only the tags mentioned in this test are expected to be set by module
 # makefiles. Anything else is either a typo or a source of unexpected
 # behaviors.
-ifneq ($(filter-out tests optional samples,$(my_module_tags)),)
-$(call pretty-error,unusual tags: $(filter-out tests optional samples,$(my_module_tags)))
+ifneq ($(filter-out tests optional samples,$(LOCAL_MODULE_TAGS)),)
+$(call pretty-error,unusual tags: $(filter-out tests optional samples,$(LOCAL_MODULE_TAGS)))
 endif
 
 LOCAL_MODULE_CLASS := $(strip $(LOCAL_MODULE_CLASS))
@@ -240,7 +202,7 @@ else ifeq (NATIVE_TESTS,$(LOCAL_MODULE_CLASS))
 else
   # The definition of should-install-to-system will be different depending
   # on which goal (e.g., sdk or just droid) is being built.
-  partition_tag := $(if $(call should-install-to-system,$(my_module_tags)),,_DATA)
+  partition_tag := $(if $(call should-install-to-system,$(LOCAL_MODULE_TAGS)),,_DATA)
   actual_partition_tag := $(if $(partition_tag),data,system)
 endif
 endif
@@ -252,7 +214,7 @@ ifndef LOCAL_COMPATIBILITY_SUITE
     LOCAL_COMPATIBILITY_SUITE := null-suite
   endif
   ifneq ($(filter APPS, $(LOCAL_MODULE_CLASS)),)
-    ifneq ($(filter $(my_module_tags),tests),)
+    ifneq ($(filter $(LOCAL_MODULE_TAGS),tests),)
       LOCAL_COMPATIBILITY_SUITE := null-suite
     endif
   endif
@@ -947,7 +909,7 @@ ALL_MODULES.$(my_register_name).CLASS := \
 ALL_MODULES.$(my_register_name).PATH := \
     $(ALL_MODULES.$(my_register_name).PATH) $(LOCAL_PATH)
 ALL_MODULES.$(my_register_name).TAGS := \
-    $(ALL_MODULES.$(my_register_name).TAGS) $(my_module_tags)
+    $(ALL_MODULES.$(my_register_name).TAGS) $(LOCAL_MODULE_TAGS)
 ALL_MODULES.$(my_register_name).CHECKED := \
     $(ALL_MODULES.$(my_register_name).CHECKED) $(my_checked_module)
 ALL_MODULES.$(my_register_name).BUILT := \
@@ -1180,6 +1142,7 @@ ALL_MODULES.$(my_register_name).EXTRA_TEST_CONFIGS := $(LOCAL_EXTRA_FULL_TEST_CO
 ALL_MODULES.$(my_register_name).TEST_MAINLINE_MODULES := $(LOCAL_TEST_MAINLINE_MODULES)
 ifndef LOCAL_IS_HOST_MODULE
 ALL_MODULES.$(my_register_name).FILE_CONTEXTS := $(LOCAL_FILE_CONTEXTS)
+ALL_MODULES.$(my_register_name).APEX_KEYS_FILE := $(LOCAL_APEX_KEY_PATH)
 endif
 ifdef LOCAL_IS_UNIT_TEST
 ALL_MODULES.$(my_register_name).IS_UNIT_TEST := $(LOCAL_IS_UNIT_TEST)
@@ -1193,11 +1156,9 @@ INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
 
 ##########################################################
 # Track module-level dependencies.
-# Use $(LOCAL_MODULE) instead of $(my_register_name) to ignore module's bitness.
 # (b/204397180) Unlock RECORD_ALL_DEPS was acknowledged reasonable for better Atest performance.
-ALL_DEPS.MODULES += $(LOCAL_MODULE)
-ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
-  $(ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS) \
+ALL_MODULES.$(my_register_name).ALL_DEPS := \
+  $(ALL_MODULES.$(my_register_name).ALL_DEPS) \
   $(LOCAL_STATIC_LIBRARIES) \
   $(LOCAL_WHOLE_STATIC_LIBRARIES) \
   $(LOCAL_SHARED_LIBRARIES) \
@@ -1207,21 +1168,7 @@ ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
   $(LOCAL_HEADER_LIBRARIES) \
   $(LOCAL_STATIC_JAVA_LIBRARIES) \
   $(LOCAL_JAVA_LIBRARIES) \
-  $(LOCAL_JNI_SHARED_LIBRARIES))
-
-license_files := $(call find-parent-file,$(LOCAL_PATH),MODULE_LICENSE*)
-ALL_DEPS.$(LOCAL_MODULE).LICENSE := $(sort $(ALL_DEPS.$(LOCAL_MODULE).LICENSE) $(license_files))
-
-###########################################################
-## Take care of my_module_tags
-###########################################################
-
-# Keep track of all the tags we've seen.
-ALL_MODULE_TAGS := $(sort $(ALL_MODULE_TAGS) $(my_module_tags))
-
-# Add this module name to the tag list of each specified tag.
-$(foreach tag,$(filter-out optional,$(my_module_tags)),\
-    $(eval ALL_MODULE_NAME_TAGS.$(tag) := $$(ALL_MODULE_NAME_TAGS.$(tag)) $(my_register_name)))
+  $(LOCAL_JNI_SHARED_LIBRARIES)
 
 ###########################################################
 ## umbrella targets used to verify builds
@@ -1249,7 +1196,7 @@ endif
 
 ifdef j_or_n
 $(j_or_n) $(h_or_t) $(j_or_n)-$(h_or_hc_or_t) : $(my_checked_module)
-ifneq (,$(filter $(my_module_tags),tests))
+ifneq (,$(filter $(LOCAL_MODULE_TAGS),tests))
 $(j_or_n)-$(h_or_t)-tests $(j_or_n)-tests $(h_or_t)-tests : $(my_checked_module)
 endif
 $(LOCAL_MODULE)-$(h_or_hc_or_t) : $(my_all_targets)

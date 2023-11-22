@@ -22,3 +22,8 @@ PRODUCT_PACKAGES += \
     passwd_system_ext \
     selinux_policy_system_ext \
     system_ext_manifest.xml \
+
+# Base modules when shipping api level is less than or equal to 34
+PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34 += \
+    hwservicemanager \
+    android.hidl.allocator@1.0-service \

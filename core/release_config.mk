@@ -52,6 +52,15 @@ config_map_files := $(wildcard build/release/release_config_map.mk) \
         ) \
     )
 
+# PRODUCT_RELEASE_CONFIG_MAPS is set by Soong using an initial run of product
+# config to capture only the list of config maps needed by the build.
+# Keep them in the order provided, but remove duplicates.
+$(foreach map,$(PRODUCT_RELEASE_CONFIG_MAPS), \
+    $(if $(filter $(map),$(config_map_files)),,$(eval config_map_files += $(map))) \
+)
+
+# Declare or extend a release-config.
+#
 # $1 config name
 # $2 release config files
 define declare-release-config
@@ -63,30 +72,42 @@ define declare-release-config
     $(eval _all_release_configs.$(strip $(1)).FILES := $(_all_release_configs.$(strip $(1)).FILES) $(strip $(2)))
 endef
 
-# Include the config map files
+# Include the config map files and populate _flag_declaration_files.
+_flag_declaration_files :=
 $(foreach f, $(config_map_files), \
+    $(eval FLAG_DECLARATION_FILES:= ) \
     $(eval _included := $(f)) \
     $(eval include $(f)) \
+    $(eval _flag_declaration_files += $(FLAG_DECLARATION_FILES)) \
 )
+FLAG_DECLARATION_FILES :=
 
-# If TARGET_RELEASE is set, fail if there is no matching release config
-# If it isn't set, no release config files will be included and all flags
-# will get their default values.
-ifneq ($(TARGET_RELEASE),)
+ifeq ($(TARGET_RELEASE),)
+    # We allow some internal paths to explicitly set TARGET_RELEASE to the
+    # empty string.  For the most part, 'make' treats unset and empty string as
+    # the same.  But the following line differentiates, and will only assign
+    # if the variable was completely unset.
+    TARGET_RELEASE ?= was_unset
+    ifeq ($(TARGET_RELEASE),was_unset)
+        $(error No release config set for target; please set TARGET_RELEASE, or if building on the command line use 'lunch <target>-<release>-<build_type>', where release is one of: $(_all_release_configs))
+    endif
+    # Instead of leaving this string empty, we want to default to a valid
+    # setting.  Full builds coming through this path is a bug, but in case
+    # of such a bug, we want to at least get consistent, valid results.
+    TARGET_RELEASE = trunk_staging
+endif
+
 ifeq ($(filter $(_all_release_configs), $(TARGET_RELEASE)),)
     $(error No release config found for TARGET_RELEASE: $(TARGET_RELEASE). Available releases are: $(_all_release_configs))
-else
-    # Choose flag files
-    # Don't sort this, use it in the order they gave us.
-    flag_value_files := $(_all_release_configs.$(TARGET_RELEASE).FILES)
 endif
-else
-# Useful for finding scripts etc that aren't passing or setting TARGET_RELEASE
-ifneq ($(FAIL_IF_NO_RELEASE_CONFIG),)
-    $(error FAIL_IF_NO_RELEASE_CONFIG was set and TARGET_RELEASE was not)
-endif
+
+# Choose flag files
+# Don't sort this, use it in the order they gave us.
+# Do allow duplicate entries, retaining only the first usage.
 flag_value_files :=
-endif
+$(foreach f,$(_all_release_configs.$(TARGET_RELEASE).FILES), \
+  $(if $(filter $(f),$(flag_value_files)),,$(eval flag_value_files += $(f)))\
+)
 
 # Unset variables so they can't use them
 define declare-release-config
@@ -121,36 +142,23 @@ config_map_files:=
 # that we chose from the config map above.  Then we run that, and load the
 # results of that into the make environment.
 
-# If this is a google source tree, restrict it to only the one file
-# which has OWNERS control.  If it isn't let others define their own.
-# TODO: Remove wildcard for build/release one when all branch manifests
-# have updated.
-flag_declaration_files := $(wildcard build/release/build_flags.bzl) \
-    $(if $(wildcard vendor/google/release/build_flags.bzl), \
-        vendor/google/release/build_flags.bzl, \
-        $(sort \
-            $(wildcard device/*/release/build_flags.bzl) \
-            $(wildcard device/*/*/release/build_flags.bzl) \
-            $(wildcard vendor/*/release/build_flags.bzl) \
-            $(wildcard vendor/*/*/release/build_flags.bzl) \
-        ) \
-    )
-
+# _flag_declaration_files is the combined list of FLAG_DECLARATION_FILES set by
+# release_config_map.mk files above.
 
 # Because starlark can't find files with $(wildcard), write an entrypoint starlark script that
 # contains the result of the above wildcards for the starlark code to use.
 filename_to_starlark=$(subst /,_,$(subst .,_,$(1)))
-_c:=load("//build/make/core/release_config.bzl", "release_config")
+_c:=load("//build/make/core/release_config.scl", "release_config")
 _c+=$(newline)def add(d, k, v):
 _c+=$(newline)$(space)d = dict(d)
 _c+=$(newline)$(space)d[k] = v
 _c+=$(newline)$(space)return d
-_c+=$(foreach f,$(flag_declaration_files),$(newline)load("$(f)", flags_$(call filename_to_starlark,$(f)) = "flags"))
-_c+=$(newline)all_flags = [] $(foreach f,$(flag_declaration_files),+ [add(x, "declared_in", "$(f)") for x in flags_$(call filename_to_starlark,$(f))])
+_c+=$(foreach f,$(_flag_declaration_files),$(newline)load("$(f)", flags_$(call filename_to_starlark,$(f)) = "flags"))
+_c+=$(newline)all_flags = [] $(foreach f,$(_flag_declaration_files),+ [add(x, "declared_in", "$(f)") for x in flags_$(call filename_to_starlark,$(f))])
 _c+=$(foreach f,$(flag_value_files),$(newline)load("//$(f)", values_$(call filename_to_starlark,$(f)) = "values"))
 _c+=$(newline)all_values = [] $(foreach f,$(flag_value_files),+ [add(x, "set_in", "$(f)") for x in values_$(call filename_to_starlark,$(f))])
 _c+=$(newline)variables_to_export_to_make = release_config(all_flags, all_values)
-$(file >$(OUT_DIR)/release_config_entrypoint.bzl,$(_c))
+$(file >$(OUT_DIR)/release_config_entrypoint.scl,$(_c))
 _c:=
 filename_to_starlark:=
 
@@ -160,5 +168,5 @@ filename_to_starlark:=
 #
 # We also need to pass --allow_external_entrypoint to rbcrun in case the OUT_DIR is set to something
 # outside of the source tree.
-$(call run-starlark,$(OUT_DIR)/release_config_entrypoint.bzl,$(OUT_DIR)/release_config_entrypoint.bzl,--allow_external_entrypoint)
+$(call run-starlark,$(OUT_DIR)/release_config_entrypoint.scl,$(OUT_DIR)/release_config_entrypoint.scl,--allow_external_entrypoint)
 
