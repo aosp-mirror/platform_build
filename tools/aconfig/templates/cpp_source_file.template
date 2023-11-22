@@ -5,6 +5,8 @@
 {{ if for_test }}
 #include <unordered_map>
 #include <string>
+{{ -else- }}
+#include <vector>
 {{ endif }}
 
 namespace {cpp_namespace} \{
@@ -69,16 +71,15 @@ namespace {cpp_namespace} \{
             {{ -endif }}
         }
         {{ endfor }}
+    private:
+        std::vector<int8_t> cache_ = std::vector<int8_t>({readwrite_count}, -1);
     };
 
-    std::vector<int8_t> cache_ = std::vector<int8_t>({readwrite_count}, -1);
 
 {{ -endif }}
 
 std::unique_ptr<flag_provider_interface> provider_ =
     std::make_unique<flag_provider>();
-
-
 }
 
 

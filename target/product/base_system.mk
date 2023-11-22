@@ -21,7 +21,6 @@ PRODUCT_PACKAGES += \
     am \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
-    android.hidl.memory@1.0-impl \
     android.system.suspend-service \
     android.test.base \
     android.test.mock \
@@ -311,13 +310,17 @@ PRODUCT_PACKAGES += \
     system_manifest.xml \
     system_compatibility_matrix.xml \
 
-HIDL_SUPPORT_SERVICES := \
-    hwservicemanager \
-    android.hidl.allocator@1.0-service \
-
 # Base modules when shipping api level is less than or equal to 34
 PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34 += \
-    $(HIDL_SUPPORT_SERVICES) \
+    android.hidl.memory@1.0-impl \
+
+# hwservicemanager is now installed on system_ext, but apexes might be using
+# old libraries that are expecting it to be installed on system. This allows
+# those apexes to continue working. The symlink can be removed once we are sure
+# there are no devices using hwservicemanager (when Android V launching devices
+# are no longer supported for dessert upgrades).
+PRODUCT_PACKAGES += \
+    hwservicemanager_compat_symlink_module \
 
 PRODUCT_PACKAGES_ARM64 := libclang_rt.hwasan \
  libclang_rt.hwasan.bootstrap \
