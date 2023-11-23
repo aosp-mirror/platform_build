@@ -42,6 +42,7 @@ parsed_flag {
     permission: READ_ONLY
   }
   is_fixed_read_only: false
+  is_exported: false
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -57,6 +58,7 @@ parsed_flag {
     permission: READ_WRITE
   }
   is_fixed_read_only: false
+  is_exported: true
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -77,6 +79,7 @@ parsed_flag {
     permission: READ_WRITE
   }
   is_fixed_read_only: false
+  is_exported: false
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -97,6 +100,7 @@ parsed_flag {
     permission: READ_ONLY
   }
   is_fixed_read_only: true
+  is_exported: false
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -122,6 +126,7 @@ parsed_flag {
     permission: READ_ONLY
   }
   is_fixed_read_only: false
+  is_exported: false
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -142,6 +147,7 @@ parsed_flag {
     permission: READ_WRITE
   }
   is_fixed_read_only: false
+  is_exported: false
 }
 "#;
 
