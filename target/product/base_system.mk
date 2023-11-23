@@ -103,6 +103,7 @@ PRODUCT_PACKAGES += \
     fsverity-release-cert-der \
     fs_config_files_system \
     fs_config_dirs_system \
+    gpu_counter_producer \
     group_system \
     gsid \
     gsi_tool \
