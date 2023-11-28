@@ -182,6 +182,12 @@ ADDITIONAL_SYSTEM_PROPERTIES += ro.treble.enabled=${PRODUCT_FULL_TREBLE}
 $(KATI_obsolete_var PRODUCT_FULL_TREBLE,\
 	Code should be written to work regardless of a device being Treble)
 
+# Set ro.llndk.api_level to show the maximum vendor API level that the LLNDK in
+# the system partition supports.
+ifdef RELEASE_BOARD_API_LEVEL
+ADDITIONAL_SYSTEM_PROPERTIES += ro.llndk.api_level=$(RELEASE_BOARD_API_LEVEL)
+endif
+
 # Sets ro.actionable_compatible_property.enabled to know on runtime whether the
 # allowed list of actionable compatible properties is enabled or not.
 ADDITIONAL_SYSTEM_PROPERTIES += ro.actionable_compatible_property.enabled=true
@@ -1271,6 +1277,11 @@ define product-installed-modules
     $(if $(filter asan,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_ASAN)) \
     $(if $(filter java_coverage,$(tags_to_install)),$(call get-product-var,$(1),PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE)) \
     $(if $(filter arm64,$(TARGET_ARCH) $(TARGET_2ND_ARCH)),$(call get-product-var,$(1),PRODUCT_PACKAGES_ARM64)) \
+    $(if $(PRODUCT_SHIPPING_API_LEVEL), \
+      $(if $(call math_gt_or_eq,29,$(PRODUCT_SHIPPING_API_LEVEL)),$(call get-product-var,$(1),PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29)) \
+      $(if $(call math_gt_or_eq,33,$(PRODUCT_SHIPPING_API_LEVEL)),$(call get-product-var,$(1),PRODUCT_PACKAGES_SHIPPING_API_LEVEL_33)) \
+      $(if $(call math_gt_or_eq,34,$(PRODUCT_SHIPPING_API_LEVEL)),$(call get-product-var,$(1),PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34)) \
+    ) \
     $(call auto-included-modules) \
   ) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \

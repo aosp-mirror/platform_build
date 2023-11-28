@@ -9,8 +9,8 @@ import android.provider.DeviceConfig.Properties;
 /** @hide */
 public final class FeatureFlagsImpl implements FeatureFlags \{
 {{- if is_read_write }}
-{{- for namespace in namespace_set }}
-    private static boolean {namespace}_is_cached = false;
+{{- for namespace_with_flags in namespace_flags }}
+    private static boolean {namespace_with_flags.namespace}_is_cached = false;
 {{- endfor- }}
 
 {{ for flag in flag_elements }}
@@ -19,12 +19,12 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
 {{- endif- }}
 {{ endfor }}
 
-{{ for namespace in namespace_set }}
-    private void load_overrides_{namespace}() \{
+{{ for namespace_with_flags in namespace_flags }}
+    private void load_overrides_{namespace_with_flags.namespace}() \{
         try \{
-            Properties properties = DeviceConfig.getProperties("{namespace}");
+            Properties properties = DeviceConfig.getProperties("{namespace_with_flags.namespace}");
 
-            {{- for flag in flag_elements }}
+            {{- for flag in namespace_with_flags.flags }}
             {{- if flag.is_read_write }}
             {flag.method_name} =
                 properties.getBoolean("{flag.device_config_flag}", {flag.default_value});
@@ -32,7 +32,7 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
             {{ endfor }}
         } catch (NullPointerException e) \{
             throw new RuntimeException(
-                "Cannot read value from namespace {namespace} "
+                "Cannot read value from namespace {namespace_with_flags.namespace} "
                 + "from DeviceConfig. It could be that the code using flag "
                 + "executed before SettingsProvider initialization. Please use "
                 + "fixed read-only flag by adding is_fixed_read_only: true in "
@@ -40,7 +40,7 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
                 e
             );
         }
-        {namespace}_is_cached = true;
+        {namespace_with_flags.namespace}_is_cached = true;
     }
 {{ endfor- }}
 {{ endif- }}

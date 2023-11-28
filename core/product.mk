@@ -443,6 +443,9 @@ _product_single_value_vars += PRODUCT_VIRTUAL_AB_COW_VERSION
 # If set, determines whether the build system checks vendor seapp contexts violations.
 _product_single_value_vars += PRODUCT_CHECK_VENDOR_SEAPP_VIOLATIONS
 
+# If set, determines whether the build system checks dev type violations.
+_product_single_value_vars += PRODUCT_CHECK_DEV_TYPE_VIOLATIONS
+
 _product_list_vars += PRODUCT_AFDO_PROFILES
 
 _product_single_value_vars += PRODUCT_NEXT_RELEASE_HIDE_FLAGGED_API
@@ -450,6 +453,8 @@ _product_single_value_vars += PRODUCT_NEXT_RELEASE_HIDE_FLAGGED_API
 _product_list_vars += PRODUCT_RELEASE_CONFIG_MAPS
 
 _product_list_vars += PRODUCT_VALIDATION_CHECKS
+
+_product_single_value_vars += PRODUCT_BUILD_FROM_SOURCE_STUB
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)

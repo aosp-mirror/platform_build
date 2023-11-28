@@ -386,7 +386,7 @@ else # LOCAL_IS_HOST_MODULE
 endif # !LOCAL_IS_HOST_MODULE
 
 # (b/204397180) Record ALL_DEPS by default.
-ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS) $(full_java_bootclasspath_libs)
+ALL_MODULES.$(my_register_name).ALL_DEPS := $(ALL_MODULES.$(my_register_name).ALL_DEPS) $(full_java_bootclasspath_libs)
 
 # Export the SDK libs. The sdk library names listed in LOCAL_SDK_LIBRARIES are first exported.
 # Then sdk library names exported from dependencies are all re-exported.
