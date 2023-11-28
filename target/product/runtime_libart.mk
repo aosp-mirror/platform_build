@@ -134,23 +134,8 @@ endif
 # This option is for faster iteration during development and should never be enabled for production.
 ifneq (,$(filter true,$(OVERRIDE_DISABLE_DEXOPT_ALL)))
   PRODUCT_SYSTEM_PROPERTIES += \
-    pm.dexopt.post-boot=skip \
-    pm.dexopt.first-boot=skip \
-    pm.dexopt.boot-after-ota=skip \
-    pm.dexopt.boot-after-mainline-update=skip \
-    pm.dexopt.install=skip \
-    pm.dexopt.install-fast=skip \
-    pm.dexopt.install-bulk=skip \
-    pm.dexopt.install-bulk-secondary=skip \
-    pm.dexopt.install-bulk-downgraded=skip \
-    pm.dexopt.install-bulk-secondary-downgraded=skip \
-    pm.dexopt.bg-dexopt=skip \
-    pm.dexopt.ab-ota=skip \
-    pm.dexopt.inactive=skip \
-    pm.dexopt.cmdline=skip \
-    pm.dexopt.shared=skip
-
-  PRODUCT_SYSTEM_PROPERTIES += dalvik.vm.disable-odrefresh=true
+    dalvik.vm.disable-art-service-dexopt=true \
+    dalvik.vm.disable-odrefresh=true
 
   # Disable all dexpreopt activities except for the ART boot image.
   # We have to dexpreopt the ART boot image because they are used by ART tests. This should not
