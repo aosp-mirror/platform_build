@@ -15,9 +15,8 @@
  */
 
 use anyhow::Result;
-use itertools::Itertools;
 use serde::Serialize;
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
 use tinytemplate::TinyTemplate;
 
@@ -35,18 +34,14 @@ where
 {
     let flag_elements: Vec<FlagElement> =
         parsed_flags_iter.map(|pf| create_flag_element(package, pf)).collect();
-    let namespace_set: BTreeSet<String> = flag_elements
-        .iter()
-        .unique_by(|f| &f.device_config_namespace)
-        .map(|f| f.device_config_namespace.clone())
-        .collect();
+    let namespace_flags = gen_flags_by_namespace(&flag_elements);
     let properties_set: BTreeSet<String> =
         flag_elements.iter().map(|fe| format_property_name(&fe.device_config_namespace)).collect();
     let is_read_write = flag_elements.iter().any(|elem| elem.is_read_write);
     let is_test_mode = codegen_mode == CodegenMode::Test;
     let context = Context {
         flag_elements,
-        namespace_set,
+        namespace_flags,
         is_test_mode,
         is_read_write,
         properties_set,
@@ -79,17 +74,44 @@ where
         .collect::<Result<Vec<OutputFile>>>()
 }
 
+fn gen_flags_by_namespace(flags: &[FlagElement]) -> Vec<NamespaceFlags> {
+    let mut namespace_to_flag: BTreeMap<String, Vec<FlagElement>> = BTreeMap::new();
+
+    for flag in flags {
+        match namespace_to_flag.get_mut(&flag.device_config_namespace) {
+            Some(flag_list) => flag_list.push(flag.clone()),
+            None => {
+                namespace_to_flag.insert(flag.device_config_namespace.clone(), vec![flag.clone()]);
+            }
+        }
+    }
+
+    namespace_to_flag
+        .iter()
+        .map(|(namespace, flags)| NamespaceFlags {
+            namespace: namespace.to_string(),
+            flags: flags.clone(),
+        })
+        .collect()
+}
+
 #[derive(Serialize)]
 struct Context {
     pub flag_elements: Vec<FlagElement>,
-    pub namespace_set: BTreeSet<String>,
+    pub namespace_flags: Vec<NamespaceFlags>,
     pub is_test_mode: bool,
     pub is_read_write: bool,
     pub properties_set: BTreeSet<String>,
     pub package_name: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
+struct NamespaceFlags {
+    pub namespace: String,
+    pub flags: Vec<FlagElement>,
+}
+
+#[derive(Serialize, Clone, Debug)]
 struct FlagElement {
     pub default_value: bool,
     pub device_config_namespace: String,
@@ -156,6 +178,8 @@ mod tests {
         boolean disabledRo();
         @UnsupportedAppUsage
         boolean disabledRw();
+        @UnsupportedAppUsage
+        boolean disabledRwInOtherNamespace();
         @com.android.aconfig.annotations.AssumeTrueForR8
         @UnsupportedAppUsage
         boolean enabledFixedRo();
@@ -178,6 +202,8 @@ mod tests {
         /** @hide */
         public static final String FLAG_DISABLED_RW = "com.android.aconfig.test.disabled_rw";
         /** @hide */
+        public static final String FLAG_DISABLED_RW_IN_OTHER_NAMESPACE = "com.android.aconfig.test.disabled_rw_in_other_namespace";
+        /** @hide */
         public static final String FLAG_ENABLED_FIXED_RO = "com.android.aconfig.test.enabled_fixed_ro";
         /** @hide */
         public static final String FLAG_ENABLED_RO = "com.android.aconfig.test.enabled_ro";
@@ -192,6 +218,10 @@ mod tests {
         @UnsupportedAppUsage
         public static boolean disabledRw() {
             return FEATURE_FLAGS.disabledRw();
+        }
+        @UnsupportedAppUsage
+        public static boolean disabledRwInOtherNamespace() {
+            return FEATURE_FLAGS.disabledRwInOtherNamespace();
         }
         @com.android.aconfig.annotations.AssumeTrueForR8
         @UnsupportedAppUsage
@@ -232,6 +262,11 @@ mod tests {
         }
         @Override
         @UnsupportedAppUsage
+        public boolean disabledRwInOtherNamespace() {
+            return getValue(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE);
+        }
+        @Override
+        @UnsupportedAppUsage
         public boolean enabledFixedRo() {
             return getValue(Flags.FLAG_ENABLED_FIXED_RO);
         }
@@ -267,6 +302,7 @@ mod tests {
             Map.ofEntries(
                 Map.entry(Flags.FLAG_DISABLED_RO, false),
                 Map.entry(Flags.FLAG_DISABLED_RW, false),
+                Map.entry(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE, false),
                 Map.entry(Flags.FLAG_ENABLED_FIXED_RO, false),
                 Map.entry(Flags.FLAG_ENABLED_RO, false),
                 Map.entry(Flags.FLAG_ENABLED_RW, false)
@@ -298,7 +334,9 @@ mod tests {
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
             private static boolean aconfig_test_is_cached = false;
+            private static boolean other_namespace_is_cached = false;
             private static boolean disabledRw = false;
+            private static boolean disabledRwInOtherNamespace = false;
             private static boolean enabledRw = true;
 
 
@@ -322,6 +360,25 @@ mod tests {
                 aconfig_test_is_cached = true;
             }
 
+            private void load_overrides_other_namespace() {
+                try {
+                    Properties properties = DeviceConfig.getProperties("other_namespace");
+                    disabledRwInOtherNamespace =
+                        properties.getBoolean("com.android.aconfig.test.disabled_rw_in_other_namespace", false);
+                } catch (NullPointerException e) {
+                    throw new RuntimeException(
+                        "Cannot read value from namespace other_namespace "
+                        + "from DeviceConfig. It could be that the code using flag "
+                        + "executed before SettingsProvider initialization. Please use "
+                        + "fixed read-only flag by adding is_fixed_read_only: true in "
+                        + "flag declaration.",
+                        e
+                    );
+                }
+                other_namespace_is_cached = true;
+            }
+
+
             @Override
             @UnsupportedAppUsage
             public boolean disabledRo() {
@@ -334,6 +391,14 @@ mod tests {
                     load_overrides_aconfig_test();
                 }
                 return disabledRw;
+            }
+            @Override
+            @UnsupportedAppUsage
+            public boolean disabledRwInOtherNamespace() {
+                if (!other_namespace_is_cached) {
+                    load_overrides_other_namespace();
+                }
+                return disabledRwInOtherNamespace;
             }
             @Override
             @UnsupportedAppUsage
@@ -419,6 +484,12 @@ mod tests {
             @Override
             @UnsupportedAppUsage
             public boolean disabledRw() {
+                throw new UnsupportedOperationException(
+                    "Method is not implemented.");
+            }
+            @Override
+            @UnsupportedAppUsage
+            public boolean disabledRwInOtherNamespace() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
             }

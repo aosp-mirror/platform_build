@@ -16,9 +16,50 @@
 
 import common
 import logging
-from common import OPTIONS
+import shlex
+from common import OPTIONS, OptionHandler
 
 logger = logging.getLogger(__name__)
+
+OPTIONS.payload_signer = None
+OPTIONS.payload_signer_args = []
+OPTIONS.payload_signer_maximum_signature_size = None
+OPTIONS.package_key = None
+
+
+class SignerOptions(OptionHandler):
+
+  @staticmethod
+  def ParseOptions(o, a):
+    if o in ("-k", "--package_key"):
+      OPTIONS.package_key = a
+    elif o == "--payload_signer":
+      OPTIONS.payload_signer = a
+    elif o == "--payload_signer_args":
+      OPTIONS.payload_signer_args = shlex.split(a)
+    elif o == "--payload_signer_maximum_signature_size":
+      OPTIONS.payload_signer_maximum_signature_size = a
+    elif o == "--payload_signer_key_size":
+      # TODO(xunchang) remove this option after cleaning up the callers.
+      logger.warning("The option '--payload_signer_key_size' is deprecated."
+                      " Use '--payload_signer_maximum_signature_size' instead.")
+      OPTIONS.payload_signer_maximum_signature_size = a
+    else:
+      return False
+    return True
+
+  def __init__(self):
+    super().__init__(
+      ["payload_signer=",
+       "package_key=",
+       "payload_signer_args=",
+       "payload_signer_maximum_signature_size=",
+       "payload_signer_key_size="],
+       SignerOptions.ParseOptions
+    )
+
+
+signer_options = SignerOptions()
 
 
 class PayloadSigner(object):
