@@ -63,11 +63,19 @@ $(foreach map,$(PRODUCT_RELEASE_CONFIG_MAPS), \
 #
 # $1 config name
 # $2 release config files
+# $3 overridden release config.  Only applied for $(TARGET_RELEASE), not in depth.
 define declare-release-config
     $(if $(strip $(2)),,  \
         $(error declare-release-config: config $(strip $(1)) must have release config files) \
     )
     $(eval _all_release_configs := $(sort $(_all_release_configs) $(strip $(1))))
+    $(if $(strip $(3)), \
+      $(if $(filter $(_all_release_configs), $(strip $(3))),
+        $(if $(filter $(_all_release_configs.$(strip $(1)).OVERRIDES),$(strip $(3))),,
+          $(eval _all_release_configs.$(strip $(1)).OVERRIDES := $(_all_release_configs.$(strip $(1)).OVERRIDES) $(strip $(3)))), \
+        $(error No release config $(strip $(3))) \
+      ) \
+    )
     $(eval _all_release_configs.$(strip $(1)).DECLARED_IN := $(_included) $(_all_release_configs.$(strip $(1)).DECLARED_IN))
     $(eval _all_release_configs.$(strip $(1)).FILES := $(_all_release_configs.$(strip $(1)).FILES) $(strip $(2)))
 endef
@@ -105,8 +113,10 @@ endif
 # Don't sort this, use it in the order they gave us.
 # Do allow duplicate entries, retaining only the first usage.
 flag_value_files :=
-$(foreach f,$(_all_release_configs.$(TARGET_RELEASE).FILES), \
-  $(if $(filter $(f),$(flag_value_files)),,$(eval flag_value_files += $(f)))\
+$(foreach r,$(_all_release_configs.$(TARGET_RELEASE).OVERRIDES) $(TARGET_RELEASE), \
+    $(foreach f,$(_all_release_configs.$(r).FILES), \
+      $(if $(filter $(f),$(flag_value_files)),,$(eval flag_value_files += $(f)))\
+    )\
 )
 
 # Unset variables so they can't use them
