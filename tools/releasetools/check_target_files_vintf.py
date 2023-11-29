@@ -218,12 +218,12 @@ def PrepareApexDirectory(inp, dirmap):
   2. invoke apexd_host with vendor APEXes.
   """
 
-  apex_dir = os.path.join(inp, 'APEX')
+  apex_dir = common.MakeTempDir('APEX')
   # checkvintf needs /apex dirmap
   dirmap['/apex'] = apex_dir
 
   # Always create /apex directory for dirmap
-  os.makedirs(apex_dir)
+  os.makedirs(apex_dir, exist_ok=True)
 
   # Invoke apexd_host to activate vendor APEXes for checkvintf
   apex_host = os.path.join(OPTIONS.search_path, 'bin', 'apexd_host')
