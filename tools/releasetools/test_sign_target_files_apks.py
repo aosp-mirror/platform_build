@@ -23,8 +23,7 @@ import common
 import test_utils
 from sign_target_files_apks import (
     CheckApkAndApexKeysAvailable, EditTags, GetApkFileInfo, ReadApexKeysInfo,
-    ReplaceCerts, ReplaceGkiSigningKey, RewriteAvbProps, RewriteProps,
-    WriteOtacerts)
+    ReplaceCerts, RewriteAvbProps, RewriteProps, WriteOtacerts)
 
 
 class SignTargetFilesApksTest(test_utils.ReleaseToolsTestCase):
@@ -536,52 +535,3 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
             'build/make/target/product/security/testkey', None),
         }, keys_info)
-
-  def test_ReplaceGkiSigningKey(self):
-    common.OPTIONS.gki_signing_key = 'release_gki_key'
-    common.OPTIONS.gki_signing_algorithm = 'release_gki_algorithm'
-    common.OPTIONS.gki_signing_extra_args = 'release_gki_signature_extra_args'
-
-    misc_info = {
-        'gki_signing_key_path': 'default_gki_key',
-        'gki_signing_algorithm': 'default_gki_algorithm',
-        'gki_signing_signature_args': 'default_gki_signature_args',
-    }
-    expected_dict = {
-        'gki_signing_key_path': 'release_gki_key',
-        'gki_signing_algorithm': 'release_gki_algorithm',
-        'gki_signing_signature_args': 'release_gki_signature_extra_args',
-    }
-    ReplaceGkiSigningKey(misc_info)
-    self.assertDictEqual(expected_dict, misc_info)
-
-  def test_ReplaceGkiSigningKey_MissingSigningAlgorithm(self):
-    common.OPTIONS.gki_signing_key = 'release_gki_key'
-    common.OPTIONS.gki_signing_algorithm = None
-    common.OPTIONS.gki_signing_extra_args = 'release_gki_signature_extra_args'
-
-    misc_info = {
-        'gki_signing_key_path': 'default_gki_key',
-        'gki_signing_algorithm': 'default_gki_algorithm',
-        'gki_signing_signature_args': 'default_gki_signature_args',
-    }
-    self.assertRaises(ValueError, ReplaceGkiSigningKey, misc_info)
-
-  def test_ReplaceGkiSigningKey_MissingSigningKeyNop(self):
-    common.OPTIONS.gki_signing_key = None
-    common.OPTIONS.gki_signing_algorithm = 'release_gki_algorithm'
-    common.OPTIONS.gki_signing_extra_args = 'release_gki_signature_extra_args'
-
-    # No change to misc_info if common.OPTIONS.gki_signing_key is missing.
-    misc_info = {
-        'gki_signing_key_path': 'default_gki_key',
-        'gki_signing_algorithm': 'default_gki_algorithm',
-        'gki_signing_signature_args': 'default_gki_signature_args',
-    }
-    expected_dict = {
-        'gki_signing_key_path': 'default_gki_key',
-        'gki_signing_algorithm': 'default_gki_algorithm',
-        'gki_signing_signature_args': 'default_gki_signature_args',
-    }
-    ReplaceGkiSigningKey(misc_info)
-    self.assertDictEqual(expected_dict, misc_info)
