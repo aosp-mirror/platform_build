@@ -162,6 +162,8 @@ public:
 
     virtual bool disabled_rw() = 0;
 
+    virtual bool disabled_rw_exported() = 0;
+
     virtual bool disabled_rw_in_other_namespace() = 0;
 
     virtual bool enabled_fixed_ro() = 0;
@@ -179,6 +181,10 @@ inline bool disabled_ro() {
 
 inline bool disabled_rw() {
     return provider_->disabled_rw();
+}
+
+inline bool disabled_rw_exported() {
+    return provider_->disabled_rw_exported();
 }
 
 inline bool disabled_rw_in_other_namespace() {
@@ -205,6 +211,8 @@ extern "C" {
 bool com_android_aconfig_test_disabled_ro();
 
 bool com_android_aconfig_test_disabled_rw();
+
+bool com_android_aconfig_test_disabled_rw_exported();
 
 bool com_android_aconfig_test_disabled_rw_in_other_namespace();
 
@@ -241,6 +249,10 @@ public:
 
     virtual void disabled_rw(bool val) = 0;
 
+    virtual bool disabled_rw_exported() = 0;
+
+    virtual void disabled_rw_exported(bool val) = 0;
+
     virtual bool disabled_rw_in_other_namespace() = 0;
 
     virtual void disabled_rw_in_other_namespace(bool val) = 0;
@@ -276,6 +288,14 @@ inline bool disabled_rw() {
 
 inline void disabled_rw(bool val) {
     provider_->disabled_rw(val);
+}
+
+inline bool disabled_rw_exported() {
+    return provider_->disabled_rw_exported();
+}
+
+inline void disabled_rw_exported(bool val) {
+    provider_->disabled_rw_exported(val);
 }
 
 inline bool disabled_rw_in_other_namespace() {
@@ -327,6 +347,10 @@ bool com_android_aconfig_test_disabled_rw();
 
 void set_com_android_aconfig_test_disabled_rw(bool val);
 
+bool com_android_aconfig_test_disabled_rw_exported();
+
+void set_com_android_aconfig_test_disabled_rw_exported(bool val);
+
 bool com_android_aconfig_test_disabled_rw_in_other_namespace();
 
 void set_com_android_aconfig_test_disabled_rw_in_other_namespace(bool val);
@@ -377,14 +401,24 @@ namespace com::android::aconfig::test {
                 return cache_[0];
             }
 
-            virtual bool disabled_rw_in_other_namespace() override {
+            virtual bool disabled_rw_exported() override {
                 if (cache_[1] == -1) {
                     cache_[1] = server_configurable_flags::GetServerConfigurableFlag(
+                        "aconfig_flags.aconfig_test",
+                        "com.android.aconfig.test.disabled_rw_exported",
+                        "false") == "true";
+                }
+                return cache_[1];
+            }
+
+            virtual bool disabled_rw_in_other_namespace() override {
+                if (cache_[2] == -1) {
+                    cache_[2] = server_configurable_flags::GetServerConfigurableFlag(
                         "aconfig_flags.other_namespace",
                         "com.android.aconfig.test.disabled_rw_in_other_namespace",
                         "false") == "true";
                 }
-                return cache_[1];
+                return cache_[2];
             }
 
             virtual bool enabled_fixed_ro() override {
@@ -396,17 +430,17 @@ namespace com::android::aconfig::test {
             }
 
             virtual bool enabled_rw() override {
-                if (cache_[2] == -1) {
-                    cache_[2] = server_configurable_flags::GetServerConfigurableFlag(
+                if (cache_[3] == -1) {
+                    cache_[3] = server_configurable_flags::GetServerConfigurableFlag(
                         "aconfig_flags.aconfig_test",
                         "com.android.aconfig.test.enabled_rw",
                         "true") == "true";
                 }
-                return cache_[2];
+                return cache_[3];
             }
 
     private:
-        std::vector<int8_t> cache_ = std::vector<int8_t>(3, -1);
+        std::vector<int8_t> cache_ = std::vector<int8_t>(4, -1);
     };
 
     std::unique_ptr<flag_provider_interface> provider_ =
@@ -419,6 +453,10 @@ bool com_android_aconfig_test_disabled_ro() {
 
 bool com_android_aconfig_test_disabled_rw() {
     return com::android::aconfig::test::disabled_rw();
+}
+
+bool com_android_aconfig_test_disabled_rw_exported() {
+    return com::android::aconfig::test::disabled_rw_exported();
 }
 
 bool com_android_aconfig_test_disabled_rw_in_other_namespace() {
@@ -483,6 +521,22 @@ namespace com::android::aconfig::test {
 
             virtual void disabled_rw(bool val) override {
                 overrides_["disabled_rw"] = val;
+            }
+
+            virtual bool disabled_rw_exported() override {
+                auto it = overrides_.find("disabled_rw_exported");
+                  if (it != overrides_.end()) {
+                      return it->second;
+                } else {
+                  return server_configurable_flags::GetServerConfigurableFlag(
+                      "aconfig_flags.aconfig_test",
+                      "com.android.aconfig.test.disabled_rw_exported",
+                      "false") == "true";
+                }
+            }
+
+            virtual void disabled_rw_exported(bool val) override {
+                overrides_["disabled_rw_exported"] = val;
             }
 
             virtual bool disabled_rw_in_other_namespace() override {
@@ -570,10 +624,19 @@ void set_com_android_aconfig_test_disabled_rw(bool val) {
     com::android::aconfig::test::disabled_rw(val);
 }
 
+
+bool com_android_aconfig_test_disabled_rw_exported() {
+    return com::android::aconfig::test::disabled_rw_exported();
+}
+
+void set_com_android_aconfig_test_disabled_rw_exported(bool val) {
+    com::android::aconfig::test::disabled_rw_exported(val);
+}
+
+
 bool com_android_aconfig_test_disabled_rw_in_other_namespace() {
     return com::android::aconfig::test::disabled_rw_in_other_namespace();
 }
-
 
 void set_com_android_aconfig_test_disabled_rw_in_other_namespace(bool val) {
     com::android::aconfig::test::disabled_rw_in_other_namespace(val);
@@ -634,6 +697,8 @@ void com_android_aconfig_test_reset_flags() {
                 match mode {
                     CodegenMode::Production => EXPORTED_PROD_HEADER_EXPECTED,
                     CodegenMode::Test => EXPORTED_TEST_HEADER_EXPECTED,
+                    CodegenMode::Exported =>
+                        todo!("exported mode not yet supported for cpp, see b/313894653."),
                 },
                 generated_files_map.get(&target_file_path).unwrap()
             )
@@ -647,6 +712,8 @@ void com_android_aconfig_test_reset_flags() {
                 match mode {
                     CodegenMode::Production => PROD_SOURCE_FILE_EXPECTED,
                     CodegenMode::Test => TEST_SOURCE_FILE_EXPECTED,
+                    CodegenMode::Exported =>
+                        todo!("exported mode not yet supported for cpp, see b/313894653."),
                 },
                 generated_files_map.get(&target_file_path).unwrap()
             )
