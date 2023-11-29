@@ -75,6 +75,7 @@ PRODUCT_PACKAGES += \
     VpnDialogs \
     vr \
 
+PRODUCT_PACKAGES += $(RELEASE_PACKAGE_VIRTUAL_CAMERA)
 
 PRODUCT_SYSTEM_SERVER_APPS += \
     FusedLocation \
