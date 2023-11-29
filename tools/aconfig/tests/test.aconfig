@@ -59,3 +59,11 @@ flag {
     description: "This flag is DISABLED + READ_WRITE, and is defined in another namespace"
     bug: "999"
 }
+
+flag {
+    name: "disabled_rw_exported"
+    namespace: "aconfig_test"
+    description: "This flag is exported"
+    bug: "111"
+    is_exported: true
+}
