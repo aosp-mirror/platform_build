@@ -836,15 +836,21 @@ function lunch()
     # Note this is the string "release", not the value of the variable.
     export TARGET_BUILD_TYPE=release
 
+    [[ -n "${ANDROID_QUIET_BUILD:-}" ]] || echo
+
+    set_stuff_for_environment
+    [[ -n "${ANDROID_QUIET_BUILD:-}" ]] || printconfig
+
+    if [ "${TARGET_BUILD_VARIANT}" = "userdebug" ] && [[  -z "${ANDROID_QUIET_BUILD}" ]]; then
+      echo
+      echo "Want FASTER LOCAL BUILDS? Use -eng instead of -userdebug (however for" \
+        "performance benchmarking continue to use userdebug)"
+    fi
     if [ $used_lunch_menu -eq 1 ]; then
       echo
       echo "Hint: next time you can simply run 'lunch $selection'"
     fi
 
-    [[ -n "${ANDROID_QUIET_BUILD:-}" ]] || echo
-
-    set_stuff_for_environment
-    [[ -n "${ANDROID_QUIET_BUILD:-}" ]] || printconfig
     destroy_build_var_cache
 
     if [[ -n "${CHECK_MU_CONFIG:-}" ]]; then
