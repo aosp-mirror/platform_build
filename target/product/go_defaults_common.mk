@@ -24,10 +24,6 @@ PRODUCT_VENDOR_PROPERTIES += \
 # Speed profile services and wifi-service to reduce RAM and storage.
 PRODUCT_SYSTEM_SERVER_COMPILER_FILTER := speed-profile
 
-# Always preopt extracted APKs to prevent extracting out of the APK for gms
-# modules.
-PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK := true
-
 # Use a profile based boot image for this device. Note that this is currently a
 # generic profile and not Android Go optimized.
 PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE := true
