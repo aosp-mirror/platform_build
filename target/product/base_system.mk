@@ -80,6 +80,7 @@ PRODUCT_PACKAGES += \
     CtsShimPrivPrebuilt \
     debuggerd\
     device_config \
+    DeviceDiagnostics \
     dmctl \
     dnsmasq \
     dmesgd \
