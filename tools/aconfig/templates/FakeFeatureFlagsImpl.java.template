@@ -12,11 +12,23 @@ public class FakeFeatureFlagsImpl implements FeatureFlags \{
     }
 
 {{ for item in flag_elements}}
+{{ if library_exported }}
+
+{{ if item.exported }}
     @Override
     @UnsupportedAppUsage
     public boolean {item.method_name}() \{
         return getValue(Flags.FLAG_{item.flag_name_constant_suffix});
     }
+{{ endif }}
+
+{{ else }}
+    @Override
+    @UnsupportedAppUsage
+    public boolean {item.method_name}() \{
+        return getValue(Flags.FLAG_{item.flag_name_constant_suffix});
+    }
+{{ endif }}
 {{ endfor}}
     public void setFlag(String flagName, boolean value) \{
         if (!this.mFlagMap.containsKey(flagName)) \{

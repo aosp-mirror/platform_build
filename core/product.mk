@@ -183,8 +183,6 @@ _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS_EXTRA
 # Set to true to disable <uses-library> checks for a product.
 _product_list_vars += PRODUCT_BROKEN_VERIFY_USES_LIBRARIES
 
-# All of the apps that we force preopt, this overrides WITH_DEXPREOPT.
-_product_list_vars += PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK
 _product_list_vars += PRODUCT_DEXPREOPT_SPEED_APPS
 _product_list_vars += PRODUCT_LOADED_BY_PRIVILEGED_MODULES
 _product_single_value_vars += PRODUCT_VBOOT_SIGNING_KEY
