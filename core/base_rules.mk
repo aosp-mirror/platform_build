@@ -670,8 +670,14 @@ $(foreach td,$(LOCAL_TEST_DATA),$(eval $(copy_test_data_pairs)))
 
 copy_test_data_pairs :=
 
-my_installed_test_data := $(call copy-many-files,$(my_test_data_pairs))
-$(LOCAL_INSTALLED_MODULE): $(my_installed_test_data)
+ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+  my_installed_test_data := $(call copy-many-files,$(my_test_data_pairs))
+  $(LOCAL_INSTALLED_MODULE): $(my_installed_test_data)
+else
+  # Skip installing test data for Soong modules, it's already been handled.
+  # Just compute my_installed_test_data.
+  my_installed_test_data := $(foreach f, $(my_test_data_pairs), $(call word-colon,2,$(f)))
+endif
 
 endif
 endif
