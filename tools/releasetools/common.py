@@ -3105,6 +3105,34 @@ def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=None,
   zip_file.writestr(zinfo, data)
   zipfile.ZIP64_LIMIT = saved_zip64_limit
 
+def ZipExclude(input_zip, output_zip, entries, force=False):
+  """Deletes entries from a ZIP file.
+
+  Args:
+    zip_filename: The name of the ZIP file.
+    entries: The name of the entry, or the list of names to be deleted.
+  """
+  if isinstance(entries, str):
+    entries = [entries]
+  # If list is empty, nothing to do
+  if not entries:
+    shutil.copy(input_zip, output_zip)
+    return
+
+  with zipfile.ZipFile(input_zip, 'r') as zin:
+    if not force and len(set(zin.namelist()).intersection(entries)) == 0:
+      raise ExternalError(
+          "Failed to delete zip entries, name not matched: %s" % entries)
+
+    fd, new_zipfile = tempfile.mkstemp(dir=os.path.dirname(input_zip))
+    os.close(fd)
+    cmd = ["zip2zip", "-i", input_zip, "-o", new_zipfile]
+    for entry in entries:
+      cmd.append("-x")
+      cmd.append(entry)
+    RunAndCheckOutput(cmd)
+  os.replace(new_zipfile, output_zip)
+
 
 def ZipDelete(zip_filename, entries, force=False):
   """Deletes entries from a ZIP file.
@@ -3119,20 +3147,7 @@ def ZipDelete(zip_filename, entries, force=False):
   if not entries:
     return
 
-  with zipfile.ZipFile(zip_filename, 'r') as zin:
-    if not force and len(set(zin.namelist()).intersection(entries)) == 0:
-      raise ExternalError(
-          "Failed to delete zip entries, name not matched: %s" % entries)
-
-    fd, new_zipfile = tempfile.mkstemp(dir=os.path.dirname(zip_filename))
-    os.close(fd)
-    cmd = ["zip2zip", "-i", zip_filename, "-o", new_zipfile]
-    for entry in entries:
-      cmd.append("-x")
-      cmd.append(entry)
-    RunAndCheckOutput(cmd)
-
-  os.replace(new_zipfile, zip_filename)
+  ZipExclude(zip_filename, zip_filename, entries, force)
 
 
 def ZipClose(zip_file):

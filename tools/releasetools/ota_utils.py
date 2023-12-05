@@ -27,7 +27,8 @@ from common import (ZipDelete, DoesInputFileContain, ReadBytesFromInputFile, OPT
                     ZipWriteStr, BuildInfo, LoadDictionaryFromFile,
                     SignFile, PARTITIONS_WITH_BUILD_PROP, PartitionBuildProps,
                     GetRamdiskFormat, ParseUpdateEngineConfig)
-from payload_signer import PayloadSigner
+import payload_signer
+from payload_signer import PayloadSigner, AddSigningArgumentParse, GeneratePayloadProperties
 
 
 logger = logging.getLogger(__name__)
@@ -785,8 +786,8 @@ def GetPartitionMaps(target_files_dir: str, ab_partitions):
 class PayloadGenerator(object):
   """Manages the creation and the signing of an A/B OTA Payload."""
 
-  PAYLOAD_BIN = 'payload.bin'
-  PAYLOAD_PROPERTIES_TXT = 'payload_properties.txt'
+  PAYLOAD_BIN = payload_signer.PAYLOAD_BIN
+  PAYLOAD_PROPERTIES_TXT = payload_signer.PAYLOAD_PROPERTIES_TXT
   SECONDARY_PAYLOAD_BIN = 'secondary/payload.bin'
   SECONDARY_PAYLOAD_PROPERTIES_TXT = 'secondary/payload_properties.txt'
 
@@ -905,12 +906,7 @@ class PayloadGenerator(object):
     """
     assert self.payload_file is not None
     # 4. Dump the signed payload properties.
-    properties_file = common.MakeTempFile(prefix="payload-properties-",
-                                          suffix=".txt")
-    cmd = ["delta_generator",
-           "--in_file=" + self.payload_file,
-           "--properties_file=" + properties_file]
-    self._Run(cmd)
+    properties_file = GeneratePayloadProperties(self.payload_file)
 
 
     with open(properties_file, "a") as f:
