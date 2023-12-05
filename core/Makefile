@@ -4600,6 +4600,12 @@ BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.pvmfw.security_patch:$(PVMFW_SECURITY_PATCH)
 endif
 
+# Append avbpubkey of microdroid-vendor partition into vendor_boot partition.
+ifdef MICRODROID_VENDOR_AVBKEY
+BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS += \
+    --prop_from_file com.android.build.microdroid-vendor.avbpubkey:$(MICRODROID_VENDOR_AVBKEY)
+endif
+
 BOOT_FOOTER_ARGS := BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS
 INIT_BOOT_FOOTER_ARGS := BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS
 VENDOR_BOOT_FOOTER_ARGS := BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS
