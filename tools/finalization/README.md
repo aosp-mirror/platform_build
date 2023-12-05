@@ -12,10 +12,8 @@ This folder contains automation and CI scripts for [finalizing](https://go/andro
 
 ## CI:
 Performed in build targets in Finalization branches.
-1. [Finalization Step 1 for Main, git_main-fina-1-release](https://android-build.googleplex.com/builds/branches/git_main-fina-1-release/grid). Test [1st step/Finalize SDK](./finalize-aidl-vndk-sdk-resources.sh).
-2. [Finalization Step 1 for UDC, git_udc-fina-1-release](https://android-build.googleplex.com/builds/branches/git_udc-fina-1-release/grid). Same but for udc-dev.
-3. [Finalization Step 2 for Main, git_main-fina-2-release](https://android-build.googleplex.com/builds/branches/git_main-fina-2-release/grid). Test [1st step/Finalize SDK](./finalize-aidl-vndk-sdk-resources.sh) and [2nd step/Finalize Android](./finalize-sdk-rel.sh). Use [local finalization](./localonly-steps.sh) to build and copy presubmits.
-4. [Finalization Step 2 for UDC, git_udc-fina-2-release](https://android-build.googleplex.com/builds/branches/git_udc-fina-2-release/grid). Same but for udc-dev.
+1. [Finalization Step 1, git_main-fina-1-release](https://android-build.corp.google.com/build_explorer/branch/git_main-fina-1-release). Test [1st step/Finalize SDK](./finalize-aidl-vndk-sdk-resources.sh).
+3. [Finalization Step 2, git_main-fina-2-release](https://android-build.corp.google.com/build_explorer/branch/git_main-fina-2-release). Test [1st step/Finalize SDK](./finalize-aidl-vndk-sdk-resources.sh) and [2nd step/Finalize Android](./finalize-sdk-rel.sh). Use [local finalization](./localonly-steps.sh) to build and copy presubmits.
 5. [Local finalization steps](./localonly-steps.sh) are done only during local testing or in the CI lab. Normally these steps use artifacts from other builds.
 
 ## Utility:
