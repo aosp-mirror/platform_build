@@ -264,11 +264,11 @@ pub enum DumpFormat {
     Textproto,
 }
 
-pub fn dump_parsed_flags(mut input: Vec<Input>, format: DumpFormat) -> Result<Vec<u8>> {
+pub fn dump_parsed_flags(mut input: Vec<Input>, format: DumpFormat, dedup: bool) -> Result<Vec<u8>> {
     let individually_parsed_flags: Result<Vec<ProtoParsedFlags>> =
         input.iter_mut().map(|i| i.try_parse_flags()).collect();
     let parsed_flags: ProtoParsedFlags =
-        crate::protos::parsed_flags::merge(individually_parsed_flags?)?;
+        crate::protos::parsed_flags::merge(individually_parsed_flags?, dedup)?;
 
     let mut output = Vec::new();
     match format {
@@ -529,7 +529,7 @@ mod tests {
     #[test]
     fn test_dump_text_format() {
         let input = parse_test_flags_as_input();
-        let bytes = dump_parsed_flags(vec![input], DumpFormat::Text).unwrap();
+        let bytes = dump_parsed_flags(vec![input], DumpFormat::Text, false).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
         assert!(
             text.contains("com.android.aconfig.test.disabled_ro [system]: READ_ONLY + DISABLED")
@@ -546,7 +546,7 @@ mod tests {
         .unwrap();
 
         let input = parse_test_flags_as_input();
-        let actual = dump_parsed_flags(vec![input], DumpFormat::Protobuf).unwrap();
+        let actual = dump_parsed_flags(vec![input], DumpFormat::Protobuf, false).unwrap();
 
         assert_eq!(expected, actual);
     }
@@ -554,7 +554,16 @@ mod tests {
     #[test]
     fn test_dump_textproto_format() {
         let input = parse_test_flags_as_input();
-        let bytes = dump_parsed_flags(vec![input], DumpFormat::Textproto).unwrap();
+        let bytes = dump_parsed_flags(vec![input], DumpFormat::Textproto, false).unwrap();
+        let text = std::str::from_utf8(&bytes).unwrap();
+        assert_eq!(crate::test::TEST_FLAGS_TEXTPROTO.trim(), text.trim());
+    }
+
+    #[test]
+    fn test_dump_textproto_format_dedup() {
+        let input = parse_test_flags_as_input();
+        let input2 = parse_test_flags_as_input();
+        let bytes = dump_parsed_flags(vec![input, input2], DumpFormat::Textproto, true).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
         assert_eq!(crate::test::TEST_FLAGS_TEXTPROTO.trim(), text.trim());
     }
