@@ -56,7 +56,6 @@ PRODUCT_PACKAGES += \
     MmsService \
     MtpService \
     MusicFX \
-    NfcNci \
     PacProcessor \
     preinstalled-packages-platform-handheld-system.xml \
     PrintRecommendationService \
@@ -73,6 +72,7 @@ PRODUCT_PACKAGES += \
     UserDictionaryProvider \
     VpnDialogs \
     vr \
+    $(RELEASE_PACKAGE_NFC_STACK)
 
 
 PRODUCT_SYSTEM_SERVER_APPS += \
