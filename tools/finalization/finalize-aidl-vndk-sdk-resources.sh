@@ -137,6 +137,13 @@ function finalize_aidl_vndk_sdk_resources() {
     local version_codes="$top/platform_testing/libraries/compatibility-common-util/src/com/android/compatibility/common/util/VersionCodes.java"
     sed -i -e "/=.*$((${FINAL_PLATFORM_SDK_VERSION}-1));/a \\    ${SDK_VERSION}" $version_codes
 
+    # tools/platform-compat
+    local class2nonsdklist="$top/tools/platform-compat/java/com/android/class2nonsdklist/Class2NonSdkList.java"
+    if ! grep -q "\.*map.put($((${FINAL_PLATFORM_SDK_VERSION}))" $class2nonsdklist ; then
+      local sdk_version="map.put(${FINAL_PLATFORM_SDK_VERSION}, FLAG_UNSUPPORTED);"
+      sed -i -e "/.*map.put($((${FINAL_PLATFORM_SDK_VERSION}-1))/a \\        ${sdk_version}" $class2nonsdklist
+    fi
+
     # Finalize resources
     "$top/frameworks/base/tools/aapt2/tools/finalize_res.py" \
            "$top/frameworks/base/core/res/res/values/public-staging.xml" \
