@@ -101,13 +101,14 @@ fn cli() -> Command {
         )
         .subcommand(
             Command::new("dump")
-                .arg(Arg::new("cache").long("cache").action(ArgAction::Append).required(true))
+                .arg(Arg::new("cache").long("cache").action(ArgAction::Append))
                 .arg(
                     Arg::new("format")
                         .long("format")
                         .value_parser(EnumValueParser::<commands::DumpFormat>::new())
                         .default_value("text"),
                 )
+                .arg(Arg::new("dedup").long("dedup").num_args(0).action(ArgAction::SetTrue))
                 .arg(Arg::new("out").long("out").default_value("-")),
         )
 }
@@ -239,7 +240,8 @@ fn main() -> Result<()> {
             let input = open_zero_or_more_files(sub_matches, "cache")?;
             let format = get_required_arg::<DumpFormat>(sub_matches, "format")
                 .context("failed to dump previously parsed flags")?;
-            let output = commands::dump_parsed_flags(input, *format)?;
+            let dedup = get_required_arg::<bool>(sub_matches, "dedup")?;
+            let output = commands::dump_parsed_flags(input, *format, *dedup)?;
             let path = get_required_arg::<String>(sub_matches, "out")?;
             write_output_to_file_or_stdout(path, &output)?;
         }
