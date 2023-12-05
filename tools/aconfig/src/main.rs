@@ -42,6 +42,8 @@ fn cli() -> Command {
         .subcommand(
             Command::new("create-cache")
                 .arg(Arg::new("package").long("package").required(true))
+                // TODO(b/312769710): Make this argument required.
+                .arg(Arg::new("container").long("container"))
                 .arg(Arg::new("declarations").long("declarations").action(ArgAction::Append))
                 .arg(Arg::new("values").long("values").action(ArgAction::Append))
                 .arg(
@@ -119,6 +121,13 @@ where
         .ok_or(anyhow!("internal error: required argument '{}' not found", arg_name))
 }
 
+fn get_optional_arg<'a, T>(matches: &'a ArgMatches, arg_name: &str) -> Option<&'a T>
+where
+    T: Any + Clone + Send + Sync + 'static,
+{
+    matches.get_one::<T>(arg_name)
+}
+
 fn open_zero_or_more_files(matches: &ArgMatches, arg_name: &str) -> Result<Vec<Input>> {
     let mut opened_files = vec![];
     for path in matches.get_many::<String>(arg_name).unwrap_or_default() {
@@ -167,12 +176,20 @@ fn main() -> Result<()> {
     match matches.subcommand() {
         Some(("create-cache", sub_matches)) => {
             let package = get_required_arg::<String>(sub_matches, "package")?;
+            let container =
+                get_optional_arg::<String>(sub_matches, "container").map(|c| c.as_str());
             let declarations = open_zero_or_more_files(sub_matches, "declarations")?;
             let values = open_zero_or_more_files(sub_matches, "values")?;
             let default_permission =
                 get_required_arg::<protos::ProtoFlagPermission>(sub_matches, "default-permission")?;
-            let output = commands::parse_flags(package, declarations, values, *default_permission)
-                .context("failed to create cache")?;
+            let output = commands::parse_flags(
+                package,
+                container,
+                declarations,
+                values,
+                *default_permission,
+            )
+            .context("failed to create cache")?;
             let path = get_required_arg::<String>(sub_matches, "cache")?;
             write_output_to_file_or_stdout(path, &output)?;
         }

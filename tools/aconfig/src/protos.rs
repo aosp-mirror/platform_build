@@ -111,10 +111,15 @@ pub mod flag_declarations {
 
     pub fn verify_fields(pdf: &ProtoFlagDeclarations) -> Result<()> {
         ensure_required_fields!("flag declarations", pdf, "package");
+        // TODO(b/312769710): Make the container field required.
 
         ensure!(
             codegen::is_valid_package_ident(pdf.package()),
             "bad flag declarations: bad package"
+        );
+        ensure!(
+            !pdf.has_container() || codegen::is_valid_container_ident(pdf.container()),
+            "bad flag declarations: bad container"
         );
         for flag_declaration in pdf.flag.iter() {
             super::flag_declaration::verify_fields(flag_declaration)?;
@@ -207,6 +212,10 @@ pub mod parsed_flag {
         );
 
         ensure!(codegen::is_valid_package_ident(pf.package()), "bad parsed flag: bad package");
+        ensure!(
+            !pf.has_container() || codegen::is_valid_container_ident(pf.container()),
+            "bad parsed flag: bad container"
+        );
         ensure!(codegen::is_valid_name_ident(pf.name()), "bad parsed flag: bad name");
         ensure!(codegen::is_valid_name_ident(pf.namespace()), "bad parsed flag: bad namespace");
         ensure!(!pf.description().is_empty(), "bad parsed flag: empty description");
@@ -303,6 +312,7 @@ mod tests {
         let flag_declarations = flag_declarations::try_from_text_proto(
             r#"
 package: "com.foo.bar"
+container: "system"
 flag {
     name: "first"
     namespace: "first_ns"
@@ -321,6 +331,7 @@ flag {
         )
         .unwrap();
         assert_eq!(flag_declarations.package(), "com.foo.bar");
+        assert_eq!(flag_declarations.container(), "system");
         let first = flag_declarations.flag.iter().find(|pf| pf.name() == "first").unwrap();
         assert_eq!(first.name(), "first");
         assert_eq!(first.namespace(), "first_ns");
@@ -336,9 +347,26 @@ flag {
         assert!(second.is_fixed_read_only());
         assert!(!second.is_exported());
 
+        // valid input: missing container in flag declarations is supported
+        let flag_declarations = flag_declarations::try_from_text_proto(
+            r#"
+package: "com.foo.bar"
+flag {
+    name: "first"
+    namespace: "first_ns"
+    description: "This is the description of the first flag."
+    bug: "123"
+}
+"#,
+        )
+        .unwrap();
+        assert_eq!(flag_declarations.container(), "");
+        assert!(!flag_declarations.has_container());
+
         // bad input: missing package in flag declarations
         let error = flag_declarations::try_from_text_proto(
             r#"
+container: "system"
 flag {
     name: "first"
     namespace: "first_ns"
@@ -358,6 +386,7 @@ flag {
         let error = flag_declarations::try_from_text_proto(
             r#"
 package: "com.foo.bar"
+container: "system"
 flag {
     name: "first"
     description: "This is the description of the first flag."
@@ -376,6 +405,7 @@ flag {
         let error = flag_declarations::try_from_text_proto(
             r#"
 package: "_com.FOO__BAR"
+container: "system"
 flag {
     name: "first"
     namespace: "first_ns"
@@ -395,6 +425,7 @@ flag {
         let error = flag_declarations::try_from_text_proto(
             r#"
 package: "com.foo.bar"
+container: "system"
 flag {
     name: "FIRST"
     namespace: "first_ns"
@@ -414,6 +445,7 @@ flag {
         let error = flag_declarations::try_from_text_proto(
             r#"
 package: "com.foo.bar"
+container: "system"
 flag {
     name: "first"
     namespace: "first_ns"
@@ -428,6 +460,7 @@ flag {
         let error = flag_declarations::try_from_text_proto(
             r#"
 package: "com.foo.bar"
+container: "system"
 flag {
     name: "first"
     namespace: "first_ns"
@@ -439,6 +472,25 @@ flag {
         )
         .unwrap_err();
         assert!(format!("{:?}", error).contains("bad flag declaration: exactly one bug required"));
+
+        // bad input: invalid container name in flag declaration
+        let error = flag_declarations::try_from_text_proto(
+            r#"
+package: "com.foo.bar"
+container: "__bad_bad_container.com"
+flag {
+    name: "first"
+    namespace: "first_ns"
+    description: "This is the description of the first flag."
+    bug: "123"
+    bug: "abc"
+}
+"#,
+        )
+        .unwrap_err();
+        assert!(format!("{:?}", error).contains("bad flag declarations: bad container"));
+
+        // TODO(b/312769710): Verify error when container is missing.
     }
 
     #[test]
@@ -553,6 +605,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 parsed_flag {
     package: "com.second"
@@ -573,6 +626,7 @@ parsed_flag {
         permission: READ_ONLY
     }
     is_fixed_read_only: true
+    container: "system"
 }
 "#;
         let parsed_flags = try_from_binary_proto_from_text_proto(text_proto).unwrap();
@@ -607,6 +661,7 @@ parsed_flag {
     description: "This is the description of the first flag."
     state: DISABLED
     permission: READ_ONLY
+    container: "system"
 }
 "#;
         let error = try_from_binary_proto_from_text_proto(text_proto).unwrap_err();
@@ -625,6 +680,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 "#;
         let error = try_from_binary_proto_from_text_proto(text_proto).unwrap_err();
@@ -645,6 +701,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 parsed_flag {
     package: "aaa.aaa"
@@ -659,6 +716,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 "#;
         let error = try_from_binary_proto_from_text_proto(text_proto).unwrap_err();
@@ -682,6 +740,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 parsed_flag {
     package: "com.foo"
@@ -696,6 +755,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 "#;
         let error = try_from_binary_proto_from_text_proto(text_proto).unwrap_err();
@@ -719,6 +779,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 parsed_flag {
     package: "com.foo"
@@ -733,6 +794,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 "#;
         let error = try_from_binary_proto_from_text_proto(text_proto).unwrap_err();
@@ -760,6 +822,7 @@ parsed_flag {
         state: ENABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 "#;
         let parsed_flags = try_from_binary_proto_from_text_proto(text_proto).unwrap();
@@ -786,6 +849,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 parsed_flag {
     package: "com.second"
@@ -800,6 +864,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 "#;
         let expected = try_from_binary_proto_from_text_proto(text_proto).unwrap();
@@ -818,6 +883,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 "#;
         let first = try_from_binary_proto_from_text_proto(text_proto).unwrap();
@@ -836,6 +902,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 "#;
         let second = try_from_binary_proto_from_text_proto(text_proto).unwrap();
