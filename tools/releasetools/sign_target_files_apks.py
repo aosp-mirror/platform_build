@@ -83,9 +83,8 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
 
   --replace_verity_public_key <key>
       Replace the certificate (public key) used for verity verification. The
-      key file replaces the one at BOOT/RAMDISK/verity_key (or ROOT/verity_key
-      for devices using system_root_image). It expects the key filename WITH
-      the extension (e.g. verity_key.pub).
+      key file replaces the one at BOOT/RAMDISK/verity_key. It expects the key
+      filename WITH the extension (e.g. verity_key.pub).
 
   --replace_verity_keyid <path_to_X509_PEM_cert_file>
       Replace the veritykeyid in BOOT/cmdline of input_target_file_zip
@@ -554,8 +553,6 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
   except ValueError:
     # Sets this to zero for targets without APK files, e.g., gki_arm64.
     maxsize = 0
-
-  system_root_image = misc_info.get("system_root_image") == "true"
 
   for info in input_tf_zip.infolist():
     filename = info.filename

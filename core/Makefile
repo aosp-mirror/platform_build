@@ -3781,7 +3781,7 @@ ifdef BOARD_USES_VENDOR_DLKMIMAGE
   ALL_DEFAULT_INSTALLED_MODULES += $(_vendor_dlkm_lib_modules_symlink)
 endif
 
-# Install vendor/etc/linker.config.pb with PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS and STUB_LIBRARIES
+# Install vendor/etc/linker.config.pb with PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS and SOONG_STUB_VENDOR_LIBRARIES
 vendor_linker_config_file := $(TARGET_OUT_VENDOR)/etc/linker.config.pb
 $(vendor_linker_config_file): private_linker_config_fragments := $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS)
 $(vendor_linker_config_file): $(INTERNAL_VENDORIMAGE_FILES) $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS) | $(HOST_OUT_EXECUTABLES)/conv_linker_config
@@ -3792,7 +3792,7 @@ $(vendor_linker_config_file): $(INTERNAL_VENDORIMAGE_FILES) $(PRODUCT_VENDOR_LIN
 		--source $(call normalize-path-list,$(private_linker_config_fragments)) \
 		--output $@
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config systemprovide --source $@ \
-		--output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT_VENDOR)"
+		--output $@ --value "$(SOONG_STUB_VENDOR_LIBRARIES)" --system "$(TARGET_OUT_VENDOR)"
 $(call define declare-0p-target,$(vendor_linker_config_file),)
 INTERNAL_VENDORIMAGE_FILES += $(vendor_linker_config_file)
 ALL_DEFAULT_INSTALLED_MODULES += $(vendor_linker_config_file)
@@ -4598,6 +4598,12 @@ endif
 ifdef PVMFW_SECURITY_PATCH
 BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.pvmfw.security_patch:$(PVMFW_SECURITY_PATCH)
+endif
+
+# Append avbpubkey of microdroid-vendor partition into vendor_boot partition.
+ifdef MICRODROID_VENDOR_AVBKEY
+BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS += \
+    --prop_from_file com.android.build.microdroid-vendor.avbpubkey:$(MICRODROID_VENDOR_AVBKEY)
 endif
 
 BOOT_FOOTER_ARGS := BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS
