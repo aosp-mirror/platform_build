@@ -43,6 +43,7 @@ parsed_flag {
   }
   is_fixed_read_only: false
   is_exported: false
+  container: "system"
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -59,6 +60,7 @@ parsed_flag {
   }
   is_fixed_read_only: false
   is_exported: true
+  container: "system"
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -80,6 +82,7 @@ parsed_flag {
   }
   is_fixed_read_only: false
   is_exported: true
+  container: "system"
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -101,6 +104,7 @@ parsed_flag {
   }
   is_fixed_read_only: false
   is_exported: false
+  container: "system"
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -122,6 +126,7 @@ parsed_flag {
   }
   is_fixed_read_only: true
   is_exported: false
+  container: "system"
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -148,6 +153,7 @@ parsed_flag {
   }
   is_fixed_read_only: false
   is_exported: false
+  container: "system"
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -169,12 +175,14 @@ parsed_flag {
   }
   is_fixed_read_only: false
   is_exported: false
+  container: "system"
 }
 "#;
 
     pub fn parse_test_flags() -> ProtoParsedFlags {
         let bytes = crate::commands::parse_flags(
             "com.android.aconfig.test",
+            Some("system"),
             vec![Input {
                 source: "tests/test.aconfig".to_string(),
                 reader: Box::new(include_bytes!("../tests/test.aconfig").as_slice()),
