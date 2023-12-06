@@ -42,6 +42,8 @@ fn cli() -> Command {
         .subcommand(
             Command::new("create-cache")
                 .arg(Arg::new("package").long("package").required(true))
+                // TODO(b/312769710): Make this argument required.
+                .arg(Arg::new("container").long("container"))
                 .arg(Arg::new("declarations").long("declarations").action(ArgAction::Append))
                 .arg(Arg::new("values").long("values").action(ArgAction::Append))
                 .arg(
@@ -99,13 +101,14 @@ fn cli() -> Command {
         )
         .subcommand(
             Command::new("dump")
-                .arg(Arg::new("cache").long("cache").action(ArgAction::Append).required(true))
+                .arg(Arg::new("cache").long("cache").action(ArgAction::Append))
                 .arg(
                     Arg::new("format")
                         .long("format")
                         .value_parser(EnumValueParser::<commands::DumpFormat>::new())
                         .default_value("text"),
                 )
+                .arg(Arg::new("dedup").long("dedup").num_args(0).action(ArgAction::SetTrue))
                 .arg(Arg::new("out").long("out").default_value("-")),
         )
 }
@@ -117,6 +120,13 @@ where
     matches
         .get_one::<T>(arg_name)
         .ok_or(anyhow!("internal error: required argument '{}' not found", arg_name))
+}
+
+fn get_optional_arg<'a, T>(matches: &'a ArgMatches, arg_name: &str) -> Option<&'a T>
+where
+    T: Any + Clone + Send + Sync + 'static,
+{
+    matches.get_one::<T>(arg_name)
 }
 
 fn open_zero_or_more_files(matches: &ArgMatches, arg_name: &str) -> Result<Vec<Input>> {
@@ -167,12 +177,20 @@ fn main() -> Result<()> {
     match matches.subcommand() {
         Some(("create-cache", sub_matches)) => {
             let package = get_required_arg::<String>(sub_matches, "package")?;
+            let container =
+                get_optional_arg::<String>(sub_matches, "container").map(|c| c.as_str());
             let declarations = open_zero_or_more_files(sub_matches, "declarations")?;
             let values = open_zero_or_more_files(sub_matches, "values")?;
             let default_permission =
                 get_required_arg::<protos::ProtoFlagPermission>(sub_matches, "default-permission")?;
-            let output = commands::parse_flags(package, declarations, values, *default_permission)
-                .context("failed to create cache")?;
+            let output = commands::parse_flags(
+                package,
+                container,
+                declarations,
+                values,
+                *default_permission,
+            )
+            .context("failed to create cache")?;
             let path = get_required_arg::<String>(sub_matches, "cache")?;
             write_output_to_file_or_stdout(path, &output)?;
         }
@@ -222,7 +240,8 @@ fn main() -> Result<()> {
             let input = open_zero_or_more_files(sub_matches, "cache")?;
             let format = get_required_arg::<DumpFormat>(sub_matches, "format")
                 .context("failed to dump previously parsed flags")?;
-            let output = commands::dump_parsed_flags(input, *format)?;
+            let dedup = get_required_arg::<bool>(sub_matches, "dedup")?;
+            let output = commands::dump_parsed_flags(input, *format, *dedup)?;
             let path = get_required_arg::<String>(sub_matches, "out")?;
             write_output_to_file_or_stdout(path, &output)?;
         }

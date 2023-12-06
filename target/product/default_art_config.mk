@@ -50,6 +50,7 @@ PRODUCT_TEST_ONLY_ART_BOOT_IMAGE_JARS := \
 PRODUCT_BOOT_JARS += \
     framework-minus-apex \
     framework-graphics \
+    framework-nfc \
     ext \
     telephony-common \
     voip-common \

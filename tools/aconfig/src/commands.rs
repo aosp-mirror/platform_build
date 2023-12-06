@@ -57,6 +57,7 @@ pub const DEFAULT_FLAG_PERMISSION: ProtoFlagPermission = ProtoFlagPermission::RE
 
 pub fn parse_flags(
     package: &str,
+    container: Option<&str>,
     declarations: Vec<Input>,
     values: Vec<Input>,
     default_permission: ProtoFlagPermission,
@@ -79,12 +80,24 @@ pub fn parse_flags(
             package,
             flag_declarations.package()
         );
+        if let Some(c) = container {
+            ensure!(
+                c == flag_declarations.container(),
+                "failed to parse {}: expected container {}, got {}",
+                input.source,
+                c,
+                flag_declarations.container()
+            );
+        }
         for mut flag_declaration in flag_declarations.flag.into_iter() {
             crate::protos::flag_declaration::verify_fields(&flag_declaration)
                 .with_context(|| input.error_context())?;
 
             // create ParsedFlag using FlagDeclaration and default values
             let mut parsed_flag = ProtoParsedFlag::new();
+            if let Some(c) = container {
+                parsed_flag.set_container(c.to_string());
+            }
             parsed_flag.set_package(package.to_string());
             parsed_flag.set_name(flag_declaration.take_name());
             parsed_flag.set_namespace(flag_declaration.take_namespace());
@@ -251,20 +264,21 @@ pub enum DumpFormat {
     Textproto,
 }
 
-pub fn dump_parsed_flags(mut input: Vec<Input>, format: DumpFormat) -> Result<Vec<u8>> {
+pub fn dump_parsed_flags(mut input: Vec<Input>, format: DumpFormat, dedup: bool) -> Result<Vec<u8>> {
     let individually_parsed_flags: Result<Vec<ProtoParsedFlags>> =
         input.iter_mut().map(|i| i.try_parse_flags()).collect();
     let parsed_flags: ProtoParsedFlags =
-        crate::protos::parsed_flags::merge(individually_parsed_flags?)?;
+        crate::protos::parsed_flags::merge(individually_parsed_flags?, dedup)?;
 
     let mut output = Vec::new();
     match format {
         DumpFormat::Text => {
             for parsed_flag in parsed_flags.parsed_flag.into_iter() {
                 let line = format!(
-                    "{}.{}: {:?} + {:?}\n",
+                    "{}.{} [{}]: {:?} + {:?}\n",
                     parsed_flag.package(),
                     parsed_flag.name(),
+                    parsed_flag.container(),
                     parsed_flag.permission(),
                     parsed_flag.state()
                 );
@@ -276,9 +290,10 @@ pub fn dump_parsed_flags(mut input: Vec<Input>, format: DumpFormat) -> Result<Ve
                 let sources: Vec<_> =
                     parsed_flag.trace.iter().map(|tracepoint| tracepoint.source()).collect();
                 let line = format!(
-                    "{}.{}: {:?} + {:?} ({})\n",
+                    "{}.{} [{}]: {:?} + {:?} ({})\n",
                     parsed_flag.package(),
                     parsed_flag.name(),
+                    parsed_flag.container(),
                     parsed_flag.permission(),
                     parsed_flag.state(),
                     sources.join(", ")
@@ -377,6 +392,7 @@ mod tests {
 
         let flags_bytes = crate::commands::parse_flags(
             "com.first",
+            None,
             declaration,
             value,
             ProtoFlagPermission::READ_ONLY,
@@ -391,9 +407,72 @@ mod tests {
     }
 
     #[test]
+    fn test_parse_flags_package_mismatch_between_declaration_and_command_line() {
+        let first_flag = r#"
+        package: "com.declaration.package"
+        container: "first.container"
+        flag {
+            name: "first"
+            namespace: "first_ns"
+            description: "This is the description of the first flag."
+            bug: "123"
+        }
+        "#;
+        let declaration =
+            vec![Input { source: "memory".to_string(), reader: Box::new(first_flag.as_bytes()) }];
+
+        let value: Vec<Input> = vec![];
+
+        let error = crate::commands::parse_flags(
+            "com.argument.package",
+            Some("first.container"),
+            declaration,
+            value,
+            ProtoFlagPermission::READ_WRITE,
+        )
+        .unwrap_err();
+        assert_eq!(
+            format!("{:?}", error),
+            "failed to parse memory: expected package com.argument.package, got com.declaration.package"
+        );
+    }
+
+    #[test]
+    fn test_parse_flags_container_mismatch_between_declaration_and_command_line() {
+        let first_flag = r#"
+        package: "com.first"
+        container: "declaration.container"
+        flag {
+            name: "first"
+            namespace: "first_ns"
+            description: "This is the description of the first flag."
+            bug: "123"
+        }
+        "#;
+        let declaration =
+            vec![Input { source: "memory".to_string(), reader: Box::new(first_flag.as_bytes()) }];
+
+        let value: Vec<Input> = vec![];
+
+        let error = crate::commands::parse_flags(
+            "com.first",
+            Some("argument.container"),
+            declaration,
+            value,
+            ProtoFlagPermission::READ_WRITE,
+        )
+        .unwrap_err();
+        assert_eq!(
+            format!("{:?}", error),
+            "failed to parse memory: expected container argument.container, got declaration.container"
+        );
+    }
+
+    #[test]
     fn test_parse_flags_override_fixed_read_only() {
         let first_flag = r#"
         package: "com.first"
+        container: "com.first.container"
         flag {
             name: "first"
             namespace: "first_ns"
@@ -419,6 +498,7 @@ mod tests {
         }];
         let error = crate::commands::parse_flags(
             "com.first",
+            Some("com.first.container"),
             declaration,
             value,
             ProtoFlagPermission::READ_WRITE,
@@ -449,9 +529,11 @@ mod tests {
     #[test]
     fn test_dump_text_format() {
         let input = parse_test_flags_as_input();
-        let bytes = dump_parsed_flags(vec![input], DumpFormat::Text).unwrap();
+        let bytes = dump_parsed_flags(vec![input], DumpFormat::Text, false).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
-        assert!(text.contains("com.android.aconfig.test.disabled_ro: READ_ONLY + DISABLED"));
+        assert!(
+            text.contains("com.android.aconfig.test.disabled_ro [system]: READ_ONLY + DISABLED")
+        );
     }
 
     #[test]
@@ -464,7 +546,7 @@ mod tests {
         .unwrap();
 
         let input = parse_test_flags_as_input();
-        let actual = dump_parsed_flags(vec![input], DumpFormat::Protobuf).unwrap();
+        let actual = dump_parsed_flags(vec![input], DumpFormat::Protobuf, false).unwrap();
 
         assert_eq!(expected, actual);
     }
@@ -472,7 +554,16 @@ mod tests {
     #[test]
     fn test_dump_textproto_format() {
         let input = parse_test_flags_as_input();
-        let bytes = dump_parsed_flags(vec![input], DumpFormat::Textproto).unwrap();
+        let bytes = dump_parsed_flags(vec![input], DumpFormat::Textproto, false).unwrap();
+        let text = std::str::from_utf8(&bytes).unwrap();
+        assert_eq!(crate::test::TEST_FLAGS_TEXTPROTO.trim(), text.trim());
+    }
+
+    #[test]
+    fn test_dump_textproto_format_dedup() {
+        let input = parse_test_flags_as_input();
+        let input2 = parse_test_flags_as_input();
+        let bytes = dump_parsed_flags(vec![input, input2], DumpFormat::Textproto, true).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
         assert_eq!(crate::test::TEST_FLAGS_TEXTPROTO.trim(), text.trim());
     }
