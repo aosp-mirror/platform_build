@@ -283,12 +283,18 @@ pub mod parsed_flags {
         Ok(())
     }
 
-    pub fn merge(parsed_flags: Vec<ProtoParsedFlags>) -> Result<ProtoParsedFlags> {
+    pub fn merge(parsed_flags: Vec<ProtoParsedFlags>, dedup: bool) -> Result<ProtoParsedFlags> {
         let mut merged = ProtoParsedFlags::new();
         for mut pfs in parsed_flags.into_iter() {
             merged.parsed_flag.append(&mut pfs.parsed_flag);
         }
         merged.parsed_flag.sort_by_cached_key(create_sorting_key);
+        if dedup {
+            // Deduplicate identical protobuf messages.  Messages with the same sorting key but
+            // different fields (including the path to the original source file) will not be
+            // deduplicated and trigger an error in verify_fields.
+            merged.parsed_flag.dedup();
+        }
         verify_fields(&merged)?;
         Ok(merged)
     }
@@ -907,14 +913,49 @@ parsed_flag {
 "#;
         let second = try_from_binary_proto_from_text_proto(text_proto).unwrap();
 
+        let text_proto = r#"
+parsed_flag {
+    package: "com.second"
+    name: "second"
+    namespace: "second_ns"
+    bug: "b"
+    description: "This is the description of the second flag."
+    state: ENABLED
+    permission: READ_WRITE
+    trace {
+        source: "duplicate/flags.declarations"
+        state: DISABLED
+        permission: READ_ONLY
+    }
+}
+"#;
+        let second_duplicate = try_from_binary_proto_from_text_proto(text_proto).unwrap();
+
         // bad cases
-        let error = parsed_flags::merge(vec![first.clone(), first.clone()]).unwrap_err();
+
+        // two of the same flag with dedup disabled
+        let error = parsed_flags::merge(vec![first.clone(), first.clone()], false).unwrap_err();
         assert_eq!(format!("{:?}", error), "bad parsed flags: duplicate flag com.first.first (defined in flags.declarations and flags.declarations)");
 
+        // two conflicting flags with dedup disabled
+        let error = parsed_flags::merge(vec![second.clone(), second_duplicate.clone()], false).unwrap_err();
+        assert_eq!(format!("{:?}", error), "bad parsed flags: duplicate flag com.second.second (defined in flags.declarations and duplicate/flags.declarations)");
+
+        // two conflicting flags with dedup enabled
+        let error = parsed_flags::merge(vec![second.clone(), second_duplicate.clone()], true).unwrap_err();
+        assert_eq!(format!("{:?}", error), "bad parsed flags: duplicate flag com.second.second (defined in flags.declarations and duplicate/flags.declarations)");
+
         // valid cases
-        assert!(parsed_flags::merge(vec![]).unwrap().parsed_flag.is_empty());
-        assert_eq!(first, parsed_flags::merge(vec![first.clone()]).unwrap());
-        assert_eq!(expected, parsed_flags::merge(vec![first.clone(), second.clone()]).unwrap());
-        assert_eq!(expected, parsed_flags::merge(vec![second, first]).unwrap());
+        assert!(parsed_flags::merge(vec![], false).unwrap().parsed_flag.is_empty());
+        assert!(parsed_flags::merge(vec![], true).unwrap().parsed_flag.is_empty());
+        assert_eq!(first, parsed_flags::merge(vec![first.clone()], false).unwrap());
+        assert_eq!(first, parsed_flags::merge(vec![first.clone()], true).unwrap());
+        assert_eq!(expected, parsed_flags::merge(vec![first.clone(), second.clone()], false).unwrap());
+        assert_eq!(expected, parsed_flags::merge(vec![first.clone(), second.clone()], true).unwrap());
+        assert_eq!(expected, parsed_flags::merge(vec![second.clone(), first.clone()], false).unwrap());
+        assert_eq!(expected, parsed_flags::merge(vec![second.clone(), first.clone()], true).unwrap());
+
+        // two identical flags with dedup enabled
+        assert_eq!(first, parsed_flags::merge(vec![first.clone(), first.clone()], true).unwrap());
     }
 }
