@@ -10,6 +10,9 @@ flag {
     namespace: "aconfig_test"
     description: "This flag is ENABLED + READ_ONLY"
     bug: "abc"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
 }
 
 # This flag's final value is calculated from:
