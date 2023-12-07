@@ -24,7 +24,8 @@ use crate::codegen_cpp::generate_cpp_code;
 use crate::codegen_java::generate_java_code;
 use crate::codegen_rust::generate_rust_code;
 use crate::protos::{
-    ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag, ProtoParsedFlags, ProtoTracepoint,
+    ProtoFlagMetadata, ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag, ProtoParsedFlags,
+    ProtoTracepoint,
 };
 
 pub struct Input {
@@ -117,6 +118,11 @@ pub fn parse_flags(
             tracepoint.set_state(DEFAULT_FLAG_STATE);
             tracepoint.set_permission(flag_permission);
             parsed_flag.trace.push(tracepoint);
+
+            let mut metadata = ProtoFlagMetadata::new();
+            let purpose = flag_declaration.metadata.purpose();
+            metadata.set_purpose(purpose);
+            parsed_flag.metadata = Some(metadata).into();
 
             // verify ParsedFlag looks reasonable
             crate::protos::parsed_flag::verify_fields(&parsed_flag)?;
@@ -264,7 +270,11 @@ pub enum DumpFormat {
     Textproto,
 }
 
-pub fn dump_parsed_flags(mut input: Vec<Input>, format: DumpFormat, dedup: bool) -> Result<Vec<u8>> {
+pub fn dump_parsed_flags(
+    mut input: Vec<Input>,
+    format: DumpFormat,
+    dedup: bool,
+) -> Result<Vec<u8>> {
     let individually_parsed_flags: Result<Vec<ProtoParsedFlags>> =
         input.iter_mut().map(|i| i.try_parse_flags()).collect();
     let parsed_flags: ProtoParsedFlags =
@@ -325,6 +335,7 @@ fn find_unique_package(parsed_flags: &ProtoParsedFlags) -> Option<&str> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::protos::ProtoFlagPurpose;
 
     #[test]
     fn test_parse_flags() {
@@ -339,6 +350,7 @@ mod tests {
         assert_eq!("This flag is ENABLED + READ_ONLY", enabled_ro.description());
         assert_eq!(ProtoFlagState::ENABLED, enabled_ro.state());
         assert_eq!(ProtoFlagPermission::READ_ONLY, enabled_ro.permission());
+        assert_eq!(ProtoFlagPurpose::PURPOSE_BUGFIX, enabled_ro.metadata.purpose());
         assert_eq!(3, enabled_ro.trace.len());
         assert!(!enabled_ro.is_fixed_read_only());
         assert_eq!("tests/test.aconfig", enabled_ro.trace[0].source());
@@ -508,6 +520,41 @@ mod tests {
             format!("{:?}", error),
             "failed to set permission of flag first, since this flag is fixed read only flag"
         );
+    }
+
+    #[test]
+    fn test_parse_flags_metadata() {
+        let metadata_flag = r#"
+        package: "com.first"
+        flag {
+            name: "first"
+            namespace: "first_ns"
+            description: "This is the description of this feature flag."
+            bug: "123"
+            metadata {
+                purpose: PURPOSE_FEATURE
+            }
+        }
+        "#;
+        let declaration = vec![Input {
+            source: "memory".to_string(),
+            reader: Box::new(metadata_flag.as_bytes()),
+        }];
+        let value: Vec<Input> = vec![];
+
+        let flags_bytes = crate::commands::parse_flags(
+            "com.first",
+            None,
+            declaration,
+            value,
+            ProtoFlagPermission::READ_ONLY,
+        )
+        .unwrap();
+        let parsed_flags =
+            crate::protos::parsed_flags::try_from_binary_proto(&flags_bytes).unwrap();
+        assert_eq!(1, parsed_flags.parsed_flag.len());
+        let parsed_flag = parsed_flags.parsed_flag.first().unwrap();
+        assert_eq!(ProtoFlagPurpose::PURPOSE_FEATURE, parsed_flag.metadata.purpose());
     }
 
     #[test]
