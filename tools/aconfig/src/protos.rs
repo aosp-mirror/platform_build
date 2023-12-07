@@ -29,8 +29,10 @@
 // ---- When building with the Android tool-chain ----
 #[cfg(not(feature = "cargo"))]
 mod auto_generated {
+    pub use aconfig_protos::aconfig::flag_metadata::Flag_purpose as ProtoFlagPurpose;
     pub use aconfig_protos::aconfig::Flag_declaration as ProtoFlagDeclaration;
     pub use aconfig_protos::aconfig::Flag_declarations as ProtoFlagDeclarations;
+    pub use aconfig_protos::aconfig::Flag_metadata as ProtoFlagMetadata;
     pub use aconfig_protos::aconfig::Flag_permission as ProtoFlagPermission;
     pub use aconfig_protos::aconfig::Flag_state as ProtoFlagState;
     pub use aconfig_protos::aconfig::Flag_value as ProtoFlagValue;
@@ -47,8 +49,10 @@ mod auto_generated {
     // because this is only used during local development, and only if using cargo instead of the
     // Android tool-chain, we allow it
     include!(concat!(env!("OUT_DIR"), "/aconfig_proto/mod.rs"));
+    pub use aconfig::flag_metadata::Flag_purpose as ProtoFlagPurpose;
     pub use aconfig::Flag_declaration as ProtoFlagDeclaration;
     pub use aconfig::Flag_declarations as ProtoFlagDeclarations;
+    pub use aconfig::Flag_metadata as ProtoFlagMetadata;
     pub use aconfig::Flag_permission as ProtoFlagPermission;
     pub use aconfig::Flag_state as ProtoFlagState;
     pub use aconfig::Flag_value as ProtoFlagValue;
@@ -938,11 +942,13 @@ parsed_flag {
         assert_eq!(format!("{:?}", error), "bad parsed flags: duplicate flag com.first.first (defined in flags.declarations and flags.declarations)");
 
         // two conflicting flags with dedup disabled
-        let error = parsed_flags::merge(vec![second.clone(), second_duplicate.clone()], false).unwrap_err();
+        let error =
+            parsed_flags::merge(vec![second.clone(), second_duplicate.clone()], false).unwrap_err();
         assert_eq!(format!("{:?}", error), "bad parsed flags: duplicate flag com.second.second (defined in flags.declarations and duplicate/flags.declarations)");
 
         // two conflicting flags with dedup enabled
-        let error = parsed_flags::merge(vec![second.clone(), second_duplicate.clone()], true).unwrap_err();
+        let error =
+            parsed_flags::merge(vec![second.clone(), second_duplicate.clone()], true).unwrap_err();
         assert_eq!(format!("{:?}", error), "bad parsed flags: duplicate flag com.second.second (defined in flags.declarations and duplicate/flags.declarations)");
 
         // valid cases
@@ -950,10 +956,22 @@ parsed_flag {
         assert!(parsed_flags::merge(vec![], true).unwrap().parsed_flag.is_empty());
         assert_eq!(first, parsed_flags::merge(vec![first.clone()], false).unwrap());
         assert_eq!(first, parsed_flags::merge(vec![first.clone()], true).unwrap());
-        assert_eq!(expected, parsed_flags::merge(vec![first.clone(), second.clone()], false).unwrap());
-        assert_eq!(expected, parsed_flags::merge(vec![first.clone(), second.clone()], true).unwrap());
-        assert_eq!(expected, parsed_flags::merge(vec![second.clone(), first.clone()], false).unwrap());
-        assert_eq!(expected, parsed_flags::merge(vec![second.clone(), first.clone()], true).unwrap());
+        assert_eq!(
+            expected,
+            parsed_flags::merge(vec![first.clone(), second.clone()], false).unwrap()
+        );
+        assert_eq!(
+            expected,
+            parsed_flags::merge(vec![first.clone(), second.clone()], true).unwrap()
+        );
+        assert_eq!(
+            expected,
+            parsed_flags::merge(vec![second.clone(), first.clone()], false).unwrap()
+        );
+        assert_eq!(
+            expected,
+            parsed_flags::merge(vec![second.clone(), first.clone()], true).unwrap()
+        );
 
         // two identical flags with dedup enabled
         assert_eq!(first, parsed_flags::merge(vec![first.clone(), first.clone()], true).unwrap());
