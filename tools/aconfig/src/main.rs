@@ -25,9 +25,6 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 
 mod codegen;
-mod codegen_cpp;
-mod codegen_java;
-mod codegen_rust;
 mod commands;
 mod protos;
 

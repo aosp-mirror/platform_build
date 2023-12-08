@@ -20,9 +20,9 @@ use protobuf::Message;
 use std::io::Read;
 use std::path::PathBuf;
 
-use crate::codegen_cpp::generate_cpp_code;
-use crate::codegen_java::generate_java_code;
-use crate::codegen_rust::generate_rust_code;
+use crate::codegen::cpp::generate_cpp_code;
+use crate::codegen::java::generate_java_code;
+use crate::codegen::rust::generate_rust_code;
 use crate::protos::{
     ParsedFlagExt, ProtoFlagMetadata, ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag,
     ProtoParsedFlags, ProtoTracepoint,
