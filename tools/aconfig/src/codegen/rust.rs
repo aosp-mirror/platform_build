@@ -43,8 +43,8 @@ where
     template.add_template(
         "rust_code_gen",
         match codegen_mode {
-            CodegenMode::Production => include_str!("../templates/rust_prod.template"),
-            CodegenMode::Test => include_str!("../templates/rust_test.template"),
+            CodegenMode::Production => include_str!("../../templates/rust_prod.template"),
+            CodegenMode::Test => include_str!("../../templates/rust_test.template"),
             CodegenMode::Exported => {
                 todo!("exported mode not yet supported for rust, see b/313894653.")
             }
