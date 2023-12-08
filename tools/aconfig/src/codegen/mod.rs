@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+pub mod cpp;
+pub mod java;
+pub mod rust;
+
 use anyhow::{ensure, Result};
 
 pub fn is_valid_name_ident(s: &str) -> bool {
