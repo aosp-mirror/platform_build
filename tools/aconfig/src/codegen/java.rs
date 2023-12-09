@@ -50,18 +50,18 @@ where
         library_exported,
     };
     let mut template = TinyTemplate::new();
-    template.add_template("Flags.java", include_str!("../templates/Flags.java.template"))?;
+    template.add_template("Flags.java", include_str!("../../templates/Flags.java.template"))?;
     template.add_template(
         "FeatureFlagsImpl.java",
-        include_str!("../templates/FeatureFlagsImpl.java.template"),
+        include_str!("../../templates/FeatureFlagsImpl.java.template"),
     )?;
     template.add_template(
         "FeatureFlags.java",
-        include_str!("../templates/FeatureFlags.java.template"),
+        include_str!("../../templates/FeatureFlags.java.template"),
     )?;
     template.add_template(
         "FakeFeatureFlagsImpl.java",
-        include_str!("../templates/FakeFeatureFlagsImpl.java.template"),
+        include_str!("../../templates/FakeFeatureFlagsImpl.java.template"),
     )?;
 
     let path: PathBuf = package.split('.').collect();
