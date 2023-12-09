@@ -308,7 +308,17 @@ pub mod parsed_flags {
     }
 
     fn create_sorting_key(pf: &ProtoParsedFlag) -> String {
-        format!("{}.{}", pf.package(), pf.name())
+        pf.fully_qualified_name()
+    }
+}
+
+pub trait ParsedFlagExt {
+    fn fully_qualified_name(&self) -> String;
+}
+
+impl ParsedFlagExt for ProtoParsedFlag {
+    fn fully_qualified_name(&self) -> String {
+        format!("{}.{}", self.package(), self.name())
     }
 }
 

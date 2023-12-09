@@ -56,12 +56,12 @@ where
     let files = [
         FileSpec {
             name: &format!("{}.h", header),
-            template: include_str!("../templates/cpp_exported_header.template"),
+            template: include_str!("../../templates/cpp_exported_header.template"),
             dir: "include",
         },
         FileSpec {
             name: &format!("{}.cc", header),
-            template: include_str!("../templates/cpp_source_file.template"),
+            template: include_str!("../../templates/cpp_source_file.template"),
             dir: "",
         },
     ];

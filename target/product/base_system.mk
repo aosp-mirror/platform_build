@@ -127,7 +127,6 @@ PRODUCT_PACKAGES += \
     IntentResolver \
     ip \
     iptables \
-    ip-up-vpn \
     javax.obex \
     keystore2 \
     credstore \
@@ -225,7 +224,6 @@ PRODUCT_PACKAGES += \
     mkfs.erofs \
     monkey \
     mtectrl \
-    mtpd \
     ndc \
     netd \
     NetworkStack \
@@ -240,14 +238,12 @@ PRODUCT_PACKAGES += \
     pintool \
     platform.xml \
     pm \
-    pppd \
     preinstalled-packages-asl-files.xml \
     preinstalled-packages-platform.xml \
     preinstalled-packages-strict-signature.xml \
     printflags \
     privapp-permissions-platform.xml \
     prng_seeder \
-    racoon \
     recovery-persist \
     resize2fs \
     rss_hwm_reset \

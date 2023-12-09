@@ -78,7 +78,7 @@ $(eval $(strip $(1)): PRIVATE_IN := $(strip $(3)))
 $(strip $(1)): $(ACONFIG) $(strip $(3))
 	mkdir -p $$(dir $$(PRIVATE_OUT))
 	$$(if $$(PRIVATE_IN), \
-		$$(ACONFIG) dump --format protobuf --out $$(PRIVATE_OUT) \
+		$$(ACONFIG) dump --dedup --format protobuf --out $$(PRIVATE_OUT) \
 			$$(addprefix --cache ,$$(PRIVATE_IN)), \
 		echo -n > $$(PRIVATE_OUT) \
 	)
