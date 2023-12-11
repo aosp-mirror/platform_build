@@ -193,6 +193,9 @@ mod tests {
         @com.android.aconfig.annotations.AssumeTrueForR8
         @UnsupportedAppUsage
         boolean enabledRo();
+        @com.android.aconfig.annotations.AssumeTrueForR8
+        @UnsupportedAppUsage
+        boolean enabledRoExported();
         @UnsupportedAppUsage
         boolean enabledRw();
     }
@@ -216,6 +219,8 @@ mod tests {
         public static final String FLAG_ENABLED_FIXED_RO = "com.android.aconfig.test.enabled_fixed_ro";
         /** @hide */
         public static final String FLAG_ENABLED_RO = "com.android.aconfig.test.enabled_ro";
+        /** @hide */
+        public static final String FLAG_ENABLED_RO_EXPORTED = "com.android.aconfig.test.enabled_ro_exported";
         /** @hide */
         public static final String FLAG_ENABLED_RW = "com.android.aconfig.test.enabled_rw";
 
@@ -245,6 +250,11 @@ mod tests {
         @UnsupportedAppUsage
         public static boolean enabledRo() {
             return FEATURE_FLAGS.enabledRo();
+        }
+        @com.android.aconfig.annotations.AssumeTrueForR8
+        @UnsupportedAppUsage
+        public static boolean enabledRoExported() {
+            return FEATURE_FLAGS.enabledRoExported();
         }
         @UnsupportedAppUsage
         public static boolean enabledRw() {
@@ -295,6 +305,11 @@ mod tests {
         }
         @Override
         @UnsupportedAppUsage
+        public boolean enabledRoExported() {
+            return getValue(Flags.FLAG_ENABLED_RO_EXPORTED);
+        }
+        @Override
+        @UnsupportedAppUsage
         public boolean enabledRw() {
             return getValue(Flags.FLAG_ENABLED_RW);
         }
@@ -324,6 +339,7 @@ mod tests {
                 Map.entry(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE, false),
                 Map.entry(Flags.FLAG_ENABLED_FIXED_RO, false),
                 Map.entry(Flags.FLAG_ENABLED_RO, false),
+                Map.entry(Flags.FLAG_ENABLED_RO_EXPORTED, false),
                 Map.entry(Flags.FLAG_ENABLED_RW, false)
             )
         );
@@ -442,6 +458,11 @@ mod tests {
             }
             @Override
             @UnsupportedAppUsage
+            public boolean enabledRoExported() {
+                return true;
+            }
+            @Override
+            @UnsupportedAppUsage
             public boolean enabledRw() {
                 if (!aconfig_test_is_cached) {
                     load_overrides_aconfig_test();
@@ -495,17 +516,17 @@ mod tests {
         /** @hide */
         public final class Flags {
             /** @hide */
-            public static final String FLAG_DISABLED_RW = "com.android.aconfig.test.disabled_rw";
-            /** @hide */
             public static final String FLAG_DISABLED_RW_EXPORTED = "com.android.aconfig.test.disabled_rw_exported";
+            /** @hide */
+            public static final String FLAG_ENABLED_RO_EXPORTED = "com.android.aconfig.test.enabled_ro_exported";
 
-            @UnsupportedAppUsage
-            public static boolean disabledRw() {
-                return FEATURE_FLAGS.disabledRw();
-            }
             @UnsupportedAppUsage
             public static boolean disabledRwExported() {
                 return FEATURE_FLAGS.disabledRwExported();
+            }
+            @UnsupportedAppUsage
+            public static boolean enabledRoExported() {
+                return FEATURE_FLAGS.enabledRoExported();
             }
             private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
         }
@@ -518,9 +539,9 @@ mod tests {
         /** @hide */
         public interface FeatureFlags {
             @UnsupportedAppUsage
-            boolean disabledRw();
-            @UnsupportedAppUsage
             boolean disabledRwExported();
+            @UnsupportedAppUsage
+            boolean enabledRoExported();
         }
         "#;
 
@@ -534,17 +555,17 @@ mod tests {
         public final class FeatureFlagsImpl implements FeatureFlags {
             private static boolean aconfig_test_is_cached = false;
             private static boolean other_namespace_is_cached = false;
-            private static boolean disabledRw = false;
             private static boolean disabledRwExported = false;
+            private static boolean enabledRoExported = false;
 
 
             private void load_overrides_aconfig_test() {
                 try {
                     Properties properties = DeviceConfig.getProperties("aconfig_test");
-                    disabledRw =
-                        properties.getBoolean("com.android.aconfig.test.disabled_rw", false);
                     disabledRwExported =
                         properties.getBoolean("com.android.aconfig.test.disabled_rw_exported", false);
+                    enabledRoExported =
+                        properties.getBoolean("com.android.aconfig.test.enabled_ro_exported", false);
                 } catch (NullPointerException e) {
                     throw new RuntimeException(
                         "Cannot read value from namespace aconfig_test "
@@ -576,20 +597,20 @@ mod tests {
 
             @Override
             @UnsupportedAppUsage
-            public boolean disabledRw() {
-                if (!aconfig_test_is_cached) {
-                    load_overrides_aconfig_test();
-                }
-                return disabledRw;
-            }
-
-            @Override
-            @UnsupportedAppUsage
             public boolean disabledRwExported() {
                 if (!aconfig_test_is_cached) {
                     load_overrides_aconfig_test();
                 }
                 return disabledRwExported;
+            }
+
+            @Override
+            @UnsupportedAppUsage
+            public boolean enabledRoExported() {
+                if (!aconfig_test_is_cached) {
+                    load_overrides_aconfig_test();
+                }
+                return enabledRoExported;
             }
         }"#;
 
@@ -606,13 +627,13 @@ mod tests {
             }
             @Override
             @UnsupportedAppUsage
-            public boolean disabledRw() {
-                return getValue(Flags.FLAG_DISABLED_RW);
+            public boolean disabledRwExported() {
+                return getValue(Flags.FLAG_DISABLED_RW_EXPORTED);
             }
             @Override
             @UnsupportedAppUsage
-            public boolean disabledRwExported() {
-                return getValue(Flags.FLAG_DISABLED_RW_EXPORTED);
+            public boolean enabledRoExported() {
+                return getValue(Flags.FLAG_ENABLED_RO_EXPORTED);
             }
             public void setFlag(String flagName, boolean value) {
                 if (!this.mFlagMap.containsKey(flagName)) {
@@ -640,6 +661,7 @@ mod tests {
                     Map.entry(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE, false),
                     Map.entry(Flags.FLAG_ENABLED_FIXED_RO, false),
                     Map.entry(Flags.FLAG_ENABLED_RO, false),
+                    Map.entry(Flags.FLAG_ENABLED_RO_EXPORTED, false),
                     Map.entry(Flags.FLAG_ENABLED_RW, false)
                 )
             );
@@ -734,6 +756,12 @@ mod tests {
             @Override
             @UnsupportedAppUsage
             public boolean enabledRo() {
+                throw new UnsupportedOperationException(
+                    "Method is not implemented.");
+            }
+            @Override
+            @UnsupportedAppUsage
+            public boolean enabledRoExported() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
             }
