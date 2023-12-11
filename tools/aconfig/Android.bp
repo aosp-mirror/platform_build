@@ -154,6 +154,12 @@ cc_aconfig_library {
     aconfig_declarations: "aconfig.test.flags",
 }
 
+cc_aconfig_library {
+    name: "aconfig_test_cpp_library_test_variant",
+    aconfig_declarations: "aconfig.test.flags",
+    mode: "test",
+}
+
 cc_test {
     name: "aconfig.test.cpp",
     srcs: [
@@ -161,6 +167,20 @@ cc_test {
     ],
     static_libs: [
         "aconfig_test_cpp_library",
+        "libgmock",
+    ],
+    shared_libs: [
+        "server_configurable_flags",
+    ],
+}
+
+cc_test {
+    name: "aconfig.test.cpp.test_mode",
+    srcs: [
+        "tests/aconfig_test_test_variant.cpp",
+    ],
+    static_libs: [
+        "aconfig_test_cpp_library_test_variant",
         "libgmock",
     ],
     shared_libs: [
