@@ -55,6 +55,24 @@ TEST(AconfigTest, TestEnabledFixedReadOnlyFlag) {
   ASSERT_FALSE(enabled_fixed_ro());
 }
 
+TEST(AconfigTest, OverrideFlagValue) {
+  ASSERT_FALSE(disabled_ro());
+  disabled_ro(true);
+  ASSERT_TRUE(disabled_ro());
+}
+
+TEST(AconfigTest, ResetFlagValue) {
+  ASSERT_FALSE(disabled_ro());
+  ASSERT_FALSE(enabled_ro());
+  disabled_ro(true);
+  enabled_ro(true);
+  ASSERT_TRUE(disabled_ro());
+  ASSERT_TRUE(enabled_ro());
+  reset_flags();
+  ASSERT_FALSE(disabled_ro());
+  ASSERT_FALSE(enabled_ro());
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
