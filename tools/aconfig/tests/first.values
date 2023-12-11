@@ -30,6 +30,12 @@ flag_value {
 }
 flag_value {
     package: "com.android.aconfig.test"
+    name: "enabled_ro_exported"
+    state: ENABLED
+    permission: READ_ONLY
+}
+flag_value {
+    package: "com.android.aconfig.test"
     name: "disabled_rw_exported"
     state: DISABLED
     permission: READ_WRITE

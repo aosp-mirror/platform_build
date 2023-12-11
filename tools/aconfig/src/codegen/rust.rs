@@ -158,6 +158,11 @@ impl FlagProvider {
         true
     }
 
+    /// query flag enabled_ro_exported
+    pub fn enabled_ro_exported(&self) -> bool {
+        true
+    }
+
     /// query flag enabled_rw
     pub fn enabled_rw(&self) -> bool {
         *CACHED_enabled_rw
@@ -200,6 +205,12 @@ pub fn enabled_fixed_ro() -> bool {
 /// query flag enabled_ro
 #[inline(always)]
 pub fn enabled_ro() -> bool {
+    true
+}
+
+/// query flag enabled_ro_exported
+#[inline(always)]
+pub fn enabled_ro_exported() -> bool {
     true
 }
 
@@ -303,6 +314,18 @@ impl FlagProvider {
         self.overrides.insert("enabled_ro", val);
     }
 
+    /// query flag enabled_ro_exported
+    pub fn enabled_ro_exported(&self) -> bool {
+        self.overrides.get("enabled_ro_exported").copied().unwrap_or(
+            true
+        )
+    }
+
+    /// set flag enabled_ro_exported
+    pub fn set_enabled_ro_exported(&mut self, val: bool) {
+        self.overrides.insert("enabled_ro_exported", val);
+    }
+
     /// query flag enabled_rw
     pub fn enabled_rw(&self) -> bool {
         self.overrides.get("enabled_rw").copied().unwrap_or(
@@ -399,6 +422,18 @@ pub fn enabled_ro() -> bool {
 #[inline(always)]
 pub fn set_enabled_ro(val: bool) {
     PROVIDER.lock().unwrap().set_enabled_ro(val);
+}
+
+/// query flag enabled_ro_exported
+#[inline(always)]
+pub fn enabled_ro_exported() -> bool {
+    PROVIDER.lock().unwrap().enabled_ro_exported()
+}
+
+/// set flag enabled_ro_exported
+#[inline(always)]
+pub fn set_enabled_ro_exported(val: bool) {
+    PROVIDER.lock().unwrap().set_enabled_ro_exported(val);
 }
 
 /// query flag enabled_rw
