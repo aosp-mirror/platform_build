@@ -347,7 +347,7 @@ def get_sbom_fragments(installed_file_metadata, metadata_file_path):
       sbom_checksum = metadata_proto.third_party.sbom_ref.checksum
       upstream_element_id = metadata_proto.third_party.sbom_ref.element_id
       if sbom_url and sbom_checksum and upstream_element_id:
-        doc_ref_id = f'DocumentRef-{PKG_UPSTREAM}-{encode_for_spdxid(name)}'
+        doc_ref_id = f'DocumentRef-{PKG_UPSTREAM}-{sbom_data.encode_for_spdxid(name)}'
         external_doc_ref = sbom_data.DocumentExternalReference(id=doc_ref_id,
                                                                uri=sbom_url,
                                                                checksum=sbom_checksum)
