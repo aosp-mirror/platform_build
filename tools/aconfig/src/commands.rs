@@ -370,7 +370,7 @@ mod tests {
         assert_eq!(ProtoFlagState::ENABLED, enabled_ro.trace[2].state());
         assert_eq!(ProtoFlagPermission::READ_ONLY, enabled_ro.trace[2].permission());
 
-        assert_eq!(7, parsed_flags.parsed_flag.len());
+        assert_eq!(8, parsed_flags.parsed_flag.len());
         for pf in parsed_flags.parsed_flag.iter() {
             if pf.name() == "enabled_fixed_ro" {
                 continue;
