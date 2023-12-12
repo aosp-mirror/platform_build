@@ -52,11 +52,20 @@ public class FakeFeatureFlagsImpl implements FeatureFlags \{
     }
 
     private Map<String, Boolean> mFlagMap = new HashMap<>(
+        {{ if library_exported }}
+        Map.ofEntries(
+            {{-for item in exported_flag_elements}}
+            Map.entry(Flags.FLAG_{item.flag_name_constant_suffix}, false)
+            {{ -if not @last }},{{ endif }}
+            {{ -endfor }}
+        )
+        {{ else }}
         Map.ofEntries(
             {{-for item in flag_elements}}
             Map.entry(Flags.FLAG_{item.flag_name_constant_suffix}, false)
             {{ -if not @last }},{{ endif }}
             {{ -endfor }}
         )
+        {{ endif }}
     );
 }
