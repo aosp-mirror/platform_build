@@ -8,6 +8,8 @@ import static com.android.aconfig.test.Flags.disabledRw;
 import static com.android.aconfig.test.Flags.enabledFixedRo;
 import static com.android.aconfig.test.Flags.enabledRo;
 import static com.android.aconfig.test.Flags.enabledRw;
+import static com.android.aconfig.test.exported.Flags.exportedFlag;
+import static com.android.aconfig.test.exported.Flags.FLAG_EXPORTED_FLAG;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
@@ -63,5 +65,11 @@ public final class AconfigTest {
         FakeFeatureFlagsImpl fakeFeatureFlags = new FakeFeatureFlagsImpl();
         fakeFeatureFlags.setFlag(FLAG_ENABLED_RW, false);
         assertFalse(fakeFeatureFlags.enabledRw());
+    }
+
+    @Test
+    public void testExportedFlag() {
+        assertEquals("com.android.aconfig.test.exported.exported_flag", FLAG_EXPORTED_FLAG);
+        assertFalse(exportedFlag());
     }
 }
