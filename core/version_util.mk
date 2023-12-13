@@ -100,7 +100,7 @@ PLATFORM_VERSION_LAST_STABLE := $(RELEASE_PLATFORM_VERSION_LAST_STABLE)
 PLATFORM_VERSION_KNOWN_CODENAMES := \
 Base Base11 Cupcake Donut Eclair Eclair01 EclairMr1 Froyo Gingerbread GingerbreadMr1 \
 Honeycomb HoneycombMr1 HoneycombMr2 IceCreamSandwich IceCreamSandwichMr1 \
-JellyBean JellyBeanMr1 JellyBeanMr2 Kitkat KitkatWatch L Lollipop LollipopMr1 M N NMr1 O OMr1 P \
+JellyBean JellyBeanMr1 JellyBeanMr2 Kitkat KitkatWatch Lollipop LollipopMr1 M N NMr1 O OMr1 P \
 Q R S Sv2 Tiramisu UpsideDownCake VanillaIceCream
 
 # Convert from space separated list to comma separated
