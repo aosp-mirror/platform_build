@@ -197,26 +197,29 @@ pub enum CodegenMode {
 
 pub fn create_java_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec<OutputFile>> {
     let parsed_flags = input.try_parse_flags()?;
-    let Some(package) = find_unique_package(&parsed_flags) else {
+    let filtered_parsed_flags = filter_parsed_flags(parsed_flags, codegen_mode);
+    let Some(package) = find_unique_package(&filtered_parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
-    generate_java_code(package, parsed_flags.parsed_flag.iter(), codegen_mode)
+    generate_java_code(package, filtered_parsed_flags.iter(), codegen_mode)
 }
 
 pub fn create_cpp_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec<OutputFile>> {
     let parsed_flags = input.try_parse_flags()?;
-    let Some(package) = find_unique_package(&parsed_flags) else {
+    let filtered_parsed_flags = filter_parsed_flags(parsed_flags, codegen_mode);
+    let Some(package) = find_unique_package(&filtered_parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
-    generate_cpp_code(package, parsed_flags.parsed_flag.iter(), codegen_mode)
+    generate_cpp_code(package, filtered_parsed_flags.iter(), codegen_mode)
 }
 
 pub fn create_rust_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<OutputFile> {
     let parsed_flags = input.try_parse_flags()?;
-    let Some(package) = find_unique_package(&parsed_flags) else {
+    let filtered_parsed_flags = filter_parsed_flags(parsed_flags, codegen_mode);
+    let Some(package) = find_unique_package(&filtered_parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
-    generate_rust_code(package, parsed_flags.parsed_flag.iter(), codegen_mode)
+    generate_rust_code(package, filtered_parsed_flags.iter(), codegen_mode)
 }
 
 pub fn create_storage(caches: Vec<Input>, container: &str) -> Result<Vec<OutputFile>> {
@@ -342,11 +345,11 @@ pub fn dump_parsed_flags(
     Ok(output)
 }
 
-fn find_unique_package(parsed_flags: &ProtoParsedFlags) -> Option<&str> {
-    let Some(package) = parsed_flags.parsed_flag.first().map(|pf| pf.package()) else {
+fn find_unique_package(parsed_flags: &[ProtoParsedFlag]) -> Option<&str> {
+    let Some(package) = parsed_flags.first().map(|pf| pf.package()) else {
         return None;
     };
-    if parsed_flags.parsed_flag.iter().any(|pf| pf.package() != package) {
+    if parsed_flags.iter().any(|pf| pf.package() != package) {
         return None;
     }
     Some(package)
@@ -360,6 +363,18 @@ fn find_unique_container(parsed_flags: &ProtoParsedFlags) -> Option<&str> {
         return None;
     }
     Some(container)
+}
+
+fn filter_parsed_flags(
+    parsed_flags: ProtoParsedFlags,
+    codegen_mode: CodegenMode,
+) -> Vec<ProtoParsedFlag> {
+    match codegen_mode {
+        CodegenMode::Exported => {
+            parsed_flags.parsed_flag.into_iter().filter(|pf| pf.is_exported()).collect()
+        }
+        _ => parsed_flags.parsed_flag,
+    }
 }
 
 #[cfg(test)]
@@ -643,6 +658,23 @@ mod tests {
         let bytes = dump_parsed_flags(vec![input, input2], DumpFormat::Textproto, true).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
         assert_eq!(crate::test::TEST_FLAGS_TEXTPROTO.trim(), text.trim());
+    }
+
+    #[test]
+    fn test_filter_parsed_flags() {
+        let mut input = parse_test_flags_as_input();
+        let parsed_flags = input.try_parse_flags().unwrap();
+
+        let filtered_parsed_flags =
+            filter_parsed_flags(parsed_flags.clone(), CodegenMode::Exported);
+        assert_eq!(2, filtered_parsed_flags.len());
+
+        let filtered_parsed_flags =
+            filter_parsed_flags(parsed_flags.clone(), CodegenMode::Production);
+        assert_eq!(8, filtered_parsed_flags.len());
+
+        let filtered_parsed_flags = filter_parsed_flags(parsed_flags.clone(), CodegenMode::Test);
+        assert_eq!(8, filtered_parsed_flags.len());
     }
 
     fn parse_test_flags_as_input() -> Input {
