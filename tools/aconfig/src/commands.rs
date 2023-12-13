@@ -23,6 +23,8 @@ use std::path::PathBuf;
 use crate::codegen::cpp::generate_cpp_code;
 use crate::codegen::java::generate_java_code;
 use crate::codegen::rust::generate_rust_code;
+use crate::storage::generate_storage_files;
+
 use crate::protos::{
     ParsedFlagExt, ProtoFlagMetadata, ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag,
     ProtoParsedFlags, ProtoTracepoint,
@@ -217,6 +219,17 @@ pub fn create_rust_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Ou
     generate_rust_code(package, parsed_flags.parsed_flag.iter(), codegen_mode)
 }
 
+pub fn create_storage(caches: Vec<Input>, container: &str) -> Result<Vec<OutputFile>> {
+    let parsed_flags_vec: Vec<ProtoParsedFlags> = caches
+        .into_iter()
+        .map(|mut input| input.try_parse_flags())
+        .collect::<Result<Vec<_>>>()?
+        .into_iter()
+        .filter(|pfs| find_unique_container(pfs) == Some(container))
+        .collect();
+    generate_storage_files(container, parsed_flags_vec.iter())
+}
+
 pub fn create_device_config_defaults(mut input: Input) -> Result<Vec<u8>> {
     let parsed_flags = input.try_parse_flags()?;
     let mut output = Vec::new();
@@ -337,6 +350,16 @@ fn find_unique_package(parsed_flags: &ProtoParsedFlags) -> Option<&str> {
         return None;
     }
     Some(package)
+}
+
+fn find_unique_container(parsed_flags: &ProtoParsedFlags) -> Option<&str> {
+    let Some(container) = parsed_flags.parsed_flag.first().map(|pf| pf.container()) else {
+        return None;
+    };
+    if parsed_flags.parsed_flag.iter().any(|pf| pf.container() != container) {
+        return None;
+    }
+    Some(container)
 }
 
 #[cfg(test)]

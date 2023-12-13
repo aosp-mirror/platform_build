@@ -1,0 +1,17 @@
+package: "com.android.aconfig.storage.test_1"
+container: "system"
+
+flag {
+    name: "enabled_rw"
+    namespace: "aconfig_test"
+    description: "This flag is ENABLED + READ_WRITE"
+    bug: ""
+}
+
+flag {
+    name: "disabled_rw"
+    namespace: "aconfig_test"
+    description: "This flag is DISABLED + READ_WRITE"
+    bug: "456"
+    is_exported: true
+}
