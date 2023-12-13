@@ -1,0 +1,17 @@
+package: "com.android.aconfig.test.exported"
+container: "system"
+
+flag {
+    name: "exported_flag"
+    namespace: "aconfig_test"
+    description: "This is an exported flag"
+    is_exported: true
+    bug: "888"
+}
+
+flag {
+    name: "not_exported_flag"
+    namespace: "aconfig_test"
+    description: "This flag is not exported"
+    bug: "777"
+}

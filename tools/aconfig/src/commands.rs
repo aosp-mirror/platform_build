@@ -20,11 +20,14 @@ use protobuf::Message;
 use std::io::Read;
 use std::path::PathBuf;
 
-use crate::codegen_cpp::generate_cpp_code;
-use crate::codegen_java::generate_java_code;
-use crate::codegen_rust::generate_rust_code;
+use crate::codegen::cpp::generate_cpp_code;
+use crate::codegen::java::generate_java_code;
+use crate::codegen::rust::generate_rust_code;
+use crate::storage::generate_storage_files;
+
 use crate::protos::{
-    ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag, ProtoParsedFlags, ProtoTracepoint,
+    ParsedFlagExt, ProtoFlagMetadata, ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag,
+    ProtoParsedFlags, ProtoTracepoint,
 };
 
 pub struct Input {
@@ -117,6 +120,11 @@ pub fn parse_flags(
             tracepoint.set_state(DEFAULT_FLAG_STATE);
             tracepoint.set_permission(flag_permission);
             parsed_flag.trace.push(tracepoint);
+
+            let mut metadata = ProtoFlagMetadata::new();
+            let purpose = flag_declaration.metadata.purpose();
+            metadata.set_purpose(purpose);
+            parsed_flag.metadata = Some(metadata).into();
 
             // verify ParsedFlag looks reasonable
             crate::protos::parsed_flag::verify_fields(&parsed_flag)?;
@@ -211,6 +219,17 @@ pub fn create_rust_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Ou
     generate_rust_code(package, parsed_flags.parsed_flag.iter(), codegen_mode)
 }
 
+pub fn create_storage(caches: Vec<Input>, container: &str) -> Result<Vec<OutputFile>> {
+    let parsed_flags_vec: Vec<ProtoParsedFlags> = caches
+        .into_iter()
+        .map(|mut input| input.try_parse_flags())
+        .collect::<Result<Vec<_>>>()?
+        .into_iter()
+        .filter(|pfs| find_unique_container(pfs) == Some(container))
+        .collect();
+    generate_storage_files(container, parsed_flags_vec.iter())
+}
+
 pub fn create_device_config_defaults(mut input: Input) -> Result<Vec<u8>> {
     let parsed_flags = input.try_parse_flags()?;
     let mut output = Vec::new();
@@ -220,10 +239,9 @@ pub fn create_device_config_defaults(mut input: Input) -> Result<Vec<u8>> {
         .filter(|pf| pf.permission() == ProtoFlagPermission::READ_WRITE)
     {
         let line = format!(
-            "{}:{}.{}={}\n",
+            "{}:{}={}\n",
             parsed_flag.namespace(),
-            parsed_flag.package(),
-            parsed_flag.name(),
+            parsed_flag.fully_qualified_name(),
             match parsed_flag.state() {
                 ProtoFlagState::ENABLED => "enabled",
                 ProtoFlagState::DISABLED => "disabled",
@@ -243,9 +261,8 @@ pub fn create_device_config_sysprops(mut input: Input) -> Result<Vec<u8>> {
         .filter(|pf| pf.permission() == ProtoFlagPermission::READ_WRITE)
     {
         let line = format!(
-            "persist.device_config.{}.{}={}\n",
-            parsed_flag.package(),
-            parsed_flag.name(),
+            "persist.device_config.{}={}\n",
+            parsed_flag.fully_qualified_name(),
             match parsed_flag.state() {
                 ProtoFlagState::ENABLED => "true",
                 ProtoFlagState::DISABLED => "false",
@@ -262,9 +279,14 @@ pub enum DumpFormat {
     Verbose,
     Protobuf,
     Textproto,
+    Bool,
 }
 
-pub fn dump_parsed_flags(mut input: Vec<Input>, format: DumpFormat, dedup: bool) -> Result<Vec<u8>> {
+pub fn dump_parsed_flags(
+    mut input: Vec<Input>,
+    format: DumpFormat,
+    dedup: bool,
+) -> Result<Vec<u8>> {
     let individually_parsed_flags: Result<Vec<ProtoParsedFlags>> =
         input.iter_mut().map(|i| i.try_parse_flags()).collect();
     let parsed_flags: ProtoParsedFlags =
@@ -275,9 +297,8 @@ pub fn dump_parsed_flags(mut input: Vec<Input>, format: DumpFormat, dedup: bool)
         DumpFormat::Text => {
             for parsed_flag in parsed_flags.parsed_flag.into_iter() {
                 let line = format!(
-                    "{}.{} [{}]: {:?} + {:?}\n",
-                    parsed_flag.package(),
-                    parsed_flag.name(),
+                    "{} [{}]: {:?} + {:?}\n",
+                    parsed_flag.fully_qualified_name(),
                     parsed_flag.container(),
                     parsed_flag.permission(),
                     parsed_flag.state()
@@ -290,9 +311,8 @@ pub fn dump_parsed_flags(mut input: Vec<Input>, format: DumpFormat, dedup: bool)
                 let sources: Vec<_> =
                     parsed_flag.trace.iter().map(|tracepoint| tracepoint.source()).collect();
                 let line = format!(
-                    "{}.{} [{}]: {:?} + {:?} ({})\n",
-                    parsed_flag.package(),
-                    parsed_flag.name(),
+                    "{} [{}]: {:?} + {:?} ({})\n",
+                    parsed_flag.fully_qualified_name(),
                     parsed_flag.container(),
                     parsed_flag.permission(),
                     parsed_flag.state(),
@@ -308,6 +328,16 @@ pub fn dump_parsed_flags(mut input: Vec<Input>, format: DumpFormat, dedup: bool)
             let s = protobuf::text_format::print_to_string_pretty(&parsed_flags);
             output.extend_from_slice(s.as_bytes());
         }
+        DumpFormat::Bool => {
+            for parsed_flag in parsed_flags.parsed_flag.into_iter() {
+                let line = format!(
+                    "{}={:?}\n",
+                    parsed_flag.fully_qualified_name(),
+                    parsed_flag.state() == ProtoFlagState::ENABLED
+                );
+                output.extend_from_slice(line.as_bytes());
+            }
+        }
     }
     Ok(output)
 }
@@ -322,9 +352,20 @@ fn find_unique_package(parsed_flags: &ProtoParsedFlags) -> Option<&str> {
     Some(package)
 }
 
+fn find_unique_container(parsed_flags: &ProtoParsedFlags) -> Option<&str> {
+    let Some(container) = parsed_flags.parsed_flag.first().map(|pf| pf.container()) else {
+        return None;
+    };
+    if parsed_flags.parsed_flag.iter().any(|pf| pf.container() != container) {
+        return None;
+    }
+    Some(container)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::protos::ProtoFlagPurpose;
 
     #[test]
     fn test_parse_flags() {
@@ -339,6 +380,7 @@ mod tests {
         assert_eq!("This flag is ENABLED + READ_ONLY", enabled_ro.description());
         assert_eq!(ProtoFlagState::ENABLED, enabled_ro.state());
         assert_eq!(ProtoFlagPermission::READ_ONLY, enabled_ro.permission());
+        assert_eq!(ProtoFlagPurpose::PURPOSE_BUGFIX, enabled_ro.metadata.purpose());
         assert_eq!(3, enabled_ro.trace.len());
         assert!(!enabled_ro.is_fixed_read_only());
         assert_eq!("tests/test.aconfig", enabled_ro.trace[0].source());
@@ -351,7 +393,7 @@ mod tests {
         assert_eq!(ProtoFlagState::ENABLED, enabled_ro.trace[2].state());
         assert_eq!(ProtoFlagPermission::READ_ONLY, enabled_ro.trace[2].permission());
 
-        assert_eq!(7, parsed_flags.parsed_flag.len());
+        assert_eq!(8, parsed_flags.parsed_flag.len());
         for pf in parsed_flags.parsed_flag.iter() {
             if pf.name() == "enabled_fixed_ro" {
                 continue;
@@ -508,6 +550,41 @@ mod tests {
             format!("{:?}", error),
             "failed to set permission of flag first, since this flag is fixed read only flag"
         );
+    }
+
+    #[test]
+    fn test_parse_flags_metadata() {
+        let metadata_flag = r#"
+        package: "com.first"
+        flag {
+            name: "first"
+            namespace: "first_ns"
+            description: "This is the description of this feature flag."
+            bug: "123"
+            metadata {
+                purpose: PURPOSE_FEATURE
+            }
+        }
+        "#;
+        let declaration = vec![Input {
+            source: "memory".to_string(),
+            reader: Box::new(metadata_flag.as_bytes()),
+        }];
+        let value: Vec<Input> = vec![];
+
+        let flags_bytes = crate::commands::parse_flags(
+            "com.first",
+            None,
+            declaration,
+            value,
+            ProtoFlagPermission::READ_ONLY,
+        )
+        .unwrap();
+        let parsed_flags =
+            crate::protos::parsed_flags::try_from_binary_proto(&flags_bytes).unwrap();
+        assert_eq!(1, parsed_flags.parsed_flag.len());
+        let parsed_flag = parsed_flags.parsed_flag.first().unwrap();
+        assert_eq!(ProtoFlagPurpose::PURPOSE_FEATURE, parsed_flag.metadata.purpose());
     }
 
     #[test]

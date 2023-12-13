@@ -44,6 +44,9 @@ parsed_flag {
   is_fixed_read_only: false
   is_exported: false
   container: "system"
+  metadata {
+    purpose: PURPOSE_UNSPECIFIED
+  }
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -59,14 +62,17 @@ parsed_flag {
     permission: READ_WRITE
   }
   is_fixed_read_only: false
-  is_exported: true
+  is_exported: false
   container: "system"
+  metadata {
+    purpose: PURPOSE_UNSPECIFIED
+  }
 }
 parsed_flag {
   package: "com.android.aconfig.test"
   name: "disabled_rw_exported"
   namespace: "aconfig_test"
-  description: "This flag is exported"
+  description: "This flag is DISABLED + READ_WRITE and exported"
   bug: "111"
   state: DISABLED
   permission: READ_WRITE
@@ -83,6 +89,9 @@ parsed_flag {
   is_fixed_read_only: false
   is_exported: true
   container: "system"
+  metadata {
+    purpose: PURPOSE_UNSPECIFIED
+  }
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -105,6 +114,9 @@ parsed_flag {
   is_fixed_read_only: false
   is_exported: false
   container: "system"
+  metadata {
+    purpose: PURPOSE_UNSPECIFIED
+  }
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -127,6 +139,9 @@ parsed_flag {
   is_fixed_read_only: true
   is_exported: false
   container: "system"
+  metadata {
+    purpose: PURPOSE_UNSPECIFIED
+  }
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -154,6 +169,34 @@ parsed_flag {
   is_fixed_read_only: false
   is_exported: false
   container: "system"
+  metadata {
+    purpose: PURPOSE_BUGFIX
+  }
+}
+parsed_flag {
+  package: "com.android.aconfig.test"
+  name: "enabled_ro_exported"
+  namespace: "aconfig_test"
+  description: "This flag is ENABLED + READ_ONLY and exported"
+  bug: "111"
+  state: ENABLED
+  permission: READ_ONLY
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  trace {
+    source: "tests/first.values"
+    state: ENABLED
+    permission: READ_ONLY
+  }
+  is_fixed_read_only: false
+  is_exported: true
+  container: "system"
+  metadata {
+    purpose: PURPOSE_UNSPECIFIED
+  }
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -176,6 +219,9 @@ parsed_flag {
   is_fixed_read_only: false
   is_exported: false
   container: "system"
+  metadata {
+    purpose: PURPOSE_UNSPECIFIED
+  }
 }
 "#;
 
