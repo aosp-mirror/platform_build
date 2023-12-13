@@ -44,6 +44,7 @@ PRODUCT_PACKAGES += \
     CaptivePortalLogin \
     CertInstaller \
     CredentialManager \
+    DeviceAsWebcam \
     DocumentsUI \
     DownloadProviderUi \
     EasterEgg \

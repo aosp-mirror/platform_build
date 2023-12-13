@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use serde::Serialize;
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
@@ -34,34 +34,43 @@ where
 {
     let flag_elements: Vec<FlagElement> =
         parsed_flags_iter.map(|pf| create_flag_element(package, pf)).collect();
+    let exported_flag_elements: Vec<FlagElement> =
+        flag_elements.iter().filter(|elem| elem.exported).cloned().collect();
     let namespace_flags = gen_flags_by_namespace(&flag_elements);
     let properties_set: BTreeSet<String> =
         flag_elements.iter().map(|fe| format_property_name(&fe.device_config_namespace)).collect();
-    let is_read_write = flag_elements.iter().any(|elem| elem.is_read_write);
     let is_test_mode = codegen_mode == CodegenMode::Test;
     let library_exported = codegen_mode == CodegenMode::Exported;
+    let runtime_lookup_required =
+        flag_elements.iter().any(|elem| elem.is_read_write) || library_exported;
+
+    if library_exported && exported_flag_elements.is_empty() {
+        return Err(anyhow!("exported library contains no exported flags"));
+    }
+
     let context = Context {
         flag_elements,
+        exported_flag_elements,
         namespace_flags,
         is_test_mode,
-        is_read_write,
+        runtime_lookup_required,
         properties_set,
         package_name: package.to_string(),
         library_exported,
     };
     let mut template = TinyTemplate::new();
-    template.add_template("Flags.java", include_str!("../templates/Flags.java.template"))?;
+    template.add_template("Flags.java", include_str!("../../templates/Flags.java.template"))?;
     template.add_template(
         "FeatureFlagsImpl.java",
-        include_str!("../templates/FeatureFlagsImpl.java.template"),
+        include_str!("../../templates/FeatureFlagsImpl.java.template"),
     )?;
     template.add_template(
         "FeatureFlags.java",
-        include_str!("../templates/FeatureFlags.java.template"),
+        include_str!("../../templates/FeatureFlags.java.template"),
     )?;
     template.add_template(
         "FakeFeatureFlagsImpl.java",
-        include_str!("../templates/FakeFeatureFlagsImpl.java.template"),
+        include_str!("../../templates/FakeFeatureFlagsImpl.java.template"),
     )?;
 
     let path: PathBuf = package.split('.').collect();
@@ -100,9 +109,10 @@ fn gen_flags_by_namespace(flags: &[FlagElement]) -> Vec<NamespaceFlags> {
 #[derive(Serialize)]
 struct Context {
     pub flag_elements: Vec<FlagElement>,
+    pub exported_flag_elements: Vec<FlagElement>,
     pub namespace_flags: Vec<NamespaceFlags>,
     pub is_test_mode: bool,
-    pub is_read_write: bool,
+    pub runtime_lookup_required: bool,
     pub properties_set: BTreeSet<String>,
     pub package_name: String,
     pub library_exported: bool,
@@ -193,6 +203,9 @@ mod tests {
         @com.android.aconfig.annotations.AssumeTrueForR8
         @UnsupportedAppUsage
         boolean enabledRo();
+        @com.android.aconfig.annotations.AssumeTrueForR8
+        @UnsupportedAppUsage
+        boolean enabledRoExported();
         @UnsupportedAppUsage
         boolean enabledRw();
     }
@@ -216,6 +229,8 @@ mod tests {
         public static final String FLAG_ENABLED_FIXED_RO = "com.android.aconfig.test.enabled_fixed_ro";
         /** @hide */
         public static final String FLAG_ENABLED_RO = "com.android.aconfig.test.enabled_ro";
+        /** @hide */
+        public static final String FLAG_ENABLED_RO_EXPORTED = "com.android.aconfig.test.enabled_ro_exported";
         /** @hide */
         public static final String FLAG_ENABLED_RW = "com.android.aconfig.test.enabled_rw";
 
@@ -245,6 +260,11 @@ mod tests {
         @UnsupportedAppUsage
         public static boolean enabledRo() {
             return FEATURE_FLAGS.enabledRo();
+        }
+        @com.android.aconfig.annotations.AssumeTrueForR8
+        @UnsupportedAppUsage
+        public static boolean enabledRoExported() {
+            return FEATURE_FLAGS.enabledRoExported();
         }
         @UnsupportedAppUsage
         public static boolean enabledRw() {
@@ -295,6 +315,11 @@ mod tests {
         }
         @Override
         @UnsupportedAppUsage
+        public boolean enabledRoExported() {
+            return getValue(Flags.FLAG_ENABLED_RO_EXPORTED);
+        }
+        @Override
+        @UnsupportedAppUsage
         public boolean enabledRw() {
             return getValue(Flags.FLAG_ENABLED_RW);
         }
@@ -324,6 +349,7 @@ mod tests {
                 Map.entry(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE, false),
                 Map.entry(Flags.FLAG_ENABLED_FIXED_RO, false),
                 Map.entry(Flags.FLAG_ENABLED_RO, false),
+                Map.entry(Flags.FLAG_ENABLED_RO_EXPORTED, false),
                 Map.entry(Flags.FLAG_ENABLED_RW, false)
             )
         );
@@ -442,6 +468,11 @@ mod tests {
             }
             @Override
             @UnsupportedAppUsage
+            public boolean enabledRoExported() {
+                return true;
+            }
+            @Override
+            @UnsupportedAppUsage
             public boolean enabledRw() {
                 if (!aconfig_test_is_cached) {
                     load_overrides_aconfig_test();
@@ -495,17 +526,17 @@ mod tests {
         /** @hide */
         public final class Flags {
             /** @hide */
-            public static final String FLAG_DISABLED_RW = "com.android.aconfig.test.disabled_rw";
-            /** @hide */
             public static final String FLAG_DISABLED_RW_EXPORTED = "com.android.aconfig.test.disabled_rw_exported";
+            /** @hide */
+            public static final String FLAG_ENABLED_RO_EXPORTED = "com.android.aconfig.test.enabled_ro_exported";
 
-            @UnsupportedAppUsage
-            public static boolean disabledRw() {
-                return FEATURE_FLAGS.disabledRw();
-            }
             @UnsupportedAppUsage
             public static boolean disabledRwExported() {
                 return FEATURE_FLAGS.disabledRwExported();
+            }
+            @UnsupportedAppUsage
+            public static boolean enabledRoExported() {
+                return FEATURE_FLAGS.enabledRoExported();
             }
             private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
         }
@@ -518,9 +549,9 @@ mod tests {
         /** @hide */
         public interface FeatureFlags {
             @UnsupportedAppUsage
-            boolean disabledRw();
-            @UnsupportedAppUsage
             boolean disabledRwExported();
+            @UnsupportedAppUsage
+            boolean enabledRoExported();
         }
         "#;
 
@@ -534,17 +565,17 @@ mod tests {
         public final class FeatureFlagsImpl implements FeatureFlags {
             private static boolean aconfig_test_is_cached = false;
             private static boolean other_namespace_is_cached = false;
-            private static boolean disabledRw = false;
             private static boolean disabledRwExported = false;
+            private static boolean enabledRoExported = false;
 
 
             private void load_overrides_aconfig_test() {
                 try {
                     Properties properties = DeviceConfig.getProperties("aconfig_test");
-                    disabledRw =
-                        properties.getBoolean("com.android.aconfig.test.disabled_rw", false);
                     disabledRwExported =
                         properties.getBoolean("com.android.aconfig.test.disabled_rw_exported", false);
+                    enabledRoExported =
+                        properties.getBoolean("com.android.aconfig.test.enabled_ro_exported", false);
                 } catch (NullPointerException e) {
                     throw new RuntimeException(
                         "Cannot read value from namespace aconfig_test "
@@ -576,20 +607,20 @@ mod tests {
 
             @Override
             @UnsupportedAppUsage
-            public boolean disabledRw() {
-                if (!aconfig_test_is_cached) {
-                    load_overrides_aconfig_test();
-                }
-                return disabledRw;
-            }
-
-            @Override
-            @UnsupportedAppUsage
             public boolean disabledRwExported() {
                 if (!aconfig_test_is_cached) {
                     load_overrides_aconfig_test();
                 }
                 return disabledRwExported;
+            }
+
+            @Override
+            @UnsupportedAppUsage
+            public boolean enabledRoExported() {
+                if (!aconfig_test_is_cached) {
+                    load_overrides_aconfig_test();
+                }
+                return enabledRoExported;
             }
         }"#;
 
@@ -606,13 +637,13 @@ mod tests {
             }
             @Override
             @UnsupportedAppUsage
-            public boolean disabledRw() {
-                return getValue(Flags.FLAG_DISABLED_RW);
+            public boolean disabledRwExported() {
+                return getValue(Flags.FLAG_DISABLED_RW_EXPORTED);
             }
             @Override
             @UnsupportedAppUsage
-            public boolean disabledRwExported() {
-                return getValue(Flags.FLAG_DISABLED_RW_EXPORTED);
+            public boolean enabledRoExported() {
+                return getValue(Flags.FLAG_ENABLED_RO_EXPORTED);
             }
             public void setFlag(String flagName, boolean value) {
                 if (!this.mFlagMap.containsKey(flagName)) {
@@ -634,13 +665,8 @@ mod tests {
             }
             private Map<String, Boolean> mFlagMap = new HashMap<>(
                 Map.ofEntries(
-                    Map.entry(Flags.FLAG_DISABLED_RO, false),
-                    Map.entry(Flags.FLAG_DISABLED_RW, false),
                     Map.entry(Flags.FLAG_DISABLED_RW_EXPORTED, false),
-                    Map.entry(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE, false),
-                    Map.entry(Flags.FLAG_ENABLED_FIXED_RO, false),
-                    Map.entry(Flags.FLAG_ENABLED_RO, false),
-                    Map.entry(Flags.FLAG_ENABLED_RW, false)
+                    Map.entry(Flags.FLAG_ENABLED_RO_EXPORTED, false)
                 )
             );
         }
@@ -734,6 +760,12 @@ mod tests {
             @Override
             @UnsupportedAppUsage
             public boolean enabledRo() {
+                throw new UnsupportedOperationException(
+                    "Method is not implemented.");
+            }
+            @Override
+            @UnsupportedAppUsage
+            public boolean enabledRoExported() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
             }

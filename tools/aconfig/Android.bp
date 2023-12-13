@@ -80,6 +80,7 @@ rust_test_host {
     rustlibs: [
         "libitertools",
     ],
+    test_suites: ["general-tests"],
 }
 
 // integration tests: general
@@ -88,6 +89,12 @@ aconfig_declarations {
     name: "aconfig.test.flags",
     package: "com.android.aconfig.test",
     srcs: ["tests/test.aconfig"],
+}
+
+aconfig_declarations {
+    name: "aconfig.test.exported.flags",
+    package: "com.android.aconfig.test.exported",
+    srcs: ["tests/test_exported.aconfig"],
 }
 
 aconfig_values {
@@ -113,6 +120,12 @@ java_aconfig_library {
     aconfig_declarations: "aconfig.test.flags",
 }
 
+java_aconfig_library {
+    name: "aconfig_test_java_library_exported",
+    aconfig_declarations: "aconfig.test.exported.flags",
+    mode: "exported",
+}
+
 android_test {
     name: "aconfig.test.java",
     srcs: [
@@ -122,10 +135,11 @@ android_test {
     certificate: "platform",
     static_libs: [
         "aconfig_test_java_library",
+        "aconfig_test_java_library_exported",
         "androidx.test.rules",
         "testng",
     ],
-    test_suites: ["device-tests"],
+    test_suites: ["general-tests"],
 }
 
 java_aconfig_library {
@@ -154,6 +168,12 @@ cc_aconfig_library {
     aconfig_declarations: "aconfig.test.flags",
 }
 
+cc_aconfig_library {
+    name: "aconfig_test_cpp_library_test_variant",
+    aconfig_declarations: "aconfig.test.flags",
+    mode: "test",
+}
+
 cc_test {
     name: "aconfig.test.cpp",
     srcs: [
@@ -166,6 +186,22 @@ cc_test {
     shared_libs: [
         "server_configurable_flags",
     ],
+    test_suites: ["general-tests"],
+}
+
+cc_test {
+    name: "aconfig.test.cpp.test_mode",
+    srcs: [
+        "tests/aconfig_test_test_variant.cpp",
+    ],
+    static_libs: [
+        "aconfig_test_cpp_library_test_variant",
+        "libgmock",
+    ],
+    shared_libs: [
+        "server_configurable_flags",
+    ],
+    test_suites: ["general-tests"],
 }
 
 rust_aconfig_library {
@@ -182,6 +218,7 @@ rust_test {
     rustlibs: [
         "libaconfig_test_rust_library",
     ],
+    test_suites: ["general-tests"],
 }
 
 rust_aconfig_library {
@@ -199,4 +236,5 @@ rust_test {
     rustlibs: [
         "libaconfig_test_rust_library_with_test_mode",
     ],
+    test_suites: ["general-tests"],
 }
