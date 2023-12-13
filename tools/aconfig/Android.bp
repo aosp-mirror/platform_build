@@ -80,6 +80,7 @@ rust_test_host {
     rustlibs: [
         "libitertools",
     ],
+    test_suites: ["general-tests"],
 }
 
 // integration tests: general
@@ -125,7 +126,7 @@ android_test {
         "androidx.test.rules",
         "testng",
     ],
-    test_suites: ["device-tests"],
+    test_suites: ["general-tests"],
 }
 
 java_aconfig_library {
@@ -172,6 +173,7 @@ cc_test {
     shared_libs: [
         "server_configurable_flags",
     ],
+    test_suites: ["general-tests"],
 }
 
 cc_test {
@@ -186,6 +188,7 @@ cc_test {
     shared_libs: [
         "server_configurable_flags",
     ],
+    test_suites: ["general-tests"],
 }
 
 rust_aconfig_library {
@@ -202,6 +205,7 @@ rust_test {
     rustlibs: [
         "libaconfig_test_rust_library",
     ],
+    test_suites: ["general-tests"],
 }
 
 rust_aconfig_library {
@@ -219,4 +223,5 @@ rust_test {
     rustlibs: [
         "libaconfig_test_rust_library_with_test_mode",
     ],
+    test_suites: ["general-tests"],
 }
