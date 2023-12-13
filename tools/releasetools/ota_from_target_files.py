@@ -1038,7 +1038,11 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   partition_timestamps_flags = []
   # Enforce a max timestamp this payload can be applied on top of.
   if OPTIONS.downgrade:
-    max_timestamp = source_info.GetBuildProp("ro.build.date.utc")
+    # When generating ota between merged target-files, partition build date can
+    # decrease in target, at the same time as ro.build.date.utc increases,
+    # so always pick largest value.
+    max_timestamp = max(source_info.GetBuildProp("ro.build.date.utc"),
+        str(metadata.postcondition.timestamp))
     partition_timestamps_flags = GeneratePartitionTimestampFlagsDowngrade(
         metadata.precondition.partition_state,
         metadata.postcondition.partition_state
