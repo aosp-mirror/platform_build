@@ -5626,7 +5626,12 @@ endif # build_otatools_package
 FASTBOOT_INFO_VERSION = 1
 
 INSTALLED_FASTBOOT_INFO_TARGET := $(PRODUCT_OUT)/fastboot-info.txt
-
+ifdef TARGET_BOARD_FASTBOOT_INFO_FILE
+$(INSTALLED_FASTBOOT_INFO_TARGET): $(TARGET_BOARD_FASTBOOT_INFO_FILE)
+	rm -f $@
+	$(call pretty,"Target fastboot-info.txt: $@")
+	$(hide) cp $< $@
+else
 $(INSTALLED_FASTBOOT_INFO_TARGET):
 	rm -f $@
 	$(call pretty,"Target fastboot-info.txt: $@")
@@ -5684,6 +5689,7 @@ endif
 	$(hide) echo "if-wipe erase userdata" >> $@
 ifeq ($(BOARD_USES_METADATA_PARTITION),true)
 	$(hide) echo "if-wipe erase metadata" >> $@
+endif
 endif
 
 # -----------------------------------------------------------------
