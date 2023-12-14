@@ -49,7 +49,9 @@ where
         has_fixed_read_only,
         readwrite,
         readwrite_count,
-        for_test: codegen_mode == CodegenMode::Test,
+        is_test_mode: codegen_mode == CodegenMode::Test,
+        is_prod_mode: codegen_mode == CodegenMode::Production,
+        is_exported_mode: codegen_mode == CodegenMode::Exported,
         class_elements,
     };
 
@@ -92,7 +94,9 @@ pub struct Context<'a> {
     pub has_fixed_read_only: bool,
     pub readwrite: bool,
     pub readwrite_count: i32,
-    pub for_test: bool,
+    pub is_test_mode: bool,
+    pub is_prod_mode: bool,
+    pub is_exported_mode: bool,
     pub class_elements: Vec<ClassElement>,
 }
 
@@ -400,6 +404,48 @@ void com_android_aconfig_test_reset_flags();
 #endif
 
 
+"#;
+
+    const EXPORTED_EXPORTED_HEADER_EXPECTED: &str = r#"
+#pragma once
+
+#ifdef __cplusplus
+
+#include <memory>
+
+namespace com::android::aconfig::test {
+
+class flag_provider_interface {
+public:
+    virtual ~flag_provider_interface() = default;
+
+    virtual bool disabled_rw_exported() = 0;
+
+    virtual bool enabled_ro_exported() = 0;
+};
+
+extern std::unique_ptr<flag_provider_interface> provider_;
+
+inline bool disabled_rw_exported() {
+    return provider_->disabled_rw_exported();
+}
+
+inline bool enabled_ro_exported() {
+    return provider_->enabled_ro_exported();
+}
+
+}
+
+extern "C" {
+#endif // __cplusplus
+
+bool com_android_aconfig_test_disabled_rw_exported();
+
+bool com_android_aconfig_test_enabled_ro_exported();
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 "#;
 
     const PROD_SOURCE_FILE_EXPECTED: &str = r#"
@@ -733,6 +779,55 @@ void com_android_aconfig_test_reset_flags() {
 
 "#;
 
+    const EXPORTED_SOURCE_FILE_EXPECTED: &str = r#"
+#include "com_android_aconfig_test.h"
+#include <server_configurable_flags/get_flags.h>
+#include <vector>
+
+namespace com::android::aconfig::test {
+
+    class flag_provider : public flag_provider_interface {
+        public:
+            virtual bool disabled_rw_exported() override {
+                if (cache_[0] == -1) {
+                    cache_[0] = server_configurable_flags::GetServerConfigurableFlag(
+                        "aconfig_flags.aconfig_test",
+                        "com.android.aconfig.test.disabled_rw_exported",
+                        "false") == "true";
+                }
+                return cache_[0];
+            }
+
+            virtual bool enabled_ro_exported() override {
+                if (cache_[1] == -1) {
+                    cache_[1] = server_configurable_flags::GetServerConfigurableFlag(
+                        "aconfig_flags.aconfig_test",
+                        "com.android.aconfig.test.enabled_ro_exported",
+                        "false") == "true";
+                }
+                return cache_[1];
+            }
+
+
+    private:
+        std::vector<int8_t> cache_ = std::vector<int8_t>(2, -1);
+    };
+
+    std::unique_ptr<flag_provider_interface> provider_ =
+        std::make_unique<flag_provider>();
+}
+
+bool com_android_aconfig_test_disabled_rw_exported() {
+    return com::android::aconfig::test::disabled_rw_exported();
+}
+
+bool com_android_aconfig_test_enabled_ro_exported() {
+    return com::android::aconfig::test::enabled_ro_exported();
+}
+
+
+"#;
+
     const READ_ONLY_EXPORTED_PROD_HEADER_EXPECTED: &str = r#"
 #pragma once
 
@@ -854,12 +949,11 @@ bool com_android_aconfig_test_enabled_ro() {
         expected_header: &str,
         expected_src: &str,
     ) {
-        let generated = generate_cpp_code(
-            crate::test::TEST_PACKAGE,
-            parsed_flags.parsed_flag.into_iter(),
-            mode,
-        )
-        .unwrap();
+        let modified_parsed_flags =
+            crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode);
+        let generated =
+            generate_cpp_code(crate::test::TEST_PACKAGE, modified_parsed_flags.into_iter(), mode)
+                .unwrap();
         let mut generated_files_map = HashMap::new();
         for file in generated {
             generated_files_map.insert(
@@ -908,6 +1002,17 @@ bool com_android_aconfig_test_enabled_ro() {
             CodegenMode::Test,
             EXPORTED_TEST_HEADER_EXPECTED,
             TEST_SOURCE_FILE_EXPECTED,
+        );
+    }
+
+    #[test]
+    fn test_generate_cpp_code_for_exported() {
+        let parsed_flags = crate::test::parse_test_flags();
+        test_generate_cpp_code(
+            parsed_flags,
+            CodegenMode::Exported,
+            EXPORTED_EXPORTED_HEADER_EXPECTED,
+            EXPORTED_SOURCE_FILE_EXPECTED,
         );
     }
 
