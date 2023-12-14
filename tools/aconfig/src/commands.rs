@@ -219,7 +219,8 @@ pub fn create_rust_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Ou
     let Some(package) = find_unique_package(&filtered_parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
-    generate_rust_code(package, filtered_parsed_flags.iter(), codegen_mode)
+    let package = package.to_string();
+    generate_rust_code(&package, filtered_parsed_flags.into_iter(), codegen_mode)
 }
 
 pub fn create_storage(caches: Vec<Input>, container: &str) -> Result<Vec<OutputFile>> {
