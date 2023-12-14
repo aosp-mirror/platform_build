@@ -5137,6 +5137,10 @@ $(call declare-container-license-deps,$(INTERNAL_OTATOOLS_PACKAGE_FILES) $(INTER
 .PHONY: otatools-package
 otatools-package: $(BUILT_OTATOOLS_PACKAGE)
 
+$(call dist-for-goals, otatools-package, \
+  $(BUILT_OTATOOLS_PACKAGE) \
+)
+
 endif # build_otatools_package
 
 # -----------------------------------------------------------------
