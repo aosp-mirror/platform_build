@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-use crate::protos::{ParsedFlagExt, ProtoFlagMetadata, ProtoFlagState, ProtoTracepoint};
+use crate::protos::{
+    ParsedFlagExt, ProtoFlagMetadata, ProtoFlagPermission, ProtoFlagState, ProtoTracepoint,
+};
 use crate::protos::{ProtoParsedFlag, ProtoParsedFlags};
-use anyhow::Result;
+use anyhow::{anyhow, bail, Context, Result};
 use protobuf::Message;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -125,9 +127,78 @@ fn dump_custom_format(flag: &ProtoParsedFlag, format: &str, output: &mut Vec<u8>
 
 pub type DumpPredicate = dyn Fn(&ProtoParsedFlag) -> bool;
 
-#[allow(unused)]
 pub fn create_filter_predicate(filter: &str) -> Result<Box<DumpPredicate>> {
-    todo!();
+    let predicates = filter
+        .split('+')
+        .map(|sub_filter| create_filter_predicate_single(sub_filter))
+        .collect::<Result<Vec<_>>>()?;
+    Ok(Box::new(move |flag| predicates.iter().all(|p| p(flag))))
+}
+
+fn create_filter_predicate_single(filter: &str) -> Result<Box<DumpPredicate>> {
+    fn enum_from_str<T>(expected: &[T], s: &str) -> Result<T>
+    where
+        T: std::fmt::Debug + Copy,
+    {
+        for candidate in expected.iter() {
+            if s == format!("{:?}", candidate) {
+                return Ok(*candidate);
+            }
+        }
+        let expected =
+            expected.iter().map(|state| format!("{:?}", state)).collect::<Vec<_>>().join(", ");
+        bail!("\"{s}\": not a valid flag state, expected one of {expected}");
+    }
+
+    let error_msg = format!("\"{filter}\": filter syntax error");
+    let (what, arg) = filter.split_once(':').ok_or_else(|| anyhow!(error_msg.clone()))?;
+    match what {
+        "package" => {
+            let expected = arg.to_owned();
+            Ok(Box::new(move |flag: &ProtoParsedFlag| flag.package() == expected))
+        }
+        "name" => {
+            let expected = arg.to_owned();
+            Ok(Box::new(move |flag: &ProtoParsedFlag| flag.name() == expected))
+        }
+        "namespace" => {
+            let expected = arg.to_owned();
+            Ok(Box::new(move |flag: &ProtoParsedFlag| flag.namespace() == expected))
+        }
+        // description: not supported yet
+        "bug" => {
+            let expected = arg.to_owned();
+            Ok(Box::new(move |flag: &ProtoParsedFlag| flag.bug.join(", ") == expected))
+        }
+        "state" => {
+            let expected = enum_from_str(&[ProtoFlagState::ENABLED, ProtoFlagState::DISABLED], arg)
+                .context(error_msg)?;
+            Ok(Box::new(move |flag: &ProtoParsedFlag| flag.state() == expected))
+        }
+        "permission" => {
+            let expected = enum_from_str(
+                &[ProtoFlagPermission::READ_ONLY, ProtoFlagPermission::READ_WRITE],
+                arg,
+            )
+            .context(error_msg)?;
+            Ok(Box::new(move |flag: &ProtoParsedFlag| flag.permission() == expected))
+        }
+        // trace: not supported yet
+        "is_fixed_read_only" => {
+            let expected: bool = arg.parse().context(error_msg)?;
+            Ok(Box::new(move |flag: &ProtoParsedFlag| flag.is_fixed_read_only() == expected))
+        }
+        "is_exported" => {
+            let expected: bool = arg.parse().context(error_msg)?;
+            Ok(Box::new(move |flag: &ProtoParsedFlag| flag.is_exported() == expected))
+        }
+        "container" => {
+            let expected = arg.to_owned();
+            Ok(Box::new(move |flag: &ProtoParsedFlag| flag.container() == expected))
+        }
+        // metadata: not supported yet
+        _ => Err(anyhow!(error_msg)),
+    }
 }
 
 #[cfg(test)]
@@ -243,5 +314,101 @@ mod tests {
 
         assert_custom_format!("name={name}|state={state}", "name=enabled_ro|state=ENABLED\n");
         assert_custom_format!("{state}{state}{state}", "ENABLEDENABLEDENABLED\n");
+    }
+
+    #[test]
+    fn test_create_filter_predicate() {
+        macro_rules! assert_create_filter_predicate {
+            ($filter:expr, $expected:expr) => {
+                let parsed_flags = parse_test_flags();
+                let predicate = create_filter_predicate($filter).unwrap();
+                let mut filtered_flags: Vec<String> = parsed_flags
+                    .parsed_flag
+                    .into_iter()
+                    .filter(predicate)
+                    .map(|flag| flag.fully_qualified_name())
+                    .collect();
+                filtered_flags.sort();
+                assert_eq!(&filtered_flags, $expected);
+            };
+        }
+
+        assert_create_filter_predicate!(
+            "package:com.android.aconfig.test",
+            &[
+                "com.android.aconfig.test.disabled_ro",
+                "com.android.aconfig.test.disabled_rw",
+                "com.android.aconfig.test.disabled_rw_exported",
+                "com.android.aconfig.test.disabled_rw_in_other_namespace",
+                "com.android.aconfig.test.enabled_fixed_ro",
+                "com.android.aconfig.test.enabled_ro",
+                "com.android.aconfig.test.enabled_ro_exported",
+                "com.android.aconfig.test.enabled_rw",
+            ]
+        );
+        assert_create_filter_predicate!(
+            "name:disabled_rw",
+            &["com.android.aconfig.test.disabled_rw"]
+        );
+        assert_create_filter_predicate!(
+            "namespace:other_namespace",
+            &["com.android.aconfig.test.disabled_rw_in_other_namespace"]
+        );
+        // description: not supported yet
+        assert_create_filter_predicate!("bug:123", &["com.android.aconfig.test.disabled_ro",]);
+        assert_create_filter_predicate!(
+            "state:ENABLED",
+            &[
+                "com.android.aconfig.test.enabled_fixed_ro",
+                "com.android.aconfig.test.enabled_ro",
+                "com.android.aconfig.test.enabled_ro_exported",
+                "com.android.aconfig.test.enabled_rw",
+            ]
+        );
+        assert_create_filter_predicate!(
+            "permission:READ_ONLY",
+            &[
+                "com.android.aconfig.test.disabled_ro",
+                "com.android.aconfig.test.enabled_fixed_ro",
+                "com.android.aconfig.test.enabled_ro",
+                "com.android.aconfig.test.enabled_ro_exported",
+            ]
+        );
+        // trace: not supported yet
+        assert_create_filter_predicate!(
+            "is_fixed_read_only:true",
+            &["com.android.aconfig.test.enabled_fixed_ro"]
+        );
+        assert_create_filter_predicate!(
+            "is_exported:true",
+            &[
+                "com.android.aconfig.test.disabled_rw_exported",
+                "com.android.aconfig.test.enabled_ro_exported",
+            ]
+        );
+        assert_create_filter_predicate!(
+            "container:system",
+            &[
+                "com.android.aconfig.test.disabled_ro",
+                "com.android.aconfig.test.disabled_rw",
+                "com.android.aconfig.test.disabled_rw_exported",
+                "com.android.aconfig.test.disabled_rw_in_other_namespace",
+                "com.android.aconfig.test.enabled_fixed_ro",
+                "com.android.aconfig.test.enabled_ro",
+                "com.android.aconfig.test.enabled_ro_exported",
+                "com.android.aconfig.test.enabled_rw",
+            ]
+        );
+        // metadata: not supported yet
+
+        // multiple sub filters
+        assert_create_filter_predicate!(
+            "permission:READ_ONLY+state:ENABLED",
+            &[
+                "com.android.aconfig.test.enabled_fixed_ro",
+                "com.android.aconfig.test.enabled_ro",
+                "com.android.aconfig.test.enabled_ro_exported",
+            ]
+        );
     }
 }

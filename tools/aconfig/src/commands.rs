@@ -292,7 +292,10 @@ pub fn dump_parsed_flags(
     let filters: Vec<Box<DumpPredicate>> = if filters.is_empty() {
         vec![Box::new(|_| true)]
     } else {
-        filters.iter().map(|f| crate::dump::create_filter_predicate(f)).collect::<Result<Vec<_>>>()?
+        filters
+            .iter()
+            .map(|f| crate::dump::create_filter_predicate(f))
+            .collect::<Result<Vec<_>>>()?
     };
     crate::dump::dump_parsed_flags(
         parsed_flags.parsed_flag.into_iter().filter(|flag| filters.iter().any(|p| p(flag))),
