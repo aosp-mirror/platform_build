@@ -4883,7 +4883,9 @@ my_board_extracted_kernel := true
 endif # INSTALLED_BOOTIMAGE_TARGET
 endif # my_board_extracted_kernel
 
-ifneq ($(my_board_extracted_kernel),true)
+ifeq ($(my_board_extracted_kernel),true)
+$(call dist-for-goals, droid_targets, $(BUILT_KERNEL_VERSION_FILE))
+else
 $(warning Neither INSTALLED_KERNEL_TARGET nor INSTALLED_BOOTIMAGE_TARGET is defined when \
     PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS  is true. Information about the updated kernel \
     cannot be built into OTA update package. You can fix this by: \
@@ -6585,6 +6587,14 @@ $(JACOCO_REPORT_CLASSES_ALL) :
 
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
   $(JACOCO_REPORT_CLASSES_ALL): $(INTERNAL_ALLIMAGES_FILES)
+endif
+
+# This is not ideal, but it is difficult to correctly figure out the actual jacoco report
+# jars we need to add here as dependencies, so we add the device-tests as a dependency when
+# the env variable is set and this should guarantee thaat all the jacoco report jars are ready
+# when we package the final report jar here.
+ifeq ($(JACOCO_PACKAGING_INCLUDE_DEVICE_TESTS),true)
+  $(JACOCO_REPORT_CLASSES_ALL): $(COMPATIBILITY.device-tests.FILES)
 endif
 endif # EMMA_INSTRUMENT=true
 

@@ -85,7 +85,7 @@ class TagValueWriter:
     return headers
 
   @staticmethod
-  def marshal_package(package):
+  def marshal_package(sbom_doc, package, fragment):
     download_location = sbom_data.VALUE_NOASSERTION
     if package.download_location:
       download_location = package.download_location
@@ -107,50 +107,32 @@ class TagValueWriter:
           f'{Tags.PACKAGE_EXTERNAL_REF}: {external_ref.category} {external_ref.type} {external_ref.locator}')
 
     tagvalues.append('')
+
+    if package.id == sbom_doc.describes and not fragment:
+      tagvalues.append(
+          f'{Tags.RELATIONSHIP}: {sbom_doc.id} {sbom_data.RelationshipType.DESCRIBES} {sbom_doc.describes}')
+      tagvalues.append('')
+
+    for file in sbom_doc.files:
+      if file.id in package.file_ids:
+        tagvalues += TagValueWriter.marshal_file(file)
+
     return tagvalues
 
   @staticmethod
-  def marshal_described_element(sbom_doc, fragment):
-    if not sbom_doc.describes:
-      return None
-
-    product_package = [p for p in sbom_doc.packages if p.id == sbom_doc.describes]
-    if product_package:
-      tagvalues = TagValueWriter.marshal_package(product_package[0])
-      if not fragment:
-        tagvalues.append(
-            f'{Tags.RELATIONSHIP}: {sbom_doc.id} {sbom_data.RelationshipType.DESCRIBES} {sbom_doc.describes}')
-
-      tagvalues.append('')
-      return tagvalues
-
-    file = [f for f in sbom_doc.files if f.id == sbom_doc.describes]
-    if file:
-      tagvalues = TagValueWriter.marshal_file(file[0])
-      if not fragment:
-        tagvalues.append(
-            f'{Tags.RELATIONSHIP}: {sbom_doc.id} {sbom_data.RelationshipType.DESCRIBES} {sbom_doc.describes}')
-
-      return tagvalues
-
-    return None
-
-  @staticmethod
-  def marshal_packages(sbom_doc):
+  def marshal_packages(sbom_doc, fragment):
     tagvalues = []
     marshaled_relationships = []
     i = 0
     packages = sbom_doc.packages
     while i < len(packages):
-      if packages[i].id == sbom_doc.describes:
-        i += 1
-        continue
-
-      if i + 1 < len(packages) \
-          and packages[i].id.startswith('SPDXRef-SOURCE-') \
-          and packages[i + 1].id.startswith('SPDXRef-UPSTREAM-'):
-        tagvalues += TagValueWriter.marshal_package(packages[i])
-        tagvalues += TagValueWriter.marshal_package(packages[i + 1])
+      if (i + 1 < len(packages)
+          and packages[i].id.startswith('SPDXRef-SOURCE-')
+          and packages[i + 1].id.startswith('SPDXRef-UPSTREAM-')):
+        # Output SOURCE, UPSTREAM packages and their VARIANT_OF relationship together, so they are close to each other
+        # in SBOMs in tagvalue format.
+        tagvalues += TagValueWriter.marshal_package(sbom_doc, packages[i], fragment)
+        tagvalues += TagValueWriter.marshal_package(sbom_doc, packages[i + 1], fragment)
         rel = next((r for r in sbom_doc.relationships if
                     r.id1 == packages[i].id and
                     r.id2 == packages[i + 1].id and
@@ -162,7 +144,7 @@ class TagValueWriter:
 
         i += 2
       else:
-        tagvalues += TagValueWriter.marshal_package(packages[i])
+        tagvalues += TagValueWriter.marshal_package(sbom_doc, packages[i], fragment)
         i += 1
 
     return tagvalues, marshaled_relationships
@@ -179,12 +161,20 @@ class TagValueWriter:
     return tagvalues
 
   @staticmethod
-  def marshal_files(sbom_doc):
+  def marshal_files(sbom_doc, fragment):
     tagvalues = []
+    files_in_packages = []
+    for package in sbom_doc.packages:
+      files_in_packages += package.file_ids
     for file in sbom_doc.files:
-      if file.id == sbom_doc.describes:
+      if file.id in files_in_packages:
         continue
       tagvalues += TagValueWriter.marshal_file(file)
+      if file.id == sbom_doc.describes and not fragment:
+        # Fragment is not a full SBOM document so the relationship DESCRIBES is not applicable.
+        tagvalues.append(
+            f'{Tags.RELATIONSHIP}: {sbom_doc.id} {sbom_data.RelationshipType.DESCRIBES} {sbom_doc.describes}')
+        tagvalues.append('')
     return tagvalues
 
   @staticmethod
@@ -208,11 +198,8 @@ class TagValueWriter:
     content = []
     if not fragment:
       content += TagValueWriter.marshal_doc_headers(sbom_doc)
-    described_element = TagValueWriter.marshal_described_element(sbom_doc, fragment)
-    if described_element:
-      content += described_element
-    content += TagValueWriter.marshal_files(sbom_doc)
-    tagvalues, marshaled_relationships = TagValueWriter.marshal_packages(sbom_doc)
+    content += TagValueWriter.marshal_files(sbom_doc, fragment)
+    tagvalues, marshaled_relationships = TagValueWriter.marshal_packages(sbom_doc, fragment)
     content += tagvalues
     content += TagValueWriter.marshal_relationships(sbom_doc, marshaled_relationships)
     file.write('\n'.join(content))
