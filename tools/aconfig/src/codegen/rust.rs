@@ -153,6 +153,11 @@ impl FlagProvider {
         true
     }
 
+    /// query flag enabled_fixed_ro_exported
+    pub fn enabled_fixed_ro_exported(&self) -> bool {
+        true
+    }
+
     /// query flag enabled_ro
     pub fn enabled_ro(&self) -> bool {
         true
@@ -199,6 +204,12 @@ pub fn disabled_rw_in_other_namespace() -> bool {
 /// query flag enabled_fixed_ro
 #[inline(always)]
 pub fn enabled_fixed_ro() -> bool {
+    true
+}
+
+/// query flag enabled_fixed_ro_exported
+#[inline(always)]
+pub fn enabled_fixed_ro_exported() -> bool {
     true
 }
 
@@ -300,6 +311,18 @@ impl FlagProvider {
     /// set flag enabled_fixed_ro
     pub fn set_enabled_fixed_ro(&mut self, val: bool) {
         self.overrides.insert("enabled_fixed_ro", val);
+    }
+
+    /// query flag enabled_fixed_ro_exported
+    pub fn enabled_fixed_ro_exported(&self) -> bool {
+        self.overrides.get("enabled_fixed_ro_exported").copied().unwrap_or(
+            true
+        )
+    }
+
+    /// set flag enabled_fixed_ro_exported
+    pub fn set_enabled_fixed_ro_exported(&mut self, val: bool) {
+        self.overrides.insert("enabled_fixed_ro_exported", val);
     }
 
     /// query flag enabled_ro
@@ -410,6 +433,18 @@ pub fn enabled_fixed_ro() -> bool {
 #[inline(always)]
 pub fn set_enabled_fixed_ro(val: bool) {
     PROVIDER.lock().unwrap().set_enabled_fixed_ro(val);
+}
+
+/// query flag enabled_fixed_ro_exported
+#[inline(always)]
+pub fn enabled_fixed_ro_exported() -> bool {
+    PROVIDER.lock().unwrap().enabled_fixed_ro_exported()
+}
+
+/// set flag enabled_fixed_ro_exported
+#[inline(always)]
+pub fn set_enabled_fixed_ro_exported(val: bool) {
+    PROVIDER.lock().unwrap().set_enabled_fixed_ro_exported(val);
 }
 
 /// query flag enabled_ro

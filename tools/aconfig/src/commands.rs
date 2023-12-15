@@ -390,9 +390,9 @@ mod tests {
         assert_eq!(ProtoFlagState::ENABLED, enabled_ro.trace[2].state());
         assert_eq!(ProtoFlagPermission::READ_ONLY, enabled_ro.trace[2].permission());
 
-        assert_eq!(8, parsed_flags.parsed_flag.len());
+        assert_eq!(9, parsed_flags.parsed_flag.len());
         for pf in parsed_flags.parsed_flag.iter() {
-            if pf.name() == "enabled_fixed_ro" {
+            if pf.name().starts_with("enabled_fixed_ro") {
                 continue;
             }
             let first = pf.trace.first().unwrap();
@@ -621,7 +621,13 @@ mod tests {
         let bytes =
             dump_parsed_flags(vec![input, input2], DumpFormat::Textproto, &[], true).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
-        assert_eq!(crate::test::TEST_FLAGS_TEXTPROTO.trim(), text.trim());
+        assert_eq!(
+            None,
+            crate::test::first_significant_code_diff(
+                crate::test::TEST_FLAGS_TEXTPROTO.trim(),
+                text.trim()
+            )
+        );
     }
 
     #[test]
@@ -631,14 +637,14 @@ mod tests {
 
         let filtered_parsed_flags =
             filter_parsed_flags(parsed_flags.clone(), CodegenMode::Exported);
-        assert_eq!(2, filtered_parsed_flags.len());
+        assert_eq!(3, filtered_parsed_flags.len());
 
         let filtered_parsed_flags =
             filter_parsed_flags(parsed_flags.clone(), CodegenMode::Production);
-        assert_eq!(8, filtered_parsed_flags.len());
+        assert_eq!(9, filtered_parsed_flags.len());
 
         let filtered_parsed_flags = filter_parsed_flags(parsed_flags.clone(), CodegenMode::Test);
-        assert_eq!(8, filtered_parsed_flags.len());
+        assert_eq!(9, filtered_parsed_flags.len());
     }
 
     fn parse_test_flags_as_input() -> Input {
@@ -664,7 +670,7 @@ mod tests {
     fn test_modify_parsed_flags_based_on_mode_exported() {
         let parsed_flags = crate::test::parse_test_flags();
         let p_parsed_flags = modify_parsed_flags_based_on_mode(parsed_flags, CodegenMode::Exported);
-        assert_eq!(2, p_parsed_flags.len());
+        assert_eq!(3, p_parsed_flags.len());
         for flag in p_parsed_flags.iter() {
             assert_eq!(ProtoFlagState::DISABLED, flag.state());
             assert_eq!(ProtoFlagPermission::READ_WRITE, flag.permission());
