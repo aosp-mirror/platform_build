@@ -23,12 +23,12 @@ use std::path::PathBuf;
 use crate::codegen::cpp::generate_cpp_code;
 use crate::codegen::java::generate_java_code;
 use crate::codegen::rust::generate_rust_code;
-use crate::storage::generate_storage_files;
-
+use crate::dump::DumpFormat;
 use crate::protos::{
     ParsedFlagExt, ProtoFlagMetadata, ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag,
     ProtoParsedFlags, ProtoTracepoint,
 };
+use crate::storage::generate_storage_files;
 
 pub struct Input {
     pub source: String,
@@ -279,15 +279,6 @@ pub fn create_device_config_sysprops(mut input: Input) -> Result<Vec<u8>> {
     Ok(output)
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
-pub enum DumpFormat {
-    Text,
-    Verbose,
-    Protobuf,
-    Textproto,
-    Bool,
-}
-
 pub fn dump_parsed_flags(
     mut input: Vec<Input>,
     format: DumpFormat,
@@ -297,55 +288,7 @@ pub fn dump_parsed_flags(
         input.iter_mut().map(|i| i.try_parse_flags()).collect();
     let parsed_flags: ProtoParsedFlags =
         crate::protos::parsed_flags::merge(individually_parsed_flags?, dedup)?;
-
-    let mut output = Vec::new();
-    match format {
-        DumpFormat::Text => {
-            for parsed_flag in parsed_flags.parsed_flag.into_iter() {
-                let line = format!(
-                    "{} [{}]: {:?} + {:?}\n",
-                    parsed_flag.fully_qualified_name(),
-                    parsed_flag.container(),
-                    parsed_flag.permission(),
-                    parsed_flag.state()
-                );
-                output.extend_from_slice(line.as_bytes());
-            }
-        }
-        DumpFormat::Verbose => {
-            for parsed_flag in parsed_flags.parsed_flag.into_iter() {
-                let sources: Vec<_> =
-                    parsed_flag.trace.iter().map(|tracepoint| tracepoint.source()).collect();
-                let line = format!(
-                    "{} [{}]: {:?} + {:?} ({})\n",
-                    parsed_flag.fully_qualified_name(),
-                    parsed_flag.container(),
-                    parsed_flag.permission(),
-                    parsed_flag.state(),
-                    sources.join(", ")
-                );
-                output.extend_from_slice(line.as_bytes());
-            }
-        }
-        DumpFormat::Protobuf => {
-            parsed_flags.write_to_vec(&mut output)?;
-        }
-        DumpFormat::Textproto => {
-            let s = protobuf::text_format::print_to_string_pretty(&parsed_flags);
-            output.extend_from_slice(s.as_bytes());
-        }
-        DumpFormat::Bool => {
-            for parsed_flag in parsed_flags.parsed_flag.into_iter() {
-                let line = format!(
-                    "{}={:?}\n",
-                    parsed_flag.fully_qualified_name(),
-                    parsed_flag.state() == ProtoFlagState::ENABLED
-                );
-                output.extend_from_slice(line.as_bytes());
-            }
-        }
-    }
-    Ok(output)
+    crate::dump::dump_parsed_flags(parsed_flags.parsed_flag.into_iter(), format)
 }
 
 fn find_unique_package(parsed_flags: &[ProtoParsedFlag]) -> Option<&str> {
@@ -622,36 +565,16 @@ mod tests {
     }
 
     #[test]
-    fn test_dump_text_format() {
+    fn test_dump() {
         let input = parse_test_flags_as_input();
-        let bytes = dump_parsed_flags(vec![input], DumpFormat::Text, false).unwrap();
-        let text = std::str::from_utf8(&bytes).unwrap();
-        assert!(
-            text.contains("com.android.aconfig.test.disabled_ro [system]: READ_ONLY + DISABLED")
-        );
-    }
-
-    #[test]
-    fn test_dump_protobuf_format() {
-        let expected = protobuf::text_format::parse_from_str::<ProtoParsedFlags>(
-            crate::test::TEST_FLAGS_TEXTPROTO,
+        let bytes = dump_parsed_flags(
+            vec![input],
+            DumpFormat::Custom("{fully_qualified_name}".to_string()),
+            false,
         )
-        .unwrap()
-        .write_to_bytes()
         .unwrap();
-
-        let input = parse_test_flags_as_input();
-        let actual = dump_parsed_flags(vec![input], DumpFormat::Protobuf, false).unwrap();
-
-        assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn test_dump_textproto_format() {
-        let input = parse_test_flags_as_input();
-        let bytes = dump_parsed_flags(vec![input], DumpFormat::Textproto, false).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
-        assert_eq!(crate::test::TEST_FLAGS_TEXTPROTO.trim(), text.trim());
+        assert!(text.contains("com.android.aconfig.test.disabled_ro"));
     }
 
     #[test]
