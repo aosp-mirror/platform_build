@@ -24,16 +24,16 @@ use crate::codegen;
 use crate::commands::{CodegenMode, OutputFile};
 use crate::protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
 
-pub fn generate_java_code<'a, I>(
+pub fn generate_java_code<I>(
     package: &str,
     parsed_flags_iter: I,
     codegen_mode: CodegenMode,
 ) -> Result<Vec<OutputFile>>
 where
-    I: Iterator<Item = &'a ProtoParsedFlag>,
+    I: Iterator<Item = ProtoParsedFlag>,
 {
     let flag_elements: Vec<FlagElement> =
-        parsed_flags_iter.map(|pf| create_flag_element(package, pf)).collect();
+        parsed_flags_iter.map(|pf| create_flag_element(package, &pf)).collect();
     let exported_flag_elements: Vec<FlagElement> =
         flag_elements.iter().filter(|elem| elem.exported).cloned().collect();
     let namespace_flags = gen_flags_by_namespace(&flag_elements);
@@ -361,7 +361,7 @@ mod tests {
         let parsed_flags = crate::test::parse_test_flags();
         let generated_files = generate_java_code(
             crate::test::TEST_PACKAGE,
-            parsed_flags.parsed_flag.iter(),
+            parsed_flags.parsed_flag.into_iter(),
             CodegenMode::Production,
         )
         .unwrap();
@@ -514,7 +514,7 @@ mod tests {
         let parsed_flags = crate::test::parse_test_flags();
         let generated_files = generate_java_code(
             crate::test::TEST_PACKAGE,
-            parsed_flags.parsed_flag.iter(),
+            parsed_flags.parsed_flag.into_iter(),
             CodegenMode::Exported,
         )
         .unwrap();
@@ -705,7 +705,7 @@ mod tests {
         let parsed_flags = crate::test::parse_test_flags();
         let generated_files = generate_java_code(
             crate::test::TEST_PACKAGE,
-            parsed_flags.parsed_flag.iter(),
+            parsed_flags.parsed_flag.into_iter(),
             CodegenMode::Test,
         )
         .unwrap();
