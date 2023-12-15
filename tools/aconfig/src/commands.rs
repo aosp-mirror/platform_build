@@ -23,7 +23,7 @@ use std::path::PathBuf;
 use crate::codegen::cpp::generate_cpp_code;
 use crate::codegen::java::generate_java_code;
 use crate::codegen::rust::generate_rust_code;
-use crate::dump::DumpFormat;
+use crate::dump::{DumpFormat, DumpPredicate};
 use crate::protos::{
     ParsedFlagExt, ProtoFlagMetadata, ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag,
     ProtoParsedFlags, ProtoTracepoint,
@@ -282,13 +282,22 @@ pub fn create_device_config_sysprops(mut input: Input) -> Result<Vec<u8>> {
 pub fn dump_parsed_flags(
     mut input: Vec<Input>,
     format: DumpFormat,
+    filters: &[&str],
     dedup: bool,
 ) -> Result<Vec<u8>> {
     let individually_parsed_flags: Result<Vec<ProtoParsedFlags>> =
         input.iter_mut().map(|i| i.try_parse_flags()).collect();
     let parsed_flags: ProtoParsedFlags =
         crate::protos::parsed_flags::merge(individually_parsed_flags?, dedup)?;
-    crate::dump::dump_parsed_flags(parsed_flags.parsed_flag.into_iter(), format)
+    let filters: Vec<Box<DumpPredicate>> = if filters.is_empty() {
+        vec![Box::new(|_| true)]
+    } else {
+        filters.iter().map(|f| crate::dump::create_filter_predicate(f)).collect::<Result<Vec<_>>>()?
+    };
+    crate::dump::dump_parsed_flags(
+        parsed_flags.parsed_flag.into_iter().filter(|flag| filters.iter().any(|p| p(flag))),
+        format,
+    )
 }
 
 fn find_unique_package(parsed_flags: &[ProtoParsedFlag]) -> Option<&str> {
@@ -570,6 +579,7 @@ mod tests {
         let bytes = dump_parsed_flags(
             vec![input],
             DumpFormat::Custom("{fully_qualified_name}".to_string()),
+            &[],
             false,
         )
         .unwrap();
@@ -581,7 +591,8 @@ mod tests {
     fn test_dump_textproto_format_dedup() {
         let input = parse_test_flags_as_input();
         let input2 = parse_test_flags_as_input();
-        let bytes = dump_parsed_flags(vec![input, input2], DumpFormat::Textproto, true).unwrap();
+        let bytes =
+            dump_parsed_flags(vec![input, input2], DumpFormat::Textproto, &[], true).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
         assert_eq!(crate::test::TEST_FLAGS_TEXTPROTO.trim(), text.trim());
     }

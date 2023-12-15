@@ -123,6 +123,13 @@ fn dump_custom_format(flag: &ProtoParsedFlag, format: &str, output: &mut Vec<u8>
     output.extend_from_slice(str.as_bytes());
 }
 
+pub type DumpPredicate = dyn Fn(&ProtoParsedFlag) -> bool;
+
+#[allow(unused)]
+pub fn create_filter_predicate(filter: &str) -> Result<Box<DumpPredicate>> {
+    todo!();
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
