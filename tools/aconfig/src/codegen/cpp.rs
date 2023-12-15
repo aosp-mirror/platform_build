@@ -23,17 +23,17 @@ use crate::codegen;
 use crate::commands::{CodegenMode, OutputFile};
 use crate::protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
 
-pub fn generate_cpp_code<'a, I>(
+pub fn generate_cpp_code<I>(
     package: &str,
     parsed_flags_iter: I,
     codegen_mode: CodegenMode,
 ) -> Result<Vec<OutputFile>>
 where
-    I: Iterator<Item = &'a ProtoParsedFlag>,
+    I: Iterator<Item = ProtoParsedFlag>,
 {
     let mut readwrite_count = 0;
     let class_elements: Vec<ClassElement> = parsed_flags_iter
-        .map(|pf| create_class_element(package, pf, &mut readwrite_count))
+        .map(|pf| create_class_element(package, &pf, &mut readwrite_count))
         .collect();
     let readwrite = readwrite_count > 0;
     let has_fixed_read_only = class_elements.iter().any(|item| item.is_fixed_read_only);
@@ -734,9 +734,12 @@ void com_android_aconfig_test_reset_flags() {
 
     fn test_generate_cpp_code(mode: CodegenMode) {
         let parsed_flags = crate::test::parse_test_flags();
-        let generated =
-            generate_cpp_code(crate::test::TEST_PACKAGE, parsed_flags.parsed_flag.iter(), mode)
-                .unwrap();
+        let generated = generate_cpp_code(
+            crate::test::TEST_PACKAGE,
+            parsed_flags.parsed_flag.into_iter(),
+            mode,
+        )
+        .unwrap();
         let mut generated_files_map = HashMap::new();
         for file in generated {
             generated_files_map.insert(

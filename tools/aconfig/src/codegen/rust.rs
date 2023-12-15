@@ -22,16 +22,16 @@ use crate::codegen;
 use crate::commands::{CodegenMode, OutputFile};
 use crate::protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
 
-pub fn generate_rust_code<'a, I>(
+pub fn generate_rust_code<I>(
     package: &str,
     parsed_flags_iter: I,
     codegen_mode: CodegenMode,
 ) -> Result<OutputFile>
 where
-    I: Iterator<Item = &'a ProtoParsedFlag>,
+    I: Iterator<Item = ProtoParsedFlag>,
 {
     let template_flags: Vec<TemplateParsedFlag> =
-        parsed_flags_iter.map(|pf| TemplateParsedFlag::new(package, pf)).collect();
+        parsed_flags_iter.map(|pf| TemplateParsedFlag::new(package, &pf)).collect();
     let has_readwrite = template_flags.iter().any(|item| item.readwrite);
     let context = TemplateContext {
         package: package.to_string(),
@@ -456,9 +456,12 @@ pub fn reset_flags() {
 
     fn test_generate_rust_code(mode: CodegenMode) {
         let parsed_flags = crate::test::parse_test_flags();
-        let generated =
-            generate_rust_code(crate::test::TEST_PACKAGE, parsed_flags.parsed_flag.iter(), mode)
-                .unwrap();
+        let generated = generate_rust_code(
+            crate::test::TEST_PACKAGE,
+            parsed_flags.parsed_flag.into_iter(),
+            mode,
+        )
+        .unwrap();
         assert_eq!("src/lib.rs", format!("{}", generated.path.display()));
         assert_eq!(
             None,
