@@ -96,13 +96,13 @@ PRODUCT_PACKAGES += \
     framework-minus-apex \
     framework-minus-apex-install-dependencies \
     framework-nfc \
-    framework-res \
     framework-sysconfig.xml \
     fsck.erofs \
     fsck_msdos \
     fsverity-release-cert-der \
     fs_config_files_system \
     fs_config_dirs_system \
+    gpu_counter_producer \
     group_system \
     gsid \
     gsi_tool \
@@ -127,7 +127,6 @@ PRODUCT_PACKAGES += \
     IntentResolver \
     ip \
     iptables \
-    ip-up-vpn \
     javax.obex \
     keystore2 \
     credstore \
@@ -225,7 +224,6 @@ PRODUCT_PACKAGES += \
     mkfs.erofs \
     monkey \
     mtectrl \
-    mtpd \
     ndc \
     netd \
     NetworkStack \
@@ -240,14 +238,12 @@ PRODUCT_PACKAGES += \
     pintool \
     platform.xml \
     pm \
-    pppd \
     preinstalled-packages-asl-files.xml \
     preinstalled-packages-platform.xml \
     preinstalled-packages-strict-signature.xml \
     printflags \
     privapp-permissions-platform.xml \
     prng_seeder \
-    racoon \
     recovery-persist \
     resize2fs \
     rss_hwm_reset \
@@ -294,8 +290,6 @@ PRODUCT_PACKAGES += \
     wificond \
     wifi.rc \
     wm \
-
-PRODUCT_PACKAGES += $(RELEASE_PACKAGE_VIRTUAL_CAMERA)
 
 # These packages are not used on Android TV
 ifneq ($(PRODUCT_IS_ATV),true)
@@ -422,6 +416,7 @@ PRODUCT_PACKAGES_DEBUG := \
     adevice_fingerprint \
     arping \
     dmuserd \
+    evemu-record \
     idlcli \
     init-debug.rc \
     iotop \

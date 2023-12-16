@@ -59,9 +59,9 @@ def main(argv):
   parser.add_argument('otafile', metavar='PAYLOAD', type=str,
                       help='The output OTA package file.')
   parser.add_argument('--product', type=str,
-                      help='The product name of the device, for example, bramble, redfin. This can be a comma separated list.', required=True)
+                      help='The product name of the device, for example, bramble, redfin.', required=True)
   parser.add_argument('--serialno', type=str,
-                      help='The serial number of devices that are allowed to install this OTA package. This can be a comma separated list.')
+                      help='The serial number of devices that are allowed to install this OTA package. This can be a | separated list.')
   parser.add_argument('--extra_wipe_partitions', type=str,
                       help='Additional partitions on device which should be wiped.')
   parser.add_argument('-v', action="store_true",

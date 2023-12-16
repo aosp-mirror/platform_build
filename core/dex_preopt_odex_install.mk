@@ -60,10 +60,8 @@ ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file)$(LOCAL_SOONG_DEX_JAR)))
   LOCAL_DEX_PREOPT :=
 endif
 
-ifneq (true,$(my_preopt_for_extracted_apk))
-  ifeq (true,$(WITH_DEXPREOPT_ART_BOOT_IMG_ONLY))
-    LOCAL_DEX_PREOPT :=
-  endif
+ifeq (true,$(WITH_DEXPREOPT_ART_BOOT_IMG_ONLY))
+  LOCAL_DEX_PREOPT :=
 endif
 
 my_process_profile :=
@@ -392,7 +390,6 @@ ifeq ($(my_create_dexpreopt_config), true)
   $(call add_json_list, DexPreoptImageLocationsOnDevice,$(my_dexpreopt_image_locations_on_device))
   $(call add_json_list, PreoptBootClassPathDexFiles,    $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES))
   $(call add_json_list, PreoptBootClassPathDexLocations,$(DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS))
-  $(call add_json_bool, PreoptExtractedApk,             $(my_preopt_for_extracted_apk))
   $(call add_json_bool, NoCreateAppImage,               $(filter false,$(LOCAL_DEX_PREOPT_APP_IMAGE)))
   $(call add_json_bool, ForceCreateAppImage,            $(filter true,$(LOCAL_DEX_PREOPT_APP_IMAGE)))
   $(call add_json_bool, PresignedPrebuilt,              $(filter PRESIGNED,$(LOCAL_CERTIFICATE)))

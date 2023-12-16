@@ -2,21 +2,29 @@ package {package_name};
 // TODO(b/303773055): Remove the annotation after access issue is resolved.
 import android.compat.annotation.UnsupportedAppUsage;
 {{ if not is_test_mode }}
-{{ if is_read_write- }}
+{{ if runtime_lookup_required- }}
 import android.provider.DeviceConfig;
 import android.provider.DeviceConfig.Properties;
 {{ endif }}
 /** @hide */
 public final class FeatureFlagsImpl implements FeatureFlags \{
-{{- if is_read_write }}
+{{- if runtime_lookup_required }}
 {{- for namespace_with_flags in namespace_flags }}
     private static boolean {namespace_with_flags.namespace}_is_cached = false;
 {{- endfor- }}
 
 {{ for flag in flag_elements }}
+{{ if library_exported }}
+{{ if flag.exported }}
+    private static boolean {flag.method_name} = false;
+{{ endif }}
+
+{{ else }}
+
 {{- if flag.is_read_write }}
     private static boolean {flag.method_name} = {flag.default_value};
 {{- endif- }}
+{{ endif }}
 {{ endfor }}
 
 {{ for namespace_with_flags in namespace_flags }}
@@ -25,10 +33,21 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
             Properties properties = DeviceConfig.getProperties("{namespace_with_flags.namespace}");
 
             {{- for flag in namespace_with_flags.flags }}
-            {{- if flag.is_read_write }}
+            {{ if library_exported }}
+
+            {{ if flag.exported }}
+            {flag.method_name} =
+                properties.getBoolean("{flag.device_config_flag}", false);
+            {{ endif }}
+
+            {{ else }}
+
+            {{ if flag.is_read_write }}
             {flag.method_name} =
                 properties.getBoolean("{flag.device_config_flag}", {flag.default_value});
-            {{- endif- }}
+            {{ endif }}
+
+            {{ endif }}
             {{ endfor }}
         } catch (NullPointerException e) \{
             throw new RuntimeException(
@@ -46,6 +65,20 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ endif- }}
 
 {{ for flag in flag_elements }}
+{{ if library_exported }}
+
+{{ if flag.exported }}
+    @Override
+    @UnsupportedAppUsage
+    public boolean {flag.method_name}() \{
+        if (!{flag.device_config_namespace}_is_cached) \{
+            load_overrides_{flag.device_config_namespace}();
+        }
+        return {flag.method_name};
+    }
+{{ endif }}
+
+{{ else }}
     @Override
     @UnsupportedAppUsage
     public boolean {flag.method_name}() \{
@@ -58,6 +91,8 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
         return {flag.default_value};
     {{ endif- }}
     }
+{{ endif }}
+
 {{ endfor }}
 }
 {{ else }}

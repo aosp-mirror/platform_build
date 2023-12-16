@@ -42,6 +42,11 @@ parsed_flag {
     permission: READ_ONLY
   }
   is_fixed_read_only: false
+  is_exported: false
+  container: "system"
+  metadata {
+    purpose: PURPOSE_UNSPECIFIED
+  }
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -57,6 +62,36 @@ parsed_flag {
     permission: READ_WRITE
   }
   is_fixed_read_only: false
+  is_exported: false
+  container: "system"
+  metadata {
+    purpose: PURPOSE_UNSPECIFIED
+  }
+}
+parsed_flag {
+  package: "com.android.aconfig.test"
+  name: "disabled_rw_exported"
+  namespace: "aconfig_test"
+  description: "This flag is DISABLED + READ_WRITE and exported"
+  bug: "111"
+  state: DISABLED
+  permission: READ_WRITE
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  trace {
+    source: "tests/first.values"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  is_fixed_read_only: false
+  is_exported: true
+  container: "system"
+  metadata {
+    purpose: PURPOSE_UNSPECIFIED
+  }
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -77,6 +112,11 @@ parsed_flag {
     permission: READ_WRITE
   }
   is_fixed_read_only: false
+  is_exported: false
+  container: "system"
+  metadata {
+    purpose: PURPOSE_UNSPECIFIED
+  }
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -97,6 +137,11 @@ parsed_flag {
     permission: READ_ONLY
   }
   is_fixed_read_only: true
+  is_exported: false
+  container: "system"
+  metadata {
+    purpose: PURPOSE_UNSPECIFIED
+  }
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -122,6 +167,36 @@ parsed_flag {
     permission: READ_ONLY
   }
   is_fixed_read_only: false
+  is_exported: false
+  container: "system"
+  metadata {
+    purpose: PURPOSE_BUGFIX
+  }
+}
+parsed_flag {
+  package: "com.android.aconfig.test"
+  name: "enabled_ro_exported"
+  namespace: "aconfig_test"
+  description: "This flag is ENABLED + READ_ONLY and exported"
+  bug: "111"
+  state: ENABLED
+  permission: READ_ONLY
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_WRITE
+  }
+  trace {
+    source: "tests/first.values"
+    state: ENABLED
+    permission: READ_ONLY
+  }
+  is_fixed_read_only: false
+  is_exported: true
+  container: "system"
+  metadata {
+    purpose: PURPOSE_UNSPECIFIED
+  }
 }
 parsed_flag {
   package: "com.android.aconfig.test"
@@ -142,12 +217,18 @@ parsed_flag {
     permission: READ_WRITE
   }
   is_fixed_read_only: false
+  is_exported: false
+  container: "system"
+  metadata {
+    purpose: PURPOSE_UNSPECIFIED
+  }
 }
 "#;
 
     pub fn parse_test_flags() -> ProtoParsedFlags {
         let bytes = crate::commands::parse_flags(
             "com.android.aconfig.test",
+            Some("system"),
             vec![Input {
                 source: "tests/test.aconfig".to_string(),
                 reader: Box::new(include_bytes!("../tests/test.aconfig").as_slice()),
