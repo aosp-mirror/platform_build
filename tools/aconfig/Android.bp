@@ -44,7 +44,6 @@ rust_protobuf {
     protos: ["protos/aconfig.proto"],
     crate_name: "aconfig_protos",
     source_stem: "aconfig_protos",
-    use_protobuf3: true,
     host_supported: true,
 }
 
