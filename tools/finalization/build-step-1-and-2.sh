@@ -8,7 +8,8 @@ function finalize_main_step12() {
 
     if [ "$FINAL_STATE" = "unfinalized" ] ; then
         # SDK codename -> int
-        source $top/build/make/tools/finalization/finalize-aidl-vndk-sdk-resources.sh
+        source $top/build/make/tools/finalization/finalize-vintf-resources.sh
+        source $top/build/make/tools/finalization/finalize-sdk-resources.sh
     fi;
 
     if [ "$FINAL_STATE" = "unfinalized" ] || [ "$FINAL_STATE" = "sdk" ] ; then
