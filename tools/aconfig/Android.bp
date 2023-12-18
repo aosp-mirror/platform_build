@@ -238,3 +238,21 @@ rust_test {
     ],
     test_suites: ["general-tests"],
 }
+
+rust_aconfig_library {
+    name: "libaconfig_test_rust_library_with_exported_mode",
+    crate_name: "aconfig_test_rust_library",
+    aconfig_declarations: "aconfig.test.flags",
+    mode: "exported",
+}
+
+rust_test {
+    name: "aconfig.exported_mode.test.rust",
+    srcs: [
+        "tests/aconfig_exported_mode_test.rs"
+    ],
+    rustlibs: [
+        "libaconfig_test_rust_library_with_exported_mode",
+    ],
+    test_suites: ["general-tests"],
+}
