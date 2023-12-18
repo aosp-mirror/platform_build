@@ -225,6 +225,24 @@ parsed_flag {
 }
 "#;
 
+    pub fn parse_read_only_test_flags() -> ProtoParsedFlags {
+        let bytes = crate::commands::parse_flags(
+            "com.android.aconfig.test",
+            Some("system"),
+            vec![Input {
+                source: "tests/read_only_test.aconfig".to_string(),
+                reader: Box::new(include_bytes!("../tests/read_only_test.aconfig").as_slice()),
+            }],
+            vec![Input {
+                source: "tests/read_only_test.values".to_string(),
+                reader: Box::new(include_bytes!("../tests/read_only_test.values").as_slice()),
+            }],
+            crate::commands::DEFAULT_FLAG_PERMISSION,
+        )
+        .unwrap();
+        crate::protos::parsed_flags::try_from_binary_proto(&bytes).unwrap()
+    }
+
     pub fn parse_test_flags() -> ProtoParsedFlags {
         let bytes = crate::commands::parse_flags(
             "com.android.aconfig.test",
