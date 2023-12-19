@@ -341,6 +341,7 @@ mod tests {
                 "com.android.aconfig.test.disabled_rw_exported",
                 "com.android.aconfig.test.disabled_rw_in_other_namespace",
                 "com.android.aconfig.test.enabled_fixed_ro",
+                "com.android.aconfig.test.enabled_fixed_ro_exported",
                 "com.android.aconfig.test.enabled_ro",
                 "com.android.aconfig.test.enabled_ro_exported",
                 "com.android.aconfig.test.enabled_rw",
@@ -360,6 +361,7 @@ mod tests {
             "state:ENABLED",
             &[
                 "com.android.aconfig.test.enabled_fixed_ro",
+                "com.android.aconfig.test.enabled_fixed_ro_exported",
                 "com.android.aconfig.test.enabled_ro",
                 "com.android.aconfig.test.enabled_ro_exported",
                 "com.android.aconfig.test.enabled_rw",
@@ -370,6 +372,7 @@ mod tests {
             &[
                 "com.android.aconfig.test.disabled_ro",
                 "com.android.aconfig.test.enabled_fixed_ro",
+                "com.android.aconfig.test.enabled_fixed_ro_exported",
                 "com.android.aconfig.test.enabled_ro",
                 "com.android.aconfig.test.enabled_ro_exported",
             ]
@@ -377,12 +380,16 @@ mod tests {
         // trace: not supported yet
         assert_create_filter_predicate!(
             "is_fixed_read_only:true",
-            &["com.android.aconfig.test.enabled_fixed_ro"]
+            &[
+                "com.android.aconfig.test.enabled_fixed_ro",
+                "com.android.aconfig.test.enabled_fixed_ro_exported",
+            ]
         );
         assert_create_filter_predicate!(
             "is_exported:true",
             &[
                 "com.android.aconfig.test.disabled_rw_exported",
+                "com.android.aconfig.test.enabled_fixed_ro_exported",
                 "com.android.aconfig.test.enabled_ro_exported",
             ]
         );
@@ -394,6 +401,7 @@ mod tests {
                 "com.android.aconfig.test.disabled_rw_exported",
                 "com.android.aconfig.test.disabled_rw_in_other_namespace",
                 "com.android.aconfig.test.enabled_fixed_ro",
+                "com.android.aconfig.test.enabled_fixed_ro_exported",
                 "com.android.aconfig.test.enabled_ro",
                 "com.android.aconfig.test.enabled_ro_exported",
                 "com.android.aconfig.test.enabled_rw",
@@ -406,6 +414,7 @@ mod tests {
             "permission:READ_ONLY+state:ENABLED",
             &[
                 "com.android.aconfig.test.enabled_fixed_ro",
+                "com.android.aconfig.test.enabled_fixed_ro_exported",
                 "com.android.aconfig.test.enabled_ro",
                 "com.android.aconfig.test.enabled_ro_exported",
             ]
