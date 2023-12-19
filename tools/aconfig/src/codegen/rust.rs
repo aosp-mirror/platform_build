@@ -45,9 +45,7 @@ where
         match codegen_mode {
             CodegenMode::Production => include_str!("../../templates/rust_prod.template"),
             CodegenMode::Test => include_str!("../../templates/rust_test.template"),
-            CodegenMode::Exported => {
-                todo!("exported mode not yet supported for rust, see b/313894653.")
-            }
+            CodegenMode::Exported => include_str!("../../templates/rust_exported.template"),
         },
     )?;
     let contents = template.render("rust_code_gen", &context)?;
@@ -489,14 +487,79 @@ pub fn reset_flags() {
 }
 "#;
 
+    const EXPORTED_EXPECTED: &str = r#"
+//! codegenerated rust flag lib
+
+/// flag provider
+pub struct FlagProvider;
+
+lazy_static::lazy_static! {
+    /// flag value cache for disabled_rw_exported
+    static ref CACHED_disabled_rw_exported: bool = flags_rust::GetServerConfigurableFlag(
+        "aconfig_flags.aconfig_test",
+        "com.android.aconfig.test.disabled_rw_exported",
+        "false") == "true";
+
+    /// flag value cache for enabled_fixed_ro_exported
+    static ref CACHED_enabled_fixed_ro_exported: bool = flags_rust::GetServerConfigurableFlag(
+        "aconfig_flags.aconfig_test",
+        "com.android.aconfig.test.enabled_fixed_ro_exported",
+        "false") == "true";
+
+    /// flag value cache for enabled_ro_exported
+    static ref CACHED_enabled_ro_exported: bool = flags_rust::GetServerConfigurableFlag(
+        "aconfig_flags.aconfig_test",
+        "com.android.aconfig.test.enabled_ro_exported",
+        "false") == "true";
+
+}
+
+impl FlagProvider {
+    /// query flag disabled_rw_exported
+    pub fn disabled_rw_exported(&self) -> bool {
+        *CACHED_disabled_rw_exported
+    }
+
+    /// query flag enabled_fixed_ro_exported
+    pub fn enabled_fixed_ro_exported(&self) -> bool {
+        *CACHED_enabled_fixed_ro_exported
+    }
+
+    /// query flag enabled_ro_exported
+    pub fn enabled_ro_exported(&self) -> bool {
+        *CACHED_enabled_ro_exported
+    }
+}
+
+/// flag provider
+pub static PROVIDER: FlagProvider = FlagProvider;
+
+/// query flag disabled_rw_exported
+#[inline(always)]
+pub fn disabled_rw_exported() -> bool {
+    PROVIDER.disabled_rw_exported()
+}
+
+/// query flag enabled_fixed_ro_exported
+#[inline(always)]
+pub fn enabled_fixed_ro_exported() -> bool {
+    PROVIDER.enabled_fixed_ro_exported()
+}
+
+/// query flag enabled_ro_exported
+#[inline(always)]
+pub fn enabled_ro_exported() -> bool {
+    PROVIDER.enabled_ro_exported()
+}
+"#;
+
     fn test_generate_rust_code(mode: CodegenMode) {
         let parsed_flags = crate::test::parse_test_flags();
-        let generated = generate_rust_code(
-            crate::test::TEST_PACKAGE,
-            parsed_flags.parsed_flag.into_iter(),
-            mode,
-        )
-        .unwrap();
+        let modified_parsed_flags =
+            crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode);
+        let generated =
+            generate_rust_code(crate::test::TEST_PACKAGE, modified_parsed_flags.into_iter(), mode)
+                .unwrap();
         assert_eq!("src/lib.rs", format!("{}", generated.path.display()));
         assert_eq!(
             None,
@@ -504,8 +567,7 @@ pub fn reset_flags() {
                 match mode {
                     CodegenMode::Production => PROD_EXPECTED,
                     CodegenMode::Test => TEST_EXPECTED,
-                    CodegenMode::Exported =>
-                        todo!("exported mode not yet supported for rust, see b/313894653."),
+                    CodegenMode::Exported => EXPORTED_EXPECTED,
                 },
                 &String::from_utf8(generated.contents).unwrap()
             )
@@ -520,5 +582,10 @@ pub fn reset_flags() {
     #[test]
     fn test_generate_rust_code_for_test() {
         test_generate_rust_code(CodegenMode::Test);
+    }
+
+    #[test]
+    fn test_generate_rust_code_for_exported() {
+        test_generate_rust_code(CodegenMode::Exported);
     }
 }
