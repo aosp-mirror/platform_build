@@ -30,12 +30,13 @@ mod dump;
 mod protos;
 mod storage;
 
+use codegen::CodegenMode;
 use dump::DumpFormat;
 
 #[cfg(test)]
 mod test;
 
-use commands::{CodegenMode, Input, OutputFile};
+use commands::{Input, OutputFile};
 
 const HELP_DUMP_FILTER: &str = r#"
 Limit which flags to output. If multiple --filter arguments are provided, the output will be
@@ -69,7 +70,7 @@ fn cli() -> Command {
                 .arg(
                     Arg::new("mode")
                         .long("mode")
-                        .value_parser(EnumValueParser::<commands::CodegenMode>::new())
+                        .value_parser(EnumValueParser::<CodegenMode>::new())
                         .default_value("production"),
                 ),
         )
@@ -80,7 +81,7 @@ fn cli() -> Command {
                 .arg(
                     Arg::new("mode")
                         .long("mode")
-                        .value_parser(EnumValueParser::<commands::CodegenMode>::new())
+                        .value_parser(EnumValueParser::<CodegenMode>::new())
                         .default_value("production"),
                 ),
         )
@@ -91,7 +92,7 @@ fn cli() -> Command {
                 .arg(
                     Arg::new("mode")
                         .long("mode")
-                        .value_parser(EnumValueParser::<commands::CodegenMode>::new())
+                        .value_parser(EnumValueParser::<CodegenMode>::new())
                         .default_value("production"),
                 ),
         )
@@ -114,7 +115,12 @@ fn cli() -> Command {
                         .value_parser(|s: &str| DumpFormat::try_from(s))
                         .default_value("text"),
                 )
-                .arg(Arg::new("filter").long("filter").action(ArgAction::Append).help(HELP_DUMP_FILTER.trim()))
+                .arg(
+                    Arg::new("filter")
+                        .long("filter")
+                        .action(ArgAction::Append)
+                        .help(HELP_DUMP_FILTER.trim()),
+                )
                 .arg(Arg::new("dedup").long("dedup").num_args(0).action(ArgAction::SetTrue))
                 .arg(Arg::new("out").long("out").default_value("-")),
         )
