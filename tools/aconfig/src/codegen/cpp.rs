@@ -20,7 +20,8 @@ use std::path::PathBuf;
 use tinytemplate::TinyTemplate;
 
 use crate::codegen;
-use crate::commands::{CodegenMode, OutputFile};
+use crate::codegen::CodegenMode;
+use crate::commands::OutputFile;
 use crate::protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
 
 pub fn generate_cpp_code<I>(
