@@ -14,11 +14,41 @@
  * limitations under the License.
  */
 
-use anyhow::Result;
-use std::collections::{HashMap, HashSet};
+pub mod package_table;
+
+use anyhow::{anyhow, Result};
+use std::collections::{hash_map::DefaultHasher, HashMap, HashSet};
+use std::hash::{Hash, Hasher};
+use std::path::PathBuf;
 
 use crate::commands::OutputFile;
 use crate::protos::{ProtoParsedFlag, ProtoParsedFlags};
+use crate::storage::package_table::PackageTable;
+
+pub const FILE_VERSION: u32 = 1;
+
+pub const HASH_PRIMES: [u32; 29] = [
+    7, 13, 29, 53, 97, 193, 389, 769, 1543, 3079, 6151, 12289, 24593, 49157, 98317, 196613, 393241,
+    786433, 1572869, 3145739, 6291469, 12582917, 25165843, 50331653, 100663319, 201326611,
+    402653189, 805306457, 1610612741,
+];
+
+/// Get the right hash table size given number of entries in the table. Use a
+/// load factor of 0.5 for performance.
+pub fn get_table_size(entries: u32) -> Result<u32> {
+    HASH_PRIMES
+        .iter()
+        .find(|&&num| num >= 2 * entries)
+        .copied()
+        .ok_or(anyhow!("Number of packages is too large"))
+}
+
+/// Get the corresponding bucket index given the key and number of buckets
+pub fn get_bucket_index<T: Hash>(val: &T, num_buckets: u32) -> u32 {
+    let mut s = DefaultHasher::new();
+    val.hash(&mut s);
+    (s.finish() % num_buckets as u64) as u32
+}
 
 pub struct FlagPackage<'a> {
     pub package_name: &'a str,
@@ -52,7 +82,7 @@ where
 {
     // group flags by package
     let mut packages: Vec<FlagPackage<'a>> = Vec::new();
-    let mut package_index: HashMap<&'a str, usize> = HashMap::new();
+    let mut package_index: HashMap<&str, usize> = HashMap::new();
     for parsed_flags in parsed_flags_vec_iter {
         for parsed_flag in parsed_flags.parsed_flag.iter() {
             let index = *(package_index.entry(parsed_flag.package()).or_insert(packages.len()));
@@ -76,20 +106,42 @@ where
 }
 
 pub fn generate_storage_files<'a, I>(
-    _containser: &str,
+    container: &str,
     parsed_flags_vec_iter: I,
 ) -> Result<Vec<OutputFile>>
 where
     I: Iterator<Item = &'a ProtoParsedFlags>,
 {
-    let _packages = group_flags_by_package(parsed_flags_vec_iter);
-    Ok(vec![])
+    let packages = group_flags_by_package(parsed_flags_vec_iter);
+
+    // create and serialize package map
+    let package_table = PackageTable::new(container, &packages)?;
+    let package_table_file_path = PathBuf::from("package.map");
+    let package_table_file =
+        OutputFile { contents: package_table.as_bytes(), path: package_table_file_path };
+
+    Ok(vec![package_table_file])
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::Input;
+
+    /// Read and parse bytes as u32
+    pub fn read_u32_from_bytes(buf: &[u8], head: &mut usize) -> Result<u32> {
+        let val = u32::from_le_bytes(buf[*head..*head + 4].try_into()?);
+        *head += 4;
+        Ok(val)
+    }
+
+    /// Read and parse bytes as string
+    pub fn read_str_from_bytes(buf: &[u8], head: &mut usize) -> Result<String> {
+        let num_bytes = read_u32_from_bytes(buf, head)? as usize;
+        let val = String::from_utf8(buf[*head..*head + num_bytes].to_vec())?;
+        *head += num_bytes;
+        Ok(val)
+    }
 
     pub fn parse_all_test_flags() -> Vec<ProtoParsedFlags> {
         let aconfig_files = [
