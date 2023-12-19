@@ -190,12 +190,12 @@ pub fn parse_flags(
 
 pub fn create_java_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec<OutputFile>> {
     let parsed_flags = input.try_parse_flags()?;
-    let filtered_parsed_flags = filter_parsed_flags(parsed_flags, codegen_mode);
-    let Some(package) = find_unique_package(&filtered_parsed_flags) else {
+    let modified_parsed_flags = modify_parsed_flags_based_on_mode(parsed_flags, codegen_mode)?;
+    let Some(package) = find_unique_package(&modified_parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
     let package = package.to_string();
-    generate_java_code(&package, filtered_parsed_flags.into_iter(), codegen_mode)
+    generate_java_code(&package, modified_parsed_flags.into_iter(), codegen_mode)
 }
 
 pub fn create_cpp_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec<OutputFile>> {
@@ -314,18 +314,6 @@ fn find_unique_container(parsed_flags: &ProtoParsedFlags) -> Option<&str> {
         return None;
     }
     Some(container)
-}
-
-fn filter_parsed_flags(
-    parsed_flags: ProtoParsedFlags,
-    codegen_mode: CodegenMode,
-) -> Vec<ProtoParsedFlag> {
-    match codegen_mode {
-        CodegenMode::Exported => {
-            parsed_flags.parsed_flag.into_iter().filter(|pf| pf.is_exported()).collect()
-        }
-        _ => parsed_flags.parsed_flag,
-    }
 }
 
 pub fn modify_parsed_flags_based_on_mode(
@@ -626,23 +614,6 @@ mod tests {
                 text.trim()
             )
         );
-    }
-
-    #[test]
-    fn test_filter_parsed_flags() {
-        let mut input = parse_test_flags_as_input();
-        let parsed_flags = input.try_parse_flags().unwrap();
-
-        let filtered_parsed_flags =
-            filter_parsed_flags(parsed_flags.clone(), CodegenMode::Exported);
-        assert_eq!(3, filtered_parsed_flags.len());
-
-        let filtered_parsed_flags =
-            filter_parsed_flags(parsed_flags.clone(), CodegenMode::Production);
-        assert_eq!(9, filtered_parsed_flags.len());
-
-        let filtered_parsed_flags = filter_parsed_flags(parsed_flags.clone(), CodegenMode::Test);
-        assert_eq!(9, filtered_parsed_flags.len());
     }
 
     fn parse_test_flags_as_input() -> Input {
