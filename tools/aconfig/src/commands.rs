@@ -15,7 +15,6 @@
  */
 
 use anyhow::{bail, ensure, Context, Result};
-use clap::ValueEnum;
 use protobuf::Message;
 use std::io::Read;
 use std::path::PathBuf;
@@ -23,6 +22,7 @@ use std::path::PathBuf;
 use crate::codegen::cpp::generate_cpp_code;
 use crate::codegen::java::generate_java_code;
 use crate::codegen::rust::generate_rust_code;
+use crate::codegen::CodegenMode;
 use crate::dump::{DumpFormat, DumpPredicate};
 use crate::protos::{
     ParsedFlagExt, ProtoFlagMetadata, ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag,
@@ -186,13 +186,6 @@ pub fn parse_flags(
     let mut output = Vec::new();
     parsed_flags.write_to_vec(&mut output)?;
     Ok(output)
-}
-
-#[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
-pub enum CodegenMode {
-    Production,
-    Test,
-    Exported,
 }
 
 pub fn create_java_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec<OutputFile>> {
