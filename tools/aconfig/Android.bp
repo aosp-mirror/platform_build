@@ -13,7 +13,7 @@ java_library {
         type: "lite",
     },
     sdk_version: "current",
-    min_sdk_version: "UpsideDownCake",
+    min_sdk_version: "34",
     apex_available: [
         "com.android.configinfrastructure",
         "//apex_available:platform",
