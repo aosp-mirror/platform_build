@@ -207,12 +207,12 @@ pub fn create_java_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Ve
 
 pub fn create_cpp_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec<OutputFile>> {
     let parsed_flags = input.try_parse_flags()?;
-    let filtered_parsed_flags = filter_parsed_flags(parsed_flags, codegen_mode);
-    let Some(package) = find_unique_package(&filtered_parsed_flags) else {
+    let modified_parsed_flags = modify_parsed_flags_based_on_mode(parsed_flags, codegen_mode);
+    let Some(package) = find_unique_package(&modified_parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
     let package = package.to_string();
-    generate_cpp_code(&package, filtered_parsed_flags.into_iter(), codegen_mode)
+    generate_cpp_code(&package, modified_parsed_flags.into_iter(), codegen_mode)
 }
 
 pub fn create_rust_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<OutputFile> {
@@ -335,6 +335,30 @@ fn filter_parsed_flags(
     }
 }
 
+pub fn modify_parsed_flags_based_on_mode(
+    parsed_flags: ProtoParsedFlags,
+    codegen_mode: CodegenMode,
+) -> Vec<ProtoParsedFlag> {
+    fn exported_mode_flag_modifier(mut parsed_flag: ProtoParsedFlag) -> ProtoParsedFlag {
+        parsed_flag.set_state(ProtoFlagState::DISABLED);
+        parsed_flag.set_permission(ProtoFlagPermission::READ_WRITE);
+        parsed_flag.set_is_fixed_read_only(false);
+        parsed_flag
+    }
+
+    match codegen_mode {
+        CodegenMode::Exported => parsed_flags
+            .parsed_flag
+            .into_iter()
+            .filter(|pf| pf.is_exported())
+            .map(exported_mode_flag_modifier)
+            .collect(),
+        CodegenMode::Production | CodegenMode::Test => {
+            parsed_flags.parsed_flag.into_iter().collect()
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -366,9 +390,9 @@ mod tests {
         assert_eq!(ProtoFlagState::ENABLED, enabled_ro.trace[2].state());
         assert_eq!(ProtoFlagPermission::READ_ONLY, enabled_ro.trace[2].permission());
 
-        assert_eq!(8, parsed_flags.parsed_flag.len());
+        assert_eq!(9, parsed_flags.parsed_flag.len());
         for pf in parsed_flags.parsed_flag.iter() {
-            if pf.name() == "enabled_fixed_ro" {
+            if pf.name().starts_with("enabled_fixed_ro") {
                 continue;
             }
             let first = pf.trace.first().unwrap();
@@ -597,7 +621,13 @@ mod tests {
         let bytes =
             dump_parsed_flags(vec![input, input2], DumpFormat::Textproto, &[], true).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
-        assert_eq!(crate::test::TEST_FLAGS_TEXTPROTO.trim(), text.trim());
+        assert_eq!(
+            None,
+            crate::test::first_significant_code_diff(
+                crate::test::TEST_FLAGS_TEXTPROTO.trim(),
+                text.trim()
+            )
+        );
     }
 
     #[test]
@@ -607,14 +637,14 @@ mod tests {
 
         let filtered_parsed_flags =
             filter_parsed_flags(parsed_flags.clone(), CodegenMode::Exported);
-        assert_eq!(2, filtered_parsed_flags.len());
+        assert_eq!(3, filtered_parsed_flags.len());
 
         let filtered_parsed_flags =
             filter_parsed_flags(parsed_flags.clone(), CodegenMode::Production);
-        assert_eq!(8, filtered_parsed_flags.len());
+        assert_eq!(9, filtered_parsed_flags.len());
 
         let filtered_parsed_flags = filter_parsed_flags(parsed_flags.clone(), CodegenMode::Test);
-        assert_eq!(8, filtered_parsed_flags.len());
+        assert_eq!(9, filtered_parsed_flags.len());
     }
 
     fn parse_test_flags_as_input() -> Input {
@@ -623,5 +653,29 @@ mod tests {
         let cursor = std::io::Cursor::new(binary_proto);
         let reader = Box::new(cursor);
         Input { source: "test.data".to_string(), reader }
+    }
+
+    #[test]
+    fn test_modify_parsed_flags_based_on_mode_prod() {
+        let parsed_flags = crate::test::parse_test_flags();
+        let p_parsed_flags =
+            modify_parsed_flags_based_on_mode(parsed_flags.clone(), CodegenMode::Production);
+        assert_eq!(parsed_flags.parsed_flag.len(), p_parsed_flags.len());
+        for (i, item) in p_parsed_flags.iter().enumerate() {
+            assert!(parsed_flags.parsed_flag[i].eq(item));
+        }
+    }
+
+    #[test]
+    fn test_modify_parsed_flags_based_on_mode_exported() {
+        let parsed_flags = crate::test::parse_test_flags();
+        let p_parsed_flags = modify_parsed_flags_based_on_mode(parsed_flags, CodegenMode::Exported);
+        assert_eq!(3, p_parsed_flags.len());
+        for flag in p_parsed_flags.iter() {
+            assert_eq!(ProtoFlagState::DISABLED, flag.state());
+            assert_eq!(ProtoFlagPermission::READ_WRITE, flag.permission());
+            assert!(!flag.is_fixed_read_only());
+            assert!(flag.is_exported());
+        }
     }
 }
