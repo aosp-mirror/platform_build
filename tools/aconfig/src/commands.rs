@@ -217,12 +217,12 @@ pub fn create_cpp_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec
 
 pub fn create_rust_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<OutputFile> {
     let parsed_flags = input.try_parse_flags()?;
-    let filtered_parsed_flags = filter_parsed_flags(parsed_flags, codegen_mode);
-    let Some(package) = find_unique_package(&filtered_parsed_flags) else {
+    let modified_parsed_flags = modify_parsed_flags_based_on_mode(parsed_flags, codegen_mode);
+    let Some(package) = find_unique_package(&modified_parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
     let package = package.to_string();
-    generate_rust_code(&package, filtered_parsed_flags.into_iter(), codegen_mode)
+    generate_rust_code(&package, modified_parsed_flags.into_iter(), codegen_mode)
 }
 
 pub fn create_storage(caches: Vec<Input>, container: &str) -> Result<Vec<OutputFile>> {
