@@ -107,7 +107,8 @@ fn cli() -> Command {
                 .arg(Arg::new("out").long("out").default_value("-")),
         )
         .subcommand(
-            Command::new("dump")
+            Command::new("dump-cache")
+                .alias("dump")
                 .arg(Arg::new("cache").long("cache").action(ArgAction::Append))
                 .arg(
                     Arg::new("format")
@@ -260,7 +261,7 @@ fn main() -> Result<()> {
             let path = get_required_arg::<String>(sub_matches, "out")?;
             write_output_to_file_or_stdout(path, &output)?;
         }
-        Some(("dump", sub_matches)) => {
+        Some(("dump-cache", sub_matches)) => {
             let input = open_zero_or_more_files(sub_matches, "cache")?;
             let format = get_required_arg::<DumpFormat>(sub_matches, "format")
                 .context("failed to dump previously parsed flags")?;
