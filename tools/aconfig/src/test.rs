@@ -145,6 +145,31 @@ parsed_flag {
 }
 parsed_flag {
   package: "com.android.aconfig.test"
+  name: "enabled_fixed_ro_exported"
+  namespace: "aconfig_test"
+  description: "This flag is fixed ENABLED + READ_ONLY and exported"
+  bug: "111"
+  state: ENABLED
+  permission: READ_ONLY
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_ONLY
+  }
+  trace {
+    source: "tests/first.values"
+    state: ENABLED
+    permission: READ_ONLY
+  }
+  is_fixed_read_only: true
+  is_exported: true
+  container: "system"
+  metadata {
+    purpose: PURPOSE_UNSPECIFIED
+  }
+}
+parsed_flag {
+  package: "com.android.aconfig.test"
   name: "enabled_ro"
   namespace: "aconfig_test"
   description: "This flag is ENABLED + READ_ONLY"

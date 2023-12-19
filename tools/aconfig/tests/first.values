@@ -40,3 +40,9 @@ flag_value {
     state: DISABLED
     permission: READ_WRITE
 }
+flag_value {
+    package: "com.android.aconfig.test"
+    name: "enabled_fixed_ro_exported"
+    state: ENABLED
+    permission: READ_ONLY
+}

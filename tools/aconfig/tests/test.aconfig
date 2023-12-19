@@ -78,3 +78,12 @@ flag {
     bug: "111"
     is_exported: true
 }
+
+flag {
+    name: "enabled_fixed_ro_exported"
+    namespace: "aconfig_test"
+    description: "This flag is fixed ENABLED + READ_ONLY and exported"
+    bug: "111"
+    is_fixed_read_only: true
+    is_exported: true
+}
