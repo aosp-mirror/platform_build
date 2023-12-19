@@ -197,6 +197,10 @@ fn create_filter_predicate_single(filter: &str) -> Result<Box<DumpPredicate>> {
             Ok(Box::new(move |flag: &ProtoParsedFlag| flag.container() == expected))
         }
         // metadata: not supported yet
+        "fully_qualified_name" => {
+            let expected = arg.to_owned();
+            Ok(Box::new(move |flag: &ProtoParsedFlag| flag.fully_qualified_name() == expected))
+        }
         _ => Err(anyhow!(error_msg)),
     }
 }
@@ -408,6 +412,12 @@ mod tests {
             ]
         );
         // metadata: not supported yet
+
+        // synthesized fields
+        assert_create_filter_predicate!(
+            "fully_qualified_name:com.android.aconfig.test.disabled_rw",
+            &["com.android.aconfig.test.disabled_rw"]
+        );
 
         // multiple sub filters
         assert_create_filter_predicate!(
