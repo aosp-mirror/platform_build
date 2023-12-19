@@ -114,7 +114,9 @@ fn cli() -> Command {
                     Arg::new("format")
                         .long("format")
                         .value_parser(|s: &str| DumpFormat::try_from(s))
-                        .default_value("text"),
+                        .default_value(
+                            "{fully_qualified_name} [{container}]: {permission} + {state}",
+                        ),
                 )
                 .arg(
                     Arg::new("filter")
