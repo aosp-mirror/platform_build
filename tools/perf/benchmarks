@@ -23,9 +23,12 @@ import datetime
 import json
 import os
 import pathlib
+import random
+import re
 import shutil
 import subprocess
 import time
+import uuid
 
 import pretty
 import utils
@@ -137,9 +140,23 @@ def NoChange():
     return Change(label="No change", change=lambda: None, undo=lambda: None)
 
 
+def Create(filename):
+    "Create an action to create `filename`. The parent directory must exist."
+    def create():
+        with open(filename, "w") as f:
+            pass
+    def delete():
+        os.remove(filename)
+    return Change(
+                label=f"Create {filename}",
+                change=create,
+                undo=delete,
+            )
+
+
 def Modify(filename, contents, before=None):
-    """Create an action to modify `filename` by appending `contents` before the last instances
-    of `before` in the file.
+    """Create an action to modify `filename` by appending the result of `contents`
+    before the last instances of `before` in the file.
 
     Raises an error if `before` doesn't appear in the file.
     """
@@ -151,12 +168,28 @@ def Modify(filename, contents, before=None):
             raise FatalError()
     else:
         index = len(orig.contents)
-    modified = FileSnapshot(filename, orig.contents[:index] + contents + orig.contents[index:])
+    modified = FileSnapshot(filename, orig.contents[:index] + contents() + orig.contents[index:])
+    if False:
+        print(f"Modify: {filename}")
+        x = orig.contents.replace("\n", "\n   ORIG")
+        print(f"   ORIG {x}")
+        x = modified.contents.replace("\n", "\n   MODIFIED")
+        print(f"   MODIFIED {x}")
+
     return Change(
             label="Modify " + filename,
             change=lambda: modified.write(),
             undo=lambda: orig.write()
         )
+
+def AddJavaField(filename, prefix):
+    return Modify(filename,
+                  lambda: f"{prefix} static final int BENCHMARK = {random.randint(0, 1000000)};\n",
+                  before="}")
+
+
+def Comment(prefix, suffix=""):
+    return lambda: prefix + " " + str(uuid.uuid4()) + suffix
 
 
 class BenchmarkReport():
@@ -262,11 +295,16 @@ class Runner():
             ns = self._run_build(lunch, benchmark_log_dir.joinpath("measured"), benchmark.modules)
             report.duration_ns = ns
 
-            # Postroll builds
-            for i in range(benchmark.preroll):
-                ns = self._run_build(lunch, benchmark_log_dir.joinpath(f"post_{i}"),
-                                     benchmark.modules)
-                report.postroll_duration_ns.append(ns)
+            dist_one = self._options.DistOne()
+            if dist_one:
+                # If we're disting just one benchmark, save the logs and we can stop here.
+                self._dist(dist_one)
+            else:
+                # Postroll builds
+                for i in range(benchmark.preroll):
+                    ns = self._run_build(lunch, benchmark_log_dir.joinpath(f"post_{i}"),
+                                         benchmark.modules)
+                    report.postroll_duration_ns.append(ns)
 
         finally:
             # Always undo, even if we crashed or the build failed and we stopped.
@@ -314,6 +352,22 @@ class Runner():
         sys.stderr.write(f"FINISHED BUILD {modules}\n")
 
         return after_ns - before_ns
+
+    def _dist(self, dist_dir):
+        out_dir = pathlib.Path("out")
+        dest_dir = pathlib.Path(dist_dir).joinpath("logs")
+        os.makedirs(dest_dir, exist_ok=True)
+        basenames = [
+            "build.trace.gz",
+            "soong.log",
+            "soong_build_metrics.pb",
+            "soong_metrics",
+        ]
+        for base in basenames:
+            src = out_dir.joinpath(base)
+            if src.exists():
+                sys.stderr.write(f"DIST: copied {src} to {dest_dir}\n")
+                shutil.copy(src, dest_dir)
 
     def _write_summary(self):
         # Write the results, even if the build failed or we crashed, including
@@ -406,6 +460,9 @@ benchmarks:
         parser.add_argument("--benchmark", nargs="*", default=[b.id for b in self._benchmarks],
                             metavar="BENCHMARKS",
                             help="Benchmarks to run.  Default suite will be run if omitted.")
+        parser.add_argument("--dist-one", type=str,
+                            help="Copy logs and metrics to the given dist dir. Requires that only"
+                                + " one benchmark be supplied. Postroll steps will be skipped.")
 
         self._args = parser.parse_args()
 
@@ -419,6 +476,10 @@ benchmarks:
         if bad_ids:
             for id in bad_ids:
                 self._error(f"Invalid benchmark: {id}")
+
+        # --dist-one requires that only one benchmark be supplied
+        if len(self.Benchmarks()) != 1:
+            self._error("--dist-one requires that exactly one --benchmark.")
 
         if self._had_error:
             raise FatalError()
@@ -501,31 +562,129 @@ benchmarks:
     def Iterations(self):
         return self._args.iterations
 
+    def DistOne(self):
+        return self._args.dist_one
+
     def _init_benchmarks(self):
         """Initialize the list of benchmarks."""
         # Assumes that we've already chdired to the root of the tree.
         self._benchmarks = [
             Benchmark(id="full",
-                title="Full build",
-                change=Clean(),
-                modules=["droid"],
-                preroll=0,
-                postroll=3
-            ),
+                      title="Full build",
+                      change=Clean(),
+                      modules=["droid"],
+                      preroll=0,
+                      postroll=3,
+                      ),
             Benchmark(id="nochange",
-                title="No change",
-                change=NoChange(),
-                modules=["droid"],
-                preroll=2,
-                postroll=3
-            ),
+                      title="No change",
+                      change=NoChange(),
+                      modules=["droid"],
+                      preroll=2,
+                      postroll=3,
+                      ),
+            Benchmark(id="unreferenced",
+                      title="Create unreferenced file",
+                      change=Create("bionic/unreferenced.txt"),
+                      modules=["droid"],
+                      preroll=1,
+                      postroll=2,
+                      ),
             Benchmark(id="modify_bp",
-                title="Modify Android.bp",
-                change=Modify("bionic/libc/Android.bp", "// Comment"),
-                modules=["droid"],
-                preroll=1,
-                postroll=3
-            ),
+                      title="Modify Android.bp",
+                      change=Modify("bionic/libc/Android.bp", Comment("//")),
+                      modules=["droid"],
+                      preroll=1,
+                      postroll=3,
+                      ),
+            Benchmark(id="modify_stdio",
+                      title="Modify stdio.cpp",
+                      change=Modify("bionic/libc/stdio/stdio.cpp", Comment("//")),
+                      modules=["libc"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="modify_adbd",
+                      title="Modify adbd",
+                      change=Modify("packages/modules/adb/daemon/main.cpp", Comment("//")),
+                      modules=["adbd"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="services_private_field",
+                      title="Add private field to ActivityManagerService.java",
+                      change=AddJavaField("frameworks/base/services/core/java/com/android/server/am/ActivityManagerService.java",
+                                          "private"),
+                      modules=["services"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="services_public_field",
+                      title="Add public field to ActivityManagerService.java",
+                      change=AddJavaField("frameworks/base/services/core/java/com/android/server/am/ActivityManagerService.java",
+                                          "/** @hide */ public"),
+                      modules=["services"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="services_api",
+                      title="Add API to ActivityManagerService.javaa",
+                      change=AddJavaField("frameworks/base/services/core/java/com/android/server/am/ActivityManagerService.java",
+                                          "@android.annotation.SuppressLint(\"UnflaggedApi\") public"),
+                      modules=["services"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="framework_private_field",
+                      title="Add private field to Settings.java",
+                      change=AddJavaField("frameworks/base/core/java/android/provider/Settings.java",
+                                          "private"),
+                      modules=["framework-minus-apex"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="framework_public_field",
+                      title="Add public field to Settings.java",
+                      change=AddJavaField("frameworks/base/core/java/android/provider/Settings.java",
+                                          "/** @hide */ public"),
+                      modules=["framework-minus-apex"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="framework_api",
+                      title="Add API to Settings.java",
+                      change=AddJavaField("frameworks/base/core/java/android/provider/Settings.java",
+                                          "@android.annotation.SuppressLint(\"UnflaggedApi\") public"),
+                      modules=["framework-minus-apex"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="modify_framework_resource",
+                      title="Modify framework resource",
+                      change=Modify("frameworks/base/core/res/res/values/config.xml",
+                                    lambda: str(uuid.uuid4()),
+                                    before="</string>"),
+                      modules=["framework-minus-apex"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="add_framework_resource",
+                      title="Add framework resource",
+                      change=Modify("frameworks/base/core/res/res/values/config.xml",
+                                    lambda: f"<string name=\"BENCHMARK\">{uuid.uuid4()}</string>",
+                                    before="</resources>"),
+                      modules=["framework-minus-apex"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="add_systemui_field",
+                      title="Add SystemUI field",
+                      change=AddJavaField("frameworks/base/packages/SystemUI/src/com/android/systemui/wmshell/WMShell.java",
+                                    "public"),
+                      modules=["SystemUI"],
+                      preroll=1,
+                      postroll=2,
+                      ),
         ]
 
     def _error(self, message):
