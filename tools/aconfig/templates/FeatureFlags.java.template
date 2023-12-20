@@ -5,10 +5,10 @@ import android.compat.annotation.UnsupportedAppUsage;
 /** @hide */
 public interface FeatureFlags \{
 {{ for item in flag_elements }}
-{{ if library_exported }}
+{{ -if library_exported }}
     @UnsupportedAppUsage
     boolean {item.method_name}();
-{{ else }}
+{{ -else }}
 {{ -if not item.is_read_write }}
 {{ -if item.default_value }}
     @com.android.aconfig.annotations.AssumeTrueForR8
@@ -19,5 +19,5 @@ public interface FeatureFlags \{
     @UnsupportedAppUsage
     boolean {item.method_name}();
 {{ endif }}
-{{ endfor }}
+{{ -endfor }}
 }
