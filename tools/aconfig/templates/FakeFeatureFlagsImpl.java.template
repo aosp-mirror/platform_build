@@ -12,23 +12,11 @@ public class FakeFeatureFlagsImpl implements FeatureFlags \{
     }
 
 {{ for item in flag_elements}}
-{{ if library_exported }}
-
-{{ if item.exported }}
     @Override
     @UnsupportedAppUsage
     public boolean {item.method_name}() \{
         return getValue(Flags.FLAG_{item.flag_name_constant_suffix});
     }
-{{ endif }}
-
-{{ else }}
-    @Override
-    @UnsupportedAppUsage
-    public boolean {item.method_name}() \{
-        return getValue(Flags.FLAG_{item.flag_name_constant_suffix});
-    }
-{{ endif }}
 {{ endfor}}
     public void setFlag(String flagName, boolean value) \{
         if (!this.mFlagMap.containsKey(flagName)) \{
@@ -52,20 +40,11 @@ public class FakeFeatureFlagsImpl implements FeatureFlags \{
     }
 
     private Map<String, Boolean> mFlagMap = new HashMap<>(
-        {{ if library_exported }}
-        Map.ofEntries(
-            {{-for item in exported_flag_elements}}
-            Map.entry(Flags.FLAG_{item.flag_name_constant_suffix}, false)
-            {{ -if not @last }},{{ endif }}
-            {{ -endfor }}
-        )
-        {{ else }}
         Map.ofEntries(
             {{-for item in flag_elements}}
             Map.entry(Flags.FLAG_{item.flag_name_constant_suffix}, false)
             {{ -if not @last }},{{ endif }}
             {{ -endfor }}
         )
-        {{ endif }}
     );
 }
