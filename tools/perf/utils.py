@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2023 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,10 +11,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-# BUILD_ID is usually used to specify the branch name
-# (like "MAIN") or a branch name and a release candidate
-# (like "CRB01").  It must be a single word, and is
-# capitalized by convention.
 
-BUILD_ID=AD1A.231220.001
+import os
+import pathlib
+
+DEFAULT_REPORT_DIR = "benchmarks"
+
+def get_root():
+    top_dir = os.environ.get("ANDROID_BUILD_TOP")
+    if top_dir:
+        return pathlib.Path(top_dir).resolve()
+    d = pathlib.Path.cwd()
+    while True:
+        if d.joinpath("build", "soong", "soong_ui.bash").exists():
+            return d.resolve().absolute()
+        d = d.parent
+        if d == pathlib.Path("/"):
+            return None
