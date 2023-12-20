@@ -5626,7 +5626,12 @@ endif # build_otatools_package
 FASTBOOT_INFO_VERSION = 1
 
 INSTALLED_FASTBOOT_INFO_TARGET := $(PRODUCT_OUT)/fastboot-info.txt
-
+ifdef TARGET_BOARD_FASTBOOT_INFO_FILE
+$(INSTALLED_FASTBOOT_INFO_TARGET): $(TARGET_BOARD_FASTBOOT_INFO_FILE)
+	rm -f $@
+	$(call pretty,"Target fastboot-info.txt: $@")
+	$(hide) cp $< $@
+else
 $(INSTALLED_FASTBOOT_INFO_TARGET):
 	rm -f $@
 	$(call pretty,"Target fastboot-info.txt: $@")
@@ -5684,6 +5689,7 @@ endif
 	$(hide) echo "if-wipe erase userdata" >> $@
 ifeq ($(BOARD_USES_METADATA_PARTITION),true)
 	$(hide) echo "if-wipe erase metadata" >> $@
+endif
 endif
 
 # -----------------------------------------------------------------
@@ -6744,7 +6750,7 @@ endif
 
 $(BUILT_TARGET_FILES_PACKAGE): $(BUILT_TARGET_FILES_DIR)
 	@echo "Packaging target files: $@"
-	$(hide) $(SOONG_ZIP) -d -o $@ -C $(zip_root) -r $@.list
+	$(hide) $(SOONG_ZIP) -d -o $@ -C $(zip_root) -r $@.list -sha256
 
 .PHONY: target-files-package
 target-files-package: $(BUILT_TARGET_FILES_PACKAGE)

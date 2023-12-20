@@ -26,13 +26,22 @@ use std::path::{Path, PathBuf};
 
 mod codegen;
 mod commands;
+mod dump;
 mod protos;
 mod storage;
+
+use codegen::CodegenMode;
+use dump::DumpFormat;
 
 #[cfg(test)]
 mod test;
 
-use commands::{CodegenMode, DumpFormat, Input, OutputFile};
+use commands::{Input, OutputFile};
+
+const HELP_DUMP_FILTER: &str = r#"
+Limit which flags to output. If multiple --filter arguments are provided, the output will be
+limited to flags that match any of the filters.
+"#;
 
 fn cli() -> Command {
     Command::new("aconfig")
@@ -61,7 +70,7 @@ fn cli() -> Command {
                 .arg(
                     Arg::new("mode")
                         .long("mode")
-                        .value_parser(EnumValueParser::<commands::CodegenMode>::new())
+                        .value_parser(EnumValueParser::<CodegenMode>::new())
                         .default_value("production"),
                 ),
         )
@@ -72,7 +81,7 @@ fn cli() -> Command {
                 .arg(
                     Arg::new("mode")
                         .long("mode")
-                        .value_parser(EnumValueParser::<commands::CodegenMode>::new())
+                        .value_parser(EnumValueParser::<CodegenMode>::new())
                         .default_value("production"),
                 ),
         )
@@ -83,7 +92,7 @@ fn cli() -> Command {
                 .arg(
                     Arg::new("mode")
                         .long("mode")
-                        .value_parser(EnumValueParser::<commands::CodegenMode>::new())
+                        .value_parser(EnumValueParser::<CodegenMode>::new())
                         .default_value("production"),
                 ),
         )
@@ -98,13 +107,20 @@ fn cli() -> Command {
                 .arg(Arg::new("out").long("out").default_value("-")),
         )
         .subcommand(
-            Command::new("dump")
+            Command::new("dump-cache")
+                .alias("dump")
                 .arg(Arg::new("cache").long("cache").action(ArgAction::Append))
                 .arg(
                     Arg::new("format")
                         .long("format")
-                        .value_parser(EnumValueParser::<commands::DumpFormat>::new())
+                        .value_parser(|s: &str| DumpFormat::try_from(s))
                         .default_value("text"),
+                )
+                .arg(
+                    Arg::new("filter")
+                        .long("filter")
+                        .action(ArgAction::Append)
+                        .help(HELP_DUMP_FILTER.trim()),
                 )
                 .arg(Arg::new("dedup").long("dedup").num_args(0).action(ArgAction::SetTrue))
                 .arg(Arg::new("out").long("out").default_value("-")),
@@ -245,12 +261,17 @@ fn main() -> Result<()> {
             let path = get_required_arg::<String>(sub_matches, "out")?;
             write_output_to_file_or_stdout(path, &output)?;
         }
-        Some(("dump", sub_matches)) => {
+        Some(("dump-cache", sub_matches)) => {
             let input = open_zero_or_more_files(sub_matches, "cache")?;
             let format = get_required_arg::<DumpFormat>(sub_matches, "format")
                 .context("failed to dump previously parsed flags")?;
+            let filters = sub_matches
+                .get_many::<String>("filter")
+                .unwrap_or_default()
+                .map(String::as_ref)
+                .collect::<Vec<_>>();
             let dedup = get_required_arg::<bool>(sub_matches, "dedup")?;
-            let output = commands::dump_parsed_flags(input, *format, *dedup)?;
+            let output = commands::dump_parsed_flags(input, format.clone(), &filters, *dedup)?;
             let path = get_required_arg::<String>(sub_matches, "out")?;
             write_output_to_file_or_stdout(path, &output)?;
         }

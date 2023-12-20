@@ -145,6 +145,31 @@ parsed_flag {
 }
 parsed_flag {
   package: "com.android.aconfig.test"
+  name: "enabled_fixed_ro_exported"
+  namespace: "aconfig_test"
+  description: "This flag is fixed ENABLED + READ_ONLY and exported"
+  bug: "111"
+  state: ENABLED
+  permission: READ_ONLY
+  trace {
+    source: "tests/test.aconfig"
+    state: DISABLED
+    permission: READ_ONLY
+  }
+  trace {
+    source: "tests/first.values"
+    state: ENABLED
+    permission: READ_ONLY
+  }
+  is_fixed_read_only: true
+  is_exported: true
+  container: "system"
+  metadata {
+    purpose: PURPOSE_UNSPECIFIED
+  }
+}
+parsed_flag {
+  package: "com.android.aconfig.test"
   name: "enabled_ro"
   namespace: "aconfig_test"
   description: "This flag is ENABLED + READ_ONLY"
@@ -224,6 +249,24 @@ parsed_flag {
   }
 }
 "#;
+
+    pub fn parse_read_only_test_flags() -> ProtoParsedFlags {
+        let bytes = crate::commands::parse_flags(
+            "com.android.aconfig.test",
+            Some("system"),
+            vec![Input {
+                source: "tests/read_only_test.aconfig".to_string(),
+                reader: Box::new(include_bytes!("../tests/read_only_test.aconfig").as_slice()),
+            }],
+            vec![Input {
+                source: "tests/read_only_test.values".to_string(),
+                reader: Box::new(include_bytes!("../tests/read_only_test.values").as_slice()),
+            }],
+            crate::commands::DEFAULT_FLAG_PERMISSION,
+        )
+        .unwrap();
+        crate::protos::parsed_flags::try_from_binary_proto(&bytes).unwrap()
+    }
 
     pub fn parse_test_flags() -> ProtoParsedFlags {
         let bytes = crate::commands::parse_flags(
