@@ -1028,7 +1028,7 @@ bool com_android_aconfig_test_enabled_ro() {
         expected_src: &str,
     ) {
         let modified_parsed_flags =
-            crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode);
+            crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
         let generated =
             generate_cpp_code(crate::test::TEST_PACKAGE, modified_parsed_flags.into_iter(), mode)
                 .unwrap();
