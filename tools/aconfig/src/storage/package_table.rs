@@ -206,8 +206,8 @@ mod tests {
         let expected_header = PackageTableHeader {
             version: storage::FILE_VERSION,
             container: String::from("system"),
-            file_size: 158,
-            num_packages: 2,
+            file_size: 208,
+            num_packages: 3,
             bucket_offset: 30,
             node_offset: 58,
         };
@@ -218,7 +218,7 @@ mod tests {
         assert_eq!(buckets, &expected);
 
         let nodes: &Vec<PackageTableNode> = &package_table.as_ref().unwrap().nodes;
-        assert_eq!(nodes.len(), 2);
+        assert_eq!(nodes.len(), 3);
         let first_node_expected = PackageTableNode {
             package_name: String::from("com.android.aconfig.storage.test_2"),
             package_id: 1,
@@ -231,10 +231,18 @@ mod tests {
             package_name: String::from("com.android.aconfig.storage.test_1"),
             package_id: 0,
             boolean_offset: 0,
-            next_offset: None,
+            next_offset: Some(100),
             bucket_index: 3,
         };
         assert_eq!(nodes[1], second_node_expected);
+        let third_node_expected = PackageTableNode {
+            package_name: String::from("com.android.aconfig.storage.test_4"),
+            package_id: 2,
+            boolean_offset: 16,
+            next_offset: None,
+            bucket_index: 3,
+        };
+        assert_eq!(nodes[2], third_node_expected);
     }
 
     #[test]

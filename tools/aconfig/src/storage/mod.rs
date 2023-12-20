@@ -160,6 +160,11 @@ mod tests {
                 "storage_test_2.aconfig",
                 include_bytes!("../../tests/storage_test_2.aconfig").as_slice(),
             ),
+            (
+                "com.android.aconfig.storage.test_4",
+                "storage_test_4.aconfig",
+                include_bytes!("../../tests/storage_test_4.aconfig").as_slice(),
+            ),
         ];
 
         aconfig_files
@@ -195,7 +200,7 @@ mod tests {
             }
         }
 
-        assert_eq!(packages.len(), 2);
+        assert_eq!(packages.len(), 3);
 
         assert_eq!(packages[0].package_name, "com.android.aconfig.storage.test_1");
         assert_eq!(packages[0].package_id, 0);
@@ -214,5 +219,12 @@ mod tests {
         assert!(packages[1].flag_names.contains("disabled_ro"));
         assert!(packages[1].flag_names.contains("enabled_fixed_ro"));
         assert_eq!(packages[1].boolean_offset, 10);
+
+        assert_eq!(packages[2].package_name, "com.android.aconfig.storage.test_4");
+        assert_eq!(packages[2].package_id, 2);
+        assert_eq!(packages[2].flag_names.len(), 2);
+        assert!(packages[2].flag_names.contains("enabled_ro"));
+        assert!(packages[2].flag_names.contains("enabled_fixed_ro"));
+        assert_eq!(packages[2].boolean_offset, 16);
     }
 }
