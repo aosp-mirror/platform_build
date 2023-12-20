@@ -1,0 +1,18 @@
+flag_value {
+    package: "com.android.aconfig.test"
+    name: "disabled_ro"
+    state: DISABLED
+    permission: READ_ONLY
+}
+flag_value {
+    package: "com.android.aconfig.test"
+    name: "enabled_ro"
+    state: ENABLED
+    permission: READ_ONLY
+}
+flag_value {
+    package: "com.android.aconfig.test"
+    name: "enabled_fixed_ro"
+    state: ENABLED
+    permission: READ_ONLY
+}

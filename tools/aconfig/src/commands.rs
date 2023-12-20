@@ -15,7 +15,6 @@
  */
 
 use anyhow::{bail, ensure, Context, Result};
-use clap::ValueEnum;
 use protobuf::Message;
 use std::io::Read;
 use std::path::PathBuf;
@@ -23,12 +22,13 @@ use std::path::PathBuf;
 use crate::codegen::cpp::generate_cpp_code;
 use crate::codegen::java::generate_java_code;
 use crate::codegen::rust::generate_rust_code;
-use crate::storage::generate_storage_files;
-
+use crate::codegen::CodegenMode;
+use crate::dump::{DumpFormat, DumpPredicate};
 use crate::protos::{
     ParsedFlagExt, ProtoFlagMetadata, ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag,
     ProtoParsedFlags, ProtoTracepoint,
 };
+use crate::storage::generate_storage_files;
 
 pub struct Input {
     pub source: String,
@@ -188,38 +188,34 @@ pub fn parse_flags(
     Ok(output)
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
-pub enum CodegenMode {
-    Production,
-    Test,
-    Exported,
-}
-
 pub fn create_java_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec<OutputFile>> {
     let parsed_flags = input.try_parse_flags()?;
     let filtered_parsed_flags = filter_parsed_flags(parsed_flags, codegen_mode);
     let Some(package) = find_unique_package(&filtered_parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
-    generate_java_code(package, filtered_parsed_flags.iter(), codegen_mode)
+    let package = package.to_string();
+    generate_java_code(&package, filtered_parsed_flags.into_iter(), codegen_mode)
 }
 
 pub fn create_cpp_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec<OutputFile>> {
     let parsed_flags = input.try_parse_flags()?;
-    let filtered_parsed_flags = filter_parsed_flags(parsed_flags, codegen_mode);
-    let Some(package) = find_unique_package(&filtered_parsed_flags) else {
+    let modified_parsed_flags = modify_parsed_flags_based_on_mode(parsed_flags, codegen_mode);
+    let Some(package) = find_unique_package(&modified_parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
-    generate_cpp_code(package, filtered_parsed_flags.iter(), codegen_mode)
+    let package = package.to_string();
+    generate_cpp_code(&package, modified_parsed_flags.into_iter(), codegen_mode)
 }
 
 pub fn create_rust_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<OutputFile> {
     let parsed_flags = input.try_parse_flags()?;
-    let filtered_parsed_flags = filter_parsed_flags(parsed_flags, codegen_mode);
-    let Some(package) = find_unique_package(&filtered_parsed_flags) else {
+    let modified_parsed_flags = modify_parsed_flags_based_on_mode(parsed_flags, codegen_mode);
+    let Some(package) = find_unique_package(&modified_parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
-    generate_rust_code(package, filtered_parsed_flags.iter(), codegen_mode)
+    let package = package.to_string();
+    generate_rust_code(&package, modified_parsed_flags.into_iter(), codegen_mode)
 }
 
 pub fn create_storage(caches: Vec<Input>, container: &str) -> Result<Vec<OutputFile>> {
@@ -276,73 +272,28 @@ pub fn create_device_config_sysprops(mut input: Input) -> Result<Vec<u8>> {
     Ok(output)
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
-pub enum DumpFormat {
-    Text,
-    Verbose,
-    Protobuf,
-    Textproto,
-    Bool,
-}
-
 pub fn dump_parsed_flags(
     mut input: Vec<Input>,
     format: DumpFormat,
+    filters: &[&str],
     dedup: bool,
 ) -> Result<Vec<u8>> {
     let individually_parsed_flags: Result<Vec<ProtoParsedFlags>> =
         input.iter_mut().map(|i| i.try_parse_flags()).collect();
     let parsed_flags: ProtoParsedFlags =
         crate::protos::parsed_flags::merge(individually_parsed_flags?, dedup)?;
-
-    let mut output = Vec::new();
-    match format {
-        DumpFormat::Text => {
-            for parsed_flag in parsed_flags.parsed_flag.into_iter() {
-                let line = format!(
-                    "{} [{}]: {:?} + {:?}\n",
-                    parsed_flag.fully_qualified_name(),
-                    parsed_flag.container(),
-                    parsed_flag.permission(),
-                    parsed_flag.state()
-                );
-                output.extend_from_slice(line.as_bytes());
-            }
-        }
-        DumpFormat::Verbose => {
-            for parsed_flag in parsed_flags.parsed_flag.into_iter() {
-                let sources: Vec<_> =
-                    parsed_flag.trace.iter().map(|tracepoint| tracepoint.source()).collect();
-                let line = format!(
-                    "{} [{}]: {:?} + {:?} ({})\n",
-                    parsed_flag.fully_qualified_name(),
-                    parsed_flag.container(),
-                    parsed_flag.permission(),
-                    parsed_flag.state(),
-                    sources.join(", ")
-                );
-                output.extend_from_slice(line.as_bytes());
-            }
-        }
-        DumpFormat::Protobuf => {
-            parsed_flags.write_to_vec(&mut output)?;
-        }
-        DumpFormat::Textproto => {
-            let s = protobuf::text_format::print_to_string_pretty(&parsed_flags);
-            output.extend_from_slice(s.as_bytes());
-        }
-        DumpFormat::Bool => {
-            for parsed_flag in parsed_flags.parsed_flag.into_iter() {
-                let line = format!(
-                    "{}={:?}\n",
-                    parsed_flag.fully_qualified_name(),
-                    parsed_flag.state() == ProtoFlagState::ENABLED
-                );
-                output.extend_from_slice(line.as_bytes());
-            }
-        }
-    }
-    Ok(output)
+    let filters: Vec<Box<DumpPredicate>> = if filters.is_empty() {
+        vec![Box::new(|_| true)]
+    } else {
+        filters
+            .iter()
+            .map(|f| crate::dump::create_filter_predicate(f))
+            .collect::<Result<Vec<_>>>()?
+    };
+    crate::dump::dump_parsed_flags(
+        parsed_flags.parsed_flag.into_iter().filter(|flag| filters.iter().any(|p| p(flag))),
+        format,
+    )
 }
 
 fn find_unique_package(parsed_flags: &[ProtoParsedFlag]) -> Option<&str> {
@@ -377,6 +328,30 @@ fn filter_parsed_flags(
     }
 }
 
+pub fn modify_parsed_flags_based_on_mode(
+    parsed_flags: ProtoParsedFlags,
+    codegen_mode: CodegenMode,
+) -> Vec<ProtoParsedFlag> {
+    fn exported_mode_flag_modifier(mut parsed_flag: ProtoParsedFlag) -> ProtoParsedFlag {
+        parsed_flag.set_state(ProtoFlagState::DISABLED);
+        parsed_flag.set_permission(ProtoFlagPermission::READ_WRITE);
+        parsed_flag.set_is_fixed_read_only(false);
+        parsed_flag
+    }
+
+    match codegen_mode {
+        CodegenMode::Exported => parsed_flags
+            .parsed_flag
+            .into_iter()
+            .filter(|pf| pf.is_exported())
+            .map(exported_mode_flag_modifier)
+            .collect(),
+        CodegenMode::Production | CodegenMode::Test => {
+            parsed_flags.parsed_flag.into_iter().collect()
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -408,9 +383,9 @@ mod tests {
         assert_eq!(ProtoFlagState::ENABLED, enabled_ro.trace[2].state());
         assert_eq!(ProtoFlagPermission::READ_ONLY, enabled_ro.trace[2].permission());
 
-        assert_eq!(8, parsed_flags.parsed_flag.len());
+        assert_eq!(9, parsed_flags.parsed_flag.len());
         for pf in parsed_flags.parsed_flag.iter() {
-            if pf.name() == "enabled_fixed_ro" {
+            if pf.name().starts_with("enabled_fixed_ro") {
                 continue;
             }
             let first = pf.trace.first().unwrap();
@@ -619,45 +594,33 @@ mod tests {
     }
 
     #[test]
-    fn test_dump_text_format() {
+    fn test_dump() {
         let input = parse_test_flags_as_input();
-        let bytes = dump_parsed_flags(vec![input], DumpFormat::Text, false).unwrap();
-        let text = std::str::from_utf8(&bytes).unwrap();
-        assert!(
-            text.contains("com.android.aconfig.test.disabled_ro [system]: READ_ONLY + DISABLED")
-        );
-    }
-
-    #[test]
-    fn test_dump_protobuf_format() {
-        let expected = protobuf::text_format::parse_from_str::<ProtoParsedFlags>(
-            crate::test::TEST_FLAGS_TEXTPROTO,
+        let bytes = dump_parsed_flags(
+            vec![input],
+            DumpFormat::Custom("{fully_qualified_name}".to_string()),
+            &[],
+            false,
         )
-        .unwrap()
-        .write_to_bytes()
         .unwrap();
-
-        let input = parse_test_flags_as_input();
-        let actual = dump_parsed_flags(vec![input], DumpFormat::Protobuf, false).unwrap();
-
-        assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn test_dump_textproto_format() {
-        let input = parse_test_flags_as_input();
-        let bytes = dump_parsed_flags(vec![input], DumpFormat::Textproto, false).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
-        assert_eq!(crate::test::TEST_FLAGS_TEXTPROTO.trim(), text.trim());
+        assert!(text.contains("com.android.aconfig.test.disabled_ro"));
     }
 
     #[test]
     fn test_dump_textproto_format_dedup() {
         let input = parse_test_flags_as_input();
         let input2 = parse_test_flags_as_input();
-        let bytes = dump_parsed_flags(vec![input, input2], DumpFormat::Textproto, true).unwrap();
+        let bytes =
+            dump_parsed_flags(vec![input, input2], DumpFormat::Textproto, &[], true).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
-        assert_eq!(crate::test::TEST_FLAGS_TEXTPROTO.trim(), text.trim());
+        assert_eq!(
+            None,
+            crate::test::first_significant_code_diff(
+                crate::test::TEST_FLAGS_TEXTPROTO.trim(),
+                text.trim()
+            )
+        );
     }
 
     #[test]
@@ -667,14 +630,14 @@ mod tests {
 
         let filtered_parsed_flags =
             filter_parsed_flags(parsed_flags.clone(), CodegenMode::Exported);
-        assert_eq!(2, filtered_parsed_flags.len());
+        assert_eq!(3, filtered_parsed_flags.len());
 
         let filtered_parsed_flags =
             filter_parsed_flags(parsed_flags.clone(), CodegenMode::Production);
-        assert_eq!(8, filtered_parsed_flags.len());
+        assert_eq!(9, filtered_parsed_flags.len());
 
         let filtered_parsed_flags = filter_parsed_flags(parsed_flags.clone(), CodegenMode::Test);
-        assert_eq!(8, filtered_parsed_flags.len());
+        assert_eq!(9, filtered_parsed_flags.len());
     }
 
     fn parse_test_flags_as_input() -> Input {
@@ -683,5 +646,29 @@ mod tests {
         let cursor = std::io::Cursor::new(binary_proto);
         let reader = Box::new(cursor);
         Input { source: "test.data".to_string(), reader }
+    }
+
+    #[test]
+    fn test_modify_parsed_flags_based_on_mode_prod() {
+        let parsed_flags = crate::test::parse_test_flags();
+        let p_parsed_flags =
+            modify_parsed_flags_based_on_mode(parsed_flags.clone(), CodegenMode::Production);
+        assert_eq!(parsed_flags.parsed_flag.len(), p_parsed_flags.len());
+        for (i, item) in p_parsed_flags.iter().enumerate() {
+            assert!(parsed_flags.parsed_flag[i].eq(item));
+        }
+    }
+
+    #[test]
+    fn test_modify_parsed_flags_based_on_mode_exported() {
+        let parsed_flags = crate::test::parse_test_flags();
+        let p_parsed_flags = modify_parsed_flags_based_on_mode(parsed_flags, CodegenMode::Exported);
+        assert_eq!(3, p_parsed_flags.len());
+        for flag in p_parsed_flags.iter() {
+            assert_eq!(ProtoFlagState::DISABLED, flag.state());
+            assert_eq!(ProtoFlagPermission::READ_WRITE, flag.permission());
+            assert!(!flag.is_fixed_read_only());
+            assert!(flag.is_exported());
+        }
     }
 }

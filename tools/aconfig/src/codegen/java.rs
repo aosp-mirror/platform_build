@@ -21,19 +21,20 @@ use std::path::PathBuf;
 use tinytemplate::TinyTemplate;
 
 use crate::codegen;
-use crate::commands::{CodegenMode, OutputFile};
+use crate::codegen::CodegenMode;
+use crate::commands::OutputFile;
 use crate::protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
 
-pub fn generate_java_code<'a, I>(
+pub fn generate_java_code<I>(
     package: &str,
     parsed_flags_iter: I,
     codegen_mode: CodegenMode,
 ) -> Result<Vec<OutputFile>>
 where
-    I: Iterator<Item = &'a ProtoParsedFlag>,
+    I: Iterator<Item = ProtoParsedFlag>,
 {
     let flag_elements: Vec<FlagElement> =
-        parsed_flags_iter.map(|pf| create_flag_element(package, pf)).collect();
+        parsed_flags_iter.map(|pf| create_flag_element(package, &pf)).collect();
     let exported_flag_elements: Vec<FlagElement> =
         flag_elements.iter().filter(|elem| elem.exported).cloned().collect();
     let namespace_flags = gen_flags_by_namespace(&flag_elements);
@@ -202,6 +203,9 @@ mod tests {
         boolean enabledFixedRo();
         @com.android.aconfig.annotations.AssumeTrueForR8
         @UnsupportedAppUsage
+        boolean enabledFixedRoExported();
+        @com.android.aconfig.annotations.AssumeTrueForR8
+        @UnsupportedAppUsage
         boolean enabledRo();
         @com.android.aconfig.annotations.AssumeTrueForR8
         @UnsupportedAppUsage
@@ -227,6 +231,8 @@ mod tests {
         public static final String FLAG_DISABLED_RW_IN_OTHER_NAMESPACE = "com.android.aconfig.test.disabled_rw_in_other_namespace";
         /** @hide */
         public static final String FLAG_ENABLED_FIXED_RO = "com.android.aconfig.test.enabled_fixed_ro";
+        /** @hide */
+        public static final String FLAG_ENABLED_FIXED_RO_EXPORTED = "com.android.aconfig.test.enabled_fixed_ro_exported";
         /** @hide */
         public static final String FLAG_ENABLED_RO = "com.android.aconfig.test.enabled_ro";
         /** @hide */
@@ -255,6 +261,11 @@ mod tests {
         @UnsupportedAppUsage
         public static boolean enabledFixedRo() {
             return FEATURE_FLAGS.enabledFixedRo();
+        }
+        @com.android.aconfig.annotations.AssumeTrueForR8
+        @UnsupportedAppUsage
+        public static boolean enabledFixedRoExported() {
+            return FEATURE_FLAGS.enabledFixedRoExported();
         }
         @com.android.aconfig.annotations.AssumeTrueForR8
         @UnsupportedAppUsage
@@ -310,6 +321,11 @@ mod tests {
         }
         @Override
         @UnsupportedAppUsage
+        public boolean enabledFixedRoExported() {
+            return getValue(Flags.FLAG_ENABLED_FIXED_RO_EXPORTED);
+        }
+        @Override
+        @UnsupportedAppUsage
         public boolean enabledRo() {
             return getValue(Flags.FLAG_ENABLED_RO);
         }
@@ -348,6 +364,7 @@ mod tests {
                 Map.entry(Flags.FLAG_DISABLED_RW_EXPORTED, false),
                 Map.entry(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE, false),
                 Map.entry(Flags.FLAG_ENABLED_FIXED_RO, false),
+                Map.entry(Flags.FLAG_ENABLED_FIXED_RO_EXPORTED, false),
                 Map.entry(Flags.FLAG_ENABLED_RO, false),
                 Map.entry(Flags.FLAG_ENABLED_RO_EXPORTED, false),
                 Map.entry(Flags.FLAG_ENABLED_RW, false)
@@ -361,7 +378,7 @@ mod tests {
         let parsed_flags = crate::test::parse_test_flags();
         let generated_files = generate_java_code(
             crate::test::TEST_PACKAGE,
-            parsed_flags.parsed_flag.iter(),
+            parsed_flags.parsed_flag.into_iter(),
             CodegenMode::Production,
         )
         .unwrap();
@@ -463,6 +480,11 @@ mod tests {
             }
             @Override
             @UnsupportedAppUsage
+            public boolean enabledFixedRoExported() {
+                return true;
+            }
+            @Override
+            @UnsupportedAppUsage
             public boolean enabledRo() {
                 return true;
             }
@@ -514,7 +536,7 @@ mod tests {
         let parsed_flags = crate::test::parse_test_flags();
         let generated_files = generate_java_code(
             crate::test::TEST_PACKAGE,
-            parsed_flags.parsed_flag.iter(),
+            parsed_flags.parsed_flag.into_iter(),
             CodegenMode::Exported,
         )
         .unwrap();
@@ -528,11 +550,17 @@ mod tests {
             /** @hide */
             public static final String FLAG_DISABLED_RW_EXPORTED = "com.android.aconfig.test.disabled_rw_exported";
             /** @hide */
+            public static final String FLAG_ENABLED_FIXED_RO_EXPORTED = "com.android.aconfig.test.enabled_fixed_ro_exported";
+            /** @hide */
             public static final String FLAG_ENABLED_RO_EXPORTED = "com.android.aconfig.test.enabled_ro_exported";
 
             @UnsupportedAppUsage
             public static boolean disabledRwExported() {
                 return FEATURE_FLAGS.disabledRwExported();
+            }
+            @UnsupportedAppUsage
+            public static boolean enabledFixedRoExported() {
+                return FEATURE_FLAGS.enabledFixedRoExported();
             }
             @UnsupportedAppUsage
             public static boolean enabledRoExported() {
@@ -551,6 +579,8 @@ mod tests {
             @UnsupportedAppUsage
             boolean disabledRwExported();
             @UnsupportedAppUsage
+            boolean enabledFixedRoExported();
+            @UnsupportedAppUsage
             boolean enabledRoExported();
         }
         "#;
@@ -566,6 +596,7 @@ mod tests {
             private static boolean aconfig_test_is_cached = false;
             private static boolean other_namespace_is_cached = false;
             private static boolean disabledRwExported = false;
+            private static boolean enabledFixedRoExported = false;
             private static boolean enabledRoExported = false;
 
 
@@ -574,6 +605,8 @@ mod tests {
                     Properties properties = DeviceConfig.getProperties("aconfig_test");
                     disabledRwExported =
                         properties.getBoolean("com.android.aconfig.test.disabled_rw_exported", false);
+                    enabledFixedRoExported =
+                        properties.getBoolean("com.android.aconfig.test.enabled_fixed_ro_exported", false);
                     enabledRoExported =
                         properties.getBoolean("com.android.aconfig.test.enabled_ro_exported", false);
                 } catch (NullPointerException e) {
@@ -616,6 +649,15 @@ mod tests {
 
             @Override
             @UnsupportedAppUsage
+            public boolean enabledFixedRoExported() {
+                if (!aconfig_test_is_cached) {
+                    load_overrides_aconfig_test();
+                }
+                return enabledFixedRoExported;
+            }
+
+            @Override
+            @UnsupportedAppUsage
             public boolean enabledRoExported() {
                 if (!aconfig_test_is_cached) {
                     load_overrides_aconfig_test();
@@ -639,6 +681,11 @@ mod tests {
             @UnsupportedAppUsage
             public boolean disabledRwExported() {
                 return getValue(Flags.FLAG_DISABLED_RW_EXPORTED);
+            }
+            @Override
+            @UnsupportedAppUsage
+            public boolean enabledFixedRoExported() {
+                return getValue(Flags.FLAG_ENABLED_FIXED_RO_EXPORTED);
             }
             @Override
             @UnsupportedAppUsage
@@ -666,6 +713,7 @@ mod tests {
             private Map<String, Boolean> mFlagMap = new HashMap<>(
                 Map.ofEntries(
                     Map.entry(Flags.FLAG_DISABLED_RW_EXPORTED, false),
+                    Map.entry(Flags.FLAG_ENABLED_FIXED_RO_EXPORTED, false),
                     Map.entry(Flags.FLAG_ENABLED_RO_EXPORTED, false)
                 )
             );
@@ -705,7 +753,7 @@ mod tests {
         let parsed_flags = crate::test::parse_test_flags();
         let generated_files = generate_java_code(
             crate::test::TEST_PACKAGE,
-            parsed_flags.parsed_flag.iter(),
+            parsed_flags.parsed_flag.into_iter(),
             CodegenMode::Test,
         )
         .unwrap();
@@ -754,6 +802,12 @@ mod tests {
             @Override
             @UnsupportedAppUsage
             public boolean enabledFixedRo() {
+                throw new UnsupportedOperationException(
+                    "Method is not implemented.");
+            }
+            @Override
+            @UnsupportedAppUsage
+            public boolean enabledFixedRoExported() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
             }
