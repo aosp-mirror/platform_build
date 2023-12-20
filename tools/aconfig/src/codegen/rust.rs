@@ -557,7 +557,7 @@ pub fn enabled_ro_exported() -> bool {
     fn test_generate_rust_code(mode: CodegenMode) {
         let parsed_flags = crate::test::parse_test_flags();
         let modified_parsed_flags =
-            crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode);
+            crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
         let generated =
             generate_rust_code(crate::test::TEST_PACKAGE, modified_parsed_flags.into_iter(), mode)
                 .unwrap();
