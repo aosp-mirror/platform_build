@@ -36,12 +36,6 @@ impl TryFrom<&str> for DumpFormat {
             // protobuf formats
             "protobuf" => Ok(Self::Protobuf),
             "textproto" => Ok(Self::Textproto),
-
-            // old formats now implemented as aliases to custom format
-            "text" => Ok(Self::Custom(
-                "{fully_qualified_name} [{container}]: {permission} + {state}".to_owned(),
-            )),
-
             // custom format
             _ => Ok(Self::Custom(value.to_owned())),
         }
@@ -264,12 +258,6 @@ mod tests {
         assert_dump_parsed_flags_custom_format_contains!(
             "{fully_qualified_name}={permission} + {state}",
             "com.android.aconfig.test.enabled_ro=READ_ONLY + ENABLED"
-        );
-
-        // aliases
-        assert_dump_parsed_flags_custom_format_contains!(
-            "text",
-            "com.android.aconfig.test.enabled_ro [system]: READ_ONLY + ENABLED"
         );
     }
 
