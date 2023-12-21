@@ -51,8 +51,6 @@ where
         readwrite,
         readwrite_count,
         is_test_mode: codegen_mode == CodegenMode::Test,
-        is_prod_mode: codegen_mode == CodegenMode::Production,
-        is_exported_mode: codegen_mode == CodegenMode::Exported,
         class_elements,
     };
 
@@ -96,8 +94,6 @@ pub struct Context<'a> {
     pub readwrite: bool,
     pub readwrite_count: i32,
     pub is_test_mode: bool,
-    pub is_prod_mode: bool,
-    pub is_exported_mode: bool,
     pub class_elements: Vec<ClassElement>,
 }
 
@@ -479,6 +475,88 @@ bool com_android_aconfig_test_disabled_rw_exported();
 bool com_android_aconfig_test_enabled_fixed_ro_exported();
 
 bool com_android_aconfig_test_enabled_ro_exported();
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+"#;
+
+    const EXPORTED_FORCE_READ_ONLY_HEADER_EXPECTED: &str = r#"
+#pragma once
+
+#ifndef COM_ANDROID_ACONFIG_TEST
+#define COM_ANDROID_ACONFIG_TEST(FLAG) COM_ANDROID_ACONFIG_TEST_##FLAG
+#endif
+
+#ifndef COM_ANDROID_ACONFIG_TEST_ENABLED_FIXED_RO
+#define COM_ANDROID_ACONFIG_TEST_ENABLED_FIXED_RO true
+#endif
+
+#ifdef __cplusplus
+
+#include <memory>
+
+namespace com::android::aconfig::test {
+
+class flag_provider_interface {
+public:
+    virtual ~flag_provider_interface() = default;
+
+    virtual bool disabled_ro() = 0;
+
+    virtual bool disabled_rw() = 0;
+
+    virtual bool disabled_rw_in_other_namespace() = 0;
+
+    virtual bool enabled_fixed_ro() = 0;
+
+    virtual bool enabled_ro() = 0;
+
+    virtual bool enabled_rw() = 0;
+};
+
+extern std::unique_ptr<flag_provider_interface> provider_;
+
+inline bool disabled_ro() {
+    return false;
+}
+
+inline bool disabled_rw() {
+    return false;
+}
+
+inline bool disabled_rw_in_other_namespace() {
+    return false;
+}
+
+inline bool enabled_fixed_ro() {
+    return COM_ANDROID_ACONFIG_TEST_ENABLED_FIXED_RO;
+}
+
+inline bool enabled_ro() {
+    return true;
+}
+
+inline bool enabled_rw() {
+    return true;
+}
+
+}
+
+extern "C" {
+#endif // __cplusplus
+
+bool com_android_aconfig_test_disabled_ro();
+
+bool com_android_aconfig_test_disabled_rw();
+
+bool com_android_aconfig_test_disabled_rw_in_other_namespace();
+
+bool com_android_aconfig_test_enabled_fixed_ro();
+
+bool com_android_aconfig_test_enabled_ro();
+
+bool com_android_aconfig_test_enabled_rw();
 
 #ifdef __cplusplus
 } // extern "C"
@@ -906,6 +984,69 @@ bool com_android_aconfig_test_enabled_ro_exported() {
 
 "#;
 
+    const FORCE_READ_ONLY_SOURCE_FILE_EXPECTED: &str = r#"
+#include "com_android_aconfig_test.h"
+
+namespace com::android::aconfig::test {
+
+    class flag_provider : public flag_provider_interface {
+        public:
+
+            virtual bool disabled_ro() override {
+                return false;
+            }
+
+            virtual bool disabled_rw() override {
+                return false;
+            }
+
+            virtual bool disabled_rw_in_other_namespace() override {
+                return false;
+            }
+
+            virtual bool enabled_fixed_ro() override {
+                return COM_ANDROID_ACONFIG_TEST_ENABLED_FIXED_RO;
+            }
+
+            virtual bool enabled_ro() override {
+                return true;
+            }
+
+            virtual bool enabled_rw() override {
+                return true;
+            }
+    };
+
+    std::unique_ptr<flag_provider_interface> provider_ =
+        std::make_unique<flag_provider>();
+}
+
+bool com_android_aconfig_test_disabled_ro() {
+    return false;
+}
+
+bool com_android_aconfig_test_disabled_rw() {
+    return false;
+}
+
+bool com_android_aconfig_test_disabled_rw_in_other_namespace() {
+    return false;
+}
+
+bool com_android_aconfig_test_enabled_fixed_ro() {
+    return COM_ANDROID_ACONFIG_TEST_ENABLED_FIXED_RO;
+}
+
+bool com_android_aconfig_test_enabled_ro() {
+    return true;
+}
+
+bool com_android_aconfig_test_enabled_rw() {
+    return true;
+}
+
+"#;
+
     const READ_ONLY_EXPORTED_PROD_HEADER_EXPECTED: &str = r#"
 #pragma once
 
@@ -1091,6 +1232,17 @@ bool com_android_aconfig_test_enabled_ro() {
             CodegenMode::Exported,
             EXPORTED_EXPORTED_HEADER_EXPECTED,
             EXPORTED_SOURCE_FILE_EXPECTED,
+        );
+    }
+
+    #[test]
+    fn test_generate_cpp_code_for_force_read_only() {
+        let parsed_flags = crate::test::parse_test_flags();
+        test_generate_cpp_code(
+            parsed_flags,
+            CodegenMode::ForceReadOnly,
+            EXPORTED_FORCE_READ_ONLY_HEADER_EXPECTED,
+            FORCE_READ_ONLY_SOURCE_FILE_EXPECTED,
         );
     }
 

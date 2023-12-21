@@ -44,7 +44,6 @@ inline bool {item.flag_name}() \{
     {{ -if is_test_mode }}
     return provider_->{item.flag_name}();
     {{ -else }}
-    {{ -if is_prod_mode }}
     {{ -if item.readwrite }}
     return provider_->{item.flag_name}();
     {{ -else }}
@@ -52,11 +51,6 @@ inline bool {item.flag_name}() \{
     return {package_macro}_{item.flag_macro};
     {{ -else }}
     return {item.default_value};
-    {{ -endif }}
-    {{ -endif }}
-    {{ -else }}
-    {{ -if is_exported_mode }}
-    return provider_->{item.flag_name}();
     {{ -endif }}
     {{ -endif }}
     {{ -endif }}

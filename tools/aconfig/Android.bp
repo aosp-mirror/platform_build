@@ -179,6 +179,12 @@ cc_aconfig_library {
     mode: "exported",
 }
 
+cc_aconfig_library {
+    name: "aconfig_test_cpp_library_force_read_only_variant",
+    aconfig_declarations: "aconfig.test.flags",
+    mode: "force-read-only",
+}
+
 cc_test {
     name: "aconfig.test.cpp",
     srcs: [
@@ -216,6 +222,21 @@ cc_test {
     ],
     static_libs: [
         "aconfig_test_cpp_library_exported_variant",
+        "libgmock",
+    ],
+    shared_libs: [
+        "server_configurable_flags",
+    ],
+    test_suites: ["general-tests"],
+}
+
+cc_test {
+    name: "aconfig.test.cpp.force_read_only_mode",
+    srcs: [
+        "tests/aconfig_force_read_only_mode_test.cpp",
+    ],
+    static_libs: [
+        "aconfig_test_cpp_library_force_read_only_variant",
         "libgmock",
     ],
     shared_libs: [
