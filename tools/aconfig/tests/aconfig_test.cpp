@@ -26,11 +26,9 @@ TEST(AconfigTest, TestDisabledReadOnlyFlag) {
 }
 
 TEST(AconfigTest, TestEnabledReadOnlyFlag) {
-  // TODO: change to assertTrue(enabledRo()) when the build supports reading tests/*.values
-  // (currently all flags are assigned the default READ_ONLY + DISABLED)
-  ASSERT_FALSE(com_android_aconfig_test_enabled_ro());
-  ASSERT_FALSE(provider_->enabled_ro());
-  ASSERT_FALSE(enabled_ro());
+  ASSERT_TRUE(com_android_aconfig_test_enabled_ro());
+  ASSERT_TRUE(provider_->enabled_ro());
+  ASSERT_TRUE(enabled_ro());
 }
 
 TEST(AconfigTest, TestDisabledReadWriteFlag) {
@@ -40,19 +38,15 @@ TEST(AconfigTest, TestDisabledReadWriteFlag) {
 }
 
 TEST(AconfigTest, TestEnabledReadWriteFlag) {
-  // TODO: change to assertTrue(enabledRo()) when the build supports reading tests/*.values
-  // (currently all flags are assigned the default READ_ONLY + DISABLED)
-  ASSERT_FALSE(com_android_aconfig_test_enabled_rw());
-  ASSERT_FALSE(provider_->enabled_rw());
-  ASSERT_FALSE(enabled_rw());
+  ASSERT_TRUE(com_android_aconfig_test_enabled_rw());
+  ASSERT_TRUE(provider_->enabled_rw());
+  ASSERT_TRUE(enabled_rw());
 }
 
 TEST(AconfigTest, TestEnabledFixedReadOnlyFlag) {
-  // TODO: change to assertTrue(enabledFixedRo()) when the build supports reading tests/*.values
-  // (currently all flags are assigned the default READ_ONLY + DISABLED)
-  ASSERT_FALSE(com_android_aconfig_test_enabled_fixed_ro());
-  ASSERT_FALSE(provider_->enabled_fixed_ro());
-  ASSERT_FALSE(enabled_fixed_ro());
+  ASSERT_TRUE(com_android_aconfig_test_enabled_fixed_ro());
+  ASSERT_TRUE(provider_->enabled_fixed_ro());
+  ASSERT_TRUE(enabled_fixed_ro());
 }
 
 int main(int argc, char** argv) {
