@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use serde::Serialize;
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
@@ -35,8 +35,6 @@ where
 {
     let flag_elements: Vec<FlagElement> =
         parsed_flags_iter.map(|pf| create_flag_element(package, &pf)).collect();
-    let exported_flag_elements: Vec<FlagElement> =
-        flag_elements.iter().filter(|elem| elem.exported).cloned().collect();
     let namespace_flags = gen_flags_by_namespace(&flag_elements);
     let properties_set: BTreeSet<String> =
         flag_elements.iter().map(|fe| format_property_name(&fe.device_config_namespace)).collect();
@@ -45,13 +43,8 @@ where
     let runtime_lookup_required =
         flag_elements.iter().any(|elem| elem.is_read_write) || library_exported;
 
-    if library_exported && exported_flag_elements.is_empty() {
-        return Err(anyhow!("exported library contains no exported flags"));
-    }
-
     let context = Context {
         flag_elements,
-        exported_flag_elements,
         namespace_flags,
         is_test_mode,
         runtime_lookup_required,
@@ -110,7 +103,6 @@ fn gen_flags_by_namespace(flags: &[FlagElement]) -> Vec<NamespaceFlags> {
 #[derive(Serialize)]
 struct Context {
     pub flag_elements: Vec<FlagElement>,
-    pub exported_flag_elements: Vec<FlagElement>,
     pub namespace_flags: Vec<NamespaceFlags>,
     pub is_test_mode: bool,
     pub runtime_lookup_required: bool,
@@ -134,7 +126,6 @@ struct FlagElement {
     pub is_read_write: bool,
     pub method_name: String,
     pub properties: String,
-    pub exported: bool,
 }
 
 fn create_flag_element(package: &str, pf: &ProtoParsedFlag) -> FlagElement {
@@ -148,7 +139,6 @@ fn create_flag_element(package: &str, pf: &ProtoParsedFlag) -> FlagElement {
         is_read_write: pf.permission() == ProtoFlagPermission::READ_WRITE,
         method_name: format_java_method_name(pf.name()),
         properties: format_property_name(pf.namespace()),
-        exported: pf.is_exported.unwrap_or(false),
     }
 }
 
@@ -376,12 +366,12 @@ mod tests {
     #[test]
     fn test_generate_java_code_production() {
         let parsed_flags = crate::test::parse_test_flags();
-        let generated_files = generate_java_code(
-            crate::test::TEST_PACKAGE,
-            parsed_flags.parsed_flag.into_iter(),
-            CodegenMode::Production,
-        )
-        .unwrap();
+        let mode = CodegenMode::Production;
+        let modified_parsed_flags =
+            crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
+        let generated_files =
+            generate_java_code(crate::test::TEST_PACKAGE, modified_parsed_flags.into_iter(), mode)
+                .unwrap();
         let expect_flags_content = EXPECTED_FLAG_COMMON_CONTENT.to_string()
             + r#"
             private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
@@ -534,12 +524,12 @@ mod tests {
     #[test]
     fn test_generate_java_code_exported() {
         let parsed_flags = crate::test::parse_test_flags();
-        let generated_files = generate_java_code(
-            crate::test::TEST_PACKAGE,
-            parsed_flags.parsed_flag.into_iter(),
-            CodegenMode::Exported,
-        )
-        .unwrap();
+        let mode = CodegenMode::Exported;
+        let modified_parsed_flags =
+            crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
+        let generated_files =
+            generate_java_code(crate::test::TEST_PACKAGE, modified_parsed_flags.into_iter(), mode)
+                .unwrap();
 
         let expect_flags_content = r#"
         package com.android.aconfig.test;
@@ -594,7 +584,6 @@ mod tests {
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
             private static boolean aconfig_test_is_cached = false;
-            private static boolean other_namespace_is_cached = false;
             private static boolean disabledRwExported = false;
             private static boolean enabledFixedRoExported = false;
             private static boolean enabledRoExported = false;
@@ -620,22 +609,6 @@ mod tests {
                     );
                 }
                 aconfig_test_is_cached = true;
-            }
-
-            private void load_overrides_other_namespace() {
-                try {
-                    Properties properties = DeviceConfig.getProperties("other_namespace");
-                } catch (NullPointerException e) {
-                    throw new RuntimeException(
-                        "Cannot read value from namespace other_namespace "
-                        + "from DeviceConfig. It could be that the code using flag "
-                        + "executed before SettingsProvider initialization. Please use "
-                        + "fixed read-only flag by adding is_fixed_read_only: true in "
-                        + "flag declaration.",
-                        e
-                    );
-                }
-                other_namespace_is_cached = true;
             }
 
             @Override
@@ -751,12 +724,12 @@ mod tests {
     #[test]
     fn test_generate_java_code_test() {
         let parsed_flags = crate::test::parse_test_flags();
-        let generated_files = generate_java_code(
-            crate::test::TEST_PACKAGE,
-            parsed_flags.parsed_flag.into_iter(),
-            CodegenMode::Test,
-        )
-        .unwrap();
+        let mode = CodegenMode::Test;
+        let modified_parsed_flags =
+            crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
+        let generated_files =
+            generate_java_code(crate::test::TEST_PACKAGE, modified_parsed_flags.into_iter(), mode)
+                .unwrap();
 
         let expect_flags_content = EXPECTED_FLAG_COMMON_CONTENT.to_string()
             + r#"
