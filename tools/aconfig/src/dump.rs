@@ -45,7 +45,6 @@ impl TryFrom<&str> for DumpFormat {
                 "{fully_qualified_name} [{container}]: {permission} + {state} ({trace:paths})"
                     .to_owned(),
             )),
-            "bool" => Ok(Self::Custom("{fully_qualified_name}={state:bool}".to_owned())),
 
             // custom format
             _ => Ok(Self::Custom(value.to_owned())),
@@ -279,10 +278,6 @@ mod tests {
         assert_dump_parsed_flags_custom_format_contains!(
             "verbose",
             "com.android.aconfig.test.enabled_ro [system]: READ_ONLY + ENABLED (tests/test.aconfig, tests/first.values, tests/second.values)"
-        );
-        assert_dump_parsed_flags_custom_format_contains!(
-            "bool",
-            "com.android.aconfig.test.enabled_ro=true"
         );
     }
 
