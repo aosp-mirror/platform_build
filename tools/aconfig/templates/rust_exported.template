@@ -3,30 +3,21 @@
 /// flag provider
 pub struct FlagProvider;
 
-{{ if has_readwrite- }}
 lazy_static::lazy_static! \{
-{{ -for flag in template_flags }}
-    {{ -if flag.readwrite }}
+{{ for flag in template_flags }}
     /// flag value cache for {flag.name}
     static ref CACHED_{flag.name}: bool = flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.{flag.device_config_namespace}",
         "{flag.device_config_flag}",
-        "{flag.default_value}") == "true";
-    {{ -endif }}
-{{ -endfor }}
+        "false") == "true";
+{{ endfor }}
 }
-{{ -endif }}
 
 impl FlagProvider \{
-
 {{ for flag in template_flags }}
     /// query flag {flag.name}
     pub fn {flag.name}(&self) -> bool \{
-    {{ -if flag.readwrite }}
         *CACHED_{flag.name}
-    {{ -else }}
-        {flag.default_value}
-    {{ -endif }}
     }
 {{ endfor }}
 
@@ -38,12 +29,7 @@ pub static PROVIDER: FlagProvider = FlagProvider;
 {{ for flag in template_flags }}
 /// query flag {flag.name}
 #[inline(always)]
-{{ -if flag.readwrite }}
 pub fn {flag.name}() -> bool \{
     PROVIDER.{flag.name}()
-{{ -else }}
-pub fn {flag.name}() -> bool \{
-    {flag.default_value}
-{{ -endif }}
 }
 {{ endfor }}

@@ -19,6 +19,7 @@ pub mod java;
 pub mod rust;
 
 use anyhow::{ensure, Result};
+use clap::ValueEnum;
 
 pub fn is_valid_name_ident(s: &str) -> bool {
     // Identifiers must match [a-z][a-z0-9_]*, except consecutive underscores are not allowed
@@ -50,6 +51,23 @@ pub fn create_device_config_ident(package: &str, flag_name: &str) -> Result<Stri
     ensure!(is_valid_package_ident(package), "bad package");
     ensure!(is_valid_name_ident(flag_name), "bad flag name");
     Ok(format!("{}.{}", package, flag_name))
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
+pub enum CodegenMode {
+    Exported,
+    Production,
+    Test,
+}
+
+impl std::fmt::Display for CodegenMode {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            CodegenMode::Exported => write!(f, "exported"),
+            CodegenMode::Production => write!(f, "production"),
+            CodegenMode::Test => write!(f, "test"),
+        }
+    }
 }
 
 #[cfg(test)]

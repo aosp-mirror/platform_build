@@ -15,7 +15,6 @@
  */
 
 use anyhow::{bail, ensure, Context, Result};
-use clap::ValueEnum;
 use protobuf::Message;
 use std::io::Read;
 use std::path::PathBuf;
@@ -23,6 +22,7 @@ use std::path::PathBuf;
 use crate::codegen::cpp::generate_cpp_code;
 use crate::codegen::java::generate_java_code;
 use crate::codegen::rust::generate_rust_code;
+use crate::codegen::CodegenMode;
 use crate::dump::{DumpFormat, DumpPredicate};
 use crate::protos::{
     ParsedFlagExt, ProtoFlagMetadata, ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag,
@@ -188,41 +188,34 @@ pub fn parse_flags(
     Ok(output)
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
-pub enum CodegenMode {
-    Production,
-    Test,
-    Exported,
-}
-
 pub fn create_java_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec<OutputFile>> {
     let parsed_flags = input.try_parse_flags()?;
-    let filtered_parsed_flags = filter_parsed_flags(parsed_flags, codegen_mode);
-    let Some(package) = find_unique_package(&filtered_parsed_flags) else {
+    let modified_parsed_flags = modify_parsed_flags_based_on_mode(parsed_flags, codegen_mode)?;
+    let Some(package) = find_unique_package(&modified_parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
     let package = package.to_string();
-    generate_java_code(&package, filtered_parsed_flags.into_iter(), codegen_mode)
+    generate_java_code(&package, modified_parsed_flags.into_iter(), codegen_mode)
 }
 
 pub fn create_cpp_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec<OutputFile>> {
     let parsed_flags = input.try_parse_flags()?;
-    let filtered_parsed_flags = filter_parsed_flags(parsed_flags, codegen_mode);
-    let Some(package) = find_unique_package(&filtered_parsed_flags) else {
+    let modified_parsed_flags = modify_parsed_flags_based_on_mode(parsed_flags, codegen_mode)?;
+    let Some(package) = find_unique_package(&modified_parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
     let package = package.to_string();
-    generate_cpp_code(&package, filtered_parsed_flags.into_iter(), codegen_mode)
+    generate_cpp_code(&package, modified_parsed_flags.into_iter(), codegen_mode)
 }
 
 pub fn create_rust_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<OutputFile> {
     let parsed_flags = input.try_parse_flags()?;
-    let filtered_parsed_flags = filter_parsed_flags(parsed_flags, codegen_mode);
-    let Some(package) = find_unique_package(&filtered_parsed_flags) else {
+    let modified_parsed_flags = modify_parsed_flags_based_on_mode(parsed_flags, codegen_mode)?;
+    let Some(package) = find_unique_package(&modified_parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
     let package = package.to_string();
-    generate_rust_code(&package, filtered_parsed_flags.into_iter(), codegen_mode)
+    generate_rust_code(&package, modified_parsed_flags.into_iter(), codegen_mode)
 }
 
 pub fn create_storage(caches: Vec<Input>, container: &str) -> Result<Vec<OutputFile>> {
@@ -323,16 +316,33 @@ fn find_unique_container(parsed_flags: &ProtoParsedFlags) -> Option<&str> {
     Some(container)
 }
 
-fn filter_parsed_flags(
+pub fn modify_parsed_flags_based_on_mode(
     parsed_flags: ProtoParsedFlags,
     codegen_mode: CodegenMode,
-) -> Vec<ProtoParsedFlag> {
-    match codegen_mode {
-        CodegenMode::Exported => {
-            parsed_flags.parsed_flag.into_iter().filter(|pf| pf.is_exported()).collect()
-        }
-        _ => parsed_flags.parsed_flag,
+) -> Result<Vec<ProtoParsedFlag>> {
+    fn exported_mode_flag_modifier(mut parsed_flag: ProtoParsedFlag) -> ProtoParsedFlag {
+        parsed_flag.set_state(ProtoFlagState::DISABLED);
+        parsed_flag.set_permission(ProtoFlagPermission::READ_WRITE);
+        parsed_flag.set_is_fixed_read_only(false);
+        parsed_flag
     }
+
+    let modified_parsed_flags: Vec<_> = match codegen_mode {
+        CodegenMode::Exported => parsed_flags
+            .parsed_flag
+            .into_iter()
+            .filter(|pf| pf.is_exported())
+            .map(exported_mode_flag_modifier)
+            .collect(),
+        CodegenMode::Production | CodegenMode::Test => {
+            parsed_flags.parsed_flag.into_iter().collect()
+        }
+    };
+    if modified_parsed_flags.is_empty() {
+        bail!("{codegen_mode} library contains no {codegen_mode} flags");
+    }
+
+    Ok(modified_parsed_flags)
 }
 
 #[cfg(test)]
@@ -366,9 +376,9 @@ mod tests {
         assert_eq!(ProtoFlagState::ENABLED, enabled_ro.trace[2].state());
         assert_eq!(ProtoFlagPermission::READ_ONLY, enabled_ro.trace[2].permission());
 
-        assert_eq!(8, parsed_flags.parsed_flag.len());
+        assert_eq!(9, parsed_flags.parsed_flag.len());
         for pf in parsed_flags.parsed_flag.iter() {
-            if pf.name() == "enabled_fixed_ro" {
+            if pf.name().starts_with("enabled_fixed_ro") {
                 continue;
             }
             let first = pf.trace.first().unwrap();
@@ -597,24 +607,13 @@ mod tests {
         let bytes =
             dump_parsed_flags(vec![input, input2], DumpFormat::Textproto, &[], true).unwrap();
         let text = std::str::from_utf8(&bytes).unwrap();
-        assert_eq!(crate::test::TEST_FLAGS_TEXTPROTO.trim(), text.trim());
-    }
-
-    #[test]
-    fn test_filter_parsed_flags() {
-        let mut input = parse_test_flags_as_input();
-        let parsed_flags = input.try_parse_flags().unwrap();
-
-        let filtered_parsed_flags =
-            filter_parsed_flags(parsed_flags.clone(), CodegenMode::Exported);
-        assert_eq!(2, filtered_parsed_flags.len());
-
-        let filtered_parsed_flags =
-            filter_parsed_flags(parsed_flags.clone(), CodegenMode::Production);
-        assert_eq!(8, filtered_parsed_flags.len());
-
-        let filtered_parsed_flags = filter_parsed_flags(parsed_flags.clone(), CodegenMode::Test);
-        assert_eq!(8, filtered_parsed_flags.len());
+        assert_eq!(
+            None,
+            crate::test::first_significant_code_diff(
+                crate::test::TEST_FLAGS_TEXTPROTO.trim(),
+                text.trim()
+            )
+        );
     }
 
     fn parse_test_flags_as_input() -> Input {
@@ -623,5 +622,37 @@ mod tests {
         let cursor = std::io::Cursor::new(binary_proto);
         let reader = Box::new(cursor);
         Input { source: "test.data".to_string(), reader }
+    }
+
+    #[test]
+    fn test_modify_parsed_flags_based_on_mode_prod() {
+        let parsed_flags = crate::test::parse_test_flags();
+        let p_parsed_flags =
+            modify_parsed_flags_based_on_mode(parsed_flags.clone(), CodegenMode::Production)
+                .unwrap();
+        assert_eq!(parsed_flags.parsed_flag.len(), p_parsed_flags.len());
+        for (i, item) in p_parsed_flags.iter().enumerate() {
+            assert!(parsed_flags.parsed_flag[i].eq(item));
+        }
+    }
+
+    #[test]
+    fn test_modify_parsed_flags_based_on_mode_exported() {
+        let parsed_flags = crate::test::parse_test_flags();
+        let p_parsed_flags =
+            modify_parsed_flags_based_on_mode(parsed_flags, CodegenMode::Exported).unwrap();
+        assert_eq!(3, p_parsed_flags.len());
+        for flag in p_parsed_flags.iter() {
+            assert_eq!(ProtoFlagState::DISABLED, flag.state());
+            assert_eq!(ProtoFlagPermission::READ_WRITE, flag.permission());
+            assert!(!flag.is_fixed_read_only());
+            assert!(flag.is_exported());
+        }
+
+        let mut parsed_flags = crate::test::parse_test_flags();
+        parsed_flags.parsed_flag.retain_mut(|pf| !pf.is_exported());
+        let error =
+            modify_parsed_flags_based_on_mode(parsed_flags, CodegenMode::Exported).unwrap_err();
+        assert_eq!("exported library contains no exported flags", format!("{:?}", error));
     }
 }

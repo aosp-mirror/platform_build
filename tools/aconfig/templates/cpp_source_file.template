@@ -2,9 +2,8 @@
 
 {{ if readwrite- }}
 #include <server_configurable_flags/get_flags.h>
-{{ -endif }}
-
-{{ if for_test- }}
+{{ endif }}
+{{ if is_test_mode }}
 #include <unordered_map>
 #include <string>
 {{ -else- }}
@@ -15,7 +14,7 @@
 
 namespace {cpp_namespace} \{
 
-{{ if for_test- }}
+{{ if is_test_mode }}
     class flag_provider : public flag_provider_interface \{
     private:
         std::unordered_map<std::string, bool> overrides_;
@@ -25,7 +24,7 @@ namespace {cpp_namespace} \{
             : overrides_()
         \{}
 
-        {{ for item in class_elements }}
+{{ for item in class_elements }}
         virtual bool {item.flag_name}() override \{
             auto it = overrides_.find("{item.flag_name}");
               if (it != overrides_.end()) \{
@@ -36,7 +35,7 @@ namespace {cpp_namespace} \{
                   "aconfig_flags.{item.device_config_namespace}",
                   "{item.device_config_flag}",
                   "{item.default_value}") == "true";
-              {{ -else- }}
+              {{ -else }}
                   return {item.default_value};
               {{ -endif }}
             }
@@ -45,7 +44,7 @@ namespace {cpp_namespace} \{
         virtual void {item.flag_name}(bool val) override \{
             overrides_["{item.flag_name}"] = val;
         }
-        {{ -endfor }}
+{{ endfor }}
 
         virtual void reset_flags() override \{
             overrides_.clear();
@@ -57,9 +56,11 @@ namespace {cpp_namespace} \{
     class flag_provider : public flag_provider_interface \{
     public:
 
-        {{ for item in class_elements }}
+        {{ -for item in class_elements }}
+
         virtual bool {item.flag_name}() override \{
-            {{ if item.readwrite- }}
+            {{ -if is_prod_mode }}
+            {{ -if item.readwrite }}
             if (cache_[{item.readwrite_idx}] == -1) \{
                 cache_[{item.readwrite_idx}] = server_configurable_flags::GetServerConfigurableFlag(
                     "aconfig_flags.{item.device_config_namespace}",
@@ -67,15 +68,26 @@ namespace {cpp_namespace} \{
                     "{item.default_value}") == "true";
             }
             return cache_[{item.readwrite_idx}];
-            {{ -else- }}
-            {{ if item.is_fixed_read_only }}
+            {{ -else }}
+            {{ -if item.is_fixed_read_only }}
             return {package_macro}_{item.flag_macro};
-            {{ -else- }}
+            {{ -else }}
             return {item.default_value};
             {{ -endif }}
             {{ -endif }}
+            {{ -else- }}
+            {{ -if is_exported_mode }}
+            if (cache_[{item.readwrite_idx}] == -1) \{
+                cache_[{item.readwrite_idx}] = server_configurable_flags::GetServerConfigurableFlag(
+                    "aconfig_flags.{item.device_config_namespace}",
+                    "{item.device_config_flag}",
+                    "false") == "true";
+            }
+            return cache_[{item.readwrite_idx}];
+            {{ -endif }}
+            {{ -endif }}
         }
-        {{ endfor }}
+        {{ -endfor }}
     {{ if readwrite- }}
     private:
         std::vector<int8_t> cache_ = std::vector<int8_t>({readwrite_count}, -1);
@@ -91,29 +103,35 @@ std::unique_ptr<flag_provider_interface> provider_ =
 
 {{ for item in class_elements }}
 bool {header}_{item.flag_name}() \{
-    {{ if for_test- }}
+    {{ -if is_test_mode }}
     return {cpp_namespace}::{item.flag_name}();
-    {{ -else- }}
-    {{ if item.readwrite- }}
+    {{ -else }}
+    {{ -if is_prod_mode }}
+    {{ -if item.readwrite }}
     return {cpp_namespace}::{item.flag_name}();
-    {{ -else- }}
-    {{ if item.is_fixed_read_only }}
+    {{ -else }}
+    {{ -if item.is_fixed_read_only }}
     return {package_macro}_{item.flag_macro};
-    {{ -else- }}
+    {{ -else }}
     return {item.default_value};
+    {{ -endif }}
+    {{ -endif }}
+    {{ -else }}
+    {{ -if is_exported_mode }}
+    return {cpp_namespace}::{item.flag_name}();
     {{ -endif }}
     {{ -endif }}
     {{ -endif }}
 }
 
-{{ if for_test- }}
+{{ -if is_test_mode }}
 void set_{header}_{item.flag_name}(bool val) \{
     {cpp_namespace}::{item.flag_name}(val);
 }
 {{ -endif }}
-{{ endfor-}}
+{{ endfor }}
 
-{{ if for_test }}
+{{ -if is_test_mode }}
 void {header}_reset_flags() \{
      {cpp_namespace}::reset_flags();
 }

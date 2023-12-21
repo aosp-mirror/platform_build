@@ -13,7 +13,7 @@ java_library {
         type: "lite",
     },
     sdk_version: "current",
-    min_sdk_version: "UpsideDownCake",
+    min_sdk_version: "34",
     apex_available: [
         "com.android.configinfrastructure",
         "//apex_available:platform",
@@ -44,7 +44,6 @@ rust_protobuf {
     protos: ["protos/aconfig.proto"],
     crate_name: "aconfig_protos",
     source_stem: "aconfig_protos",
-    use_protobuf3: true,
     host_supported: true,
 }
 
@@ -174,6 +173,12 @@ cc_aconfig_library {
     mode: "test",
 }
 
+cc_aconfig_library {
+    name: "aconfig_test_cpp_library_exported_variant",
+    aconfig_declarations: "aconfig.test.flags",
+    mode: "exported",
+}
+
 cc_test {
     name: "aconfig.test.cpp",
     srcs: [
@@ -196,6 +201,21 @@ cc_test {
     ],
     static_libs: [
         "aconfig_test_cpp_library_test_variant",
+        "libgmock",
+    ],
+    shared_libs: [
+        "server_configurable_flags",
+    ],
+    test_suites: ["general-tests"],
+}
+
+cc_test {
+    name: "aconfig.test.cpp.exported_mode",
+    srcs: [
+        "tests/aconfig_exported_mode_test.cpp",
+    ],
+    static_libs: [
+        "aconfig_test_cpp_library_exported_variant",
         "libgmock",
     ],
     shared_libs: [
@@ -235,6 +255,24 @@ rust_test {
     ],
     rustlibs: [
         "libaconfig_test_rust_library_with_test_mode",
+    ],
+    test_suites: ["general-tests"],
+}
+
+rust_aconfig_library {
+    name: "libaconfig_test_rust_library_with_exported_mode",
+    crate_name: "aconfig_test_rust_library",
+    aconfig_declarations: "aconfig.test.flags",
+    mode: "exported",
+}
+
+rust_test {
+    name: "aconfig.exported_mode.test.rust",
+    srcs: [
+        "tests/aconfig_exported_mode_test.rs"
+    ],
+    rustlibs: [
+        "libaconfig_test_rust_library_with_exported_mode",
     ],
     test_suites: ["general-tests"],
 }

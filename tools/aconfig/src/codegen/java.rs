@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use serde::Serialize;
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
 use tinytemplate::TinyTemplate;
 
 use crate::codegen;
-use crate::commands::{CodegenMode, OutputFile};
+use crate::codegen::CodegenMode;
+use crate::commands::OutputFile;
 use crate::protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
 
 pub fn generate_java_code<I>(
@@ -34,8 +35,6 @@ where
 {
     let flag_elements: Vec<FlagElement> =
         parsed_flags_iter.map(|pf| create_flag_element(package, &pf)).collect();
-    let exported_flag_elements: Vec<FlagElement> =
-        flag_elements.iter().filter(|elem| elem.exported).cloned().collect();
     let namespace_flags = gen_flags_by_namespace(&flag_elements);
     let properties_set: BTreeSet<String> =
         flag_elements.iter().map(|fe| format_property_name(&fe.device_config_namespace)).collect();
@@ -44,13 +43,8 @@ where
     let runtime_lookup_required =
         flag_elements.iter().any(|elem| elem.is_read_write) || library_exported;
 
-    if library_exported && exported_flag_elements.is_empty() {
-        return Err(anyhow!("exported library contains no exported flags"));
-    }
-
     let context = Context {
         flag_elements,
-        exported_flag_elements,
         namespace_flags,
         is_test_mode,
         runtime_lookup_required,
@@ -109,7 +103,6 @@ fn gen_flags_by_namespace(flags: &[FlagElement]) -> Vec<NamespaceFlags> {
 #[derive(Serialize)]
 struct Context {
     pub flag_elements: Vec<FlagElement>,
-    pub exported_flag_elements: Vec<FlagElement>,
     pub namespace_flags: Vec<NamespaceFlags>,
     pub is_test_mode: bool,
     pub runtime_lookup_required: bool,
@@ -133,7 +126,6 @@ struct FlagElement {
     pub is_read_write: bool,
     pub method_name: String,
     pub properties: String,
-    pub exported: bool,
 }
 
 fn create_flag_element(package: &str, pf: &ProtoParsedFlag) -> FlagElement {
@@ -147,7 +139,6 @@ fn create_flag_element(package: &str, pf: &ProtoParsedFlag) -> FlagElement {
         is_read_write: pf.permission() == ProtoFlagPermission::READ_WRITE,
         method_name: format_java_method_name(pf.name()),
         properties: format_property_name(pf.namespace()),
-        exported: pf.is_exported.unwrap_or(false),
     }
 }
 
@@ -202,6 +193,9 @@ mod tests {
         boolean enabledFixedRo();
         @com.android.aconfig.annotations.AssumeTrueForR8
         @UnsupportedAppUsage
+        boolean enabledFixedRoExported();
+        @com.android.aconfig.annotations.AssumeTrueForR8
+        @UnsupportedAppUsage
         boolean enabledRo();
         @com.android.aconfig.annotations.AssumeTrueForR8
         @UnsupportedAppUsage
@@ -227,6 +221,8 @@ mod tests {
         public static final String FLAG_DISABLED_RW_IN_OTHER_NAMESPACE = "com.android.aconfig.test.disabled_rw_in_other_namespace";
         /** @hide */
         public static final String FLAG_ENABLED_FIXED_RO = "com.android.aconfig.test.enabled_fixed_ro";
+        /** @hide */
+        public static final String FLAG_ENABLED_FIXED_RO_EXPORTED = "com.android.aconfig.test.enabled_fixed_ro_exported";
         /** @hide */
         public static final String FLAG_ENABLED_RO = "com.android.aconfig.test.enabled_ro";
         /** @hide */
@@ -255,6 +251,11 @@ mod tests {
         @UnsupportedAppUsage
         public static boolean enabledFixedRo() {
             return FEATURE_FLAGS.enabledFixedRo();
+        }
+        @com.android.aconfig.annotations.AssumeTrueForR8
+        @UnsupportedAppUsage
+        public static boolean enabledFixedRoExported() {
+            return FEATURE_FLAGS.enabledFixedRoExported();
         }
         @com.android.aconfig.annotations.AssumeTrueForR8
         @UnsupportedAppUsage
@@ -310,6 +311,11 @@ mod tests {
         }
         @Override
         @UnsupportedAppUsage
+        public boolean enabledFixedRoExported() {
+            return getValue(Flags.FLAG_ENABLED_FIXED_RO_EXPORTED);
+        }
+        @Override
+        @UnsupportedAppUsage
         public boolean enabledRo() {
             return getValue(Flags.FLAG_ENABLED_RO);
         }
@@ -348,6 +354,7 @@ mod tests {
                 Map.entry(Flags.FLAG_DISABLED_RW_EXPORTED, false),
                 Map.entry(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE, false),
                 Map.entry(Flags.FLAG_ENABLED_FIXED_RO, false),
+                Map.entry(Flags.FLAG_ENABLED_FIXED_RO_EXPORTED, false),
                 Map.entry(Flags.FLAG_ENABLED_RO, false),
                 Map.entry(Flags.FLAG_ENABLED_RO_EXPORTED, false),
                 Map.entry(Flags.FLAG_ENABLED_RW, false)
@@ -359,12 +366,12 @@ mod tests {
     #[test]
     fn test_generate_java_code_production() {
         let parsed_flags = crate::test::parse_test_flags();
-        let generated_files = generate_java_code(
-            crate::test::TEST_PACKAGE,
-            parsed_flags.parsed_flag.into_iter(),
-            CodegenMode::Production,
-        )
-        .unwrap();
+        let mode = CodegenMode::Production;
+        let modified_parsed_flags =
+            crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
+        let generated_files =
+            generate_java_code(crate::test::TEST_PACKAGE, modified_parsed_flags.into_iter(), mode)
+                .unwrap();
         let expect_flags_content = EXPECTED_FLAG_COMMON_CONTENT.to_string()
             + r#"
             private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
@@ -463,6 +470,11 @@ mod tests {
             }
             @Override
             @UnsupportedAppUsage
+            public boolean enabledFixedRoExported() {
+                return true;
+            }
+            @Override
+            @UnsupportedAppUsage
             public boolean enabledRo() {
                 return true;
             }
@@ -512,12 +524,12 @@ mod tests {
     #[test]
     fn test_generate_java_code_exported() {
         let parsed_flags = crate::test::parse_test_flags();
-        let generated_files = generate_java_code(
-            crate::test::TEST_PACKAGE,
-            parsed_flags.parsed_flag.into_iter(),
-            CodegenMode::Exported,
-        )
-        .unwrap();
+        let mode = CodegenMode::Exported;
+        let modified_parsed_flags =
+            crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
+        let generated_files =
+            generate_java_code(crate::test::TEST_PACKAGE, modified_parsed_flags.into_iter(), mode)
+                .unwrap();
 
         let expect_flags_content = r#"
         package com.android.aconfig.test;
@@ -528,11 +540,17 @@ mod tests {
             /** @hide */
             public static final String FLAG_DISABLED_RW_EXPORTED = "com.android.aconfig.test.disabled_rw_exported";
             /** @hide */
+            public static final String FLAG_ENABLED_FIXED_RO_EXPORTED = "com.android.aconfig.test.enabled_fixed_ro_exported";
+            /** @hide */
             public static final String FLAG_ENABLED_RO_EXPORTED = "com.android.aconfig.test.enabled_ro_exported";
 
             @UnsupportedAppUsage
             public static boolean disabledRwExported() {
                 return FEATURE_FLAGS.disabledRwExported();
+            }
+            @UnsupportedAppUsage
+            public static boolean enabledFixedRoExported() {
+                return FEATURE_FLAGS.enabledFixedRoExported();
             }
             @UnsupportedAppUsage
             public static boolean enabledRoExported() {
@@ -551,6 +569,8 @@ mod tests {
             @UnsupportedAppUsage
             boolean disabledRwExported();
             @UnsupportedAppUsage
+            boolean enabledFixedRoExported();
+            @UnsupportedAppUsage
             boolean enabledRoExported();
         }
         "#;
@@ -564,8 +584,8 @@ mod tests {
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
             private static boolean aconfig_test_is_cached = false;
-            private static boolean other_namespace_is_cached = false;
             private static boolean disabledRwExported = false;
+            private static boolean enabledFixedRoExported = false;
             private static boolean enabledRoExported = false;
 
 
@@ -574,6 +594,8 @@ mod tests {
                     Properties properties = DeviceConfig.getProperties("aconfig_test");
                     disabledRwExported =
                         properties.getBoolean("com.android.aconfig.test.disabled_rw_exported", false);
+                    enabledFixedRoExported =
+                        properties.getBoolean("com.android.aconfig.test.enabled_fixed_ro_exported", false);
                     enabledRoExported =
                         properties.getBoolean("com.android.aconfig.test.enabled_ro_exported", false);
                 } catch (NullPointerException e) {
@@ -589,22 +611,6 @@ mod tests {
                 aconfig_test_is_cached = true;
             }
 
-            private void load_overrides_other_namespace() {
-                try {
-                    Properties properties = DeviceConfig.getProperties("other_namespace");
-                } catch (NullPointerException e) {
-                    throw new RuntimeException(
-                        "Cannot read value from namespace other_namespace "
-                        + "from DeviceConfig. It could be that the code using flag "
-                        + "executed before SettingsProvider initialization. Please use "
-                        + "fixed read-only flag by adding is_fixed_read_only: true in "
-                        + "flag declaration.",
-                        e
-                    );
-                }
-                other_namespace_is_cached = true;
-            }
-
             @Override
             @UnsupportedAppUsage
             public boolean disabledRwExported() {
@@ -612,6 +618,15 @@ mod tests {
                     load_overrides_aconfig_test();
                 }
                 return disabledRwExported;
+            }
+
+            @Override
+            @UnsupportedAppUsage
+            public boolean enabledFixedRoExported() {
+                if (!aconfig_test_is_cached) {
+                    load_overrides_aconfig_test();
+                }
+                return enabledFixedRoExported;
             }
 
             @Override
@@ -642,6 +657,11 @@ mod tests {
             }
             @Override
             @UnsupportedAppUsage
+            public boolean enabledFixedRoExported() {
+                return getValue(Flags.FLAG_ENABLED_FIXED_RO_EXPORTED);
+            }
+            @Override
+            @UnsupportedAppUsage
             public boolean enabledRoExported() {
                 return getValue(Flags.FLAG_ENABLED_RO_EXPORTED);
             }
@@ -666,6 +686,7 @@ mod tests {
             private Map<String, Boolean> mFlagMap = new HashMap<>(
                 Map.ofEntries(
                     Map.entry(Flags.FLAG_DISABLED_RW_EXPORTED, false),
+                    Map.entry(Flags.FLAG_ENABLED_FIXED_RO_EXPORTED, false),
                     Map.entry(Flags.FLAG_ENABLED_RO_EXPORTED, false)
                 )
             );
@@ -703,12 +724,12 @@ mod tests {
     #[test]
     fn test_generate_java_code_test() {
         let parsed_flags = crate::test::parse_test_flags();
-        let generated_files = generate_java_code(
-            crate::test::TEST_PACKAGE,
-            parsed_flags.parsed_flag.into_iter(),
-            CodegenMode::Test,
-        )
-        .unwrap();
+        let mode = CodegenMode::Test;
+        let modified_parsed_flags =
+            crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
+        let generated_files =
+            generate_java_code(crate::test::TEST_PACKAGE, modified_parsed_flags.into_iter(), mode)
+                .unwrap();
 
         let expect_flags_content = EXPECTED_FLAG_COMMON_CONTENT.to_string()
             + r#"
@@ -754,6 +775,12 @@ mod tests {
             @Override
             @UnsupportedAppUsage
             public boolean enabledFixedRo() {
+                throw new UnsupportedOperationException(
+                    "Method is not implemented.");
+            }
+            @Override
+            @UnsupportedAppUsage
+            public boolean enabledFixedRoExported() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
             }
