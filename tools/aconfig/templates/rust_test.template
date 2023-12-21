@@ -9,7 +9,7 @@ pub struct FlagProvider \{
 }
 
 impl FlagProvider \{
-    {{ for flag in template_flags }}
+{{ for flag in template_flags }}
     /// query flag {flag.name}
     pub fn {flag.name}(&self) -> bool \{
         self.overrides.get("{flag.name}").copied().unwrap_or(
@@ -28,7 +28,7 @@ impl FlagProvider \{
     pub fn set_{flag.name}(&mut self, val: bool) \{
         self.overrides.insert("{flag.name}", val);
     }
-    {{ endfor }}
+{{ endfor }}
 
     /// clear all flag overrides
     pub fn reset_flags(&mut self) \{
