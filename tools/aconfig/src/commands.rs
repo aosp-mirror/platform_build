@@ -650,7 +650,7 @@ mod tests {
         }
 
         let mut parsed_flags = crate::test::parse_test_flags();
-        parsed_flags.parsed_flag.retain_mut(|pf| !pf.is_exported());
+        parsed_flags.parsed_flag.retain(|pf| !pf.is_exported());
         let error =
             modify_parsed_flags_based_on_mode(parsed_flags, CodegenMode::Exported).unwrap_err();
         assert_eq!("exported library contains no exported flags", format!("{:?}", error));
