@@ -87,6 +87,7 @@ impl PackageTableNode {
     }
 }
 
+#[derive(PartialEq, Debug)]
 pub struct PackageTable {
     pub header: PackageTableHeader,
     pub buckets: Vec<Option<u32>>,
@@ -104,11 +105,17 @@ impl PackageTable {
             nodes: packages.iter().map(|pkg| PackageTableNode::new(pkg, num_buckets)).collect(),
         };
 
+        // initialize all header fields
+        table.header.bucket_offset = table.header.as_bytes().len() as u32;
+        table.header.node_offset = table.header.bucket_offset + num_buckets * 4;
+        table.header.file_size = table.header.node_offset
+            + table.nodes.iter().map(|x| x.as_bytes().len()).sum::<usize>() as u32;
+
         // sort nodes by bucket index for efficiency
         table.nodes.sort_by(|a, b| a.bucket_index.cmp(&b.bucket_index));
 
         // fill all node offset
-        let mut offset = 0;
+        let mut offset = table.header.node_offset;
         for i in 0..table.nodes.len() {
             let node_bucket_idx = table.nodes[i].bucket_index;
             let next_node_bucket_idx = if i + 1 < table.nodes.len() {
@@ -128,12 +135,6 @@ impl PackageTable {
                 }
             }
         }
-
-        // fill table region offset
-        table.header.bucket_offset = table.header.as_bytes().len() as u32;
-        table.header.node_offset = table.header.bucket_offset + num_buckets * 4;
-        table.header.file_size = table.header.node_offset
-            + table.nodes.iter().map(|x| x.as_bytes().len()).sum::<usize>() as u32;
 
         Ok(table)
     }
@@ -190,6 +191,32 @@ mod tests {
         }
     }
 
+    impl PackageTable {
+        // test only method to deserialize back into the table struct
+        fn from_bytes(bytes: &[u8]) -> Result<Self> {
+            let header = PackageTableHeader::from_bytes(bytes)?;
+            let num_packages = header.num_packages;
+            let num_buckets = storage::get_table_size(num_packages)?;
+            let mut head = header.as_bytes().len();
+            let buckets = (0..num_buckets)
+                .map(|_| match read_u32_from_bytes(bytes, &mut head).unwrap() {
+                    0 => None,
+                    val => Some(val),
+                })
+                .collect();
+            let nodes = (0..num_packages)
+                .map(|_| {
+                    let node = PackageTableNode::from_bytes(&bytes[head..], num_buckets).unwrap();
+                    head += node.as_bytes().len();
+                    node
+                })
+                .collect();
+
+            let table = Self { header, buckets, nodes };
+            Ok(table)
+        }
+    }
+
     pub fn create_test_package_table() -> Result<PackageTable> {
         let caches = parse_all_test_flags();
         let packages = group_flags_by_package(caches.iter());
@@ -206,19 +233,19 @@ mod tests {
         let expected_header = PackageTableHeader {
             version: storage::FILE_VERSION,
             container: String::from("system"),
-            file_size: 158,
-            num_packages: 2,
+            file_size: 208,
+            num_packages: 3,
             bucket_offset: 30,
             node_offset: 58,
         };
         assert_eq!(header, &expected_header);
 
         let buckets: &Vec<Option<u32>> = &package_table.as_ref().unwrap().buckets;
-        let expected: Vec<Option<u32>> = vec![Some(0), None, None, Some(50), None, None, None];
+        let expected: Vec<Option<u32>> = vec![Some(58), None, None, Some(108), None, None, None];
         assert_eq!(buckets, &expected);
 
         let nodes: &Vec<PackageTableNode> = &package_table.as_ref().unwrap().nodes;
-        assert_eq!(nodes.len(), 2);
+        assert_eq!(nodes.len(), 3);
         let first_node_expected = PackageTableNode {
             package_name: String::from("com.android.aconfig.storage.test_2"),
             package_id: 1,
@@ -231,10 +258,18 @@ mod tests {
             package_name: String::from("com.android.aconfig.storage.test_1"),
             package_id: 0,
             boolean_offset: 0,
-            next_offset: None,
+            next_offset: Some(158),
             bucket_index: 3,
         };
         assert_eq!(nodes[1], second_node_expected);
+        let third_node_expected = PackageTableNode {
+            package_name: String::from("com.android.aconfig.storage.test_4"),
+            package_id: 2,
+            boolean_offset: 16,
+            next_offset: None,
+            bucket_index: 3,
+        };
+        assert_eq!(nodes[2], third_node_expected);
     }
 
     #[test]
@@ -242,18 +277,23 @@ mod tests {
     fn test_serialization() {
         let package_table = create_test_package_table();
         assert!(package_table.is_ok());
+        let package_table = package_table.unwrap();
 
-        let header: &PackageTableHeader = &package_table.as_ref().unwrap().header;
+        let header: &PackageTableHeader = &package_table.header;
         let reinterpreted_header = PackageTableHeader::from_bytes(&header.as_bytes());
         assert!(reinterpreted_header.is_ok());
         assert_eq!(header, &reinterpreted_header.unwrap());
 
-        let nodes: &Vec<PackageTableNode> = &package_table.as_ref().unwrap().nodes;
+        let nodes: &Vec<PackageTableNode> = &package_table.nodes;
         let num_buckets = storage::get_table_size(header.num_packages).unwrap();
         for node in nodes.iter() {
             let reinterpreted_node = PackageTableNode::from_bytes(&node.as_bytes(), num_buckets);
             assert!(reinterpreted_node.is_ok());
             assert_eq!(node, &reinterpreted_node.unwrap());
         }
+
+        let reinterpreted_table = PackageTable::from_bytes(&package_table.as_bytes());
+        assert!(reinterpreted_table.is_ok());
+        assert_eq!(&package_table, &reinterpreted_table.unwrap());
     }
 }
