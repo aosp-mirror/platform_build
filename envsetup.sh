@@ -62,7 +62,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
               invocations of 'm' etc.
 - tapas:      tapas [<App1> <App2> ...] [arm|x86|arm64|x86_64] [eng|userdebug|user]
               Sets up the build environment for building unbundled apps (APKs).
-- banchan:    banchan <module1> [<module2> ...] \
+- banchan:    banchan <module1> [<module2> ...] \\
                       [arm|x86|arm64|riscv64|x86_64|arm64_only|x86_64only] [eng|userdebug|user]
               Sets up the build environment for building unbundled modules (APEXes).
 - croot:      Changes directory to the top of the tree, or a subdirectory thereof.
