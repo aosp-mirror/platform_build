@@ -890,40 +890,23 @@ BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
 
 # SEPolicy versions
 
-# PLATFORM_SEPOLICY_VERSION is a number of the form "NN.m" with "NN" mapping to
-# PLATFORM_SDK_VERSION and "m" as a minor number which allows for SELinux
-# changes independent of PLATFORM_SDK_VERSION.  This value will be set to
-# 10000.0 to represent tip-of-tree development that is inherently unstable and
-# thus designed not to work with any shipping vendor policy.  This is similar in
-# spirit to how DEFAULT_APP_TARGET_SDK is set.
-# The minor version ('m' component) must be updated every time a platform release
-# is made which breaks compatibility with the previous platform sepolicy version,
-# not just on every increase in PLATFORM_SDK_VERSION.  The minor version should
-# be reset to 0 on every bump of the PLATFORM_SDK_VERSION.
-sepolicy_major_vers := 34
-sepolicy_minor_vers := 0
+# PLATFORM_SEPOLICY_VERSION is a number of the form "YYYYMM.0" with "YYYYMM"
+# mapping to vFRC version.  This value will be set to 1000000.0 to represent
+# tip-of-tree development that is inherently unstable and thus designed not to
+# work with any shipping vendor policy.  This is similar in spirit to how
+# DEFAULT_APP_TARGET_SDK is set.
+sepolicy_vers := $(BOARD_API_LEVEL).0
 
-ifneq ($(sepolicy_major_vers), $(PLATFORM_SDK_VERSION))
-$(error sepolicy_major_version does not match PLATFORM_SDK_VERSION, please update.)
-endif
-
-TOT_SEPOLICY_VERSION := 10000.0
-ifneq (REL,$(PLATFORM_VERSION_CODENAME))
-    PLATFORM_SEPOLICY_VERSION := $(TOT_SEPOLICY_VERSION)
+TOT_SEPOLICY_VERSION := 1000000.0
+ifeq (true,$(BOARD_API_LEVEL_FROZEN))
+    PLATFORM_SEPOLICY_VERSION := $(sepolicy_vers)
 else
-    PLATFORM_SEPOLICY_VERSION := $(join $(addsuffix .,$(sepolicy_major_vers)), $(sepolicy_minor_vers))
+    PLATFORM_SEPOLICY_VERSION := $(TOT_SEPOLICY_VERSION)
 endif
-sepolicy_major_vers :=
-sepolicy_minor_vers :=
+sepolicy_vers :=
 
-# BOARD_SEPOLICY_VERS must take the format "NN.m" and contain the sepolicy
-# version identifier corresponding to the sepolicy on which the non-platform
-# policy is to be based. If unspecified, this will build against the current
-# public platform policy in tree
-ifndef BOARD_SEPOLICY_VERS
-# The default platform policy version.
 BOARD_SEPOLICY_VERS := $(PLATFORM_SEPOLICY_VERSION)
-endif
+.KATI_READONLY := PLATFORM_SEPOLICY_VERSION BOARD_SEPOLICY_VERS
 
 # A list of SEPolicy versions, besides PLATFORM_SEPOLICY_VERSION, that the framework supports.
 PLATFORM_SEPOLICY_COMPAT_VERSIONS := $(filter-out $(PLATFORM_SEPOLICY_VERSION), \
