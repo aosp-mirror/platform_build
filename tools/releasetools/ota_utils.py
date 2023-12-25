@@ -364,26 +364,66 @@ def HandleDowngradeMetadata(metadata_proto, target_info, source_info):
   # Only incremental OTAs are allowed to reach here.
   assert OPTIONS.incremental_source is not None
 
+  # used for logging upon errors
+  log_downgrades = []
+  log_upgrades = []
+
   post_timestamp = target_info.GetBuildProp("ro.build.date.utc")
   pre_timestamp = source_info.GetBuildProp("ro.build.date.utc")
-  is_downgrade = int(post_timestamp) < int(pre_timestamp)
+  if int(post_timestamp) < int(pre_timestamp):
+    logger.info(f"ro.build.date.utc pre timestamp: {pre_timestamp}, "
+                f"post timestamp: {post_timestamp}. Downgrade detected.")
+    log_downgrades.append(f"ro.build.date.utc pre: {pre_timestamp} post: {post_timestamp}")
+  else:
+    logger.info(f"ro.build.date.utc pre timestamp: {pre_timestamp}, "
+                f"post timestamp: {post_timestamp}.")
+    log_upgrades.append(f"ro.build.date.utc pre: {pre_timestamp} post: {post_timestamp}")
+
+  # When merging system and vendor target files, it is not enough
+  # to check ro.build.date.utc, the timestamp for each partition must
+  # be checked.
+  if source_info.is_ab:
+    ab_partitions = set(source_info.get("ab_partitions"))
+    for partition in sorted(set(PARTITIONS_WITH_BUILD_PROP) & ab_partitions):
+
+      partition_prop = source_info.get('{}.build.prop'.format(partition))
+      # Skip if the partition is missing, or it doesn't have a build.prop
+      if not partition_prop or not partition_prop.build_props:
+        continue
+      partition_prop = target_info.get('{}.build.prop'.format(partition))
+      # Skip if the partition is missing, or it doesn't have a build.prop
+      if not partition_prop or not partition_prop.build_props:
+        continue
+
+      post_timestamp = target_info.GetPartitionBuildProp(
+        'ro.build.date.utc', partition)
+      pre_timestamp = source_info.GetPartitionBuildProp(
+        'ro.build.date.utc', partition)
+      if int(post_timestamp) < int(pre_timestamp):
+        logger.info(f"Partition {partition} pre timestamp: {pre_timestamp}, "
+                    f"post time: {post_timestamp}. Downgrade detected.")
+        log_downgrades.append(f"{partition} pre: {pre_timestamp} post: {post_timestamp}")
+      else:
+        logger.info(f"Partition {partition} pre timestamp: {pre_timestamp}, "
+                    f"post timestamp: {post_timestamp}.")
+        log_upgrades.append(f"{partition} pre: {pre_timestamp} post: {post_timestamp}")
 
   if OPTIONS.spl_downgrade:
     metadata_proto.spl_downgrade = True
 
   if OPTIONS.downgrade:
-    if not is_downgrade:
+    if len(log_downgrades) == 0:
       raise RuntimeError(
           "--downgrade or --override_timestamp specified but no downgrade "
-          "detected: pre: %s, post: %s" % (pre_timestamp, post_timestamp))
+          "detected. Current values for ro.build.date.utc: " + ', '.join(log_upgrades))
     metadata_proto.downgrade = True
   else:
-    if is_downgrade:
+    if len(log_downgrades) != 0:
       raise RuntimeError(
-          "Downgrade detected based on timestamp check: pre: %s, post: %s. "
+          "Downgrade detected based on timestamp check in ro.build.date.utc. "
           "Need to specify --override_timestamp OR --downgrade to allow "
-          "building the incremental." % (pre_timestamp, post_timestamp))
-
+          "building the incremental. Downgrades detected for: "
+          + ', '.join(log_downgrades))
 
 def ComputeRuntimeBuildInfos(default_build_info, boot_variable_values):
   """Returns a set of build info objects that may exist during runtime."""
