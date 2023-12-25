@@ -133,11 +133,15 @@ def format_duration_sec(ns):
         result += f"{m:2d}m "
     return result + f"{sec:2d}s"
 
+
 def main(argv):
     parser = argparse.ArgumentParser(
             prog="format_benchmarks",
             allow_abbrev=False, # Don't let people write unsupportable scripts.
             description="Print analysis tables for benchmarks")
+
+    parser.add_argument("--tags", nargs="*",
+                        help="The tags to print, in order.")
 
     parser.add_argument("summaries", nargs="*",
                         help="A summary.json file or a directory in which to look for summaries.")
@@ -154,8 +158,18 @@ def main(argv):
         s["datetime"] = dt
         s["date"] = datetime.date(dt.year, dt.month, dt.day)
 
+    # Filter out tags we don't want
+    if args.tags:
+        summaries = [(f, s) for f, s in summaries if s.get("tag", "") in args.tags]
+
+    # If they supplied tags, sort in that order, otherwise sort by tag
+    if args.tags:
+        tagsort = lambda tag: args.tags.index(tag)
+    else:
+        tagsort = lambda tag: tag
+
     # Sort the summaries
-    summaries.sort(key=lambda s: (s[1]["date"], s[1]["branch"], s[1]["tag"]))
+    summaries.sort(key=lambda s: (s[1]["date"], s[1]["branch"], tagsort(s[1]["tag"])))
 
     # group the benchmarks by column and iteration
     def bm_key(b):
