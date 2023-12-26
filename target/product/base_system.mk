@@ -201,6 +201,7 @@ PRODUCT_PACKAGES += \
     libui \
     libusbhost \
     libutils \
+    libvintf_jni \
     libvulkan \
     libwilhelm \
     linker \
