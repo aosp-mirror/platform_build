@@ -6,9 +6,7 @@ This folder contains automation and CI scripts for [finalizing](https://go/andro
 2. [Finalize SDK](./finalize-aidl-vndk-sdk-resources.sh). Prepare the branch for SDK release. SDK contains Android Java APIs and other stable APIs. Commonly referred as a 1st step.
 3. [Finalize Android](./finalize-sdk-rel.sh). Mark branch as "REL", i.e. prepares for Android release. Any signed build containing these changes will be considered an official Android Release. Referred as a 2nd finalization step.
 4. [Finalize SDK and submit](./step-1.sh). Do [Finalize SDK](./finalize-aidl-vndk-sdk-resources.sh) step, create CLs, organize them into topic and send to Gerrit.
-  a. [Update SDK and submit](./update-step-1.sh). Same as above, but updates the existings CLs.
 5. [Finalize Android and submit](./step-2.sh). Do [Finalize Android](./finalize-sdk-rel.sh) step, create  CLs, organize them into topic and send to Gerrit.
-  a. [Update Android and submit](./update-step-2.sh). Same as above, but updates the existings CLs.
 
 ## CI:
 Performed in build targets in Finalization branches.
