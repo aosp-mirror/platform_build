@@ -804,6 +804,10 @@ PRODUCT_NOTICE_SPLIT := true
     PRODUCT_FULL_TREBLE \
     PRODUCT_NOTICE_SPLIT \
 
+ifneq ($(PRODUCT_FULL_TREBLE),true)
+    $(warning This device does not have Treble enabled. This is unsafe.)
+endif
+
 $(KATI_obsolete_var $(foreach req,$(requirements),$(req)_OVERRIDE) \
     ,This should be referenced without the _OVERRIDE suffix.)
 
