@@ -4600,10 +4600,18 @@ BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.pvmfw.security_patch:$(PVMFW_SECURITY_PATCH)
 endif
 
-# Append avbpubkey of microdroid-vendor partition into vendor_boot partition.
-ifdef MICRODROID_VENDOR_AVBKEY
-BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS += \
-    --prop_from_file com.android.build.microdroid-vendor.avbpubkey:$(MICRODROID_VENDOR_AVBKEY)
+# Append root digest of microdroid-vendor partition's hashtree descriptor into vendor partition.
+ifdef MICRODROID_VENDOR_IMAGE_MODULE
+MICRODROID_VENDOR_IMAGE := \
+    $(call intermediates-dir-for,ETC,$(MICRODROID_VENDOR_IMAGE_MODULE))/$(MICRODROID_VENDOR_IMAGE_MODULE)
+MICRODROID_VENDOR_ROOT_DIGEST := $(PRODUCT_OUT)/microdroid_vendor_root_digest
+BOARD_AVB_VENDOR_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop_from_file com.android.build.microdroid-vendor.root_digest:$(MICRODROID_VENDOR_ROOT_DIGEST)
+$(MICRODROID_VENDOR_ROOT_DIGEST): $(AVBTOOL) $(MICRODROID_VENDOR_IMAGE)
+	$(AVBTOOL) print_partition_digests \
+      --image $(MICRODROID_VENDOR_IMAGE) \
+      | tr -d '\n' | sed -E 's/.*: //g' > $@
+$(INSTALLED_VENDORIMAGE_TARGET): $(MICRODROID_VENDOR_ROOT_DIGEST)
 endif
 
 BOOT_FOOTER_ARGS := BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS
