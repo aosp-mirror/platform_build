@@ -274,6 +274,13 @@ ifneq ($(LOCAL_SDK_VERSION),)
   endif
 endif
 
+ifneq ($(LOCAL_MIN_SDK_VERSION),)
+  ifdef LOCAL_IS_HOST_MODULE
+    $(error $(LOCAL_PATH): LOCAL_MIN_SDK_VERSION cannot be used in host module)
+  endif
+  my_api_level := $(LOCAL_MIN_SDK_VERSION)
+endif
+
 ifeq ($(NATIVE_COVERAGE),true)
   ifndef LOCAL_IS_HOST_MODULE
     my_ldflags += -Wl,--wrap,getenv
