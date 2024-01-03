@@ -44,10 +44,10 @@ where
     template.add_template(
         "rust_code_gen",
         match codegen_mode {
-            CodegenMode::Production => include_str!("../../templates/rust_prod.template"),
             CodegenMode::Test => include_str!("../../templates/rust_test.template"),
-            CodegenMode::Exported => include_str!("../../templates/rust_exported.template"),
-            CodegenMode::ForceReadOnly => todo!(),
+            CodegenMode::Exported | CodegenMode::ForceReadOnly | CodegenMode::Production => {
+                include_str!("../../templates/rust.template")
+            }
         },
     )?;
     let contents = template.render("rust_code_gen", &context)?;
@@ -555,6 +555,84 @@ pub fn enabled_ro_exported() -> bool {
 }
 "#;
 
+    const FORCE_READ_ONLY_EXPECTED: &str = r#"
+//! codegenerated rust flag lib
+
+/// flag provider
+pub struct FlagProvider;
+
+impl FlagProvider {
+    /// query flag disabled_ro
+    pub fn disabled_ro(&self) -> bool {
+        false
+    }
+
+    /// query flag disabled_rw
+    pub fn disabled_rw(&self) -> bool {
+        false
+    }
+
+    /// query flag disabled_rw_in_other_namespace
+    pub fn disabled_rw_in_other_namespace(&self) -> bool {
+        false
+    }
+
+    /// query flag enabled_fixed_ro
+    pub fn enabled_fixed_ro(&self) -> bool {
+        true
+    }
+
+    /// query flag enabled_ro
+    pub fn enabled_ro(&self) -> bool {
+        true
+    }
+
+    /// query flag enabled_rw
+    pub fn enabled_rw(&self) -> bool {
+        true
+    }
+}
+
+/// flag provider
+pub static PROVIDER: FlagProvider = FlagProvider;
+
+/// query flag disabled_ro
+#[inline(always)]
+pub fn disabled_ro() -> bool {
+    false
+}
+
+/// query flag disabled_rw
+#[inline(always)]
+pub fn disabled_rw() -> bool {
+    false
+}
+
+/// query flag disabled_rw_in_other_namespace
+#[inline(always)]
+pub fn disabled_rw_in_other_namespace() -> bool {
+    false
+}
+
+/// query flag enabled_fixed_ro
+#[inline(always)]
+pub fn enabled_fixed_ro() -> bool {
+    true
+}
+
+/// query flag enabled_ro
+#[inline(always)]
+pub fn enabled_ro() -> bool {
+    true
+}
+
+/// query flag enabled_rw
+#[inline(always)]
+pub fn enabled_rw() -> bool {
+    true
+}
+"#;
+
     fn test_generate_rust_code(mode: CodegenMode) {
         let parsed_flags = crate::test::parse_test_flags();
         let modified_parsed_flags =
@@ -570,7 +648,7 @@ pub fn enabled_ro_exported() -> bool {
                     CodegenMode::Production => PROD_EXPECTED,
                     CodegenMode::Test => TEST_EXPECTED,
                     CodegenMode::Exported => EXPORTED_EXPECTED,
-                    codegen::CodegenMode::ForceReadOnly => todo!(),
+                    CodegenMode::ForceReadOnly => FORCE_READ_ONLY_EXPECTED,
                 },
                 &String::from_utf8(generated.contents).unwrap()
             )
@@ -590,5 +668,10 @@ pub fn enabled_ro_exported() -> bool {
     #[test]
     fn test_generate_rust_code_for_exported() {
         test_generate_rust_code(CodegenMode::Exported);
+    }
+
+    #[test]
+    fn test_generate_rust_code_for_force_read_only() {
+        test_generate_rust_code(CodegenMode::ForceReadOnly);
     }
 }
