@@ -73,14 +73,6 @@ def LoadSummary(filename):
 # Rows:
 #   Benchmark
 
-@dataclasses.dataclass(frozen=True)
-class Key():
-    pass
-
-class Column():
-    def __init__(self):
-        pass
-
 def lunch_str(d):
     "Convert a lunch dict to a string"
     return f"{d['TARGET_PRODUCT']}-{d['TARGET_RELEASE']}-{d['TARGET_BUILD_VARIANT']}"
@@ -186,7 +178,7 @@ def main(argv):
         for key, column in summary["columns"]:
             for id, cell in column:
                 duration_ns = statistics.median([b["duration_ns"] for b in cell])
-                table.Set(tuple([summary["date"].strftime("YYYY-MM-DD"),
+                table.Set(tuple([summary["date"].strftime("%Y-%m-%d"),
                                  summary["branch"],
                                  summary["tag"]]
                                 + list(key)),
