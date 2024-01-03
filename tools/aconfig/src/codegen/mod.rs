@@ -56,6 +56,7 @@ pub fn create_device_config_ident(package: &str, flag_name: &str) -> Result<Stri
 #[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
 pub enum CodegenMode {
     Exported,
+    ForceReadOnly,
     Production,
     Test,
 }
@@ -64,6 +65,7 @@ impl std::fmt::Display for CodegenMode {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
             CodegenMode::Exported => write!(f, "exported"),
+            CodegenMode::ForceReadOnly => write!(f, "force-read-only"),
             CodegenMode::Production => write!(f, "production"),
             CodegenMode::Test => write!(f, "test"),
         }
