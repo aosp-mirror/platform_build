@@ -1009,45 +1009,77 @@ ifdef LOCAL_IS_HOST_MODULE
 my_required_modules += $(LOCAL_REQUIRED_MODULES_$($(my_prefix)OS))
 endif
 
-ALL_MODULES.$(my_register_name).SHARED_LIBS := \
-    $(ALL_MODULES.$(my_register_name).SHARED_LIBS) $(LOCAL_SHARED_LIBRARIES)
+ifndef LOCAL_SOONG_MODULE_INFO_JSON
+  ALL_MAKE_MODULE_INFO_JSON_MODULES += $(my_register_name)
+  ALL_MODULES.$(my_register_name).SHARED_LIBS := \
+      $(ALL_MODULES.$(my_register_name).SHARED_LIBS) $(LOCAL_SHARED_LIBRARIES)
 
-ALL_MODULES.$(my_register_name).STATIC_LIBS := \
-    $(ALL_MODULES.$(my_register_name).STATIC_LIBS) $(LOCAL_STATIC_LIBRARIES)
+  ALL_MODULES.$(my_register_name).STATIC_LIBS := \
+      $(ALL_MODULES.$(my_register_name).STATIC_LIBS) $(LOCAL_STATIC_LIBRARIES)
 
-ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS := \
-    $(ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS) $(LOCAL_SYSTEM_SHARED_LIBRARIES)
+  ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS := \
+      $(ALL_MODULES.$(my_register_name).SYSTEM_SHARED_LIBS) $(LOCAL_SYSTEM_SHARED_LIBRARIES)
 
-ALL_MODULES.$(my_register_name).LOCAL_RUNTIME_LIBRARIES := \
-    $(ALL_MODULES.$(my_register_name).LOCAL_RUNTIME_LIBRARIES) $(LOCAL_RUNTIME_LIBRARIES) \
-    $(LOCAL_JAVA_LIBRARIES)
+  ALL_MODULES.$(my_register_name).LOCAL_RUNTIME_LIBRARIES := \
+      $(ALL_MODULES.$(my_register_name).LOCAL_RUNTIME_LIBRARIES) $(LOCAL_RUNTIME_LIBRARIES) \
+      $(LOCAL_JAVA_LIBRARIES)
 
-ALL_MODULES.$(my_register_name).LOCAL_STATIC_LIBRARIES := \
-    $(ALL_MODULES.$(my_register_name).LOCAL_STATIC_LIBRARIES) $(LOCAL_STATIC_JAVA_LIBRARIES)
+  ALL_MODULES.$(my_register_name).LOCAL_STATIC_LIBRARIES := \
+      $(ALL_MODULES.$(my_register_name).LOCAL_STATIC_LIBRARIES) $(LOCAL_STATIC_JAVA_LIBRARIES)
 
-ifneq ($(my_test_data_file_pairs),)
-  # Export the list of targets that are handled as data inputs and required
-  # by tests at runtime. The format of my_test_data_file_pairs is
-  # is $(path):$(relative_file) but for module-info, only the string after
-  # ":" is needed.
-  ALL_MODULES.$(my_register_name).TEST_DATA := \
-    $(strip $(ALL_MODULES.$(my_register_name).TEST_DATA) \
-      $(foreach f, $(my_test_data_file_pairs),\
-        $(call word-colon,2,$(f))))
+  ifneq ($(my_test_data_file_pairs),)
+    # Export the list of targets that are handled as data inputs and required
+    # by tests at runtime. The format of my_test_data_file_pairs is
+    # is $(path):$(relative_file) but for module-info, only the string after
+    # ":" is needed.
+    ALL_MODULES.$(my_register_name).TEST_DATA := \
+      $(strip $(ALL_MODULES.$(my_register_name).TEST_DATA) \
+        $(foreach f, $(my_test_data_file_pairs),\
+          $(call word-colon,2,$(f))))
+  endif
+
+  ifdef LOCAL_TEST_DATA_BINS
+    ALL_MODULES.$(my_register_name).TEST_DATA_BINS := \
+        $(ALL_MODULES.$(my_register_name).TEST_DATA_BINS) $(LOCAL_TEST_DATA_BINS)
+  endif
+
+  ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS := \
+      $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS) \
+      $(filter-out $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS),$(my_supported_variant))
+
+  ALL_MODULES.$(my_register_name).ACONFIG_FILES := \
+      $(ALL_MODULES.$(my_register_name).ACONFIG_FILES) $(LOCAL_ACONFIG_FILES)
+
+  ALL_MODULES.$(my_register_name).COMPATIBILITY_SUITES := \
+      $(ALL_MODULES.$(my_register_name).COMPATIBILITY_SUITES) $(LOCAL_COMPATIBILITY_SUITE)
+  ALL_MODULES.$(my_register_name).MODULE_NAME := $(LOCAL_MODULE)
+  ALL_MODULES.$(my_register_name).TEST_CONFIG := $(test_config)
+  ALL_MODULES.$(my_register_name).EXTRA_TEST_CONFIGS := $(LOCAL_EXTRA_FULL_TEST_CONFIGS)
+  ALL_MODULES.$(my_register_name).TEST_MAINLINE_MODULES := $(LOCAL_TEST_MAINLINE_MODULES)
+  ifdef LOCAL_IS_UNIT_TEST
+    ALL_MODULES.$(my_register_name).IS_UNIT_TEST := $(LOCAL_IS_UNIT_TEST)
+  endif
+  ifdef LOCAL_TEST_OPTIONS_TAGS
+    ALL_MODULES.$(my_register_name).TEST_OPTIONS_TAGS := $(LOCAL_TEST_OPTIONS_TAGS)
+  endif
+
+  ##########################################################
+  # Track module-level dependencies.
+  # (b/204397180) Unlock RECORD_ALL_DEPS was acknowledged reasonable for better Atest performance.
+  ALL_MODULES.$(my_register_name).ALL_DEPS := \
+    $(ALL_MODULES.$(my_register_name).ALL_DEPS) \
+    $(LOCAL_STATIC_LIBRARIES) \
+    $(LOCAL_WHOLE_STATIC_LIBRARIES) \
+    $(LOCAL_SHARED_LIBRARIES) \
+    $(LOCAL_DYLIB_LIBRARIES) \
+    $(LOCAL_RLIB_LIBRARIES) \
+    $(LOCAL_PROC_MACRO_LIBRARIES) \
+    $(LOCAL_HEADER_LIBRARIES) \
+    $(LOCAL_STATIC_JAVA_LIBRARIES) \
+    $(LOCAL_JAVA_LIBRARIES) \
+    $(LOCAL_JNI_SHARED_LIBRARIES)
+
 endif
-
-ifdef LOCAL_TEST_DATA_BINS
-  ALL_MODULES.$(my_register_name).TEST_DATA_BINS := \
-    $(ALL_MODULES.$(my_register_name).TEST_DATA_BINS) $(LOCAL_TEST_DATA_BINS)
-endif
-
-ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS := \
-  $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS) \
-  $(filter-out $(ALL_MODULES.$(my_register_name).SUPPORTED_VARIANTS),$(my_supported_variant))
-
-ALL_MODULES.$(my_register_name).ACONFIG_FILES := \
-    $(ALL_MODULES.$(my_register_name).ACONFIG_FILES) $(LOCAL_ACONFIG_FILES)
-
 
 ##########################################################################
 ## When compiling against API imported module, use API import stub
@@ -1128,54 +1160,31 @@ else
         $(call pretty-error,LOCAL_TARGET_REQUIRED_MODULES may not be used from target modules. Use LOCAL_REQUIRED_MODULES instead)
     endif
 endif
-ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS := \
-    $(ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS) $(event_log_tags)
+
+ifdef event_log_tags
+  ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS := \
+      $(ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS) $(event_log_tags)
+endif
+
 ALL_MODULES.$(my_register_name).MAKEFILE := \
     $(ALL_MODULES.$(my_register_name).MAKEFILE) $(LOCAL_MODULE_MAKEFILE)
+
 ifdef LOCAL_MODULE_OWNER
-ALL_MODULES.$(my_register_name).OWNER := \
-    $(sort $(ALL_MODULES.$(my_register_name).OWNER) $(LOCAL_MODULE_OWNER))
+  ALL_MODULES.$(my_register_name).OWNER := \
+      $(sort $(ALL_MODULES.$(my_register_name).OWNER) $(LOCAL_MODULE_OWNER))
 endif
+
 ifdef LOCAL_2ND_ARCH_VAR_PREFIX
 ALL_MODULES.$(my_register_name).FOR_2ND_ARCH := true
 endif
 ALL_MODULES.$(my_register_name).FOR_HOST_CROSS := $(my_host_cross)
-ALL_MODULES.$(my_register_name).MODULE_NAME := $(LOCAL_MODULE)
-ALL_MODULES.$(my_register_name).COMPATIBILITY_SUITES := \
-  $(ALL_MODULES.$(my_register_name).COMPATIBILITY_SUITES) \
-  $(filter-out $(ALL_MODULES.$(my_register_name).COMPATIBILITY_SUITES),$(LOCAL_COMPATIBILITY_SUITE))
-ALL_MODULES.$(my_register_name).TEST_CONFIG := $(test_config)
-ALL_MODULES.$(my_register_name).EXTRA_TEST_CONFIGS := $(LOCAL_EXTRA_FULL_TEST_CONFIGS)
-ALL_MODULES.$(my_register_name).TEST_MAINLINE_MODULES := $(LOCAL_TEST_MAINLINE_MODULES)
 ifndef LOCAL_IS_HOST_MODULE
 ALL_MODULES.$(my_register_name).FILE_CONTEXTS := $(LOCAL_FILE_CONTEXTS)
 ALL_MODULES.$(my_register_name).APEX_KEYS_FILE := $(LOCAL_APEX_KEY_PATH)
 endif
-ifdef LOCAL_IS_UNIT_TEST
-ALL_MODULES.$(my_register_name).IS_UNIT_TEST := $(LOCAL_IS_UNIT_TEST)
-endif
-ifdef LOCAL_TEST_OPTIONS_TAGS
-ALL_MODULES.$(my_register_name).TEST_OPTIONS_TAGS := $(LOCAL_TEST_OPTIONS_TAGS)
-endif
 test_config :=
 
 INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
-
-##########################################################
-# Track module-level dependencies.
-# (b/204397180) Unlock RECORD_ALL_DEPS was acknowledged reasonable for better Atest performance.
-ALL_MODULES.$(my_register_name).ALL_DEPS := \
-  $(ALL_MODULES.$(my_register_name).ALL_DEPS) \
-  $(LOCAL_STATIC_LIBRARIES) \
-  $(LOCAL_WHOLE_STATIC_LIBRARIES) \
-  $(LOCAL_SHARED_LIBRARIES) \
-  $(LOCAL_DYLIB_LIBRARIES) \
-  $(LOCAL_RLIB_LIBRARIES) \
-  $(LOCAL_PROC_MACRO_LIBRARIES) \
-  $(LOCAL_HEADER_LIBRARIES) \
-  $(LOCAL_STATIC_JAVA_LIBRARIES) \
-  $(LOCAL_JAVA_LIBRARIES) \
-  $(LOCAL_JNI_SHARED_LIBRARIES)
 
 ###########################################################
 ## umbrella targets used to verify builds
