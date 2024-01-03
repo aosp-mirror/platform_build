@@ -96,6 +96,12 @@ aconfig_declarations {
     srcs: ["tests/test_exported.aconfig"],
 }
 
+aconfig_declarations {
+    name: "aconfig.test.forcereadonly.flags",
+    package: "com.android.aconfig.test.forcereadonly",
+    srcs: ["tests/test_force_read_only.aconfig"],
+}
+
 aconfig_values {
     name: "aconfig.test.flag.values",
     package: "com.android.aconfig.test",
@@ -125,6 +131,12 @@ java_aconfig_library {
     mode: "exported",
 }
 
+java_aconfig_library {
+    name: "aconfig_test_java_library_forcereadonly",
+    aconfig_declarations: "aconfig.test.forcereadonly.flags",
+    mode: "force-read-only",
+}
+
 android_test {
     name: "aconfig.test.java",
     srcs: [
@@ -135,6 +147,7 @@ android_test {
     static_libs: [
         "aconfig_test_java_library",
         "aconfig_test_java_library_exported",
+        "aconfig_test_java_library_forcereadonly",
         "androidx.test.rules",
         "testng",
     ],
