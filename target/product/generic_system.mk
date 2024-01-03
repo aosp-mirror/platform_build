@@ -36,6 +36,11 @@ PRODUCT_PACKAGES += \
     Stk \
     Tag \
 
+ifeq ($(RELEASE_AVATAR_PICKER_APP),true)
+  PRODUCT_PACKAGES += \
+    AvatarPicker
+endif
+
 # OTA support
 PRODUCT_PACKAGES += \
     recovery-refresh \
