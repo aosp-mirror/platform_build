@@ -96,6 +96,12 @@ aconfig_declarations {
     srcs: ["tests/test_exported.aconfig"],
 }
 
+aconfig_declarations {
+    name: "aconfig.test.forcereadonly.flags",
+    package: "com.android.aconfig.test.forcereadonly",
+    srcs: ["tests/test_force_read_only.aconfig"],
+}
+
 aconfig_values {
     name: "aconfig.test.flag.values",
     package: "com.android.aconfig.test",
@@ -125,6 +131,12 @@ java_aconfig_library {
     mode: "exported",
 }
 
+java_aconfig_library {
+    name: "aconfig_test_java_library_forcereadonly",
+    aconfig_declarations: "aconfig.test.forcereadonly.flags",
+    mode: "force-read-only",
+}
+
 android_test {
     name: "aconfig.test.java",
     srcs: [
@@ -135,6 +147,7 @@ android_test {
     static_libs: [
         "aconfig_test_java_library",
         "aconfig_test_java_library_exported",
+        "aconfig_test_java_library_forcereadonly",
         "androidx.test.rules",
         "testng",
     ],
@@ -179,6 +192,12 @@ cc_aconfig_library {
     mode: "exported",
 }
 
+cc_aconfig_library {
+    name: "aconfig_test_cpp_library_force_read_only_variant",
+    aconfig_declarations: "aconfig.test.flags",
+    mode: "force-read-only",
+}
+
 cc_test {
     name: "aconfig.test.cpp",
     srcs: [
@@ -216,6 +235,21 @@ cc_test {
     ],
     static_libs: [
         "aconfig_test_cpp_library_exported_variant",
+        "libgmock",
+    ],
+    shared_libs: [
+        "server_configurable_flags",
+    ],
+    test_suites: ["general-tests"],
+}
+
+cc_test {
+    name: "aconfig.test.cpp.force_read_only_mode",
+    srcs: [
+        "tests/aconfig_force_read_only_mode_test.cpp",
+    ],
+    static_libs: [
+        "aconfig_test_cpp_library_force_read_only_variant",
         "libgmock",
     ],
     shared_libs: [
@@ -273,6 +307,24 @@ rust_test {
     ],
     rustlibs: [
         "libaconfig_test_rust_library_with_exported_mode",
+    ],
+    test_suites: ["general-tests"],
+}
+
+rust_aconfig_library {
+    name: "libaconfig_test_rust_library_with_force_read_only_mode",
+    crate_name: "aconfig_test_rust_library",
+    aconfig_declarations: "aconfig.test.flags",
+    mode: "force-read-only",
+}
+
+rust_test {
+    name: "aconfig.force_read_only_mode.test.rust",
+    srcs: [
+        "tests/aconfig_force_read_only_mode_test.rs"
+    ],
+    rustlibs: [
+        "libaconfig_test_rust_library_with_force_read_only_mode",
     ],
     test_suites: ["general-tests"],
 }
