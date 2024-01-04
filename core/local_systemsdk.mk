@@ -82,10 +82,8 @@ ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
   endif
 
   ifneq ($(_system_sdk_version),$(filter $(_system_sdk_version),$(_supported_systemsdk_versions)))
-    ifneq (true,$(BUILD_BROKEN_DONT_CHECK_SYSTEMSDK)
-      $(call pretty-error,Incompatible LOCAL_SDK_VERSION '$(LOCAL_SDK_VERSION)'. \
-             System SDK version '$(_system_sdk_version)' is not supported. Supported versions are: $(_supported_systemsdk_versions))
-    endif
+    $(call pretty-error,Incompatible LOCAL_SDK_VERSION '$(LOCAL_SDK_VERSION)'. \
+           System SDK version '$(_system_sdk_version)' is not supported. Supported versions are: $(_supported_systemsdk_versions))
   endif
   _system_sdk_version :=
   _supported_systemsdk_versions :=
