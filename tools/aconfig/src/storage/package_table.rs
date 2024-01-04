@@ -249,7 +249,7 @@ mod tests {
         let first_node_expected = PackageTableNode {
             package_name: String::from("com.android.aconfig.storage.test_2"),
             package_id: 1,
-            boolean_offset: 10,
+            boolean_offset: 6,
             next_offset: None,
             bucket_index: 0,
         };
@@ -265,7 +265,7 @@ mod tests {
         let third_node_expected = PackageTableNode {
             package_name: String::from("com.android.aconfig.storage.test_4"),
             package_id: 2,
-            boolean_offset: 16,
+            boolean_offset: 12,
             next_offset: None,
             bucket_index: 3,
         };
