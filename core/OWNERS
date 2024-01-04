@@ -5,3 +5,5 @@ per-file proguard*.flags = jdduke@google.com
 # For version updates
 per-file version_defaults.mk = aseaton@google.com,lubomir@google.com,pscovanner@google.com,bkhalife@google.com,jainne@google.com
 
+# For sdk extensions version updates
+per-file version_defaults.mk = amhk@google.com,gurpreetgs@google.com,mkhokhlova@google.com,robertogil@google.com

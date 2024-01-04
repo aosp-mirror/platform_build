@@ -332,14 +332,6 @@ def get_sbom_fragments(installed_file_metadata, metadata_file_path):
   return external_doc_ref, packages, relationships
 
 
-def generate_package_verification_code(files):
-  checksums = [file.checksum for file in files]
-  checksums.sort()
-  h = hashlib.sha1()
-  h.update(''.join(checksums).encode(encoding='utf-8'))
-  return h.hexdigest()
-
-
 def save_report(report_file_path, report):
   with open(report_file_path, 'w', encoding='utf-8') as report_file:
     for type, issues in report.items():
@@ -487,20 +479,32 @@ def main():
       product_copy_files = installed_file_metadata['product_copy_files']
       kernel_module_copy_files = installed_file_metadata['kernel_module_copy_files']
       build_output_path = installed_file_metadata['build_output_path']
+      is_static_lib = installed_file_metadata['is_static_lib']
 
       if not installed_file_has_metadata(installed_file_metadata, report):
         continue
-      if not (os.path.islink(build_output_path) or os.path.isfile(build_output_path)):
+      if not is_static_lib and not (os.path.islink(build_output_path) or os.path.isfile(build_output_path)):
+        # Ignore non-existing static library files for now since they are not shipped on devices.
         report[ISSUE_INSTALLED_FILE_NOT_EXIST].append(installed_file)
         continue
 
       file_id = new_file_id(installed_file)
-      doc.files.append(
-        sbom_data.File(id=file_id, name=installed_file, checksum=checksum(build_output_path)))
-      if not args.unbundled_apex:
-        product_package.file_ids.append(file_id)
-      elif len(doc.files) > 1:
-          doc.add_relationship(sbom_data.Relationship(doc.files[0].id, sbom_data.RelationshipType.CONTAINS, file_id))
+      # TODO(b/285453664): Soong should report the information of statically linked libraries to Make.
+      # This happens when a different sanitized version of static libraries is used in linking.
+      # As a workaround, use the following SHA1 checksum for static libraries created by Soong, if .a files could not be
+      # located correctly because Soong doesn't report the information to Make.
+      sha1 = 'SHA1: da39a3ee5e6b4b0d3255bfef95601890afd80709'  # SHA1 of empty string
+      if os.path.islink(build_output_path) or os.path.isfile(build_output_path):
+        sha1 = checksum(build_output_path)
+      doc.files.append(sbom_data.File(id=file_id,
+                                      name=installed_file,
+                                      checksum=sha1))
+
+      if not is_static_lib:
+        if not args.unbundled_apex:
+          product_package.file_ids.append(file_id)
+        elif len(doc.files) > 1:
+            doc.add_relationship(sbom_data.Relationship(doc.files[0].id, sbom_data.RelationshipType.CONTAINS, file_id))
 
       if is_source_package(installed_file_metadata) or is_prebuilt_package(installed_file_metadata):
         metadata_file_path = get_metadata_file_path(installed_file_metadata)
@@ -544,13 +548,21 @@ def main():
                                                     relationship=sbom_data.RelationshipType.GENERATED_FROM,
                                                     id2=sbom_data.SPDXID_PLATFORM))
 
-  if not args.unbundled_apex:
-    product_package.verification_code = generate_package_verification_code(doc.files)
+      # Process static libraries and whole static libraries the installed file links to
+      static_libs = installed_file_metadata['static_libraries']
+      whole_static_libs = installed_file_metadata['whole_static_libraries']
+      all_static_libs = (static_libs + ' ' + whole_static_libs).strip()
+      if all_static_libs:
+        for lib in all_static_libs.split(' '):
+          doc.add_relationship(sbom_data.Relationship(id1=file_id,
+                                                      relationship=sbom_data.RelationshipType.STATIC_LINK,
+                                                      id2=new_file_id(lib + '.a')))
 
   if args.unbundled_apex:
     doc.describes = doc.files[0].id
 
   # Save SBOM records to output file
+  doc.generate_packages_verification_code()
   doc.created = datetime.datetime.now(tz=datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
   prefix = args.output_file
   if prefix.endswith('.spdx'):
