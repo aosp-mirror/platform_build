@@ -335,6 +335,7 @@ class Runner():
                 "--build-mode",
                 "--all-modules",
                 f"--dir={self._options.root}",
+                "--skip-metrics-upload",
             ] + modules
             env = dict(os.environ)
             env["TARGET_PRODUCT"] = lunch.target_product
