@@ -47,6 +47,7 @@ where
             CodegenMode::Production => include_str!("../../templates/rust_prod.template"),
             CodegenMode::Test => include_str!("../../templates/rust_test.template"),
             CodegenMode::Exported => include_str!("../../templates/rust_exported.template"),
+            CodegenMode::ForceReadOnly => todo!(),
         },
     )?;
     let contents = template.render("rust_code_gen", &context)?;
@@ -569,6 +570,7 @@ pub fn enabled_ro_exported() -> bool {
                     CodegenMode::Production => PROD_EXPECTED,
                     CodegenMode::Test => TEST_EXPECTED,
                     CodegenMode::Exported => EXPORTED_EXPECTED,
+                    codegen::CodegenMode::ForceReadOnly => todo!(),
                 },
                 &String::from_utf8(generated.contents).unwrap()
             )
