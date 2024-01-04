@@ -121,16 +121,8 @@ non_system_module := $(filter true, \
    $(LOCAL_PROPRIETARY_MODULE))
 
 include $(BUILD_SYSTEM)/local_vndk.mk
-
-# local_current_sdk needs to run before local_systemsdk because the former may override
-# LOCAL_SDK_VERSION which is used by the latter.
-include $(BUILD_SYSTEM)/local_current_sdk.mk
-
-# Check if the use of System SDK is correct. Note that, for Soong modules, the system sdk version
-# check is done in Soong. No need to do it twice.
-ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
 include $(BUILD_SYSTEM)/local_systemsdk.mk
-endif
+include $(BUILD_SYSTEM)/local_current_sdk.mk
 
 # Ninja has an implicit dependency on the command being run, and kati will
 # regenerate the ninja manifest if any read makefile changes, so there is no
