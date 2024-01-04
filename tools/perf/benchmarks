@@ -335,6 +335,7 @@ class Runner():
                 "--build-mode",
                 "--all-modules",
                 f"--dir={self._options.root}",
+                "--skip-metrics-upload",
             ] + modules
             env = dict(os.environ)
             env["TARGET_PRODUCT"] = lunch.target_product
@@ -460,7 +461,7 @@ benchmarks:
         parser.add_argument("--benchmark", nargs="*", default=[b.id for b in self._benchmarks],
                             metavar="BENCHMARKS",
                             help="Benchmarks to run.  Default suite will be run if omitted.")
-        parser.add_argument("--dist-one", type=str,
+        parser.add_argument("--dist-one", action="store_true",
                             help="Copy logs and metrics to the given dist dir. Requires that only"
                                 + " one benchmark be supplied. Postroll steps will be skipped.")
 
@@ -478,7 +479,7 @@ benchmarks:
                 self._error(f"Invalid benchmark: {id}")
 
         # --dist-one requires that only one benchmark be supplied
-        if len(self.Benchmarks()) != 1:
+        if self._args.dist_one and len(self.Benchmarks()) != 1:
             self._error("--dist-one requires that exactly one --benchmark.")
 
         if self._had_error:
