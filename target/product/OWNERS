@@ -1,4 +1,4 @@
-per-file runtime_libart.mk = calin@google.com, mast@google.com, ngeoffray@google.com, oth@google.com, rpl@google.com, vmarko@google.com
+per-file runtime_libart.mk = mast@google.com, ngeoffray@google.com, rpl@google.com, vmarko@google.com
 
 # GSI
 per-file gsi_release.mk = file:/target/product/gsi/OWNERS
