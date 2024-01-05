@@ -332,12 +332,23 @@ pub fn modify_parsed_flags_based_on_mode(
         parsed_flag
     }
 
+    fn force_read_only_mode_flag_modifier(mut parsed_flag: ProtoParsedFlag) -> ProtoParsedFlag {
+        parsed_flag.set_permission(ProtoFlagPermission::READ_ONLY);
+        parsed_flag
+    }
+
     let modified_parsed_flags: Vec<_> = match codegen_mode {
         CodegenMode::Exported => parsed_flags
             .parsed_flag
             .into_iter()
             .filter(|pf| pf.is_exported())
             .map(exported_mode_flag_modifier)
+            .collect(),
+        CodegenMode::ForceReadOnly => parsed_flags
+            .parsed_flag
+            .into_iter()
+            .filter(|pf| !pf.is_exported())
+            .map(force_read_only_mode_flag_modifier)
             .collect(),
         CodegenMode::Production | CodegenMode::Test => {
             parsed_flags.parsed_flag.into_iter().collect()
@@ -693,5 +704,26 @@ mod tests {
             (String::from("enabled_rw"), 8_u32),
         ]);
         assert_eq!(flag_ids, expected_flag_ids);
+    }
+
+    #[test]
+    fn test_modify_parsed_flags_based_on_mode_force_read_only() {
+        let parsed_flags = crate::test::parse_test_flags();
+        let p_parsed_flags =
+            modify_parsed_flags_based_on_mode(parsed_flags.clone(), CodegenMode::ForceReadOnly)
+                .unwrap();
+        assert_eq!(6, p_parsed_flags.len());
+        for pf in p_parsed_flags {
+            assert_eq!(ProtoFlagPermission::READ_ONLY, pf.permission());
+        }
+
+        let mut parsed_flags = crate::test::parse_test_flags();
+        parsed_flags.parsed_flag.retain_mut(|pf| pf.is_exported());
+        let error = modify_parsed_flags_based_on_mode(parsed_flags, CodegenMode::ForceReadOnly)
+            .unwrap_err();
+        assert_eq!(
+            "force-read-only library contains no force-read-only flags",
+            format!("{:?}", error)
+        );
     }
 }
