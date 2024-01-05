@@ -33,6 +33,9 @@ ifdef BOARD_SYSTEMSDK_VERSIONS
           # Runtime resource overlays are exempted from building against System SDK.
           # TODO(b/155027019): remove this, after no product/vendor apps rely on this behavior.
           LOCAL_SDK_VERSION := system_current
+          # We have run below again since LOCAL_SDK_VERSION is newly set and the "_current"
+          # may have to be updated
+          include $(BUILD_SYSTEM)/local_current_sdk.mk
         endif
       endif
     endif
@@ -54,10 +57,35 @@ ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
     # If not, vendor apks are treated equally to system apps
     _supported_systemsdk_versions := $(PLATFORM_SYSTEMSDK_VERSIONS)
   endif
+
+  # b/314011075: apks and jars in the vendor or odm partitions cannot use system SDK 35 and beyond.
+  # This is to discourage the use of Java APIs in the partitions, which hasn't been supported since
+  # the beginning of the project Treble back in Android 10. Ultimately, we'd like to completely
+  # disallow any Java API in the partitions, but it shall be done progressively.
+  ifneq (,$(filter true,$(LOCAL_VENDOR_MODULE) $(LOCAL_ODM_MODULE) $(LOCAL_PROPRIETARY_MODULE)))
+    # 28 is the API level when BOARD_SYSTEMSDK_VERSIONS was introduced. So, it's the oldset API
+    # we allow.
+    _supported_systemsdk_versions := $(call int_range_list, 28, 34)
+  endif
+
+  # Extract version number from LOCAL_SDK_VERSION (ex: system_34 -> 34)
   _system_sdk_version := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
+  # However, the extraction may fail if it doesn't have any number (i.e. current, core_current,
+  # system_current, or similar) Then use the latest platform SDK version number or the actual
+  # codename.
+  ifeq (,$(_system_sdk_version)
+    ifeq (REL,$(PLATFORM_VERSION_CODENAME))
+      _system_sdk_version := $(PLATFORM_SDK_VERSION)
+    else
+      _system_sdk_version := $(PLATFORM_VERSION_CODENAME)
+    endif
+  endif
+
   ifneq ($(_system_sdk_version),$(filter $(_system_sdk_version),$(_supported_systemsdk_versions)))
-    $(call pretty-error,Incompatible LOCAL_SDK_VERSION '$(LOCAL_SDK_VERSION)'. \
-           System SDK version '$(_system_sdk_version)' is not supported. Supported versions are: $(_supported_systemsdk_versions))
+    ifneq (true,$(BUILD_BROKEN_DONT_CHECK_SYSTEMSDK)
+      $(call pretty-error,Incompatible LOCAL_SDK_VERSION '$(LOCAL_SDK_VERSION)'. \
+             System SDK version '$(_system_sdk_version)' is not supported. Supported versions are: $(_supported_systemsdk_versions))
+    endif
   endif
   _system_sdk_version :=
   _supported_systemsdk_versions :=

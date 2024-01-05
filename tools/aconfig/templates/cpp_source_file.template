@@ -59,7 +59,6 @@ namespace {cpp_namespace} \{
         {{ -for item in class_elements }}
 
         virtual bool {item.flag_name}() override \{
-            {{ -if is_prod_mode }}
             {{ -if item.readwrite }}
             if (cache_[{item.readwrite_idx}] == -1) \{
                 cache_[{item.readwrite_idx}] = server_configurable_flags::GetServerConfigurableFlag(
@@ -73,17 +72,6 @@ namespace {cpp_namespace} \{
             return {package_macro}_{item.flag_macro};
             {{ -else }}
             return {item.default_value};
-            {{ -endif }}
-            {{ -endif }}
-            {{ -else- }}
-            {{ -if is_exported_mode }}
-            if (cache_[{item.readwrite_idx}] == -1) \{
-                cache_[{item.readwrite_idx}] = server_configurable_flags::GetServerConfigurableFlag(
-                    "aconfig_flags.{item.device_config_namespace}",
-                    "{item.device_config_flag}",
-                    "false") == "true";
-            }
-            return cache_[{item.readwrite_idx}];
             {{ -endif }}
             {{ -endif }}
         }
@@ -106,7 +94,6 @@ bool {header}_{item.flag_name}() \{
     {{ -if is_test_mode }}
     return {cpp_namespace}::{item.flag_name}();
     {{ -else }}
-    {{ -if is_prod_mode }}
     {{ -if item.readwrite }}
     return {cpp_namespace}::{item.flag_name}();
     {{ -else }}
@@ -114,11 +101,6 @@ bool {header}_{item.flag_name}() \{
     return {package_macro}_{item.flag_macro};
     {{ -else }}
     return {item.default_value};
-    {{ -endif }}
-    {{ -endif }}
-    {{ -else }}
-    {{ -if is_exported_mode }}
-    return {cpp_namespace}::{item.flag_name}();
     {{ -endif }}
     {{ -endif }}
     {{ -endif }}
