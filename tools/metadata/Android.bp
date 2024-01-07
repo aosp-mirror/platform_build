@@ -1,0 +1,14 @@
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+blueprint_go_binary {
+    name: "metadata",
+    deps: [
+            "soong-testing-test_spec_proto",
+            "golang-protobuf-proto",
+        ],
+    srcs: [
+        "generator.go",
+    ]
+}
