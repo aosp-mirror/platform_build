@@ -925,7 +925,7 @@ mod tests {
             public static final String FLAG_ENABLED_RO = "com.android.aconfig.test.enabled_ro";
             /** @hide */
             public static final String FLAG_ENABLED_RW = "com.android.aconfig.test.enabled_rw";
-    
+
             @com.android.aconfig.annotations.AssumeFalseForR8
             @UnsupportedAppUsage
             public static boolean disabledRo() {
