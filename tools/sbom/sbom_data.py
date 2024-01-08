@@ -25,6 +25,7 @@ fields in each data class.
 
 from dataclasses import dataclass, field
 from typing import List
+import hashlib
 
 SPDXID_DOC = 'SPDXRef-DOCUMENT'
 SPDXID_PRODUCT = 'SPDXRef-PRODUCT'
@@ -81,6 +82,7 @@ class RelationshipType:
   VARIANT_OF = 'VARIANT_OF'
   GENERATED_FROM = 'GENERATED_FROM'
   CONTAINS = 'CONTAINS'
+  STATIC_LINK = 'STATIC_LINK'
 
 
 @dataclass
@@ -122,3 +124,17 @@ class Document:
     if not any(rel.id1 == r.id1 and rel.id2 == r.id2 and rel.relationship == r.relationship
                for r in self.relationships):
       self.relationships.append(rel)
+
+  def generate_packages_verification_code(self):
+    for package in self.packages:
+      if not package.file_ids:
+        continue
+
+      checksums = []
+      for file in self.files:
+        if file.id in package.file_ids:
+          checksums.append(file.checksum)
+      checksums.sort()
+      h = hashlib.sha1()
+      h.update(''.join(checksums).encode(encoding='utf-8'))
+      package.verification_code = h.hexdigest()
