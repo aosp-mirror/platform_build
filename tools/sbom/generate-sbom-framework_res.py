@@ -52,8 +52,19 @@ def main():
   filename = 'data/framework_res.jar'
   file_id = f'SPDXRef-{sbom_data.encode_for_spdxid(filename)}'
   file = sbom_data.File(id=file_id, name=filename, checksum='SHA1: <checksum>')
+
+  package_name = 'framework_res'
+  package_id = f'SPDXRef-PREBUILT-{sbom_data.encode_for_spdxid(package_name)}'
+  package = sbom_data.Package(id=package_id, name=package_name, version='<package_version>',
+                    download_location=sbom_data.VALUE_NONE,
+                    supplier='Organization: <organization>',
+                    files_analyzed=True,
+                    verification_code='<package_verification_code>')
+  package.file_ids.append(file_id)
+
+  doc.packages.append(package)
   doc.files.append(file)
-  doc.describes = file_id
+  doc.describes = package_id
 
   with open(args.layoutlib_sbom, 'r', encoding='utf-8') as f:
     layoutlib_sbom = json.load(f)
@@ -72,7 +83,9 @@ def main():
     if file[sbom_writers.PropNames.FILE_NAME].startswith('data/res/'):
       resource_file_spdxids.append(file[sbom_writers.PropNames.SPDXID])
 
-  doc.relationships = []
+  doc.relationships = [
+    sbom_data.Relationship(package_id, sbom_data.RelationshipType.CONTAINS, file_id)
+  ]
   for spdxid in resource_file_spdxids:
     doc.relationships.append(
       sbom_data.Relationship(file_id, sbom_data.RelationshipType.GENERATED_FROM,
