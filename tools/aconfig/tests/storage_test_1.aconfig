@@ -15,3 +15,10 @@ flag {
     bug: "456"
     is_exported: true
 }
+
+flag {
+    name: "enabled_ro"
+    namespace: "aconfig_test"
+    description: "This flag is ENABLED + READ_ONLY"
+    bug: "abc"
+}
