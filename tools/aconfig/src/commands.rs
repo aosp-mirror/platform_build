@@ -361,7 +361,7 @@ pub fn modify_parsed_flags_based_on_mode(
     Ok(modified_parsed_flags)
 }
 
-fn assign_flag_ids<'a, I>(package: &str, parsed_flags_iter: I) -> Result<HashMap<String, u32>>
+pub fn assign_flag_ids<'a, I>(package: &str, parsed_flags_iter: I) -> Result<HashMap<String, u32>>
 where
     I: Iterator<Item = &'a ProtoParsedFlag> + Clone,
 {
