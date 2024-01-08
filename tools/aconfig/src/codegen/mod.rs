@@ -44,7 +44,7 @@ pub fn is_valid_package_ident(s: &str) -> bool {
 }
 
 pub fn is_valid_container_ident(s: &str) -> bool {
-    is_valid_name_ident(s) || s.split('.').all(is_valid_name_ident)
+    s.split('.').all(is_valid_name_ident)
 }
 
 pub fn create_device_config_ident(package: &str, flag_name: &str) -> Result<String> {
