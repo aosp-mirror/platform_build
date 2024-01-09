@@ -38,6 +38,9 @@ PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.batch_writes=true
 # Enabling this property, will improve OTA install time
 # but will use an additional CPU core
 # PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.compression.threads=true
+ifndef PRODUCT_VIRTUAL_AB_COMPRESSION_FACTOR
+    PRODUCT_VIRTUAL_AB_COMPRESSION_FACTOR := 65536
+endif
 
 PRODUCT_VIRTUAL_AB_COMPRESSION := true
 PRODUCT_VIRTUAL_AB_COMPRESSION_METHOD ?= none
