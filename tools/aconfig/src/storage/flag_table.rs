@@ -58,18 +58,26 @@ impl FlagTableHeader {
 pub struct FlagTableNode {
     pub package_id: u32,
     pub flag_name: String,
-    pub flag_id: u32,
+    pub flag_type: u16,
+    pub flag_id: u16,
     pub next_offset: Option<u32>,
     pub bucket_index: u32,
 }
 
 impl FlagTableNode {
-    fn new(package_id: u32, flag_name: &str, flag_id: u32, num_buckets: u32) -> Self {
+    fn new(
+        package_id: u32,
+        flag_name: &str,
+        flag_type: u16,
+        flag_id: u16,
+        num_buckets: u32,
+    ) -> Self {
         let full_flag_name = package_id.to_string() + "/" + flag_name;
         let bucket_index = storage::get_bucket_index(&full_flag_name, num_buckets);
         Self {
             package_id,
             flag_name: flag_name.to_string(),
+            flag_type,
             flag_id,
             next_offset: None,
             bucket_index,
@@ -82,6 +90,7 @@ impl FlagTableNode {
         let name_bytes = self.flag_name.as_bytes();
         result.extend_from_slice(&(name_bytes.len() as u32).to_le_bytes());
         result.extend_from_slice(name_bytes);
+        result.extend_from_slice(&self.flag_type.to_le_bytes());
         result.extend_from_slice(&self.flag_id.to_le_bytes());
         result.extend_from_slice(&self.next_offset.unwrap_or(0).to_le_bytes());
         result
@@ -108,7 +117,11 @@ impl FlagTable {
                 let fid = flag_ids
                     .get(pf.name())
                     .ok_or(anyhow!(format!("missing flag id for {}", pf.name())))?;
-                Ok(FlagTableNode::new(package.package_id, pf.name(), *fid, num_buckets))
+                // all flags are boolean value at the moment, thus using the last bit. When more
+                // flag value types are supported, flag value type information should come from the
+                // parsed flag, and we will set the flag_type bit mask properly.
+                let flag_type = 1;
+                Ok(FlagTableNode::new(package.package_id, pf.name(), flag_type, *fid, num_buckets))
             })
             .collect::<Result<Vec<_>>>()
     }
@@ -177,7 +190,7 @@ mod tests {
     use super::*;
     use crate::storage::{
         group_flags_by_package, tests::parse_all_test_flags, tests::read_str_from_bytes,
-        tests::read_u32_from_bytes,
+        tests::read_u16_from_bytes, tests::read_u32_from_bytes,
     };
 
     impl FlagTableHeader {
@@ -202,7 +215,8 @@ mod tests {
             let mut node = Self {
                 package_id: read_u32_from_bytes(bytes, &mut head)?,
                 flag_name: read_str_from_bytes(bytes, &mut head)?,
-                flag_id: read_u32_from_bytes(bytes, &mut head)?,
+                flag_type: read_u16_from_bytes(bytes, &mut head)?,
+                flag_id: read_u16_from_bytes(bytes, &mut head)?,
                 next_offset: match read_u32_from_bytes(bytes, &mut head)? {
                     0 => None,
                     val => Some(val),
@@ -218,13 +232,15 @@ mod tests {
         fn new_expected(
             package_id: u32,
             flag_name: &str,
-            flag_id: u32,
+            flag_type: u16,
+            flag_id: u16,
             next_offset: Option<u32>,
             bucket_index: u32,
         ) -> Self {
             Self {
                 package_id,
                 flag_name: flag_name.to_string(),
+                flag_type,
                 flag_id,
                 next_offset,
                 bucket_index,
@@ -308,14 +324,17 @@ mod tests {
         let nodes: &Vec<FlagTableNode> = &flag_table.as_ref().unwrap().nodes;
         assert_eq!(nodes.len(), 8);
 
-        assert_eq!(nodes[0], FlagTableNode::new_expected(0, "enabled_ro", 1, None, 0));
-        assert_eq!(nodes[1], FlagTableNode::new_expected(0, "enabled_rw", 2, Some(150), 1));
-        assert_eq!(nodes[2], FlagTableNode::new_expected(1, "disabled_ro", 0, None, 1));
-        assert_eq!(nodes[3], FlagTableNode::new_expected(2, "enabled_ro", 1, None, 5));
-        assert_eq!(nodes[4], FlagTableNode::new_expected(1, "enabled_fixed_ro", 1, Some(235), 7));
-        assert_eq!(nodes[5], FlagTableNode::new_expected(1, "enabled_ro", 2, None, 7));
-        assert_eq!(nodes[6], FlagTableNode::new_expected(2, "enabled_fixed_ro", 0, None, 9));
-        assert_eq!(nodes[7], FlagTableNode::new_expected(0, "disabled_rw", 0, None, 15));
+        assert_eq!(nodes[0], FlagTableNode::new_expected(0, "enabled_ro", 1, 1, None, 0));
+        assert_eq!(nodes[1], FlagTableNode::new_expected(0, "enabled_rw", 1, 2, Some(150), 1));
+        assert_eq!(nodes[2], FlagTableNode::new_expected(1, "disabled_ro", 1, 0, None, 1));
+        assert_eq!(nodes[3], FlagTableNode::new_expected(2, "enabled_ro", 1, 1, None, 5));
+        assert_eq!(
+            nodes[4],
+            FlagTableNode::new_expected(1, "enabled_fixed_ro", 1, 1, Some(235), 7)
+        );
+        assert_eq!(nodes[5], FlagTableNode::new_expected(1, "enabled_ro", 1, 2, None, 7));
+        assert_eq!(nodes[6], FlagTableNode::new_expected(2, "enabled_fixed_ro", 1, 0, None, 9));
+        assert_eq!(nodes[7], FlagTableNode::new_expected(0, "disabled_rw", 1, 0, None, 15));
     }
 
     #[test]
