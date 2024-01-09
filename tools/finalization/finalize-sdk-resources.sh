@@ -111,10 +111,6 @@ function finalize_aidl_vndk_sdk_resources() {
     # bionic/NDK
     finalize_bionic_ndk
 
-    # pre-finalization build target (trunk)
-    local aidl_m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_RELEASE=trunk TARGET_BUILD_VARIANT=userdebug DIST_DIR=out/dist"
-    AIDL_TRANSITIVE_FREEZE=true $aidl_m aidl-freeze-api
-
     # TODO(b/309880485)
     # Add back create_reference_dumps and $top/build/make/target/product/gsi/current.txt
 
@@ -128,10 +124,6 @@ function finalize_aidl_vndk_sdk_resources() {
     sed -i -e 's/Pkg\.Revision.*/Pkg\.Revision=1/g' $platform_source
     local build_tools_source="$top/development/sdk/build_tools_source.prop_template"
     sed -i -e 's/Pkg\.Revision.*/Pkg\.Revision=${PLATFORM_SDK_VERSION}.0.0/g' $build_tools_source
-
-    # build/make
-    sed -i -e "s/sepolicy_major_vers := .*/sepolicy_major_vers := ${FINAL_PLATFORM_SDK_VERSION}/g" "$top/build/make/core/config.mk"
-    cp "$top/build/make/target/product/gsi/current.txt" "$top/build/make/target/product/gsi/$FINAL_PLATFORM_SDK_VERSION.txt"
 
     # build/bazel
     local codename_version="\"${FINAL_PLATFORM_CODENAME}\": ${FINAL_PLATFORM_SDK_VERSION}"

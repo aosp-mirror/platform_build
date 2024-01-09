@@ -23,8 +23,8 @@ function finalize_step_1_main() {
 
     local m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug"
 
-    # vndk etc finalization
-    source $top/build/make/tools/finalization/finalize-aidl-vndk-sdk-resources.sh
+    source $top/build/make/tools/finalization/finalize-vintf-resources.sh
+    source $top/build/make/tools/finalization/finalize-sdk-resources.sh
 
     # move all changes to finalization branch/topic and upload to gerrit
     commit_step_1_changes
