@@ -259,6 +259,9 @@ A/B OTA specific options
 
   --vabc_cow_version
       Specify the VABC cow version to be used
+
+  --compression_factor
+      Specify the maximum block size to be compressed at once during OTA. supported options: 4k, 8k, 16k, 32k, 64k, 128k
 """
 
 from __future__ import print_function
@@ -331,6 +334,7 @@ OPTIONS.vabc_compression_param = None
 OPTIONS.security_patch_level = None
 OPTIONS.max_threads = None
 OPTIONS.vabc_cow_version = None
+OPTIONS.compression_factor = None
 
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
@@ -392,17 +396,6 @@ def ModifyVABCCompressionParam(content, algo):
     Updated content of dynamic_partitions_info.txt , with custom compression algo
   """
   return ModifyKeyvalueList(content, "virtual_ab_compression_method", algo)
-
-def SetVABCCowVersion(content, cow_version):
-  """ Update virtual_ab_cow_version in dynamic_partitions_info.txt
-  Args:
-    content: The string content of dynamic_partitions_info.txt
-    algo: The cow version be used for VABC. See
-          https://cs.android.com/android/platform/superproject/main/+/main:system/core/fs_mgr/libsnapshot/include/libsnapshot/cow_format.h;l=36
-  Returns:
-    Updated content of dynamic_partitions_info.txt , updated cow version
-  """
-  return ModifyKeyvalueList(content, "virtual_ab_cow_version", cow_version)
 
 
 def UpdatesInfoForSpecialUpdates(content, partitions_filter,
@@ -1020,6 +1013,8 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
         target_file, vabc_compression_param)
   if OPTIONS.vabc_cow_version:
     target_file = ModifyTargetFilesDynamicPartitionInfo(target_file, "virtual_ab_cow_version", OPTIONS.vabc_cow_version)
+  if OPTIONS.compression_factor:
+    target_file = ModifyTargetFilesDynamicPartitionInfo(target_file, "virtual_ab_compression_factor", OPTIONS.compression_factor)
   if OPTIONS.skip_postinstall:
     target_file = GetTargetFilesZipWithoutPostinstallConfig(target_file)
   # Target_file may have been modified, reparse ab_partitions
@@ -1280,6 +1275,13 @@ def main(argv):
       else:
         raise ValueError("Cannot parse value %r for option %r - only "
                          "integers are allowed." % (a, o))
+    elif o in ("--compression_factor"):
+        values = ["4k", "8k", "16k", "32k", "64k", "128k"]
+        if a[:-1].isdigit() and a in values and a.endswith("k"):
+            OPTIONS.compression_factor = str(int(a[:-1]) * 1024)
+        else:
+            raise ValueError("Please specify value from following options: 4k, 8k, 16k, 32k, 64k, 128k")
+
     elif o == "--vabc_cow_version":
       if a.isdigit():
         OPTIONS.vabc_cow_version = a
@@ -1335,6 +1337,7 @@ def main(argv):
                                  "security_patch_level=",
                                  "max_threads=",
                                  "vabc_cow_version=",
+                                 "compression_factor=",
                              ], extra_option_handler=[option_handler, payload_signer.signer_options])
   common.InitLogging()
 
