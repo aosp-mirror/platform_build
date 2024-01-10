@@ -70,7 +70,7 @@ PRODUCT_PACKAGES += \
     com.android.scheduling \
     com.android.sdkext \
     com.android.tethering \
-    com.android.tzdata \
+    $(RELEASE_PACKAGE_TZDATA_MODULE) \
     com.android.uwb \
     com.android.virt \
     com.android.wifi \
