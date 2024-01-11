@@ -56,6 +56,8 @@ pub struct FlagPackage<'a> {
     pub package_id: u32,
     pub flag_names: HashSet<&'a str>,
     pub boolean_flags: Vec<&'a ProtoParsedFlag>,
+    // offset of the first boolean flag in this flag package with respect to the start of
+    // boolean flag value array in the flag value file
     pub boolean_offset: u32,
 }
 
@@ -95,12 +97,11 @@ where
     }
 
     // calculate package flag value start offset, in flag value file, each boolean
-    // is stored as two bytes, the first byte will be the flag value. the second
-    // byte is flag info byte, which is a bitmask to indicate the status of a flag
+    // is stored as a single byte
     let mut boolean_offset = 0;
     for p in packages.iter_mut() {
         p.boolean_offset = boolean_offset;
-        boolean_offset += 2 * p.boolean_flags.len() as u32;
+        boolean_offset += p.boolean_flags.len() as u32;
     }
 
     packages
@@ -134,6 +135,13 @@ where
 mod tests {
     use super::*;
     use crate::Input;
+
+    /// Read and parse bytes as u16
+    pub fn read_u16_from_bytes(buf: &[u8], head: &mut usize) -> Result<u16> {
+        let val = u16::from_le_bytes(buf[*head..*head + 2].try_into()?);
+        *head += 2;
+        Ok(val)
+    }
 
     /// Read and parse bytes as u32
     pub fn read_u32_from_bytes(buf: &[u8], head: &mut usize) -> Result<u32> {
@@ -218,13 +226,13 @@ mod tests {
         assert!(packages[1].flag_names.contains("enabled_ro"));
         assert!(packages[1].flag_names.contains("disabled_ro"));
         assert!(packages[1].flag_names.contains("enabled_fixed_ro"));
-        assert_eq!(packages[1].boolean_offset, 6);
+        assert_eq!(packages[1].boolean_offset, 3);
 
         assert_eq!(packages[2].package_name, "com.android.aconfig.storage.test_4");
         assert_eq!(packages[2].package_id, 2);
         assert_eq!(packages[2].flag_names.len(), 2);
         assert!(packages[2].flag_names.contains("enabled_ro"));
         assert!(packages[2].flag_names.contains("enabled_fixed_ro"));
-        assert_eq!(packages[2].boolean_offset, 12);
+        assert_eq!(packages[2].boolean_offset, 6);
     }
 }
