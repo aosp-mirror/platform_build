@@ -57,6 +57,8 @@ impl PackageTableHeader {
 pub struct PackageTableNode {
     pub package_name: String,
     pub package_id: u32,
+    // offset of the first boolean flag in this flag package with respect to the start of
+    // boolean flag value array in the flag value file
     pub boolean_offset: u32,
     pub next_offset: Option<u32>,
     pub bucket_index: u32,
@@ -249,7 +251,7 @@ mod tests {
         let first_node_expected = PackageTableNode {
             package_name: String::from("com.android.aconfig.storage.test_2"),
             package_id: 1,
-            boolean_offset: 6,
+            boolean_offset: 3,
             next_offset: None,
             bucket_index: 0,
         };
@@ -265,7 +267,7 @@ mod tests {
         let third_node_expected = PackageTableNode {
             package_name: String::from("com.android.aconfig.storage.test_4"),
             package_id: 2,
-            boolean_offset: 12,
+            boolean_offset: 6,
             next_offset: None,
             bucket_index: 3,
         };
