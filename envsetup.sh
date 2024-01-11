@@ -254,7 +254,7 @@ function set_lunch_paths()
     # Note: on windows/cygwin, ANDROID_LUNCH_BUILD_PATHS will contain spaces
     # due to "C:\Program Files" being in the path.
 
-    # Handle compat with the old ANDROID_BUILD_PATHS variable. 
+    # Handle compat with the old ANDROID_BUILD_PATHS variable.
     # TODO: Remove this after we think everyone has lunched again.
     if [ -z "$ANDROID_LUNCH_BUILD_PATHS" -a -n "$ANDROID_BUILD_PATHS" ] ; then
       ANDROID_LUNCH_BUILD_PATHS="$ANDROID_BUILD_PATHS"
@@ -1886,6 +1886,11 @@ function _trigger_build()
       >&2 echo "Couldn't locate the top of the tree. Try setting TOP."
       return 1
     fi
+    local ret=$?
+    if [[ ret -eq 0 &&  -z "${ANDROID_QUIET_BUILD:-}" && -n "${ANDROID_BUILD_BANNER}" ]]; then
+      echo "${ANDROID_BUILD_BANNER}"
+    fi
+    return $ret
 )
 
 function m()
