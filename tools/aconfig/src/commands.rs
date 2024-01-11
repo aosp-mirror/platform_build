@@ -361,7 +361,7 @@ pub fn modify_parsed_flags_based_on_mode(
     Ok(modified_parsed_flags)
 }
 
-pub fn assign_flag_ids<'a, I>(package: &str, parsed_flags_iter: I) -> Result<HashMap<String, u32>>
+pub fn assign_flag_ids<'a, I>(package: &str, parsed_flags_iter: I) -> Result<HashMap<String, u16>>
 where
     I: Iterator<Item = &'a ProtoParsedFlag> + Clone,
 {
@@ -371,7 +371,13 @@ where
         if package != pf.package() {
             return Err(anyhow::anyhow!("encountered a flag not in current package"));
         }
-        flag_ids.insert(pf.name().to_string(), id_to_assign);
+
+        // put a cap on how many flags a package can contain to 65535
+        if id_to_assign > u16::MAX as u32 {
+            return Err(anyhow::anyhow!("the number of flags in a package cannot exceed 65535"));
+        }
+
+        flag_ids.insert(pf.name().to_string(), id_to_assign as u16);
     }
     Ok(flag_ids)
 }
@@ -693,15 +699,15 @@ mod tests {
         let package = find_unique_package(&parsed_flags.parsed_flag).unwrap().to_string();
         let flag_ids = assign_flag_ids(&package, parsed_flags.parsed_flag.iter()).unwrap();
         let expected_flag_ids = HashMap::from([
-            (String::from("disabled_ro"), 0_u32),
-            (String::from("disabled_rw"), 1_u32),
-            (String::from("disabled_rw_exported"), 2_u32),
-            (String::from("disabled_rw_in_other_namespace"), 3_u32),
-            (String::from("enabled_fixed_ro"), 4_u32),
-            (String::from("enabled_fixed_ro_exported"), 5_u32),
-            (String::from("enabled_ro"), 6_u32),
-            (String::from("enabled_ro_exported"), 7_u32),
-            (String::from("enabled_rw"), 8_u32),
+            (String::from("disabled_ro"), 0_u16),
+            (String::from("disabled_rw"), 1_u16),
+            (String::from("disabled_rw_exported"), 2_u16),
+            (String::from("disabled_rw_in_other_namespace"), 3_u16),
+            (String::from("enabled_fixed_ro"), 4_u16),
+            (String::from("enabled_fixed_ro_exported"), 5_u16),
+            (String::from("enabled_ro"), 6_u16),
+            (String::from("enabled_ro_exported"), 7_u16),
+            (String::from("enabled_rw"), 8_u16),
         ]);
         assert_eq!(flag_ids, expected_flag_ids);
     }
