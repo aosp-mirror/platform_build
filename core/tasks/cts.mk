@@ -16,6 +16,8 @@ test_suite_name := cts
 test_suite_tradefed := cts-tradefed
 test_suite_dynamic_config := cts/tools/cts-tradefed/DynamicConfig.xml
 test_suite_readme := cts/tools/cts-tradefed/README
+test_suite_tools := $(HOST_OUT_JAVA_LIBRARIES)/ats_console_deploy.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/ats_olc_server_local_mode_deploy.jar
 
 $(call declare-1p-target,$(test_suite_dynamic_config),cts)
 $(call declare-1p-target,$(test_suite_readme),cts)
