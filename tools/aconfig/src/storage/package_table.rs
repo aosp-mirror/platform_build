@@ -277,9 +277,7 @@ mod tests {
     #[test]
     // this test point locks down the table serialization
     fn test_serialization() {
-        let package_table = create_test_package_table();
-        assert!(package_table.is_ok());
-        let package_table = package_table.unwrap();
+        let package_table = create_test_package_table().unwrap();
 
         let header: &PackageTableHeader = &package_table.header;
         let reinterpreted_header = PackageTableHeader::from_bytes(&header.as_bytes());
