@@ -127,6 +127,7 @@ PRODUCT_PACKAGES += \
     ip \
     iptables \
     javax.obex \
+    kcmdlinectrl \
     keystore2 \
     credstore \
     ld.mc \
