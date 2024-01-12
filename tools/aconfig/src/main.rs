@@ -135,7 +135,7 @@ fn cli() -> Command {
                         .required(true)
                         .help("The target container for the generated storage file."),
                 )
-                .arg(Arg::new("cache").long("cache").required(true))
+                .arg(Arg::new("cache").long("cache").action(ArgAction::Append).required(true))
                 .arg(Arg::new("out").long("out").required(true)),
         )
 }
