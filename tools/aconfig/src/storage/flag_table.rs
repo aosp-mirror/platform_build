@@ -295,8 +295,6 @@ mod tests {
         };
         assert_eq!(header, &expected_header);
 
-        println!("{:?}", &flag_table.as_ref().unwrap().nodes);
-
         let buckets: &Vec<Option<u32>> = &flag_table.as_ref().unwrap().buckets;
         let expected_bucket: Vec<Option<u32>> = vec![
             Some(98),
@@ -338,9 +336,7 @@ mod tests {
     #[test]
     // this test point locks down the table serialization
     fn test_serialization() {
-        let flag_table = create_test_flag_table();
-        assert!(flag_table.is_ok());
-        let flag_table = flag_table.unwrap();
+        let flag_table = create_test_flag_table().unwrap();
 
         let header: &FlagTableHeader = &flag_table.header;
         let reinterpreted_header = FlagTableHeader::from_bytes(&header.as_bytes());
