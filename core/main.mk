@@ -1721,10 +1721,8 @@ droidcore: droidcore-unbundled
 # dist_files only for putting your library into the dist directory with a full build.
 .PHONY: dist_files
 
-ifeq ($(SOONG_COLLECT_JAVA_DEPS), true)
-  $(call dist-for-goals, dist_files, $(SOONG_OUT_DIR)/module_bp_java_deps.json)
-  $(call dist-for-goals, dist_files, $(PRODUCT_OUT)/module-info.json)
-endif
+$(call dist-for-goals, dist_files, $(SOONG_OUT_DIR)/module_bp_java_deps.json)
+$(call dist-for-goals, dist_files, $(PRODUCT_OUT)/module-info.json)
 
 .PHONY: apps_only
 ifeq ($(HOST_OS),darwin)
