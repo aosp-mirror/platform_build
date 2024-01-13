@@ -189,6 +189,9 @@ endif
 $(call add_soong_config_var,ANDROID,SYSTEM_OPTIMIZE_JAVA)
 $(call add_soong_config_var,ANDROID,FULL_SYSTEM_OPTIMIZE_JAVA)
 
+# TODO(b/319697968): Remove this build flag support when metalava fully supports flagged api
+$(call soong_config_set,ANDROID,release_hidden_api_exportable_stubs,$(RELEASE_HIDDEN_API_EXPORTABLE_STUBS))
+
 # Check for SupplementalApi module.
 ifeq ($(wildcard packages/modules/SupplementalApi),)
 $(call add_soong_config_var_value,ANDROID,include_nonpublic_framework_api,false)
