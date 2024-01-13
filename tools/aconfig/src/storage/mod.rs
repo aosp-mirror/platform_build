@@ -15,6 +15,7 @@
  */
 
 pub mod flag_table;
+pub mod flag_value;
 pub mod package_table;
 
 use anyhow::{anyhow, Result};
@@ -24,7 +25,9 @@ use std::path::PathBuf;
 
 use crate::commands::OutputFile;
 use crate::protos::{ProtoParsedFlag, ProtoParsedFlags};
-use crate::storage::{flag_table::FlagTable, package_table::PackageTable};
+use crate::storage::{
+    flag_table::FlagTable, flag_value::FlagValueList, package_table::PackageTable,
+};
 
 pub const FILE_VERSION: u32 = 1;
 
@@ -128,13 +131,26 @@ where
     let flag_table_file =
         OutputFile { contents: flag_table.as_bytes(), path: flag_table_file_path };
 
-    Ok(vec![package_table_file, flag_table_file])
+    // create and serialize flag value
+    let flag_value = FlagValueList::new(container, &packages)?;
+    let flag_value_file_path = PathBuf::from("flag.val");
+    let flag_value_file =
+        OutputFile { contents: flag_value.as_bytes(), path: flag_value_file_path };
+
+    Ok(vec![package_table_file, flag_table_file, flag_value_file])
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::Input;
+
+    /// Read and parse bytes as u8
+    pub fn read_u8_from_bytes(buf: &[u8], head: &mut usize) -> Result<u8> {
+        let val = u8::from_le_bytes(buf[*head..*head + 1].try_into()?);
+        *head += 1;
+        Ok(val)
+    }
 
     /// Read and parse bytes as u16
     pub fn read_u16_from_bytes(buf: &[u8], head: &mut usize) -> Result<u16> {
