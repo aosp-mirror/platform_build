@@ -75,6 +75,10 @@ PRODUCT_PACKAGES += \
     vr \
 
 PRODUCT_PACKAGES += $(RELEASE_PACKAGE_VIRTUAL_CAMERA)
+# Set virtual_camera_service_enabled soong config variable based on the
+# RELEASE_PACKAGE_VIRTUAL_CAMERA build. virtual_camera_service_enabled soong config
+# variable is used to prevent accessing the service when it's not present in the build.
+$(call soong_config_set,vdm,virtual_camera_service_enabled,$(if $(RELEASE_PACKAGE_VIRTUAL_CAMERA),true,false))
 
 PRODUCT_SYSTEM_SERVER_APPS += \
     FusedLocation \
