@@ -97,6 +97,46 @@ $(foreach partition, $(_FLAG_PARTITIONS), \
 	)) \
 )
 
+# Create a set of storage file for each partition
+# $(1): built aconfig flags storage dir (out)
+# $(2): installed aconfig flags storage package map file (out)
+# $(3): installed aconfig flags storage flag map file (out)
+# $(4): installed aconfig flags storage flag value file (out)
+# $(5): input aconfig files for the partition (in)
+define generate-partition-aconfig-storage-file
+$(eval $(strip $(1))/target: PRIVATE_OUT_DIR := $(strip $(1)))
+$(eval $(strip $(1))/target: PRIVATE_IN := $(strip $(5)))
+$(strip $(1))/target: $(ACONFIG) $(strip $(5))
+	mkdir -p $$(PRIVATE_OUT_DIR)
+	$$(if $$(PRIVATE_IN), \
+		$$(ACONFIG) create-storage --container "" --out $$(PRIVATE_OUT_DIR) \
+			$$(addprefix --cache ,$$(PRIVATE_IN)), \
+	)
+	echo -n > $$(PRIVATE_OUT_DIR)/target
+$(strip $(1))/package.map: $(strip $(1))/target
+$(strip $(1))/flag.map: $(strip $(1))/target
+$(strip $(1))/flag.val: $(strip $(1))/target
+$(call copy-one-file, $(strip $(1))/package.map, $(2))
+$(call copy-one-file, $(strip $(1))/flag.map, $(3))
+$(call copy-one-file, $(strip $(1))/flag.val, $(4))
+endef
+
+ifeq ($(RELEASE_CREATE_ACONFIG_STORAGE_FILE),true)
+$(foreach partition, $(_FLAG_PARTITIONS), \
+	$(eval aconfig_storage_package_map.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/package.map) \
+	$(eval aconfig_storage_flag_map.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/flag.map) \
+	$(eval aconfig_storage_falg_value.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/flag.val) \
+	$(eval $(call generate-partition-aconfig-storage-file, \
+				$(TARGET_OUT_FLAGS)/$(partition), \
+				$(aconfig_storage_package_map.$(partition)), \
+				$(aconfig_storage_flag_map.$(partition)), \
+				$(aconfig_storage_flag_val.$(partition)), \
+				$(sort $(foreach m,$(call register-names-for-partition, $(partition)), \
+					$(ALL_MODULES.$(m).ACONFIG_FILES) \
+				)), \
+	)) \
+)
+endif
 
 # -----------------------------------------------------------------
 # Install the ones we need for the configured product
@@ -104,6 +144,9 @@ required_flags_files := \
 		$(sort $(foreach partition, $(filter $(IMAGES_TO_BUILD), $(_FLAG_PARTITIONS)), \
 			$(build_flag_summaries.$(partition)) \
 			$(aconfig_flag_summaries_protobuf.$(partition)) \
+			$(aconfig_storage_package_map.$(partition)) \
+			$(aconfig_storage_flag_map.$(partition)) \
+			$(aconfig_storage_flag_val.$(partition)) \
 		))
 
 ALL_DEFAULT_INSTALLED_MODULES += $(required_flags_files)
@@ -119,5 +162,8 @@ required_flags_files:=
 $(foreach partition, $(_FLAG_PARTITIONS), \
 	$(eval build_flag_summaries.$(partition):=) \
 	$(eval aconfig_flag_summaries_protobuf.$(partition):=) \
+	$(eval aconfig_storage_package_map.$(partition):=) \
+	$(eval aconfig_storage_flag_map.$(partition):=) \
+	$(eval aconfig_storage_flag_val.$(partition):=) \
 )
 
