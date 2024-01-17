@@ -73,7 +73,6 @@ PRODUCT_PACKAGES += \
     UserDictionaryProvider \
     VpnDialogs \
     vr \
-    $(RELEASE_PACKAGE_NFC_STACK)
 
 
 PRODUCT_SYSTEM_SERVER_APPS += \

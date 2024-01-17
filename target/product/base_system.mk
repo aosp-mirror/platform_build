@@ -94,7 +94,6 @@ PRODUCT_PACKAGES += \
     framework-graphics \
     framework-minus-apex \
     framework-minus-apex-install-dependencies \
-    framework-nfc \
     framework-res \
     framework-sysconfig.xml \
     fsck.erofs \
@@ -300,6 +299,16 @@ ifneq ($(PRODUCT_NO_DYNAMIC_SYSTEM_UPDATE),true)
     PRODUCT_PACKAGES += \
         DynamicSystemInstallationService \
 
+endif
+
+# Check if the build supports NFC apex or not
+ifeq ($(RELEASE_PACKAGE_NFC_STACK),NfcNci)
+    PRODUCT_PACKAGES += \
+        framework-nfc \
+        NfcNci
+else
+    PRODUCT_PACKAGES += \
+        com.android.nfcservices
 endif
 
 # VINTF data for system image
