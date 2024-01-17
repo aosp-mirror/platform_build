@@ -23,8 +23,8 @@ function finalize_vintf_resources() {
 function create_new_compat_matrix() {
     # The compatibility matrix versions are bumped during vFRC
     # These will change every time we have a new vFRC
-    export CURRENT_COMPATIBILITY_MATRIX_LEVEL='9'
-    export FINAL_COMPATIBILITY_MATRIX_LEVEL='10'
+    export CURRENT_COMPATIBILITY_MATRIX_LEVEL='202404'
+    export FINAL_COMPATIBILITY_MATRIX_LEVEL='202504'
 
     local top="$(dirname "$0")"/../../../..
     source $top/build/make/tools/finalization/environment.sh
