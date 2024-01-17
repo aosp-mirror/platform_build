@@ -888,21 +888,9 @@ BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
 
 # SEPolicy versions
 
-# PLATFORM_SEPOLICY_VERSION is a number of the form "YYYYMM.0" with "YYYYMM"
-# mapping to vFRC version.  This value will be set to 1000000.0 to represent
-# tip-of-tree development that is inherently unstable and thus designed not to
-# work with any shipping vendor policy.  This is similar in spirit to how
-# DEFAULT_APP_TARGET_SDK is set.
-sepolicy_vers := $(BOARD_API_LEVEL).0
-
-TOT_SEPOLICY_VERSION := 1000000.0
-ifeq (true,$(RELEASE_BOARD_API_LEVEL_FROZEN))
-    PLATFORM_SEPOLICY_VERSION := $(sepolicy_vers)
-else
-    PLATFORM_SEPOLICY_VERSION := $(TOT_SEPOLICY_VERSION)
-endif
-sepolicy_vers :=
-
+# PLATFORM_SEPOLICY_VERSION is a number of the form "YYYYMM" with "YYYYMM"
+# mapping to vFRC version.
+PLATFORM_SEPOLICY_VERSION := $(BOARD_API_LEVEL)
 BOARD_SEPOLICY_VERS := $(PLATFORM_SEPOLICY_VERSION)
 .KATI_READONLY := PLATFORM_SEPOLICY_VERSION BOARD_SEPOLICY_VERS
 
@@ -919,7 +907,6 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := $(filter-out $(PLATFORM_SEPOLICY_VERSION), 
 .KATI_READONLY := \
     PLATFORM_SEPOLICY_COMPAT_VERSIONS \
     PLATFORM_SEPOLICY_VERSION \
-    TOT_SEPOLICY_VERSION \
 
 ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
   ifneq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
