@@ -50,7 +50,6 @@ PRODUCT_TEST_ONLY_ART_BOOT_IMAGE_JARS := \
 PRODUCT_BOOT_JARS += \
     framework-minus-apex \
     framework-graphics \
-    framework-nfc \
     ext \
     telephony-common \
     voip-common \
@@ -87,6 +86,15 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.uwb:framework-uwb \
     com.android.virt:framework-virtualization \
     com.android.wifi:framework-wifi \
+
+# Check if the build supports NFC apex or not
+ifeq ($(RELEASE_PACKAGE_NFC_STACK),NfcNci)
+    PRODUCT_BOOT_JARS += \
+        framework-nfc
+else
+    PRODUCT_APEX_BOOT_JARS := \
+        com.android.nfcservices:framework-nfc
+endif
 
 # TODO(b/308174306): Adjust this after multiple prebuilts version is supported.
 # APEX boot jars that are not in prebuilt apexes.

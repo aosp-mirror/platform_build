@@ -704,6 +704,7 @@ def main(argv):
         runner.Run()
     except FatalError:
         sys.stderr.write(f"FAILED\n")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

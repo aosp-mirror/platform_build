@@ -856,10 +856,10 @@ def ExtractOrCopyTargetFiles(target_file):
     return ExtractTargetFiles(target_file)
 
 
-def ValidateCompressinParam(target_info):
+def ValidateCompressionParam(target_info):
   vabc_compression_param = OPTIONS.vabc_compression_param
   if vabc_compression_param:
-    minimum_api_level_required = VABC_COMPRESSION_PARAM_SUPPORT[vabc_compression_param]
+    minimum_api_level_required = VABC_COMPRESSION_PARAM_SUPPORT[vabc_compression_param.split(",")[0]]
     if target_info.vendor_api_level < minimum_api_level_required:
       raise ValueError("Specified VABC compression param {} is only supported for API level >= {}, device is on API level {}".format(
           vabc_compression_param, minimum_api_level_required, target_info.vendor_api_level))
@@ -872,7 +872,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   target_info = common.BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
   if OPTIONS.disable_vabc and target_info.is_release_key:
     raise ValueError("Disabling VABC on release-key builds is not supported.")
-  ValidateCompressinParam(target_info)
+  ValidateCompressionParam(target_info)
   vabc_compression_param = target_info.vabc_compression_param
 
   target_file = ExtractOrCopyTargetFiles(target_file)
