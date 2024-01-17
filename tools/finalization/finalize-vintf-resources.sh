@@ -62,7 +62,7 @@ function create_new_compat_matrix() {
       }" >> $bp_file
 
     # get the previous kernel_configs properties and add them to the new module
-    local kernel_configs=$($top/out/host/linux-x86/bin/bazel query --config=queryview //hardware/interfaces/compatibility_matrices:"$current_bp_module"--android_common --output=build | grep kernel_configs | sed 's/[^\[]*\[\(.*\)],/\1/' | sed 's/ //g' | sed 's/\"//g')
+    local kernel_configs=$($top/out/host/linux-x86/bin/bazel query --config=queryview //hardware/interfaces/compatibility_matrices:"$current_bp_module"--android_common --output=build 2>$1 | grep kernel_configs | sed 's/[^\[]*\[\(.*\)],/\1/' | sed 's/ //g' | sed 's/\"//g')
 
     $top/out/host/linux-x86/bin/bpmodify -m $final_bp_module -property kernel_configs -a $kernel_configs -w $bp_file
 
