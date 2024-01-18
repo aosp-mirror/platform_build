@@ -95,6 +95,8 @@ def base_build_command(args: argparse.Namespace) -> list:
   build_command.append('DIST_DIR=' + args.dist_dir)
   build_command.append('TARGET_PRODUCT=' + args.target_product)
   build_command.append('TARGET_RELEASE=' + args.target_release)
+  if args.with_dexpreopt_boot_img_and_system_server_only:
+    build_command.append('WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY=true')
   build_command.extend(args.extra_targets)
 
   return build_command
