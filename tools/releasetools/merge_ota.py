@@ -243,8 +243,6 @@ def main(argv):
   # Get signing keys
   key_passwords = common.GetKeyPasswords([args.package_key])
 
-  generator = PayloadGenerator()
-
   apex_info_bytes = ApexInfo(file_paths)
 
   with tempfile.NamedTemporaryFile() as unsigned_payload:
