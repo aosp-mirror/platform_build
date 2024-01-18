@@ -18,56 +18,65 @@ package {
 }
 
 python_binary_host {
-  name: "generate-self-extracting-archive",
-  srcs: ["generate-self-extracting-archive.py"],
+    name: "generate-self-extracting-archive",
+    srcs: ["generate-self-extracting-archive.py"],
 }
 
 python_binary_host {
-  name: "post_process_props",
-  srcs: ["post_process_props.py"],
+    name: "post_process_props",
+    srcs: ["post_process_props.py"],
+    libs: [
+        "uffd_gc_utils",
+    ],
 }
 
 python_test_host {
-  name: "post_process_props_unittest",
-  main: "test_post_process_props.py",
-  srcs: [
-    "post_process_props.py",
-    "test_post_process_props.py",
-  ],
-  test_config: "post_process_props_unittest.xml",
-  test_suites: ["general-tests"],
+    name: "post_process_props_unittest",
+    main: "test_post_process_props.py",
+    srcs: [
+        "post_process_props.py",
+        "test_post_process_props.py",
+    ],
+    libs: [
+        "uffd_gc_utils",
+    ],
+    test_config: "post_process_props_unittest.xml",
+    test_suites: ["general-tests"],
 }
 
 python_binary_host {
-  name: "extract_kernel",
-  srcs: ["extract_kernel.py"],
+    name: "extract_kernel",
+    srcs: ["extract_kernel.py"],
 }
 
 genrule_defaults {
-  name: "extract_kernel_release_defaults",
-  tools: ["extract_kernel", "lz4"],
-  out: ["kernel_release.txt"],
-  cmd: "$(location) --tools lz4:$(location lz4) --input $(in) --output-release > $(out)"
+    name: "extract_kernel_release_defaults",
+    tools: [
+        "extract_kernel",
+        "lz4",
+    ],
+    out: ["kernel_release.txt"],
+    cmd: "$(location) --tools lz4:$(location lz4) --input $(in) --output-release > $(out)",
 }
 
 cc_binary_host {
-  name: "build-runfiles",
-  srcs: ["build-runfiles.cc"],
+    name: "build-runfiles",
+    srcs: ["build-runfiles.cc"],
 }
 
 python_binary_host {
-  name: "check_radio_versions",
-  srcs: ["check_radio_versions.py"],
+    name: "check_radio_versions",
+    srcs: ["check_radio_versions.py"],
 }
 
 python_binary_host {
-  name: "check_elf_file",
-  srcs: ["check_elf_file.py"],
+    name: "check_elf_file",
+    srcs: ["check_elf_file.py"],
 }
 
 python_binary_host {
-  name: "generate_gts_shared_report",
-  srcs: ["generate_gts_shared_report.py"],
+    name: "generate_gts_shared_report",
+    srcs: ["generate_gts_shared_report.py"],
 }
 
 python_binary_host {
@@ -77,10 +86,10 @@ python_binary_host {
         "list_files.py",
     ],
     version: {
-      py3: {
-        embedded_launcher: true,
-      }
-    }
+        py3: {
+            embedded_launcher: true,
+        },
+    },
 }
 
 python_test_host {
@@ -98,11 +107,11 @@ python_test_host {
 }
 
 python_binary_host {
-  name: "characteristics_rro_generator",
-  srcs: ["characteristics_rro_generator.py"],
-  version: {
-    py3: {
-      embedded_launcher: true,
+    name: "characteristics_rro_generator",
+    srcs: ["characteristics_rro_generator.py"],
+    version: {
+        py3: {
+            embedded_launcher: true,
+        },
     },
-  },
 }

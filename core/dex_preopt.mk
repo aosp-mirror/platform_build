@@ -57,6 +57,7 @@ my_boot_image_module :=
 # Build the boot.zip which contains the boot jars and their compilation output
 # We can do this only if preopt is enabled and if the product uses libart config (which sets the
 # default properties for preopting).
+# At the time of writing, this is only for ART Cloud.
 ifeq ($(WITH_DEXPREOPT), true)
 ifneq ($(WITH_DEXPREOPT_ART_BOOT_IMG_ONLY), true)
 ifeq ($(PRODUCT_USES_DEFAULT_ART_CONFIG), true)
@@ -95,15 +96,16 @@ bootclasspath_arg := $(subst $(space),:,$(patsubst $(dexpreopt_root_dir)%,%,$(DE
 bootclasspath_locations_arg := $(subst $(space),:,$(DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS))
 boot_images := $(subst :,$(space),$(DEXPREOPT_IMAGE_LOCATIONS_ON_DEVICE$(DEXPREOPT_INFIX)))
 boot_image_arg := $(subst $(space),:,$(patsubst /%,%,$(boot_images)))
-dex2oat_extra_args := $(if $(filter true,$(ENABLE_UFFD_GC)),--runtime-arg -Xgc:CMC)
+uffd_gc_flag_txt := $(OUT_DIR)/soong/dexpreopt/uffd_gc_flag.txt
 
 boot_zip_metadata_txt := $(dir $(boot_zip))boot_zip/METADATA.txt
+$(boot_zip_metadata_txt): $(uffd_gc_flag_txt)
 $(boot_zip_metadata_txt):
 	rm -f $@
 	echo "bootclasspath = $(bootclasspath_arg)" >> $@
 	echo "bootclasspath-locations = $(bootclasspath_locations_arg)" >> $@
 	echo "boot-image = $(boot_image_arg)" >> $@
-	echo "extra-args = $(dex2oat_extra_args)" >> $@
+	echo "extra-args = `cat $(uffd_gc_flag_txt)`" >> $@
 
 $(call dist-for-goals, droidcore, $(boot_zip_metadata_txt))
 
