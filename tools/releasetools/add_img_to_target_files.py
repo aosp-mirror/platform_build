@@ -835,8 +835,7 @@ def HasPartition(partition_name):
 
 
 def AddApexInfo(output_zip):
-  apex_infos = GetApexInfoFromTargetFiles(OPTIONS.input_tmp, 'system',
-                                          compressed_only=False)
+  apex_infos = GetApexInfoFromTargetFiles(OPTIONS.input_tmp)
   apex_metadata_proto = ota_metadata_pb2.ApexMetadata()
   apex_metadata_proto.apex_info.extend(apex_infos)
   apex_info_bytes = apex_metadata_proto.SerializeToString()

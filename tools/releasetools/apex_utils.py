@@ -534,22 +534,28 @@ def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
         'Failed to get type for {}:\n{}'.format(apex_file, e))
 
 
-def GetApexInfoFromTargetFiles(input_file, partition, compressed_only=True):
+def GetApexInfoFromTargetFiles(input_file):
   """
-  Get information about system APEX stored in the input_file zip
+  Get information about APEXes stored in the input_file zip
 
   Args:
     input_file: The filename of the target build target-files zip or directory.
 
   Return:
     A list of ota_metadata_pb2.ApexInfo() populated using the APEX stored in
-    /system partition of the input_file
+    each partition of the input_file
   """
 
   # Extract the apex files so that we can run checks on them
   if not isinstance(input_file, str):
     raise RuntimeError("must pass filepath to target-files zip or directory")
+  apex_infos = []
+  for partition in ['system', 'system_ext', 'product', 'vendor']:
+    apex_infos.extend(GetApexInfoForPartition(input_file, partition))
+  return apex_infos
 
+
+def GetApexInfoForPartition(input_file, partition):
   apex_subdir = os.path.join(partition.upper(), 'apex')
   if os.path.isdir(input_file):
     tmp_dir = input_file
@@ -607,7 +613,6 @@ def GetApexInfoFromTargetFiles(input_file, partition, compressed_only=True):
                          '--output', decompressed_file_path])
       apex_info.decompressed_size = os.path.getsize(decompressed_file_path)
 
-    if not compressed_only or apex_info.is_compressed:
-      apex_infos.append(apex_info)
+    apex_infos.append(apex_info)
 
   return apex_infos
