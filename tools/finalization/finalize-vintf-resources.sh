@@ -23,8 +23,8 @@ function finalize_vintf_resources() {
 function create_new_compat_matrix() {
     # The compatibility matrix versions are bumped during vFRC
     # These will change every time we have a new vFRC
-    export CURRENT_COMPATIBILITY_MATRIX_LEVEL='9'
-    export FINAL_COMPATIBILITY_MATRIX_LEVEL='10'
+    export CURRENT_COMPATIBILITY_MATRIX_LEVEL='202404'
+    export FINAL_COMPATIBILITY_MATRIX_LEVEL='202504'
 
     local top="$(dirname "$0")"/../../../..
     source $top/build/make/tools/finalization/environment.sh
@@ -62,7 +62,7 @@ function create_new_compat_matrix() {
       }" >> $bp_file
 
     # get the previous kernel_configs properties and add them to the new module
-    local kernel_configs=$($top/out/host/linux-x86/bin/bazel query --config=queryview //hardware/interfaces/compatibility_matrices:"$current_bp_module"--android_common --output=build | grep kernel_configs | sed 's/[^\[]*\[\(.*\)],/\1/' | sed 's/ //g' | sed 's/\"//g')
+    local kernel_configs=$($top/out/host/linux-x86/bin/bazel query --config=queryview //hardware/interfaces/compatibility_matrices:"$current_bp_module"--android_common --output=build 2>$1 | grep kernel_configs | sed 's/[^\[]*\[\(.*\)],/\1/' | sed 's/ //g' | sed 's/\"//g')
 
     $top/out/host/linux-x86/bin/bpmodify -m $final_bp_module -property kernel_configs -a $kernel_configs -w $bp_file
 
