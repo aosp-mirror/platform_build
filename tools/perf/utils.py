@@ -28,3 +28,15 @@ def get_root():
         d = d.parent
         if d == pathlib.Path("/"):
             return None
+
+def get_dist_dir():
+    dist_dir = os.getenv("DIST_DIR")
+    if dist_dir:
+        return pathlib.Path(dist_dir).resolve()
+    return get_out_dir().joinpath("dist")
+
+def get_out_dir():
+    out_dir = os.getenv("OUT_DIR")
+    if not out_dir:
+        out_dir = "out"
+    return pathlib.Path(out_dir).resolve()
