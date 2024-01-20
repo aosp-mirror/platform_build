@@ -86,10 +86,12 @@ def group_by(l, key):
 
 
 class Table:
-    def __init__(self):
+    def __init__(self, row_title, fixed_titles=[]):
         self._data = {}
         self._rows = []
         self._cols = []
+        self._fixed_cols = {}
+        self._titles = [row_title] + fixed_titles
 
     def Set(self, column_key, row_key, data):
         self._data[(column_key, row_key)] = data
@@ -98,19 +100,27 @@ class Table:
         if not row_key in self._rows:
             self._rows.append(row_key)
 
+    def SetFixedCol(self, row_key, columns):
+        self._fixed_cols[row_key] = columns
+
     def Write(self, out):
         table = []
         # Expand the column items
         for row in zip(*self._cols):
             if row.count(row[0]) == len(row):
                 continue
-            table.append([""] + [col for col in row])
+            table.append([""] * len(self._titles) + [col for col in row])
         if table:
+            # Update the last row of the header with title and add separator
+            for i in range(len(self._titles)):
+                table[len(table)-1][i] = self._titles[i]
             table.append(pretty.SEPARATOR)
         # Populate the data
         for row in self._rows:
-            table.append([str(row)] + [str(self._data.get((col, row), "")) for col in self._cols])
-        out.write(pretty.FormatTable(table))
+            table.append([str(row)]
+                         + self._fixed_cols[row]
+                         + [str(self._data.get((col, row), "")) for col in self._cols])
+        out.write(pretty.FormatTable(table, alignments="LL"))
 
 
 def format_duration_sec(ns):
@@ -173,11 +183,12 @@ def main(argv):
                               in group_by(summary["benchmarks"], bm_key)]
 
     # Build the table
-    table = Table()
+    table = Table("Benchmark", ["Rebuild"])
     for filename, summary in summaries:
         for key, column in summary["columns"]:
             for id, cell in column:
                 duration_ns = statistics.median([b["duration_ns"] for b in cell])
+                table.SetFixedCol(cell[0]["title"], [" ".join(cell[0]["modules"])])
                 table.Set(tuple([summary["date"].strftime("%Y-%m-%d"),
                                  summary["branch"],
                                  summary["tag"]]
