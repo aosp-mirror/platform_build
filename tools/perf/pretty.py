@@ -19,7 +19,7 @@ class Sentinel():
 
 SEPARATOR = Sentinel()
 
-def FormatTable(data, prefix=""):
+def FormatTable(data, prefix="", alignments=[]):
     """Pretty print a table.
 
     Prefixes each row with `prefix`.
@@ -40,10 +40,10 @@ def FormatTable(data, prefix=""):
         else:
             for i in range(len(row)):
                 cell = row[i] if row[i] else ""
-                if i != 0:
+                if i >= len(alignments) or alignments[i] == "R":
                     result += " " * (widths[i] - len(cell))
                 result += cell
-                if i == 0:
+                if i < len(alignments) and alignments[i] == "L":
                     result += " " * (widths[i] - len(cell))
                 result += colsep
             result += "\n"
