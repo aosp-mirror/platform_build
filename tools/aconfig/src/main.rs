@@ -32,6 +32,7 @@ mod storage;
 
 use codegen::CodegenMode;
 use dump::DumpFormat;
+use storage::StorageFileSelection;
 
 #[cfg(test)]
 mod test;
@@ -134,6 +135,11 @@ fn cli() -> Command {
                         .long("container")
                         .required(true)
                         .help("The target container for the generated storage file."),
+                )
+                .arg(
+                    Arg::new("file")
+                        .long("file")
+                        .value_parser(|s: &str| StorageFileSelection::try_from(s)),
                 )
                 .arg(Arg::new("cache").long("cache").action(ArgAction::Append).required(true))
                 .arg(Arg::new("out").long("out").required(true)),
@@ -278,14 +284,14 @@ fn main() -> Result<()> {
             write_output_to_file_or_stdout(path, &output)?;
         }
         Some(("create-storage", sub_matches)) => {
+            let file = get_required_arg::<StorageFileSelection>(sub_matches, "file")
+                .context("Invalid storage file selection")?;
             let cache = open_zero_or_more_files(sub_matches, "cache")?;
             let container = get_required_arg::<String>(sub_matches, "container")?;
-            let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
-            let generated_files = commands::create_storage(cache, container)
+            let path = get_required_arg::<String>(sub_matches, "out")?;
+            let output = commands::create_storage(cache, container, file)
                 .context("failed to create storage files")?;
-            generated_files
-                .iter()
-                .try_for_each(|file| write_output_file_realtive_to_dir(&dir, file))?;
+            write_output_to_file_or_stdout(path, &output)?;
         }
         _ => unreachable!(),
     }
