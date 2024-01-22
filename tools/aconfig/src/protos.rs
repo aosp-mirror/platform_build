@@ -29,8 +29,10 @@
 // ---- When building with the Android tool-chain ----
 #[cfg(not(feature = "cargo"))]
 mod auto_generated {
+    pub use aconfig_protos::aconfig::flag_metadata::Flag_purpose as ProtoFlagPurpose;
     pub use aconfig_protos::aconfig::Flag_declaration as ProtoFlagDeclaration;
     pub use aconfig_protos::aconfig::Flag_declarations as ProtoFlagDeclarations;
+    pub use aconfig_protos::aconfig::Flag_metadata as ProtoFlagMetadata;
     pub use aconfig_protos::aconfig::Flag_permission as ProtoFlagPermission;
     pub use aconfig_protos::aconfig::Flag_state as ProtoFlagState;
     pub use aconfig_protos::aconfig::Flag_value as ProtoFlagValue;
@@ -47,8 +49,10 @@ mod auto_generated {
     // because this is only used during local development, and only if using cargo instead of the
     // Android tool-chain, we allow it
     include!(concat!(env!("OUT_DIR"), "/aconfig_proto/mod.rs"));
+    pub use aconfig::flag_metadata::Flag_purpose as ProtoFlagPurpose;
     pub use aconfig::Flag_declaration as ProtoFlagDeclaration;
     pub use aconfig::Flag_declarations as ProtoFlagDeclarations;
+    pub use aconfig::Flag_metadata as ProtoFlagMetadata;
     pub use aconfig::Flag_permission as ProtoFlagPermission;
     pub use aconfig::Flag_state as ProtoFlagState;
     pub use aconfig::Flag_value as ProtoFlagValue;
@@ -111,10 +115,15 @@ pub mod flag_declarations {
 
     pub fn verify_fields(pdf: &ProtoFlagDeclarations) -> Result<()> {
         ensure_required_fields!("flag declarations", pdf, "package");
+        // TODO(b/312769710): Make the container field required.
 
         ensure!(
             codegen::is_valid_package_ident(pdf.package()),
             "bad flag declarations: bad package"
+        );
+        ensure!(
+            !pdf.has_container() || codegen::is_valid_container_ident(pdf.container()),
+            "bad flag declarations: bad container"
         );
         for flag_declaration in pdf.flag.iter() {
             super::flag_declaration::verify_fields(flag_declaration)?;
@@ -207,6 +216,10 @@ pub mod parsed_flag {
         );
 
         ensure!(codegen::is_valid_package_ident(pf.package()), "bad parsed flag: bad package");
+        ensure!(
+            !pf.has_container() || codegen::is_valid_container_ident(pf.container()),
+            "bad parsed flag: bad container"
+        );
         ensure!(codegen::is_valid_name_ident(pf.name()), "bad parsed flag: bad name");
         ensure!(codegen::is_valid_name_ident(pf.namespace()), "bad parsed flag: bad namespace");
         ensure!(!pf.description().is_empty(), "bad parsed flag: empty description");
@@ -274,12 +287,18 @@ pub mod parsed_flags {
         Ok(())
     }
 
-    pub fn merge(parsed_flags: Vec<ProtoParsedFlags>) -> Result<ProtoParsedFlags> {
+    pub fn merge(parsed_flags: Vec<ProtoParsedFlags>, dedup: bool) -> Result<ProtoParsedFlags> {
         let mut merged = ProtoParsedFlags::new();
         for mut pfs in parsed_flags.into_iter() {
             merged.parsed_flag.append(&mut pfs.parsed_flag);
         }
         merged.parsed_flag.sort_by_cached_key(create_sorting_key);
+        if dedup {
+            // Deduplicate identical protobuf messages.  Messages with the same sorting key but
+            // different fields (including the path to the original source file) will not be
+            // deduplicated and trigger an error in verify_fields.
+            merged.parsed_flag.dedup();
+        }
         verify_fields(&merged)?;
         Ok(merged)
     }
@@ -289,7 +308,17 @@ pub mod parsed_flags {
     }
 
     fn create_sorting_key(pf: &ProtoParsedFlag) -> String {
-        format!("{}.{}", pf.package(), pf.name())
+        pf.fully_qualified_name()
+    }
+}
+
+pub trait ParsedFlagExt {
+    fn fully_qualified_name(&self) -> String;
+}
+
+impl ParsedFlagExt for ProtoParsedFlag {
+    fn fully_qualified_name(&self) -> String {
+        format!("{}.{}", self.package(), self.name())
     }
 }
 
@@ -303,6 +332,7 @@ mod tests {
         let flag_declarations = flag_declarations::try_from_text_proto(
             r#"
 package: "com.foo.bar"
+container: "system"
 flag {
     name: "first"
     namespace: "first_ns"
@@ -321,6 +351,7 @@ flag {
         )
         .unwrap();
         assert_eq!(flag_declarations.package(), "com.foo.bar");
+        assert_eq!(flag_declarations.container(), "system");
         let first = flag_declarations.flag.iter().find(|pf| pf.name() == "first").unwrap();
         assert_eq!(first.name(), "first");
         assert_eq!(first.namespace(), "first_ns");
@@ -336,9 +367,26 @@ flag {
         assert!(second.is_fixed_read_only());
         assert!(!second.is_exported());
 
+        // valid input: missing container in flag declarations is supported
+        let flag_declarations = flag_declarations::try_from_text_proto(
+            r#"
+package: "com.foo.bar"
+flag {
+    name: "first"
+    namespace: "first_ns"
+    description: "This is the description of the first flag."
+    bug: "123"
+}
+"#,
+        )
+        .unwrap();
+        assert_eq!(flag_declarations.container(), "");
+        assert!(!flag_declarations.has_container());
+
         // bad input: missing package in flag declarations
         let error = flag_declarations::try_from_text_proto(
             r#"
+container: "system"
 flag {
     name: "first"
     namespace: "first_ns"
@@ -358,6 +406,7 @@ flag {
         let error = flag_declarations::try_from_text_proto(
             r#"
 package: "com.foo.bar"
+container: "system"
 flag {
     name: "first"
     description: "This is the description of the first flag."
@@ -376,6 +425,7 @@ flag {
         let error = flag_declarations::try_from_text_proto(
             r#"
 package: "_com.FOO__BAR"
+container: "system"
 flag {
     name: "first"
     namespace: "first_ns"
@@ -395,6 +445,7 @@ flag {
         let error = flag_declarations::try_from_text_proto(
             r#"
 package: "com.foo.bar"
+container: "system"
 flag {
     name: "FIRST"
     namespace: "first_ns"
@@ -414,6 +465,7 @@ flag {
         let error = flag_declarations::try_from_text_proto(
             r#"
 package: "com.foo.bar"
+container: "system"
 flag {
     name: "first"
     namespace: "first_ns"
@@ -428,6 +480,7 @@ flag {
         let error = flag_declarations::try_from_text_proto(
             r#"
 package: "com.foo.bar"
+container: "system"
 flag {
     name: "first"
     namespace: "first_ns"
@@ -439,6 +492,25 @@ flag {
         )
         .unwrap_err();
         assert!(format!("{:?}", error).contains("bad flag declaration: exactly one bug required"));
+
+        // bad input: invalid container name in flag declaration
+        let error = flag_declarations::try_from_text_proto(
+            r#"
+package: "com.foo.bar"
+container: "__bad_bad_container.com"
+flag {
+    name: "first"
+    namespace: "first_ns"
+    description: "This is the description of the first flag."
+    bug: "123"
+    bug: "abc"
+}
+"#,
+        )
+        .unwrap_err();
+        assert!(format!("{:?}", error).contains("bad flag declarations: bad container"));
+
+        // TODO(b/312769710): Verify error when container is missing.
     }
 
     #[test]
@@ -553,6 +625,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 parsed_flag {
     package: "com.second"
@@ -573,6 +646,7 @@ parsed_flag {
         permission: READ_ONLY
     }
     is_fixed_read_only: true
+    container: "system"
 }
 "#;
         let parsed_flags = try_from_binary_proto_from_text_proto(text_proto).unwrap();
@@ -607,6 +681,7 @@ parsed_flag {
     description: "This is the description of the first flag."
     state: DISABLED
     permission: READ_ONLY
+    container: "system"
 }
 "#;
         let error = try_from_binary_proto_from_text_proto(text_proto).unwrap_err();
@@ -625,6 +700,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 "#;
         let error = try_from_binary_proto_from_text_proto(text_proto).unwrap_err();
@@ -645,6 +721,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 parsed_flag {
     package: "aaa.aaa"
@@ -659,6 +736,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 "#;
         let error = try_from_binary_proto_from_text_proto(text_proto).unwrap_err();
@@ -682,6 +760,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 parsed_flag {
     package: "com.foo"
@@ -696,6 +775,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 "#;
         let error = try_from_binary_proto_from_text_proto(text_proto).unwrap_err();
@@ -719,6 +799,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 parsed_flag {
     package: "com.foo"
@@ -733,6 +814,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 "#;
         let error = try_from_binary_proto_from_text_proto(text_proto).unwrap_err();
@@ -760,6 +842,7 @@ parsed_flag {
         state: ENABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 "#;
         let parsed_flags = try_from_binary_proto_from_text_proto(text_proto).unwrap();
@@ -786,6 +869,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 parsed_flag {
     package: "com.second"
@@ -800,6 +884,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 "#;
         let expected = try_from_binary_proto_from_text_proto(text_proto).unwrap();
@@ -818,6 +903,7 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 "#;
         let first = try_from_binary_proto_from_text_proto(text_proto).unwrap();
@@ -836,18 +922,68 @@ parsed_flag {
         state: DISABLED
         permission: READ_ONLY
     }
+    container: "system"
 }
 "#;
         let second = try_from_binary_proto_from_text_proto(text_proto).unwrap();
 
+        let text_proto = r#"
+parsed_flag {
+    package: "com.second"
+    name: "second"
+    namespace: "second_ns"
+    bug: "b"
+    description: "This is the description of the second flag."
+    state: ENABLED
+    permission: READ_WRITE
+    trace {
+        source: "duplicate/flags.declarations"
+        state: DISABLED
+        permission: READ_ONLY
+    }
+}
+"#;
+        let second_duplicate = try_from_binary_proto_from_text_proto(text_proto).unwrap();
+
         // bad cases
-        let error = parsed_flags::merge(vec![first.clone(), first.clone()]).unwrap_err();
+
+        // two of the same flag with dedup disabled
+        let error = parsed_flags::merge(vec![first.clone(), first.clone()], false).unwrap_err();
         assert_eq!(format!("{:?}", error), "bad parsed flags: duplicate flag com.first.first (defined in flags.declarations and flags.declarations)");
 
+        // two conflicting flags with dedup disabled
+        let error =
+            parsed_flags::merge(vec![second.clone(), second_duplicate.clone()], false).unwrap_err();
+        assert_eq!(format!("{:?}", error), "bad parsed flags: duplicate flag com.second.second (defined in flags.declarations and duplicate/flags.declarations)");
+
+        // two conflicting flags with dedup enabled
+        let error =
+            parsed_flags::merge(vec![second.clone(), second_duplicate.clone()], true).unwrap_err();
+        assert_eq!(format!("{:?}", error), "bad parsed flags: duplicate flag com.second.second (defined in flags.declarations and duplicate/flags.declarations)");
+
         // valid cases
-        assert!(parsed_flags::merge(vec![]).unwrap().parsed_flag.is_empty());
-        assert_eq!(first, parsed_flags::merge(vec![first.clone()]).unwrap());
-        assert_eq!(expected, parsed_flags::merge(vec![first.clone(), second.clone()]).unwrap());
-        assert_eq!(expected, parsed_flags::merge(vec![second, first]).unwrap());
+        assert!(parsed_flags::merge(vec![], false).unwrap().parsed_flag.is_empty());
+        assert!(parsed_flags::merge(vec![], true).unwrap().parsed_flag.is_empty());
+        assert_eq!(first, parsed_flags::merge(vec![first.clone()], false).unwrap());
+        assert_eq!(first, parsed_flags::merge(vec![first.clone()], true).unwrap());
+        assert_eq!(
+            expected,
+            parsed_flags::merge(vec![first.clone(), second.clone()], false).unwrap()
+        );
+        assert_eq!(
+            expected,
+            parsed_flags::merge(vec![first.clone(), second.clone()], true).unwrap()
+        );
+        assert_eq!(
+            expected,
+            parsed_flags::merge(vec![second.clone(), first.clone()], false).unwrap()
+        );
+        assert_eq!(
+            expected,
+            parsed_flags::merge(vec![second.clone(), first.clone()], true).unwrap()
+        );
+
+        // two identical flags with dedup enabled
+        assert_eq!(first, parsed_flags::merge(vec![first.clone(), first.clone()], true).unwrap());
     }
 }

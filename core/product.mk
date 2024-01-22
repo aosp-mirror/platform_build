@@ -35,7 +35,7 @@ _product_single_value_vars += PRODUCT_MAX_PAGE_SIZE_SUPPORTED
 
 # Indicates that AOSP can use a kernel configured with 4k/16k/64k page sizes.
 # The possible values are true or false.
-_product_single_value_vars += PRODUCT_PAGE_SIZE_AGNOSTIC
+_product_single_value_vars += PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO
 
 # The resource configuration options to use for this product.
 _product_list_vars += PRODUCT_LOCALES
@@ -183,8 +183,6 @@ _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS_EXTRA
 # Set to true to disable <uses-library> checks for a product.
 _product_list_vars += PRODUCT_BROKEN_VERIFY_USES_LIBRARIES
 
-# All of the apps that we force preopt, this overrides WITH_DEXPREOPT.
-_product_list_vars += PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK
 _product_list_vars += PRODUCT_DEXPREOPT_SPEED_APPS
 _product_list_vars += PRODUCT_LOADED_BY_PRIVILEGED_MODULES
 _product_single_value_vars += PRODUCT_VBOOT_SIGNING_KEY
@@ -448,7 +446,7 @@ _product_single_value_vars += PRODUCT_CHECK_DEV_TYPE_VIOLATIONS
 
 _product_list_vars += PRODUCT_AFDO_PROFILES
 
-_product_single_value_vars += PRODUCT_NEXT_RELEASE_HIDE_FLAGGED_API
+_product_single_value_vars += PRODUCT_SCUDO_ALLOCATION_RING_BUFFER_SIZE
 
 _product_list_vars += PRODUCT_RELEASE_CONFIG_MAPS
 

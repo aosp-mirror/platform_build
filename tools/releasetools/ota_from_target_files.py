@@ -256,6 +256,12 @@ A/B OTA specific options
 
   --max_threads
       Specify max number of threads allowed when generating A/B OTA
+
+  --vabc_cow_version
+      Specify the VABC cow version to be used
+
+  --compression_factor
+      Specify the maximum block size to be compressed at once during OTA. supported options: 4k, 8k, 16k, 32k, 64k, 128k
 """
 
 from __future__ import print_function
@@ -327,10 +333,13 @@ OPTIONS.enable_lz4diff = False
 OPTIONS.vabc_compression_param = None
 OPTIONS.security_patch_level = None
 OPTIONS.max_threads = None
+OPTIONS.vabc_cow_version = None
+OPTIONS.compression_factor = None
 
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
+MISC_INFO = 'META/misc_info.txt'
 AB_PARTITIONS = 'META/ab_partitions.txt'
 
 # Files to be unzipped for target diffing purpose.
@@ -357,6 +366,25 @@ def _LoadOemDicts(oem_source):
     oem_dicts.append(common.LoadDictionaryFromFile(oem_file))
   return oem_dicts
 
+def ModifyKeyvalueList(content: str, key: str, value: str):
+  """ Update update the key value list with specified key and value
+  Args:
+    content: The string content of dynamic_partitions_info.txt. Each line
+      should be a key valur pair, where string before the first '=' are keys,
+      remaining parts are values.
+    key: the key of the key value pair to modify
+    value: the new value to replace with
+
+  Returns:
+    Updated content of the key value list
+  """
+  output_list = []
+  for line in content.splitlines():
+    if line.startswith(key+"="):
+      continue
+    output_list.append(line)
+  output_list.append("{}={}".format(key, value))
+  return "\n".join(output_list)
 
 def ModifyVABCCompressionParam(content, algo):
   """ Update update VABC Compression Param in dynamic_partitions_info.txt
@@ -367,13 +395,7 @@ def ModifyVABCCompressionParam(content, algo):
   Returns:
     Updated content of dynamic_partitions_info.txt , with custom compression algo
   """
-  output_list = []
-  for line in content.splitlines():
-    if line.startswith("virtual_ab_compression_method="):
-      continue
-    output_list.append(line)
-  output_list.append("virtual_ab_compression_method="+algo)
-  return "\n".join(output_list)
+  return ModifyKeyvalueList(content, "virtual_ab_compression_method", algo)
 
 
 def UpdatesInfoForSpecialUpdates(content, partitions_filter,
@@ -533,8 +555,7 @@ def GetTargetFilesZipWithoutPostinstallConfig(input_file):
 def ParseInfoDict(target_file_path):
   return common.LoadInfoDict(target_file_path)
 
-
-def GetTargetFilesZipForCustomVABCCompression(input_file, vabc_compression_param):
+def ModifyTargetFilesDynamicPartitionInfo(input_file, key, value):
   """Returns a target-files.zip with a custom VABC compression param.
   Args:
     input_file: The input target-files.zip path
@@ -545,11 +566,11 @@ def GetTargetFilesZipForCustomVABCCompression(input_file, vabc_compression_param
   """
   if os.path.isdir(input_file):
     dynamic_partition_info_path = os.path.join(
-        input_file, "META", "dynamic_partitions_info.txt")
+        input_file, *DYNAMIC_PARTITION_INFO.split("/"))
     with open(dynamic_partition_info_path, "r") as fp:
       dynamic_partition_info = fp.read()
-    dynamic_partition_info = ModifyVABCCompressionParam(
-        dynamic_partition_info, vabc_compression_param)
+    dynamic_partition_info = ModifyKeyvalueList(
+        dynamic_partition_info, key, value)
     with open(dynamic_partition_info_path, "w") as fp:
       fp.write(dynamic_partition_info)
     return input_file
@@ -559,11 +580,22 @@ def GetTargetFilesZipForCustomVABCCompression(input_file, vabc_compression_param
   common.ZipDelete(target_file, DYNAMIC_PARTITION_INFO)
   with zipfile.ZipFile(input_file, 'r', allowZip64=True) as zfp:
     dynamic_partition_info = zfp.read(DYNAMIC_PARTITION_INFO).decode()
-    dynamic_partition_info = ModifyVABCCompressionParam(
-        dynamic_partition_info, vabc_compression_param)
+    dynamic_partition_info = ModifyKeyvalueList(
+        dynamic_partition_info, key, value)
     with zipfile.ZipFile(target_file, "a", allowZip64=True) as output_zip:
       output_zip.writestr(DYNAMIC_PARTITION_INFO, dynamic_partition_info)
   return target_file
+
+def GetTargetFilesZipForCustomVABCCompression(input_file, vabc_compression_param):
+  """Returns a target-files.zip with a custom VABC compression param.
+  Args:
+    input_file: The input target-files.zip path
+    vabc_compression_param: Custom Virtual AB Compression algorithm
+
+  Returns:
+    The path to modified target-files.zip
+  """
+  return ModifyTargetFilesDynamicPartitionInfo(input_file, "virtual_ab_compression_method", vabc_compression_param)
 
 
 def GetTargetFilesZipForPartialUpdates(input_file, ab_partitions):
@@ -824,10 +856,10 @@ def ExtractOrCopyTargetFiles(target_file):
     return ExtractTargetFiles(target_file)
 
 
-def ValidateCompressinParam(target_info):
+def ValidateCompressionParam(target_info):
   vabc_compression_param = OPTIONS.vabc_compression_param
   if vabc_compression_param:
-    minimum_api_level_required = VABC_COMPRESSION_PARAM_SUPPORT[vabc_compression_param]
+    minimum_api_level_required = VABC_COMPRESSION_PARAM_SUPPORT[vabc_compression_param.split(",")[0]]
     if target_info.vendor_api_level < minimum_api_level_required:
       raise ValueError("Specified VABC compression param {} is only supported for API level >= {}, device is on API level {}".format(
           vabc_compression_param, minimum_api_level_required, target_info.vendor_api_level))
@@ -840,7 +872,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   target_info = common.BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
   if OPTIONS.disable_vabc and target_info.is_release_key:
     raise ValueError("Disabling VABC on release-key builds is not supported.")
-  ValidateCompressinParam(target_info)
+  ValidateCompressionParam(target_info)
   vabc_compression_param = target_info.vabc_compression_param
 
   target_file = ExtractOrCopyTargetFiles(target_file)
@@ -979,6 +1011,10 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   if vabc_compression_param != target_info.vabc_compression_param:
     target_file = GetTargetFilesZipForCustomVABCCompression(
         target_file, vabc_compression_param)
+  if OPTIONS.vabc_cow_version:
+    target_file = ModifyTargetFilesDynamicPartitionInfo(target_file, "virtual_ab_cow_version", OPTIONS.vabc_cow_version)
+  if OPTIONS.compression_factor:
+    target_file = ModifyTargetFilesDynamicPartitionInfo(target_file, "virtual_ab_compression_factor", OPTIONS.compression_factor)
   if OPTIONS.skip_postinstall:
     target_file = GetTargetFilesZipWithoutPostinstallConfig(target_file)
   # Target_file may have been modified, reparse ab_partitions
@@ -997,7 +1033,11 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   partition_timestamps_flags = []
   # Enforce a max timestamp this payload can be applied on top of.
   if OPTIONS.downgrade:
-    max_timestamp = source_info.GetBuildProp("ro.build.date.utc")
+    # When generating ota between merged target-files, partition build date can
+    # decrease in target, at the same time as ro.build.date.utc increases,
+    # so always pick largest value.
+    max_timestamp = max(source_info.GetBuildProp("ro.build.date.utc"),
+        str(metadata.postcondition.timestamp))
     partition_timestamps_flags = GeneratePartitionTimestampFlagsDowngrade(
         metadata.precondition.partition_state,
         metadata.postcondition.partition_state
@@ -1235,6 +1275,19 @@ def main(argv):
       else:
         raise ValueError("Cannot parse value %r for option %r - only "
                          "integers are allowed." % (a, o))
+    elif o in ("--compression_factor"):
+        values = ["4k", "8k", "16k", "32k", "64k", "128k"]
+        if a[:-1].isdigit() and a in values and a.endswith("k"):
+            OPTIONS.compression_factor = str(int(a[:-1]) * 1024)
+        else:
+            raise ValueError("Please specify value from following options: 4k, 8k, 16k, 32k, 64k, 128k")
+
+    elif o == "--vabc_cow_version":
+      if a.isdigit():
+        OPTIONS.vabc_cow_version = a
+      else:
+        raise ValueError("Cannot parse value %r for option %r - only "
+                         "integers are allowed." % (a, o))
     else:
       return False
     return True
@@ -1283,6 +1336,8 @@ def main(argv):
                                  "vabc_compression_param=",
                                  "security_patch_level=",
                                  "max_threads=",
+                                 "vabc_cow_version=",
+                                 "compression_factor=",
                              ], extra_option_handler=[option_handler, payload_signer.signer_options])
   common.InitLogging()
 

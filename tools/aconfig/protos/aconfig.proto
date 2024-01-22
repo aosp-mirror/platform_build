@@ -41,11 +41,27 @@ message flag_declaration {
   repeated string bug = 4;
   optional bool is_fixed_read_only = 5;
   optional bool is_exported = 6;
+  optional flag_metadata metadata = 7;
 };
+
+// Optional metadata about the flag, such as its purpose and its intended form factors.
+// Can influence the applied policies and testing strategy.
+message flag_metadata {
+  enum flag_purpose {
+    PURPOSE_UNSPECIFIED = 0;
+    PURPOSE_FEATURE = 1;
+    PURPOSE_BUGFIX = 2;
+  }
+
+  optional flag_purpose purpose = 1;
+
+  // TODO(b/315025930): Add field to designate intended target device form factor(s), such as phone, watch or other.
+}
 
 message flag_declarations {
   optional string package = 1;
   repeated flag_declaration flag = 2;
+  optional string container = 3;
 };
 
 message flag_value {
@@ -79,7 +95,8 @@ message parsed_flag {
   repeated tracepoint trace = 8;
   optional bool is_fixed_read_only = 9;
   optional bool is_exported = 10;
-
+  optional string container = 11;
+  optional flag_metadata metadata = 12;
 }
 
 message parsed_flags {

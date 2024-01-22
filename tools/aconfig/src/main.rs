@@ -25,16 +25,23 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 
 mod codegen;
-mod codegen_cpp;
-mod codegen_java;
-mod codegen_rust;
 mod commands;
+mod dump;
 mod protos;
+mod storage;
+
+use codegen::CodegenMode;
+use dump::DumpFormat;
 
 #[cfg(test)]
 mod test;
 
-use commands::{CodegenMode, DumpFormat, Input, OutputFile};
+use commands::{Input, OutputFile};
+
+const HELP_DUMP_FILTER: &str = r#"
+Limit which flags to output. If multiple --filter arguments are provided, the output will be
+limited to flags that match any of the filters.
+"#;
 
 fn cli() -> Command {
     Command::new("aconfig")
@@ -42,6 +49,8 @@ fn cli() -> Command {
         .subcommand(
             Command::new("create-cache")
                 .arg(Arg::new("package").long("package").required(true))
+                // TODO(b/312769710): Make this argument required.
+                .arg(Arg::new("container").long("container"))
                 .arg(Arg::new("declarations").long("declarations").action(ArgAction::Append))
                 .arg(Arg::new("values").long("values").action(ArgAction::Append))
                 .arg(
@@ -61,7 +70,7 @@ fn cli() -> Command {
                 .arg(
                     Arg::new("mode")
                         .long("mode")
-                        .value_parser(EnumValueParser::<commands::CodegenMode>::new())
+                        .value_parser(EnumValueParser::<CodegenMode>::new())
                         .default_value("production"),
                 ),
         )
@@ -72,7 +81,7 @@ fn cli() -> Command {
                 .arg(
                     Arg::new("mode")
                         .long("mode")
-                        .value_parser(EnumValueParser::<commands::CodegenMode>::new())
+                        .value_parser(EnumValueParser::<CodegenMode>::new())
                         .default_value("production"),
                 ),
         )
@@ -83,7 +92,7 @@ fn cli() -> Command {
                 .arg(
                     Arg::new("mode")
                         .long("mode")
-                        .value_parser(EnumValueParser::<commands::CodegenMode>::new())
+                        .value_parser(EnumValueParser::<CodegenMode>::new())
                         .default_value("production"),
                 ),
         )
@@ -98,15 +107,36 @@ fn cli() -> Command {
                 .arg(Arg::new("out").long("out").default_value("-")),
         )
         .subcommand(
-            Command::new("dump")
-                .arg(Arg::new("cache").long("cache").action(ArgAction::Append).required(true))
+            Command::new("dump-cache")
+                .alias("dump")
+                .arg(Arg::new("cache").long("cache").action(ArgAction::Append))
                 .arg(
                     Arg::new("format")
                         .long("format")
-                        .value_parser(EnumValueParser::<commands::DumpFormat>::new())
-                        .default_value("text"),
+                        .value_parser(|s: &str| DumpFormat::try_from(s))
+                        .default_value(
+                            "{fully_qualified_name} [{container}]: {permission} + {state}",
+                        ),
                 )
+                .arg(
+                    Arg::new("filter")
+                        .long("filter")
+                        .action(ArgAction::Append)
+                        .help(HELP_DUMP_FILTER.trim()),
+                )
+                .arg(Arg::new("dedup").long("dedup").num_args(0).action(ArgAction::SetTrue))
                 .arg(Arg::new("out").long("out").default_value("-")),
+        )
+        .subcommand(
+            Command::new("create-storage")
+                .arg(
+                    Arg::new("container")
+                        .long("container")
+                        .required(true)
+                        .help("The target container for the generated storage file."),
+                )
+                .arg(Arg::new("cache").long("cache").action(ArgAction::Append).required(true))
+                .arg(Arg::new("out").long("out").required(true)),
         )
 }
 
@@ -117,6 +147,13 @@ where
     matches
         .get_one::<T>(arg_name)
         .ok_or(anyhow!("internal error: required argument '{}' not found", arg_name))
+}
+
+fn get_optional_arg<'a, T>(matches: &'a ArgMatches, arg_name: &str) -> Option<&'a T>
+where
+    T: Any + Clone + Send + Sync + 'static,
+{
+    matches.get_one::<T>(arg_name)
 }
 
 fn open_zero_or_more_files(matches: &ArgMatches, arg_name: &str) -> Result<Vec<Input>> {
@@ -167,12 +204,20 @@ fn main() -> Result<()> {
     match matches.subcommand() {
         Some(("create-cache", sub_matches)) => {
             let package = get_required_arg::<String>(sub_matches, "package")?;
+            let container =
+                get_optional_arg::<String>(sub_matches, "container").map(|c| c.as_str());
             let declarations = open_zero_or_more_files(sub_matches, "declarations")?;
             let values = open_zero_or_more_files(sub_matches, "values")?;
             let default_permission =
                 get_required_arg::<protos::ProtoFlagPermission>(sub_matches, "default-permission")?;
-            let output = commands::parse_flags(package, declarations, values, *default_permission)
-                .context("failed to create cache")?;
+            let output = commands::parse_flags(
+                package,
+                container,
+                declarations,
+                values,
+                *default_permission,
+            )
+            .context("failed to create cache")?;
             let path = get_required_arg::<String>(sub_matches, "cache")?;
             write_output_to_file_or_stdout(path, &output)?;
         }
@@ -218,13 +263,29 @@ fn main() -> Result<()> {
             let path = get_required_arg::<String>(sub_matches, "out")?;
             write_output_to_file_or_stdout(path, &output)?;
         }
-        Some(("dump", sub_matches)) => {
+        Some(("dump-cache", sub_matches)) => {
             let input = open_zero_or_more_files(sub_matches, "cache")?;
             let format = get_required_arg::<DumpFormat>(sub_matches, "format")
                 .context("failed to dump previously parsed flags")?;
-            let output = commands::dump_parsed_flags(input, *format)?;
+            let filters = sub_matches
+                .get_many::<String>("filter")
+                .unwrap_or_default()
+                .map(String::as_ref)
+                .collect::<Vec<_>>();
+            let dedup = get_required_arg::<bool>(sub_matches, "dedup")?;
+            let output = commands::dump_parsed_flags(input, format.clone(), &filters, *dedup)?;
             let path = get_required_arg::<String>(sub_matches, "out")?;
             write_output_to_file_or_stdout(path, &output)?;
+        }
+        Some(("create-storage", sub_matches)) => {
+            let cache = open_zero_or_more_files(sub_matches, "cache")?;
+            let container = get_required_arg::<String>(sub_matches, "container")?;
+            let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
+            let generated_files = commands::create_storage(cache, container)
+                .context("failed to create storage files")?;
+            generated_files
+                .iter()
+                .try_for_each(|file| write_output_file_realtive_to_dir(&dir, file))?;
         }
         _ => unreachable!(),
     }
