@@ -21,13 +21,31 @@ pub mod package_table;
 use anyhow::{anyhow, Result};
 use std::collections::{hash_map::DefaultHasher, HashMap, HashSet};
 use std::hash::{Hash, Hasher};
-use std::path::PathBuf;
 
-use crate::commands::OutputFile;
 use crate::protos::{ProtoParsedFlag, ProtoParsedFlags};
 use crate::storage::{
     flag_table::FlagTable, flag_value::FlagValueList, package_table::PackageTable,
 };
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum StorageFileSelection {
+    PackageMap,
+    FlagMap,
+    FlagVal,
+}
+
+impl TryFrom<&str> for StorageFileSelection {
+    type Error = anyhow::Error;
+
+    fn try_from(value: &str) -> std::result::Result<Self, Self::Error> {
+        match value {
+            "package_map" => Ok(Self::PackageMap),
+            "flag_map" => Ok(Self::FlagMap),
+            "flag_val" => Ok(Self::FlagVal),
+            _ => Err(anyhow!("Invalid storage file to create")),
+        }
+    }
+}
 
 pub const FILE_VERSION: u32 = 1;
 
@@ -110,34 +128,30 @@ where
     packages
 }
 
-pub fn generate_storage_files<'a, I>(
+pub fn generate_storage_file<'a, I>(
     container: &str,
     parsed_flags_vec_iter: I,
-) -> Result<Vec<OutputFile>>
+    file: &StorageFileSelection,
+) -> Result<Vec<u8>>
 where
     I: Iterator<Item = &'a ProtoParsedFlags>,
 {
     let packages = group_flags_by_package(parsed_flags_vec_iter);
 
-    // create and serialize package map
-    let package_table = PackageTable::new(container, &packages)?;
-    let package_table_file_path = PathBuf::from("package.map");
-    let package_table_file =
-        OutputFile { contents: package_table.as_bytes(), path: package_table_file_path };
-
-    // create and serialize flag map
-    let flag_table = FlagTable::new(container, &packages)?;
-    let flag_table_file_path = PathBuf::from("flag.map");
-    let flag_table_file =
-        OutputFile { contents: flag_table.as_bytes(), path: flag_table_file_path };
-
-    // create and serialize flag value
-    let flag_value = FlagValueList::new(container, &packages)?;
-    let flag_value_file_path = PathBuf::from("flag.val");
-    let flag_value_file =
-        OutputFile { contents: flag_value.as_bytes(), path: flag_value_file_path };
-
-    Ok(vec![package_table_file, flag_table_file, flag_value_file])
+    match file {
+        StorageFileSelection::PackageMap => {
+            let package_table = PackageTable::new(container, &packages)?;
+            Ok(package_table.as_bytes())
+        }
+        StorageFileSelection::FlagMap => {
+            let flag_table = FlagTable::new(container, &packages)?;
+            Ok(flag_table.as_bytes())
+        }
+        StorageFileSelection::FlagVal => {
+            let flag_value = FlagValueList::new(container, &packages)?;
+            Ok(flag_value.as_bytes())
+        }
+    }
 }
 
 #[cfg(test)]
