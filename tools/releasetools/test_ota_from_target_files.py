@@ -299,7 +299,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetApexInfoFromTargetFiles(self):
     target_files = construct_target_files(compressedApex=True)
-    apex_infos = GetApexInfoFromTargetFiles(target_files, 'system')
+    apex_infos = GetApexInfoFromTargetFiles(target_files)
     self.assertEqual(len(apex_infos), 1)
     self.assertEqual(apex_infos[0].package_name, "com.android.apex.compressed")
     self.assertEqual(apex_infos[0].version, 1)
