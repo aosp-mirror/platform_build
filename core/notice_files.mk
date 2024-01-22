@@ -2,30 +2,6 @@
 ## Track NOTICE files
 ###########################################################
 
-ifneq ($(LOCAL_NOTICE_FILE),)
-  notice_file:=$(strip $(LOCAL_NOTICE_FILE))
-else
-  notice_file:=$(strip $(wildcard $(LOCAL_PATH)/LICENSE $(LOCAL_PATH)/LICENCE $(LOCAL_PATH)/NOTICE))
-endif
-
-ifeq ($(LOCAL_MODULE_CLASS),GYP)
-  # We ignore NOTICE files for modules of type GYP.
-  notice_file :=
-endif
-
-ifeq ($(LOCAL_MODULE_CLASS),FAKE)
-  # We ignore NOTICE files for modules of type FAKE.
-  notice_file :=
-endif
-
-# Soong generates stub libraries that don't need NOTICE files
-ifdef LOCAL_NO_NOTICE_FILE
-  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-    $(call pretty-error,LOCAL_NO_NOTICE_FILE should not be used by Android.mk files)
-  endif
-  notice_file :=
-endif
-
 module_license_metadata := $(call local-meta-intermediates-dir)/$(my_register_name).meta_lic
 
 $(foreach target,$(ALL_MODULES.$(my_register_name).BUILT) $(ALL_MODULES.$(my_register_name).INSTALLED) $(foreach bi,$(LOCAL_SOONG_BUILT_INSTALLED),$(call word-colon,1,$(bi))),\
@@ -44,6 +20,30 @@ ifdef LOCAL_SOONG_LICENSE_METADATA
 else
   # Make modules don't have enough information to produce a license metadata rule until after fix-notice-deps
   # has been called, store the necessary information until later.
+
+  ifneq ($(LOCAL_NOTICE_FILE),)
+    notice_file:=$(strip $(LOCAL_NOTICE_FILE))
+  else
+    notice_file:=$(strip $(wildcard $(LOCAL_PATH)/LICENSE $(LOCAL_PATH)/LICENCE $(LOCAL_PATH)/NOTICE))
+  endif
+
+  ifeq ($(LOCAL_MODULE_CLASS),GYP)
+    # We ignore NOTICE files for modules of type GYP.
+    notice_file :=
+  endif
+
+  ifeq ($(LOCAL_MODULE_CLASS),FAKE)
+    # We ignore NOTICE files for modules of type FAKE.
+    notice_file :=
+  endif
+
+  # Soong generates stub libraries that don't need NOTICE files
+  ifdef LOCAL_NO_NOTICE_FILE
+    ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+      $(call pretty-error,LOCAL_NO_NOTICE_FILE should not be used by Android.mk files)
+    endif
+    notice_file :=
+  endif
 
   ifneq (,$(strip $(LOCAL_LICENSE_PACKAGE_NAME)))
     license_package_name:=$(strip $(LOCAL_LICENSE_PACKAGE_NAME))
@@ -136,8 +136,9 @@ else
   ALL_MODULES.$(my_register_name).NOTICE_DEPS := $(ALL_MODULES.$(my_register_name).NOTICE_DEPS) $(notice_deps)
   ALL_MODULES.$(my_register_name).IS_CONTAINER := $(strip $(filter-out false,$(ALL_MODULES.$(my_register_name).IS_CONTAINER) $(is_container)))
   ALL_MODULES.$(my_register_name).PATH := $(strip $(ALL_MODULES.$(my_register_name).PATH) $(local_path))
+
+  ifdef notice_file
+    ALL_MODULES.$(my_register_name).NOTICES := $(ALL_MODULES.$(my_register_name).NOTICES) $(notice_file)
+  endif  # notice_file
 endif
 
-ifdef notice_file
-ALL_MODULES.$(my_register_name).NOTICES := $(ALL_MODULES.$(my_register_name).NOTICES) $(notice_file)
-endif  # notice_file

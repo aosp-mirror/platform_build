@@ -1,4 +1,5 @@
 package: "com.android.aconfig.test"
+container: "system"
 
 # This flag's final value is calculated from:
 # - test.aconfig: DISABLED + READ_WRITE (default)
@@ -9,6 +10,9 @@ flag {
     namespace: "aconfig_test"
     description: "This flag is ENABLED + READ_ONLY"
     bug: "abc"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
 }
 
 # This flag's final value is calculated from:
@@ -39,7 +43,6 @@ flag {
     namespace: "aconfig_test"
     description: "This flag is DISABLED + READ_WRITE"
     bug: "456"
-    is_exported: true
 }
 
 # This flag's final value calculated from:
@@ -58,4 +61,29 @@ flag {
     namespace: "other_namespace"
     description: "This flag is DISABLED + READ_WRITE, and is defined in another namespace"
     bug: "999"
+}
+
+flag {
+    name: "enabled_ro_exported"
+    namespace: "aconfig_test"
+    description: "This flag is ENABLED + READ_ONLY and exported"
+    bug: "111"
+    is_exported: true
+}
+
+flag {
+    name: "disabled_rw_exported"
+    namespace: "aconfig_test"
+    description: "This flag is DISABLED + READ_WRITE and exported"
+    bug: "111"
+    is_exported: true
+}
+
+flag {
+    name: "enabled_fixed_ro_exported"
+    namespace: "aconfig_test"
+    description: "This flag is fixed ENABLED + READ_ONLY and exported"
+    bug: "111"
+    is_fixed_read_only: true
+    is_exported: true
 }

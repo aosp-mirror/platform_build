@@ -47,6 +47,10 @@ Usage: merge_builds.py [args]
       The optional path to a newline-separated config file containing keys to
       obtain from the framework instance of misc_info.txt, used for creating
       vbmeta.img. The remaining keys come from the vendor instance.
+
+  --avb_resolve_rollback_index_location_conflict
+      If provided, resolve the conflict AVB rollback index location when
+      necessary.
 """
 from __future__ import print_function
 
@@ -65,6 +69,7 @@ OPTIONS.product_out_framework = None
 OPTIONS.product_out_vendor = None
 OPTIONS.build_vbmeta = False
 OPTIONS.framework_misc_info_keys = None
+OPTIONS.avb_resolve_rollback_index_location_conflict = False
 
 
 def CreateImageSymlinks():
@@ -140,7 +145,8 @@ def BuildVBMeta():
   output_vbmeta_path = os.path.join(OPTIONS.product_out_vendor, "vbmeta.img")
   OPTIONS.info_dict = merged_dict
   common.BuildVBMeta(output_vbmeta_path, partitions, "vbmeta",
-                     vbmeta_partitions)
+                     vbmeta_partitions,
+                     OPTIONS.avb_resolve_rollback_index_location_conflict)
 
 
 def MergeBuilds():
@@ -164,6 +170,8 @@ def main():
       OPTIONS.build_vbmeta = True
     elif o == "--framework_misc_info_keys":
       OPTIONS.framework_misc_info_keys = a
+    elif o == "--avb_resolve_rollback_index_location_conflict":
+      OPTIONS.avb_resolve_rollback_index_location_conflict = True
     else:
       return False
     return True
@@ -177,6 +185,7 @@ def main():
           "product_out_vendor=",
           "build_vbmeta",
           "framework_misc_info_keys=",
+          "avb_resolve_rollback_index_location_conflict"
       ],
       extra_option_handler=option_handler)
 

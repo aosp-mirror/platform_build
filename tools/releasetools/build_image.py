@@ -437,6 +437,8 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
         sldc_flags = sldc_flags_str.split()
         build_command.append(str(len(sldc_flags)))
         build_command.extend(sldc_flags)
+    f2fs_blocksize = prop_dict.get("f2fs_blocksize", "4096")
+    build_command.extend(["-b", f2fs_blocksize])
   else:
     raise BuildImageError(
         "Error: unknown filesystem type: {}".format(fs_type))
@@ -721,6 +723,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "system_f2fs_compress",
       "system_f2fs_sldc_flags",
       "f2fs_sparse_flag",
+      "f2fs_blocksize",
       "skip_fsck",
       "ext_mkuserimg",
       "avb_enable",
@@ -770,6 +773,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       (True, "{}_extfs_inode_count", "extfs_inode_count"),
       (True, "{}_f2fs_compress", "f2fs_compress"),
       (True, "{}_f2fs_sldc_flags", "f2fs_sldc_flags"),
+      (True, "{}_f2fs_blocksize", "f2fs_block_size"),
       (True, "{}_reserved_size", "partition_reserved_size"),
       (True, "{}_squashfs_block_size", "squashfs_block_size"),
       (True, "{}_squashfs_compressor", "squashfs_compressor"),
@@ -817,7 +821,6 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   d["mount_point"] = mount_point
   if mount_point == "system":
     copy_prop("system_headroom", "partition_headroom")
-    copy_prop("system_root_image", "system_root_image")
     copy_prop("root_dir", "root_dir")
     copy_prop("root_fs_config", "root_fs_config")
   elif mount_point == "data":

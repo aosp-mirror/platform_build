@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
+pub mod cpp;
+pub mod java;
+pub mod rust;
+
 use anyhow::{ensure, Result};
+use clap::ValueEnum;
 
 pub fn is_valid_name_ident(s: &str) -> bool {
     // Identifiers must match [a-z][a-z0-9_]*, except consecutive underscores are not allowed
@@ -38,10 +43,33 @@ pub fn is_valid_package_ident(s: &str) -> bool {
     s.split('.').all(is_valid_name_ident)
 }
 
+pub fn is_valid_container_ident(s: &str) -> bool {
+    s.split('.').all(is_valid_name_ident)
+}
+
 pub fn create_device_config_ident(package: &str, flag_name: &str) -> Result<String> {
     ensure!(is_valid_package_ident(package), "bad package");
     ensure!(is_valid_name_ident(flag_name), "bad flag name");
     Ok(format!("{}.{}", package, flag_name))
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
+pub enum CodegenMode {
+    Exported,
+    ForceReadOnly,
+    Production,
+    Test,
+}
+
+impl std::fmt::Display for CodegenMode {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            CodegenMode::Exported => write!(f, "exported"),
+            CodegenMode::ForceReadOnly => write!(f, "force-read-only"),
+            CodegenMode::Production => write!(f, "production"),
+            CodegenMode::Test => write!(f, "test"),
+        }
+    }
 }
 
 #[cfg(test)]
@@ -82,6 +110,29 @@ mod tests {
         assert!(!is_valid_package_ident(".."));
         assert!(!is_valid_package_ident("foo..bar"));
         assert!(!is_valid_package_ident("foo.__bar"));
+    }
+
+    #[test]
+    fn test_is_valid_container_ident() {
+        assert!(is_valid_container_ident("foo.bar"));
+        assert!(is_valid_container_ident("foo.bar_baz"));
+        assert!(is_valid_container_ident("foo.bar.a123"));
+        assert!(is_valid_container_ident("foo"));
+        assert!(is_valid_container_ident("foo_bar_123"));
+
+        assert!(!is_valid_container_ident(""));
+        assert!(!is_valid_container_ident("foo._bar"));
+        assert!(!is_valid_container_ident("_foo"));
+        assert!(!is_valid_container_ident("123_foo"));
+        assert!(!is_valid_container_ident("foo-bar"));
+        assert!(!is_valid_container_ident("foo-b\u{00e5}r"));
+        assert!(!is_valid_container_ident("foo.bar.123"));
+        assert!(!is_valid_container_ident(".foo.bar"));
+        assert!(!is_valid_container_ident("foo.bar."));
+        assert!(!is_valid_container_ident("."));
+        assert!(!is_valid_container_ident(".."));
+        assert!(!is_valid_container_ident("foo..bar"));
+        assert!(!is_valid_container_ident("foo.__bar"));
     }
 
     #[test]

@@ -17,5 +17,47 @@
       // that using the flag macros to do filtering will get affected.
       "name": "FlagMacrosTests"
     }
+  ],
+  "postsubmit": [
+    {
+      // aconfig unit tests
+      "name": "aconfig.test"
+    },
+    {
+      // aconfig Java integration tests (host)
+      "name": "AconfigJavaHostTest"
+    },
+    {
+      // aconfig Java integration tests
+      "name": "aconfig.test.java"
+    },
+    {
+      // aconfig C++ integration tests (production mode auto-generated code)
+      "name": "aconfig.test.cpp"
+    },
+    {
+      // aconfig C++ integration tests (test mode auto-generated code)
+      "name": "aconfig.test.cpp.test_mode"
+    },
+    {
+      // aconfig C++ integration tests (exported mode auto-generated code)
+      "name": "aconfig.test.cpp.exported_mode"
+    },
+    {
+      // aconfig Rust integration tests (production mode auto-generated code)
+      "name": "aconfig.prod_mode.test.rust"
+    },
+    {
+      // aconfig Rust integration tests (test mode auto-generated code)
+      "name": "aconfig.test_mode.test.rust"
+    },
+    {
+      // aconfig Rust integration tests (exported mode auto-generated code)
+      "name": "aconfig.exported_mode.test.rust"
+    },
+    {
+      // printflags unit tests
+      "name": "printflags.test"
+    }
   ]
 }
