@@ -994,11 +994,6 @@ ifdef RELEASE_BOARD_API_LEVEL
   endif
   BOARD_API_LEVEL := $(RELEASE_BOARD_API_LEVEL)
   .KATI_READONLY := BOARD_API_LEVEL
-
-  ifdef RELEASE_BOARD_API_LEVEL_FROZEN
-    BOARD_API_LEVEL_FROZEN := true
-    .KATI_READONLY := BOARD_API_LEVEL_FROZEN
-  endif
 endif
 
 ###########################################
