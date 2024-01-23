@@ -29,17 +29,17 @@
 // ---- When building with the Android tool-chain ----
 #[cfg(not(feature = "cargo"))]
 mod auto_generated {
-    pub use aconfig_protos::aconfig::flag_metadata::Flag_purpose as ProtoFlagPurpose;
-    pub use aconfig_protos::aconfig::Flag_declaration as ProtoFlagDeclaration;
-    pub use aconfig_protos::aconfig::Flag_declarations as ProtoFlagDeclarations;
-    pub use aconfig_protos::aconfig::Flag_metadata as ProtoFlagMetadata;
-    pub use aconfig_protos::aconfig::Flag_permission as ProtoFlagPermission;
-    pub use aconfig_protos::aconfig::Flag_state as ProtoFlagState;
-    pub use aconfig_protos::aconfig::Flag_value as ProtoFlagValue;
-    pub use aconfig_protos::aconfig::Flag_values as ProtoFlagValues;
-    pub use aconfig_protos::aconfig::Parsed_flag as ProtoParsedFlag;
-    pub use aconfig_protos::aconfig::Parsed_flags as ProtoParsedFlags;
-    pub use aconfig_protos::aconfig::Tracepoint as ProtoTracepoint;
+    pub use aconfig_rust_proto::aconfig::flag_metadata::Flag_purpose as ProtoFlagPurpose;
+    pub use aconfig_rust_proto::aconfig::Flag_declaration as ProtoFlagDeclaration;
+    pub use aconfig_rust_proto::aconfig::Flag_declarations as ProtoFlagDeclarations;
+    pub use aconfig_rust_proto::aconfig::Flag_metadata as ProtoFlagMetadata;
+    pub use aconfig_rust_proto::aconfig::Flag_permission as ProtoFlagPermission;
+    pub use aconfig_rust_proto::aconfig::Flag_state as ProtoFlagState;
+    pub use aconfig_rust_proto::aconfig::Flag_value as ProtoFlagValue;
+    pub use aconfig_rust_proto::aconfig::Flag_values as ProtoFlagValues;
+    pub use aconfig_rust_proto::aconfig::Parsed_flag as ProtoParsedFlag;
+    pub use aconfig_rust_proto::aconfig::Parsed_flags as ProtoParsedFlags;
+    pub use aconfig_rust_proto::aconfig::Tracepoint as ProtoTracepoint;
 }
 
 // ---- When building with cargo ----
@@ -68,6 +68,32 @@ pub use auto_generated::*;
 use anyhow::Result;
 use paste::paste;
 
+pub fn is_valid_name_ident(s: &str) -> bool {
+    // Identifiers must match [a-z][a-z0-9_]*, except consecutive underscores are not allowed
+    if s.contains("__") {
+        return false;
+    }
+    let mut chars = s.chars();
+    let Some(first) = chars.next() else {
+        return false;
+    };
+    if !first.is_ascii_lowercase() {
+        return false;
+    }
+    chars.all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || ch == '_')
+}
+
+pub fn is_valid_package_ident(s: &str) -> bool {
+    if !s.contains('.') {
+        return false;
+    }
+    s.split('.').all(is_valid_name_ident)
+}
+
+pub fn is_valid_container_ident(s: &str) -> bool {
+    s.split('.').all(is_valid_name_ident)
+}
+
 fn try_from_text_proto<T>(s: &str) -> Result<T>
 where
     T: protobuf::MessageFull,
@@ -87,14 +113,13 @@ macro_rules! ensure_required_fields {
 
 pub mod flag_declaration {
     use super::*;
-    use crate::codegen;
     use anyhow::ensure;
 
     pub fn verify_fields(pdf: &ProtoFlagDeclaration) -> Result<()> {
         ensure_required_fields!("flag declaration", pdf, "name", "namespace", "description");
 
-        ensure!(codegen::is_valid_name_ident(pdf.name()), "bad flag declaration: bad name");
-        ensure!(codegen::is_valid_name_ident(pdf.namespace()), "bad flag declaration: bad name");
+        ensure!(is_valid_name_ident(pdf.name()), "bad flag declaration: bad name");
+        ensure!(is_valid_name_ident(pdf.namespace()), "bad flag declaration: bad name");
         ensure!(!pdf.description().is_empty(), "bad flag declaration: empty description");
         ensure!(pdf.bug.len() == 1, "bad flag declaration: exactly one bug required");
 
@@ -104,7 +129,6 @@ pub mod flag_declaration {
 
 pub mod flag_declarations {
     use super::*;
-    use crate::codegen;
     use anyhow::ensure;
 
     pub fn try_from_text_proto(s: &str) -> Result<ProtoFlagDeclarations> {
@@ -118,11 +142,11 @@ pub mod flag_declarations {
         // TODO(b/312769710): Make the container field required.
 
         ensure!(
-            codegen::is_valid_package_ident(pdf.package()),
+            is_valid_package_ident(pdf.package()),
             "bad flag declarations: bad package"
         );
         ensure!(
-            !pdf.has_container() || codegen::is_valid_container_ident(pdf.container()),
+            !pdf.has_container() || is_valid_container_ident(pdf.container()),
             "bad flag declarations: bad container"
         );
         for flag_declaration in pdf.flag.iter() {
@@ -135,14 +159,13 @@ pub mod flag_declarations {
 
 pub mod flag_value {
     use super::*;
-    use crate::codegen;
     use anyhow::ensure;
 
     pub fn verify_fields(fv: &ProtoFlagValue) -> Result<()> {
         ensure_required_fields!("flag value", fv, "package", "name", "state", "permission");
 
-        ensure!(codegen::is_valid_package_ident(fv.package()), "bad flag value: bad package");
-        ensure!(codegen::is_valid_name_ident(fv.name()), "bad flag value: bad name");
+        ensure!(is_valid_package_ident(fv.package()), "bad flag value: bad package");
+        ensure!(is_valid_name_ident(fv.name()), "bad flag value: bad name");
 
         Ok(())
     }
@@ -200,7 +223,6 @@ pub mod tracepoint {
 
 pub mod parsed_flag {
     use super::*;
-    use crate::codegen;
     use anyhow::ensure;
 
     pub fn verify_fields(pf: &ProtoParsedFlag) -> Result<()> {
@@ -215,13 +237,13 @@ pub mod parsed_flag {
             "permission"
         );
 
-        ensure!(codegen::is_valid_package_ident(pf.package()), "bad parsed flag: bad package");
+        ensure!(is_valid_package_ident(pf.package()), "bad parsed flag: bad package");
         ensure!(
-            !pf.has_container() || codegen::is_valid_container_ident(pf.container()),
+            !pf.has_container() || is_valid_container_ident(pf.container()),
             "bad parsed flag: bad container"
         );
-        ensure!(codegen::is_valid_name_ident(pf.name()), "bad parsed flag: bad name");
-        ensure!(codegen::is_valid_name_ident(pf.namespace()), "bad parsed flag: bad namespace");
+        ensure!(is_valid_name_ident(pf.name()), "bad parsed flag: bad name");
+        ensure!(is_valid_name_ident(pf.namespace()), "bad parsed flag: bad namespace");
         ensure!(!pf.description().is_empty(), "bad parsed flag: empty description");
         ensure!(!pf.trace.is_empty(), "bad parsed flag: empty trace");
         for tp in pf.trace.iter() {
@@ -261,7 +283,7 @@ pub mod parsed_flags {
     }
 
     pub fn verify_fields(pf: &ProtoParsedFlags) -> Result<()> {
-        use crate::protos::parsed_flag::path_to_declaration;
+        use crate::parsed_flag::path_to_declaration;
 
         let mut previous: Option<&ProtoParsedFlag> = None;
         for parsed_flag in pf.parsed_flag.iter() {
@@ -848,7 +870,7 @@ parsed_flag {
         let parsed_flags = try_from_binary_proto_from_text_proto(text_proto).unwrap();
         let parsed_flag = &parsed_flags.parsed_flag[0];
         assert_eq!(
-            crate::protos::parsed_flag::path_to_declaration(parsed_flag),
+            crate::parsed_flag::path_to_declaration(parsed_flag),
             "flags.declarations"
         );
     }
