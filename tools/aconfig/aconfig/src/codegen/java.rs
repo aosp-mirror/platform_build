@@ -20,10 +20,11 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
 use tinytemplate::TinyTemplate;
 
+use aconfig_protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
+
 use crate::codegen;
 use crate::codegen::CodegenMode;
 use crate::commands::OutputFile;
-use crate::protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
 
 pub fn generate_java_code<I>(
     package: &str,

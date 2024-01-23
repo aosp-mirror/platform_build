@@ -17,7 +17,7 @@
 #[cfg(test)]
 pub mod test_utils {
     use crate::commands::Input;
-    use crate::protos::ProtoParsedFlags;
+    use aconfig_protos::ProtoParsedFlags;
     use itertools;
 
     pub const TEST_PACKAGE: &str = "com.android.aconfig.test";
@@ -265,7 +265,7 @@ parsed_flag {
             crate::commands::DEFAULT_FLAG_PERMISSION,
         )
         .unwrap();
-        crate::protos::parsed_flags::try_from_binary_proto(&bytes).unwrap()
+        aconfig_protos::parsed_flags::try_from_binary_proto(&bytes).unwrap()
     }
 
     pub fn parse_test_flags() -> ProtoParsedFlags {
@@ -289,7 +289,7 @@ parsed_flag {
             crate::commands::DEFAULT_FLAG_PERMISSION,
         )
         .unwrap();
-        crate::protos::parsed_flags::try_from_binary_proto(&bytes).unwrap()
+        aconfig_protos::parsed_flags::try_from_binary_proto(&bytes).unwrap()
     }
 
     pub fn first_significant_code_diff(a: &str, b: &str) -> Option<String> {
