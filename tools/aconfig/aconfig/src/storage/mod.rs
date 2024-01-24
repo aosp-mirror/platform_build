@@ -22,7 +22,7 @@ use anyhow::{anyhow, Result};
 use std::collections::{hash_map::DefaultHasher, HashMap, HashSet};
 use std::hash::{Hash, Hasher};
 
-use crate::protos::{ProtoParsedFlag, ProtoParsedFlags};
+use aconfig_protos::{ProtoParsedFlag, ProtoParsedFlags};
 use crate::storage::{
     flag_table::FlagTable, flag_value::FlagValueList, package_table::PackageTable,
 };
@@ -221,7 +221,7 @@ mod tests {
                     crate::commands::DEFAULT_FLAG_PERMISSION,
                 )
                 .unwrap();
-                crate::protos::parsed_flags::try_from_binary_proto(&bytes).unwrap()
+                aconfig_protos::parsed_flags::try_from_binary_proto(&bytes).unwrap()
             })
             .collect()
     }
