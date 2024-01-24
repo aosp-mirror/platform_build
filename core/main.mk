@@ -311,10 +311,10 @@ ifdef BOARD_API_LEVEL
 ADDITIONAL_VENDOR_PROPERTIES += \
     ro.board.api_level=$(BOARD_API_LEVEL)
 endif
-# BOARD_API_LEVEL_FROZEN is true when the vendor API surface is frozen.
-ifdef BOARD_API_LEVEL_FROZEN
+# RELEASE_BOARD_API_LEVEL_FROZEN is true when the vendor API surface is frozen.
+ifdef RELEASE_BOARD_API_LEVEL_FROZEN
 ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.board.api_frozen=$(BOARD_API_LEVEL_FROZEN)
+    ro.board.api_frozen=$(RELEASE_BOARD_API_LEVEL_FROZEN)
 endif
 
 # Set build prop. This prop is read by ota_from_target_files when generating OTA,

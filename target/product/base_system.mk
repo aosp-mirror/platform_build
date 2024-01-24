@@ -200,6 +200,7 @@ PRODUCT_PACKAGES += \
     libui \
     libusbhost \
     libutils \
+    libvintf_jni \
     libvulkan \
     libwilhelm \
     linker \
@@ -286,6 +287,13 @@ PRODUCT_PACKAGES += \
     wificond \
     wifi.rc \
     wm \
+
+# When we release crashrecovery module
+ifeq ($(RELEASE_CRASHRECOVERY_MODULE),true)
+  PRODUCT_PACKAGES += \
+        com.android.crashrecovery \
+
+endif
 
 # These packages are not used on Android TV
 ifneq ($(PRODUCT_IS_ATV),true)

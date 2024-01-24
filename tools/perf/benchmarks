@@ -130,8 +130,9 @@ def Snapshot(filename):
 def Clean():
     """Remove the out directory."""
     def remove_out():
-        if os.path.exists("out"):
-            shutil.rmtree("out")
+        out_dir = utils.get_out_dir()
+        if os.path.exists(out_dir):
+            shutil.rmtree(out_dir)
     return Change(label="Remove out", change=remove_out, undo=lambda: None)
 
 
@@ -270,7 +271,7 @@ class Runner():
 
     def _run_benchmark(self, lunch, benchmark, iteration):
         """Run a single benchmark."""
-        benchmark_log_subdir = self._log_dir(lunch, benchmark, iteration)
+        benchmark_log_subdir = self._benchmark_log_dir(lunch, benchmark, iteration)
         benchmark_log_dir = self._options.LogDir().joinpath(benchmark_log_subdir)
 
         sys.stderr.write(f"STARTING BENCHMARK: {benchmark.id}\n")
@@ -298,7 +299,7 @@ class Runner():
             dist_one = self._options.DistOne()
             if dist_one:
                 # If we're disting just one benchmark, save the logs and we can stop here.
-                self._dist(dist_one)
+                self._dist(utils.get_dist_dir())
             else:
                 # Postroll builds
                 for i in range(benchmark.preroll):
@@ -315,7 +316,7 @@ class Runner():
         self._write_summary()
         sys.stderr.write(f"FINISHED BENCHMARK: {benchmark.id}\n")
 
-    def _log_dir(self, lunch, benchmark, iteration):
+    def _benchmark_log_dir(self, lunch, benchmark, iteration):
         """Construct the log directory fir a benchmark run."""
         path = f"{lunch.Combine()}/{benchmark.id}"
         # Zero pad to the correct length for correct alpha sorting
@@ -355,8 +356,8 @@ class Runner():
         return after_ns - before_ns
 
     def _dist(self, dist_dir):
-        out_dir = pathlib.Path("out")
-        dest_dir = pathlib.Path(dist_dir).joinpath("logs")
+        out_dir = utils.get_out_dir()
+        dest_dir = dist_dir.joinpath("logs")
         os.makedirs(dest_dir, exist_ok=True)
         basenames = [
             "build.trace.gz",

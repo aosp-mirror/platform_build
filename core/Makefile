@@ -2094,11 +2094,6 @@ endif
 # Get a colon-separated list of search paths.
 INTERNAL_USERIMAGES_BINARY_PATHS := $(subst $(space),:,$(sort $(dir $(INTERNAL_USERIMAGES_DEPS))))
 
-# Collects file_contexts files from modules to be installed
-$(call merge-fc-files, \
-  $(sort $(foreach m,$(product_MODULES),$(ALL_MODULES.$(m).FILE_CONTEXTS))),\
-  $(call intermediates-dir-for,ETC,file_contexts.bin)/file_contexts.modules.tmp)
-
 SELINUX_FC := $(call intermediates-dir-for,ETC,file_contexts.bin)/file_contexts.bin
 
 INTERNAL_USERIMAGES_DEPS += $(SELINUX_FC)
@@ -3237,7 +3232,6 @@ $1:
 	  exit 1; \
 	fi
 	ln -sfn $2 $1
-$1: .KATI_SYMLINK_OUTPUTS := $1
 )
 $(eval PARTITION_COMPAT_SYMLINKS += $1)
 $1

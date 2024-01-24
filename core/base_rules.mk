@@ -1187,7 +1187,6 @@ ALL_MODULES.$(my_register_name).FOR_2ND_ARCH := true
 endif
 ALL_MODULES.$(my_register_name).FOR_HOST_CROSS := $(my_host_cross)
 ifndef LOCAL_IS_HOST_MODULE
-ALL_MODULES.$(my_register_name).FILE_CONTEXTS := $(LOCAL_FILE_CONTEXTS)
 ALL_MODULES.$(my_register_name).APEX_KEYS_FILE := $(LOCAL_APEX_KEY_PATH)
 endif
 test_config :=
