@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-use crate::protos::{
+use aconfig_protos::{
     ParsedFlagExt, ProtoFlagMetadata, ProtoFlagPermission, ProtoFlagState, ProtoTracepoint,
 };
-use crate::protos::{ProtoParsedFlag, ProtoParsedFlags};
+use aconfig_protos::{ProtoParsedFlag, ProtoParsedFlags};
 use anyhow::{anyhow, bail, Context, Result};
 use protobuf::Message;
 
@@ -197,7 +197,7 @@ fn create_filter_predicate_single(filter: &str) -> Result<Box<DumpPredicate>> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::protos::ProtoParsedFlags;
+    use aconfig_protos::ProtoParsedFlags;
     use crate::test::parse_test_flags;
     use protobuf::Message;
 
