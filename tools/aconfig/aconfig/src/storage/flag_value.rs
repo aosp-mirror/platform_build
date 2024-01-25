@@ -15,7 +15,7 @@
  */
 
 use crate::commands::assign_flag_ids;
-use crate::protos::ProtoFlagState;
+use aconfig_protos::ProtoFlagState;
 use crate::storage::{self, FlagPackage};
 use anyhow::{anyhow, Result};
 
