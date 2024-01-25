@@ -20,32 +20,7 @@ pub mod rust;
 
 use anyhow::{ensure, Result};
 use clap::ValueEnum;
-
-pub fn is_valid_name_ident(s: &str) -> bool {
-    // Identifiers must match [a-z][a-z0-9_]*, except consecutive underscores are not allowed
-    if s.contains("__") {
-        return false;
-    }
-    let mut chars = s.chars();
-    let Some(first) = chars.next() else {
-        return false;
-    };
-    if !first.is_ascii_lowercase() {
-        return false;
-    }
-    chars.all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || ch == '_')
-}
-
-pub fn is_valid_package_ident(s: &str) -> bool {
-    if !s.contains('.') {
-        return false;
-    }
-    s.split('.').all(is_valid_name_ident)
-}
-
-pub fn is_valid_container_ident(s: &str) -> bool {
-    s.split('.').all(is_valid_name_ident)
-}
+use aconfig_protos::{is_valid_name_ident, is_valid_package_ident};
 
 pub fn create_device_config_ident(package: &str, flag_name: &str) -> Result<String> {
     ensure!(is_valid_package_ident(package), "bad package");
@@ -75,6 +50,7 @@ impl std::fmt::Display for CodegenMode {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use aconfig_protos::is_valid_container_ident;
 
     #[test]
     fn test_is_valid_name_ident() {

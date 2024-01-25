@@ -39,7 +39,7 @@ REQUIRED_MODULES = frozenset(
 def build_test_suites(argv):
   args = parse_args(argv)
 
-  if not args.change_info:
+  if not os.environ.get('BUILD_NUMBER')[0] == 'P':
     build_everything(args)
     return
 

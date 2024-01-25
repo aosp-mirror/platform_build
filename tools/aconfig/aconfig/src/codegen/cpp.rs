@@ -19,10 +19,11 @@ use serde::Serialize;
 use std::path::PathBuf;
 use tinytemplate::TinyTemplate;
 
+use aconfig_protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
+
 use crate::codegen;
 use crate::codegen::CodegenMode;
 use crate::commands::OutputFile;
-use crate::protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
 
 pub fn generate_cpp_code<I>(
     package: &str,
@@ -136,7 +137,7 @@ fn create_class_element(package: &str, pf: &ProtoParsedFlag, rw_count: &mut i32)
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::protos::ProtoParsedFlags;
+    use aconfig_protos::ProtoParsedFlags;
     use std::collections::HashMap;
 
     const EXPORTED_PROD_HEADER_EXPECTED: &str = r#"
