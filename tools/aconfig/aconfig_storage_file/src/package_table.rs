@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
+//! package table module defines the package table file format and methods for serialization
+//! and deserialization
+
 use crate::{read_str_from_bytes, read_u32_from_bytes};
 use anyhow::Result;
 
+/// Package table header struct
 #[derive(PartialEq, Debug)]
 pub struct PackageTableHeader {
     pub version: u32,
@@ -28,6 +32,7 @@ pub struct PackageTableHeader {
 }
 
 impl PackageTableHeader {
+    /// Serialize to bytes
     pub fn as_bytes(&self) -> Vec<u8> {
         let mut result = Vec::new();
         result.extend_from_slice(&self.version.to_le_bytes());
@@ -41,6 +46,7 @@ impl PackageTableHeader {
         result
     }
 
+    /// Deserialize from bytes
     pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
         let mut head = 0;
         Ok(Self {
@@ -54,6 +60,7 @@ impl PackageTableHeader {
     }
 }
 
+/// Package table node struct
 #[derive(PartialEq, Debug)]
 pub struct PackageTableNode {
     pub package_name: String,
@@ -66,6 +73,7 @@ pub struct PackageTableNode {
 }
 
 impl PackageTableNode {
+    /// Serialize to bytes
     pub fn as_bytes(&self) -> Vec<u8> {
         let mut result = Vec::new();
         let name_bytes = self.package_name.as_bytes();
@@ -77,6 +85,7 @@ impl PackageTableNode {
         result
     }
 
+    /// Deserialize from bytes
     pub fn from_bytes(bytes: &[u8], num_buckets: u32) -> Result<Self> {
         let mut head = 0;
         let mut node = Self {
@@ -94,6 +103,7 @@ impl PackageTableNode {
     }
 }
 
+/// Package table struct
 #[derive(PartialEq, Debug)]
 pub struct PackageTable {
     pub header: PackageTableHeader,
@@ -102,6 +112,7 @@ pub struct PackageTable {
 }
 
 impl PackageTable {
+    /// Serialize to bytes
     pub fn as_bytes(&self) -> Vec<u8> {
         [
             self.header.as_bytes(),
@@ -111,6 +122,7 @@ impl PackageTable {
         .concat()
     }
 
+    /// Deserialize from bytes
     pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
         let header = PackageTableHeader::from_bytes(bytes)?;
         let num_packages = header.num_packages;
