@@ -27,7 +27,6 @@ use std::path::{Path, PathBuf};
 mod codegen;
 mod commands;
 mod dump;
-mod protos;
 mod storage;
 
 use codegen::CodegenMode;
@@ -57,8 +56,8 @@ fn cli() -> Command {
                 .arg(
                     Arg::new("default-permission")
                         .long("default-permission")
-                        .value_parser(protos::flag_permission::parse_from_str)
-                        .default_value(protos::flag_permission::to_string(
+                        .value_parser(aconfig_protos::flag_permission::parse_from_str)
+                        .default_value(aconfig_protos::flag_permission::to_string(
                             &commands::DEFAULT_FLAG_PERMISSION,
                         )),
                 )
@@ -215,7 +214,7 @@ fn main() -> Result<()> {
             let declarations = open_zero_or_more_files(sub_matches, "declarations")?;
             let values = open_zero_or_more_files(sub_matches, "values")?;
             let default_permission =
-                get_required_arg::<protos::ProtoFlagPermission>(sub_matches, "default-permission")?;
+                get_required_arg::<aconfig_protos::ProtoFlagPermission>(sub_matches, "default-permission")?;
             let output = commands::parse_flags(
                 package,
                 container,
