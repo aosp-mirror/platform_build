@@ -18,59 +18,15 @@ pub mod flag_table;
 pub mod flag_value;
 pub mod package_table;
 
-use anyhow::{anyhow, Result};
-use std::collections::{hash_map::DefaultHasher, HashMap, HashSet};
-use std::hash::{Hash, Hasher};
+use anyhow::Result;
+use std::collections::{HashMap, HashSet};
 
-use aconfig_protos::{ProtoParsedFlag, ProtoParsedFlags};
 use crate::storage::{
-    flag_table::FlagTable, flag_value::FlagValueList, package_table::PackageTable,
+    flag_table::create_flag_table, flag_value::create_flag_value,
+    package_table::create_package_table,
 };
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum StorageFileSelection {
-    PackageMap,
-    FlagMap,
-    FlagVal,
-}
-
-impl TryFrom<&str> for StorageFileSelection {
-    type Error = anyhow::Error;
-
-    fn try_from(value: &str) -> std::result::Result<Self, Self::Error> {
-        match value {
-            "package_map" => Ok(Self::PackageMap),
-            "flag_map" => Ok(Self::FlagMap),
-            "flag_val" => Ok(Self::FlagVal),
-            _ => Err(anyhow!("Invalid storage file to create")),
-        }
-    }
-}
-
-pub const FILE_VERSION: u32 = 1;
-
-pub const HASH_PRIMES: [u32; 29] = [
-    7, 17, 29, 53, 97, 193, 389, 769, 1543, 3079, 6151, 12289, 24593, 49157, 98317, 196613, 393241,
-    786433, 1572869, 3145739, 6291469, 12582917, 25165843, 50331653, 100663319, 201326611,
-    402653189, 805306457, 1610612741,
-];
-
-/// Get the right hash table size given number of entries in the table. Use a
-/// load factor of 0.5 for performance.
-pub fn get_table_size(entries: u32) -> Result<u32> {
-    HASH_PRIMES
-        .iter()
-        .find(|&&num| num >= 2 * entries)
-        .copied()
-        .ok_or(anyhow!("Number of packages is too large"))
-}
-
-/// Get the corresponding bucket index given the key and number of buckets
-pub fn get_bucket_index<T: Hash>(val: &T, num_buckets: u32) -> u32 {
-    let mut s = DefaultHasher::new();
-    val.hash(&mut s);
-    (s.finish() % num_buckets as u64) as u32
-}
+use aconfig_protos::{ProtoParsedFlag, ProtoParsedFlags};
+use aconfig_storage_file::StorageFileSelection;
 
 pub struct FlagPackage<'a> {
     pub package_name: &'a str,
@@ -140,15 +96,15 @@ where
 
     match file {
         StorageFileSelection::PackageMap => {
-            let package_table = PackageTable::new(container, &packages)?;
+            let package_table = create_package_table(container, &packages)?;
             Ok(package_table.as_bytes())
         }
         StorageFileSelection::FlagMap => {
-            let flag_table = FlagTable::new(container, &packages)?;
+            let flag_table = create_flag_table(container, &packages)?;
             Ok(flag_table.as_bytes())
         }
         StorageFileSelection::FlagVal => {
-            let flag_value = FlagValueList::new(container, &packages)?;
+            let flag_value = create_flag_value(container, &packages)?;
             Ok(flag_value.as_bytes())
         }
     }
@@ -158,35 +114,6 @@ where
 mod tests {
     use super::*;
     use crate::Input;
-
-    /// Read and parse bytes as u8
-    pub fn read_u8_from_bytes(buf: &[u8], head: &mut usize) -> Result<u8> {
-        let val = u8::from_le_bytes(buf[*head..*head + 1].try_into()?);
-        *head += 1;
-        Ok(val)
-    }
-
-    /// Read and parse bytes as u16
-    pub fn read_u16_from_bytes(buf: &[u8], head: &mut usize) -> Result<u16> {
-        let val = u16::from_le_bytes(buf[*head..*head + 2].try_into()?);
-        *head += 2;
-        Ok(val)
-    }
-
-    /// Read and parse bytes as u32
-    pub fn read_u32_from_bytes(buf: &[u8], head: &mut usize) -> Result<u32> {
-        let val = u32::from_le_bytes(buf[*head..*head + 4].try_into()?);
-        *head += 4;
-        Ok(val)
-    }
-
-    /// Read and parse bytes as string
-    pub fn read_str_from_bytes(buf: &[u8], head: &mut usize) -> Result<String> {
-        let num_bytes = read_u32_from_bytes(buf, head)? as usize;
-        let val = String::from_utf8(buf[*head..*head + num_bytes].to_vec())?;
-        *head += num_bytes;
-        Ok(val)
-    }
 
     pub fn parse_all_test_flags() -> Vec<ProtoParsedFlags> {
         let aconfig_files = [
