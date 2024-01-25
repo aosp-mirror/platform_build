@@ -119,28 +119,23 @@ class TransitiveHelper:
   # modify the module's shared_libs and static_libs with all of the transient
   # dependencies required from all of the explicit dependencies
   def flattenDeps(self, module, module_info):
-    libs_snapshot = dict(shared_libs = set(module["shared_libs"]), static_libs = set(module["static_libs"]))
+    libs_snapshot = dict(shared_libs = set(module.get("shared_libs",{})), static_libs = set(module.get("static_libs",{})))
 
     for lib_class in ["shared_libs", "static_libs"]:
       for lib in libs_snapshot[lib_class]:
-        if not lib or lib not in module_info:
+        if not lib or lib not in module_info or lib_class not in module:
           continue
         if lib in self.visited:
           module[lib_class].update(self.visited[lib][lib_class])
         else:
           res = self.flattenDeps(module_info[lib], module_info)
-          module[lib_class].update(res[lib_class])
-          self.visited[lib][lib_class].update(res[lib_class])
+          module[lib_class].update(res.get(lib_class, {}))
+          self.visited[lib][lib_class].update(res.get(lib_class, {}))
 
     return module
 
 def main():
   module_info = json.load(open(ANDROID_PRODUCT_OUT + "/module-info.json"))
-  # turn all of the static_libs and shared_libs lists into sets to make them
-  # easier to update
-  for _, module in module_info.items():
-    module["shared_libs"] = set(module["shared_libs"])
-    module["static_libs"] = set(module["static_libs"])
 
   args = parse_args()
 
@@ -148,6 +143,12 @@ def main():
     if args.module not in module_info:
       print("Module {} does not exist".format(args.module))
       exit(1)
+
+  # turn all of the static_libs and shared_libs lists into sets to make them
+  # easier to update
+  for _, module in module_info.items():
+    module["shared_libs"] = set(module.get("shared_libs", {}))
+    module["static_libs"] = set(module.get("static_libs", {}))
 
   includedStatically = defaultdict(set)
   includedSharedly = defaultdict(set)
@@ -160,24 +161,28 @@ def main():
         continue
       module = transitive.flattenDeps(module, module_info)
       # filter out fuzzers by their dependency on clang
-      if "libclang_rt.fuzzer" in module["static_libs"]:
-        continue
+      if "static_libs" in module:
+        if "libclang_rt.fuzzer" in module["static_libs"]:
+          continue
     else:
       if "NATIVE_TESTS" in module["class"]:
         # We don't care about how tests are including libraries
         continue
 
     # count all of the shared and static libs included in this module
-    for lib in module["shared_libs"]:
-      includedSharedly[lib].add(name)
-    for lib in module["static_libs"]:
-      includedStatically[lib].add(name)
+    if "shared_libs" in module:
+      for lib in module["shared_libs"]:
+        includedSharedly[lib].add(name)
+    if "static_libs" in module:
+      for lib in module["static_libs"]:
+        includedStatically[lib].add(name)
 
-    intersection = set(module["shared_libs"]).intersection(
-        module["static_libs"]
-    )
-    if intersection:
-      includedBothly[name] = intersection
+    if "shared_libs" in module and  "static_libs" in module:
+      intersection = set(module["shared_libs"]).intersection(
+          module["static_libs"]
+      )
+      if intersection:
+        includedBothly[name] = intersection
 
   if args.print_shared:
     print(
