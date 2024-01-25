@@ -1,0 +1,14 @@
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+rust_library {
+    name: "libaconfig_storage_file",
+    srcs: ["src/lib.rs"],
+    crate_name: "aconfig_storage_file",
+    host_supported: true,
+    lints: "none",
+    rustlibs: [
+        "libanyhow",
+    ],
+}
