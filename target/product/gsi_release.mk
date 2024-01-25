@@ -89,4 +89,6 @@ PRODUCT_PRODUCT_PROPERTIES += \
     ro.crypto.metadata_init_delete_all_keys.enabled=false \
 
 # Window Extensions
+ifneq ($(PRODUCT_IS_ATV),true)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/window_extensions.mk)
+endif
