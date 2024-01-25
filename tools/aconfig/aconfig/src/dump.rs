@@ -197,8 +197,8 @@ fn create_filter_predicate_single(filter: &str) -> Result<Box<DumpPredicate>> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_protos::ProtoParsedFlags;
     use crate::test::parse_test_flags;
+    use aconfig_protos::ProtoParsedFlags;
     use protobuf::Message;
 
     fn parse_enabled_ro_flag() -> ProtoParsedFlag {
