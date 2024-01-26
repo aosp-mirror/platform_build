@@ -21,6 +21,10 @@ pub mod flag_table;
 pub mod flag_value;
 pub mod package_table;
 
+mod protos;
+#[cfg(test)]
+mod test_utils;
+
 use anyhow::{anyhow, Result};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
