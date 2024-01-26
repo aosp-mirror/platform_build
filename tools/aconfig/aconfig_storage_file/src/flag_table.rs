@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
+//! flag table module defines the flag table file format and methods for serialization
+//! and deserialization
+
 use crate::{read_str_from_bytes, read_u16_from_bytes, read_u32_from_bytes};
 use anyhow::Result;
 
+/// Flag table header struct
 #[derive(PartialEq, Debug)]
 pub struct FlagTableHeader {
     pub version: u32,
@@ -28,6 +32,7 @@ pub struct FlagTableHeader {
 }
 
 impl FlagTableHeader {
+    /// Serialize to bytes
     pub fn as_bytes(&self) -> Vec<u8> {
         let mut result = Vec::new();
         result.extend_from_slice(&self.version.to_le_bytes());
@@ -41,6 +46,7 @@ impl FlagTableHeader {
         result
     }
 
+    /// Deserialize from bytes
     pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
         let mut head = 0;
         Ok(Self {
@@ -54,6 +60,7 @@ impl FlagTableHeader {
     }
 }
 
+/// Flag table node struct
 #[derive(PartialEq, Debug, Clone)]
 pub struct FlagTableNode {
     pub package_id: u32,
@@ -65,6 +72,7 @@ pub struct FlagTableNode {
 }
 
 impl FlagTableNode {
+    /// Serialize to bytes
     pub fn as_bytes(&self) -> Vec<u8> {
         let mut result = Vec::new();
         result.extend_from_slice(&self.package_id.to_le_bytes());
@@ -77,6 +85,7 @@ impl FlagTableNode {
         result
     }
 
+    /// Deserialize from bytes
     pub fn from_bytes(bytes: &[u8], num_buckets: u32) -> Result<Self> {
         let mut head = 0;
         let mut node = Self {
@@ -103,7 +112,9 @@ pub struct FlagTable {
     pub nodes: Vec<FlagTableNode>,
 }
 
+/// Flag table struct
 impl FlagTable {
+    /// Serialize to bytes
     pub fn as_bytes(&self) -> Vec<u8> {
         [
             self.header.as_bytes(),
@@ -113,6 +124,7 @@ impl FlagTable {
         .concat()
     }
 
+    /// Deserialize from bytes
     pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
         let header = FlagTableHeader::from_bytes(bytes)?;
         let num_flags = header.num_flags;

@@ -2,13 +2,25 @@ package {
     default_applicable_licenses: ["Android-Apache-2.0"],
 }
 
-rust_library {
-    name: "libaconfig_storage_file",
-    srcs: ["src/lib.rs"],
-    crate_name: "aconfig_storage_file",
-    host_supported: true,
+rust_defaults {
+    name: "aconfig_storage_file.defaults",
+    edition: "2021",
     lints: "none",
+    srcs: ["src/lib.rs"],
     rustlibs: [
         "libanyhow",
     ],
+}
+
+rust_library {
+    name: "libaconfig_storage_file",
+    crate_name: "aconfig_storage_file",
+    host_supported: true,
+    defaults: ["aconfig_storage_file.defaults"],
+}
+
+rust_test_host {
+    name: "aconfig_storage_file.test",
+    test_suites: ["general-tests"],
+    defaults: ["aconfig_storage_file.defaults"],
 }
