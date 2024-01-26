@@ -26,12 +26,12 @@ use crate::codegen::java::generate_java_code;
 use crate::codegen::rust::generate_rust_code;
 use crate::codegen::CodegenMode;
 use crate::dump::{DumpFormat, DumpPredicate};
+use crate::storage::generate_storage_file;
 use aconfig_protos::{
     ParsedFlagExt, ProtoFlagMetadata, ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag,
     ProtoParsedFlags, ProtoTracepoint,
 };
-use crate::storage::generate_storage_file;
-use crate::storage::StorageFileSelection;
+use aconfig_storage_file::StorageFileSelection;
 
 pub struct Input {
     pub source: String,
@@ -224,7 +224,11 @@ pub fn create_rust_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Ou
     generate_rust_code(&package, modified_parsed_flags.into_iter(), codegen_mode)
 }
 
-pub fn create_storage(caches: Vec<Input>, container: &str, file: &StorageFileSelection) -> Result<Vec<u8>> {
+pub fn create_storage(
+    caches: Vec<Input>,
+    container: &str,
+    file: &StorageFileSelection,
+) -> Result<Vec<u8>> {
     let parsed_flags_vec: Vec<ProtoParsedFlags> = caches
         .into_iter()
         .map(|mut input| input.try_parse_flags())

@@ -1,0 +1,11 @@
+[package]
+name = "aconfig_storage_file"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = ["cargo"]
+cargo = []
+
+[dependencies]
+anyhow = "1.0.69"
