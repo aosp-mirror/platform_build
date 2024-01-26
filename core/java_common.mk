@@ -10,9 +10,7 @@ endif
 ## Java version
 ###########################################################
 # Use the LOCAL_JAVA_LANGUAGE_VERSION if it is set, otherwise
-# use one based on the LOCAL_SDK_VERSION. If it is < 24
-# pass "1.7" to the tools, if it is unset, >= 24 or "current"
-# pass "1.8".
+# use one based on the LOCAL_SDK_VERSION.
 #
 # The LOCAL_SDK_VERSION behavior is to ensure that, by default,
 # code that is expected to run on older releases of Android
@@ -25,9 +23,7 @@ ifeq (,$(LOCAL_JAVA_LANGUAGE_VERSION))
     # Host modules always default to 1.9
     LOCAL_JAVA_LANGUAGE_VERSION := 1.9
   else
-    ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_1_8_SUPPORT)))
-      LOCAL_JAVA_LANGUAGE_VERSION := 1.7
-    else ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_1_9_SUPPORT)))
+    ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_1_9_SUPPORT)))
       LOCAL_JAVA_LANGUAGE_VERSION := 1.8
     else ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_11_SUPPORT)))
       LOCAL_JAVA_LANGUAGE_VERSION := 1.9
