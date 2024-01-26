@@ -132,7 +132,7 @@ def ValidateFileConsistency(input_zip, input_tmp, info_dict):
     return
 
   # Verify IMAGES/system.img if applicable.
-  # Some targets, e.g., gki_arm64, gki_x86_64, etc., are system.img-less.
+  # Some targets are system.img-less.
   if 'IMAGES/system.img' in input_zip.namelist():
     CheckAllFiles('system')
 
