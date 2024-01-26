@@ -58,6 +58,14 @@
     {
       // printflags unit tests
       "name": "printflags.test"
+    },
+    {
+      // aconfig_protos unit tests
+      "name": "aconfig_protos.test"
+    },
+    {
+      // aconfig_storage_file unit tests
+      "name": "aconfig_storage_file.test"
     }
   ]
 }
