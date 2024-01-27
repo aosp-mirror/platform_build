@@ -45,12 +45,12 @@ rust_protobuf {
     host_supported: true,
 }
 
-rust_library {
-    name: "libaconfig_protos",
+rust_defaults {
+    name: "aconfig_protos.defaults",
+    edition: "2021",
+    clippy_lints: "android",
+    lints: "android",
     srcs: ["src/lib.rs"],
-    crate_name: "aconfig_protos",
-    host_supported: true,
-    lints: "none",
     rustlibs: [
         "libaconfig_rust_proto",
         "libanyhow",
@@ -59,4 +59,17 @@ rust_library {
     proc_macros: [
         "libpaste",
     ]
+}
+
+rust_library {
+    name: "libaconfig_protos",
+    crate_name: "aconfig_protos",
+    host_supported: true,
+    defaults: ["aconfig_protos.defaults"],
+}
+
+rust_test_host {
+    name: "aconfig_protos.test",
+    test_suites: ["general-tests"],
+    defaults: ["aconfig_protos.defaults"],
 }
