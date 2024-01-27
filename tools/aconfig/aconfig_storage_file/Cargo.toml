@@ -9,3 +9,7 @@ cargo = []
 
 [dependencies]
 anyhow = "1.0.69"
+protobuf = "3.2.0"
+
+[build-dependencies]
+protobuf-codegen = "3.2.0"
