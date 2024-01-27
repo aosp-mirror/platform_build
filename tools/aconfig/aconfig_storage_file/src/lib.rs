@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+//! `aconfig_storage_file` is a crate that defines aconfig storage file format, it
+//! also includes apis to read flags from storage files
+
 pub mod flag_table;
 pub mod flag_value;
 pub mod package_table;
@@ -26,14 +29,17 @@ pub use crate::flag_table::{FlagTable, FlagTableHeader, FlagTableNode};
 pub use crate::flag_value::{FlagValueHeader, FlagValueList};
 pub use crate::package_table::{PackageTable, PackageTableHeader, PackageTableNode};
 
+/// Storage file version
 pub const FILE_VERSION: u32 = 1;
 
+/// Good hash table prime number
 pub const HASH_PRIMES: [u32; 29] = [
     7, 17, 29, 53, 97, 193, 389, 769, 1543, 3079, 6151, 12289, 24593, 49157, 98317, 196613, 393241,
     786433, 1572869, 3145739, 6291469, 12582917, 25165843, 50331653, 100663319, 201326611,
     402653189, 805306457, 1610612741,
 ];
 
+/// Storage file type enum
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum StorageFileSelection {
     PackageMap,

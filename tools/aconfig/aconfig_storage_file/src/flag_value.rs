@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
+//! flag value module defines the flag value file format and methods for serialization
+//! and deserialization
+
 use crate::{read_str_from_bytes, read_u32_from_bytes, read_u8_from_bytes};
 use anyhow::Result;
 
+/// Flag value header struct
 #[derive(PartialEq, Debug)]
 pub struct FlagValueHeader {
     pub version: u32,
@@ -27,6 +31,7 @@ pub struct FlagValueHeader {
 }
 
 impl FlagValueHeader {
+    /// Serialize to bytes
     pub fn as_bytes(&self) -> Vec<u8> {
         let mut result = Vec::new();
         result.extend_from_slice(&self.version.to_le_bytes());
@@ -39,6 +44,7 @@ impl FlagValueHeader {
         result
     }
 
+    /// Deserialize from bytes
     pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
         let mut head = 0;
         Ok(Self {
@@ -51,6 +57,7 @@ impl FlagValueHeader {
     }
 }
 
+/// Flag value list struct
 #[derive(PartialEq, Debug)]
 pub struct FlagValueList {
     pub header: FlagValueHeader,
@@ -58,6 +65,7 @@ pub struct FlagValueList {
 }
 
 impl FlagValueList {
+    /// Serialize to bytes
     pub fn as_bytes(&self) -> Vec<u8> {
         [
             self.header.as_bytes(),
@@ -66,6 +74,7 @@ impl FlagValueList {
         .concat()
     }
 
+    /// Deserialize from bytes
     pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
         let header = FlagValueHeader::from_bytes(bytes)?;
         let num_flags = header.num_flags;
