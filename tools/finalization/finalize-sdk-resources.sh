@@ -96,7 +96,7 @@ function bumpSdkExtensionsVersion() {
         $modules_arg
 }
 
-function finalize_aidl_vndk_sdk_resources() {
+function finalize_sdk_resources() {
     local top="$(dirname "$0")"/../../../..
     source $top/build/make/tools/finalization/environment.sh
 
@@ -110,9 +110,6 @@ function finalize_aidl_vndk_sdk_resources() {
 
     # bionic/NDK
     finalize_bionic_ndk
-
-    # TODO(b/309880485)
-    # Add back create_reference_dumps and $top/build/make/target/product/gsi/current.txt
 
     # Finalize SDK
 
@@ -171,5 +168,5 @@ function finalize_aidl_vndk_sdk_resources() {
     $sdk_m update-api
 }
 
-finalize_aidl_vndk_sdk_resources
+finalize_sdk_resources
 
