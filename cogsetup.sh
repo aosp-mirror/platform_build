@@ -35,31 +35,6 @@ function _create_out_symlink_for_cog() {
   ln -s ${DEFAULT_OUTPUT_DIR} `pwd`/out
 }
 
-# This function moves the reclient binaries into a directory that exists in a
-# non-cog part of the overall filesystem.  This is to workaround the problem
-# described in b/289391270.
-function _copy_reclient_binaries_from_cog() {
-  if [[ "${OUT_DIR}" == "" ]]; then
-    OUT_DIR="out"
-  fi
-  local RECLIENT_VERSION=`readlink prebuilts/remoteexecution-client/live`
-
-  local NONCOG_RECLIENT_BIN_DIR_BASE="${OUT_DIR}/.reclient"
-  local NONCOG_RECLIENT_BIN_DIR="${NONCOG_RECLIENT_BIN_DIR_BASE}/${RECLIENT_VERSION}"
-
-  # Create the non cog directory and setup live symlink.
-  mkdir -p ${NONCOG_RECLIENT_BIN_DIR}
-
-  if [ `ls ${NONCOG_RECLIENT_BIN_DIR} | wc -l` -lt 8 ]; then
-    # Not all binaries exist, copy them from the Cog directory.
-    local TOP=$(gettop)
-    cp ${TOP}/prebuilts/remoteexecution-client/live/* ${NONCOG_RECLIENT_BIN_DIR}
-  fi
-
-  ln -sfn ${RECLIENT_VERSION} ${NONCOG_RECLIENT_BIN_DIR_BASE}/live
-  export RBE_DIR="${NONCOG_RECLIENT_BIN_DIR_BASE}/live"
-}
-
 # This function sets up the build environment to be appropriate for Cog.
 function _setup_cog_env() {
   _create_out_symlink_for_cog
@@ -67,7 +42,6 @@ function _setup_cog_env() {
     echo -e "\e[0;33mWARNING:\e[00m Cog environment setup failed!"
     return 1
   fi
-  _copy_reclient_binaries_from_cog
 
   export ANDROID_BUILD_ENVIRONMENT_CONFIG="googler-cog"
 
