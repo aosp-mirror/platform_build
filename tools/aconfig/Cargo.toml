@@ -6,3 +6,5 @@ members = [
     "aconfig_storage_file",
     "printflags"
 ]
+
+resolver = "2"
