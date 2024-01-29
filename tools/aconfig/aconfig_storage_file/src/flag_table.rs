@@ -68,7 +68,6 @@ pub struct FlagTableNode {
     pub flag_type: u16,
     pub flag_id: u16,
     pub next_offset: Option<u32>,
-    pub bucket_index: u32,
 }
 
 impl FlagTableNode {
@@ -97,7 +96,6 @@ impl FlagTableNode {
                 0 => None,
                 val => Some(val),
             },
-            bucket_index: 0,
         };
         Ok(node)
     }
@@ -142,13 +140,11 @@ impl FlagTable {
             .collect();
         let nodes = (0..num_flags)
             .map(|_| {
-                let mut node = FlagTableNode::from_bytes(&bytes[head..]).unwrap();
+                let node = FlagTableNode::from_bytes(&bytes[head..])?;
                 head += node.as_bytes().len();
-                node.bucket_index = FlagTableNode::find_bucket_index(
-                    node.package_id, &node.flag_name, num_buckets);
-                node
+                Ok(node)
             })
-            .collect();
+            .collect::<Result<Vec<_>>>()?;
 
         let table = Self { header, buckets, nodes };
         Ok(table)
@@ -203,7 +199,6 @@ mod tests {
             flag_type: u16,
             flag_id: u16,
             next_offset: Option<u32>,
-            bucket_index: u32,
         ) -> Self {
             Self {
                 package_id,
@@ -211,7 +206,6 @@ mod tests {
                 flag_type,
                 flag_id,
                 next_offset,
-                bucket_index,
             }
         }
     }
@@ -245,14 +239,14 @@ mod tests {
             None,
         ];
         let nodes = vec![
-            FlagTableNode::new_expected(0, "enabled_ro", 1, 1, None, 0),
-            FlagTableNode::new_expected(0, "enabled_rw", 1, 2, Some(150), 1),
-            FlagTableNode::new_expected(1, "disabled_ro", 1, 0, None, 1),
-            FlagTableNode::new_expected(2, "enabled_ro", 1, 1, None, 5),
-            FlagTableNode::new_expected(1, "enabled_fixed_ro", 1, 1, Some(235), 7),
-            FlagTableNode::new_expected(1, "enabled_ro", 1, 2, None, 7),
-            FlagTableNode::new_expected(2, "enabled_fixed_ro", 1, 0, None, 9),
-            FlagTableNode::new_expected(0, "disabled_rw", 1, 0, None, 15),
+            FlagTableNode::new_expected(0, "enabled_ro", 1, 1, None),
+            FlagTableNode::new_expected(0, "enabled_rw", 1, 2, Some(150)),
+            FlagTableNode::new_expected(1, "disabled_ro", 1, 0, None),
+            FlagTableNode::new_expected(2, "enabled_ro", 1, 1, None),
+            FlagTableNode::new_expected(1, "enabled_fixed_ro", 1, 1, Some(235)),
+            FlagTableNode::new_expected(1, "enabled_ro", 1, 2, None),
+            FlagTableNode::new_expected(2, "enabled_fixed_ro", 1, 0, None),
+            FlagTableNode::new_expected(0, "disabled_rw", 1, 0, None),
         ];
         Ok(FlagTable { header, buckets, nodes })
     }
@@ -268,14 +262,8 @@ mod tests {
         assert_eq!(header, &reinterpreted_header.unwrap());
 
         let nodes: &Vec<FlagTableNode> = &flag_table.nodes;
-        let num_buckets = crate::get_table_size(header.num_flags).unwrap();
         for node in nodes.iter() {
-            let mut reinterpreted_node = FlagTableNode::from_bytes(&node.as_bytes()).unwrap();
-            reinterpreted_node.bucket_index = FlagTableNode::find_bucket_index(
-                reinterpreted_node.package_id,
-                &reinterpreted_node.flag_name,
-                num_buckets
-            );
+            let reinterpreted_node = FlagTableNode::from_bytes(&node.as_bytes()).unwrap();
             assert_eq!(node, &reinterpreted_node);
         }
 
