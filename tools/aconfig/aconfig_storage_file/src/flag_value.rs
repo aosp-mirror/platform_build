@@ -18,7 +18,7 @@
 //! and deserialization
 
 use crate::{read_str_from_bytes, read_u32_from_bytes, read_u8_from_bytes};
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 
 /// Flag value header struct
 #[derive(PartialEq, Debug)]
@@ -86,6 +86,29 @@ impl FlagValueList {
     }
 }
 
+/// Query flag value
+pub fn get_boolean_flag_value(buf: &[u8], flag_offset: u32) -> Result<bool> {
+    let interpreted_header = FlagValueHeader::from_bytes(buf)?;
+    if interpreted_header.version > crate::FILE_VERSION {
+        return Err(anyhow!(
+            "Cannot read storage file with a higher version of {} with lib version {}",
+            interpreted_header.version,
+            crate::FILE_VERSION
+        ));
+    }
+
+    let mut head = (interpreted_header.boolean_value_offset + flag_offset) as usize;
+
+    // TODO: right now, there is only boolean flags, with more flag value types added
+    // later, the end of boolean flag value section should be updated (b/322826265).
+    if head >= interpreted_header.file_size as usize {
+        return Err(anyhow!("Flag value offset goes beyond the end of the file."));
+    }
+
+    let val = read_u8_from_bytes(buf, &mut head)?;
+    Ok(val == 1)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -115,5 +138,48 @@ mod tests {
         let reinterpreted_value_list = FlagValueList::from_bytes(&flag_value_list.as_bytes());
         assert!(reinterpreted_value_list.is_ok());
         assert_eq!(&flag_value_list, &reinterpreted_value_list.unwrap());
+    }
+
+    #[test]
+    // this test point locks down flag value query
+    fn test_flag_value_query() {
+        let flag_value_list = create_test_flag_value_list().unwrap().as_bytes();
+        let baseline: Vec<bool> = vec![false, true, false, false, true, true, false, true];
+        for (offset, expected_value) in baseline.into_iter().enumerate() {
+            let flag_value =
+                get_boolean_flag_value(&flag_value_list[..], offset as u32)
+                .unwrap();
+            assert_eq!(flag_value, expected_value);
+        }
+    }
+
+    #[test]
+    // this test point locks down query beyond the end of boolean section
+    fn test_boolean_out_of_range() {
+        let flag_value_list = create_test_flag_value_list().unwrap().as_bytes();
+        let error = get_boolean_flag_value(&flag_value_list[..], 8)
+            .unwrap_err();
+        assert_eq!(
+            format!("{:?}", error),
+            "Flag value offset goes beyond the end of the file."
+        );
+    }
+
+    #[test]
+    // this test point locks down query error when file has a higher version
+    fn test_higher_version_storage_file() {
+        let mut value_list = create_test_flag_value_list().unwrap();
+        value_list.header.version = crate::FILE_VERSION + 1;
+        let flag_value = value_list.as_bytes();
+        let error = get_boolean_flag_value(&flag_value[..], 4)
+            .unwrap_err();
+        assert_eq!(
+            format!("{:?}", error),
+            format!(
+                "Cannot read storage file with a higher version of {} with lib version {}",
+                crate::FILE_VERSION + 1,
+                crate::FILE_VERSION
+            )
+        );
     }
 }
