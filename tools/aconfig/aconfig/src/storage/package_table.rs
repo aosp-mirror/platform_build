@@ -17,7 +17,7 @@
 use anyhow::Result;
 
 use aconfig_storage_file::{
-    get_bucket_index, get_table_size, PackageTable, PackageTableHeader, PackageTableNode,
+    get_table_size, PackageTable, PackageTableHeader, PackageTableNode,
     FILE_VERSION,
 };
 
@@ -34,14 +34,24 @@ fn new_header(container: &str, num_packages: u32) -> PackageTableHeader {
     }
 }
 
-fn new_node(package: &FlagPackage, num_buckets: u32) -> PackageTableNode {
-    let bucket_index = get_bucket_index(&package.package_name.to_string(), num_buckets);
-    PackageTableNode {
-        package_name: String::from(package.package_name),
-        package_id: package.package_id,
-        boolean_offset: package.boolean_offset,
-        next_offset: None,
-        bucket_index,
+// a struct that contains PackageTableNode and a bunch of other information to help
+// package table creation
+#[derive(PartialEq, Debug)]
+struct PackageTableNodeWrapper {
+    pub node: PackageTableNode,
+    pub bucket_index: u32,
+}
+
+impl PackageTableNodeWrapper {
+    fn new(package: &FlagPackage, num_buckets: u32) -> Self {
+        let node = PackageTableNode {
+            package_name: String::from(package.package_name),
+            package_id: package.package_id,
+            boolean_offset: package.boolean_offset,
+            next_offset: None,
+        };
+        let bucket_index = PackageTableNode::find_bucket_index(package.package_name, num_buckets);
+        Self { node, bucket_index }
     }
 }
 
@@ -49,40 +59,46 @@ pub fn create_package_table(container: &str, packages: &[FlagPackage]) -> Result
     // create table
     let num_packages = packages.len() as u32;
     let num_buckets = get_table_size(num_packages)?;
-    let mut table = PackageTable {
-        header: new_header(container, num_packages),
-        buckets: vec![None; num_buckets as usize],
-        nodes: packages.iter().map(|pkg| new_node(pkg, num_buckets)).collect(),
-    };
+    let mut header = new_header(container, num_packages);
+    let mut buckets = vec![None; num_buckets as usize];
+    let mut node_wrappers: Vec<_> = packages
+        .iter()
+        .map(|pkg| PackageTableNodeWrapper::new(pkg, num_buckets))
+        .collect();
 
     // initialize all header fields
-    table.header.bucket_offset = table.header.as_bytes().len() as u32;
-    table.header.node_offset = table.header.bucket_offset + num_buckets * 4;
-    table.header.file_size = table.header.node_offset
-        + table.nodes.iter().map(|x| x.as_bytes().len()).sum::<usize>() as u32;
+    header.bucket_offset = header.as_bytes().len() as u32;
+    header.node_offset = header.bucket_offset + num_buckets * 4;
+    header.file_size = header.node_offset
+        + node_wrappers.iter().map(|x| x.node.as_bytes().len()).sum::<usize>() as u32;
 
-    // sort nodes by bucket index for efficiency
-    table.nodes.sort_by(|a, b| a.bucket_index.cmp(&b.bucket_index));
+    // sort node_wrappers by bucket index for efficiency
+    node_wrappers.sort_by(|a, b| a.bucket_index.cmp(&b.bucket_index));
 
     // fill all node offset
-    let mut offset = table.header.node_offset;
-    for i in 0..table.nodes.len() {
-        let node_bucket_idx = table.nodes[i].bucket_index;
+    let mut offset = header.node_offset;
+    for i in 0..node_wrappers.len() {
+        let node_bucket_idx = node_wrappers[i].bucket_index;
         let next_node_bucket_idx =
-            if i + 1 < table.nodes.len() { Some(table.nodes[i + 1].bucket_index) } else { None };
+            if i + 1 < node_wrappers.len() { Some(node_wrappers[i + 1].bucket_index) } else { None };
 
-        if table.buckets[node_bucket_idx as usize].is_none() {
-            table.buckets[node_bucket_idx as usize] = Some(offset);
+        if buckets[node_bucket_idx as usize].is_none() {
+            buckets[node_bucket_idx as usize] = Some(offset);
         }
-        offset += table.nodes[i].as_bytes().len() as u32;
+        offset += node_wrappers[i].node.as_bytes().len() as u32;
 
         if let Some(index) = next_node_bucket_idx {
             if index == node_bucket_idx {
-                table.nodes[i].next_offset = Some(offset);
+                node_wrappers[i].node.next_offset = Some(offset);
             }
         }
     }
 
+    let table = PackageTable {
+        header,
+        buckets,
+        nodes: node_wrappers.into_iter().map(|nw| nw.node).collect(),
+    };
     Ok(table)
 }
 
@@ -125,7 +141,6 @@ mod tests {
             package_id: 1,
             boolean_offset: 3,
             next_offset: None,
-            bucket_index: 0,
         };
         assert_eq!(nodes[0], first_node_expected);
         let second_node_expected = PackageTableNode {
@@ -133,7 +148,6 @@ mod tests {
             package_id: 0,
             boolean_offset: 0,
             next_offset: Some(158),
-            bucket_index: 3,
         };
         assert_eq!(nodes[1], second_node_expected);
         let third_node_expected = PackageTableNode {
@@ -141,7 +155,6 @@ mod tests {
             package_id: 2,
             boolean_offset: 6,
             next_offset: None,
-            bucket_index: 3,
         };
         assert_eq!(nodes[2], third_node_expected);
     }
