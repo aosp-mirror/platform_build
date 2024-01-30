@@ -52,10 +52,6 @@ function finalize_sdk_rel() {
     # prebuilts/abi-dumps/ndk
     #mkdir -p "$top/prebuilts/abi-dumps/ndk/$FINAL_PLATFORM_SDK_VERSION"
     #cp -r "$top/prebuilts/abi-dumps/ndk/current/64/" "$top/prebuilts/abi-dumps/ndk/$FINAL_PLATFORM_SDK_VERSION/"
-    #if [ "$FINAL_STATE" != "sdk" ] || [ "$FINAL_PLATFORM_CODENAME" == "$CURRENT_PLATFORM_CODENAME" ] ; then
-        # prebuilts/abi-dumps/vndk
-        #mv "$top/prebuilts/abi-dumps/vndk/$CURRENT_PLATFORM_CODENAME" "$top/prebuilts/abi-dumps/vndk/$FINAL_PLATFORM_SDK_VERSION"
-    #fi;
 }
 
 finalize_sdk_rel

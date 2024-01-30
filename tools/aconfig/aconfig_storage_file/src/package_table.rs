@@ -17,8 +17,8 @@
 //! package table module defines the package table file format and methods for serialization
 //! and deserialization
 
-use crate::{read_str_from_bytes, read_u32_from_bytes};
-use anyhow::Result;
+use crate::{get_bucket_index, read_str_from_bytes, read_u32_from_bytes};
+use anyhow::{anyhow, Result};
 
 /// Package table header struct
 #[derive(PartialEq, Debug)]
@@ -86,9 +86,9 @@ impl PackageTableNode {
     }
 
     /// Deserialize from bytes
-    pub fn from_bytes(bytes: &[u8], num_buckets: u32) -> Result<Self> {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
         let mut head = 0;
-        let mut node = Self {
+        let node = Self {
             package_name: read_str_from_bytes(bytes, &mut head)?,
             package_id: read_u32_from_bytes(bytes, &mut head)?,
             boolean_offset: read_u32_from_bytes(bytes, &mut head)?,
@@ -98,7 +98,6 @@ impl PackageTableNode {
             },
             bucket_index: 0,
         };
-        node.bucket_index = crate::get_bucket_index(&node.package_name, num_buckets);
         Ok(node)
     }
 }
@@ -136,14 +135,59 @@ impl PackageTable {
             .collect();
         let nodes = (0..num_packages)
             .map(|_| {
-                let node = PackageTableNode::from_bytes(&bytes[head..], num_buckets).unwrap();
+                let mut node = PackageTableNode::from_bytes(&bytes[head..]).unwrap();
                 head += node.as_bytes().len();
+                node.bucket_index = get_bucket_index(&node.package_name, num_buckets);
                 node
             })
             .collect();
 
         let table = Self { header, buckets, nodes };
         Ok(table)
+    }
+}
+
+/// Package table query return
+#[derive(PartialEq, Debug)]
+pub struct PackageOffset {
+    pub package_id: u32,
+    pub boolean_offset: u32,
+}
+
+/// Query package id and start offset
+pub fn find_package_offset(buf: &[u8], package: &str) -> Result<Option<PackageOffset>> {
+    let interpreted_header = PackageTableHeader::from_bytes(buf)?;
+    if interpreted_header.version > crate::FILE_VERSION {
+        return Err(anyhow!(
+            "Cannot read storage file with a higher version of {} with lib version {}",
+            interpreted_header.version,
+            crate::FILE_VERSION
+        ));
+    }
+
+    let num_buckets = (interpreted_header.node_offset - interpreted_header.bucket_offset) / 4;
+    let bucket_index = get_bucket_index(&package, num_buckets);
+
+    let mut pos = (interpreted_header.bucket_offset + 4 * bucket_index) as usize;
+    let mut package_node_offset = read_u32_from_bytes(buf, &mut pos)? as usize;
+    if package_node_offset < interpreted_header.node_offset as usize
+        || package_node_offset >= interpreted_header.file_size as usize
+    {
+        return Ok(None);
+    }
+
+    loop {
+        let interpreted_node = PackageTableNode::from_bytes(&buf[package_node_offset..])?;
+        if interpreted_node.package_name == package {
+            return Ok(Some(PackageOffset {
+                package_id: interpreted_node.package_id,
+                boolean_offset: interpreted_node.boolean_offset,
+            }));
+        }
+        match interpreted_node.next_offset {
+            Some(offset) => package_node_offset = offset as usize,
+            None => return Ok(None),
+        }
     }
 }
 
@@ -199,13 +243,70 @@ mod tests {
         let nodes: &Vec<PackageTableNode> = &package_table.nodes;
         let num_buckets = crate::get_table_size(header.num_packages).unwrap();
         for node in nodes.iter() {
-            let reinterpreted_node = PackageTableNode::from_bytes(&node.as_bytes(), num_buckets);
-            assert!(reinterpreted_node.is_ok());
-            assert_eq!(node, &reinterpreted_node.unwrap());
+            let mut reinterpreted_node = PackageTableNode::from_bytes(&node.as_bytes()).unwrap();
+            reinterpreted_node.bucket_index =
+                get_bucket_index(&reinterpreted_node.package_name, num_buckets);
+            assert_eq!(node, &reinterpreted_node);
         }
 
         let reinterpreted_table = PackageTable::from_bytes(&package_table.as_bytes());
         assert!(reinterpreted_table.is_ok());
         assert_eq!(&package_table, &reinterpreted_table.unwrap());
+    }
+
+    #[test]
+    // this test point locks down table query
+    fn test_package_query() {
+        let package_table = create_test_package_table().unwrap().as_bytes();
+        let package_offset =
+            find_package_offset(&package_table[..], "com.android.aconfig.storage.test_1")
+                .unwrap()
+                .unwrap();
+        let expected_package_offset = PackageOffset { package_id: 0, boolean_offset: 0 };
+        assert_eq!(package_offset, expected_package_offset);
+        let package_offset =
+            find_package_offset(&package_table[..], "com.android.aconfig.storage.test_2")
+                .unwrap()
+                .unwrap();
+        let expected_package_offset = PackageOffset { package_id: 1, boolean_offset: 3 };
+        assert_eq!(package_offset, expected_package_offset);
+        let package_offset =
+            find_package_offset(&package_table[..], "com.android.aconfig.storage.test_4")
+                .unwrap()
+                .unwrap();
+        let expected_package_offset = PackageOffset { package_id: 2, boolean_offset: 6 };
+        assert_eq!(package_offset, expected_package_offset);
+    }
+
+    #[test]
+    // this test point locks down table query of a non exist package
+    fn test_not_existed_package_query() {
+        // this will land at an empty bucket
+        let package_table = create_test_package_table().unwrap().as_bytes();
+        let package_offset =
+            find_package_offset(&package_table[..], "com.android.aconfig.storage.test_3").unwrap();
+        assert_eq!(package_offset, None);
+        // this will land at the end of a linked list
+        let package_offset =
+            find_package_offset(&package_table[..], "com.android.aconfig.storage.test_5").unwrap();
+        assert_eq!(package_offset, None);
+    }
+
+    #[test]
+    // this test point locks down query error when file has a higher version
+    fn test_higher_version_storage_file() {
+        let mut table = create_test_package_table().unwrap();
+        table.header.version = crate::FILE_VERSION + 1;
+        let package_table = table.as_bytes();
+        let error = find_package_offset(&package_table[..], "com.android.aconfig.storage.test_1")
+            .unwrap_err();
+        assert_eq!(
+            format!("{:?}", error),
+            format!(
+                "Cannot read storage file with a higher version of {} with lib version {}",
+                crate::FILE_VERSION + 1,
+                crate::FILE_VERSION
+            )
+        );
     }
 }

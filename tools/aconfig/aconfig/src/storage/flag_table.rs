@@ -17,7 +17,7 @@
 use crate::commands::assign_flag_ids;
 use crate::storage::FlagPackage;
 use aconfig_storage_file::{
-    get_bucket_index, get_table_size, FlagTable, FlagTableHeader, FlagTableNode, FILE_VERSION,
+    get_table_size, FlagTable, FlagTableHeader, FlagTableNode, FILE_VERSION,
 };
 use anyhow::{anyhow, Result};
 
@@ -39,8 +39,7 @@ fn new_node(
     flag_id: u16,
     num_buckets: u32,
 ) -> FlagTableNode {
-    let full_flag_name = package_id.to_string() + "/" + flag_name;
-    let bucket_index = get_bucket_index(&full_flag_name, num_buckets);
+    let bucket_index = FlagTableNode::find_bucket_index(package_id, flag_name, num_buckets);
     FlagTableNode {
         package_id,
         flag_name: flag_name.to_string(),

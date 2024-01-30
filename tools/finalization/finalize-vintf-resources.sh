@@ -17,7 +17,6 @@ function finalize_vintf_resources() {
 
     # build/make
     sed -i -e "s/sepolicy_major_vers := .*/sepolicy_major_vers := ${FINAL_PLATFORM_SDK_VERSION}/g" "$top/build/make/core/config.mk"
-    cp "$top/build/make/target/product/gsi/current.txt" "$top/build/make/target/product/gsi/$FINAL_PLATFORM_SDK_VERSION.txt"
 }
 
 function create_new_compat_matrix() {
