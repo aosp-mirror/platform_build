@@ -59,6 +59,17 @@ $(foreach map,$(PRODUCT_RELEASE_CONFIG_MAPS), \
     $(if $(filter $(map),$(config_map_files)),,$(eval config_map_files += $(map))) \
 )
 
+# Declare an alias release-config
+#
+# This should be used to declare a release as an alias of another, meaning no
+# release config files should be present.
+#
+# $1 config name
+# $2 release config for which it is an alias
+define alias-release-config
+    $(call _declare-release-config,$(1),,$(2),true)
+endef
+
 # Declare or extend a release-config.
 #
 # The order of processing is:
@@ -85,9 +96,14 @@ $(foreach map,$(PRODUCT_RELEASE_CONFIG_MAPS), \
 # $2 release config files
 # $3 overridden release config
 define declare-release-config
+    $(call _declare-release-config,$(1),$(2),$(3),)
+endef
+
+define _declare-release-config
     $(if $(strip $(2)$(3)),,  \
         $(error declare-release-config: config $(strip $(1)) must have release config files, override another release config, or both) \
     )
+    $(if $(strip $(4)),$(eval _all_release_configs.$(strip $(1)).ALIAS := true))
     $(eval _all_release_configs := $(sort $(_all_release_configs) $(strip $(1))))
     $(if $(strip $(3)), \
       $(if $(filter $(_all_release_configs), $(strip $(3))),
@@ -169,6 +185,11 @@ TARGET_RELEASE:=
 endif
 .KATI_READONLY := TARGET_RELEASE
 
+# Verify that alias configs do not have config files.
+$(foreach r,$(_all_release_configs),\
+  $(if $(_all_release_configs.$(r).ALIAS),$(if $(_all_release_configs.$(r).FILES),\
+    $(error Alias release config "$(r)" may not specify release config files $(_all_release_configs.$(r).FILES))\
+)))
 
 $(foreach config, $(_all_release_configs), \
     $(eval _all_release_configs.$(config).DECLARED_IN:= ) \
