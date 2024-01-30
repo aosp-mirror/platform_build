@@ -1294,7 +1294,7 @@ DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages)
 include $(BUILD_SYSTEM)/dumpvar.mk
 
 ifeq (true,$(FULL_SYSTEM_OPTIMIZE_JAVA))
-ifeq (,$(SYSTEM_OPTIMIZE_JAVA))
+ifeq (false,$(SYSTEM_OPTIMIZE_JAVA))
 $(error SYSTEM_OPTIMIZE_JAVA must be enabled when FULL_SYSTEM_OPTIMIZE_JAVA is enabled)
 endif
 endif
