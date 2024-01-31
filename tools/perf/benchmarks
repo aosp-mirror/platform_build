@@ -29,6 +29,7 @@ import shutil
 import subprocess
 import time
 import uuid
+from typing import Optional
 
 import pretty
 import utils
@@ -80,6 +81,33 @@ class Change:
     undo: callable
     "Function to revert the source tree to its previous condition in the most minimal way possible."
 
+_DUMPVARS_VARS=[
+    "COMMON_LUNCH_CHOICES",
+    "HOST_PREBUILT_TAG",
+    "print",
+    "PRODUCT_OUT",
+    "report_config",
+    "TARGET_ARCH",
+    "TARGET_BUILD_VARIANT",
+    "TARGET_DEVICE",
+    "TARGET_PRODUCT",
+]
+
+_DUMPVARS_ABS_VARS =[
+    "ANDROID_CLANG_PREBUILTS",
+    "ANDROID_JAVA_HOME",
+    "ANDROID_JAVA_TOOLCHAIN",
+    "ANDROID_PREBUILTS",
+    "HOST_OUT",
+    "HOST_OUT_EXECUTABLES",
+    "HOST_OUT_TESTCASES",
+    "OUT_DIR",
+    "print",
+    "PRODUCT_OUT",
+    "SOONG_HOST_OUT",
+    "SOONG_HOST_OUT_EXECUTABLES",
+    "TARGET_OUT_TESTCASES",
+]
 
 @dataclasses.dataclass(frozen=True)
 class Benchmark:
@@ -94,14 +122,46 @@ class Benchmark:
     change: Change
     "Source tree modification for the benchmark that will be measured"
 
-    modules: list[str]
+    dumpvars: Optional[bool] = False
+    "If specified, soong will run in dumpvars mode rather than build-mode."
+
+    modules: Optional[list[str]] = None
     "Build modules to build on soong command line"
 
-    preroll: int
+    preroll: Optional[int] = 0
     "Number of times to run the build command to stabilize"
 
-    postroll: int
+    postroll: Optional[int] = 3
     "Number of times to run the build command after reverting the action to stabilize"
+
+    def build_description(self):
+      "Short description of the benchmark's Soong invocation."
+      if self.dumpvars:
+        return "dumpvars"
+      elif self.modules:
+        return " ".join(self.modules)
+      return ""
+
+
+    def soong_command(self, root):
+      "Command line args to soong_ui for this benchmark."
+      if self.dumpvars:
+          return [
+              "--dumpvars-mode",
+              f"--vars=\"{' '.join(_DUMPVARS_VARS)}\"",
+              f"--abs-vars=\"{' '.join(_DUMPVARS_ABS_VARS)}\"",
+              "--var-prefix=var_cache_",
+              "--abs-var-prefix=abs_var_cache_",
+          ]
+      elif self.modules:
+          return [
+              "--build-mode",
+              "--all-modules",
+              f"--dir={root}",
+              "--skip-metrics-upload",
+          ] + self.modules
+      else:
+          raise Exception("Benchmark must specify dumpvars or modules")
 
 
 @dataclasses.dataclass(frozen=True)
@@ -242,6 +302,7 @@ class BenchmarkReport():
             "id": self.benchmark.id,
             "title": self.benchmark.title,
             "modules": self.benchmark.modules,
+            "dumpvars": self.benchmark.dumpvars,
             "change": self.benchmark.change.label,
             "iteration": self.iteration,
             "log_dir": self.log_dir,
@@ -290,7 +351,7 @@ class Runner():
 
         # Preroll builds
         for i in range(benchmark.preroll):
-            ns = self._run_build(lunch, benchmark_log_dir.joinpath(f"pre_{i}"), benchmark.modules)
+            ns = self._run_build(lunch, benchmark_log_dir.joinpath(f"pre_{i}"), benchmark)
             report.preroll_duration_ns.append(ns)
 
         sys.stderr.write(f"PERFORMING CHANGE: {benchmark.change.label}\n")
@@ -299,18 +360,18 @@ class Runner():
         try:
 
             # Measured build
-            ns = self._run_build(lunch, benchmark_log_dir.joinpath("measured"), benchmark.modules)
+            ns = self._run_build(lunch, benchmark_log_dir.joinpath("measured"), benchmark)
             report.duration_ns = ns
 
             dist_one = self._options.DistOne()
             if dist_one:
                 # If we're disting just one benchmark, save the logs and we can stop here.
-                self._dist(utils.get_dist_dir())
+                self._dist(utils.get_dist_dir(), benchmark.dumpvars)
             else:
                 # Postroll builds
                 for i in range(benchmark.postroll):
                     ns = self._run_build(lunch, benchmark_log_dir.joinpath(f"post_{i}"),
-                                         benchmark.modules)
+                                         benchmark)
                     report.postroll_duration_ns.append(ns)
 
         finally:
@@ -329,21 +390,17 @@ class Runner():
         path += ("/%0" + str(len(str(self._options.Iterations()))) + "d") % iteration
         return path
 
-    def _run_build(self, lunch, build_log_dir, modules):
+    def _run_build(self, lunch, build_log_dir, benchmark):
         """Builds the modules.  Saves interesting log files to log_dir.  Raises FatalError
         if the build fails.
         """
-        sys.stderr.write(f"STARTING BUILD {modules}\n")
+        sys.stderr.write(f"STARTING BUILD {benchmark.build_description()}\n")
 
         before_ns = time.perf_counter_ns()
         if not self._options.DryRun():
             cmd = [
                 "build/soong/soong_ui.bash",
-                "--build-mode",
-                "--all-modules",
-                f"--dir={self._options.root}",
-                "--skip-metrics-upload",
-            ] + modules
+            ] + benchmark.soong_command(self._options.root)
             env = dict(os.environ)
             env["TARGET_PRODUCT"] = lunch.target_product
             env["TARGET_RELEASE"] = lunch.target_release
@@ -357,11 +414,11 @@ class Runner():
 
         # TODO: Copy some log files.
 
-        sys.stderr.write(f"FINISHED BUILD {modules}\n")
+        sys.stderr.write(f"FINISHED BUILD {benchmark.build_description()}\n")
 
         return after_ns - before_ns
 
-    def _dist(self, dist_dir):
+    def _dist(self, dist_dir, dumpvars):
         out_dir = utils.get_out_dir()
         dest_dir = dist_dir.joinpath("logs")
         os.makedirs(dest_dir, exist_ok=True)
@@ -371,6 +428,8 @@ class Runner():
             "soong_build_metrics.pb",
             "soong_metrics",
         ]
+        if dumpvars:
+            basenames = ['dumpvars-'+b for b in basenames]
         for base in basenames:
             src = out_dir.joinpath(base)
             if src.exists():
@@ -393,7 +452,7 @@ class Runner():
 
 def benchmark_table(benchmarks):
     rows = [("ID", "DESCRIPTION", "REBUILD"),]
-    rows += [(benchmark.id, benchmark.title, " ".join(benchmark.modules)) for benchmark in
+    rows += [(benchmark.id, benchmark.title, benchmark.build_description()) for benchmark in
              benchmarks]
     return rows
 
@@ -577,6 +636,22 @@ benchmarks:
         """Initialize the list of benchmarks."""
         # Assumes that we've already chdired to the root of the tree.
         self._benchmarks = [
+            Benchmark(
+                      id="full_lunch",
+                      title="Lunch from clean out",
+                      change=Clean(),
+                      dumpvars=True,
+                      preroll=0,
+                      postroll=0,
+            ),
+            Benchmark(
+                      id="noop_lunch",
+                      title="Lunch with no change",
+                      change=NoChange(),
+                      dumpvars=True,
+                      preroll=1,
+                      postroll=0,
+            ),
             Benchmark(id="full",
                       title="Full build",
                       change=Clean(),
