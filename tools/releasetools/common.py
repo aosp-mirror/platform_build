@@ -1565,50 +1565,6 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
       pubkey_path=pubkey_path)
 
 
-def _HasGkiCertificationArgs():
-  return ("gki_signing_key_path" in OPTIONS.info_dict and
-          "gki_signing_algorithm" in OPTIONS.info_dict)
-
-
-def _GenerateGkiCertificate(image, image_name):
-  key_path = OPTIONS.info_dict.get("gki_signing_key_path")
-  algorithm = OPTIONS.info_dict.get("gki_signing_algorithm")
-
-  key_path = ResolveAVBSigningPathArgs(key_path)
-
-  # Checks key_path exists, before processing --gki_signing_* args.
-  if not os.path.exists(key_path):
-    raise ExternalError(
-        'gki_signing_key_path: "{}" not found'.format(key_path))
-
-  output_certificate = tempfile.NamedTemporaryFile()
-  cmd = [
-      "generate_gki_certificate",
-      "--name", image_name,
-      "--algorithm", algorithm,
-      "--key", key_path,
-      "--output", output_certificate.name,
-      image,
-  ]
-
-  signature_args = OPTIONS.info_dict.get("gki_signing_signature_args", "")
-  signature_args = signature_args.strip()
-  if signature_args:
-    cmd.extend(["--additional_avb_args", signature_args])
-
-  args = OPTIONS.info_dict.get("avb_boot_add_hash_footer_args", "")
-  args = args.strip()
-  if args:
-    cmd.extend(["--additional_avb_args", args])
-
-  RunAndCheckOutput(cmd)
-
-  output_certificate.seek(os.SEEK_SET, 0)
-  data = output_certificate.read()
-  output_certificate.close()
-  return data
-
-
 def BuildVBMeta(image_path, partitions, name, needed_partitions,
                 resolve_rollback_index_location_conflict=False):
   """Creates a VBMeta image.
@@ -1830,29 +1786,6 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file,
       cmd.extend(["--recovery_acpio", fn])
 
   RunAndCheckOutput(cmd)
-
-  if _HasGkiCertificationArgs():
-    if not os.path.exists(img.name):
-      raise ValueError("Cannot find GKI boot.img")
-    if kernel_path is None or not os.path.exists(kernel_path):
-      raise ValueError("Cannot find GKI kernel.img")
-
-    # Certify GKI images.
-    boot_signature_bytes = b''
-    boot_signature_bytes += _GenerateGkiCertificate(img.name, "boot")
-    boot_signature_bytes += _GenerateGkiCertificate(
-        kernel_path, "generic_kernel")
-
-    BOOT_SIGNATURE_SIZE = 16 * 1024
-    if len(boot_signature_bytes) > BOOT_SIGNATURE_SIZE:
-      raise ValueError(
-          f"GKI boot_signature size must be <= {BOOT_SIGNATURE_SIZE}")
-    boot_signature_bytes += (
-        b'\0' * (BOOT_SIGNATURE_SIZE - len(boot_signature_bytes)))
-    assert len(boot_signature_bytes) == BOOT_SIGNATURE_SIZE
-
-    with open(img.name, 'ab') as f:
-      f.write(boot_signature_bytes)
 
   # Sign the image if vboot is non-empty.
   if info_dict.get("vboot"):

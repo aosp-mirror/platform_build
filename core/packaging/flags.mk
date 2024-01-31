@@ -97,37 +97,70 @@ $(foreach partition, $(_FLAG_PARTITIONS), \
 	)) \
 )
 
+# Collect the on-device flags into a single file, similar to all_aconfig_declarations.
+required_aconfig_flags_files := \
+		$(sort $(foreach partition, $(filter $(IMAGES_TO_BUILD), $(_FLAG_PARTITIONS)), \
+			$(aconfig_flag_summaries_protobuf.$(partition)) \
+		))
+
+.PHONY: device_aconfig_declarations
+device_aconfig_declarations: $(PRODUCT_OUT)/device_aconfig_declarations.pb
+$(eval $(call generate-partition-aconfig-flag-file, \
+			$(TARGET_OUT_FLAGS)/device_aconfig_declarations.pb, \
+			$(PRODUCT_OUT)/device_aconfig_declarations.pb, \
+			$(sort $(required_aconfig_flags_files)) \
+)) \
+
 # Create a set of storage file for each partition
-# $(1): built aconfig flags storage dir (out)
-# $(2): installed aconfig flags storage package map file (out)
-# $(3): installed aconfig flags storage flag map file (out)
-# $(4): installed aconfig flags storage flag value file (out)
-# $(5): input aconfig files for the partition (in)
+# $(1): built aconfig flags storage package map file (out)
+# $(2): built aconfig flags storage flag map file (out)
+# $(3): built aconfig flags storage flag val file (out)
+# $(4): installed aconfig flags storage package map file (out)
+# $(5): installed aconfig flags storage flag map file (out)
+# $(6): installed aconfig flags storage flag value file (out)
+# $(7): input aconfig files for the partition (in)
 define generate-partition-aconfig-storage-file
-$(eval $(strip $(1))/target: PRIVATE_OUT_DIR := $(strip $(1)))
-$(eval $(strip $(1))/target: PRIVATE_IN := $(strip $(5)))
-$(strip $(1))/target: $(ACONFIG) $(strip $(5))
-	mkdir -p $$(PRIVATE_OUT_DIR)
+$(eval $(strip $(1)): PRIVATE_OUT := $(strip $(1)))
+$(eval $(strip $(1)): PRIVATE_IN := $(strip $(7)))
+$(strip $(1)): $(ACONFIG) $(strip $(7))
+	mkdir -p $$(dir $$(PRIVATE_OUT))
 	$$(if $$(PRIVATE_IN), \
-		$$(ACONFIG) create-storage --container "" --out $$(PRIVATE_OUT_DIR) \
+		$$(ACONFIG) create-storage --container "" --file package_map --out $$(PRIVATE_OUT) \
 			$$(addprefix --cache ,$$(PRIVATE_IN)), \
 	)
-	echo -n > $$(PRIVATE_OUT_DIR)/target
-$(strip $(1))/package.map: $(strip $(1))/target
-$(strip $(1))/flag.map: $(strip $(1))/target
-$(strip $(1))/flag.val: $(strip $(1))/target
-$(call copy-one-file, $(strip $(1))/package.map, $(2))
-$(call copy-one-file, $(strip $(1))/flag.map, $(3))
-$(call copy-one-file, $(strip $(1))/flag.val, $(4))
+	touch $$(PRIVATE_OUT)
+$(eval $(strip $(2)): PRIVATE_OUT := $(strip $(2)))
+$(eval $(strip $(2)): PRIVATE_IN := $(strip $(7)))
+$(strip $(2)): $(ACONFIG) $(strip $(7))
+	mkdir -p $$(dir $$(PRIVATE_OUT))
+	$$(if $$(PRIVATE_IN), \
+		$$(ACONFIG) create-storage --container "" --file flag_map --out $$(PRIVATE_OUT) \
+			$$(addprefix --cache ,$$(PRIVATE_IN)), \
+	)
+	touch $$(PRIVATE_OUT)
+$(eval $(strip $(3)): PRIVATE_OUT := $(strip $(3)))
+$(eval $(strip $(3)): PRIVATE_IN := $(strip $(7)))
+$(strip $(3)): $(ACONFIG) $(strip $(7))
+	mkdir -p $$(dir $$(PRIVATE_OUT))
+	$$(if $$(PRIVATE_IN), \
+		$$(ACONFIG) create-storage --container "" --file flag_val --out $$(PRIVATE_OUT) \
+		$$(addprefix --cache ,$$(PRIVATE_IN)), \
+	)
+	touch $$(PRIVATE_OUT)
+$(call copy-one-file, $(strip $(1)), $(4))
+$(call copy-one-file, $(strip $(2)), $(5))
+$(call copy-one-file, $(strip $(3)), $(6))
 endef
 
 ifeq ($(RELEASE_CREATE_ACONFIG_STORAGE_FILE),true)
 $(foreach partition, $(_FLAG_PARTITIONS), \
 	$(eval aconfig_storage_package_map.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/package.map) \
 	$(eval aconfig_storage_flag_map.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/flag.map) \
-	$(eval aconfig_storage_falg_value.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/flag.val) \
+	$(eval aconfig_storage_flag_val.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/flag.val) \
 	$(eval $(call generate-partition-aconfig-storage-file, \
-				$(TARGET_OUT_FLAGS)/$(partition), \
+				$(TARGET_OUT_FLAGS)/$(partition)/package.map, \
+				$(TARGET_OUT_FLAGS)/$(partition)/flag.map, \
+				$(TARGET_OUT_FLAGS)/$(partition)/flag.val, \
 				$(aconfig_storage_package_map.$(partition)), \
 				$(aconfig_storage_flag_map.$(partition)), \
 				$(aconfig_storage_flag_val.$(partition)), \
@@ -159,6 +192,7 @@ flag-files: $(required_flags_files)
 
 # Clean up
 required_flags_files:=
+required_aconfig_flags_files:=
 $(foreach partition, $(_FLAG_PARTITIONS), \
 	$(eval build_flag_summaries.$(partition):=) \
 	$(eval aconfig_flag_summaries_protobuf.$(partition):=) \
