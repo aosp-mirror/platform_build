@@ -29,9 +29,9 @@ mod commands;
 mod dump;
 mod storage;
 
+use aconfig_storage_file::StorageFileSelection;
 use codegen::CodegenMode;
 use dump::DumpFormat;
-use storage::StorageFileSelection;
 
 #[cfg(test)]
 mod test;
@@ -213,8 +213,10 @@ fn main() -> Result<()> {
                 get_optional_arg::<String>(sub_matches, "container").map(|c| c.as_str());
             let declarations = open_zero_or_more_files(sub_matches, "declarations")?;
             let values = open_zero_or_more_files(sub_matches, "values")?;
-            let default_permission =
-                get_required_arg::<aconfig_protos::ProtoFlagPermission>(sub_matches, "default-permission")?;
+            let default_permission = get_required_arg::<aconfig_protos::ProtoFlagPermission>(
+                sub_matches,
+                "default-permission",
+            )?;
             let output = commands::parse_flags(
                 package,
                 container,

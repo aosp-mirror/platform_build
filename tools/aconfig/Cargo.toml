@@ -3,5 +3,8 @@
 members = [
     "aconfig",
     "aconfig_protos",
+    "aconfig_storage_file",
     "printflags"
 ]
+
+resolver = "2"
