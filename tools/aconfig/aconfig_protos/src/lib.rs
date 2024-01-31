@@ -150,10 +150,7 @@ pub mod flag_declarations {
         ensure_required_fields!("flag declarations", pdf, "package");
         // TODO(b/312769710): Make the container field required.
 
-        ensure!(
-            is_valid_package_ident(pdf.package()),
-            "bad flag declarations: bad package"
-        );
+        ensure!(is_valid_package_ident(pdf.package()), "bad flag declarations: bad package");
         ensure!(
             !pdf.has_container() || is_valid_container_ident(pdf.container()),
             "bad flag declarations: bad container"
@@ -898,10 +895,7 @@ parsed_flag {
 "#;
         let parsed_flags = try_from_binary_proto_from_text_proto(text_proto).unwrap();
         let parsed_flag = &parsed_flags.parsed_flag[0];
-        assert_eq!(
-            crate::parsed_flag::path_to_declaration(parsed_flag),
-            "flags.declarations"
-        );
+        assert_eq!(crate::parsed_flag::path_to_declaration(parsed_flag), "flags.declarations");
     }
 
     #[test]
