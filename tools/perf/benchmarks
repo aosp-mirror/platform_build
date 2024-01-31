@@ -131,8 +131,14 @@ def Clean():
     """Remove the out directory."""
     def remove_out():
         out_dir = utils.get_out_dir()
+        #only remove actual contents, in case out is a symlink (as is the case for cog)
         if os.path.exists(out_dir):
-            shutil.rmtree(out_dir)
+          for filename in os.listdir(out_dir):
+              p = os.path.join(out_dir, filename)
+              if os.path.isfile(p) or os.path.islink(p):
+                  os.remove(p)
+              elif os.path.isdir(p):
+                  shutil.rmtree(p)
     return Change(label="Remove out", change=remove_out, undo=lambda: None)
 
 
