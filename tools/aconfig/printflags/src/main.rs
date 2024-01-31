@@ -16,8 +16,8 @@
 
 //! `printflags` is a device binary to print feature flags.
 
-use aconfig_protos::aconfig::Flag_state as State;
-use aconfig_protos::aconfig::Parsed_flags as ProtoParsedFlags;
+use aconfig_protos::ProtoFlagState as State;
+use aconfig_protos::ProtoParsedFlags;
 use anyhow::{bail, Context, Result};
 use regex::Regex;
 use std::collections::BTreeMap;
