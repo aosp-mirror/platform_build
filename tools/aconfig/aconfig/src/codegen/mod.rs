@@ -18,9 +18,9 @@ pub mod cpp;
 pub mod java;
 pub mod rust;
 
+use aconfig_protos::{is_valid_name_ident, is_valid_package_ident};
 use anyhow::{ensure, Result};
 use clap::ValueEnum;
-use aconfig_protos::{is_valid_name_ident, is_valid_package_ident};
 
 pub fn create_device_config_ident(package: &str, flag_name: &str) -> Result<String> {
     ensure!(is_valid_package_ident(package), "bad package");

@@ -10,6 +10,7 @@ rust_defaults {
     srcs: ["src/main.rs"],
     rustlibs: [
         "libaconfig_protos",
+        "libaconfig_storage_file",
         "libanyhow",
         "libclap",
         "libitertools",

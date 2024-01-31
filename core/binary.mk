@@ -145,14 +145,20 @@ endif
 ifneq (,$(strip $(foreach dir,$(NATIVE_COVERAGE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
 ifeq (,$(strip $(foreach dir,$(NATIVE_COVERAGE_EXCLUDE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
   my_native_coverage := true
+  my_clang_coverage := true
 else
   my_native_coverage := false
+  my_clang_coverage := false
 endif
 else
   my_native_coverage := false
+  my_clang_coverage := false
 endif
 ifneq ($(NATIVE_COVERAGE),true)
   my_native_coverage := false
+endif
+ifneq ($(CLANG_COVERAGE),true)
+  my_clang_coverage := false
 endif
 
 # Exclude directories from checking allowed manual binder interface lists.
@@ -270,6 +276,7 @@ ifneq ($(LOCAL_SDK_VERSION),)
   ifneq ($(my_ndk_api),current)
     ifeq ($(call math_lt, $(my_ndk_api),23),true)
       my_native_coverage := false
+      my_clang_coverage := false
     endif
   endif
 endif
@@ -291,6 +298,36 @@ ifeq ($(NATIVE_COVERAGE),true)
       else
         my_whole_static_libraries += libprofile-extras_ndk
       endif
+    endif
+  endif
+endif
+
+ifeq ($(CLANG_COVERAGE),true)
+  ifndef LOCAL_IS_HOST_MODULE
+    my_ldflags += $(CLANG_COVERAGE_HOST_LDFLAGS)
+    ifneq ($(LOCAL_MODULE_CLASS),STATIC_LIBRARIES)
+      my_whole_static_libraries += libclang_rt.profile
+      ifeq ($(LOCAL_SDK_VERSION),)
+        my_whole_static_libraries += libprofile-clang-extras
+      else
+        my_whole_static_libraries += libprofile-clang-extras_ndk
+      endif
+    endif
+  endif
+  ifeq ($(my_clang_coverage),true)
+    my_profile_instr_generate := $(CLANG_COVERAGE_INSTR_PROFILE)
+    ifeq ($(CLANG_COVERAGE_CONTINUOUS_MODE),true)
+      my_cflags += $(CLANG_COVERAGE_CONTINUOUS_FLAGS)
+      my_ldflags += $(CLANG_COVERAGE_CONTINUOUS_FLAGS)
+    endif
+
+    my_profile_instr_generate += $(CLANG_COVERAGE_CONFIG_COMMFLAGS)
+    my_cflags += $(CLANG_COVERAGE_INSTR_PROFILE) $(CLANG_COVERAGE_CONFIG_CFLAGS) $(CLANG_COVERAGE_CONFIG_COMMFLAGS)
+    my_ldflags += $(CLANG_COVERAGE_CONFIG_COMMFLAGS)
+
+    ifneq ($(filter hwaddress,$(my_sanitize)),)
+      my_cflags += $(CLANG_COVERAGE_HWASAN_FLAGS)
+      my_ldflags += $(CLANG_COVERAGE_HWASAN_FLAGS)
     endif
   endif
 endif
