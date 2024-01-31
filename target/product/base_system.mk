@@ -439,6 +439,7 @@ PRODUCT_PACKAGES_DEBUG := \
     logpersist.start \
     logtagd.rc \
     ot-cli-ftd \
+    ot-ctl \
     procrank \
     profcollectd \
     profcollectctl \
