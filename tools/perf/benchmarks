@@ -368,6 +368,7 @@ class Runner():
                 # If we're disting just one benchmark, save the logs and we can stop here.
                 self._dist(utils.get_dist_dir(), benchmark.dumpvars)
             else:
+                self._dist(benchmark_log_dir, benchmark.dumpvars, store_metrics_only=True)
                 # Postroll builds
                 for i in range(benchmark.postroll):
                     ns = self._run_build(lunch, benchmark_log_dir.joinpath(f"post_{i}"),
@@ -418,16 +419,19 @@ class Runner():
 
         return after_ns - before_ns
 
-    def _dist(self, dist_dir, dumpvars):
+    def _dist(self, dist_dir, dumpvars, store_metrics_only=False):
         out_dir = utils.get_out_dir()
         dest_dir = dist_dir.joinpath("logs")
         os.makedirs(dest_dir, exist_ok=True)
         basenames = [
-            "build.trace.gz",
-            "soong.log",
             "soong_build_metrics.pb",
             "soong_metrics",
         ]
+        if not store_metrics_only:
+            basenames.extend([
+                "build.trace.gz",
+                "soong.log",
+            ])
         if dumpvars:
             basenames = ['dumpvars-'+b for b in basenames]
         for base in basenames:
