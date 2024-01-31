@@ -17,8 +17,7 @@
 use anyhow::Result;
 
 use aconfig_storage_file::{
-    get_table_size, PackageTable, PackageTableHeader, PackageTableNode,
-    FILE_VERSION,
+    get_table_size, PackageTable, PackageTableHeader, PackageTableNode, FILE_VERSION,
 };
 
 use crate::storage::FlagPackage;
@@ -61,10 +60,8 @@ pub fn create_package_table(container: &str, packages: &[FlagPackage]) -> Result
     let num_buckets = get_table_size(num_packages)?;
     let mut header = new_header(container, num_packages);
     let mut buckets = vec![None; num_buckets as usize];
-    let mut node_wrappers: Vec<_> = packages
-        .iter()
-        .map(|pkg| PackageTableNodeWrapper::new(pkg, num_buckets))
-        .collect();
+    let mut node_wrappers: Vec<_> =
+        packages.iter().map(|pkg| PackageTableNodeWrapper::new(pkg, num_buckets)).collect();
 
     // initialize all header fields
     header.bucket_offset = header.as_bytes().len() as u32;
@@ -79,8 +76,11 @@ pub fn create_package_table(container: &str, packages: &[FlagPackage]) -> Result
     let mut offset = header.node_offset;
     for i in 0..node_wrappers.len() {
         let node_bucket_idx = node_wrappers[i].bucket_index;
-        let next_node_bucket_idx =
-            if i + 1 < node_wrappers.len() { Some(node_wrappers[i + 1].bucket_index) } else { None };
+        let next_node_bucket_idx = if i + 1 < node_wrappers.len() {
+            Some(node_wrappers[i + 1].bucket_index)
+        } else {
+            None
+        };
 
         if buckets[node_bucket_idx as usize].is_none() {
             buckets[node_bucket_idx as usize] = Some(offset);
