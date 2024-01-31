@@ -302,7 +302,7 @@ class Runner():
                 self._dist(utils.get_dist_dir())
             else:
                 # Postroll builds
-                for i in range(benchmark.preroll):
+                for i in range(benchmark.postroll):
                     ns = self._run_build(lunch, benchmark_log_dir.joinpath(f"post_{i}"),
                                          benchmark.modules)
                     report.postroll_duration_ns.append(ns)
