@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+use crate::protos::ProtoStorageFiles;
 use anyhow::Result;
 use protobuf::Message;
-use crate::protos::ProtoStorageFiles;
 
 pub fn get_binary_storage_proto_bytes(text_proto: &str) -> Result<Vec<u8>> {
     let storage_files: ProtoStorageFiles = protobuf::text_format::parse_from_str(text_proto)?;
