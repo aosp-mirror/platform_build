@@ -19,9 +19,11 @@ DEFAULT_REPORT_DIR = "benchmarks"
 
 def get_root():
     top_dir = os.environ.get("ANDROID_BUILD_TOP")
-    if top_dir:
-        return pathlib.Path(top_dir).resolve()
     d = pathlib.Path.cwd()
+    # with cog, someone may have a new workspace and new source tree top, but
+    # not run lunch yet, resulting in a misleading ANDROID_BUILD_TOP value
+    if top_dir and d.is_relative_to(top_dir):
+        return pathlib.Path(top_dir).resolve()
     while True:
         if d.joinpath("build", "soong", "soong_ui.bash").exists():
             return d.resolve().absolute()
