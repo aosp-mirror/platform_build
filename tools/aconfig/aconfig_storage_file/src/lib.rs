@@ -21,6 +21,9 @@ pub mod flag_table;
 pub mod flag_value;
 pub mod package_table;
 
+#[cfg(feature = "cargo")]
+pub mod mapped_file;
+
 mod protos;
 #[cfg(test)]
 mod test_utils;
