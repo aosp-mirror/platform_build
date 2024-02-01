@@ -74,13 +74,7 @@ impl FlagTableNodeWrapper {
                 // should come from the parsed flag, and we will set the flag_type bit
                 // mask properly.
                 let flag_type = 1;
-                Ok(Self::new(
-                    package.package_id,
-                    pf.name(),
-                    flag_type,
-                    *fid,
-                    num_buckets,
-                ))
+                Ok(Self::new(package.package_id, pf.name(), flag_type, *fid, num_buckets))
             })
             .collect::<Result<Vec<_>>>()
     }
@@ -112,8 +106,11 @@ pub fn create_flag_table(container: &str, packages: &[FlagPackage]) -> Result<Fl
     let mut offset = header.node_offset;
     for i in 0..node_wrappers.len() {
         let node_bucket_idx = node_wrappers[i].bucket_index;
-        let next_node_bucket_idx =
-            if i + 1 < node_wrappers.len() { Some(node_wrappers[i + 1].bucket_index) } else { None };
+        let next_node_bucket_idx = if i + 1 < node_wrappers.len() {
+            Some(node_wrappers[i + 1].bucket_index)
+        } else {
+            None
+        };
 
         if buckets[node_bucket_idx as usize].is_none() {
             buckets[node_bucket_idx as usize] = Some(offset);
@@ -127,11 +124,8 @@ pub fn create_flag_table(container: &str, packages: &[FlagPackage]) -> Result<Fl
         }
     }
 
-    let table = FlagTable {
-        header,
-        buckets,
-        nodes: node_wrappers.into_iter().map(|nw| nw.node).collect(),
-    };
+    let table =
+        FlagTable { header, buckets, nodes: node_wrappers.into_iter().map(|nw| nw.node).collect() };
 
     Ok(table)
 }

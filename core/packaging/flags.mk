@@ -97,6 +97,20 @@ $(foreach partition, $(_FLAG_PARTITIONS), \
 	)) \
 )
 
+# Collect the on-device flags into a single file, similar to all_aconfig_declarations.
+required_aconfig_flags_files := \
+		$(sort $(foreach partition, $(filter $(IMAGES_TO_BUILD), $(_FLAG_PARTITIONS)), \
+			$(aconfig_flag_summaries_protobuf.$(partition)) \
+		))
+
+.PHONY: device_aconfig_declarations
+device_aconfig_declarations: $(PRODUCT_OUT)/device_aconfig_declarations.pb
+$(eval $(call generate-partition-aconfig-flag-file, \
+			$(TARGET_OUT_FLAGS)/device_aconfig_declarations.pb, \
+			$(PRODUCT_OUT)/device_aconfig_declarations.pb, \
+			$(sort $(required_aconfig_flags_files)) \
+)) \
+
 # Create a set of storage file for each partition
 # $(1): built aconfig flags storage package map file (out)
 # $(2): built aconfig flags storage flag map file (out)
@@ -178,6 +192,7 @@ flag-files: $(required_flags_files)
 
 # Clean up
 required_flags_files:=
+required_aconfig_flags_files:=
 $(foreach partition, $(_FLAG_PARTITIONS), \
 	$(eval build_flag_summaries.$(partition):=) \
 	$(eval aconfig_flag_summaries_protobuf.$(partition):=) \

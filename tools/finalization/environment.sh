@@ -24,3 +24,6 @@ export FINAL_MAINLINE_EXTENSION='58'
 export FINAL_STATE='unfinalized'
 
 export BUILD_FROM_SOURCE_STUB=true
+
+# FINAL versions for VINTF
+export FINAL_BOARD_API_LEVEL=$(TARGET_RELEASE=fina_1 $top/build/soong/soong_ui.bash --dumpvar-mode RELEASE_BOARD_API_LEVEL)
