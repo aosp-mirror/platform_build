@@ -17,8 +17,10 @@
 //! flag table module defines the flag table file format and methods for serialization
 //! and deserialization
 
+use crate::AconfigStorageError::{self, BytesParseFail, HigherStorageFileVersion};
 use crate::{get_bucket_index, read_str_from_bytes, read_u16_from_bytes, read_u32_from_bytes};
-use anyhow::{anyhow, Result};
+use anyhow::anyhow;
+pub type FlagOffset = u16;
 
 /// Flag table header struct
 #[derive(PartialEq, Debug)]
@@ -47,7 +49,7 @@ impl FlagTableHeader {
     }
 
     /// Deserialize from bytes
-    pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, AconfigStorageError> {
         let mut head = 0;
         Ok(Self {
             version: read_u32_from_bytes(bytes, &mut head)?,
@@ -85,7 +87,7 @@ impl FlagTableNode {
     }
 
     /// Deserialize from bytes
-    pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, AconfigStorageError> {
         let mut head = 0;
         let node = Self {
             package_id: read_u32_from_bytes(bytes, &mut head)?,
@@ -127,7 +129,7 @@ impl FlagTable {
     }
 
     /// Deserialize from bytes
-    pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, AconfigStorageError> {
         let header = FlagTableHeader::from_bytes(bytes)?;
         let num_flags = header.num_flags;
         let num_buckets = crate::get_table_size(num_flags)?;
@@ -144,7 +146,8 @@ impl FlagTable {
                 head += node.as_bytes().len();
                 Ok(node)
             })
-            .collect::<Result<Vec<_>>>()?;
+            .collect::<Result<Vec<_>, AconfigStorageError>>()
+            .map_err(|errmsg| BytesParseFail(anyhow!("fail to parse flag table: {}", errmsg)))?;
 
         let table = Self { header, buckets, nodes };
         Ok(table)
@@ -152,14 +155,18 @@ impl FlagTable {
 }
 
 /// Query flag within package offset
-pub fn find_flag_offset(buf: &[u8], package_id: u32, flag: &str) -> Result<Option<u16>> {
+pub fn find_flag_offset(
+    buf: &[u8],
+    package_id: u32,
+    flag: &str,
+) -> Result<Option<FlagOffset>, AconfigStorageError> {
     let interpreted_header = FlagTableHeader::from_bytes(buf)?;
     if interpreted_header.version > crate::FILE_VERSION {
-        return Err(anyhow!(
+        return Err(HigherStorageFileVersion(anyhow!(
             "Cannot read storage file with a higher version of {} with lib version {}",
             interpreted_header.version,
             crate::FILE_VERSION
-        ));
+        )));
     }
 
     let num_buckets = (interpreted_header.node_offset - interpreted_header.bucket_offset) / 4;
@@ -202,7 +209,7 @@ mod tests {
         }
     }
 
-    pub fn create_test_flag_table() -> Result<FlagTable> {
+    pub fn create_test_flag_table() -> FlagTable {
         let header = FlagTableHeader {
             version: crate::FILE_VERSION,
             container: String::from("system"),
@@ -240,13 +247,13 @@ mod tests {
             FlagTableNode::new_expected(2, "enabled_fixed_ro", 1, 0, None),
             FlagTableNode::new_expected(0, "disabled_rw", 1, 0, None),
         ];
-        Ok(FlagTable { header, buckets, nodes })
+        FlagTable { header, buckets, nodes }
     }
 
     #[test]
     // this test point locks down the table serialization
     fn test_serialization() {
-        let flag_table = create_test_flag_table().unwrap();
+        let flag_table = create_test_flag_table();
 
         let header: &FlagTableHeader = &flag_table.header;
         let reinterpreted_header = FlagTableHeader::from_bytes(&header.as_bytes());
@@ -267,7 +274,7 @@ mod tests {
     #[test]
     // this test point locks down table query
     fn test_flag_query() {
-        let flag_table = create_test_flag_table().unwrap().as_bytes();
+        let flag_table = create_test_flag_table().as_bytes();
         let baseline = vec![
             (0, "enabled_ro", 1u16),
             (0, "enabled_rw", 2u16),
@@ -288,7 +295,7 @@ mod tests {
     #[test]
     // this test point locks down table query of a non exist flag
     fn test_not_existed_flag_query() {
-        let flag_table = create_test_flag_table().unwrap().as_bytes();
+        let flag_table = create_test_flag_table().as_bytes();
         let flag_offset = find_flag_offset(&flag_table[..], 1, "disabled_fixed_ro").unwrap();
         assert_eq!(flag_offset, None);
         let flag_offset = find_flag_offset(&flag_table[..], 2, "disabled_rw").unwrap();
@@ -298,14 +305,14 @@ mod tests {
     #[test]
     // this test point locks down query error when file has a higher version
     fn test_higher_version_storage_file() {
-        let mut table = create_test_flag_table().unwrap();
+        let mut table = create_test_flag_table();
         table.header.version = crate::FILE_VERSION + 1;
         let flag_table = table.as_bytes();
         let error = find_flag_offset(&flag_table[..], 0, "enabled_ro").unwrap_err();
         assert_eq!(
             format!("{:?}", error),
             format!(
-                "Cannot read storage file with a higher version of {} with lib version {}",
+                "HigherStorageFileVersion(Cannot read storage file with a higher version of {} with lib version {})",
                 crate::FILE_VERSION + 1,
                 crate::FILE_VERSION
             )

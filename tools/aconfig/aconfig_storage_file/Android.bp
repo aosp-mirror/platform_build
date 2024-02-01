@@ -13,6 +13,9 @@ rust_defaults {
         "libonce_cell",
         "libprotobuf",
         "libtempfile",
+        "libmemmap2",
+        "libcxx",
+        "libthiserror",
     ],
 }
 
@@ -23,10 +26,60 @@ rust_library {
     defaults: ["aconfig_storage_file.defaults"],
 }
 
+genrule {
+    name: "ro.package.map",
+    out: ["tests/tmp.ro.package.map"],
+    srcs: ["tests/package.map"],
+    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
+}
+
+genrule {
+    name: "ro.flag.map",
+    out: ["tests/tmp.ro.flag.map"],
+    srcs: ["tests/flag.map"],
+    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
+}
+
+genrule {
+    name: "ro.flag.val",
+    out: ["tests/tmp.ro.flag.val"],
+    srcs: ["tests/flag.val"],
+    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
+}
+
+genrule {
+    name: "rw.package.map",
+    out: ["tests/tmp.rw.package.map"],
+    srcs: ["tests/package.map"],
+    cmd: "rm -f $(out);cp -f $(in) $(out);chmod +w $(out)",
+}
+
+genrule {
+    name: "rw.flag.map",
+    out: ["tests/tmp.rw.flag.map"],
+    srcs: ["tests/flag.map"],
+    cmd: "rm -f $(out);cp -f $(in) $(out);chmod +w $(out)",
+}
+
+genrule {
+    name: "rw.flag.val",
+    out: ["tests/tmp.rw.flag.val"],
+    srcs: ["tests/flag.val"],
+    cmd: "rm -f $(out);cp -f $(in) $(out);chmod +w $(out)",
+}
+
 rust_test_host {
     name: "aconfig_storage_file.test",
     test_suites: ["general-tests"],
     defaults: ["aconfig_storage_file.defaults"],
+    data: [
+        ":ro.package.map",
+        ":ro.flag.map",
+        ":ro.flag.val",
+        ":rw.package.map",
+        ":rw.flag.map",
+        ":rw.flag.val",
+    ],
 }
 
 rust_protobuf {
