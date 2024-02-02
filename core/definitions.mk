@@ -2774,10 +2774,6 @@ define module-min-sdk-version
 $(if $(LOCAL_MIN_SDK_VERSION),$(LOCAL_MIN_SDK_VERSION),$(call module-target-sdk-version))
 endef
 
-# Checks if module is in vendor or product
-define module-in-vendor-or-product
-$(if $(filter true,$(LOCAL_IN_VENDOR) $(LOCAL_IN_PRODUCT)),true)
-endef
 
 define transform-classes.jar-to-dex
 @echo "target Dex: $(PRIVATE_MODULE)"
