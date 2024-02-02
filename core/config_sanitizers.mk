@@ -355,6 +355,12 @@ ifneq ($(filter fuzzer,$(my_sanitize)),)
   my_sanitize := $(filter-out cfi,$(my_sanitize))
   my_cflags += -fno-lto
   my_ldflags += -fno-lto
+
+  # TODO(b/142430592): Upstream linker scripts for sanitizer runtime libraries
+  # discard the sancov_lowest_stack symbol, because it's emulated TLS (and thus
+  # doesn't match the linker script due to the "__emutls_v." prefix).
+  my_cflags += -fno-sanitize-coverage=stack-depth
+  my_ldflags += -fno-sanitize-coverage=stack-depth
 endif
 
 ifneq ($(filter integer_overflow,$(my_sanitize)),)

@@ -16,10 +16,11 @@
 
 //! `printflags` is a device binary to print feature flags.
 
-use aconfig_protos::aconfig::Flag_state as State;
-use aconfig_protos::aconfig::Parsed_flags as ProtoParsedFlags;
+use aconfig_protos::ProtoFlagState as State;
+use aconfig_protos::ProtoParsedFlags;
 use anyhow::{bail, Context, Result};
 use regex::Regex;
+use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::process::Command;
 use std::{fs, str};
@@ -66,7 +67,7 @@ fn main() -> Result<()> {
     let device_config_flags = parse_device_config(dc_stdout);
 
     // read aconfig_flags.pb files
-    let mut flags: HashMap<String, Vec<String>> = HashMap::new();
+    let mut flags: BTreeMap<String, Vec<String>> = BTreeMap::new();
     for partition in ["system", "system_ext", "product", "vendor"] {
         let path = format!("/{}/etc/aconfig_flags.pb", partition);
         let Ok(bytes) = fs::read(&path) else {
@@ -86,11 +87,10 @@ fn main() -> Result<()> {
 
     // print flags
     for (key, mut value) in flags {
-        let (_, package_and_name) = key.split_once('/').unwrap();
         if let Some(dc_value) = device_config_flags.get(&key) {
             value.push(dc_value.to_string());
         }
-        println!("{}: {}", package_and_name, value.join(", "));
+        println!("{}: {}", key, value.join(", "));
     }
 
     Ok(())

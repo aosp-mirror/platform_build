@@ -1,0 +1,75 @@
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+// proto libraries for consumers of `aconfig dump --format=protobuf` output
+
+java_library {
+    name: "libaconfig_java_proto_lite",
+    host_supported: true,
+    srcs: ["protos/aconfig.proto"],
+    static_libs: ["libprotobuf-java-lite"],
+    proto: {
+        type: "lite",
+    },
+    sdk_version: "current",
+    min_sdk_version: "UpsideDownCake",
+    apex_available: [
+        "com.android.configinfrastructure",
+        "//apex_available:platform",
+    ]
+}
+
+java_library_host {
+    name: "libaconfig_java_proto_full",
+    srcs: ["protos/aconfig.proto"],
+    static_libs: ["libprotobuf-java-full"],
+    proto: {
+        type: "full",
+    },
+}
+
+python_library_host {
+    name: "libaconfig_python_proto",
+    srcs: ["protos/aconfig.proto"],
+    proto: {
+        canonical_path_from_root: false,
+    },
+}
+
+rust_protobuf {
+    name: "libaconfig_rust_proto",
+    protos: ["protos/aconfig.proto"],
+    crate_name: "aconfig_rust_proto",
+    source_stem: "aconfig_rust_proto",
+    host_supported: true,
+}
+
+rust_defaults {
+    name: "aconfig_protos.defaults",
+    edition: "2021",
+    clippy_lints: "android",
+    lints: "android",
+    srcs: ["src/lib.rs"],
+    rustlibs: [
+        "libaconfig_rust_proto",
+        "libanyhow",
+        "libprotobuf",
+    ],
+    proc_macros: [
+        "libpaste",
+    ]
+}
+
+rust_library {
+    name: "libaconfig_protos",
+    crate_name: "aconfig_protos",
+    host_supported: true,
+    defaults: ["aconfig_protos.defaults"],
+}
+
+rust_test_host {
+    name: "aconfig_protos.test",
+    test_suites: ["general-tests"],
+    defaults: ["aconfig_protos.defaults"],
+}

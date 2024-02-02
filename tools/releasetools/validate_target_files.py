@@ -132,7 +132,7 @@ def ValidateFileConsistency(input_zip, input_tmp, info_dict):
     return
 
   # Verify IMAGES/system.img if applicable.
-  # Some targets, e.g., gki_arm64, gki_x86_64, etc., are system.img-less.
+  # Some targets are system.img-less.
   if 'IMAGES/system.img' in input_zip.namelist():
     CheckAllFiles('system')
 
@@ -361,18 +361,15 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
           "Mismatching mincrypt verity key files"
       logging.info('Verified the content of /verity_key')
 
-    # For devices with a separate ramdisk (i.e. non-system-as-root), there must
-    # be a copy in ramdisk.
-    if info_dict.get("system_root_image") != "true":
-      verity_key_ramdisk = os.path.join(
-          input_tmp, 'BOOT', 'RAMDISK', 'verity_key')
-      assert os.path.exists(
-          verity_key_ramdisk), 'Missing verity_key in ramdisk'
+    verity_key_ramdisk = os.path.join(
+        input_tmp, 'BOOT', 'RAMDISK', 'verity_key')
+    assert os.path.exists(
+        verity_key_ramdisk), 'Missing verity_key in ramdisk'
 
-      assert filecmp.cmp(
-          verity_key_mincrypt, verity_key_ramdisk, shallow=False), \
-          'Mismatching verity_key files in root and ramdisk'
-      logging.info('Verified the content of /verity_key in ramdisk')
+    assert filecmp.cmp(
+        verity_key_mincrypt, verity_key_ramdisk, shallow=False), \
+        'Mismatching verity_key files in root and ramdisk'
+    logging.info('Verified the content of /verity_key in ramdisk')
 
     # Then verify the verity signed system/vendor/product images, against the
     # verity pubkey in mincrypt format.

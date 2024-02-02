@@ -24,7 +24,7 @@
     </target_preparer>
 
     <test class="com.android.tradefed.testtype.{TEST_TYPE}" >
-        <option name="package" value="{PACKAGE}" />
+        {EXTRA_TEST_RUNNER_CONFIGS}<option name="package" value="{PACKAGE}" />
         <option name="runner" value="{RUNNER}" />
     </test>
 </configuration>

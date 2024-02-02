@@ -25,3 +25,4 @@ ifeq ($(filter memtag_heap,$(SANITIZE_TARGET)),)
   SANITIZE_TARGET_DIAG := $(strip $(SANITIZE_TARGET_DIAG) memtag_heap)
 endif
 PRODUCT_PRODUCT_PROPERTIES += persist.arm64.memtag.default=sync
+PRODUCT_SCUDO_ALLOCATION_RING_BUFFER_SIZE := 131072

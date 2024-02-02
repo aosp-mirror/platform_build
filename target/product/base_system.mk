@@ -70,7 +70,7 @@ PRODUCT_PACKAGES += \
     com.android.scheduling \
     com.android.sdkext \
     com.android.tethering \
-    com.android.tzdata \
+    $(RELEASE_PACKAGE_TZDATA_MODULE) \
     com.android.uwb \
     com.android.virt \
     com.android.wifi \
@@ -125,7 +125,6 @@ PRODUCT_PACKAGES += \
     IntentResolver \
     ip \
     iptables \
-    ip-up-vpn \
     javax.obex \
     keystore2 \
     credstore \
@@ -201,6 +200,7 @@ PRODUCT_PACKAGES += \
     libui \
     libusbhost \
     libutils \
+    libvintf_jni \
     libvulkan \
     libwilhelm \
     linker \
@@ -223,7 +223,6 @@ PRODUCT_PACKAGES += \
     mkfs.erofs \
     monkey \
     mtectrl \
-    mtpd \
     ndc \
     netd \
     NetworkStack \
@@ -237,13 +236,11 @@ PRODUCT_PACKAGES += \
     ping6 \
     platform.xml \
     pm \
-    pppd \
     preinstalled-packages-asl-files.xml \
     preinstalled-packages-platform.xml \
     printflags \
     privapp-permissions-platform.xml \
     prng_seeder \
-    racoon \
     recovery-persist \
     resize2fs \
     rss_hwm_reset \
@@ -291,6 +288,13 @@ PRODUCT_PACKAGES += \
     wifi.rc \
     wm \
 
+# When we release crashrecovery module
+ifeq ($(RELEASE_CRASHRECOVERY_MODULE),true)
+  PRODUCT_PACKAGES += \
+        com.android.crashrecovery \
+
+endif
+
 # These packages are not used on Android TV
 ifneq ($(PRODUCT_IS_ATV),true)
   PRODUCT_PACKAGES += \
@@ -303,6 +307,16 @@ ifneq ($(PRODUCT_NO_DYNAMIC_SYSTEM_UPDATE),true)
     PRODUCT_PACKAGES += \
         DynamicSystemInstallationService \
 
+endif
+
+# Check if the build supports NFC apex or not
+ifeq ($(RELEASE_PACKAGE_NFC_STACK),NfcNci)
+    PRODUCT_PACKAGES += \
+        framework-nfc \
+        NfcNci
+else
+    PRODUCT_PACKAGES += \
+        com.android.nfcservices
 endif
 
 # VINTF data for system image
@@ -427,6 +441,7 @@ PRODUCT_PACKAGES_DEBUG := \
     logpersist.start \
     logtagd.rc \
     ot-cli-ftd \
+    ot-ctl \
     procrank \
     profcollectd \
     profcollectctl \
