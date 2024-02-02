@@ -481,6 +481,34 @@ ifneq ($(filter external/%,$(LOCAL_PATH)),)
     my_cflags += $(CLANG_EXTERNAL_CFLAGS)
 endif
 
+# Extra cflags for projects under hardware/ directory.
+# This should match the definition of `thirdPartyDirPrefixExceptions`
+# in build/soong/android/paths.go.
+# Get the second element of LOCAL_PATH
+ifneq ($(filter hardware/%,$(LOCAL_PATH)),)
+  my_subdir := $(word 2,$(subst /,$(space),$(LOCAL_PATH)))
+  must_compile_hardware_subdirs := \
+                  hardware/google/% \
+                  hardware/interfaces/% \
+                  hardware/libhardware/% \
+                  hardware/libhardware_legacy/% \
+                  hardware/ril/%
+  ifeq ($(filter $(must_compile_hardware_subdirs),$(my_subdir)),)
+    my_cflags += $(CLANG_EXTERNAL_CFLAGS)
+  endif
+endif
+
+# Extra cflags for projects under vendor/ directory.
+# This should match the definition of `thirdPartyDirPrefixExceptions`
+# in build/soong/android/paths.go.
+ifneq ($(filter vendor/%,$(LOCAL_PATH)),)
+  my_subdir := $(word 2,$(subst /,$(space),$(LOCAL_PATH)))
+  # Do not add the flags for any subdir that contains the string "google".
+  ifneq ($(findstring google,$(my_subdir)),)
+    my_cflags += $(CLANG_EXTERNAL_CFLAGS)
+  endif
+endif
+
 # arch-specific static libraries go first so that generic ones can depend on them
 my_static_libraries := $(LOCAL_STATIC_LIBRARIES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_STATIC_LIBRARIES_$(my_32_64_bit_suffix)) $(my_static_libraries)
 my_whole_static_libraries := $(LOCAL_WHOLE_STATIC_LIBRARIES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_WHOLE_STATIC_LIBRARIES_$(my_32_64_bit_suffix)) $(my_whole_static_libraries)
