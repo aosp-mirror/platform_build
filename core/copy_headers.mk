@@ -13,12 +13,13 @@ ifdef LOCAL_SDK_VERSION
   $(call pretty-error,Modules using LOCAL_SDK_VERSION may not use LOCAL_COPY_HEADERS)
 endif
 
-include $(BUILD_SYSTEM)/local_vendor_product.mk
+include $(BUILD_SYSTEM)/local_vndk.mk
 
-# Modules in vendor or product may use LOCAL_COPY_HEADERS.
-# Platform libraries will not have the include path present.
-ifeq ($(call module-in-vendor-or-product),)
-  $(call pretty-error,Only modules in vendor or product may use LOCAL_COPY_HEADERS)
+# If we're using the VNDK, only vendor modules using the VNDK may use
+# LOCAL_COPY_HEADERS. Platform libraries will not have the include path
+# present.
+ifndef LOCAL_USE_VNDK
+  $(call pretty-error,Only vendor modules using LOCAL_USE_VNDK may use LOCAL_COPY_HEADERS)
 endif
 
 # Clean up LOCAL_COPY_HEADERS_TO, since soong_ui will be comparing cleaned
