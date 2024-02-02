@@ -17,10 +17,18 @@
 use crate::protos::ProtoStorageFiles;
 use anyhow::Result;
 use protobuf::Message;
+use std::io::Write;
+use tempfile::NamedTempFile;
 
 pub fn get_binary_storage_proto_bytes(text_proto: &str) -> Result<Vec<u8>> {
     let storage_files: ProtoStorageFiles = protobuf::text_format::parse_from_str(text_proto)?;
     let mut binary_proto = Vec::new();
     storage_files.write_to_vec(&mut binary_proto)?;
     Ok(binary_proto)
+}
+
+pub fn write_bytes_to_temp_file(bytes: &[u8]) -> Result<NamedTempFile> {
+    let mut file = NamedTempFile::new()?;
+    let _ = file.write_all(&bytes);
+    Ok(file)
 }
