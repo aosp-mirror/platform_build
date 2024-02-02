@@ -17,6 +17,8 @@
 import argparse
 import sys
 
+from uffd_gc_utils import should_enable_uffd_gc
+
 # Usage: post_process_props.py file.prop [disallowed_key, ...]
 # Disallowed keys are removed from the property file, if present
 
@@ -27,7 +29,7 @@ PROP_VALUE_MAX = 91
 
 # Put the modifications that you need to make into the */build.prop into this
 # function.
-def mangle_build_prop(prop_list):
+def mangle_build_prop(prop_list, kernel_version_file_for_uffd_gc):
   # If ro.debuggable is 1, then enable adb on USB by default
   # (this is for userdebug builds)
   if prop_list.get_value("ro.debuggable") == "1":
@@ -38,6 +40,11 @@ def mangle_build_prop(prop_list):
       else:
         val = val + ",adb"
       prop_list.put("persist.sys.usb.config", val)
+  if prop_list.get_value("ro.dalvik.vm.enable_uffd_gc") == "default":
+    assert kernel_version_file_for_uffd_gc != ""
+    enable_uffd_gc = should_enable_uffd_gc(kernel_version_file_for_uffd_gc)
+    prop_list.put("ro.dalvik.vm.enable_uffd_gc",
+                  "true" if enable_uffd_gc else "false")
 
 def validate_grf_props(prop_list):
   """Validate GRF properties if exist.
@@ -233,6 +240,7 @@ def main(argv):
   parser.add_argument("filename")
   parser.add_argument("disallowed_keys", metavar="KEY", type=str, nargs="*")
   parser.add_argument("--sdk-version", type=int, required=True)
+  parser.add_argument("--kernel-version-file-for-uffd-gc", required=True)
   args = parser.parse_args()
 
   if not args.filename.endswith("/build.prop"):
@@ -240,7 +248,7 @@ def main(argv):
     sys.exit(1)
 
   props = PropList(args.filename)
-  mangle_build_prop(props)
+  mangle_build_prop(props, args.kernel_version_file_for_uffd_gc)
   if not override_optional_props(props, args.allow_dup):
     sys.exit(1)
   if not validate_grf_props(props):
