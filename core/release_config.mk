@@ -59,15 +59,51 @@ $(foreach map,$(PRODUCT_RELEASE_CONFIG_MAPS), \
     $(if $(filter $(map),$(config_map_files)),,$(eval config_map_files += $(map))) \
 )
 
+# Declare an alias release-config
+#
+# This should be used to declare a release as an alias of another, meaning no
+# release config files should be present.
+#
+# $1 config name
+# $2 release config for which it is an alias
+define alias-release-config
+    $(call _declare-release-config,$(1),,$(2),true)
+endef
+
 # Declare or extend a release-config.
+#
+# The order of processing is:
+# 1. Recursively apply any overridden release configs.  Only apply each config
+#    the first time we reach it.
+# 2. Apply any files for this release config, in the order they were added to
+#    the declaration.
+#
+# Example:
+#   With these declarations:
+#     $(declare-release-config foo, foo.scl)
+#     $(declare-release-config bar, bar.scl, foo)
+#     $(declare-release-config baz, baz.scl, bar)
+#     $(declare-release-config bif, bif.scl, foo baz)
+#     $(declare-release-config bop, bop.scl, bar baz)
+#
+#   TARGET_RELEASE:
+#     - bar will use: foo.scl bar.scl
+#     - baz will use: foo.scl bar.scl baz.scl
+#     - bif will use: foo.scl bar.scl baz.scl bif.scl
+#     - bop will use: foo.scl bar.scl baz.scl bop.scl
 #
 # $1 config name
 # $2 release config files
-# $3 overridden release config.  Only applied for $(TARGET_RELEASE), not in depth.
+# $3 overridden release config
 define declare-release-config
-    $(if $(strip $(2)),,  \
-        $(error declare-release-config: config $(strip $(1)) must have release config files) \
+    $(call _declare-release-config,$(1),$(2),$(3),)
+endef
+
+define _declare-release-config
+    $(if $(strip $(2)$(3)),,  \
+        $(error declare-release-config: config $(strip $(1)) must have release config files, override another release config, or both) \
     )
+    $(if $(strip $(4)),$(eval _all_release_configs.$(strip $(1)).ALIAS := true))
     $(eval _all_release_configs := $(sort $(_all_release_configs) $(strip $(1))))
     $(if $(strip $(3)), \
       $(if $(filter $(_all_release_configs), $(strip $(3))),
@@ -113,15 +149,29 @@ endif
 # Don't sort this, use it in the order they gave us.
 # Do allow duplicate entries, retaining only the first usage.
 flag_value_files :=
-$(foreach r,$(_all_release_configs.$(TARGET_RELEASE).OVERRIDES) $(TARGET_RELEASE), \
+
+# Apply overrides recursively
+#
+# $1 release config that we override
+applied_releases :=
+define _apply-release-config-overrides
+$(foreach r,$(1), \
+  $(if $(filter $(r),$(applied_releases)),, \
+    $(foreach o,$(_all_release_configs.$(r).OVERRIDES),$(call _apply-release-config-overrides,$(o)))\
+    $(eval applied_releases += $(r))\
     $(foreach f,$(_all_release_configs.$(r).FILES), \
       $(if $(filter $(f),$(flag_value_files)),,$(eval flag_value_files += $(f)))\
     )\
+  )\
 )
-
+endef
+$(call _apply-release-config-overrides,$(TARGET_RELEASE))
 # Unset variables so they can't use them
 define declare-release-config
 $(error declare-release-config can only be called from inside release_config_map.mk files)
+endef
+define apply-release-config-overrides
+$(error invalid use of apply-release-config-overrides)
 endef
 
 # TODO: Remove this check after enough people have sourced lunch that we don't
@@ -135,6 +185,11 @@ TARGET_RELEASE:=
 endif
 .KATI_READONLY := TARGET_RELEASE
 
+# Verify that alias configs do not have config files.
+$(foreach r,$(_all_release_configs),\
+  $(if $(_all_release_configs.$(r).ALIAS),$(if $(_all_release_configs.$(r).FILES),\
+    $(error Alias release config "$(r)" may not specify release config files $(_all_release_configs.$(r).FILES))\
+)))
 
 $(foreach config, $(_all_release_configs), \
     $(eval _all_release_configs.$(config).DECLARED_IN:= ) \
@@ -142,6 +197,7 @@ $(foreach config, $(_all_release_configs), \
 )
 _all_release_configs:=
 config_map_files:=
+applied_releases:=
 
 
 # -----------------------------------------------------------------

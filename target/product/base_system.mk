@@ -64,6 +64,7 @@ PRODUCT_PACKAGES += \
     com.android.ondevicepersonalization \
     com.android.os.statsd \
     com.android.permission \
+    com.android.profiling \
     com.android.resolv \
     com.android.rkpd \
     com.android.neuralnetworks \

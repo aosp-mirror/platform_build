@@ -79,6 +79,7 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.os.statsd:framework-statsd \
     com.android.permission:framework-permission \
     com.android.permission:framework-permission-s \
+    com.android.profiling:framework-profiling \
     com.android.scheduling:framework-scheduling \
     com.android.sdkext:framework-sdkextensions \
     com.android.tethering:framework-connectivity \
@@ -136,6 +137,7 @@ PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS := \
     com.android.btservices:service-bluetooth \
     com.android.devicelock:service-devicelock \
     com.android.os.statsd:service-statsd \
+    com.android.profiling:service-profiling \
     com.android.scheduling:service-scheduling \
     com.android.tethering:service-connectivity \
     com.android.uwb:service-uwb \

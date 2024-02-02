@@ -12,6 +12,7 @@ rust_defaults {
         "libaconfig_storage_protos",
         "libonce_cell",
         "libprotobuf",
+        "libtempfile",
     ],
 }
 
