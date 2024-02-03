@@ -1,0 +1,121 @@
+#include "{header}.h"
+
+{{ if readwrite- }}
+#include <server_configurable_flags/get_flags.h>
+{{ endif }}
+{{ if is_test_mode }}
+#include <unordered_map>
+#include <string>
+{{ -else- }}
+{{ if readwrite- }}
+#include <vector>
+{{ -endif }}
+{{ -endif }}
+
+namespace {cpp_namespace} \{
+
+{{ if is_test_mode }}
+    class flag_provider : public flag_provider_interface \{
+    private:
+        std::unordered_map<std::string, bool> overrides_;
+
+    public:
+        flag_provider()
+            : overrides_()
+        \{}
+
+{{ for item in class_elements }}
+        virtual bool {item.flag_name}() override \{
+            auto it = overrides_.find("{item.flag_name}");
+              if (it != overrides_.end()) \{
+                  return it->second;
+            } else \{
+              {{ if item.readwrite- }}
+              return server_configurable_flags::GetServerConfigurableFlag(
+                  "aconfig_flags.{item.device_config_namespace}",
+                  "{item.device_config_flag}",
+                  "{item.default_value}") == "true";
+              {{ -else }}
+                  return {item.default_value};
+              {{ -endif }}
+            }
+        }
+
+        virtual void {item.flag_name}(bool val) override \{
+            overrides_["{item.flag_name}"] = val;
+        }
+{{ endfor }}
+
+        virtual void reset_flags() override \{
+            overrides_.clear();
+        }
+    };
+
+{{ -else- }}
+
+    class flag_provider : public flag_provider_interface \{
+    public:
+
+        {{ -for item in class_elements }}
+
+        virtual bool {item.flag_name}() override \{
+            {{ -if item.readwrite }}
+            if (cache_[{item.readwrite_idx}] == -1) \{
+                cache_[{item.readwrite_idx}] = server_configurable_flags::GetServerConfigurableFlag(
+                    "aconfig_flags.{item.device_config_namespace}",
+                    "{item.device_config_flag}",
+                    "{item.default_value}") == "true";
+            }
+            return cache_[{item.readwrite_idx}];
+            {{ -else }}
+            {{ -if item.is_fixed_read_only }}
+            return {package_macro}_{item.flag_macro};
+            {{ -else }}
+            return {item.default_value};
+            {{ -endif }}
+            {{ -endif }}
+        }
+        {{ -endfor }}
+    {{ if readwrite- }}
+    private:
+        std::vector<int8_t> cache_ = std::vector<int8_t>({readwrite_count}, -1);
+    {{ -endif }}
+    };
+
+
+{{ -endif }}
+
+std::unique_ptr<flag_provider_interface> provider_ =
+    std::make_unique<flag_provider>();
+}
+
+{{ for item in class_elements }}
+bool {header}_{item.flag_name}() \{
+    {{ -if is_test_mode }}
+    return {cpp_namespace}::{item.flag_name}();
+    {{ -else }}
+    {{ -if item.readwrite }}
+    return {cpp_namespace}::{item.flag_name}();
+    {{ -else }}
+    {{ -if item.is_fixed_read_only }}
+    return {package_macro}_{item.flag_macro};
+    {{ -else }}
+    return {item.default_value};
+    {{ -endif }}
+    {{ -endif }}
+    {{ -endif }}
+}
+
+{{ -if is_test_mode }}
+void set_{header}_{item.flag_name}(bool val) \{
+    {cpp_namespace}::{item.flag_name}(val);
+}
+{{ -endif }}
+{{ endfor }}
+
+{{ -if is_test_mode }}
+void {header}_reset_flags() \{
+     {cpp_namespace}::reset_flags();
+}
+{{ -endif }}
+

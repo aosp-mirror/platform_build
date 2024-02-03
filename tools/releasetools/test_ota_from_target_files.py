@@ -163,6 +163,20 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
       'oem_fingerprint_properties': 'ro.product.device ro.product.brand',
   }
 
+  TEST_TARGET_VENDOR_INFO_DICT = common.PartitionBuildProps.FromDictionary(
+    'vendor', {
+      'ro.vendor.build.date.utc' : '87654321',
+      'ro.product.vendor.device':'vendor-device',
+      'ro.vendor.build.fingerprint': 'build-fingerprint-vendor'}
+  )
+
+  TEST_SOURCE_VENDOR_INFO_DICT = common.PartitionBuildProps.FromDictionary(
+    'vendor', {
+      'ro.vendor.build.date.utc' : '12345678',
+      'ro.product.vendor.device':'vendor-device',
+      'ro.vendor.build.fingerprint': 'build-fingerprint-vendor'}
+  )
+
   def setUp(self):
     self.testdata_dir = test_utils.get_testdata_dir()
     self.assertTrue(os.path.exists(self.testdata_dir))
@@ -285,7 +299,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetApexInfoFromTargetFiles(self):
     target_files = construct_target_files(compressedApex=True)
-    apex_infos = GetApexInfoFromTargetFiles(target_files, 'system')
+    apex_infos = GetApexInfoFromTargetFiles(target_files)
     self.assertEqual(len(apex_infos), 1)
     self.assertEqual(apex_infos[0].package_name, "com.android.apex.compressed")
     self.assertEqual(apex_infos[0].version, 1)
@@ -351,10 +365,35 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
          source_info['build.prop'].build_props['ro.build.date.utc'],
          target_info['build.prop'].build_props['ro.build.date.utc'])
 
+  @staticmethod
+  def _test_GetPackageMetadata_swapVendorBuildTimestamps(target_info, source_info):
+    (target_info['vendor.build.prop'].build_props['ro.vendor.build.date.utc'],
+     source_info['vendor.build.prop'].build_props['ro.vendor.build.date.utc']) = (
+         source_info['vendor.build.prop'].build_props['ro.vendor.build.date.utc'],
+         target_info['vendor.build.prop'].build_props['ro.vendor.build.date.utc'])
+
   def test_GetPackageMetadata_unintentionalDowngradeDetected(self):
     target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
     source_info_dict = copy.deepcopy(self.TEST_SOURCE_INFO_DICT)
     self._test_GetPackageMetadata_swapBuildTimestamps(
+        target_info_dict, source_info_dict)
+
+    target_info = common.BuildInfo(target_info_dict, None)
+    source_info = common.BuildInfo(source_info_dict, None)
+    common.OPTIONS.incremental_source = ''
+    self.assertRaises(RuntimeError, self.GetLegacyOtaMetadata, target_info,
+                      source_info)
+
+  def test_GetPackageMetadata_unintentionalVendorDowngradeDetected(self):
+    target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
+    target_info_dict['ab_update'] = 'true'
+    target_info_dict['ab_partitions'] = ['vendor']
+    target_info_dict["vendor.build.prop"] = copy.deepcopy(self.TEST_TARGET_VENDOR_INFO_DICT)
+    source_info_dict = copy.deepcopy(self.TEST_SOURCE_INFO_DICT)
+    source_info_dict['ab_update'] = 'true'
+    source_info_dict['ab_partitions'] = ['vendor']
+    source_info_dict["vendor.build.prop"] = copy.deepcopy(self.TEST_SOURCE_VENDOR_INFO_DICT)
+    self._test_GetPackageMetadata_swapVendorBuildTimestamps(
         target_info_dict, source_info_dict)
 
     target_info = common.BuildInfo(target_info_dict, None)
@@ -396,6 +435,55 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
             'spl-downgrade': 'yes',
         },
         metadata)
+
+  def test_GetPackageMetadata_vendorDowngrade(self):
+    target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
+    target_info_dict['ab_update'] = 'true'
+    target_info_dict['ab_partitions'] = ['vendor']
+    target_info_dict["vendor.build.prop"] = copy.deepcopy(self.TEST_TARGET_VENDOR_INFO_DICT)
+    source_info_dict = copy.deepcopy(self.TEST_SOURCE_INFO_DICT)
+    source_info_dict['ab_update'] = 'true'
+    source_info_dict['ab_partitions'] = ['vendor']
+    source_info_dict["vendor.build.prop"] = copy.deepcopy(self.TEST_SOURCE_VENDOR_INFO_DICT)
+    self._test_GetPackageMetadata_swapVendorBuildTimestamps(
+        target_info_dict, source_info_dict)
+
+    target_info = common.BuildInfo(target_info_dict, None)
+    source_info = common.BuildInfo(source_info_dict, None)
+    common.OPTIONS.incremental_source = ''
+    common.OPTIONS.downgrade = True
+    common.OPTIONS.wipe_user_data = True
+    common.OPTIONS.spl_downgrade = True
+    metadata = self.GetLegacyOtaMetadata(target_info, source_info)
+    # Reset spl_downgrade so other tests are unaffected
+    common.OPTIONS.spl_downgrade = False
+
+    self.assertDictEqual(
+        {
+            'ota-downgrade': 'yes',
+            'ota-type': 'AB',
+            'ota-required-cache': '0',
+            'ota-wipe': 'yes',
+            'post-build': 'build-fingerprint-target',
+            'post-build-incremental': 'build-version-incremental-target',
+            'post-sdk-level': '27',
+            'post-security-patch-level': '2017-12-01',
+            'post-timestamp': '1500000000',
+            'pre-device': 'product-device',
+            'pre-build': 'build-fingerprint-source',
+            'pre-build-incremental': 'build-version-incremental-source',
+            'spl-downgrade': 'yes',
+        },
+        metadata)
+
+    post_build = GetPackageMetadata(target_info, source_info).postcondition
+    self.assertEqual('vendor', post_build.partition_state[0].partition_name)
+    self.assertEqual('12345678', post_build.partition_state[0].version)
+
+    pre_build = GetPackageMetadata(target_info, source_info).precondition
+    self.assertEqual('vendor', pre_build.partition_state[0].partition_name)
+    self.assertEqual('87654321', pre_build.partition_state[0].version)
+
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetTargetFilesZipForSecondaryImages(self):

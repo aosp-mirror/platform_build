@@ -182,6 +182,12 @@ ADDITIONAL_SYSTEM_PROPERTIES += ro.treble.enabled=${PRODUCT_FULL_TREBLE}
 $(KATI_obsolete_var PRODUCT_FULL_TREBLE,\
 	Code should be written to work regardless of a device being Treble)
 
+# Set ro.llndk.api_level to show the maximum vendor API level that the LLNDK in
+# the system partition supports.
+ifdef RELEASE_BOARD_API_LEVEL
+ADDITIONAL_SYSTEM_PROPERTIES += ro.llndk.api_level=$(RELEASE_BOARD_API_LEVEL)
+endif
+
 # Sets ro.actionable_compatible_property.enabled to know on runtime whether the
 # allowed list of actionable compatible properties is enabled or not.
 ADDITIONAL_SYSTEM_PROPERTIES += ro.actionable_compatible_property.enabled=true
@@ -305,10 +311,10 @@ ifdef BOARD_API_LEVEL
 ADDITIONAL_VENDOR_PROPERTIES += \
     ro.board.api_level=$(BOARD_API_LEVEL)
 endif
-# BOARD_API_LEVEL_FROZEN is true when the vendor API surface is frozen.
-ifdef BOARD_API_LEVEL_FROZEN
+# RELEASE_BOARD_API_LEVEL_FROZEN is true when the vendor API surface is frozen.
+ifdef RELEASE_BOARD_API_LEVEL_FROZEN
 ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.board.api_frozen=$(BOARD_API_LEVEL_FROZEN)
+    ro.board.api_frozen=$(RELEASE_BOARD_API_LEVEL_FROZEN)
 endif
 
 # Set build prop. This prop is read by ota_from_target_files when generating OTA,
@@ -1715,10 +1721,8 @@ droidcore: droidcore-unbundled
 # dist_files only for putting your library into the dist directory with a full build.
 .PHONY: dist_files
 
-ifeq ($(SOONG_COLLECT_JAVA_DEPS), true)
-  $(call dist-for-goals, dist_files, $(SOONG_OUT_DIR)/module_bp_java_deps.json)
-  $(call dist-for-goals, dist_files, $(PRODUCT_OUT)/module-info.json)
-endif
+$(call dist-for-goals, dist_files, $(SOONG_OUT_DIR)/module_bp_java_deps.json)
+$(call dist-for-goals, dist_files, $(PRODUCT_OUT)/module-info.json)
 
 .PHONY: apps_only
 ifeq ($(HOST_OS),darwin)

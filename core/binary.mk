@@ -145,14 +145,20 @@ endif
 ifneq (,$(strip $(foreach dir,$(NATIVE_COVERAGE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
 ifeq (,$(strip $(foreach dir,$(NATIVE_COVERAGE_EXCLUDE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
   my_native_coverage := true
+  my_clang_coverage := true
 else
   my_native_coverage := false
+  my_clang_coverage := false
 endif
 else
   my_native_coverage := false
+  my_clang_coverage := false
 endif
 ifneq ($(NATIVE_COVERAGE),true)
   my_native_coverage := false
+endif
+ifneq ($(CLANG_COVERAGE),true)
+  my_clang_coverage := false
 endif
 
 # Exclude directories from checking allowed manual binder interface lists.
@@ -270,8 +276,16 @@ ifneq ($(LOCAL_SDK_VERSION),)
   ifneq ($(my_ndk_api),current)
     ifeq ($(call math_lt, $(my_ndk_api),23),true)
       my_native_coverage := false
+      my_clang_coverage := false
     endif
   endif
+endif
+
+ifneq ($(LOCAL_MIN_SDK_VERSION),)
+  ifdef LOCAL_IS_HOST_MODULE
+    $(error $(LOCAL_PATH): LOCAL_MIN_SDK_VERSION cannot be used in host module)
+  endif
+  my_api_level := $(LOCAL_MIN_SDK_VERSION)
 endif
 
 ifeq ($(NATIVE_COVERAGE),true)
@@ -288,26 +302,51 @@ ifeq ($(NATIVE_COVERAGE),true)
   endif
 endif
 
-ifneq ($(LOCAL_USE_VNDK),)
-  # Required VNDK version for vendor modules is BOARD_VNDK_VERSION.
-  my_api_level := $(BOARD_VNDK_VERSION)
-  ifeq ($(my_api_level),current)
-    # Build with current PLATFORM_VNDK_VERSION.
-    # If PLATFORM_VNDK_VERSION has a CODENAME, it will return
-    # __ANDROID_API_FUTURE__.
-    my_api_level := $(call codename-or-sdk-to-sdk,$(PLATFORM_VNDK_VERSION))
-  else
-    # Build with current BOARD_VNDK_VERSION.
-    my_api_level := $(call codename-or-sdk-to-sdk,$(BOARD_VNDK_VERSION))
+ifeq ($(CLANG_COVERAGE),true)
+  ifndef LOCAL_IS_HOST_MODULE
+    my_ldflags += $(CLANG_COVERAGE_HOST_LDFLAGS)
+    ifneq ($(LOCAL_MODULE_CLASS),STATIC_LIBRARIES)
+      my_whole_static_libraries += libclang_rt.profile
+      ifeq ($(LOCAL_SDK_VERSION),)
+        my_whole_static_libraries += libprofile-clang-extras
+      else
+        my_whole_static_libraries += libprofile-clang-extras_ndk
+      endif
+    endif
   endif
+  ifeq ($(my_clang_coverage),true)
+    my_profile_instr_generate := $(CLANG_COVERAGE_INSTR_PROFILE)
+    ifeq ($(CLANG_COVERAGE_CONTINUOUS_MODE),true)
+      my_cflags += $(CLANG_COVERAGE_CONTINUOUS_FLAGS)
+      my_ldflags += $(CLANG_COVERAGE_CONTINUOUS_FLAGS)
+    endif
+
+    my_profile_instr_generate += $(CLANG_COVERAGE_CONFIG_COMMFLAGS)
+    my_cflags += $(CLANG_COVERAGE_INSTR_PROFILE) $(CLANG_COVERAGE_CONFIG_CFLAGS) $(CLANG_COVERAGE_CONFIG_COMMFLAGS)
+    my_ldflags += $(CLANG_COVERAGE_CONFIG_COMMFLAGS)
+
+    ifneq ($(filter hwaddress,$(my_sanitize)),)
+      my_cflags += $(CLANG_COVERAGE_HWASAN_FLAGS)
+      my_ldflags += $(CLANG_COVERAGE_HWASAN_FLAGS)
+    endif
+  endif
+endif
+
+ifneq ($(LOCAL_USE_VNDK),)
   my_cflags += -D__ANDROID_VNDK__
   ifneq ($(LOCAL_USE_VNDK_VENDOR),)
-    # Vendor modules have LOCAL_USE_VNDK_VENDOR when
-    # BOARD_VNDK_VERSION is defined.
+    # Vendor modules have LOCAL_USE_VNDK_VENDOR
     my_cflags += -D__ANDROID_VENDOR__
+
+    ifeq ($(BOARD_API_LEVEL),)
+      # TODO(b/314036847): This is a fallback for UDC targets.
+      # This must be a build failure when UDC is no longer built from this source tree.
+      my_cflags += -D__ANDROID_VENDOR_API__=$(PLATFORM_SDK_VERSION)
+    else
+      my_cflags += -D__ANDROID_VENDOR_API__=$(BOARD_API_LEVEL)
+    endif
   else ifneq ($(LOCAL_USE_VNDK_PRODUCT),)
-    # Product modules have LOCAL_USE_VNDK_PRODUCT when
-    # PRODUCT_PRODUCT_VNDK_VERSION is defined.
+    # Product modules have LOCAL_USE_VNDK_PRODUCT
     my_cflags += -D__ANDROID_PRODUCT__
   endif
 endif

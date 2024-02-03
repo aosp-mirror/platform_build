@@ -62,7 +62,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
               invocations of 'm' etc.
 - tapas:      tapas [<App1> <App2> ...] [arm|x86|arm64|x86_64] [eng|userdebug|user]
               Sets up the build environment for building unbundled apps (APKs).
-- banchan:    banchan <module1> [<module2> ...] \
+- banchan:    banchan <module1> [<module2> ...] \\
                       [arm|x86|arm64|riscv64|x86_64|arm64_only|x86_64only] [eng|userdebug|user]
               Sets up the build environment for building unbundled modules (APEXes).
 - croot:      Changes directory to the top of the tree, or a subdirectory thereof.
@@ -254,7 +254,7 @@ function set_lunch_paths()
     # Note: on windows/cygwin, ANDROID_LUNCH_BUILD_PATHS will contain spaces
     # due to "C:\Program Files" being in the path.
 
-    # Handle compat with the old ANDROID_BUILD_PATHS variable. 
+    # Handle compat with the old ANDROID_BUILD_PATHS variable.
     # TODO: Remove this after we think everyone has lunched again.
     if [ -z "$ANDROID_LUNCH_BUILD_PATHS" -a -n "$ANDROID_BUILD_PATHS" ] ; then
       ANDROID_LUNCH_BUILD_PATHS="$ANDROID_BUILD_PATHS"
@@ -775,7 +775,7 @@ function lunch()
         answer=$1
     else
         print_lunch_menu
-        echo "Which would you like? [aosp_arm-trunk_staging-eng]"
+        echo "Which would you like? [aosp_cf_x86_64_phone-trunk_staging-eng]"
         echo -n "Pick from common choices above (e.g. 13) or specify your own (e.g. aosp_barbet-trunk_staging-eng): "
         read answer
         used_lunch_menu=1
@@ -785,10 +785,10 @@ function lunch()
 
     if [ -z "$answer" ]
     then
-        selection=aosp_arm-trunk_staging-eng
+        selection=aosp_cf_x86_64_phone-trunk_staging-eng
     elif (echo -n $answer | grep -q -e "^[0-9][0-9]*$")
     then
-        local choices=($(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES))
+        local choices=($(TARGET_BUILD_APPS= TARGET_PRODUCT= TARGET_RELEASE= TARGET_BUILD_VARIANT= get_build_var COMMON_LUNCH_CHOICES 2>/dev/null))
         if [ $answer -le ${#choices[@]} ]
         then
             # array in zsh starts from 1 instead of 0.
@@ -836,15 +836,21 @@ function lunch()
     # Note this is the string "release", not the value of the variable.
     export TARGET_BUILD_TYPE=release
 
+    [[ -n "${ANDROID_QUIET_BUILD:-}" ]] || echo
+
+    set_stuff_for_environment
+    [[ -n "${ANDROID_QUIET_BUILD:-}" ]] || printconfig
+
+    if [ "${TARGET_BUILD_VARIANT}" = "userdebug" ] && [[  -z "${ANDROID_QUIET_BUILD}" ]]; then
+      echo
+      echo "Want FASTER LOCAL BUILDS? Use -eng instead of -userdebug (however for" \
+        "performance benchmarking continue to use userdebug)"
+    fi
     if [ $used_lunch_menu -eq 1 ]; then
       echo
       echo "Hint: next time you can simply run 'lunch $selection'"
     fi
 
-    [[ -n "${ANDROID_QUIET_BUILD:-}" ]] || echo
-
-    set_stuff_for_environment
-    [[ -n "${ANDROID_QUIET_BUILD:-}" ]] || printconfig
     destroy_build_var_cache
 
     if [[ -n "${CHECK_MU_CONFIG:-}" ]]; then
@@ -1880,6 +1886,11 @@ function _trigger_build()
       >&2 echo "Couldn't locate the top of the tree. Try setting TOP."
       return 1
     fi
+    local ret=$?
+    if [[ ret -eq 0 &&  -z "${ANDROID_QUIET_BUILD:-}" && -n "${ANDROID_BUILD_BANNER}" ]]; then
+      echo "${ANDROID_BUILD_BANNER}"
+    fi
+    return $ret
 )
 
 function m()

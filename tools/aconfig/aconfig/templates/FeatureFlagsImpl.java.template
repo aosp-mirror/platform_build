@@ -1,0 +1,89 @@
+package {package_name};
+// TODO(b/303773055): Remove the annotation after access issue is resolved.
+import android.compat.annotation.UnsupportedAppUsage;
+{{ -if not is_test_mode }}
+{{ -if runtime_lookup_required }}
+import android.provider.DeviceConfig;
+import android.provider.DeviceConfig.Properties;
+{{ endif }}
+/** @hide */
+public final class FeatureFlagsImpl implements FeatureFlags \{
+{{ -if runtime_lookup_required }}
+{{ -for namespace_with_flags in namespace_flags }}
+    private static boolean {namespace_with_flags.namespace}_is_cached = false;
+{{ -endfor- }}
+
+{{ for flag in flag_elements }}
+{{ -if library_exported }}
+    private static boolean {flag.method_name} = false;
+{{ -else }}
+{{- if flag.is_read_write }}
+    private static boolean {flag.method_name} = {flag.default_value};
+{{- endif- }}
+{{ -endif }}
+{{ -endfor }}
+{{ for namespace_with_flags in namespace_flags }}
+    private void load_overrides_{namespace_with_flags.namespace}() \{
+        try \{
+            Properties properties = DeviceConfig.getProperties("{namespace_with_flags.namespace}");
+{{ -for flag in namespace_with_flags.flags }}
+{{ -if library_exported }}
+            {flag.method_name} =
+                properties.getBoolean("{flag.device_config_flag}", false);
+{{ -else }}
+{{ -if flag.is_read_write }}
+            {flag.method_name} =
+                properties.getBoolean("{flag.device_config_flag}", {flag.default_value});
+{{ -endif }}
+{{ -endif }}
+{{ -endfor }}
+        } catch (NullPointerException e) \{
+            throw new RuntimeException(
+                "Cannot read value from namespace {namespace_with_flags.namespace} "
+                + "from DeviceConfig. It could be that the code using flag "
+                + "executed before SettingsProvider initialization. Please use "
+                + "fixed read-only flag by adding is_fixed_read_only: true in "
+                + "flag declaration.",
+                e
+            );
+        }
+        {namespace_with_flags.namespace}_is_cached = true;
+    }
+{{ endfor- }}
+{{ -endif }}{#- end of runtime_lookup_required #}
+{{ -for flag in flag_elements }}
+    @Override
+    @UnsupportedAppUsage
+    public boolean {flag.method_name}() \{
+{{ -if library_exported }}
+        if (!{flag.device_config_namespace}_is_cached) \{
+            load_overrides_{flag.device_config_namespace}();
+        }
+        return {flag.method_name};
+{{ -else }}
+{{ -if flag.is_read_write }}
+        if (!{flag.device_config_namespace}_is_cached) \{
+            load_overrides_{flag.device_config_namespace}();
+        }
+        return {flag.method_name};
+{{ -else }}
+        return {flag.default_value};
+{{ -endif- }}
+{{ -endif }}
+    }
+{{ endfor }}
+}
+{{ else }}
+{#- Generate only stub if in test mode #}
+/** @hide */
+public final class FeatureFlagsImpl implements FeatureFlags \{
+{{ for flag in flag_elements }}
+    @Override
+    @UnsupportedAppUsage
+    public boolean {flag.method_name}() \{
+        throw new UnsupportedOperationException(
+            "Method is not implemented.");
+    }
+{{ endfor- }}
+}
+{{ endif }}

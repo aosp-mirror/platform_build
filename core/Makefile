@@ -287,6 +287,11 @@ endif
 endif
 endif
 
+# Do this early because sysprop.mk depends on BUILT_KERNEL_VERSION_FILE_FOR_UFFD_GC.
+ifeq (default,$(ENABLE_UFFD_GC))
+BUILT_KERNEL_VERSION_FILE_FOR_UFFD_GC := $(OUT_DIR)/soong/dexpreopt/kernel_version_for_uffd_gc.txt
+endif # ENABLE_UFFD_GC
+
 include $(BUILD_SYSTEM)/sysprop.mk
 
 # ----------------------------------------------------------------
@@ -1158,7 +1163,7 @@ BUILT_BOOTIMAGE_16K_TARGET := $(PRODUCT_OUT)/boot_16k.img
 
 BOARD_KERNEL_16K_BOOTIMAGE_PARTITION_SIZE := $(BOARD_BOOTIMAGE_PARTITION_SIZE)
 
-$(BUILT_BOOTIMAGE_16K_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH) $(INTERNAL_GKI_CERTIFICATE_DEPS) $(BUILT_KERNEL_16K_TARGET)
+$(BUILT_BOOTIMAGE_16K_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH) $(BUILT_KERNEL_16K_TARGET)
 	$(call pretty,"Target boot 16k image: $@")
 	$(call build_boot_from_kernel_avb_enabled,$@,$(BUILT_KERNEL_16K_TARGET))
 
@@ -1281,15 +1286,6 @@ endef
 define build_boot_from_kernel_avb_enabled
   $(eval kernel := $(2))
   $(MKBOOTIMG) --kernel $(kernel) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1)
-  $(if $(BOARD_GKI_SIGNING_KEY_PATH), \
-    $(eval boot_signature := $(call intermediates-dir-for,PACKAGING,generic_boot)/$(notdir $(1)).boot_signature) \
-    $(eval kernel_signature := $(call intermediates-dir-for,PACKAGING,generic_kernel)/$(notdir $(kernel)).boot_signature) \
-    $(call generate_generic_boot_image_certificate,$(1),$(boot_signature),boot,$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)) $(newline) \
-    $(call generate_generic_boot_image_certificate,$(kernel),$(kernel_signature),generic_kernel,$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)) $(newline) \
-    cat $(kernel_signature) >> $(boot_signature) $(newline) \
-    $(call assert-max-image-size,$(boot_signature),16 << 10) $(newline) \
-    truncate -s $$(( 16 << 10 )) $(boot_signature) $(newline) \
-    cat "$(boot_signature)" >> $(1))
   $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(call get-bootimage-partition-size,$(1),boot)))
   $(AVBTOOL) add_hash_footer \
           --image $(1) \
@@ -1306,11 +1302,8 @@ ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 INTERNAL_BOOTIMAGE_ARGS := \
 	$(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET))
 
-# TODO(b/229701033): clean up BOARD_BUILD_GKI_BOOT_IMAGE_WITHOUT_RAMDISK.
-ifneq ($(BOARD_BUILD_GKI_BOOT_IMAGE_WITHOUT_RAMDISK),true)
-  ifneq ($(BUILDING_INIT_BOOT_IMAGE),true)
-    INTERNAL_BOOTIMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
-  endif
+ifneq ($(BUILDING_INIT_BOOT_IMAGE),true)
+  INTERNAL_BOOTIMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
 endif
 
 ifndef BUILDING_VENDOR_BOOT_IMAGE
@@ -1343,51 +1336,9 @@ else ifndef BUILDING_VENDOR_BOOT_IMAGE # && BOARD_USES_GENERIC_KERNEL_IMAGE != t
   endif
 endif # BUILDING_VENDOR_BOOT_IMAGE == "" && BOARD_USES_GENERIC_KERNEL_IMAGE != true
 
-ifdef BOARD_GKI_SIGNING_KEY_PATH
-  # GKI boot images will not set system version & SPL value in the header.
-  # They can be set by the device manufacturer in the AVB properties instead.
-  INTERNAL_MKBOOTIMG_VERSION_ARGS :=
-else
-  INTERNAL_MKBOOTIMG_VERSION_ARGS := \
-    --os_version $(PLATFORM_VERSION_LAST_STABLE) \
-    --os_patch_level $(PLATFORM_SECURITY_PATCH)
-endif # BOARD_GKI_SIGNING_KEY_PATH
-
-# $(1): image target to certify
-# $(2): out certificate target
-# $(3): image name
-# $(4): additional AVB arguments
-define generate_generic_boot_image_certificate
-  rm -rf "$(2)"
-  mkdir -p "$(dir $(2))"
-  $(GENERATE_GKI_CERTIFICATE) $(INTERNAL_GKI_CERTIFICATE_ARGS) \
-    --additional_avb_args "$(4)" \
-    --name "$(3)" --output "$(2)" "$(1)"
-endef
-
-INTERNAL_GKI_CERTIFICATE_ARGS :=
-INTERNAL_GKI_CERTIFICATE_DEPS :=
-ifdef BOARD_GKI_SIGNING_KEY_PATH
-  ifndef BOARD_GKI_SIGNING_ALGORITHM
-    $(error BOARD_GKI_SIGNING_ALGORITHM should be defined with BOARD_GKI_SIGNING_KEY_PATH)
-  endif
-
-  INTERNAL_GKI_CERTIFICATE_ARGS := \
-    --key "$(BOARD_GKI_SIGNING_KEY_PATH)" \
-    --algorithm "$(BOARD_GKI_SIGNING_ALGORITHM)" \
-    --avbtool "$(AVBTOOL)"
-
-  # Quote and pass BOARD_GKI_SIGNING_SIGNATURE_ARGS as a single string argument.
-  ifdef BOARD_GKI_SIGNING_SIGNATURE_ARGS
-    INTERNAL_GKI_CERTIFICATE_ARGS += --additional_avb_args "$(BOARD_GKI_SIGNING_SIGNATURE_ARGS)"
-  endif
-
-  INTERNAL_GKI_CERTIFICATE_DEPS := \
-    $(GENERATE_GKI_CERTIFICATE) \
-    $(BOARD_GKI_SIGNING_KEY_PATH) \
-    $(AVBTOOL)
-
-endif
+INTERNAL_MKBOOTIMG_VERSION_ARGS := \
+  --os_version $(PLATFORM_VERSION_LAST_STABLE) \
+  --os_patch_level $(PLATFORM_SECURITY_PATCH)
 
 # Define these only if we are building boot
 ifdef BUILDING_BOOT_IMAGE
@@ -1407,17 +1358,17 @@ define build_boot_board_avb_enabled
   $(call build_boot_from_kernel_avb_enabled,$(1),$(kernel))
 endef
 
-$(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH) $(INTERNAL_GKI_CERTIFICATE_DEPS)
+$(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH)
 	$(call pretty,"Target boot image: $@")
 	$(call build_boot_board_avb_enabled,$@)
 
 $(call declare-container-license-metadata,$(INSTALLED_BOOTIMAGE_TARGET),SPDX-license-identifier-GPL-2.0-only SPDX-license-identifier-Apache-2.0,restricted notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING build/soong/licenses/LICENSE,"Boot Image",boot)
-$(call declare-container-license-deps,$(INSTALLED_BOOTIMAGE_TARGET),$(INTERNAL_BOOTIMAGE_FILES) $(INTERNAL_GKI_CERTIFICATE_DEPS),$(PRODUCT_OUT)/:/)
+$(call declare-container-license-deps,$(INSTALLED_BOOTIMAGE_TARGET),$(INTERNAL_BOOTIMAGE_FILES),$(PRODUCT_OUT)/:/)
 
 UNMOUNTED_NOTICE_VENDOR_DEPS += $(INSTALLED_BOOTIMAGE_TARGET)
 
 .PHONY: bootimage-nodeps
-bootimage-nodeps: $(MKBOOTIMG) $(AVBTOOL) $(BOARD_AVB_BOOT_KEY_PATH) $(INTERNAL_GKI_CERTIFICATE_DEPS)
+bootimage-nodeps: $(MKBOOTIMG) $(AVBTOOL) $(BOARD_AVB_BOOT_KEY_PATH)
 	@echo "make $@: ignoring dependencies"
 	$(foreach b,$(INSTALLED_BOOTIMAGE_TARGET),$(call build_boot_board_avb_enabled,$(b)))
 
@@ -2148,11 +2099,6 @@ endif
 # Get a colon-separated list of search paths.
 INTERNAL_USERIMAGES_BINARY_PATHS := $(subst $(space),:,$(sort $(dir $(INTERNAL_USERIMAGES_DEPS))))
 
-# Collects file_contexts files from modules to be installed
-$(call merge-fc-files, \
-  $(sort $(foreach m,$(product_MODULES),$(ALL_MODULES.$(m).FILE_CONTEXTS))),\
-  $(call intermediates-dir-for,ETC,file_contexts.bin)/file_contexts.modules.tmp)
-
 SELINUX_FC := $(call intermediates-dir-for,ETC,file_contexts.bin)/file_contexts.bin
 
 INTERNAL_USERIMAGES_DEPS += $(SELINUX_FC)
@@ -2176,6 +2122,7 @@ $(if $(BOARD_$(_var)IMAGE_EROFS_BLOCKSIZE),$(hide) echo "$(1)_erofs_blocksize=$(
 $(if $(BOARD_$(_var)IMAGE_EXTFS_INODE_COUNT),$(hide) echo "$(1)_extfs_inode_count=$(BOARD_$(_var)IMAGE_EXTFS_INODE_COUNT)" >> $(2))
 $(if $(BOARD_$(_var)IMAGE_EXTFS_RSV_PCT),$(hide) echo "$(1)_extfs_rsv_pct=$(BOARD_$(_var)IMAGE_EXTFS_RSV_PCT)" >> $(2))
 $(if $(BOARD_$(_var)IMAGE_F2FS_SLOAD_COMPRESS_FLAGS),$(hide) echo "$(1)_f2fs_sldc_flags=$(BOARD_$(_var)IMAGE_F2FS_SLOAD_COMPRESS_FLAGS)" >> $(2))
+$(if $(BOARD_$(_var)IMAGE_F2FS_BLOCKSIZE),$(hide) echo "$(1)_f2fs_blocksize=$(BOARD_$(_var)IMAGE_F2FS_BLOCKSIZE)" >> $(2))
 $(if $(BOARD_$(_var)IMAGE_FILE_SYSTEM_COMPRESS),$(hide) echo "$(1)_f2fs_compress=$(BOARD_$(_var)IMAGE_FILE_SYSTEM_COMPRESS)" >> $(2))
 $(if $(BOARD_$(_var)IMAGE_FILE_SYSTEM_TYPE),$(hide) echo "$(1)_fs_type=$(BOARD_$(_var)IMAGE_FILE_SYSTEM_TYPE)" >> $(2))
 $(if $(BOARD_$(_var)IMAGE_JOURNAL_SIZE),$(hide) echo "$(1)_journal_size=$(BOARD_$(_var)IMAGE_JOURNAL_SIZE)" >> $(2))
@@ -2266,6 +2213,7 @@ $(if $(BOARD_EROFS_BLOCKSIZE),$(hide) echo "erofs_blocksize=$(BOARD_EROFS_BLOCKS
 $(if $(BOARD_EROFS_SHARE_DUP_BLOCKS),$(hide) echo "erofs_share_dup_blocks=$(BOARD_EROFS_SHARE_DUP_BLOCKS)" >> $(1))
 $(if $(BOARD_EROFS_USE_LEGACY_COMPRESSION),$(hide) echo "erofs_use_legacy_compression=$(BOARD_EROFS_USE_LEGACY_COMPRESSION)" >> $(1))
 $(if $(BOARD_EXT4_SHARE_DUP_BLOCKS),$(hide) echo "ext4_share_dup_blocks=$(BOARD_EXT4_SHARE_DUP_BLOCKS)" >> $(1))
+$(if $(BOARD_F2FS_BLOCKSIZE),$(hide) echo "f2fs_blocksize=$(BOARD_F2FS_BLOCKSIZE)" >> $(1))
 $(if $(BOARD_FLASH_LOGICAL_BLOCK_SIZE), $(hide) echo "flash_logical_block_size=$(BOARD_FLASH_LOGICAL_BLOCK_SIZE)" >> $(1))
 $(if $(BOARD_FLASH_ERASE_BLOCK_SIZE), $(hide) echo "flash_erase_block_size=$(BOARD_FLASH_ERASE_BLOCK_SIZE)" >> $(1))
 $(if $(filter eng, $(TARGET_BUILD_VARIANT)),$(hide) echo "verity_disable=true" >> $(1))
@@ -2348,8 +2296,6 @@ $(if $(BOARD_AVB_ENABLE), \
 )
 $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
     $(hide) echo "recovery_as_boot=true" >> $(1))
-$(if $(filter true,$(BOARD_BUILD_GKI_BOOT_IMAGE_WITHOUT_RAMDISK)),\
-    $(hide) echo "gki_boot_image_without_ramdisk=true" >> $(1))
 $(hide) echo "root_dir=$(TARGET_ROOT_OUT)" >> $(1)
 $(if $(filter true,$(PRODUCT_USE_DYNAMIC_PARTITION_SIZE)),\
     $(hide) echo "use_dynamic_partition_size=true" >> $(1))
@@ -3291,7 +3237,6 @@ $1:
 	  exit 1; \
 	fi
 	ln -sfn $2 $1
-$1: .KATI_SYMLINK_OUTPUTS := $1
 )
 $(eval PARTITION_COMPAT_SYMLINKS += $1)
 $1
@@ -3835,7 +3780,7 @@ ifdef BOARD_USES_VENDOR_DLKMIMAGE
   ALL_DEFAULT_INSTALLED_MODULES += $(_vendor_dlkm_lib_modules_symlink)
 endif
 
-# Install vendor/etc/linker.config.pb with PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS and STUB_LIBRARIES
+# Install vendor/etc/linker.config.pb with PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS and SOONG_STUB_VENDOR_LIBRARIES
 vendor_linker_config_file := $(TARGET_OUT_VENDOR)/etc/linker.config.pb
 $(vendor_linker_config_file): private_linker_config_fragments := $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS)
 $(vendor_linker_config_file): $(INTERNAL_VENDORIMAGE_FILES) $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS) | $(HOST_OUT_EXECUTABLES)/conv_linker_config
@@ -3846,7 +3791,7 @@ $(vendor_linker_config_file): $(INTERNAL_VENDORIMAGE_FILES) $(PRODUCT_VENDOR_LIN
 		--source $(call normalize-path-list,$(private_linker_config_fragments)) \
 		--output $@
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config systemprovide --source $@ \
-		--output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT_VENDOR)"
+		--output $@ --value "$(SOONG_STUB_VENDOR_LIBRARIES)" --system "$(TARGET_OUT_VENDOR)"
 $(call define declare-0p-target,$(vendor_linker_config_file),)
 INTERNAL_VENDORIMAGE_FILES += $(vendor_linker_config_file)
 ALL_DEFAULT_INSTALLED_MODULES += $(vendor_linker_config_file)
@@ -4654,6 +4599,20 @@ BOARD_AVB_PVMFW_ADD_HASH_FOOTER_ARGS += \
     --prop com.android.build.pvmfw.security_patch:$(PVMFW_SECURITY_PATCH)
 endif
 
+# Append root digest of microdroid-vendor partition's hashtree descriptor into vendor partition.
+ifdef MICRODROID_VENDOR_IMAGE_MODULE
+MICRODROID_VENDOR_IMAGE := \
+    $(call intermediates-dir-for,ETC,$(MICRODROID_VENDOR_IMAGE_MODULE))/$(MICRODROID_VENDOR_IMAGE_MODULE)
+MICRODROID_VENDOR_ROOT_DIGEST := $(PRODUCT_OUT)/microdroid_vendor_root_digest
+BOARD_AVB_VENDOR_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop_from_file com.android.build.microdroid-vendor.root_digest:$(MICRODROID_VENDOR_ROOT_DIGEST)
+$(MICRODROID_VENDOR_ROOT_DIGEST): $(AVBTOOL) $(MICRODROID_VENDOR_IMAGE)
+	$(AVBTOOL) print_partition_digests \
+      --image $(MICRODROID_VENDOR_IMAGE) \
+      | tr -d '\n' | sed -E 's/.*: //g' > $@
+$(INSTALLED_VENDORIMAGE_TARGET): $(MICRODROID_VENDOR_ROOT_DIGEST)
+endif
+
 BOOT_FOOTER_ARGS := BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS
 INIT_BOOT_FOOTER_ARGS := BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS
 VENDOR_BOOT_FOOTER_ARGS := BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS
@@ -5302,6 +5261,34 @@ my_board_extracted_kernel :=
 
 endif # PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 
+ifeq (default,$(ENABLE_UFFD_GC))
+
+ifneq (,$(BUILT_KERNEL_VERSION_FILE))
+$(BUILT_KERNEL_VERSION_FILE_FOR_UFFD_GC): $(BUILT_KERNEL_VERSION_FILE)
+$(BUILT_KERNEL_VERSION_FILE_FOR_UFFD_GC):
+	cp $(BUILT_KERNEL_VERSION_FILE) $(BUILT_KERNEL_VERSION_FILE_FOR_UFFD_GC)
+else
+# We make this a warning rather than an error to avoid breaking too many builds. When it happens,
+# we use a placeholder as the kernel version, which is consumed by uffd_gc_utils.py.
+$(BUILT_KERNEL_VERSION_FILE_FOR_UFFD_GC):
+	echo $$'\
+Unable to determine UFFD GC flag because the kernel version is not available and\n\
+PRODUCT_ENABLE_UFFD_GC is "default".\n\
+You can fix this by:\n\
+  1. [Recommended] Making the kernel version available.\n\
+    (1). Set PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS to "true".\n\
+    (2). If you are still getting this message after doing so, see the warning about\n\
+         PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS in the build logs.\n\
+  or\n\
+  2. Explicitly setting PRODUCT_ENABLE_UFFD_GC to "true" or "false" based on the kernel version.\n\
+    (1). Set PRODUCT_ENABLE_UFFD_GC to "true" if the kernel is a GKI kernel and is android12-5.4\n\
+         or above, or a non-GKI kernel that supports userfaultfd(2) and MREMAP_DONTUNMAP.\n\
+    (2). Set PRODUCT_ENABLE_UFFD_GC to "false" otherwise.'\
+	  && echo '<unknown-kernel>' > $@
+endif # BUILT_KERNEL_VERSION_FILE
+
+endif # ENABLE_UFFD_GC == "default"
+
 # -- Check VINTF compatibility of build.
 # Skip partial builds; only check full builds. Only check if:
 # - PRODUCT_ENFORCE_VINTF_MANIFEST is true
@@ -5530,7 +5517,6 @@ INTERNAL_OTATOOLS_MODULES := \
   fsck.erofs \
   fsck.f2fs \
   fs_config \
-  generate_gki_certificate \
   generate_verity_key \
   host_init_verifier \
   img2simg \
@@ -5675,7 +5661,12 @@ endif # build_otatools_package
 FASTBOOT_INFO_VERSION = 1
 
 INSTALLED_FASTBOOT_INFO_TARGET := $(PRODUCT_OUT)/fastboot-info.txt
-
+ifdef TARGET_BOARD_FASTBOOT_INFO_FILE
+$(INSTALLED_FASTBOOT_INFO_TARGET): $(TARGET_BOARD_FASTBOOT_INFO_FILE)
+	rm -f $@
+	$(call pretty,"Target fastboot-info.txt: $@")
+	$(hide) cp $< $@
+else
 $(INSTALLED_FASTBOOT_INFO_TARGET):
 	rm -f $@
 	$(call pretty,"Target fastboot-info.txt: $@")
@@ -5733,6 +5724,7 @@ endif
 	$(hide) echo "if-wipe erase userdata" >> $@
 ifeq ($(BOARD_USES_METADATA_PARTITION),true)
 	$(hide) echo "if-wipe erase metadata" >> $@
+endif
 endif
 
 # -----------------------------------------------------------------
@@ -5815,11 +5807,6 @@ endif
 	$(hide) echo 'recovery_mkbootimg_args=$(BOARD_RECOVERY_MKBOOTIMG_ARGS)' >> $@
 	$(hide) echo 'mkbootimg_version_args=$(INTERNAL_MKBOOTIMG_VERSION_ARGS)' >> $@
 	$(hide) echo 'mkbootimg_init_args=$(BOARD_MKBOOTIMG_INIT_ARGS)' >> $@
-ifdef BOARD_GKI_SIGNING_KEY_PATH
-	$(hide) echo 'gki_signing_key_path=$(BOARD_GKI_SIGNING_KEY_PATH)' >> $@
-	$(hide) echo 'gki_signing_algorithm=$(BOARD_GKI_SIGNING_ALGORITHM)' >> $@
-	$(hide) echo 'gki_signing_signature_args=$(BOARD_GKI_SIGNING_SIGNATURE_ARGS)' >> $@
-endif
 	$(hide) echo "multistage_support=1" >> $@
 	$(hide) echo "blockimgdiff_versions=3,4" >> $@
 ifeq ($(PRODUCT_BUILD_GENERIC_OTA_PACKAGE),true)
@@ -6798,7 +6785,7 @@ endif
 
 $(BUILT_TARGET_FILES_PACKAGE): $(BUILT_TARGET_FILES_DIR)
 	@echo "Packaging target files: $@"
-	$(hide) $(SOONG_ZIP) -d -o $@ -C $(zip_root) -r $@.list
+	$(hide) $(SOONG_ZIP) -d -o $@ -C $(zip_root) -r $@.list -sha256
 
 .PHONY: target-files-package
 target-files-package: $(BUILT_TARGET_FILES_PACKAGE)

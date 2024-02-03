@@ -156,7 +156,6 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
         verity_key_mincrypt)
 
     info_dict = {
-        'system_root_image' : 'true',
         'verity' : 'true',
     }
     options = {
