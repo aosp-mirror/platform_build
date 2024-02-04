@@ -366,7 +366,8 @@ function set_global_paths()
     fi
 
     # And in with the new...
-    ANDROID_GLOBAL_BUILD_PATHS=$T/build/bazel/bin
+    ANDROID_GLOBAL_BUILD_PATHS=$T/build/soong/bin
+    ANDROID_GLOBAL_BUILD_PATHS+=:$T/bazel/bin
     ANDROID_GLOBAL_BUILD_PATHS+=:$T/development/scripts
     ANDROID_GLOBAL_BUILD_PATHS+=:$T/prebuilts/devtools/tools
 
