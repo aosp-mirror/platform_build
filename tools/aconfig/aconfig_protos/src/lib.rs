@@ -69,6 +69,9 @@ pub use auto_generated::*;
 use anyhow::Result;
 use paste::paste;
 
+/// Path to proto file
+const ACONFIG_PROTO_PATH: &str = "//build/make/tools/aconfig/aconfig_protos/protos/aconfig.proto";
+
 /// Check if the name identifier is valid
 pub fn is_valid_name_ident(s: &str) -> bool {
     // Identifiers must match [a-z][a-z0-9_]*, except consecutive underscores are not allowed
@@ -124,8 +127,18 @@ pub mod flag_declaration {
     pub fn verify_fields(pdf: &ProtoFlagDeclaration) -> Result<()> {
         ensure_required_fields!("flag declaration", pdf, "name", "namespace", "description");
 
-        ensure!(is_valid_name_ident(pdf.name()), "bad flag declaration: bad name");
-        ensure!(is_valid_name_ident(pdf.namespace()), "bad flag declaration: bad name");
+        ensure!(
+            is_valid_name_ident(pdf.name()),
+            "bad flag declaration: bad name {} expected snake_case string; \
+        see {ACONFIG_PROTO_PATH} for details",
+            pdf.name()
+        );
+        ensure!(
+            is_valid_name_ident(pdf.namespace()),
+            "bad flag declaration: bad namespace {} expected snake_case string; \
+        see {ACONFIG_PROTO_PATH} for details",
+            pdf.namespace()
+        );
         ensure!(!pdf.description().is_empty(), "bad flag declaration: empty description");
         ensure!(pdf.bug.len() == 1, "bad flag declaration: exactly one bug required");
 
@@ -149,8 +162,12 @@ pub mod flag_declarations {
     pub fn verify_fields(pdf: &ProtoFlagDeclarations) -> Result<()> {
         ensure_required_fields!("flag declarations", pdf, "package");
         // TODO(b/312769710): Make the container field required.
-
-        ensure!(is_valid_package_ident(pdf.package()), "bad flag declarations: bad package");
+        ensure!(
+            is_valid_package_ident(pdf.package()),
+            "bad flag declarations: bad package {} expected snake_case strings delimited by dots; \
+        see {ACONFIG_PROTO_PATH} for details",
+            pdf.package()
+        );
         ensure!(
             !pdf.has_container() || is_valid_container_ident(pdf.container()),
             "bad flag declarations: bad container"
@@ -172,8 +189,18 @@ pub mod flag_value {
     pub fn verify_fields(fv: &ProtoFlagValue) -> Result<()> {
         ensure_required_fields!("flag value", fv, "package", "name", "state", "permission");
 
-        ensure!(is_valid_package_ident(fv.package()), "bad flag value: bad package");
-        ensure!(is_valid_name_ident(fv.name()), "bad flag value: bad name");
+        ensure!(
+            is_valid_package_ident(fv.package()),
+            "bad flag value: bad package {} expected snake_case strings delimited by dots; \
+        see {ACONFIG_PROTO_PATH} for details",
+            fv.package()
+        );
+        ensure!(
+            is_valid_name_ident(fv.name()),
+            "bad flag value: bad name {} expected snake_case string; \
+        see {ACONFIG_PROTO_PATH} for details",
+            fv.name()
+        );
 
         Ok(())
     }
@@ -255,13 +282,28 @@ pub mod parsed_flag {
             "permission"
         );
 
-        ensure!(is_valid_package_ident(pf.package()), "bad parsed flag: bad package");
+        ensure!(
+            is_valid_package_ident(pf.package()),
+            "bad parsed flag: bad package {} expected snake_case strings delimited by dots; \
+        see {ACONFIG_PROTO_PATH} for details",
+            pf.package()
+        );
         ensure!(
             !pf.has_container() || is_valid_container_ident(pf.container()),
             "bad parsed flag: bad container"
         );
-        ensure!(is_valid_name_ident(pf.name()), "bad parsed flag: bad name");
-        ensure!(is_valid_name_ident(pf.namespace()), "bad parsed flag: bad namespace");
+        ensure!(
+            is_valid_name_ident(pf.name()),
+            "bad parsed flag: bad name {} expected snake_case string; \
+        see {ACONFIG_PROTO_PATH} for details",
+            pf.name()
+        );
+        ensure!(
+            is_valid_name_ident(pf.namespace()),
+            "bad parsed flag: bad namespace {} expected snake_case string; \
+        see {ACONFIG_PROTO_PATH} for details",
+            pf.namespace()
+        );
         ensure!(!pf.description().is_empty(), "bad parsed flag: empty description");
         ensure!(!pf.trace.is_empty(), "bad parsed flag: empty trace");
         for tp in pf.trace.iter() {

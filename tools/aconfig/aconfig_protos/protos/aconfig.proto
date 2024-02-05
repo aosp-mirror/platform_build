@@ -20,6 +20,19 @@ syntax = "proto2";
 
 package android.aconfig;
 
+// This protobuf file defines messages used to represent and manage flags in the "aconfig" system
+// The following format requirements apply across various message fields:
+// # name: a lowercase string in snake_case format, no consecutive underscores, and no leading digit
+//    For example adjust_rate is a valid name, while AdjustRate, adjust__rate, and
+//    2adjust_rate are invalid
+//
+// # namespace: a lowercase string in snake_case format, no consecutive underscores, and no leading
+//    digit. For example android_bar_system
+//
+// # package: lowercase strings in snake_case format, delimited by dots, no consecutive underscores
+//    and no leading digit in each string. For example com.android.mypackage is a valid name
+//    while com.android.myPackage, com.android.1mypackage are invalid
+
 // messages used in both aconfig input and output
 
 enum flag_state {
@@ -35,12 +48,30 @@ enum flag_permission {
 // aconfig input messages: flag declarations and values
 
 message flag_declaration {
+  // Name of the flag (required)
+  // See # name for format detail
   optional string name = 1;
+
+  // Namespace the flag belongs to (required)
+  // See # namespace for format detail
   optional string namespace = 2;
+
+  // Textual description of the flag's purpose (required)
   optional string description = 3;
+
+  // Single bug id related to the flag (required)
   repeated string bug = 4;
+
+  // Indicates if the flag is permanently read-only and cannot be changed
+  // via release configs (optional)
+  // Default value false
   optional bool is_fixed_read_only = 5;
+
+  // Indicates if the flag is exported and accessible beyond its originating container (optional)
+  // Default value false
   optional bool is_exported = 6;
+
+  // Additional information about the flag, including its purpose and form factors (optional)
   optional flag_metadata metadata = 7;
 };
 
@@ -59,14 +90,26 @@ message flag_metadata {
 }
 
 message flag_declarations {
+  // Package to which the flag belongs (required)
+  // See # package for format detail
   optional string package = 1;
+
+  // List of flag_declaration objects (required)
   repeated flag_declaration flag = 2;
+
+  // Container the flag belongs to (optional)
   optional string container = 3;
 };
 
 message flag_value {
+  // Package to which the flag belongs (required)
+  // See # package for format detail
   optional string package = 1;
+
+  // Name of the flag (required)
+  // See # name for format detail
   optional string name = 2;
+
   optional flag_state state = 3;
   optional flag_permission permission = 4;
 };
@@ -85,17 +128,41 @@ message tracepoint {
 }
 
 message parsed_flag {
+  // Package to which the flag belongs (required)
+  // See # package for format detail
   optional string package = 1;
+
+  // Name of the flag (required)
+  // See # name for format detail
   optional string name = 2;
+
+  // Namespace the flag belongs to (required)
+  // See # namespace for format detail
   optional string namespace = 3;
+
+  // Textual description of the flag's purpose (required)
   optional string description = 4;
+
+  // Single bug id related to the flag (required)
   repeated string bug = 5;
+
   optional flag_state state = 6;
   optional flag_permission permission = 7;
   repeated tracepoint trace = 8;
+
+  // Indicates if the flag is permanently read-only and cannot be changed
+  // via release configs (optional)
+  // Default value false
   optional bool is_fixed_read_only = 9;
+
+  // Indicates if the flag is exported and accessible beyond its originating container (optional)
+  // Default value false
   optional bool is_exported = 10;
+
+  // Container the flag belongs to (optional)
   optional string container = 11;
+
+  // Additional information about the flag, including its purpose and form factors (optional)
   optional flag_metadata metadata = 12;
 }
 
