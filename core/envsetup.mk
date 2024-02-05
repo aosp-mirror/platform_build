@@ -50,6 +50,13 @@ endef
 # Release config
 include $(BUILD_SYSTEM)/release_config.mk
 
+# Set default value of KEEP_VNDK.
+ifeq ($(RELEASE_DEPRECATE_VNDK),true)
+  KEEP_VNDK ?= false
+else
+  KEEP_VNDK ?= true
+endif
+
 # ---------------------------------------------------------------
 # Set up version information
 include $(BUILD_SYSTEM)/version_util.mk
