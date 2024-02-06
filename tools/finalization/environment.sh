@@ -19,11 +19,14 @@ export FINAL_MAINLINE_EXTENSION='58'
 
 # Options:
 # 'unfinalized' - branch is in development state,
-# 'sdk' - SDK/API is finalized
+# 'vintf' - VINTF is finalized
+# 'sdk' - VINTF and SDK/API are finalized
 # 'rel' - branch is finalized, switched to REL
 export FINAL_STATE='unfinalized'
 
 export BUILD_FROM_SOURCE_STUB=true
 
 # FINAL versions for VINTF
-export FINAL_BOARD_API_LEVEL=$(TARGET_RELEASE=fina_1 $top/build/soong/soong_ui.bash --dumpvar-mode RELEASE_BOARD_API_LEVEL)
+# TODO(b/323985297): The version must match with that from the release configuration.
+# Instead of hardcoding the version here, read it from a release configuration.
+export FINAL_BOARD_API_LEVEL='202404'
