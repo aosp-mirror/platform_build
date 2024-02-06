@@ -12,38 +12,15 @@
 # ENABLE_UFFD_GC: Whether to use userfaultfd GC.
 
 config_enable_uffd_gc := \
-  $(firstword $(OVERRIDE_ENABLE_UFFD_GC) $(PRODUCT_ENABLE_UFFD_GC))
+  $(firstword $(OVERRIDE_ENABLE_UFFD_GC) $(PRODUCT_ENABLE_UFFD_GC) default)
 
-ifeq (,$(filter-out default,$(config_enable_uffd_gc)))
-  ENABLE_UFFD_GC := true
-
-  # Disable userfaultfd GC if the device doesn't support it (i.e., if
-  # `min(ro.board.api_level ?? ro.board.first_api_level ?? MAX_VALUE,
-  #      ro.product.first_api_level ?? ro.build.version.sdk ?? MAX_VALUE) < 31`)
-  # This logic aligns with how `ro.vendor.api_level` is calculated in
-  # `system/core/init/property_service.cpp`.
-  # We omit the check on `ro.build.version.sdk` here because we are on the latest build system.
-  board_api_level := $(firstword $(BOARD_API_LEVEL) $(BOARD_SHIPPING_API_LEVEL))
-  ifneq (,$(board_api_level))
-    ifeq (true,$(call math_lt,$(board_api_level),31))
-      ENABLE_UFFD_GC := false
-    endif
-  endif
-
-  ifneq (,$(PRODUCT_SHIPPING_API_LEVEL))
-    ifeq (true,$(call math_lt,$(PRODUCT_SHIPPING_API_LEVEL),31))
-      ENABLE_UFFD_GC := false
-    endif
-  endif
-else ifeq (true,$(config_enable_uffd_gc))
-  ENABLE_UFFD_GC := true
-else ifeq (false,$(config_enable_uffd_gc))
-  ENABLE_UFFD_GC := false
-else
+ifeq (,$(filter default true false,$(config_enable_uffd_gc)))
   $(error Unknown PRODUCT_ENABLE_UFFD_GC value: $(config_enable_uffd_gc))
 endif
 
-ADDITIONAL_PRODUCT_PROPERTIES += ro.dalvik.vm.enable_uffd_gc=$(ENABLE_UFFD_GC)
+ENABLE_UFFD_GC := $(config_enable_uffd_gc)
+# If the value is "default", it will be mangled by post_process_props.py.
+ADDITIONAL_PRODUCT_PROPERTIES += ro.dalvik.vm.enable_uffd_gc=$(config_enable_uffd_gc)
 
 # Create APEX_BOOT_JARS_EXCLUDED which is a list of jars to be removed from
 # ApexBoorJars when built from mainline prebuilts.
