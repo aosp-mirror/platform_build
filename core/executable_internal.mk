@@ -45,7 +45,7 @@ ifeq ($(LOCAL_NO_CRT),true)
 my_target_crtbegin_dynamic_o :=
 my_target_crtbegin_static_o :=
 my_target_crtend_o :=
-else ifdef LOCAL_USE_VNDK
+else ifeq (true,$(call module-in-vendor-or-product))
 my_target_crtbegin_dynamic_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtbegin_dynamic.vendor)
 my_target_crtbegin_static_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtbegin_static.vendor)
 my_target_crtend_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtend_android.vendor)
