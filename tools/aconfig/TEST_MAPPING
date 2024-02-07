@@ -1,25 +1,6 @@
 {
   "presubmit": [
     {
-      // Ensure changes on aconfig auto generated library is compatible with
-      // test testing filtering logic. Breakage on this test means all tests
-      // that using the flag annotations to do filtering will get affected.
-      "name": "FlagAnnotationTests",
-      "options": [
-        {
-          "include-filter": "android.cts.flags.tests.FlagAnnotationTest"
-        }
-      ]
-    },
-    {
-      // Ensure changes on aconfig auto generated library is compatible with
-      // test testing filtering logic. Breakage on this test means all tests
-      // that using the flag macros to do filtering will get affected.
-      "name": "FlagMacrosTests"
-    }
-  ],
-  "postsubmit": [
-    {
       // aconfig unit tests
       "name": "aconfig.test"
     },
@@ -66,6 +47,23 @@
     {
       // aconfig_storage_file unit tests
       "name": "aconfig_storage_file.test"
+    },
+    {
+      // Ensure changes on aconfig auto generated library is compatible with
+      // test testing filtering logic. Breakage on this test means all tests
+      // that using the flag annotations to do filtering will get affected.
+      "name": "FlagAnnotationTests",
+      "options": [
+        {
+          "include-filter": "android.cts.flags.tests.FlagAnnotationTest"
+        }
+      ]
+    },
+    {
+      // Ensure changes on aconfig auto generated library is compatible with
+      // test testing filtering logic. Breakage on this test means all tests
+      // that using the flag macros to do filtering will get affected.
+      "name": "FlagMacrosTests"
     }
   ]
 }

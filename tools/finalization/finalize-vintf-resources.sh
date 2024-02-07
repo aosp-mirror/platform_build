@@ -14,7 +14,7 @@ function finalize_vintf_resources() {
     create_new_compat_matrix
 
     # pre-finalization build target (trunk)
-    local aidl_m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_RELEASE=trunk TARGET_BUILD_VARIANT=userdebug DIST_DIR=out/dist"
+    local aidl_m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_RELEASE=fina_0 TARGET_BUILD_VARIANT=userdebug DIST_DIR=out/dist"
     AIDL_TRANSITIVE_FREEZE=true $aidl_m aidl-freeze-api
 }
 
@@ -42,7 +42,7 @@ function create_new_compat_matrix() {
     fi
 
     # build the targets required before touching the Android.bp/Android.mk files
-    local build_cmd="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_RELEASE=trunk TARGET_BUILD_VARIANT=userdebug DIST_DIR=out/dist"
+    local build_cmd="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_RELEASE=fina_0 TARGET_BUILD_VARIANT=userdebug DIST_DIR=out/dist"
     $build_cmd bpfmt
     $build_cmd bpmodify
     $build_cmd queryview

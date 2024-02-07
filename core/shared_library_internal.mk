@@ -42,7 +42,7 @@ endif
 ifeq ($(LOCAL_NO_CRT),true)
 my_target_crtbegin_so_o :=
 my_target_crtend_so_o :=
-else ifdef LOCAL_USE_VNDK
+else ifeq ($(call module-in-vendor-or-product),true)
 my_target_crtbegin_so_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtbegin_so.vendor)
 my_target_crtend_so_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtend_so.vendor)
 else
