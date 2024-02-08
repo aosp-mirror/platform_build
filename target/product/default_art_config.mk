@@ -131,6 +131,10 @@ ifeq ($(RELEASE_CRASHRECOVERY_MODULE),true)
 
 endif
 
+ifeq ($(RELEASE_AVF_ENABLE_LLPVM_CHANGES),true)
+  PRODUCT_APEX_SYSTEM_SERVER_JARS += com.android.virt:service-virtualization
+endif
+
 # Use $(wildcard) to avoid referencing the profile in thin manifests that don't have the
 # art project.
 ifneq (,$(wildcard art))
