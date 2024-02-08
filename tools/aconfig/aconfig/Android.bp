@@ -40,18 +40,21 @@ rust_test_host {
 aconfig_declarations {
     name: "aconfig.test.flags",
     package: "com.android.aconfig.test",
+    container: "system",
     srcs: ["tests/test.aconfig"],
 }
 
 aconfig_declarations {
     name: "aconfig.test.exported.flags",
     package: "com.android.aconfig.test.exported",
+    container: "system",
     srcs: ["tests/test_exported.aconfig"],
 }
 
 aconfig_declarations {
     name: "aconfig.test.forcereadonly.flags",
     package: "com.android.aconfig.test.forcereadonly",
+    container: "system",
     srcs: ["tests/test_force_read_only.aconfig"],
 }
 
@@ -220,7 +223,7 @@ rust_aconfig_library {
 rust_test {
     name: "aconfig.prod_mode.test.rust",
     srcs: [
-        "tests/aconfig_prod_mode_test.rs"
+        "tests/aconfig_prod_mode_test.rs",
     ],
     rustlibs: [
         "libaconfig_test_rust_library",
@@ -238,7 +241,7 @@ rust_aconfig_library {
 rust_test {
     name: "aconfig.test_mode.test.rust",
     srcs: [
-        "tests/aconfig_test_mode_test.rs"
+        "tests/aconfig_test_mode_test.rs",
     ],
     rustlibs: [
         "libaconfig_test_rust_library_with_test_mode",
@@ -256,7 +259,7 @@ rust_aconfig_library {
 rust_test {
     name: "aconfig.exported_mode.test.rust",
     srcs: [
-        "tests/aconfig_exported_mode_test.rs"
+        "tests/aconfig_exported_mode_test.rs",
     ],
     rustlibs: [
         "libaconfig_test_rust_library_with_exported_mode",
@@ -274,7 +277,7 @@ rust_aconfig_library {
 rust_test {
     name: "aconfig.force_read_only_mode.test.rust",
     srcs: [
-        "tests/aconfig_force_read_only_mode_test.rs"
+        "tests/aconfig_force_read_only_mode_test.rs",
     ],
     rustlibs: [
         "libaconfig_test_rust_library_with_force_read_only_mode",
