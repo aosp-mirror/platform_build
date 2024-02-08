@@ -806,7 +806,7 @@ else
   ifneq (,$(test_config))
     $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
       $(eval my_compat_dist_config_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
-        $(test_config):$(dir)/$(LOCAL_MODULE).config)))
+        $(test_config):$(dir)/$(LOCAL_MODULE).config$(LOCAL_TEST_CONFIG_SUFFIX))))
   endif
 
   ifneq (,$(LOCAL_EXTRA_FULL_TEST_CONFIGS))

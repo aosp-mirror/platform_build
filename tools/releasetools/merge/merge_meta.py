@@ -53,23 +53,31 @@ PARTITION_TAG_PATTERN = re.compile(r'partition="(.*?)"')
 MODULE_KEY_PATTERN = re.compile(r'name="(.+)\.(apex|apk)"')
 
 
-def MergeUpdateEngineConfig(input_metadir1, input_metadir2, merged_meta_dir):
-  UPDATE_ENGINE_CONFIG_NAME = "update_engine_config.txt"
-  config1_path = os.path.join(
-      input_metadir1, UPDATE_ENGINE_CONFIG_NAME)
-  config2_path = os.path.join(
-      input_metadir2, UPDATE_ENGINE_CONFIG_NAME)
-  config1 = ParseUpdateEngineConfig(config1_path)
-  config2 = ParseUpdateEngineConfig(config2_path)
-  # Copy older config to merged target files for maximum compatibility
-  # update_engine in system partition is from system side, but
-  # update_engine_sideload in recovery is from vendor side.
-  if config1 < config2:
-    shutil.copy(config1_path, os.path.join(
-        merged_meta_dir, UPDATE_ENGINE_CONFIG_NAME))
+def MergeUpdateEngineConfig(framework_meta_dir, vendor_meta_dir,
+                            merged_meta_dir):
+  """Merges META/update_engine_config.txt.
+
+  The output is the configuration for maximum compatibility.
+  """
+  _CONFIG_NAME = 'update_engine_config.txt'
+  framework_config_path = os.path.join(framework_meta_dir, _CONFIG_NAME)
+  vendor_config_path = os.path.join(vendor_meta_dir, _CONFIG_NAME)
+  merged_config_path = os.path.join(merged_meta_dir, _CONFIG_NAME)
+
+  if os.path.exists(framework_config_path):
+    framework_config = ParseUpdateEngineConfig(framework_config_path)
+    vendor_config = ParseUpdateEngineConfig(vendor_config_path)
+    # Copy older config to merged target files for maximum compatibility
+    # update_engine in system partition is from system side, but
+    # update_engine_sideload in recovery is from vendor side.
+    if framework_config < vendor_config:
+      shutil.copy(framework_config_path, merged_config_path)
+    else:
+      shutil.copy(vendor_config_path, merged_config_path)
   else:
-    shutil.copy(config2_path, os.path.join(
-        merged_meta_dir, UPDATE_ENGINE_CONFIG_NAME))
+    if not OPTIONS.allow_partial_ab:
+      raise FileNotFoundError(framework_config_path)
+    shutil.copy(vendor_config_path, merged_config_path)
 
 
 def MergeMetaFiles(temp_dir, merged_dir, framework_partitions):
@@ -125,8 +133,7 @@ def MergeMetaFiles(temp_dir, merged_dir, framework_partitions):
 
   if OPTIONS.merged_misc_info.get('ab_update') == 'true':
     MergeUpdateEngineConfig(
-        framework_meta_dir,
-        vendor_meta_dir, merged_meta_dir)
+        framework_meta_dir, vendor_meta_dir, merged_meta_dir)
 
   # Write the now-finalized OPTIONS.merged_misc_info.
   merge_utils.WriteSortedData(
@@ -140,16 +147,24 @@ def MergeAbPartitions(framework_meta_dir, vendor_meta_dir, merged_meta_dir,
 
   The output contains the union of the partition names.
   """
-  with open(os.path.join(framework_meta_dir, 'ab_partitions.txt')) as f:
-    # Filter out some partitions here to support the case that the
-    # ab_partitions.txt of framework-target-files has non-framework partitions.
-    # This case happens when we use a complete merged target files package as
-    # the framework-target-files.
-    framework_ab_partitions = [
-        partition
-        for partition in f.read().splitlines()
-        if partition in framework_partitions
-    ]
+  framework_ab_partitions = []
+  framework_ab_config = os.path.join(framework_meta_dir, 'ab_partitions.txt')
+  if os.path.exists(framework_ab_config):
+    with open(framework_ab_config) as f:
+      # Filter out some partitions here to support the case that the
+      # ab_partitions.txt of framework-target-files has non-framework
+      # partitions. This case happens when we use a complete merged target
+      # files package as the framework-target-files.
+      framework_ab_partitions.extend([
+          partition
+          for partition in f.read().splitlines()
+          if partition in framework_partitions
+      ])
+  else:
+    if not OPTIONS.allow_partial_ab:
+      raise FileNotFoundError(framework_ab_config)
+    logger.info('Use partial AB because framework ab_partitions.txt does not '
+                'exist.')
 
   with open(os.path.join(vendor_meta_dir, 'ab_partitions.txt')) as f:
     vendor_ab_partitions = f.read().splitlines()
