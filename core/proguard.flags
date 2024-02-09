@@ -15,6 +15,13 @@
     @com.android.internal.annotations.VisibleForTesting *;
 }
 
+# Keep classes and members with platform @TestApi annotations, similar to
+# @VisibleForTesting.
+-keep @android.annotation.TestApi class *
+-keepclassmembers class * {
+    @android.annotation.TestApi *;
+}
+
 # Keep classes and members with non-platform @VisibleForTesting annotations, but
 # only within platform-defined packages. This avoids keeping external, library-specific
 # test code that isn't actually needed for platform testing.
