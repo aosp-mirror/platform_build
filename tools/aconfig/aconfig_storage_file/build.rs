@@ -14,4 +14,7 @@ fn main() {
         .inputs(proto_files)
         .cargo_out_dir("aconfig_storage_protos")
         .run_from_script();
+
+    let _ = cxx_build::bridge("src/lib.rs");
+    println!("cargo:rerun-if-changed=src/lib.rs");
 }
