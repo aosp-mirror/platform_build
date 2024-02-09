@@ -259,32 +259,38 @@ pub fn get_boolean_flag_value(container: &str, offset: u32) -> Result<bool, Acon
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::{
-        create_temp_storage_files_for_test, get_binary_storage_proto_bytes,
-        set_temp_storage_files_to_read_only, write_bytes_to_temp_file,
-    };
+    use crate::test_utils::{write_storage_text_to_temp_file, TestStorageFileSet};
+
+    fn create_test_storage_files(read_only: bool) -> TestStorageFileSet {
+        TestStorageFileSet::new(
+            "./tests/package.map",
+            "./tests/flag.map",
+            "./tests/flag.val",
+            read_only,
+        )
+        .unwrap()
+    }
 
     #[test]
     // this test point locks down flag package offset query
     fn test_package_offset_query() {
-        #[cfg(feature = "cargo")]
-        create_temp_storage_files_for_test();
-
-        set_temp_storage_files_to_read_only();
-        let text_proto = r#"
-files {
+        let ro_files = create_test_storage_files(true);
+        let text_proto = format!(
+            r#"
+files {{
     version: 0
     container: "system"
-    package_map: "./tests/tmp.ro.package.map"
-    flag_map: "./tests/tmp.ro.flag.map"
-    flag_val: "./tests/tmp.ro.flag.val"
+    package_map: "{}"
+    flag_map: "{}"
+    flag_val: "{}"
     timestamp: 12345
-}
-"#;
-        let binary_proto_bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-        let file = write_bytes_to_temp_file(&binary_proto_bytes).unwrap();
-        let file_full_path = file.path().display().to_string();
+}}
+"#,
+            ro_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
+        );
 
+        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
+        let file_full_path = file.path().display().to_string();
         let package_offset = get_package_offset_impl(
             &file_full_path,
             "system",
@@ -319,24 +325,23 @@ files {
     #[test]
     // this test point locks down flag offset query
     fn test_flag_offset_query() {
-        #[cfg(feature = "cargo")]
-        create_temp_storage_files_for_test();
-
-        set_temp_storage_files_to_read_only();
-        let text_proto = r#"
-files {
+        let ro_files = create_test_storage_files(true);
+        let text_proto = format!(
+            r#"
+files {{
     version: 0
     container: "system"
-    package_map: "./tests/tmp.ro.package.map"
-    flag_map: "./tests/tmp.ro.flag.map"
-    flag_val: "./tests/tmp.ro.flag.val"
+    package_map: "{}"
+    flag_map: "{}"
+    flag_val: "{}"
     timestamp: 12345
-}
-"#;
-        let binary_proto_bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-        let file = write_bytes_to_temp_file(&binary_proto_bytes).unwrap();
-        let file_full_path = file.path().display().to_string();
+}}
+"#,
+            ro_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
+        );
 
+        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
+        let file_full_path = file.path().display().to_string();
         let baseline = vec![
             (0, "enabled_ro", 1u16),
             (0, "enabled_rw", 2u16),
@@ -359,24 +364,23 @@ files {
     #[test]
     // this test point locks down flag offset query
     fn test_flag_value_query() {
-        #[cfg(feature = "cargo")]
-        create_temp_storage_files_for_test();
-
-        set_temp_storage_files_to_read_only();
-        let text_proto = r#"
-files {
+        let ro_files = create_test_storage_files(true);
+        let text_proto = format!(
+            r#"
+files {{
     version: 0
     container: "system"
-    package_map: "./tests/tmp.ro.package.map"
-    flag_map: "./tests/tmp.ro.flag.map"
-    flag_val: "./tests/tmp.ro.flag.val"
+    package_map: "{}"
+    flag_map: "{}"
+    flag_val: "{}"
     timestamp: 12345
-}
-"#;
-        let binary_proto_bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-        let file = write_bytes_to_temp_file(&binary_proto_bytes).unwrap();
-        let file_full_path = file.path().display().to_string();
+}}
+"#,
+            ro_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
+        );
 
+        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
+        let file_full_path = file.path().display().to_string();
         let baseline: Vec<bool> = vec![false; 8];
         for (offset, expected_value) in baseline.into_iter().enumerate() {
             let flag_value =
