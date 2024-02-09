@@ -47,38 +47,14 @@ genrule {
     cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
 }
 
-genrule {
-    name: "rw.package.map",
-    out: ["tests/tmp.rw.package.map"],
-    srcs: ["tests/package.map"],
-    cmd: "rm -f $(out);cp -f $(in) $(out);chmod +w $(out)",
-}
-
-genrule {
-    name: "rw.flag.map",
-    out: ["tests/tmp.rw.flag.map"],
-    srcs: ["tests/flag.map"],
-    cmd: "rm -f $(out);cp -f $(in) $(out);chmod +w $(out)",
-}
-
-genrule {
-    name: "rw.flag.val",
-    out: ["tests/tmp.rw.flag.val"],
-    srcs: ["tests/flag.val"],
-    cmd: "rm -f $(out);cp -f $(in) $(out);chmod +w $(out)",
-}
-
 rust_test_host {
     name: "aconfig_storage_file.test",
     test_suites: ["general-tests"],
     defaults: ["aconfig_storage_file.defaults"],
     data: [
-        ":ro.package.map",
-        ":ro.flag.map",
-        ":ro.flag.val",
-        ":rw.package.map",
-        ":rw.flag.map",
-        ":rw.flag.val",
+        "tests/package.map",
+        "tests/flag.map",
+        "tests/flag.val",
     ],
 }
 
