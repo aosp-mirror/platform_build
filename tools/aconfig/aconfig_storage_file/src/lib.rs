@@ -256,6 +256,185 @@ pub fn get_boolean_flag_value(container: &str, offset: u32) -> Result<bool, Acon
     get_boolean_flag_value_impl(STORAGE_LOCATION_FILE, container, offset)
 }
 
+#[cxx::bridge]
+mod ffi {
+    // Package table query return for cc interlop
+    pub struct PackageOffsetQueryCXX {
+        pub query_success: bool,
+        pub error_message: String,
+        pub package_exists: bool,
+        pub package_id: u32,
+        pub boolean_offset: u32,
+    }
+
+    // Flag table query return for cc interlop
+    pub struct FlagOffsetQueryCXX {
+        pub query_success: bool,
+        pub error_message: String,
+        pub flag_exists: bool,
+        pub flag_offset: u16,
+    }
+
+    // Flag value query return for cc interlop
+    pub struct BooleanFlagValueQueryCXX {
+        pub query_success: bool,
+        pub error_message: String,
+        pub flag_value: bool,
+    }
+
+    // Rust export to c++
+    extern "Rust" {
+        pub fn get_package_offset_cxx_impl(
+            pb_file: &str,
+            container: &str,
+            package: &str,
+        ) -> PackageOffsetQueryCXX;
+
+        pub fn get_flag_offset_cxx_impl(
+            pb_file: &str,
+            container: &str,
+            package_id: u32,
+            flag: &str,
+        ) -> FlagOffsetQueryCXX;
+
+        pub fn get_boolean_flag_value_cxx_impl(
+            pb_file: &str,
+            container: &str,
+            offset: u32,
+        ) -> BooleanFlagValueQueryCXX;
+
+        pub fn get_package_offset_cxx(container: &str, package: &str) -> PackageOffsetQueryCXX;
+
+        pub fn get_flag_offset_cxx(
+            container: &str,
+            package_id: u32,
+            flag: &str,
+        ) -> FlagOffsetQueryCXX;
+
+        pub fn get_boolean_flag_value_cxx(container: &str, offset: u32)
+            -> BooleanFlagValueQueryCXX;
+    }
+}
+
+/// Get package start offset impl cc interlop
+pub fn get_package_offset_cxx_impl(
+    pb_file: &str,
+    container: &str,
+    package: &str,
+) -> ffi::PackageOffsetQueryCXX {
+    ffi::PackageOffsetQueryCXX::new(get_package_offset_impl(pb_file, container, package))
+}
+
+/// Get flag start offset impl cc interlop
+pub fn get_flag_offset_cxx_impl(
+    pb_file: &str,
+    container: &str,
+    package_id: u32,
+    flag: &str,
+) -> ffi::FlagOffsetQueryCXX {
+    ffi::FlagOffsetQueryCXX::new(get_flag_offset_impl(pb_file, container, package_id, flag))
+}
+
+/// Get boolean flag value impl cc interlop
+pub fn get_boolean_flag_value_cxx_impl(
+    pb_file: &str,
+    container: &str,
+    offset: u32,
+) -> ffi::BooleanFlagValueQueryCXX {
+    ffi::BooleanFlagValueQueryCXX::new(get_boolean_flag_value_impl(pb_file, container, offset))
+}
+
+/// Get package start offset cc interlop
+pub fn get_package_offset_cxx(container: &str, package: &str) -> ffi::PackageOffsetQueryCXX {
+    ffi::PackageOffsetQueryCXX::new(get_package_offset(container, package))
+}
+
+/// Get flag start offset cc interlop
+pub fn get_flag_offset_cxx(
+    container: &str,
+    package_id: u32,
+    flag: &str,
+) -> ffi::FlagOffsetQueryCXX {
+    ffi::FlagOffsetQueryCXX::new(get_flag_offset(container, package_id, flag))
+}
+
+/// Get boolean flag value cc interlop
+pub fn get_boolean_flag_value_cxx(container: &str, offset: u32) -> ffi::BooleanFlagValueQueryCXX {
+    ffi::BooleanFlagValueQueryCXX::new(get_boolean_flag_value(container, offset))
+}
+
+impl ffi::PackageOffsetQueryCXX {
+    pub(crate) fn new(offset_result: Result<Option<PackageOffset>, AconfigStorageError>) -> Self {
+        match offset_result {
+            Ok(offset_opt) => match offset_opt {
+                Some(offset) => Self {
+                    query_success: true,
+                    error_message: String::from(""),
+                    package_exists: true,
+                    package_id: offset.package_id,
+                    boolean_offset: offset.boolean_offset,
+                },
+                None => Self {
+                    query_success: true,
+                    error_message: String::from(""),
+                    package_exists: false,
+                    package_id: 0,
+                    boolean_offset: 0,
+                },
+            },
+            Err(errmsg) => Self {
+                query_success: false,
+                error_message: format!("{:?}", errmsg),
+                package_exists: false,
+                package_id: 0,
+                boolean_offset: 0,
+            },
+        }
+    }
+}
+
+impl ffi::FlagOffsetQueryCXX {
+    pub(crate) fn new(offset_result: Result<Option<FlagOffset>, AconfigStorageError>) -> Self {
+        match offset_result {
+            Ok(offset_opt) => match offset_opt {
+                Some(offset) => Self {
+                    query_success: true,
+                    error_message: String::from(""),
+                    flag_exists: true,
+                    flag_offset: offset,
+                },
+                None => Self {
+                    query_success: true,
+                    error_message: String::from(""),
+                    flag_exists: false,
+                    flag_offset: 0,
+                },
+            },
+            Err(errmsg) => Self {
+                query_success: false,
+                error_message: format!("{:?}", errmsg),
+                flag_exists: false,
+                flag_offset: 0,
+            },
+        }
+    }
+}
+
+impl ffi::BooleanFlagValueQueryCXX {
+    pub(crate) fn new(value_result: Result<bool, AconfigStorageError>) -> Self {
+        match value_result {
+            Ok(value) => {
+                Self { query_success: true, error_message: String::from(""), flag_value: value }
+            }
+            Err(errmsg) => Self {
+                query_success: false,
+                error_message: format!("{:?}", errmsg),
+                flag_value: false,
+            },
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
