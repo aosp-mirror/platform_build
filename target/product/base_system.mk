@@ -92,6 +92,7 @@ PRODUCT_PACKAGES += \
     dumpstate \
     dumpsys \
     e2fsck \
+    enhanced-confirmation.xml \
     ExtShared \
     flags_health_check \
     framework-graphics \
