@@ -183,14 +183,17 @@ ifndef PLATFORM_SECURITY_PATCH_TIMESTAMP
 endif
 .KATI_READONLY := PLATFORM_SECURITY_PATCH_TIMESTAMP
 
-ifndef PLATFORM_BASE_OS
-  # Used to indicate the base os applied to the device.
-  # Can be an arbitrary string, but must be a single word.
-  #
-  # If there is no $PLATFORM_BASE_OS set, keep it empty.
-  PLATFORM_BASE_OS :=
-endif
-.KATI_READONLY := PLATFORM_BASE_OS
+# PLATFORM_BASE_OS is used to indicate the base os applied
+# to the device. Can be an arbitrary string, but must be a
+# single word.
+#
+# If there is no $PLATFORM_BASE_OS set, keep it empty.
+#
+# PLATFORM_BASE_OS can either be set via an enviornment
+# variable, or set via the PRODUCT_BASE_OS product variable.
+PLATFORM_BASE_OS_ENV_INPUT := $(PLATFORM_BASE_OS)
+.KATI_READONLY := PLATFORM_BASE_OS_ENV_INPUT
+PLATFORM_BASE_OS :=
 
 ifndef BUILD_ID
   # Used to signify special builds.  E.g., branches and/or releases,

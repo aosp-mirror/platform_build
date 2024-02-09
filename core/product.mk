@@ -26,6 +26,7 @@ _product_single_value_vars += PRODUCT_NAME
 _product_single_value_vars += PRODUCT_MODEL
 _product_single_value_vars += PRODUCT_NAME_FOR_ATTESTATION
 _product_single_value_vars += PRODUCT_MODEL_FOR_ATTESTATION
+_product_single_value_vars += PRODUCT_BASE_OS
 
 # Defines the ELF segment alignment for binaries (executables and shared libraries).
 # The ELF segment alignment has to be a PAGE_SIZE multiple. For example, if

@@ -311,6 +311,14 @@ endif
 
 TARGET_DEVICE := $(PRODUCT_DEVICE)
 
+# Allow overriding PLATFORM_BASE_OS when PRODUCT_BASE_OS is defined
+ifdef PRODUCT_BASE_OS
+  PLATFORM_BASE_OS := $(PRODUCT_BASE_OS)
+else
+  PLATFORM_BASE_OS := $(PLATFORM_BASE_OS_ENV_INPUT)
+endif
+.KATI_READONLY := PLATFORM_BASE_OS
+
 # TODO: also keep track of things like "port", "land" in product files.
 
 # Figure out which resoure configuration options to use for this
