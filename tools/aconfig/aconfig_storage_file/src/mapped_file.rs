@@ -243,6 +243,7 @@ files {
     }
 
     #[test]
+    #[cfg(feature = "cargo")]
     fn test_map_non_read_only_file() {
         #[cfg(feature = "cargo")]
         create_temp_storage_files_for_test();
