@@ -37,5 +37,8 @@
         <option name="java-flags" value="--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED"/>
         <option name="java-flags" value="--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED"/>
         <option name="java-flags" value="--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED"/>
+
+        <!-- Needed for supporting ParcelFileDescriptor internals -->
+        <option name="java-flags" value="--add-exports=java.base/jdk.internal.access=ALL-UNNAMED"/>
     </test>
 </configuration>
