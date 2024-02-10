@@ -7,3 +7,6 @@ per-file version_defaults.mk = ankurbakshi@google.com,bkhalife@google.com,jainne
 
 # For sdk extensions version updates
 per-file version_defaults.mk = amhk@google.com,gurpreetgs@google.com,mkhokhlova@google.com,robertogil@google.com
+
+# For Ravenwood test configs
+per-file ravenwood_test_config_template.xml = jsharkey@google.com,omakoto@google.com

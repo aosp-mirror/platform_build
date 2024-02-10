@@ -148,10 +148,7 @@ pub(crate) fn get_mapped_file(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::{
-        create_temp_storage_files_for_test, get_binary_storage_proto_bytes,
-        set_temp_storage_files_to_read_only, write_bytes_to_temp_file,
-    };
+    use crate::test_utils::{write_storage_text_to_temp_file, TestStorageFileSet};
 
     #[test]
     fn test_find_storage_file_location() {
@@ -173,10 +170,8 @@ files {
     timestamp: 54321
 }
 "#;
-        let binary_proto_bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-        let file = write_bytes_to_temp_file(&binary_proto_bytes).unwrap();
+        let file = write_storage_text_to_temp_file(text_proto).unwrap();
         let file_full_path = file.path().display().to_string();
-
         let file_info = find_container_storage_location(&file_full_path, "system").unwrap();
         assert_eq!(file_info.version(), 0);
         assert_eq!(file_info.container(), "system");
@@ -213,99 +208,121 @@ files {
         assert_eq!(mmaped_file[..], content[..]);
     }
 
+    fn create_test_storage_files(read_only: bool) -> TestStorageFileSet {
+        TestStorageFileSet::new(
+            "./tests/package.map",
+            "./tests/flag.map",
+            "./tests/flag.val",
+            read_only,
+        )
+        .unwrap()
+    }
+
     #[test]
     fn test_mapped_file_contents() {
-        #[cfg(feature = "cargo")]
-        create_temp_storage_files_for_test();
-
-        set_temp_storage_files_to_read_only();
-        let text_proto = r#"
-files {
+        let ro_files = create_test_storage_files(true);
+        let text_proto = format!(
+            r#"
+files {{
     version: 0
     container: "system"
-    package_map: "./tests/tmp.ro.package.map"
-    flag_map: "./tests/tmp.ro.flag.map"
-    flag_val: "./tests/tmp.ro.flag.val"
+    package_map: "{}"
+    flag_map: "{}"
+    flag_val: "{}"
     timestamp: 12345
-}
-"#;
-        let binary_proto_bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-        let file = write_bytes_to_temp_file(&binary_proto_bytes).unwrap();
-        let file_full_path = file.path().display().to_string();
+}}
+"#,
+            ro_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
+        );
 
+        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
+        let file_full_path = file.path().display().to_string();
         map_and_verify(
             &file_full_path,
             StorageFileSelection::PackageMap,
-            "./tests/tmp.ro.package.map",
+            &ro_files.package_map.name,
         );
-        map_and_verify(&file_full_path, StorageFileSelection::FlagMap, "./tests/tmp.ro.flag.map");
-        map_and_verify(&file_full_path, StorageFileSelection::FlagVal, "./tests/tmp.ro.flag.val");
+        map_and_verify(&file_full_path, StorageFileSelection::FlagMap, &ro_files.flag_map.name);
+        map_and_verify(&file_full_path, StorageFileSelection::FlagVal, &ro_files.flag_val.name);
     }
 
     #[test]
     fn test_map_non_read_only_file() {
-        #[cfg(feature = "cargo")]
-        create_temp_storage_files_for_test();
-
-        set_temp_storage_files_to_read_only();
-        let text_proto = r#"
-files {
+        let ro_files = create_test_storage_files(true);
+        let rw_files = create_test_storage_files(false);
+        let text_proto = format!(
+            r#"
+files {{
     version: 0
     container: "system"
-    package_map: "./tests/tmp.rw.package.map"
-    flag_map: "./tests/tmp.rw.flag.map"
-    flag_val: "./tests/tmp.rw.flag.val"
+    package_map: "{}"
+    flag_map: "{}"
+    flag_val: "{}"
     timestamp: 12345
-}
-"#;
-        let binary_proto_bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-        let file = write_bytes_to_temp_file(&binary_proto_bytes).unwrap();
-        let file_full_path = file.path().display().to_string();
-
-        let error = map_container_storage_files(&file_full_path, "system").unwrap_err();
-        assert_eq!(
-            format!("{:?}", error),
-            "MapFileFail(fail to map non read only storage file ./tests/tmp.rw.package.map)"
+}}
+"#,
+            rw_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
         );
 
-        let text_proto = r#"
-files {
-    version: 0
-    container: "system"
-    package_map: "./tests/tmp.ro.package.map"
-    flag_map: "./tests/tmp.rw.flag.map"
-    flag_val: "./tests/tmp.rw.flag.val"
-    timestamp: 12345
-}
-"#;
-        let binary_proto_bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-        let file = write_bytes_to_temp_file(&binary_proto_bytes).unwrap();
+        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
         let file_full_path = file.path().display().to_string();
-
         let error = map_container_storage_files(&file_full_path, "system").unwrap_err();
         assert_eq!(
             format!("{:?}", error),
-            "MapFileFail(fail to map non read only storage file ./tests/tmp.rw.flag.map)"
+            format!(
+                "MapFileFail(fail to map non read only storage file {})",
+                rw_files.package_map.name
+            )
         );
 
-        let text_proto = r#"
-files {
+        let text_proto = format!(
+            r#"
+files {{
     version: 0
     container: "system"
-    package_map: "./tests/tmp.ro.package.map"
-    flag_map: "./tests/tmp.ro.flag.map"
-    flag_val: "./tests/tmp.rw.flag.val"
+    package_map: "{}"
+    flag_map: "{}"
+    flag_val: "{}"
     timestamp: 12345
-}
-"#;
-        let binary_proto_bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-        let file = write_bytes_to_temp_file(&binary_proto_bytes).unwrap();
-        let file_full_path = file.path().display().to_string();
+}}
+"#,
+            ro_files.package_map.name, rw_files.flag_map.name, ro_files.flag_val.name
+        );
 
+        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
+        let file_full_path = file.path().display().to_string();
         let error = map_container_storage_files(&file_full_path, "system").unwrap_err();
         assert_eq!(
             format!("{:?}", error),
-            "MapFileFail(fail to map non read only storage file ./tests/tmp.rw.flag.val)"
+            format!(
+                "MapFileFail(fail to map non read only storage file {})",
+                rw_files.flag_map.name
+            )
+        );
+
+        let text_proto = format!(
+            r#"
+files {{
+    version: 0
+    container: "system"
+    package_map: "{}"
+    flag_map: "{}"
+    flag_val: "{}"
+    timestamp: 12345
+}}
+"#,
+            ro_files.package_map.name, ro_files.flag_map.name, rw_files.flag_val.name
+        );
+
+        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
+        let file_full_path = file.path().display().to_string();
+        let error = map_container_storage_files(&file_full_path, "system").unwrap_err();
+        assert_eq!(
+            format!("{:?}", error),
+            format!(
+                "MapFileFail(fail to map non read only storage file {})",
+                rw_files.flag_val.name
+            )
         );
     }
 }
