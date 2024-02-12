@@ -256,6 +256,8 @@ pub fn get_boolean_flag_value(container: &str, offset: u32) -> Result<bool, Acon
     get_boolean_flag_value_impl(STORAGE_LOCATION_FILE, container, offset)
 }
 
+
+#[cfg(feature = "cargo")]
 #[cxx::bridge]
 mod ffi {
     // Package table query return for cc interlop
@@ -317,6 +319,7 @@ mod ffi {
 }
 
 /// Get package start offset impl cc interlop
+#[cfg(feature = "cargo")]
 pub fn get_package_offset_cxx_impl(
     pb_file: &str,
     container: &str,
@@ -326,6 +329,7 @@ pub fn get_package_offset_cxx_impl(
 }
 
 /// Get flag start offset impl cc interlop
+#[cfg(feature = "cargo")]
 pub fn get_flag_offset_cxx_impl(
     pb_file: &str,
     container: &str,
@@ -336,6 +340,7 @@ pub fn get_flag_offset_cxx_impl(
 }
 
 /// Get boolean flag value impl cc interlop
+#[cfg(feature = "cargo")]
 pub fn get_boolean_flag_value_cxx_impl(
     pb_file: &str,
     container: &str,
@@ -345,11 +350,13 @@ pub fn get_boolean_flag_value_cxx_impl(
 }
 
 /// Get package start offset cc interlop
+#[cfg(feature = "cargo")]
 pub fn get_package_offset_cxx(container: &str, package: &str) -> ffi::PackageOffsetQueryCXX {
     ffi::PackageOffsetQueryCXX::new(get_package_offset(container, package))
 }
 
 /// Get flag start offset cc interlop
+#[cfg(feature = "cargo")]
 pub fn get_flag_offset_cxx(
     container: &str,
     package_id: u32,
@@ -359,10 +366,12 @@ pub fn get_flag_offset_cxx(
 }
 
 /// Get boolean flag value cc interlop
+#[cfg(feature = "cargo")]
 pub fn get_boolean_flag_value_cxx(container: &str, offset: u32) -> ffi::BooleanFlagValueQueryCXX {
     ffi::BooleanFlagValueQueryCXX::new(get_boolean_flag_value(container, offset))
 }
 
+#[cfg(feature = "cargo")]
 impl ffi::PackageOffsetQueryCXX {
     pub(crate) fn new(offset_result: Result<Option<PackageOffset>, AconfigStorageError>) -> Self {
         match offset_result {
@@ -393,6 +402,7 @@ impl ffi::PackageOffsetQueryCXX {
     }
 }
 
+#[cfg(feature = "cargo")]
 impl ffi::FlagOffsetQueryCXX {
     pub(crate) fn new(offset_result: Result<Option<FlagOffset>, AconfigStorageError>) -> Self {
         match offset_result {
@@ -420,6 +430,7 @@ impl ffi::FlagOffsetQueryCXX {
     }
 }
 
+#[cfg(feature = "cargo")]
 impl ffi::BooleanFlagValueQueryCXX {
     pub(crate) fn new(value_result: Result<bool, AconfigStorageError>) -> Self {
         match value_result {
