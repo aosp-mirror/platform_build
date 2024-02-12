@@ -9,7 +9,7 @@ function finalize_vintf_resources() {
     # TODO(b/314010764): finalize LL_NDK
 
     # system/sepolicy
-    system/sepolicy/tools/finalize-vintf-resources.sh "$top" "$FINAL_BOARD_API_LEVEL"
+    "$top/system/sepolicy/tools/finalize-vintf-resources.sh" "$top" "$FINAL_BOARD_API_LEVEL"
 
     create_new_compat_matrix_and_kernel_configs
 
