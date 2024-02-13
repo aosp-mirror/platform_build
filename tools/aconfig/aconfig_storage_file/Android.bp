@@ -14,7 +14,6 @@ rust_defaults {
         "libprotobuf",
         "libtempfile",
         "libmemmap2",
-        "libcxx",
         "libthiserror",
     ],
 }
@@ -78,39 +77,4 @@ cc_library_static {
         "//apex_available:anyapex",
     ],
     host_supported: true,
-}
-
-genrule {
-    name: "libcxx_aconfig_storage_bridge_code",
-    tools: ["cxxbridge"],
-    cmd: "$(location cxxbridge) $(in) > $(out)",
-    srcs: ["src/lib.rs"],
-    out: ["aconfig_storage/lib.rs.cc"],
-}
-
-genrule {
-    name: "libcxx_aconfig_storage_bridge_header",
-    tools: ["cxxbridge"],
-    cmd: "$(location cxxbridge) $(in) --header > $(out)",
-    srcs: ["src/lib.rs"],
-    out: ["aconfig_storage/lib.rs.h"],
-}
-
-rust_ffi_static {
-    name: "libaconfig_storage_cxx_bridge",
-    crate_name: "aconfig_storage_cxx_bridge",
-    host_supported: true,
-    defaults: ["aconfig_storage_file.defaults"],
-}
-
-cc_library_static {
-    name: "libaconfig_storage_cc",
-    srcs: ["aconfig_storage.cpp"],
-    generated_headers: [
-        "cxx-bridge-header",
-        "libcxx_aconfig_storage_bridge_header"
-    ],
-    generated_sources: ["libcxx_aconfig_storage_bridge_code"],
-    whole_static_libs: ["libaconfig_storage_cxx_bridge"],
-    export_include_dirs: ["include"],
 }
