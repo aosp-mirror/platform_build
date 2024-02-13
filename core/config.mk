@@ -374,19 +374,6 @@ ANDROID_BUILDSPEC := $(TOPDIR)buildspec.mk
 endif
 -include $(ANDROID_BUILDSPEC)
 
-ifeq ($(KEEP_VNDK),true)
-  # Starting in Android U, non-VNDK devices not supported
-  # WARNING: DO NOT CHANGE: if you are downstream of AOSP, and you change this, without
-  # letting upstream know it's important to you, we may do cleanup which breaks this
-  # significantly. Please let us know if you are changing this.
-  ifndef BOARD_VNDK_VERSION
-  # READ WARNING - DO NOT CHANGE
-  BOARD_VNDK_VERSION := current
-  # READ WARNING - DO NOT CHANGE
-  endif
-endif
-
-
 # ---------------------------------------------------------------
 # Define most of the global variables.  These are the ones that
 # are specific to the user's build configuration.
