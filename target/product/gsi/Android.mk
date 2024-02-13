@@ -7,6 +7,7 @@ INTERNAL_VNDK_LIB_LIST := $(SOONG_VNDK_LIBRARIES_FILE)
 #####################################################################
 # This is the up-to-date list of vndk libs.
 LATEST_VNDK_LIB_LIST := $(LOCAL_PATH)/current.txt
+ifeq ($(KEEP_VNDK),true)
 UNFROZEN_VNDK := true
 ifeq (REL,$(PLATFORM_VERSION_CODENAME))
     # Use frozen vndk lib list only if "34 >= PLATFORM_VNDK_VERSION"
@@ -17,6 +18,7 @@ ifeq (REL,$(PLATFORM_VERSION_CODENAME))
         endif
         UNFROZEN_VNDK :=
     endif
+endif
 endif
 
 #####################################################################
@@ -34,6 +36,8 @@ ifeq ($(TARGET_IS_64_BIT)|$(TARGET_2ND_ARCH),true|)
 # TODO(b/110429754) remove this condition when we support 64-bit-only device
 check-vndk-list: ;
 else ifeq ($(TARGET_SKIP_CURRENT_VNDK),true)
+check-vndk-list: ;
+else ifeq ($(BOARD_VNDK_VERSION),)
 check-vndk-list: ;
 else
 check-vndk-list: $(check-vndk-list-timestamp)
@@ -199,24 +203,13 @@ endif
 include $(BUILD_PHONY_PACKAGE)
 
 include $(CLEAR_VARS)
-_vndk_versions :=
-ifeq ($(filter com.android.vndk.current.on_vendor, $(PRODUCT_PACKAGES)),)
-	_vndk_versions += $(if $(call math_is_number,$(PLATFORM_VNDK_VERSION)),\
-		$(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),\
-			$(if $(call math_lt,$(vndk_ver),$(PLATFORM_VNDK_VERSION)),$(vndk_ver))),\
-		$(PRODUCT_EXTRA_VNDK_VERSIONS))
-endif
-ifneq ($(BOARD_VNDK_VERSION),current)
-	_vndk_versions += $(BOARD_VNDK_VERSION)
-endif
+
 LOCAL_MODULE := vndk_apex_snapshot_package
 LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
 LOCAL_LICENSE_CONDITIONS := notice
 LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_REQUIRED_MODULES := $(foreach vndk_ver,$(_vndk_versions),com.android.vndk.v$(vndk_ver))
+LOCAL_REQUIRED_MODULES := $(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),com.android.vndk.v$(vndk_ver))
 include $(BUILD_PHONY_PACKAGE)
-
-_vndk_versions :=
 
 #####################################################################
 # Define Phony module to install LLNDK modules which are installed in
