@@ -374,15 +374,18 @@ ANDROID_BUILDSPEC := $(TOPDIR)buildspec.mk
 endif
 -include $(ANDROID_BUILDSPEC)
 
-# Starting in Android U, non-VNDK devices not supported
-# WARNING: DO NOT CHANGE: if you are downstream of AOSP, and you change this, without
-# letting upstream know it's important to you, we may do cleanup which breaks this
-# significantly. Please let us know if you are changing this.
-ifndef BOARD_VNDK_VERSION
-# READ WARNING - DO NOT CHANGE
-BOARD_VNDK_VERSION := current
-# READ WARNING - DO NOT CHANGE
+ifeq ($(KEEP_VNDK),true)
+  # Starting in Android U, non-VNDK devices not supported
+  # WARNING: DO NOT CHANGE: if you are downstream of AOSP, and you change this, without
+  # letting upstream know it's important to you, we may do cleanup which breaks this
+  # significantly. Please let us know if you are changing this.
+  ifndef BOARD_VNDK_VERSION
+  # READ WARNING - DO NOT CHANGE
+  BOARD_VNDK_VERSION := current
+  # READ WARNING - DO NOT CHANGE
+  endif
 endif
+
 
 # ---------------------------------------------------------------
 # Define most of the global variables.  These are the ones that
@@ -812,13 +815,6 @@ $(KATI_obsolete_var $(foreach req,$(requirements),$(req)_OVERRIDE) \
     ,This should be referenced without the _OVERRIDE suffix.)
 
 requirements :=
-
-# Set default value of KEEP_VNDK.
-ifeq ($(RELEASE_DEPRECATE_VNDK),true)
-  KEEP_VNDK ?= false
-else
-  KEEP_VNDK ?= true
-endif
 
 # BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED can be true only if early-mount of
 # partitions is supported. But the early-mount must be supported for full
@@ -1292,6 +1288,15 @@ DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages)
 .KATI_READONLY := DEFAULT_DATA_OUT_MODULES
 
 include $(BUILD_SYSTEM)/dumpvar.mk
+
+ifneq ($(KEEP_VNDK),true)
+ifdef BOARD_VNDK_VERSION
+BOARD_VNDK_VERSION=
+endif
+ifdef PLATFORM_VNDK_VERSION
+PLATFORM_VNDK_VERSION=
+endif
+endif
 
 ifeq (true,$(FULL_SYSTEM_OPTIMIZE_JAVA))
 ifeq (false,$(SYSTEM_OPTIMIZE_JAVA))
