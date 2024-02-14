@@ -151,21 +151,23 @@ ifndef DEFAULT_APP_TARGET_SDK
 endif
 .KATI_READONLY := DEFAULT_APP_TARGET_SDK
 
-ifndef PLATFORM_VNDK_VERSION
-  # This is the definition of the VNDK version for the current VNDK libraries.
-  # With trunk stable, VNDK will not be frozen but deprecated.
-  # This version will be removed with the VNDK deprecation.
-  ifeq (REL,$(PLATFORM_VERSION_CODENAME))
-    ifdef RELEASE_PLATFORM_VNDK_VERSION
-      PLATFORM_VNDK_VERSION := $(RELEASE_PLATFORM_VNDK_VERSION)
+ifeq ($(KEEP_VNDK),true)
+  ifndef PLATFORM_VNDK_VERSION
+    # This is the definition of the VNDK version for the current VNDK libraries.
+    # With trunk stable, VNDK will not be frozen but deprecated.
+    # This version will be removed with the VNDK deprecation.
+    ifeq (REL,$(PLATFORM_VERSION_CODENAME))
+      ifdef RELEASE_PLATFORM_VNDK_VERSION
+        PLATFORM_VNDK_VERSION := $(RELEASE_PLATFORM_VNDK_VERSION)
+      else
+        PLATFORM_VNDK_VERSION := $(PLATFORM_SDK_VERSION)
+      endif
     else
-      PLATFORM_VNDK_VERSION := $(PLATFORM_SDK_VERSION)
+      PLATFORM_VNDK_VERSION := $(PLATFORM_VERSION_CODENAME)
     endif
-  else
-    PLATFORM_VNDK_VERSION := $(PLATFORM_VERSION_CODENAME)
   endif
+  .KATI_READONLY := PLATFORM_VNDK_VERSION
 endif
-.KATI_READONLY := PLATFORM_VNDK_VERSION
 
 ifndef PLATFORM_SYSTEMSDK_MIN_VERSION
   # This is the oldest version of system SDK that the platform supports. Contrary
