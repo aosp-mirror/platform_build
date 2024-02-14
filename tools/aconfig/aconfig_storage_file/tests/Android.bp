@@ -1,0 +1,18 @@
+rust_test {
+    name: "aconfig_storage.test.rust",
+    srcs: [
+        "storage_lib_rust_test.rs"
+    ],
+    rustlibs: [
+        "libanyhow",
+        "libaconfig_storage_file",
+        "libprotobuf",
+        "libtempfile",
+    ],
+    data: [
+        ":ro.package.map",
+        ":ro.flag.map",
+        ":ro.flag.val",
+    ],
+    test_suites: ["general-tests"],
+}
