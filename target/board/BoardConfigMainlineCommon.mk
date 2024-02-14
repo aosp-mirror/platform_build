@@ -21,8 +21,10 @@ BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
 # the devices with metadata parition
 BOARD_USES_METADATA_PARTITION := true
 
+ifeq ($(KEEP_VNDK),true)
 # Default is current, but allow devices to override vndk version if needed.
 BOARD_VNDK_VERSION ?= current
+endif
 
 # 64 bit mediadrmserver
 TARGET_ENABLE_MEDIADRM_64 := true

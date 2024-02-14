@@ -13,6 +13,8 @@ rust_defaults {
         "libonce_cell",
         "libprotobuf",
         "libtempfile",
+        "libmemmap2",
+        "libthiserror",
     ],
 }
 
@@ -23,10 +25,36 @@ rust_library {
     defaults: ["aconfig_storage_file.defaults"],
 }
 
+genrule {
+    name: "ro.package.map",
+    out: ["tests/tmp.ro.package.map"],
+    srcs: ["tests/package.map"],
+    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
+}
+
+genrule {
+    name: "ro.flag.map",
+    out: ["tests/tmp.ro.flag.map"],
+    srcs: ["tests/flag.map"],
+    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
+}
+
+genrule {
+    name: "ro.flag.val",
+    out: ["tests/tmp.ro.flag.val"],
+    srcs: ["tests/flag.val"],
+    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
+}
+
 rust_test_host {
     name: "aconfig_storage_file.test",
     test_suites: ["general-tests"],
     defaults: ["aconfig_storage_file.defaults"],
+    data: [
+        "tests/package.map",
+        "tests/flag.map",
+        "tests/flag.val",
+    ],
 }
 
 rust_protobuf {
@@ -34,5 +62,19 @@ rust_protobuf {
     protos: ["protos/aconfig_storage_metadata.proto"],
     crate_name: "aconfig_storage_protos",
     source_stem: "aconfig_storage_protos",
+    host_supported: true,
+}
+
+cc_library_static {
+    name: "libaconfig_storage_protos_cc",
+    proto: {
+        export_proto_headers: true,
+        type: "lite",
+    },
+    srcs: ["protos/aconfig_storage_metadata.proto"],
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
     host_supported: true,
 }

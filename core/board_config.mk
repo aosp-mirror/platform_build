@@ -965,12 +965,15 @@ define check_vndk_version
   $(if $(wildcard $(vndk_path)/*/Android.bp),,$(error VNDK version $(1) not found))
 endef
 
+ifeq ($(KEEP_VNDK),true)
 ifeq ($(BOARD_VNDK_VERSION),$(PLATFORM_VNDK_VERSION))
   $(error BOARD_VNDK_VERSION is equal to PLATFORM_VNDK_VERSION; use BOARD_VNDK_VERSION := current)
 endif
 ifneq ($(BOARD_VNDK_VERSION),current)
   $(call check_vndk_version,$(BOARD_VNDK_VERSION))
 endif
+endif
+
 TARGET_VENDOR_TEST_SUFFIX := /vendor
 
 ifeq (,$(TARGET_BUILD_UNBUNDLED))

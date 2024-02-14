@@ -19,12 +19,15 @@ use std::fs::File;
 use std::io::{BufReader, Read};
 use std::sync::{Arc, Mutex};
 
-use anyhow::{bail, ensure, Result};
+use anyhow::anyhow;
 use memmap2::Mmap;
 use once_cell::sync::Lazy;
 
 use crate::protos::{
     storage_files::try_from_binary_proto, ProtoStorageFileInfo, ProtoStorageFiles,
+};
+use crate::AconfigStorageError::{
+    self, FileReadFail, MapFileFail, ProtobufParseFail, StorageFileNotFound,
 };
 use crate::StorageFileSelection;
 
@@ -46,30 +49,43 @@ struct MappedStorageFileSet {
 fn find_container_storage_location(
     location_pb_file: &str,
     container: &str,
-) -> Result<ProtoStorageFileInfo> {
-    let file = File::open(location_pb_file)?;
+) -> Result<ProtoStorageFileInfo, AconfigStorageError> {
+    let file = File::open(location_pb_file).map_err(|errmsg| {
+        FileReadFail(anyhow!("Failed to open file {}: {}", location_pb_file, errmsg))
+    })?;
     let mut reader = BufReader::new(file);
     let mut bytes = Vec::new();
-    reader.read_to_end(&mut bytes)?;
-
-    let storage_locations: ProtoStorageFiles = try_from_binary_proto(&bytes)?;
+    reader.read_to_end(&mut bytes).map_err(|errmsg| {
+        FileReadFail(anyhow!("Failed to read file {}: {}", location_pb_file, errmsg))
+    })?;
+    let storage_locations: ProtoStorageFiles = try_from_binary_proto(&bytes).map_err(|errmsg| {
+        ProtobufParseFail(anyhow!(
+            "Failed to parse storage location pb file {}: {}",
+            location_pb_file,
+            errmsg
+        ))
+    })?;
     for location_info in storage_locations.files.iter() {
         if location_info.container() == container {
             return Ok(location_info.clone());
         }
     }
-    bail!("Storage file does not exist for {}", container)
+    Err(StorageFileNotFound(anyhow!("Storage file does not exist for {}", container)))
 }
 
 /// Verify the file is read only and then map it
-fn verify_read_only_and_map(file_path: &str) -> Result<Mmap> {
-    let file = File::open(file_path)?;
-    let metadata = file.metadata()?;
-    ensure!(
-        metadata.permissions().readonly(),
-        "Cannot mmap file {} as it is not read only",
-        file_path
-    );
+fn verify_read_only_and_map(file_path: &str) -> Result<Mmap, AconfigStorageError> {
+    let file = File::open(file_path)
+        .map_err(|errmsg| FileReadFail(anyhow!("Failed to open file {}: {}", file_path, errmsg)))?;
+    let metadata = file.metadata().map_err(|errmsg| {
+        FileReadFail(anyhow!("Failed to find metadata for {}: {}", file_path, errmsg))
+    })?;
+
+    // ensure storage file is read only
+    if !metadata.permissions().readonly() {
+        return Err(MapFileFail(anyhow!("fail to map non read only storage file {}", file_path)));
+    }
+
     // SAFETY:
     //
     // Mmap constructors are unsafe as it would have undefined behaviors if the file
@@ -83,14 +99,19 @@ fn verify_read_only_and_map(file_path: &str) -> Result<Mmap> {
     // We should remove this restriction if we need to support mmap non read only file in
     // the future (by making this api unsafe). But for now, all flags are boot stable, so
     // the boot flag file copy should be readonly.
-    unsafe { Ok(Mmap::map(&file)?) }
+    unsafe {
+        let mapped_file = Mmap::map(&file).map_err(|errmsg| {
+            MapFileFail(anyhow!("fail to map storage file {}: {}", file_path, errmsg))
+        })?;
+        Ok(mapped_file)
+    }
 }
 
 /// Map all storage files for a particular container
 fn map_container_storage_files(
     location_pb_file: &str,
     container: &str,
-) -> Result<MappedStorageFileSet> {
+) -> Result<MappedStorageFileSet, AconfigStorageError> {
     let files_location = find_container_storage_location(location_pb_file, container)?;
     let package_map = Arc::new(verify_read_only_and_map(files_location.package_map())?);
     let flag_map = Arc::new(verify_read_only_and_map(files_location.flag_map())?);
@@ -99,11 +120,11 @@ fn map_container_storage_files(
 }
 
 /// Get a mapped storage file given the container and file type
-pub fn get_mapped_file(
+pub(crate) fn get_mapped_file(
     location_pb_file: &str,
     container: &str,
     file_selection: StorageFileSelection,
-) -> Result<Arc<Mmap>> {
+) -> Result<Arc<Mmap>, AconfigStorageError> {
     let mut all_mapped_files = ALL_MAPPED_FILES.lock().unwrap();
     match all_mapped_files.get(container) {
         Some(mapped_files) => Ok(match file_selection {
@@ -127,7 +148,7 @@ pub fn get_mapped_file(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::{get_binary_storage_proto_bytes, write_bytes_to_temp_file};
+    use crate::test_utils::{write_storage_text_to_temp_file, TestStorageFileSet};
 
     #[test]
     fn test_find_storage_file_location() {
@@ -149,10 +170,8 @@ files {
     timestamp: 54321
 }
 "#;
-        let binary_proto_bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-        let file = write_bytes_to_temp_file(&binary_proto_bytes).unwrap();
+        let file = write_storage_text_to_temp_file(text_proto).unwrap();
         let file_full_path = file.path().display().to_string();
-
         let file_info = find_container_storage_location(&file_full_path, "system").unwrap();
         assert_eq!(file_info.version(), 0);
         assert_eq!(file_info.container(), "system");
@@ -170,7 +189,10 @@ files {
         assert_eq!(file_info.timestamp(), 54321);
 
         let err = find_container_storage_location(&file_full_path, "vendor").unwrap_err();
-        assert_eq!(format!("{:?}", err), "Storage file does not exist for vendor");
+        assert_eq!(
+            format!("{:?}", err),
+            "StorageFileNotFound(Storage file does not exist for vendor)"
+        );
     }
 
     fn map_and_verify(
@@ -186,89 +208,121 @@ files {
         assert_eq!(mmaped_file[..], content[..]);
     }
 
+    fn create_test_storage_files(read_only: bool) -> TestStorageFileSet {
+        TestStorageFileSet::new(
+            "./tests/package.map",
+            "./tests/flag.map",
+            "./tests/flag.val",
+            read_only,
+        )
+        .unwrap()
+    }
+
     #[test]
     fn test_mapped_file_contents() {
-        let text_proto = r#"
-files {
+        let ro_files = create_test_storage_files(true);
+        let text_proto = format!(
+            r#"
+files {{
     version: 0
     container: "system"
-    package_map: "./tests/package.map"
-    flag_map: "./tests/flag.map"
-    flag_val: "./tests/flag.val"
+    package_map: "{}"
+    flag_map: "{}"
+    flag_val: "{}"
     timestamp: 12345
-}
-"#;
-        let binary_proto_bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-        let file = write_bytes_to_temp_file(&binary_proto_bytes).unwrap();
+}}
+"#,
+            ro_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
+        );
+
+        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
         let file_full_path = file.path().display().to_string();
-
-        map_and_verify(&file_full_path, StorageFileSelection::PackageMap, "./tests/package.map");
-
-        map_and_verify(&file_full_path, StorageFileSelection::FlagMap, "./tests/flag.map");
-
-        map_and_verify(&file_full_path, StorageFileSelection::FlagVal, "./tests/flag.val");
+        map_and_verify(
+            &file_full_path,
+            StorageFileSelection::PackageMap,
+            &ro_files.package_map.name,
+        );
+        map_and_verify(&file_full_path, StorageFileSelection::FlagMap, &ro_files.flag_map.name);
+        map_and_verify(&file_full_path, StorageFileSelection::FlagVal, &ro_files.flag_val.name);
     }
 
     #[test]
     fn test_map_non_read_only_file() {
-        let text_proto = r#"
-files {
+        let ro_files = create_test_storage_files(true);
+        let rw_files = create_test_storage_files(false);
+        let text_proto = format!(
+            r#"
+files {{
     version: 0
     container: "system"
-    package_map: "./tests/rw.package.map"
-    flag_map: "./tests/rw.flag.map"
-    flag_val: "./tests/rw.flag.val"
+    package_map: "{}"
+    flag_map: "{}"
+    flag_val: "{}"
     timestamp: 12345
-}
-"#;
-        let binary_proto_bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-        let file = write_bytes_to_temp_file(&binary_proto_bytes).unwrap();
-        let file_full_path = file.path().display().to_string();
-
-        let error = map_container_storage_files(&file_full_path, "system").unwrap_err();
-        assert_eq!(
-            format!("{:?}", error),
-            "Cannot mmap file ./tests/rw.package.map as it is not read only"
+}}
+"#,
+            rw_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
         );
 
-        let text_proto = r#"
-files {
-    version: 0
-    container: "system"
-    package_map: "./tests/package.map"
-    flag_map: "./tests/rw.flag.map"
-    flag_val: "./tests/rw.flag.val"
-    timestamp: 12345
-}
-"#;
-        let binary_proto_bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-        let file = write_bytes_to_temp_file(&binary_proto_bytes).unwrap();
+        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
         let file_full_path = file.path().display().to_string();
-
         let error = map_container_storage_files(&file_full_path, "system").unwrap_err();
         assert_eq!(
             format!("{:?}", error),
-            "Cannot mmap file ./tests/rw.flag.map as it is not read only"
+            format!(
+                "MapFileFail(fail to map non read only storage file {})",
+                rw_files.package_map.name
+            )
         );
 
-        let text_proto = r#"
-files {
+        let text_proto = format!(
+            r#"
+files {{
     version: 0
     container: "system"
-    package_map: "./tests/package.map"
-    flag_map: "./tests/flag.map"
-    flag_val: "./tests/rw.flag.val"
+    package_map: "{}"
+    flag_map: "{}"
+    flag_val: "{}"
     timestamp: 12345
-}
-"#;
-        let binary_proto_bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-        let file = write_bytes_to_temp_file(&binary_proto_bytes).unwrap();
-        let file_full_path = file.path().display().to_string();
+}}
+"#,
+            ro_files.package_map.name, rw_files.flag_map.name, ro_files.flag_val.name
+        );
 
+        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
+        let file_full_path = file.path().display().to_string();
         let error = map_container_storage_files(&file_full_path, "system").unwrap_err();
         assert_eq!(
             format!("{:?}", error),
-            "Cannot mmap file ./tests/rw.flag.val as it is not read only"
+            format!(
+                "MapFileFail(fail to map non read only storage file {})",
+                rw_files.flag_map.name
+            )
+        );
+
+        let text_proto = format!(
+            r#"
+files {{
+    version: 0
+    container: "system"
+    package_map: "{}"
+    flag_map: "{}"
+    flag_val: "{}"
+    timestamp: 12345
+}}
+"#,
+            ro_files.package_map.name, ro_files.flag_map.name, rw_files.flag_val.name
+        );
+
+        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
+        let file_full_path = file.path().display().to_string();
+        let error = map_container_storage_files(&file_full_path, "system").unwrap_err();
+        assert_eq!(
+            format!("{:?}", error),
+            format!(
+                "MapFileFail(fail to map non read only storage file {})",
+                rw_files.flag_val.name
+            )
         );
     }
 }
