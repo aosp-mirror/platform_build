@@ -4335,3 +4335,32 @@ team {
     // go/trendy/manage/engineers/5093014696525824
     trendy_team_id: "5093014696525824",
 }
+
+team {
+  name: "trendy_team_media_framework_drm",
+
+  // go/trendy/manage/engineers/5311752690335744
+  trendy_team_id: "5311752690335744",
+}
+
+team {
+  name: "trendy_team_media_framework_audio",
+
+  // go/trendy/manage/engineers/5823575353065472
+  trendy_team_id: "5823575353065472",
+}
+
+team {
+  name: "trendy_team_ar_sensors_context_hub",
+
+  // go/trendy/manage/engineers/4776371090259968
+  trendy_team_id: "4776371090259968",
+}
+
+
+team {
+  name: "trendy_team_media_codec_framework",
+
+  // go/trendy/manage/engineers/4943966050844672
+  trendy_team_id: "4943966050844672",
+}
