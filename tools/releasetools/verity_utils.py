@@ -31,6 +31,7 @@ import sys
 import common
 import sparse_img
 from rangelib import RangeSet
+from hashlib import sha256
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +42,7 @@ FIXED_SALT = "aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7"
 # From external/avb/avbtool.py
 MAX_VBMETA_SIZE = 64 * 1024
 MAX_FOOTER_SIZE = 4096
+
 
 class BuildVerityImageError(Exception):
   """An Exception raised during verity image building."""
@@ -64,6 +66,11 @@ def CreateVerityImageBuilder(prop_dict):
   # partition_size could be None at this point, if using dynamic partitions.
   if partition_size:
     partition_size = int(partition_size)
+  # Set up the salt (based on fingerprint) that will be used when adding AVB
+  # hash / hashtree footers.
+  salt = prop_dict.get("avb_salt")
+  if salt is None:
+    salt = sha256(prop_dict.get("fingerprint", "").encode()).hexdigest()
 
   # Verified Boot 2.0
   if (prop_dict.get("avb_hash_enable") == "true" or
@@ -81,7 +88,7 @@ def CreateVerityImageBuilder(prop_dict):
           prop_dict["avb_avbtool"],
           key_path,
           algorithm,
-          prop_dict.get("avb_salt"),
+          salt,
           prop_dict["avb_add_hash_footer_args"])
 
     # Image uses hashtree footer.
@@ -92,7 +99,7 @@ def CreateVerityImageBuilder(prop_dict):
         prop_dict["avb_avbtool"],
         key_path,
         algorithm,
-        prop_dict.get("avb_salt"),
+        salt,
         prop_dict["avb_add_hashtree_footer_args"])
 
   return None
@@ -279,7 +286,7 @@ class VerifiedBootVersion2VerityImageBuilder(VerityImageBuilder):
 
 
 def CreateCustomImageBuilder(info_dict, partition_name, partition_size,
-                            key_path, algorithm, signing_args):
+                             key_path, algorithm, signing_args):
   builder = None
   if info_dict.get("avb_enable") == "true":
     builder = VerifiedBootVersion2VerityImageBuilder(

@@ -58,22 +58,6 @@ if sys.hexversion < 0x02070000:
 
 logger = logging.getLogger(__name__)
 
-# Work around a bug in Python's zipfile module that prevents opening of zipfiles
-# if any entry has an extra field of between 1 and 3 bytes (which is common with
-# zipaligned APKs). This overrides the ZipInfo._decodeExtra() method (which
-# contains the bug) with an empty version (since we don't need to decode the
-# extra field anyway).
-# Issue #14315: https://bugs.python.org/issue14315, fixed in Python 2.7.8 and
-# Python 3.5.0 alpha 1.
-
-
-class MyZipInfo(zipfile.ZipInfo):
-  def _decodeExtra(self):
-    pass
-
-
-zipfile.ZipInfo = MyZipInfo
-
 
 OPTIONS = common.OPTIONS
 
@@ -241,7 +225,8 @@ class APK(object):
     # Signer (minSdkVersion=24, maxSdkVersion=32) certificate SHA-1 digest: 19da94896ce4078c38ca695701f1dec741ec6d67
     # ...
     certs_info = {}
-    certificate_regex = re.compile(r"(Signer (?:#[0-9]+|\(.*\))) (certificate .*):(.*)")
+    certificate_regex = re.compile(
+        r"(Signer (?:#[0-9]+|\(.*\))) (certificate .*):(.*)")
     for line in output.splitlines():
       m = certificate_regex.match(line)
       if not m:
@@ -312,7 +297,7 @@ class TargetFiles(object):
     # This is the list of wildcards of files we extract from |filename|.
     apk_extensions = ['*.apk', '*.apex']
 
-    with zipfile.ZipFile(filename) as input_zip:
+    with zipfile.ZipFile(filename, "r") as input_zip:
       self.certmap, compressed_extension = common.ReadApkCerts(input_zip)
     if compressed_extension:
       apk_extensions.append('*.apk' + compressed_extension)

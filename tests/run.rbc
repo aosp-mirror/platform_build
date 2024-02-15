@@ -144,7 +144,8 @@ assert_eq(
             "v2": "def"
         },
         "NS2": {
-            "v3": "xyz"
+            "v3": "xyz",
+            "v4": "xyz"
         }
     },
     {k:v for k, v in sorted(ns.items()) }

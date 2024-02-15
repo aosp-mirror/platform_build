@@ -46,5 +46,4 @@ else
 endif
 endif
 
-LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
 LOCAL_JAVA_LIBRARIES := $(sort $(LOCAL_JAVA_LIBRARIES))

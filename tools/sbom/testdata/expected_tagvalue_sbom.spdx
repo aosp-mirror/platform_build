@@ -7,6 +7,10 @@ Creator: Organization: Google
 Created: 2023-03-31T22:17:58Z
 ExternalDocumentRef: DocumentRef-external_doc_ref external_doc_uri SHA1: 1234567890
 
+FileName: file4.a
+SPDXID: SPDXRef-file4
+FileChecksum: SHA1: 44444
+
 PackageName: PRODUCT
 SPDXID: SPDXRef-PRODUCT
 PackageDownloadLocation: NONE
@@ -63,3 +67,4 @@ Relationship: SPDXRef-SOURCE-package1 VARIANT_OF SPDXRef-UPSTREAM-package1
 Relationship: SPDXRef-file1 GENERATED_FROM SPDXRef-PLATFORM
 Relationship: SPDXRef-file2 GENERATED_FROM SPDXRef-PREBUILT-package1
 Relationship: SPDXRef-file3 GENERATED_FROM SPDXRef-SOURCE-package1
+Relationship: SPDXRef-file1 STATIC_LINK SPDXRef-file4

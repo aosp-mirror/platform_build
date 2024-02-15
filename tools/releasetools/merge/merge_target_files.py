@@ -46,6 +46,10 @@ Usage: merge_target_files [args]
       The optional path to a newline-separated config file of items that
       are extracted as-is from the vendor target files package.
 
+  --boot-image-dir-path
+      The input boot image directory path. This path contains IMAGES/boot.img
+      file.
+
   --output-target-files output-target-files-package
       If provided, the output merged target files package. Also a zip archive.
 
@@ -90,6 +94,14 @@ Usage: merge_target_files [args]
   --keep-tmp
       Keep tempoary files for debugging purposes.
 
+  --avb-resolve-rollback-index-location-conflict
+      If provided, resolve the conflict AVB rollback index location when
+      necessary.
+
+  --allow-partial-ab
+      If provided, allow merging non-AB framework target files with AB vendor
+      target files, which means that only the vendor has AB partitions.
+
   The following only apply when using the VSDK to perform dexopt on vendor apps:
 
   --framework-dexpreopt-config
@@ -132,6 +144,7 @@ OPTIONS.framework_item_list = []
 OPTIONS.framework_misc_info_keys = []
 OPTIONS.vendor_target_files = None
 OPTIONS.vendor_item_list = []
+OPTIONS.boot_image_dir_path = None
 OPTIONS.output_target_files = None
 OPTIONS.output_dir = None
 OPTIONS.output_item_list = []
@@ -144,6 +157,8 @@ OPTIONS.allow_duplicate_apkapex_keys = False
 OPTIONS.vendor_otatools = None
 OPTIONS.rebuild_sepolicy = False
 OPTIONS.keep_tmp = False
+OPTIONS.avb_resolve_rollback_index_location_conflict = False
+OPTIONS.allow_partial_ab = False
 OPTIONS.framework_dexpreopt_config = None
 OPTIONS.framework_dexpreopt_tools = None
 OPTIONS.vendor_dexpreopt_config = None
@@ -165,17 +180,24 @@ def remove_file_if_exists(file_name):
     pass
 
 
-def include_meta_in_list(item_list):
-  """Include all `META/*` files in the item list.
+def include_extra_in_list(item_list):
+  """
+  1. Include all `META/*` files in the item list.
 
   To ensure that `AddImagesToTargetFiles` can still be used with vendor item
   list that do not specify all of the required META/ files, those files should
   be included by default. This preserves the backward compatibility of
   `rebuild_image_with_sepolicy`.
+
+  2. Include `SYSTEM/build.prop` file in the item list.
+
+  To ensure that `AddImagesToTargetFiles` for GRF vendor images, can still
+  access SYSTEM/build.prop to pass GetPartitionFingerprint check in BuildInfo
+  constructor.
   """
   if not item_list:
     return None
-  return list(item_list) + ['META/*']
+  return list(item_list) + ['META/*'] + ['SYSTEM/build.prop']
 
 
 def create_merged_package(temp_dir):
@@ -198,11 +220,19 @@ def create_merged_package(temp_dir):
       output_dir=output_target_files_temp_dir,
       item_list=OPTIONS.vendor_item_list)
 
+  if OPTIONS.boot_image_dir_path:
+    merge_utils.CollectTargetFiles(
+        input_zipfile_or_dir=OPTIONS.boot_image_dir_path,
+        output_dir=output_target_files_temp_dir,
+        item_list=['IMAGES/boot.img'])
+
   # Perform special case processing on META/* items.
   # After this function completes successfully, all the files we need to create
   # the output target files package are in place.
   merge_meta.MergeMetaFiles(
-      temp_dir=temp_dir, merged_dir=output_target_files_temp_dir)
+      temp_dir=temp_dir,
+      merged_dir=output_target_files_temp_dir,
+      framework_partitions=OPTIONS.framework_partition_set)
 
   merge_dexopt.MergeDexopt(
       temp_dir=temp_dir, output_target_files_dir=output_target_files_temp_dir)
@@ -221,6 +251,8 @@ def generate_missing_images(target_files_dir):
   ]
   if OPTIONS.rebuild_recovery:
     add_img_args.append('--rebuild_recovery')
+  if OPTIONS.avb_resolve_rollback_index_location_conflict:
+    add_img_args.append('--avb_resolve_rollback_index_location_conflict')
   add_img_args.append(target_files_dir)
 
   add_img_to_target_files.main(add_img_args)
@@ -289,7 +321,7 @@ def rebuild_image_with_sepolicy(target_files_dir):
   merge_utils.CollectTargetFiles(
       input_zipfile_or_dir=OPTIONS.vendor_target_files,
       output_dir=vendor_target_files_dir,
-      item_list=include_meta_in_list(OPTIONS.vendor_item_list))
+      item_list=include_extra_in_list(OPTIONS.vendor_item_list))
 
   # Copy the partition contents from the merged target-files archive to the
   # vendor target-files archive.
@@ -523,6 +555,8 @@ def main():
       OPTIONS.vendor_item_list = a
     elif o == '--vendor-item-list':
       OPTIONS.vendor_item_list = a
+    elif o == '--boot-image-dir-path':
+      OPTIONS.boot_image_dir_path = a
     elif o == '--output-target-files':
       OPTIONS.output_target_files = a
     elif o == '--output-dir':
@@ -545,6 +579,10 @@ def main():
       OPTIONS.rebuild_sepolicy = True
     elif o == '--keep-tmp':
       OPTIONS.keep_tmp = True
+    elif o == '--avb-resolve-rollback-index-location-conflict':
+      OPTIONS.avb_resolve_rollback_index_location_conflict = True
+    elif o == '--allow-partial-ab':
+      OPTIONS.allow_partial_ab = True
     elif o == '--framework-dexpreopt-config':
       OPTIONS.framework_dexpreopt_config = a
     elif o == '--framework-dexpreopt-tools':
@@ -569,6 +607,7 @@ def main():
           'vendor-target-files=',
           'other-item-list=',
           'vendor-item-list=',
+          'boot-image-dir-path=',
           'output-target-files=',
           'output-dir=',
           'output-item-list=',
@@ -584,6 +623,8 @@ def main():
           'vendor-otatools=',
           'rebuild-sepolicy',
           'keep-tmp',
+          'avb-resolve-rollback-index-location-conflict',
+          'allow-partial-ab',
       ],
       extra_option_handler=option_handler)
 

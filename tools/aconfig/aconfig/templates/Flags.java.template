@@ -1,0 +1,44 @@
+package {package_name};
+
+// TODO(b/303773055): Remove the annotation after access issue is resolved.
+import android.compat.annotation.UnsupportedAppUsage;
+
+/** @hide */
+public final class Flags \{
+{{ -for item in flag_elements}}
+    /** @hide */
+    public static final String FLAG_{item.flag_name_constant_suffix} = "{item.device_config_flag}";
+{{- endfor }}
+{{ -for item in flag_elements}}
+{{ if library_exported }}
+    @UnsupportedAppUsage
+    public static boolean {item.method_name}() \{
+        return FEATURE_FLAGS.{item.method_name}();
+    }
+{{ -else }}
+{{ -if not item.is_read_write }}
+{{ -if item.default_value }}
+    @com.android.aconfig.annotations.AssumeTrueForR8
+{{ -else }}
+    @com.android.aconfig.annotations.AssumeFalseForR8
+{{ -endif }}
+{{ -endif }}
+    @UnsupportedAppUsage
+    public static boolean {item.method_name}() \{
+        return FEATURE_FLAGS.{item.method_name}();
+    }
+{{ -endif }}
+{{ -endfor }}
+{{ -if is_test_mode }}
+    public static void setFeatureFlags(FeatureFlags featureFlags) \{
+        Flags.FEATURE_FLAGS = featureFlags;
+    }
+
+    public static void unsetFeatureFlags() \{
+        Flags.FEATURE_FLAGS = null;
+    }
+{{ -endif }}
+
+    private static FeatureFlags FEATURE_FLAGS{{ -if not is_test_mode }} = new FeatureFlagsImpl(){{ -endif- }};
+
+}

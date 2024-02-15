@@ -60,18 +60,8 @@ ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file)$(LOCAL_SOONG_DEX_JAR)))
   LOCAL_DEX_PREOPT :=
 endif
 
-# if WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY=true and module is not in boot class path skip
-# Also preopt system server jars since selinux prevents system server from loading anything from
-# /data. If we don't do this they will need to be extracted which is not favorable for RAM usage
-# or performance. If my_preopt_for_extracted_apk is true, we ignore the only preopt boot image
-# options.
-system_server_jars := $(foreach m,$(PRODUCT_SYSTEM_SERVER_JARS),$(call word-colon,2,$(m)))
-ifneq (true,$(my_preopt_for_extracted_apk))
-  ifeq (true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY))
-    ifeq ($(filter $(system_server_jars) $(DEXPREOPT_BOOT_JARS_MODULES),$(LOCAL_MODULE)),)
-      LOCAL_DEX_PREOPT :=
-    endif
-  endif
+ifeq (true,$(WITH_DEXPREOPT_ART_BOOT_IMG_ONLY))
+  LOCAL_DEX_PREOPT :=
 endif
 
 my_process_profile :=
@@ -84,12 +74,13 @@ endif
 ifndef LOCAL_DEX_PREOPT_GENERATE_PROFILE
   # If LOCAL_DEX_PREOPT_GENERATE_PROFILE is not defined, default it based on the existence of the
   # profile class listing. TODO: Use product specific directory here.
-  my_classes_directory := $(PRODUCT_DEX_PREOPT_PROFILE_DIR)
-  LOCAL_DEX_PREOPT_PROFILE := $(my_classes_directory)/$(LOCAL_MODULE).prof
+  ifdef PRODUCT_DEX_PREOPT_PROFILE_DIR
+    LOCAL_DEX_PREOPT_PROFILE := $(PRODUCT_DEX_PREOPT_PROFILE_DIR)/$(LOCAL_MODULE).prof
 
-  ifneq (,$(wildcard $(LOCAL_DEX_PREOPT_PROFILE)))
-    my_process_profile := true
-    my_profile_is_text_listing :=
+    ifneq (,$(wildcard $(LOCAL_DEX_PREOPT_PROFILE)))
+      my_process_profile := true
+      my_profile_is_text_listing :=
+    endif
   endif
 else
   my_process_profile := $(LOCAL_DEX_PREOPT_GENERATE_PROFILE)
@@ -110,18 +101,19 @@ endif
 # Local module variables and functions used in dexpreopt and manifest_check.
 ################################################################################
 
-my_filtered_optional_uses_libraries := $(filter-out $(INTERNAL_PLATFORM_MISSING_USES_LIBRARIES), \
-  $(LOCAL_OPTIONAL_USES_LIBRARIES))
-
 # TODO(b/132357300): This may filter out too much, as PRODUCT_PACKAGES doesn't
 # include all packages (the full list is unknown until reading all Android.mk
 # makefiles). As a consequence, a library may be present but not included in
 # dexpreopt, which will result in class loader context mismatch and a failure
-# to load dexpreopt code on device. We should fix this, either by deferring
-# dependency computation until the full list of product packages is known, or
-# by adding product-specific lists of missing libraries.
+# to load dexpreopt code on device.
+# However, we have to do filtering here. Otherwise, we may include extra
+# libraries that Soong and Make don't generate build rules for (e.g., a library
+# that exists in the source tree but not installable), and therefore get Ninja
+# errors.
+# We have deferred CLC computation to the Ninja phase, but the dependency
+# computation still needs to be done early. For now, this is the best we can do.
 my_filtered_optional_uses_libraries := $(filter $(PRODUCT_PACKAGES), \
-  $(my_filtered_optional_uses_libraries))
+  $(LOCAL_OPTIONAL_USES_LIBRARIES))
 
 ifeq ($(LOCAL_MODULE_CLASS),APPS)
   # compatibility libraries are added to class loader context of an app only if
@@ -149,6 +141,9 @@ endif
 my_dexpreopt_libs := \
   $(LOCAL_USES_LIBRARIES) \
   $(my_filtered_optional_uses_libraries)
+
+# The order needs to be deterministic.
+my_dexpreopt_libs_all := $(sort $(my_dexpreopt_libs) $(my_dexpreopt_libs_compat))
 
 # Module dexpreopt.config depends on dexpreopt.config files of each
 # <uses-library> dependency, because these libraries may be processed after
@@ -221,7 +216,7 @@ endif
 # as a failure to get manifest from an APK).
 ifneq (true,$(WITH_DEXPREOPT))
   LOCAL_ENFORCE_USES_LIBRARIES := false
-else ifeq (true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY))
+else ifeq (true,$(WITH_DEXPREOPT_ART_BOOT_IMG_ONLY))
   LOCAL_ENFORCE_USES_LIBRARIES := false
 endif
 
@@ -240,7 +235,7 @@ ifeq (true,$(LOCAL_ENFORCE_USES_LIBRARIES))
     --enforce-uses-libraries-relax,)
   my_dexpreopt_config_args := $(patsubst %,--dexpreopt-config %,$(my_dexpreopt_dep_configs))
 
-  my_enforced_uses_libraries := $(intermediates.COMMON)/enforce_uses_libraries.status
+  my_enforced_uses_libraries := $(intermediates)/enforce_uses_libraries.status
   $(my_enforced_uses_libraries): PRIVATE_USES_LIBRARIES := $(my_uses_libs_args)
   $(my_enforced_uses_libraries): PRIVATE_OPTIONAL_USES_LIBRARIES := $(my_optional_uses_libs_args)
   $(my_enforced_uses_libraries): PRIVATE_DEXPREOPT_CONFIGS := $(my_dexpreopt_config_args)
@@ -395,7 +390,6 @@ ifeq ($(my_create_dexpreopt_config), true)
   $(call add_json_list, DexPreoptImageLocationsOnDevice,$(my_dexpreopt_image_locations_on_device))
   $(call add_json_list, PreoptBootClassPathDexFiles,    $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES))
   $(call add_json_list, PreoptBootClassPathDexLocations,$(DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS))
-  $(call add_json_bool, PreoptExtractedApk,             $(my_preopt_for_extracted_apk))
   $(call add_json_bool, NoCreateAppImage,               $(filter false,$(LOCAL_DEX_PREOPT_APP_IMAGE)))
   $(call add_json_bool, ForceCreateAppImage,            $(filter true,$(LOCAL_DEX_PREOPT_APP_IMAGE)))
   $(call add_json_bool, PresignedPrebuilt,              $(filter PRESIGNED,$(LOCAL_CERTIFICATE)))
@@ -440,66 +434,124 @@ ifdef LOCAL_DEX_PREOPT
 	  @cp $(PRIVATE_BUILT_MODULE) $@
   endif
 
+  # The root "product_packages.txt" is generated by `build/make/core/Makefile`. It contains a list
+  # of all packages that are installed on the device. We use `grep` to filter the list by the app's
+  # dependencies to create a per-app list, and use `rsync --checksum` to prevent the file's mtime
+  # from being changed if the contents don't change. This avoids unnecessary dexpreopt reruns.
+  my_dexpreopt_product_packages := $(intermediates)/product_packages.txt
+  .KATI_RESTAT: $(my_dexpreopt_product_packages)
+  $(my_dexpreopt_product_packages): PRIVATE_MODULE := $(LOCAL_MODULE)
+  $(my_dexpreopt_product_packages): PRIVATE_LIBS := $(my_dexpreopt_libs_all)
+  $(my_dexpreopt_product_packages): PRIVATE_STAGING := $(my_dexpreopt_product_packages).tmp
+  $(my_dexpreopt_product_packages): $(PRODUCT_OUT)/product_packages.txt
+	@echo "$(PRIVATE_MODULE) dexpreopt product_packages"
+  ifneq (,$(my_dexpreopt_libs_all))
+		grep -F -x \
+			$(addprefix -e ,$(PRIVATE_LIBS)) \
+			$(PRODUCT_OUT)/product_packages.txt \
+			> $(PRIVATE_STAGING) \
+			|| true
+  else
+		rm -f $(PRIVATE_STAGING) && touch $(PRIVATE_STAGING)
+  endif
+	rsync --checksum $(PRIVATE_STAGING) $@
+
   my_dexpreopt_script := $(intermediates)/dexpreopt.sh
-  my_dexpreopt_zip := $(intermediates)/dexpreopt.zip
-  DEXPREOPT.$(LOCAL_MODULE).POST_INSTALLED_DEXPREOPT_ZIP := $(my_dexpreopt_zip)
   .KATI_RESTAT: $(my_dexpreopt_script)
   $(my_dexpreopt_script): PRIVATE_MODULE := $(LOCAL_MODULE)
   $(my_dexpreopt_script): PRIVATE_GLOBAL_SOONG_CONFIG := $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE)
   $(my_dexpreopt_script): PRIVATE_GLOBAL_CONFIG := $(DEX_PREOPT_CONFIG_FOR_MAKE)
   $(my_dexpreopt_script): PRIVATE_MODULE_CONFIG := $(my_dexpreopt_config)
+  $(my_dexpreopt_script): PRIVATE_PRODUCT_PACKAGES := $(my_dexpreopt_product_packages)
   $(my_dexpreopt_script): $(DEXPREOPT_GEN)
   $(my_dexpreopt_script): $(my_dexpreopt_jar_copy)
-  $(my_dexpreopt_script): $(my_dexpreopt_config) $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE) $(DEX_PREOPT_CONFIG_FOR_MAKE)
+  $(my_dexpreopt_script): $(my_dexpreopt_config) $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE) $(DEX_PREOPT_CONFIG_FOR_MAKE) $(my_dexpreopt_product_packages)
 	@echo "$(PRIVATE_MODULE) dexpreopt gen"
 	$(DEXPREOPT_GEN) \
 	-global_soong $(PRIVATE_GLOBAL_SOONG_CONFIG) \
 	-global $(PRIVATE_GLOBAL_CONFIG) \
 	-module $(PRIVATE_MODULE_CONFIG) \
 	-dexpreopt_script $@ \
-	-out_dir $(OUT_DIR)
+	-out_dir $(OUT_DIR) \
+	-product_packages $(PRIVATE_PRODUCT_PACKAGES)
 
   my_dexpreopt_deps := $(my_dex_jar)
   my_dexpreopt_deps += $(if $(my_process_profile),$(LOCAL_DEX_PREOPT_PROFILE))
   my_dexpreopt_deps += \
-    $(foreach lib, $(my_dexpreopt_libs) $(my_dexpreopt_libs_compat), \
+    $(foreach lib, $(my_dexpreopt_libs_all), \
       $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar)
   my_dexpreopt_deps += $(my_dexpreopt_images_deps)
   my_dexpreopt_deps += $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES)
   ifeq ($(LOCAL_ENFORCE_USES_LIBRARIES),true)
-    my_dexpreopt_deps += $(intermediates.COMMON)/enforce_uses_libraries.status
+    my_dexpreopt_deps += $(intermediates)/enforce_uses_libraries.status
   endif
 
+  # We need to add all the installed files to ALL_MODULES.$(my_register_name).INSTALLED in order
+  # for the build system to properly track installed files. (for sbom, installclean, etc)
+  # We install all the files in a zip file generated at execution time, which means we have to guess
+  # what's going to be in that zip file before it's created. We then check at executation time that
+  # our guess is correct.
+  # _system_other corresponds to OdexOnSystemOtherByName() in soong.
+  # The other paths correspond to dexpreoptCommand()
+  _dexlocation := $(patsubst $(PRODUCT_OUT)/%,%,$(LOCAL_INSTALLED_MODULE))
+  _dexname := $(basename $(notdir $(_dexlocation)))
+  _system_other := $(strip $(if $(strip $(BOARD_USES_SYSTEM_OTHER_ODEX)), \
+    $(if $(strip $(SANITIZE_LITE)),, \
+      $(if $(filter $(_dexname),$(PRODUCT_DEXPREOPT_SPEED_APPS))$(filter $(_dexname),$(PRODUCT_SYSTEM_SERVER_APPS)),, \
+        $(if $(strip $(foreach myfilter,$(SYSTEM_OTHER_ODEX_FILTER),$(filter system/$(myfilter),$(_dexlocation)))), \
+          system_other/)))))
+  # _dexdir has a trailing /
+  _dexdir := $(_system_other)$(dir $(_dexlocation))
+  my_dexpreopt_zip_contents := $(sort \
+    $(foreach arch,$(my_dexpreopt_archs), \
+      $(_dexdir)oat/$(arch)/$(_dexname).odex \
+      $(_dexdir)oat/$(arch)/$(_dexname).vdex \
+      $(if $(filter false,$(LOCAL_DEX_PREOPT_APP_IMAGE)),, \
+        $(if $(my_process_profile)$(filter true,$(LOCAL_DEX_PREOPT_APP_IMAGE)), \
+          $(_dexdir)oat/$(arch)/$(_dexname).art))) \
+    $(if $(my_process_profile),$(_dexlocation).prof))
+  _dexlocation :=
+  _dexdir :=
+  _dexname :=
+  _system_other :=
+
+  my_dexpreopt_zip := $(intermediates)/dexpreopt.zip
   $(my_dexpreopt_zip): PRIVATE_MODULE := $(LOCAL_MODULE)
   $(my_dexpreopt_zip): $(my_dexpreopt_deps)
   $(my_dexpreopt_zip): | $(DEXPREOPT_GEN_DEPS)
   $(my_dexpreopt_zip): .KATI_DEPFILE := $(my_dexpreopt_zip).d
   $(my_dexpreopt_zip): PRIVATE_DEX := $(my_dex_jar)
   $(my_dexpreopt_zip): PRIVATE_SCRIPT := $(my_dexpreopt_script)
+  $(my_dexpreopt_zip): PRIVATE_ZIP_CONTENTS := $(my_dexpreopt_zip_contents)
   $(my_dexpreopt_zip): $(my_dexpreopt_script)
 	@echo "$(PRIVATE_MODULE) dexpreopt"
+	rm -f $@
+	echo -n > $@.contents
+	$(foreach f,$(PRIVATE_ZIP_CONTENTS),echo "$(f)" >> $@.contents$(newline))
 	bash $(PRIVATE_SCRIPT) $(PRIVATE_DEX) $@
+	if ! diff <(zipinfo -1 $@ | sort) $@.contents >&2; then \
+	  echo "Contents of $@ did not match what make was expecting." >&2 && exit 1; \
+	fi
 
-  ifdef LOCAL_POST_INSTALL_CMD
-    # Add a shell command separator
-    LOCAL_POST_INSTALL_CMD += &&
-  endif
+  $(foreach installed_dex_file,$(my_dexpreopt_zip_contents),\
+    $(eval $(PRODUCT_OUT)/$(installed_dex_file): $(my_dexpreopt_zip) \
+$(newline)	unzip -qoDD -d $(PRODUCT_OUT) $(my_dexpreopt_zip) $(installed_dex_file)))
 
-  LOCAL_POST_INSTALL_CMD += \
-    for i in $$(zipinfo -1 $(my_dexpreopt_zip)); \
-      do mkdir -p $(PRODUCT_OUT)/$$(dirname $$i); \
-    done && \
-    ( unzip -qoDD -d $(PRODUCT_OUT) $(my_dexpreopt_zip) 2>&1 | grep -v "zipfile is empty"; exit $${PIPESTATUS[0]} ) || \
-      ( code=$$?; if [ $$code -ne 0 -a $$code -ne 1 ]; then exit $$code; fi )
+  ALL_MODULES.$(my_register_name).INSTALLED += $(addprefix $(PRODUCT_OUT)/,$(my_dexpreopt_zip_contents))
 
-  $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
-  $(LOCAL_INSTALLED_MODULE): $(my_dexpreopt_zip)
-
-  $(my_all_targets): $(my_dexpreopt_zip)
+  # Normally this happens in sbom.mk, which is included from base_rules.mk. But since
+  # dex_preopt_odex_install.mk is included after base_rules.mk, it misses these odex files.
+  $(foreach installed_file,$(addprefix $(PRODUCT_OUT)/,$(my_dexpreopt_zip_contents)), \
+    $(eval ALL_INSTALLED_FILES.$(installed_file) := $(my_register_name)))
 
   my_dexpreopt_config :=
+  my_dexpreopt_config_for_postprocessing :=
+  my_dexpreopt_jar_copy :=
+  my_dexpreopt_product_packages :=
   my_dexpreopt_script :=
   my_dexpreopt_zip :=
-  my_dexpreopt_config_for_postprocessing :=
+  my_dexpreopt_zip_contents :=
 endif # LOCAL_DEX_PREOPT
 endif # my_create_dexpreopt_config
+
+my_dexpreopt_libs_all :=

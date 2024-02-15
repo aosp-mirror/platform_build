@@ -36,6 +36,11 @@ PRODUCT_PACKAGES += \
     Stk \
     Tag \
 
+ifeq ($(RELEASE_AVATAR_PICKER_APP),true)
+  PRODUCT_PACKAGES += \
+    AvatarPicker
+endif
+
 # OTA support
 PRODUCT_PACKAGES += \
     recovery-refresh \
@@ -102,6 +107,13 @@ PRODUCT_HOST_PACKAGES += \
 PRODUCT_PACKAGES += \
     libaudiopolicyengineconfigurable \
     libpolicy-subsystem
+
+# Add all of the packages used to support older/upgrading devices
+# These can be removed as we drop support for the older API levels
+PRODUCT_PACKAGES += \
+    $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29) \
+    $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_33) \
+    $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34)
 
 # Include all zygote init scripts. "ro.zygote" will select one of them.
 PRODUCT_COPY_FILES += \

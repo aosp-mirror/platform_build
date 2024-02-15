@@ -82,6 +82,46 @@ SOONG_PREBUILT_MODULE_TYPES = [
   'vndk_prebuilt_shared',
 ]
 
+THIRD_PARTY_IDENTIFIER_TYPES = [
+    # Types defined in metadata_file.proto
+    'Git',
+    'SVN',
+    'Hg',
+    'Darcs',
+    'VCS',
+    'Archive',
+    'PrebuiltByAlphabet',
+    'LocalSource',
+    'Other',
+    # OSV ecosystems defined at https://ossf.github.io/osv-schema/#affectedpackage-field.
+    'Go',
+    'npm',
+    'OSS-Fuzz',
+    'PyPI',
+    'RubyGems',
+    'crates.io',
+    'Hackage',
+    'GHC',
+    'Packagist',
+    'Maven',
+    'NuGet',
+    'Linux',
+    'Debian',
+    'Alpine',
+    'Hex',
+    'Android',
+    'GitHub Actions',
+    'Pub',
+    'ConanCenter',
+    'Rocky Linux',
+    'AlmaLinux',
+    'Bitnami',
+    'Photon OS',
+    'CRAN',
+    'Bioconductor',
+    'SwiftURL'
+]
+
 
 def get_args():
   parser = argparse.ArgumentParser()
@@ -90,6 +130,7 @@ def get_args():
   parser.add_argument('--metadata', required=True, help='The SBOM metadata file path.')
   parser.add_argument('--build_version', required=True, help='The build version.')
   parser.add_argument('--product_mfr', required=True, help='The product manufacturer.')
+  parser.add_argument('--module_name', help='The module name. If specified, the generated SBOM is for the module.')
   parser.add_argument('--json', action='store_true', default=False, help='Generated SBOM file in SPDX JSON format')
   parser.add_argument('--unbundled_apk', action='store_true', default=False, help='Generate SBOM for unbundled APKs')
   parser.add_argument('--unbundled_apex', action='store_true', default=False, help='Generate SBOM for unbundled APEXs')
@@ -103,26 +144,12 @@ def log(*info):
       print(i)
 
 
-def encode_for_spdxid(s):
-  """Simple encode for string values used in SPDXID which uses the charset of A-Za-Z0-9.-"""
-  result = ''
-  for c in s:
-    if c.isalnum() or c in '.-':
-      result += c
-    elif c in '_@/':
-      result += '-'
-    else:
-      result += '0x' + c.encode('utf-8').hex()
-
-  return result.lstrip('-')
-
-
 def new_package_id(package_name, type):
-  return f'SPDXRef-{type}-{encode_for_spdxid(package_name)}'
+  return f'SPDXRef-{type}-{sbom_data.encode_for_spdxid(package_name)}'
 
 
 def new_file_id(file_path):
-  return f'SPDXRef-{encode_for_spdxid(file_path)}'
+  return f'SPDXRef-{sbom_data.encode_for_spdxid(file_path)}'
 
 
 def checksum(file_path):
@@ -320,7 +347,7 @@ def get_sbom_fragments(installed_file_metadata, metadata_file_path):
       sbom_checksum = metadata_proto.third_party.sbom_ref.checksum
       upstream_element_id = metadata_proto.third_party.sbom_ref.element_id
       if sbom_url and sbom_checksum and upstream_element_id:
-        doc_ref_id = f'DocumentRef-{PKG_UPSTREAM}-{encode_for_spdxid(name)}'
+        doc_ref_id = f'DocumentRef-{PKG_UPSTREAM}-{sbom_data.encode_for_spdxid(name)}'
         external_doc_ref = sbom_data.DocumentExternalReference(id=doc_ref_id,
                                                                uri=sbom_url,
                                                                checksum=sbom_checksum)
@@ -330,14 +357,6 @@ def get_sbom_fragments(installed_file_metadata, metadata_file_path):
                                  id2=doc_ref_id + ':' + upstream_element_id))
 
   return external_doc_ref, packages, relationships
-
-
-def generate_package_verification_code(files):
-  checksums = [file.checksum for file in files]
-  checksums.sort()
-  h = hashlib.sha1()
-  h.update(''.join(checksums).encode(encoding='utf-8'))
-  return h.hexdigest()
 
 
 def save_report(report_file_path, report):
@@ -368,6 +387,20 @@ def installed_file_has_metadata(installed_file_metadata, report):
   return True
 
 
+# Validate identifiers in a package's METADATA.
+# 1) Only known identifier type is allowed
+# 2) Only one identifier's primary_source can be true
+def validate_package_metadata(metadata_file_path, package_metadata):
+  primary_source_found = False
+  for identifier in package_metadata.third_party.identifier:
+    if identifier.type not in THIRD_PARTY_IDENTIFIER_TYPES:
+      sys.exit(f'Unknown value of third_party.identifier.type in {metadata_file_path}/METADATA: {identifier.type}.')
+    if primary_source_found and identifier.primary_source:
+      sys.exit(
+        f'Field "primary_source" is set to true in multiple third_party.identifier in {metadata_file_path}/METADATA.')
+    primary_source_found = identifier.primary_source
+
+
 def report_metadata_file(metadata_file_path, installed_file_metadata, report):
   if metadata_file_path:
     report[INFO_METADATA_FOUND_FOR_PACKAGE].append(
@@ -379,6 +412,8 @@ def report_metadata_file(metadata_file_path, installed_file_metadata, report):
     package_metadata = metadata_file_pb2.Metadata()
     with open(metadata_file_path + '/METADATA', 'rt') as f:
       text_format.Parse(f.read(), package_metadata)
+
+    validate_package_metadata(metadata_file_path, package_metadata)
 
     if not metadata_file_path in metadata_file_protos:
       metadata_file_protos[metadata_file_path] = package_metadata
@@ -449,16 +484,25 @@ def main():
   global metadata_file_protos
   metadata_file_protos = {}
 
-  product_package = sbom_data.Package(id=sbom_data.SPDXID_PRODUCT,
-                                      name=sbom_data.PACKAGE_NAME_PRODUCT,
+  product_package_id = sbom_data.SPDXID_PRODUCT
+  product_package_name = sbom_data.PACKAGE_NAME_PRODUCT
+  if args.module_name:
+    # Build SBOM of a module so use the module name instead.
+    product_package_id = f'SPDXRef-{sbom_data.encode_for_spdxid(args.module_name)}'
+    product_package_name = args.module_name
+  product_package = sbom_data.Package(id=product_package_id,
+                                      name=product_package_name,
                                       download_location=sbom_data.VALUE_NONE,
                                       version=args.build_version,
                                       supplier='Organization: ' + args.product_mfr,
                                       files_analyzed=True)
-
-  doc = sbom_data.Document(name=args.build_version,
-                           namespace=f'https://www.google.com/sbom/spdx/android/{args.build_version}',
-                           creators=['Organization: ' + args.product_mfr])
+  doc_name = args.build_version
+  if args.module_name:
+    doc_name = f'{args.build_version}/{args.module_name}'
+  doc = sbom_data.Document(name=doc_name,
+                           namespace=f'https://www.google.com/sbom/spdx/android/{doc_name}',
+                           creators=['Organization: ' + args.product_mfr],
+                           describes=product_package_id)
   if not args.unbundled_apex:
     doc.packages.append(product_package)
 
@@ -487,20 +531,32 @@ def main():
       product_copy_files = installed_file_metadata['product_copy_files']
       kernel_module_copy_files = installed_file_metadata['kernel_module_copy_files']
       build_output_path = installed_file_metadata['build_output_path']
+      is_static_lib = installed_file_metadata['is_static_lib']
 
       if not installed_file_has_metadata(installed_file_metadata, report):
         continue
-      if not (os.path.islink(build_output_path) or os.path.isfile(build_output_path)):
+      if not is_static_lib and not (os.path.islink(build_output_path) or os.path.isfile(build_output_path)):
+        # Ignore non-existing static library files for now since they are not shipped on devices.
         report[ISSUE_INSTALLED_FILE_NOT_EXIST].append(installed_file)
         continue
 
       file_id = new_file_id(installed_file)
-      doc.files.append(
-        sbom_data.File(id=file_id, name=installed_file, checksum=checksum(build_output_path)))
-      if not args.unbundled_apex:
-        product_package.file_ids.append(file_id)
-      elif len(doc.files) > 1:
-          doc.add_relationship(sbom_data.Relationship(doc.files[0].id, sbom_data.RelationshipType.CONTAINS, file_id))
+      # TODO(b/285453664): Soong should report the information of statically linked libraries to Make.
+      # This happens when a different sanitized version of static libraries is used in linking.
+      # As a workaround, use the following SHA1 checksum for static libraries created by Soong, if .a files could not be
+      # located correctly because Soong doesn't report the information to Make.
+      sha1 = 'SHA1: da39a3ee5e6b4b0d3255bfef95601890afd80709'  # SHA1 of empty string
+      if os.path.islink(build_output_path) or os.path.isfile(build_output_path):
+        sha1 = checksum(build_output_path)
+      doc.files.append(sbom_data.File(id=file_id,
+                                      name=installed_file,
+                                      checksum=sha1))
+
+      if not is_static_lib:
+        if not args.unbundled_apex:
+          product_package.file_ids.append(file_id)
+        elif len(doc.files) > 1:
+            doc.add_relationship(sbom_data.Relationship(doc.files[0].id, sbom_data.RelationshipType.CONTAINS, file_id))
 
       if is_source_package(installed_file_metadata) or is_prebuilt_package(installed_file_metadata):
         metadata_file_path = get_metadata_file_path(installed_file_metadata)
@@ -544,13 +600,21 @@ def main():
                                                     relationship=sbom_data.RelationshipType.GENERATED_FROM,
                                                     id2=sbom_data.SPDXID_PLATFORM))
 
-  if not args.unbundled_apex:
-    product_package.verification_code = generate_package_verification_code(doc.files)
+      # Process static libraries and whole static libraries the installed file links to
+      static_libs = installed_file_metadata['static_libraries']
+      whole_static_libs = installed_file_metadata['whole_static_libraries']
+      all_static_libs = (static_libs + ' ' + whole_static_libs).strip()
+      if all_static_libs:
+        for lib in all_static_libs.split(' '):
+          doc.add_relationship(sbom_data.Relationship(id1=file_id,
+                                                      relationship=sbom_data.RelationshipType.STATIC_LINK,
+                                                      id2=new_file_id(lib + '.a')))
 
   if args.unbundled_apex:
     doc.describes = doc.files[0].id
 
   # Save SBOM records to output file
+  doc.generate_packages_verification_code()
   doc.created = datetime.datetime.now(tz=datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
   prefix = args.output_file
   if prefix.endswith('.spdx'):

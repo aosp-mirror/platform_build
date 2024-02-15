@@ -28,7 +28,7 @@ function check_lunch
     [ "$TARGET_PLATFORM_VERSION" = "$4" ] || ( echo "lunch $1: expected TARGET_PLATFORM_VERSION='$4', got '$TARGET_PLATFORM_VERSION'" && exit 1 )
 )
 
-default_version=$(get_build_var DEFAULT_PLATFORM_VERSION)
+default_version=$(get_build_var RELEASE_PLATFORM_VERSION)
 
 # lunch tests
 check_lunch "aosp_arm64"                                "aosp_arm64" "eng"       ""

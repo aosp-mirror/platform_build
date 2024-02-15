@@ -115,11 +115,6 @@ my_src_aar := $(filter %.aar, $(my_prebuilt_src_file))
 ifneq ($(my_src_aar),)
 # This is .aar file, archive of classes.jar and Android resources.
 
-# run Jetifier if needed
-LOCAL_JETIFIER_INPUT_FILE := $(my_src_aar)
-include $(BUILD_SYSTEM)/jetifier.mk
-my_src_aar := $(LOCAL_JETIFIER_OUTPUT_FILE)
-
 my_src_jar := $(intermediates.COMMON)/aar/classes.jar
 my_src_proguard_options := $(intermediates.COMMON)/aar/proguard.txt
 my_src_android_manifest := $(intermediates.COMMON)/aar/AndroidManifest.xml
@@ -136,13 +131,6 @@ $(my_src_jar) : $(my_src_aar)
 my_prebuilt_android_manifest := $(intermediates.COMMON)/manifest/AndroidManifest.xml
 $(eval $(call copy-one-file,$(my_src_android_manifest),$(my_prebuilt_android_manifest)))
 $(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_prebuilt_android_manifest))
-
-else
-
-# run Jetifier if needed
-LOCAL_JETIFIER_INPUT_FILE := $(my_src_jar)
-include $(BUILD_SYSTEM)/jetifier.mk
-my_src_jar := $(LOCAL_JETIFIER_OUTPUT_FILE)
 
 endif
 

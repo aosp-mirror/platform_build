@@ -1,0 +1,171 @@
+// Copyright (C) 2023 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License
+
+// This is the schema definition for aconfig files. Modifications need to be
+// either backwards compatible, or include updates to all aconfig files in the
+// Android tree.
+
+syntax = "proto2";
+
+package android.aconfig;
+
+// This protobuf file defines messages used to represent and manage flags in the "aconfig" system
+// The following format requirements apply across various message fields:
+// # name: a lowercase string in snake_case format, no consecutive underscores, and no leading digit
+//    For example adjust_rate is a valid name, while AdjustRate, adjust__rate, and
+//    2adjust_rate are invalid
+//
+// # namespace: a lowercase string in snake_case format, no consecutive underscores, and no leading
+//    digit. For example android_bar_system
+//
+// # package: lowercase strings in snake_case format, delimited by dots, no consecutive underscores
+//    and no leading digit in each string. For example com.android.mypackage is a valid name
+//    while com.android.myPackage, com.android.1mypackage are invalid
+
+// messages used in both aconfig input and output
+
+enum flag_state {
+  ENABLED = 1;
+  DISABLED = 2;
+}
+
+enum flag_permission {
+  READ_ONLY = 1;
+  READ_WRITE = 2;
+}
+
+// aconfig input messages: flag declarations and values
+
+message flag_declaration {
+  // Name of the flag (required)
+  // See # name for format detail
+  optional string name = 1;
+
+  // Namespace the flag belongs to (required)
+  // See # namespace for format detail
+  optional string namespace = 2;
+
+  // Textual description of the flag's purpose (required)
+  optional string description = 3;
+
+  // Single bug id related to the flag (required)
+  repeated string bug = 4;
+
+  // Indicates if the flag is permanently read-only and cannot be changed
+  // via release configs (optional)
+  // Default value false
+  optional bool is_fixed_read_only = 5;
+
+  // Indicates if the flag is exported and accessible beyond its originating container (optional)
+  // Default value false
+  optional bool is_exported = 6;
+
+  // Additional information about the flag, including its purpose and form factors (optional)
+  optional flag_metadata metadata = 7;
+};
+
+// Optional metadata about the flag, such as its purpose and its intended form factors.
+// Can influence the applied policies and testing strategy.
+message flag_metadata {
+  enum flag_purpose {
+    PURPOSE_UNSPECIFIED = 0;
+    PURPOSE_FEATURE = 1;
+    PURPOSE_BUGFIX = 2;
+  }
+
+  optional flag_purpose purpose = 1;
+
+  // TODO(b/315025930): Add field to designate intended target device form factor(s), such as phone, watch or other.
+}
+
+message flag_declarations {
+  // Package to which the flag belongs (required)
+  // See # package for format detail
+  optional string package = 1;
+
+  // List of flag_declaration objects (required)
+  repeated flag_declaration flag = 2;
+
+  // Container the flag belongs to (optional)
+  optional string container = 3;
+};
+
+message flag_value {
+  // Package to which the flag belongs (required)
+  // See # package for format detail
+  optional string package = 1;
+
+  // Name of the flag (required)
+  // See # name for format detail
+  optional string name = 2;
+
+  optional flag_state state = 3;
+  optional flag_permission permission = 4;
+};
+
+message flag_values {
+  repeated flag_value flag_value = 1;
+};
+
+// aconfig output messages: parsed and verified flag declarations and values
+
+message tracepoint {
+  // path to declaration or value file relative to $TOP
+  optional string source = 1;
+  optional flag_state state = 2;
+  optional flag_permission permission = 3;
+}
+
+message parsed_flag {
+  // Package to which the flag belongs (required)
+  // See # package for format detail
+  optional string package = 1;
+
+  // Name of the flag (required)
+  // See # name for format detail
+  optional string name = 2;
+
+  // Namespace the flag belongs to (required)
+  // See # namespace for format detail
+  optional string namespace = 3;
+
+  // Textual description of the flag's purpose (required)
+  optional string description = 4;
+
+  // Single bug id related to the flag (required)
+  repeated string bug = 5;
+
+  optional flag_state state = 6;
+  optional flag_permission permission = 7;
+  repeated tracepoint trace = 8;
+
+  // Indicates if the flag is permanently read-only and cannot be changed
+  // via release configs (optional)
+  // Default value false
+  optional bool is_fixed_read_only = 9;
+
+  // Indicates if the flag is exported and accessible beyond its originating container (optional)
+  // Default value false
+  optional bool is_exported = 10;
+
+  // Container the flag belongs to (optional)
+  optional string container = 11;
+
+  // Additional information about the flag, including its purpose and form factors (optional)
+  optional flag_metadata metadata = 12;
+}
+
+message parsed_flags {
+  repeated parsed_flag parsed_flag = 1;
+}

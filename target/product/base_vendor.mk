@@ -46,12 +46,11 @@ PRODUCT_HOST_PACKAGES += \
 
 # Base modules and settings for the vendor partition.
 PRODUCT_PACKAGES += \
-    android.hardware.cas-service.example \
+    com.android.hardware.cas \
     boringssl_self_test_vendor \
     dumpsys_vendor \
     fs_config_files_nonsystem \
     fs_config_dirs_nonsystem \
-    gpu_counter_producer \
     gralloc.default \
     group_odm \
     group_vendor \
@@ -73,6 +72,10 @@ PRODUCT_PACKAGES += \
     passwd_vendor \
     selinux_policy_nonsystem \
     shell_and_utilities_vendor \
+
+# Base modules when shipping api level is less than or equal to 34
+PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34 += \
+     android.hidl.memory@1.0-impl.vendor \
 
 # OMX not supported for 64bit_only builds
 # Only supported when SHIPPING_API_LEVEL is less than or equal to 33

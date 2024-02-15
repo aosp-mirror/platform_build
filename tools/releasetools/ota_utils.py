@@ -27,7 +27,8 @@ from common import (ZipDelete, DoesInputFileContain, ReadBytesFromInputFile, OPT
                     ZipWriteStr, BuildInfo, LoadDictionaryFromFile,
                     SignFile, PARTITIONS_WITH_BUILD_PROP, PartitionBuildProps,
                     GetRamdiskFormat, ParseUpdateEngineConfig)
-from payload_signer import PayloadSigner
+import payload_signer
+from payload_signer import PayloadSigner, AddSigningArgumentParse, GeneratePayloadProperties
 
 
 logger = logging.getLogger(__name__)
@@ -37,7 +38,6 @@ OPTIONS.force_non_ab = False
 OPTIONS.wipe_user_data = False
 OPTIONS.downgrade = False
 OPTIONS.key_passwords = {}
-OPTIONS.package_key = None
 OPTIONS.incremental_source = None
 OPTIONS.retrofit_dynamic_partitions = False
 OPTIONS.output_metadata_path = None
@@ -48,6 +48,20 @@ METADATA_PROTO_NAME = 'META-INF/com/android/metadata.pb'
 UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'OTA/*',
                  'RADIO/*', '*/build.prop', '*/default.prop', '*/build.default', "*/etc/vintf/*"]
 SECURITY_PATCH_LEVEL_PROP_NAME = "ro.build.version.security_patch"
+TARGET_FILES_IMAGES_SUBDIR = ["IMAGES", "PREBUILT_IMAGES", "RADIO"]
+
+
+# Key is the compression algorithm, value is minimum API level required to
+# use this compression algorithm for VABC OTA on device.
+VABC_COMPRESSION_PARAM_SUPPORT = {
+    "gz": 31,
+    "brotli": 31,
+    "none": 31,
+    # lz4 support is added in Android U
+    "lz4": 34,
+    # zstd support is added in Android V
+    "zstd": 35,
+}
 
 
 def FinalizeMetadata(metadata, input_file, output_file, needed_property_files=None, package_key=None, pw=None):
@@ -350,26 +364,66 @@ def HandleDowngradeMetadata(metadata_proto, target_info, source_info):
   # Only incremental OTAs are allowed to reach here.
   assert OPTIONS.incremental_source is not None
 
+  # used for logging upon errors
+  log_downgrades = []
+  log_upgrades = []
+
   post_timestamp = target_info.GetBuildProp("ro.build.date.utc")
   pre_timestamp = source_info.GetBuildProp("ro.build.date.utc")
-  is_downgrade = int(post_timestamp) < int(pre_timestamp)
+  if int(post_timestamp) < int(pre_timestamp):
+    logger.info(f"ro.build.date.utc pre timestamp: {pre_timestamp}, "
+                f"post timestamp: {post_timestamp}. Downgrade detected.")
+    log_downgrades.append(f"ro.build.date.utc pre: {pre_timestamp} post: {post_timestamp}")
+  else:
+    logger.info(f"ro.build.date.utc pre timestamp: {pre_timestamp}, "
+                f"post timestamp: {post_timestamp}.")
+    log_upgrades.append(f"ro.build.date.utc pre: {pre_timestamp} post: {post_timestamp}")
+
+  # When merging system and vendor target files, it is not enough
+  # to check ro.build.date.utc, the timestamp for each partition must
+  # be checked.
+  if source_info.is_ab:
+    ab_partitions = set(source_info.get("ab_partitions"))
+    for partition in sorted(set(PARTITIONS_WITH_BUILD_PROP) & ab_partitions):
+
+      partition_prop = source_info.get('{}.build.prop'.format(partition))
+      # Skip if the partition is missing, or it doesn't have a build.prop
+      if not partition_prop or not partition_prop.build_props:
+        continue
+      partition_prop = target_info.get('{}.build.prop'.format(partition))
+      # Skip if the partition is missing, or it doesn't have a build.prop
+      if not partition_prop or not partition_prop.build_props:
+        continue
+
+      post_timestamp = target_info.GetPartitionBuildProp(
+        'ro.build.date.utc', partition)
+      pre_timestamp = source_info.GetPartitionBuildProp(
+        'ro.build.date.utc', partition)
+      if int(post_timestamp) < int(pre_timestamp):
+        logger.info(f"Partition {partition} pre timestamp: {pre_timestamp}, "
+                    f"post time: {post_timestamp}. Downgrade detected.")
+        log_downgrades.append(f"{partition} pre: {pre_timestamp} post: {post_timestamp}")
+      else:
+        logger.info(f"Partition {partition} pre timestamp: {pre_timestamp}, "
+                    f"post timestamp: {post_timestamp}.")
+        log_upgrades.append(f"{partition} pre: {pre_timestamp} post: {post_timestamp}")
 
   if OPTIONS.spl_downgrade:
     metadata_proto.spl_downgrade = True
 
   if OPTIONS.downgrade:
-    if not is_downgrade:
+    if len(log_downgrades) == 0:
       raise RuntimeError(
           "--downgrade or --override_timestamp specified but no downgrade "
-          "detected: pre: %s, post: %s" % (pre_timestamp, post_timestamp))
+          "detected. Current values for ro.build.date.utc: " + ', '.join(log_upgrades))
     metadata_proto.downgrade = True
   else:
-    if is_downgrade:
+    if len(log_downgrades) != 0:
       raise RuntimeError(
-          "Downgrade detected based on timestamp check: pre: %s, post: %s. "
+          "Downgrade detected based on timestamp check in ro.build.date.utc. "
           "Need to specify --override_timestamp OR --downgrade to allow "
-          "building the incremental." % (pre_timestamp, post_timestamp))
-
+          "building the incremental. Downgrades detected for: "
+          + ', '.join(log_downgrades))
 
 def ComputeRuntimeBuildInfos(default_build_info, boot_variable_values):
   """Returns a set of build info objects that may exist during runtime."""
@@ -726,17 +780,25 @@ def ExtractTargetFiles(path: str):
     logger.info("target files %s is already extracted", path)
     return path
   extracted_dir = common.MakeTempDir("target_files")
+  logger.info(f"Extracting target files {path} to {extracted_dir}")
   common.UnzipToDir(path, extracted_dir, UNZIP_PATTERN + [""])
+  for subdir in TARGET_FILES_IMAGES_SUBDIR:
+    image_dir = os.path.join(extracted_dir, subdir)
+    if not os.path.exists(image_dir):
+      continue
+    for filename in os.listdir(image_dir):
+      if not filename.endswith(".img"):
+        continue
+      common.UnsparseImage(os.path.join(image_dir, filename))
+
   return extracted_dir
 
 
 def LocatePartitionPath(target_files_dir: str, partition: str, allow_empty):
-  path = os.path.join(target_files_dir, "RADIO", partition + ".img")
-  if os.path.exists(path):
-    return path
-  path = os.path.join(target_files_dir, "IMAGES", partition + ".img")
-  if os.path.exists(path):
-    return path
+  for subdir in TARGET_FILES_IMAGES_SUBDIR:
+    path = os.path.join(target_files_dir, subdir, partition + ".img")
+    if os.path.exists(path):
+      return path
   if allow_empty:
     return ""
   raise common.ExternalError(
@@ -749,9 +811,10 @@ def GetPartitionImages(target_files_dir: str, ab_partitions, allow_empty=True):
 
 
 def LocatePartitionMap(target_files_dir: str, partition: str):
-  path = os.path.join(target_files_dir, "RADIO", partition + ".map")
-  if os.path.exists(path):
-    return path
+  for subdir in TARGET_FILES_IMAGES_SUBDIR:
+    path = os.path.join(target_files_dir, subdir, partition + ".map")
+    if os.path.exists(path):
+      return path
   return ""
 
 
@@ -763,12 +826,12 @@ def GetPartitionMaps(target_files_dir: str, ab_partitions):
 class PayloadGenerator(object):
   """Manages the creation and the signing of an A/B OTA Payload."""
 
-  PAYLOAD_BIN = 'payload.bin'
-  PAYLOAD_PROPERTIES_TXT = 'payload_properties.txt'
+  PAYLOAD_BIN = payload_signer.PAYLOAD_BIN
+  PAYLOAD_PROPERTIES_TXT = payload_signer.PAYLOAD_PROPERTIES_TXT
   SECONDARY_PAYLOAD_BIN = 'secondary/payload.bin'
   SECONDARY_PAYLOAD_PROPERTIES_TXT = 'secondary/payload_properties.txt'
 
-  def __init__(self, secondary=False, wipe_user_data=False, minor_version=None, is_partial_update=False):
+  def __init__(self, secondary=False, wipe_user_data=False, minor_version=None, is_partial_update=False, spl_downgrade=False):
     """Initializes a Payload instance.
 
     Args:
@@ -780,6 +843,7 @@ class PayloadGenerator(object):
     self.wipe_user_data = wipe_user_data
     self.minor_version = minor_version
     self.is_partial_update = is_partial_update
+    self.spl_downgrade = spl_downgrade
 
   def _Run(self, cmd):  # pylint: disable=no-self-use
     # Don't pipe (buffer) the output if verbose is set. Let
@@ -807,8 +871,8 @@ class PayloadGenerator(object):
     target_dir = ExtractTargetFiles(target_file)
     cmd = ["delta_generator",
            "--out_file", payload_file]
-    with open(os.path.join(target_dir, "META", "ab_partitions.txt")) as fp:
-      ab_partitions = fp.read().strip().split("\n")
+    with open(os.path.join(target_dir, "META", "ab_partitions.txt"), "r") as fp:
+      ab_partitions = fp.read().strip().splitlines()
     cmd.extend(["--partition_names", ":".join(ab_partitions)])
     cmd.extend(
         ["--new_partitions", GetPartitionImages(target_dir, ab_partitions, False)])
@@ -835,6 +899,11 @@ class PayloadGenerator(object):
 
     if os.path.exists(dynamic_partition_info):
       cmd.extend(["--dynamic_partition_info_file", dynamic_partition_info])
+
+    apex_info = os.path.join(
+        target_dir, "META", "apex_info.pb")
+    if os.path.exists(apex_info):
+      cmd.extend(["--apex_info_file", apex_info])
 
     major_version, minor_version = ParseUpdateEngineConfig(
         os.path.join(target_dir, "META", "update_engine_config.txt"))
@@ -865,30 +934,7 @@ class PayloadGenerator(object):
     """
     assert isinstance(payload_signer, PayloadSigner)
 
-    # 1. Generate hashes of the payload and metadata files.
-    payload_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
-    metadata_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
-    cmd = ["brillo_update_payload", "hash",
-           "--unsigned_payload", self.payload_file,
-           "--signature_size", str(payload_signer.maximum_signature_size),
-           "--metadata_hash_file", metadata_sig_file,
-           "--payload_hash_file", payload_sig_file]
-    self._Run(cmd)
-
-    # 2. Sign the hashes.
-    signed_payload_sig_file = payload_signer.SignHashFile(payload_sig_file)
-    signed_metadata_sig_file = payload_signer.SignHashFile(metadata_sig_file)
-
-    # 3. Insert the signatures back into the payload file.
-    signed_payload_file = common.MakeTempFile(prefix="signed-payload-",
-                                              suffix=".bin")
-    cmd = ["brillo_update_payload", "sign",
-           "--unsigned_payload", self.payload_file,
-           "--payload", signed_payload_file,
-           "--signature_size", str(payload_signer.maximum_signature_size),
-           "--metadata_signature_file", signed_metadata_sig_file,
-           "--payload_signature_file", signed_payload_sig_file]
-    self._Run(cmd)
+    signed_payload_file = payload_signer.SignPayload(self.payload_file)
 
     self.payload_file = signed_payload_file
 
@@ -900,20 +946,17 @@ class PayloadGenerator(object):
     """
     assert self.payload_file is not None
     # 4. Dump the signed payload properties.
-    properties_file = common.MakeTempFile(prefix="payload-properties-",
-                                          suffix=".txt")
-    cmd = ["brillo_update_payload", "properties",
-           "--payload", self.payload_file,
-           "--properties_file", properties_file]
-    self._Run(cmd)
+    properties_file = GeneratePayloadProperties(self.payload_file)
 
-    if self.secondary:
-      with open(properties_file, "a") as f:
-        f.write("SWITCH_SLOT_ON_REBOOT=0\n")
 
-    if self.wipe_user_data:
-      with open(properties_file, "a") as f:
+    with open(properties_file, "a") as f:
+      if self.wipe_user_data:
         f.write("POWERWASH=1\n")
+      if self.secondary:
+        f.write("SWITCH_SLOT_ON_REBOOT=0\n")
+      if self.spl_downgrade:
+        f.write("SPL_DOWNGRADE=1\n")
+
 
     self.payload_properties = properties_file
 
@@ -1047,10 +1090,21 @@ def Fnmatch(filename, pattersn):
 
 def CopyTargetFilesDir(input_dir):
   output_dir = common.MakeTempDir("target_files")
-  shutil.copytree(os.path.join(input_dir, "IMAGES"), os.path.join(
-      output_dir, "IMAGES"), dirs_exist_ok=True)
+
+  def SymlinkIfNotSparse(src, dst):
+    if common.IsSparseImage(src):
+      return common.UnsparseImage(src, dst)
+    else:
+      return os.symlink(os.path.realpath(src), dst)
+
+  for subdir in TARGET_FILES_IMAGES_SUBDIR:
+    if not os.path.exists(os.path.join(input_dir, subdir)):
+      continue
+    shutil.copytree(os.path.join(input_dir, subdir), os.path.join(
+        output_dir, subdir), dirs_exist_ok=True, copy_function=SymlinkIfNotSparse)
   shutil.copytree(os.path.join(input_dir, "META"), os.path.join(
       output_dir, "META"), dirs_exist_ok=True)
+
   for (dirpath, _, filenames) in os.walk(input_dir):
     for filename in filenames:
       path = os.path.join(dirpath, filename)

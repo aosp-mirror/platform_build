@@ -144,9 +144,6 @@ _board_strip_list += BOARD_AVB_PVMFW_KEY_PATH
 _board_strip_list += BOARD_AVB_PVMFW_ALGORITHM
 _board_strip_list += BOARD_AVB_PVMFW_ROLLBACK_INDEX_LOCATION
 _board_strip_list += BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST
-_board_strip_list += BOARD_BPT_DISK_SIZE
-_board_strip_list += BOARD_BPT_INPUT_FILES
-_board_strip_list += BOARD_BPT_MAKE_TABLE_ARGS
 _board_strip_list += BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX_LOCATION
 _board_strip_list += BOARD_AVB_VBMETA_VENDOR_ALGORITHM
 _board_strip_list += BOARD_AVB_VBMETA_VENDOR_KEY_PATH
@@ -164,9 +161,6 @@ _board_strip_list += BOARD_AVB_VENDOR_BOOT_ROLLBACK_INDEX_LOCATION
 _board_strip_list += BOARD_AVB_VENDOR_KERNEL_BOOT_KEY_PATH
 _board_strip_list += BOARD_AVB_VENDOR_KERNEL_BOOT_ALGORITHM
 _board_strip_list += BOARD_AVB_VENDOR_KERNEL_BOOT_ROLLBACK_INDEX_LOCATION
-_board_strip_list += BOARD_GKI_SIGNING_SIGNATURE_ARGS
-_board_strip_list += BOARD_GKI_SIGNING_ALGORITHM
-_board_strip_list += BOARD_GKI_SIGNING_KEY_PATH
 _board_strip_list += BOARD_MKBOOTIMG_ARGS
 _board_strip_list += BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE
 _board_strip_list += BOARD_VENDOR_KERNEL_BOOTIMAGE_PARTITION_SIZE
@@ -188,9 +182,11 @@ _build_broken_var_list := \
   BUILD_BROKEN_PREBUILT_ELF_FILES \
   BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW \
   BUILD_BROKEN_USES_NETWORK \
-  BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES \
   BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE \
   BUILD_BROKEN_VINTF_PRODUCT_COPY_FILES \
+  BUILD_BROKEN_INCORRECT_PARTITION_IMAGES \
+  BUILD_BROKEN_GENRULE_SANDBOXING \
+  BUILD_BROKEN_DONT_CHECK_SYSTEMSDK \
 
 _build_broken_var_list += \
   $(foreach m,$(AVAILABLE_BUILD_MODULE_TYPES) \
@@ -204,7 +200,7 @@ _board_strip_readonly_list += $(_build_broken_var_list) \
 
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
-  WITH_DEXPREOPT := true
+  WITH_DEXPREOPT ?= true
 endif
 
 # ###############################################################
@@ -226,6 +222,8 @@ else
   board_config_mk := \
     $(strip $(sort $(wildcard \
       $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)/BoardConfig.mk \
+      device/generic/goldfish/board/$(TARGET_DEVICE)/BoardConfig.mk \
+      device/google/cuttlefish/board/$(TARGET_DEVICE)/BoardConfig.mk \
       $(shell test -d device && find -L device -maxdepth 4 -path '*/$(TARGET_DEVICE)/BoardConfig.mk') \
       $(shell test -d vendor && find -L vendor -maxdepth 4 -path '*/$(TARGET_DEVICE)/BoardConfig.mk') \
     )))
@@ -256,7 +254,7 @@ else
   endif
 
   $(shell build/soong/scripts/update_out $(OUT_DIR)/rbc/rbc_board_config_results.mk \
-    $(OUT_DIR)/rbcrun RBC_OUT="make" $(OUT_DIR)/rbc/boardlauncher.rbc)
+    $(OUT_DIR)/rbcrun --mode=rbc $(OUT_DIR)/rbc/boardlauncher.rbc)
   ifneq ($(.SHELLSTATUS),0)
     $(error board configuration runner failed: $(.SHELLSTATUS))
   endif
@@ -948,6 +946,11 @@ ifneq ($(TARGET_OTA_ALLOW_NON_AB),true)
   endif
 endif
 
+# For Non A/B full OTA, disable brotli compression.
+ifeq ($(TARGET_OTA_ALLOW_NON_AB),true)
+  BOARD_NON_AB_OTA_DISABLE_COMPRESSION := true
+endif
+
 # Quick check for building generic OTA packages. Currently it only supports A/B OTAs.
 ifeq ($(PRODUCT_BUILD_GENERIC_OTA_PACKAGE),true)
   ifneq ($(AB_OTA_UPDATER),true)
@@ -967,37 +970,16 @@ define check_vndk_version
   $(if $(wildcard $(vndk_path)/*/Android.bp),,$(error VNDK version $(1) not found))
 endef
 
-ifdef BOARD_VNDK_VERSION
-  ifeq ($(BOARD_VNDK_VERSION),$(PLATFORM_VNDK_VERSION))
-    $(error BOARD_VNDK_VERSION is equal to PLATFORM_VNDK_VERSION; use BOARD_VNDK_VERSION := current)
-  endif
-  ifneq ($(BOARD_VNDK_VERSION),current)
-    $(call check_vndk_version,$(BOARD_VNDK_VERSION))
-  endif
-  TARGET_VENDOR_TEST_SUFFIX := /vendor
-else
-  TARGET_VENDOR_TEST_SUFFIX :=
+ifeq ($(KEEP_VNDK),true)
+ifeq ($(BOARD_VNDK_VERSION),$(PLATFORM_VNDK_VERSION))
+  $(error BOARD_VNDK_VERSION is equal to PLATFORM_VNDK_VERSION; use BOARD_VNDK_VERSION := current)
+endif
+ifneq ($(BOARD_VNDK_VERSION),current)
+  $(call check_vndk_version,$(BOARD_VNDK_VERSION))
+endif
 endif
 
-# If PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY is set,
-# BOARD_VNDK_VERSION must be set because PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY
-# is a enforcement of inter-partition dependency, and it doesn't have any meaning
-# when BOARD_VNDK_VERSION isn't set.
-ifeq ($(PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY),true)
-  ifeq ($(BOARD_VNDK_VERSION),)
-    $(error BOARD_VNDK_VERSION must be set when PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY is true)
-  endif
-endif
-
-###########################################
-# APEXes are by default not flattened, i.e. updatable.
-#
-# APEX flattening can also be forcibly enabled (resp. disabled) by
-# setting OVERRIDE_TARGET_FLATTEN_APEX to true (resp. false), e.g. by
-# setting the OVERRIDE_TARGET_FLATTEN_APEX environment variable.
-ifdef OVERRIDE_TARGET_FLATTEN_APEX
-  TARGET_FLATTEN_APEX := $(OVERRIDE_TARGET_FLATTEN_APEX)
-endif
+TARGET_VENDOR_TEST_SUFFIX := /vendor
 
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
 ifdef PRODUCT_EXTRA_VNDK_VERSIONS
@@ -1010,6 +992,16 @@ _unsupported_systemsdk_versions := $(filter-out $(PLATFORM_SYSTEMSDK_VERSIONS),$
 ifneq (,$(_unsupported_systemsdk_versions))
   $(error System SDK versions '$(_unsupported_systemsdk_versions)' in BOARD_SYSTEMSDK_VERSIONS are not supported.\
           Supported versions are $(PLATFORM_SYSTEMSDK_VERSIONS))
+endif
+
+###########################################
+# BOARD_API_LEVEL for vendor API surface
+ifdef RELEASE_BOARD_API_LEVEL
+  ifdef BOARD_API_LEVEL
+    $(error BOARD_API_LEVEL must not set manully. The build system automatically sets this value.)
+  endif
+  BOARD_API_LEVEL := $(RELEASE_BOARD_API_LEVEL)
+  .KATI_READONLY := BOARD_API_LEVEL
 endif
 
 ###########################################

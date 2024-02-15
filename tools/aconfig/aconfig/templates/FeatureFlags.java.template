@@ -1,0 +1,23 @@
+package {package_name};
+// TODO(b/303773055): Remove the annotation after access issue is resolved.
+import android.compat.annotation.UnsupportedAppUsage;
+
+/** @hide */
+public interface FeatureFlags \{
+{{ for item in flag_elements }}
+{{ -if library_exported }}
+    @UnsupportedAppUsage
+    boolean {item.method_name}();
+{{ -else }}
+{{ -if not item.is_read_write }}
+{{ -if item.default_value }}
+    @com.android.aconfig.annotations.AssumeTrueForR8
+{{ -else }}
+    @com.android.aconfig.annotations.AssumeFalseForR8
+{{ -endif- }}
+{{ endif }}
+    @UnsupportedAppUsage
+    boolean {item.method_name}();
+{{ endif }}
+{{ -endfor }}
+}

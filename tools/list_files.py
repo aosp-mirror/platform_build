@@ -18,6 +18,7 @@ from typing import List
 from glob import glob
 from pathlib import Path
 from os.path import join, relpath
+from itertools import chain
 import argparse
 
 class FileLister:
@@ -27,7 +28,8 @@ class FileLister:
         self.folder_dir = args.dir
         self.extensions = [e if e.startswith(".") else "." + e for e in args.extensions]
         self.root = args.root
-        self.files_list = list()
+        self.files_list : List[str] = list()
+        self.classes = args.classes
 
     def get_files(self) -> None:
         """Get all files directory in the input directory including the files in the subdirectories
@@ -61,6 +63,26 @@ class FileLister:
     def list(self) -> None:
         self.get_files()
         self.files_list = [f for f in self.files_list if not self.extensions or Path(f).suffix in self.extensions]
+
+        # If files_list is as below:
+        # A/B/C.java
+        # A/B/D.java
+        # A/B/E.txt
+        # --classes flag converts files_list in the following format:
+        # A/B/C.class
+        # A/B/C$*.class
+        # A/B/D.class
+        # A/B/D$*.class
+        # Additional `$*`-suffixed line is appended after each line
+        # to take multiple top level classes in a single java file into account.
+        # Note that non-java files in files_list are filtered out.
+        if self.classes:
+            self.files_list = list(chain.from_iterable([
+                (class_files := str(Path(ff).with_suffix(".class")),
+                 class_files.replace(".class", "$*.class"))
+                 for ff in self.files_list if ff.endswith(".java")
+            ]))
+
         self.write()
 
     def write(self) -> None:
@@ -95,6 +117,10 @@ if __name__ == '__main__':
                         help="optional directory to replace the root directories of output.")
     parser.add_argument('--extensions', nargs='*', default=list(), dest='extensions',
                         help="Extensions to include in the output. If not set, all files are included")
+    parser.add_argument('--classes', dest='classes', action=argparse.BooleanOptionalAction,
+                        help="Optional flag. If passed, outputs a list of pattern of class files \
+                                that will be produced by compiling java files in the input dir. \
+                                Non-java files in the input directory will be ignored.")
 
     args = parser.parse_args()
 

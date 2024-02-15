@@ -63,12 +63,12 @@ func (pm *ProjectMetadata) Project() string {
 	return pm.project
 }
 
-// ProjectName returns the name of the project.
+// Name returns the name of the project.
 func (pm *ProjectMetadata) Name() string {
 	return pm.proto.GetName()
 }
 
-// ProjectVersion returns the version of the project if available.
+// Version returns the version of the project if available.
 func (pm *ProjectMetadata) Version() string {
 	tp := pm.proto.GetThirdParty()
 	if tp != nil {

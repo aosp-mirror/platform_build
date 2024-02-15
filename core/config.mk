@@ -42,6 +42,9 @@ endif
 # Mark variables deprecated/obsolete
 CHANGES_URL := https://android.googlesource.com/platform/build/+/master/Changes.md
 .KATI_READONLY := CHANGES_URL
+$(KATI_deprecated_var TARGET_USES_64_BIT_BINDER,All devices use 64-bit binder by default now. Uses of TARGET_USES_64_BIT_BINDER should be removed.)
+$(KATI_deprecated_var PRODUCT_SEPOLICY_SPLIT,All devices are built with split sepolicy.)
+$(KATI_deprecated_var PRODUCT_SEPOLICY_SPLIT_OVERRIDE,All devices are built with split sepolicy.)
 $(KATI_obsolete_var PATH,Do not use PATH directly. See $(CHANGES_URL)#PATH)
 $(KATI_obsolete_var PYTHONPATH,Do not use PYTHONPATH directly. See $(CHANGES_URL)#PYTHONPATH)
 $(KATI_obsolete_var OUT,Use OUT_DIR instead. See $(CHANGES_URL)#OUT)
@@ -107,6 +110,7 @@ $(KATI_obsolete_var BUILD_BROKEN_DUP_COPY_HEADERS)
 $(KATI_obsolete_var BUILD_BROKEN_ENG_DEBUG_TAGS)
 $(KATI_obsolete_export It is a global setting. See $(CHANGES_URL)#export_keyword)
 $(KATI_obsolete_var BUILD_BROKEN_ANDROIDMK_EXPORTS)
+$(KATI_obsolete_var PRODUCT_NOTICE_SPLIT_OVERRIDE,Stop using this, keep calm, and carry on.)
 $(KATI_obsolete_var PRODUCT_STATIC_BOOT_CONTROL_HAL,Use shared library module instead. See $(CHANGES_URL)#PRODUCT_STATIC_BOOT_CONTROL_HAL)
 $(KATI_obsolete_var \
   ARCH_ARM_HAVE_ARMV7A \
@@ -270,7 +274,7 @@ SOONG_CONFIG_NAMESPACES :=
 # Ex: $(call add_soong_config_namespace,acme)
 
 define add_soong_config_namespace
-$(eval SOONG_CONFIG_NAMESPACES += $1) \
+$(eval SOONG_CONFIG_NAMESPACES += $(strip $1)) \
 $(eval SOONG_CONFIG_$(strip $1) :=)
 endef
 
@@ -280,8 +284,8 @@ endef
 # $1 is the namespace. $2 is the list of variables.
 # Ex: $(call add_soong_config_var,acme,COOL_FEATURE_A COOL_FEATURE_B)
 define add_soong_config_var
-$(eval SOONG_CONFIG_$(strip $1) += $2) \
-$(foreach v,$(strip $2),$(eval SOONG_CONFIG_$(strip $1)_$v := $($v)))
+$(eval SOONG_CONFIG_$(strip $1) += $(strip $2)) \
+$(foreach v,$(strip $2),$(eval SOONG_CONFIG_$(strip $1)_$v := $(strip $($v))))
 endef
 
 # The add_soong_config_var_value function defines a make variable and also adds
@@ -290,7 +294,7 @@ endef
 # Ex: $(call add_soong_config_var_value,acme,COOL_FEATURE,true)
 
 define add_soong_config_var_value
-$(eval $2 := $3) \
+$(eval $(strip $2) := $(strip $3)) \
 $(call add_soong_config_var,$1,$2)
 endef
 
@@ -298,8 +302,8 @@ endef
 #
 # internal utility to define a namespace and a variable in it.
 define soong_config_define_internal
-$(if $(filter $1,$(SOONG_CONFIG_NAMESPACES)),,$(eval SOONG_CONFIG_NAMESPACES:=$(SOONG_CONFIG_NAMESPACES) $1)) \
-$(if $(filter $2,$(SOONG_CONFIG_$(strip $1))),,$(eval SOONG_CONFIG_$(strip $1):=$(SOONG_CONFIG_$(strip $1)) $2))
+$(if $(filter $1,$(SOONG_CONFIG_NAMESPACES)),,$(eval SOONG_CONFIG_NAMESPACES:=$(SOONG_CONFIG_NAMESPACES) $(strip $1))) \
+$(if $(filter $2,$(SOONG_CONFIG_$(strip $1))),,$(eval SOONG_CONFIG_$(strip $1):=$(SOONG_CONFIG_$(strip $1)) $(strip $2)))
 endef
 
 # soong_config_set defines the variable in the given Soong config namespace
@@ -308,7 +312,7 @@ endef
 # Ex: $(call soong_config_set,acme,COOL_FEATURE,true)
 define soong_config_set
 $(call soong_config_define_internal,$1,$2) \
-$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$3)
+$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(strip $3))
 endef
 
 # soong_config_append appends to the value of the variable in the given Soong
@@ -317,7 +321,7 @@ endef
 # $1 is the namespace, $2 is the variable name, $3 is the value
 define soong_config_append
 $(call soong_config_define_internal,$1,$2) \
-$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(SOONG_CONFIG_$(strip $1)_$(strip $2)) $3)
+$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(SOONG_CONFIG_$(strip $1)_$(strip $2)) $(strip $3))
 endef
 
 # soong_config_append gets to the value of the variable in the given Soong
@@ -339,6 +343,23 @@ else
 JAVA_TMPDIR_ARG :=
 endif
 
+# These build broken variables are intended to be set in a buildspec file,
+# while other build broken flags are expected to be set in a board config.
+# These are build broken variables that are expected to apply across board
+# configs, generally for cross-cutting features.
+
+# Build broken variables that should be treated as booleans
+_build_broken_bool_vars := \
+  BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES \
+
+# Build broken variables that should be treated as lists
+_build_broken_list_vars := \
+  BUILD_BROKEN_PLUGIN_VALIDATION \
+
+_build_broken_var_names := $(_build_broken_bool_vars)
+_build_broken_var_names += $(_build_broken_list_vars)
+$(foreach v,$(_build_broken_var_names),$(eval $(v) :=))
+
 # ###############################################################
 # Include sub-configuration files
 # ###############################################################
@@ -358,6 +379,13 @@ endif
 # are specific to the user's build configuration.
 include $(BUILD_SYSTEM)/envsetup.mk
 
+
+$(foreach var,$(_build_broken_bool_vars), \
+  $(if $(filter-out true false,$($(var))), \
+    $(error Valid values of $(var) are "true", "false", and "". Not "$($(var))")))
+
+.KATI_READONLY := $(_build_broken_var_names)
+
 # Returns true if it is a low memory device, otherwise it returns false.
 define is-low-mem-device
 $(if $(findstring ro.config.low_ram=true,$(PRODUCT_PROPERTY_OVERRIDES)),true,\
@@ -371,23 +399,8 @@ $(if $(findstring ro.config.low_ram=true,$(PRODUCT_VENDOR_PROPERTIES)),true,\
 $(if $(findstring ro.config.low_ram=true,$(PRODUCT_ODM_PROPERTIES)),true,false)))))))))
 endef
 
-# Get the board API level.
-board_api_level := $(PLATFORM_SDK_VERSION)
-ifdef BOARD_API_LEVEL
-  board_api_level := $(BOARD_API_LEVEL)
-else ifdef BOARD_SHIPPING_API_LEVEL
-  # Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
-  board_api_level := $(BOARD_SHIPPING_API_LEVEL)
-endif
-
-# Calculate the VSR vendor API level.
-vsr_vendor_api_level := $(board_api_level)
-
-ifdef PRODUCT_SHIPPING_API_LEVEL
-  vsr_vendor_api_level := $(call math_min,$(PRODUCT_SHIPPING_API_LEVEL),$(board_api_level))
-endif
-
 # Set TARGET_MAX_PAGE_SIZE_SUPPORTED.
+# TARGET_MAX_PAGE_SIZE_SUPPORTED indicates the alignment of the ELF segments.
 ifdef PRODUCT_MAX_PAGE_SIZE_SUPPORTED
   TARGET_MAX_PAGE_SIZE_SUPPORTED := $(PRODUCT_MAX_PAGE_SIZE_SUPPORTED)
 else ifeq ($(strip $(call is-low-mem-device)),true)
@@ -397,11 +410,33 @@ else
   # The default binary alignment for userspace is 4096.
   TARGET_MAX_PAGE_SIZE_SUPPORTED := 4096
   # When VSR vendor API level >= 34, binary alignment will be 65536.
-  ifeq ($(call math_gt_or_eq,$(vsr_vendor_api_level),34),true)
+  ifeq ($(call math_gt_or_eq,$(VSR_VENDOR_API_LEVEL),34),true)
+    ifeq ($(TARGET_ARCH),arm64)
       TARGET_MAX_PAGE_SIZE_SUPPORTED := 65536
+    endif
   endif
 endif
 .KATI_READONLY := TARGET_MAX_PAGE_SIZE_SUPPORTED
+
+# Only arm64 and x86_64 archs supports TARGET_MAX_PAGE_SIZE_SUPPORTED greater than 4096.
+ifneq ($(TARGET_MAX_PAGE_SIZE_SUPPORTED),4096)
+  ifeq (,$(filter arm64 x86_64,$(TARGET_ARCH)))
+    $(error TARGET_MAX_PAGE_SIZE_SUPPORTED=$(TARGET_MAX_PAGE_SIZE_SUPPORTED) is greater than 4096. Only supported in arm64 and x86_64 archs)
+  endif
+endif
+
+# Boolean variable determining if AOSP is page size agnostic. This means
+# that AOSP can use a kernel configured with 4k/16k/64k PAGE SIZES.
+TARGET_NO_BIONIC_PAGE_SIZE_MACRO := false
+ifdef PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO
+  TARGET_NO_BIONIC_PAGE_SIZE_MACRO := $(PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO)
+  ifeq ($(TARGET_NO_BIONIC_PAGE_SIZE_MACRO),true)
+      ifneq ($(TARGET_MAX_PAGE_SIZE_SUPPORTED),65536)
+          $(error TARGET_MAX_PAGE_SIZE_SUPPORTED has to be 65536 to support page size agnostic)
+      endif
+  endif
+endif
+.KATI_READONLY := TARGET_NO_BIONIC_PAGE_SIZE_MACRO
 
 # Pruned directory options used when using findleaves.py
 # See envsetup.mk for a description of SCAN_EXCLUDE_DIRS
@@ -548,7 +583,10 @@ DISABLE_PREOPT :=
 DISABLE_PREOPT_BOOT_IMAGES :=
 ifneq (,$(TARGET_BUILD_APPS)$(TARGET_BUILD_UNBUNDLED_IMAGE))
   DISABLE_PREOPT := true
-  DISABLE_PREOPT_BOOT_IMAGES := true
+  # VSDK builds perform dexpreopt during merge_target_files build step.
+  ifneq (true,$(BUILDING_WITH_VSDK))
+    DISABLE_PREOPT_BOOT_IMAGES := true
+  endif
 endif
 ifeq (true,$(TARGET_BUILD_UNBUNDLED))
   ifneq (true,$(UNBUNDLED_BUILD_SDKS_FROM_SOURCE))
@@ -609,6 +647,7 @@ FILESLIST := $(HOST_OUT_EXECUTABLES)/fileslist
 FILESLIST_UTIL :=$= build/make/tools/fileslist_util.py
 HOST_INIT_VERIFIER := $(HOST_OUT_EXECUTABLES)/host_init_verifier
 XMLLINT := $(HOST_OUT_EXECUTABLES)/xmllint
+ACONFIG := $(HOST_OUT_EXECUTABLES)/aconfig
 
 # SOONG_ZIP is exported by Soong, but needs to be defined early for
 # $OUT/dexpreopt.global.  It will be verified against the Soong version.
@@ -629,12 +668,12 @@ else
 # For non-supported hosts, do not generate breakpad symbols.
 BREAKPAD_GENERATE_SYMBOLS := false
 endif
+GZIP := prebuilts/build-tools/path/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/gzip
 PROTOC := $(HOST_OUT_EXECUTABLES)/aprotoc$(HOST_EXECUTABLE_SUFFIX)
 NANOPB_SRCS := $(HOST_OUT_EXECUTABLES)/protoc-gen-nanopb
 MKBOOTFS := $(HOST_OUT_EXECUTABLES)/mkbootfs$(HOST_EXECUTABLE_SUFFIX)
-MINIGZIP := $(HOST_OUT_EXECUTABLES)/minigzip$(HOST_EXECUTABLE_SUFFIX)
+MINIGZIP := $(GZIP)
 LZ4 := $(HOST_OUT_EXECUTABLES)/lz4$(HOST_EXECUTABLE_SUFFIX)
-GENERATE_GKI_CERTIFICATE := $(HOST_OUT_EXECUTABLES)/generate_gki_certificate$(HOST_EXECUTABLE_SUFFIX)
 ifeq (,$(strip $(BOARD_CUSTOM_MKBOOTIMG)))
 MKBOOTIMG := $(HOST_OUT_EXECUTABLES)/mkbootimg$(HOST_EXECUTABLE_SUFFIX)
 else
@@ -673,8 +712,10 @@ else
 BUILD_SUPER_IMAGE := $(BOARD_CUSTOM_BUILD_SUPER_IMAGE)
 endif
 IMG_FROM_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/img_from_target_files$(HOST_EXECUTABLE_SUFFIX)
+UNPACK_BOOTIMG := $(HOST_OUT_EXECUTABLES)/unpack_bootimg
 MAKE_RECOVERY_PATCH := $(HOST_OUT_EXECUTABLES)/make_recovery_patch$(HOST_EXECUTABLE_SUFFIX)
 OTA_FROM_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/ota_from_target_files$(HOST_EXECUTABLE_SUFFIX)
+OTA_FROM_RAW_IMG := $(HOST_OUT_EXECUTABLES)/ota_from_raw_img$(HOST_EXECUTABLE_SUFFIX)
 SPARSE_IMG := $(HOST_OUT_EXECUTABLES)/sparse_img$(HOST_EXECUTABLE_SUFFIX)
 CHECK_PARTITION_SIZES := $(HOST_OUT_EXECUTABLES)/check_partition_sizes$(HOST_EXECUTABLE_SUFFIX)
 SYMBOLS_MAP := $(HOST_OUT_EXECUTABLES)/symbols_map
@@ -706,7 +747,7 @@ EXTRACT_KERNEL := build/make/tools/extract_kernel.py
 # Path to tools.jar
 HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA8_HOME)/lib/tools.jar
 
-APICHECK_COMMAND := $(JAVA) -Xmx4g -jar $(APICHECK) --no-banner
+APICHECK_COMMAND := $(JAVA) -Xmx4g -jar $(APICHECK)
 
 # Boolean variable determining if the allow list for compatible properties is enabled
 PRODUCT_COMPATIBLE_PROPERTY := true
@@ -727,17 +768,9 @@ else ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),26),)
   PRODUCT_FULL_TREBLE := true
 endif
 
-# TODO(b/69865032): Make PRODUCT_NOTICE_SPLIT the default behavior and remove
-#    references to it here and below.
-ifdef PRODUCT_NOTICE_SPLIT_OVERRIDE
-   $(error PRODUCT_NOTICE_SPLIT_OVERRIDE cannot be set.)
-endif
-
 requirements := \
     PRODUCT_TREBLE_LINKER_NAMESPACES \
-    PRODUCT_SEPOLICY_SPLIT \
-    PRODUCT_ENFORCE_VINTF_MANIFEST \
-    PRODUCT_NOTICE_SPLIT
+    PRODUCT_ENFORCE_VINTF_MANIFEST
 
 # If it is overriden, then the requirement override is taken, otherwise it's
 # PRODUCT_FULL_TREBLE
@@ -750,13 +783,8 @@ $(foreach req,$(requirements),$(eval \
 PRODUCT_FULL_TREBLE_OVERRIDE ?=
 $(foreach req,$(requirements),$(eval $(req)_OVERRIDE ?=))
 
-ifneq ($(PRODUCT_SEPOLICY_SPLIT),true)
-# WARNING: DO NOT CHANGE: if you are downstream of AOSP, and you change this, without
-# letting upstream know it's important to you, we may do cleanup which breaks this
-# significantly. Please let us know if you are changing this.
-# TODO(b/257176017) - unsplit sepolicy is no longer supported
-PRODUCT_SEPOLICY_SPLIT := true
-endif
+# used to be a part of PRODUCT_FULL_TREBLE, but now always set it
+PRODUCT_NOTICE_SPLIT := true
 
 # TODO(b/114488870): disallow PRODUCT_FULL_TREBLE_OVERRIDE from being used.
 .KATI_READONLY := \
@@ -764,6 +792,11 @@ endif
     $(foreach req,$(requirements),$(req)_OVERRIDE) \
     $(requirements) \
     PRODUCT_FULL_TREBLE \
+    PRODUCT_NOTICE_SPLIT \
+
+ifneq ($(PRODUCT_FULL_TREBLE),true)
+    $(warning This device does not have Treble enabled. This is unsafe.)
+endif
 
 $(KATI_obsolete_var $(foreach req,$(requirements),$(req)_OVERRIDE) \
     ,This should be referenced without the _OVERRIDE suffix.)
@@ -778,35 +811,13 @@ ifeq ($(PRODUCT_FULL_TREBLE),true)
   BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED ?= true
 endif
 
-# Starting in Android U, non-VNDK devices not supported
-# WARNING: DO NOT CHANGE: if you are downstream of AOSP, and you change this, without
-# letting upstream know it's important to you, we may do cleanup which breaks this
-# significantly. Please let us know if you are changing this.
-ifndef BOARD_VNDK_VERSION
-# READ WARNING - DO NOT CHANGE
-BOARD_VNDK_VERSION := current
-# READ WARNING - DO NOT CHANGE
-endif
-
-ifdef PRODUCT_PRODUCT_VNDK_VERSION
-  ifndef BOARD_VNDK_VERSION
-    # VNDK for product partition is not available unless BOARD_VNDK_VERSION
-    # defined.
-    $(error PRODUCT_PRODUCT_VNDK_VERSION cannot be defined without defining BOARD_VNDK_VERSION)
-  endif
-endif
-
 # Set BOARD_SYSTEMSDK_VERSIONS to the latest SystemSDK version starting from P-launching
 # devices if unset.
 ifndef BOARD_SYSTEMSDK_VERSIONS
-  ifdef PRODUCT_SHIPPING_API_LEVEL
-  ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),28),)
-    ifeq (REL,$(PLATFORM_VERSION_CODENAME))
-      BOARD_SYSTEMSDK_VERSIONS := $(PLATFORM_SDK_VERSION)
-    else
-      BOARD_SYSTEMSDK_VERSIONS := $(PLATFORM_VERSION_CODENAME)
-    endif
-  endif
+  ifeq (REL,$(PLATFORM_VERSION_CODENAME))
+    BOARD_SYSTEMSDK_VERSIONS := $(PLATFORM_SDK_VERSION)
+  else
+    BOARD_SYSTEMSDK_VERSIONS := $(PLATFORM_VERSION_CODENAME)
   endif
 endif
 
@@ -830,13 +841,6 @@ ifdef PRODUCT_SHIPPING_API_LEVEL
   endif
   ifneq ($(call numbers_less_than,$(min_systemsdk_version),$(BOARD_SYSTEMSDK_VERSIONS)),)
     $(error BOARD_SYSTEMSDK_VERSIONS ($(BOARD_SYSTEMSDK_VERSIONS)) must all be greater than or equal to BOARD_API_LEVEL, BOARD_SHIPPING_API_LEVEL or PRODUCT_SHIPPING_API_LEVEL ($(min_systemsdk_version)))
-  endif
-  ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),28),)
-    ifneq ($(TARGET_IS_64_BIT), true)
-      ifneq ($(TARGET_USES_64_BIT_BINDER), true)
-        $(error When PRODUCT_SHIPPING_API_LEVEL >= 28, TARGET_USES_64_BIT_BINDER must be true)
-      endif
-    endif
   endif
   ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),29),)
     ifneq ($(BOARD_OTA_FRAMEWORK_VBMETA_VERSION_OVERRIDE),)
@@ -862,65 +866,30 @@ endif
 .KATI_READONLY := MAINLINE_SEPOLICY_DEV_CERTIFICATES
 
 BUILD_NUMBER_FROM_FILE := $$(cat $(SOONG_OUT_DIR)/build_number.txt)
+BUILD_HOSTNAME_FROM_FILE := $$(cat $(SOONG_OUT_DIR)/build_hostname.txt)
 BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
 
 # SEPolicy versions
 
-# PLATFORM_SEPOLICY_VERSION is a number of the form "NN.m" with "NN" mapping to
-# PLATFORM_SDK_VERSION and "m" as a minor number which allows for SELinux
-# changes independent of PLATFORM_SDK_VERSION.  This value will be set to
-# 10000.0 to represent tip-of-tree development that is inherently unstable and
-# thus designed not to work with any shipping vendor policy.  This is similar in
-# spirit to how DEFAULT_APP_TARGET_SDK is set.
-# The minor version ('m' component) must be updated every time a platform release
-# is made which breaks compatibility with the previous platform sepolicy version,
-# not just on every increase in PLATFORM_SDK_VERSION.  The minor version should
-# be reset to 0 on every bump of the PLATFORM_SDK_VERSION.
-sepolicy_major_vers := 34
-sepolicy_minor_vers := 0
-
-ifneq ($(sepolicy_major_vers), $(PLATFORM_SDK_VERSION))
-$(error sepolicy_major_version does not match PLATFORM_SDK_VERSION, please update.)
-endif
-
-TOT_SEPOLICY_VERSION := 10000.0
-ifneq (REL,$(PLATFORM_VERSION_CODENAME))
-    PLATFORM_SEPOLICY_VERSION := $(TOT_SEPOLICY_VERSION)
-else
-    PLATFORM_SEPOLICY_VERSION := $(join $(addsuffix .,$(sepolicy_major_vers)), $(sepolicy_minor_vers))
-endif
-sepolicy_major_vers :=
-sepolicy_minor_vers :=
-
-# BOARD_SEPOLICY_VERS must take the format "NN.m" and contain the sepolicy
-# version identifier corresponding to the sepolicy on which the non-platform
-# policy is to be based. If unspecified, this will build against the current
-# public platform policy in tree
-ifndef BOARD_SEPOLICY_VERS
-# The default platform policy version.
+# PLATFORM_SEPOLICY_VERSION is a number of the form "YYYYMM" with "YYYYMM"
+# mapping to vFRC version.
+PLATFORM_SEPOLICY_VERSION := $(BOARD_API_LEVEL)
 BOARD_SEPOLICY_VERS := $(PLATFORM_SEPOLICY_VERSION)
-endif
-
-ifeq ($(BOARD_SEPOLICY_VERS),$(PLATFORM_SEPOLICY_VERSION))
-IS_TARGET_MIXED_SEPOLICY :=
-else
-IS_TARGET_MIXED_SEPOLICY := true
-endif
-
-.KATI_READONLY := IS_TARGET_MIXED_SEPOLICY
+.KATI_READONLY := PLATFORM_SEPOLICY_VERSION BOARD_SEPOLICY_VERS
 
 # A list of SEPolicy versions, besides PLATFORM_SEPOLICY_VERSION, that the framework supports.
-PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
+PLATFORM_SEPOLICY_COMPAT_VERSIONS := $(filter-out $(PLATFORM_SEPOLICY_VERSION), \
     29.0 \
     30.0 \
     31.0 \
     32.0 \
     33.0 \
+    34.0 \
+    )
 
 .KATI_READONLY := \
     PLATFORM_SEPOLICY_COMPAT_VERSIONS \
     PLATFORM_SEPOLICY_VERSION \
-    TOT_SEPOLICY_VERSION \
 
 ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
   ifneq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
@@ -1210,15 +1179,11 @@ TARGET_AVAILABLE_SDK_VERSIONS := $(patsubst %/test,test_%,$(TARGET_AVAILABLE_SDK
 TARGET_AVAILABLE_SDK_VERSIONS := $(filter-out %/module-lib %/system-server,$(TARGET_AVAILABLE_SDK_VERSIONS))
 TARGET_AVAIALBLE_SDK_VERSIONS := $(call numerically_sort,$(TARGET_AVAILABLE_SDK_VERSIONS))
 
-TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT := $(call numbers_less_than,24,$(TARGET_AVAILABLE_SDK_VERSIONS))
-TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT := $(call numbers_less_than,30,$(TARGET_AVAILABLE_SDK_VERSIONS))
+TARGET_SDK_VERSIONS_WITHOUT_JAVA_1_9_SUPPORT := $(call numbers_less_than,30,$(TARGET_AVAILABLE_SDK_VERSIONS))
+TARGET_SDK_VERSIONS_WITHOUT_JAVA_11_SUPPORT := $(call numbers_less_than,32,$(TARGET_AVAILABLE_SDK_VERSIONS))
+TARGET_SDK_VERSIONS_WITHOUT_JAVA_17_SUPPORT := $(call numbers_less_than,34,$(TARGET_AVAILABLE_SDK_VERSIONS))
 
-# Missing optional uses-libraries so that the platform doesn't create build rules that depend on
-# them.
-INTERNAL_PLATFORM_MISSING_USES_LIBRARIES := \
-  com.google.android.ble \
-  com.google.android.media.effects \
-  com.google.android.wearable \
+JAVA_LANGUAGE_VERSIONS_WITHOUT_SYSTEM_MODULES := 1.7 1.8
 
 # This is the standard way to name a directory containing prebuilt target
 # objects. E.g., prebuilt/$(TARGET_PREBUILT_TAG)/libc.so
@@ -1236,16 +1201,7 @@ RS_PREBUILT_COMPILER_RT := prebuilts/sdk/renderscript/lib/$(TARGET_ARCH)/libcomp
 RSCOMPAT_32BIT_ONLY_API_LEVELS := 8 9 10 11 12 13 14 15 16 17 18 19 20
 RSCOMPAT_NO_USAGEIO_API_LEVELS := 8 9 10 11 12 13
 
-# Add BUILD_NUMBER to apps default version name if it's unbundled build.
-ifdef TARGET_BUILD_APPS
-TARGET_BUILD_WITH_APPS_VERSION_NAME := true
-endif
-
-ifdef TARGET_BUILD_WITH_APPS_VERSION_NAME
-APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)-$(BUILD_NUMBER_FROM_FILE)
-else
 APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)
-endif
 
 # ANDROID_WARNING_ALLOWED_PROJECTS is generated by build/soong.
 define find_warning_allowed_projects
@@ -1285,6 +1241,9 @@ endif
 
 .KATI_READONLY := JAVAC_NINJA_POOL R8_NINJA_POOL D8_NINJA_POOL
 
+# Soong modules that are known to have broken optional_uses_libs dependencies.
+BUILD_WARNING_BAD_OPTIONAL_USES_LIBS_ALLOWLIST := LegacyCamera Gallery2
+
 # These goals don't need to collect and include Android.mks/CleanSpec.mks
 # in the source tree.
 dont_bother_goals := out product-graph
@@ -1298,9 +1257,23 @@ include $(BUILD_SYSTEM)/ninja_config.mk
 include $(BUILD_SYSTEM)/soong_config.mk
 endif
 
--include external/linux-kselftest/android/kselftest_test_list.mk
 -include external/ltp/android/ltp_package_list.mk
-DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages) $(kselftest_modules)
+DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages)
 .KATI_READONLY := DEFAULT_DATA_OUT_MODULES
 
 include $(BUILD_SYSTEM)/dumpvar.mk
+
+ifneq ($(KEEP_VNDK),true)
+ifdef BOARD_VNDK_VERSION
+BOARD_VNDK_VERSION=
+endif
+ifdef PLATFORM_VNDK_VERSION
+PLATFORM_VNDK_VERSION=
+endif
+endif
+
+ifeq (true,$(FULL_SYSTEM_OPTIMIZE_JAVA))
+ifeq (false,$(SYSTEM_OPTIMIZE_JAVA))
+$(error SYSTEM_OPTIMIZE_JAVA must be enabled when FULL_SYSTEM_OPTIMIZE_JAVA is enabled)
+endif
+endif

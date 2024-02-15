@@ -10,15 +10,29 @@ LOCAL_PATH := $(call my-dir)
 # device we're building for.  This file is typically packaged up
 # with everything else.
 #
-# If TARGET_BOARD_INFO_FILE (which can be set in BoardConfig.mk) is
-# defined, it is used, otherwise board-info.txt is looked for in
-# $(TARGET_DEVICE_DIR).
+# The following logic is used to find the contents of the info file:
+#   1. TARGET_BOARD_INFO_FILES (can be set in BoardConfig.mk) will be combined.
+#   2. TARGET_BOARD_INFO_FILE (can be set in BoardConfig.mk) will be used.
+#   3. $(TARGET_DEVICE_DIR)/board-info.txt will be used if present.
+#
+# Specifying both TARGET_BOARD_INFO_FILES and TARGET_BOARD_INFO_FILE is an
+# error.
 #
 INSTALLED_ANDROID_INFO_TXT_TARGET := $(PRODUCT_OUT)/android-info.txt
-board_info_txt := $(TARGET_BOARD_INFO_FILE)
-ifndef board_info_txt
-board_info_txt := $(wildcard $(TARGET_DEVICE_DIR)/board-info.txt)
+ifdef TARGET_BOARD_INFO_FILES
+  ifdef TARGET_BOARD_INFO_FILE
+    $(warning Both TARGET_BOARD_INFO_FILES and TARGET_BOARD_INFO_FILE are defined.)
+    $(warning Using $(TARGET_BOARD_INFO_FILES) rather than $(TARGET_BOARD_INFO_FILE) for android-info.txt)
+  endif
+  board_info_txt := $(call intermediates-dir-for,PACKAGING,board-info)/board-info.txt
+$(board_info_txt): $(TARGET_BOARD_INFO_FILES)
+	$(hide) cat $(TARGET_BOARD_INFO_FILES) > $@
+else ifdef TARGET_BOARD_INFO_FILE
+  board_info_txt := $(TARGET_BOARD_INFO_FILE)
+else
+  board_info_txt := $(wildcard $(TARGET_DEVICE_DIR)/board-info.txt)
 endif
+
 CHECK_RADIO_VERSIONS := $(HOST_OUT_EXECUTABLES)/check_radio_versions$(HOST_EXECUTABLE_SUFFIX)
 $(INSTALLED_ANDROID_INFO_TXT_TARGET): $(board_info_txt) $(CHECK_RADIO_VERSIONS)
 	$(hide) $(CHECK_RADIO_VERSIONS) \

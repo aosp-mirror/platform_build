@@ -73,9 +73,11 @@ endif
 # We skip it for unbundled app builds where we cannot build veridex.
 module_run_appcompat :=
 ifeq (true,$(non_system_module))
-ifeq (,$(TARGET_BUILD_APPS))  # ! unbundled app build
+ifeq (,$(TARGET_BUILD_APPS))  # not unbundled app build
+ifeq (,$(filter sdk,$(MAKECMDGOALS))) # not sdk build (which is another form of unbundled build)
 ifneq ($(UNSAFE_DISABLE_HIDDENAPI_FLAGS),true)
   module_run_appcompat := true
+endif
 endif
 endif
 endif
@@ -100,31 +102,24 @@ ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
 endif
 
 ifdef LOCAL_SOONG_PROGUARD_DICT
-  my_proguard_dictionary_directory := $(local-proguard-dictionary-directory)
-  my_proguard_dictionary_mapping_directory := $(local-proguard-dictionary-mapping-directory)
-  $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_DICT),\
-    $(intermediates.COMMON)/proguard_dictionary))
   $(eval $(call copy-r8-dictionary-file-with-mapping,\
     $(LOCAL_SOONG_PROGUARD_DICT),\
-    $(my_proguard_dictionary_directory)/proguard_dictionary,\
-    $(my_proguard_dictionary_mapping_directory)/proguard_dictionary.textproto))
-  $(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),\
-    $(my_proguard_dictionary_directory)/classes.jar))
-  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
-    $(intermediates.COMMON)/proguard_dictionary)
-  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
-    $(my_proguard_dictionary_directory)/proguard_dictionary)
-  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
-    $(my_proguard_dictionary_mapping_directory)/proguard_dictionary.textproto)
-  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
-    $(my_proguard_dictionary_directory)/classes.jar)
+    $(intermediates.COMMON)/proguard_dictionary,\
+    $(intermediates.COMMON)/proguard_dictionary.textproto))
+
+  ALL_MODULES.$(my_register_name).PROGUARD_DICTIONARY_FILES := \
+    $(intermediates.COMMON)/proguard_dictionary \
+    $(LOCAL_SOONG_CLASSES_JAR)
+  ALL_MODULES.$(my_register_name).PROGUARD_DICTIONARY_SOONG_ZIP_ARGUMENTS := \
+    -e out/target/common/obj/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates/proguard_dictionary \
+    -f $(intermediates.COMMON)/proguard_dictionary \
+    -e out/target/common/obj/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates/classes.jar \
+    -f $(LOCAL_SOONG_CLASSES_JAR)
+  ALL_MODULES.$(my_register_name).PROGUARD_DICTIONARY_MAPPING := $(intermediates.COMMON)/proguard_dictionary.textproto
 endif
 
 ifdef LOCAL_SOONG_PROGUARD_USAGE_ZIP
-  $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_USAGE_ZIP),\
-    $(call local-packaging-dir,proguard_usage)/proguard_usage.zip))
-  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
-    $(call local-packaging-dir,proguard_usage)/proguard_usage.zip)
+  ALL_MODULES.$(my_register_name).PROGUARD_USAGE_ZIP := $(LOCAL_SOONG_PROGUARD_USAGE_ZIP)
 endif
 
 ifdef LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE

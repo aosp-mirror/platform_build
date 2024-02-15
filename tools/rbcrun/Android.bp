@@ -34,6 +34,7 @@ bootstrap_go_package {
     pkgPath: "rbcrun",
     deps: [
         "go-starlark-starlark",
+        "go-starlark-starlarkjson",
         "go-starlark-starlarkstruct",
         "go-starlark-starlarktest",
     ],

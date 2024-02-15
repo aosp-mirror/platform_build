@@ -56,9 +56,6 @@ ifneq ($(filter true keep_symbols no_debuglink mini-debug-info,$(my_strip_module
   ifeq ($(filter SHARED_LIBRARIES EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
     $(call pretty-error,Can strip/pack only shared libraries or executables)
   endif
-  ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
-    $(call pretty-error,Cannot strip/pack scripts)
-  endif
   # Set the arch-specific variables to set up the strip rules
   LOCAL_STRIP_MODULE_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) := $(my_strip_module)
   include $(BUILD_SYSTEM)/dynamic_binary.mk
@@ -83,7 +80,7 @@ include $(BUILD_SYSTEM)/allowed_ndk_types.mk
 
 ifdef LOCAL_SDK_VERSION
 my_link_type := native:ndk:$(my_ndk_stl_family):$(my_ndk_stl_link_type)
-else ifdef LOCAL_USE_VNDK
+else ifeq ($(call module-in-vendor-or-product),true)
     _name := $(patsubst %.vendor,%,$(LOCAL_MODULE))
     _name := $(patsubst %.product,%,$(LOCAL_MODULE))
     ifneq ($(filter $(_name),$(VNDK_CORE_LIBRARIES) $(VNDK_SAMEPROCESS_LIBRARIES) $(LLNDK_LIBRARIES)),)
@@ -93,7 +90,7 @@ else ifdef LOCAL_USE_VNDK
             my_link_type := native:vndk_private
         endif
     else
-        ifeq ($(LOCAL_USE_VNDK_PRODUCT),true)
+        ifeq ($(LOCAL_IN_PRODUCT),true)
             my_link_type := native:product
         else
             my_link_type := native:vendor
@@ -142,8 +139,8 @@ include $(BUILD_SYSTEM)/cxx_stl_setup.mk
 # When compiling against API imported module, use API import stub libraries.
 apiimport_postfix := .apiimport
 
-ifneq ($(LOCAL_USE_VNDK),)
-  ifeq ($(LOCAL_USE_VNDK_PRODUCT),true)
+ifeq ($(call module-in-vendor-or-product),true)
+  ifeq ($(LOCAL_IN_PRODUCT),true)
     apiimport_postfix := .apiimport.product
   else
     apiimport_postfix := .apiimport.vendor
@@ -161,8 +158,8 @@ my_system_shared_libraries := $(foreach l,$(my_system_shared_libraries), \
 endif #my_system_shared_libraries
 
 ifdef my_shared_libraries
-ifdef LOCAL_USE_VNDK
-  ifeq ($(LOCAL_USE_VNDK_PRODUCT),true)
+ifeq ($(call module-in-vendor-or-product),true)
+  ifeq ($(LOCAL_IN_PRODUCT),true)
     my_shared_libraries := $(foreach l,$(my_shared_libraries),\
       $(if $(SPLIT_PRODUCT.SHARED_LIBRARIES.$(l)),$(l).product,$(l)))
   else

@@ -217,7 +217,7 @@ def ItemListToPartitionSet(item_list):
 
 # Partitions that are grabbed from the framework partial build by default.
 _FRAMEWORK_PARTITIONS = {
-    'system', 'product', 'system_ext', 'system_other', 'root', 'system_dlkm',
+    'system', 'product', 'system_ext', 'system_other', 'root',
     'vbmeta_system', 'pvmfw'
 }
 

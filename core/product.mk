@@ -33,6 +33,10 @@ _product_single_value_vars += PRODUCT_MODEL_FOR_ATTESTATION
 # 4096, 16384 and 65536.
 _product_single_value_vars += PRODUCT_MAX_PAGE_SIZE_SUPPORTED
 
+# Indicates that AOSP can use a kernel configured with 4k/16k/64k page sizes.
+# The possible values are true or false.
+_product_single_value_vars += PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO
+
 # The resource configuration options to use for this product.
 _product_list_vars += PRODUCT_LOCALES
 _product_list_vars += PRODUCT_AAPT_CONFIG
@@ -43,6 +47,13 @@ _product_list_vars += PRODUCT_PACKAGES
 _product_list_vars += PRODUCT_PACKAGES_DEBUG
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_ASAN
 _product_list_vars += PRODUCT_PACKAGES_ARM64
+
+# packages that are added to PRODUCT_PACKAGES based on the PRODUCT_SHIPPING_API_LEVEL
+# These are only added if the shipping API level is that level or lower
+_product_list_vars += PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29
+_product_list_vars += PRODUCT_PACKAGES_SHIPPING_API_LEVEL_33
+_product_list_vars += PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34
+
 # Packages included only for eng/userdebug builds, when building with EMMA_INSTRUMENT=true
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE
 _product_list_vars += PRODUCT_PACKAGES_ENG
@@ -146,6 +157,9 @@ _product_list_vars += PRODUCT_BOOT_JARS
 # PRODUCT_BOOT_JARS, so that device-specific jars go after common jars.
 _product_list_vars += PRODUCT_BOOT_JARS_EXTRA
 
+# List of jars to be included in the ART boot image for testing.
+_product_list_vars += PRODUCT_TEST_ONLY_ART_BOOT_IMAGE_JARS
+
 _product_single_value_vars += PRODUCT_SUPPORTS_VBOOT
 _product_list_vars += PRODUCT_SYSTEM_SERVER_APPS
 # List of system_server classpath jars on the platform.
@@ -169,8 +183,6 @@ _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS_EXTRA
 # Set to true to disable <uses-library> checks for a product.
 _product_list_vars += PRODUCT_BROKEN_VERIFY_USES_LIBRARIES
 
-# All of the apps that we force preopt, this overrides WITH_DEXPREOPT.
-_product_list_vars += PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK
 _product_list_vars += PRODUCT_DEXPREOPT_SPEED_APPS
 _product_list_vars += PRODUCT_LOADED_BY_PRIVILEGED_MODULES
 _product_single_value_vars += PRODUCT_VBOOT_SIGNING_KEY
@@ -247,6 +259,19 @@ _product_list_vars += PRODUCT_CFI_EXCLUDE_PATHS
 # Whether any paths should have HWASan enabled for components
 _product_list_vars += PRODUCT_HWASAN_INCLUDE_PATHS
 
+# Whether any paths are excluded from sanitization when SANITIZE_TARGET=hwaddress
+_product_list_vars += PRODUCT_HWASAN_EXCLUDE_PATHS
+
+# Whether any paths should have Memtag_heap enabled for components
+_product_list_vars += PRODUCT_MEMTAG_HEAP_ASYNC_INCLUDE_PATHS
+_product_list_vars += PRODUCT_MEMTAG_HEAP_ASYNC_DEFAULT_INCLUDE_PATHS
+_product_list_vars += PRODUCT_MEMTAG_HEAP_SYNC_INCLUDE_PATHS
+_product_list_vars += PRODUCT_MEMTAG_HEAP_SYNC_DEFAULT_INCLUDE_PATHS
+_product_list_vars += PRODUCT_MEMTAG_HEAP_EXCLUDE_PATHS
+
+# Whether this product wants to start with an empty list of default memtag_heap include paths
+_product_single_value_vars += PRODUCT_MEMTAG_HEAP_SKIP_DEFAULT_PATHS
+
 # Whether the Scudo hardened allocator is disabled platform-wide
 _product_single_value_vars += PRODUCT_DISABLE_SCUDO
 
@@ -306,6 +331,10 @@ _product_single_value_vars += PRODUCT_BUILD_GENERIC_OTA_PACKAGE
 _product_list_vars += PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES
 _product_list_vars += PRODUCT_PACKAGE_NAME_OVERRIDES
 _product_list_vars += PRODUCT_CERTIFICATE_OVERRIDES
+
+# Overrides the (apex, jar) pairs above when determining the on-device location. The format is:
+# <old_apex>:<old_jar>:<new_apex>:<new_jar>
+_product_list_vars += PRODUCT_CONFIGURED_JAR_LOCATION_OVERRIDES
 
 # Controls for whether different partitions are built for the current product.
 _product_single_value_vars += PRODUCT_BUILD_SYSTEM_IMAGE
@@ -368,8 +397,6 @@ _product_single_value_vars += PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY
 # a java_sdk_library module.
 _product_list_vars += PRODUCT_INTER_PARTITION_JAVA_LIBRARY_ALLOWLIST
 
-_product_single_value_vars += PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES
-
 # Install a copy of the debug policy to the system_ext partition, and allow
 # init-second-stage to load debug policy from system_ext.
 # This option is only meant to be set by compliance GSI targets.
@@ -389,6 +416,9 @@ _product_single_value_vars += PRODUCT_MODULE_BUILD_FROM_SOURCE
 # If true, installs a full version of com.android.virt APEX.
 _product_single_value_vars += PRODUCT_AVF_ENABLED
 
+# If true, kernel with modules will be used for Microdroid VMs.
+_product_single_value_vars += PRODUCT_AVF_KERNEL_MODULES_ENABLED
+
 # List of .json files to be merged/compiled into vendor/etc/linker.config.pb
 _product_list_vars += PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS
 
@@ -404,7 +434,25 @@ _product_list_vars += PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS
 #   supports it
 _product_single_value_vars += PRODUCT_ENABLE_UFFD_GC
 
+# Specifies COW version to be used by update_engine and libsnapshot. If this value is not
+# specified we default to COW version 2 in update_engine for backwards compatibility
+_product_single_value_vars += PRODUCT_VIRTUAL_AB_COW_VERSION
+
+# If set, determines whether the build system checks vendor seapp contexts violations.
+_product_single_value_vars += PRODUCT_CHECK_VENDOR_SEAPP_VIOLATIONS
+
+# If set, determines whether the build system checks dev type violations.
+_product_single_value_vars += PRODUCT_CHECK_DEV_TYPE_VIOLATIONS
+
 _product_list_vars += PRODUCT_AFDO_PROFILES
+
+_product_single_value_vars += PRODUCT_SCUDO_ALLOCATION_RING_BUFFER_SIZE
+
+_product_list_vars += PRODUCT_RELEASE_CONFIG_MAPS
+
+_product_list_vars += PRODUCT_VALIDATION_CHECKS
+
+_product_single_value_vars += PRODUCT_BUILD_FROM_SOURCE_STUB
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
@@ -503,7 +551,7 @@ endef
 # be cleaned up to not be product variables.
 _readonly_late_variables := \
   DEVICE_PACKAGE_OVERLAYS \
-  WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY \
+  WITH_DEXPREOPT_ART_BOOT_IMG_ONLY \
 
 # Modified internally in the build system
 _readonly_late_variables += \

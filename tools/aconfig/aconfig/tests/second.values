@@ -1,0 +1,6 @@
+flag_value {
+    package: "com.android.aconfig.test"
+    name: "enabled_ro"
+    state: ENABLED
+    permission: READ_ONLY
+}

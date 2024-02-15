@@ -85,11 +85,6 @@ $(my_extracted_apk): $(my_prebuilt_src_file)
 my_prebuilt_src_file := $(my_extracted_apk)
 my_extracted_apk :=
 my_extract_apk :=
-ifeq ($(PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK),true)
-# If the product property is set, always preopt for extracted modules to prevent executing out of
-# the APK.
-my_preopt_for_extracted_apk := true
-endif
 endif
 
 rs_compatibility_jni_libs :=
@@ -227,7 +222,7 @@ endif
 $(built_module): PRIVATE_EMBEDDED_JNI_LIBS := $(embedded_prebuilt_jni_libs)
 
 ifdef LOCAL_COMPRESSED_MODULE
-$(built_module) : $(MINIGZIP)
+$(built_module) : $(GZIP)
 endif
 
 ifeq ($(module_run_appcompat),true)

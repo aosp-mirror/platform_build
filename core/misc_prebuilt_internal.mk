@@ -27,9 +27,6 @@ include $(BUILD_SYSTEM)/base_rules.mk
 
 ifneq ($(filter init%rc,$(notdir $(LOCAL_INSTALLED_MODULE)))$(filter %/etc/init,$(dir $(LOCAL_INSTALLED_MODULE))),)
   $(eval $(call copy-init-script-file-checked,$(my_prebuilt_src_file),$(LOCAL_BUILT_MODULE)))
-else ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
-$(LOCAL_BUILT_MODULE) : $(my_prebuilt_src_file)
-	$(transform-prebuilt-to-target-strip-comments)
 else
 $(LOCAL_BUILT_MODULE) : $(my_prebuilt_src_file)
 	$(transform-prebuilt-to-target)

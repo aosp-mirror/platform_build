@@ -145,14 +145,20 @@ endif
 ifneq (,$(strip $(foreach dir,$(NATIVE_COVERAGE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
 ifeq (,$(strip $(foreach dir,$(NATIVE_COVERAGE_EXCLUDE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
   my_native_coverage := true
+  my_clang_coverage := true
 else
   my_native_coverage := false
+  my_clang_coverage := false
 endif
 else
   my_native_coverage := false
+  my_clang_coverage := false
 endif
 ifneq ($(NATIVE_COVERAGE),true)
   my_native_coverage := false
+endif
+ifneq ($(CLANG_COVERAGE),true)
+  my_clang_coverage := false
 endif
 
 # Exclude directories from checking allowed manual binder interface lists.
@@ -270,8 +276,16 @@ ifneq ($(LOCAL_SDK_VERSION),)
   ifneq ($(my_ndk_api),current)
     ifeq ($(call math_lt, $(my_ndk_api),23),true)
       my_native_coverage := false
+      my_clang_coverage := false
     endif
   endif
+endif
+
+ifneq ($(LOCAL_MIN_SDK_VERSION),)
+  ifdef LOCAL_IS_HOST_MODULE
+    $(error $(LOCAL_PATH): LOCAL_MIN_SDK_VERSION cannot be used in host module)
+  endif
+  my_api_level := $(LOCAL_MIN_SDK_VERSION)
 endif
 
 ifeq ($(NATIVE_COVERAGE),true)
@@ -288,26 +302,51 @@ ifeq ($(NATIVE_COVERAGE),true)
   endif
 endif
 
-ifneq ($(LOCAL_USE_VNDK),)
-  # Required VNDK version for vendor modules is BOARD_VNDK_VERSION.
-  my_api_level := $(BOARD_VNDK_VERSION)
-  ifeq ($(my_api_level),current)
-    # Build with current PLATFORM_VNDK_VERSION.
-    # If PLATFORM_VNDK_VERSION has a CODENAME, it will return
-    # __ANDROID_API_FUTURE__.
-    my_api_level := $(call codename-or-sdk-to-sdk,$(PLATFORM_VNDK_VERSION))
-  else
-    # Build with current BOARD_VNDK_VERSION.
-    my_api_level := $(call codename-or-sdk-to-sdk,$(BOARD_VNDK_VERSION))
+ifeq ($(CLANG_COVERAGE),true)
+  ifndef LOCAL_IS_HOST_MODULE
+    my_ldflags += $(CLANG_COVERAGE_HOST_LDFLAGS)
+    ifneq ($(LOCAL_MODULE_CLASS),STATIC_LIBRARIES)
+      my_whole_static_libraries += libclang_rt.profile
+      ifeq ($(LOCAL_SDK_VERSION),)
+        my_whole_static_libraries += libprofile-clang-extras
+      else
+        my_whole_static_libraries += libprofile-clang-extras_ndk
+      endif
+    endif
   endif
+  ifeq ($(my_clang_coverage),true)
+    my_profile_instr_generate := $(CLANG_COVERAGE_INSTR_PROFILE)
+    ifeq ($(CLANG_COVERAGE_CONTINUOUS_MODE),true)
+      my_cflags += $(CLANG_COVERAGE_CONTINUOUS_FLAGS)
+      my_ldflags += $(CLANG_COVERAGE_CONTINUOUS_FLAGS)
+    endif
+
+    my_profile_instr_generate += $(CLANG_COVERAGE_CONFIG_COMMFLAGS)
+    my_cflags += $(CLANG_COVERAGE_INSTR_PROFILE) $(CLANG_COVERAGE_CONFIG_CFLAGS) $(CLANG_COVERAGE_CONFIG_COMMFLAGS)
+    my_ldflags += $(CLANG_COVERAGE_CONFIG_COMMFLAGS)
+
+    ifneq ($(filter hwaddress,$(my_sanitize)),)
+      my_cflags += $(CLANG_COVERAGE_HWASAN_FLAGS)
+      my_ldflags += $(CLANG_COVERAGE_HWASAN_FLAGS)
+    endif
+  endif
+endif
+
+ifneq ($(call module-in-vendor-or-product),)
   my_cflags += -D__ANDROID_VNDK__
-  ifneq ($(LOCAL_USE_VNDK_VENDOR),)
-    # Vendor modules have LOCAL_USE_VNDK_VENDOR when
-    # BOARD_VNDK_VERSION is defined.
+  ifneq ($(LOCAL_IN_VENDOR),)
+    # Vendor modules have LOCAL_IN_VENDOR
     my_cflags += -D__ANDROID_VENDOR__
-  else ifneq ($(LOCAL_USE_VNDK_PRODUCT),)
-    # Product modules have LOCAL_USE_VNDK_PRODUCT when
-    # PRODUCT_PRODUCT_VNDK_VERSION is defined.
+
+    ifeq ($(BOARD_API_LEVEL),)
+      # TODO(b/314036847): This is a fallback for UDC targets.
+      # This must be a build failure when UDC is no longer built from this source tree.
+      my_cflags += -D__ANDROID_VENDOR_API__=$(PLATFORM_SDK_VERSION)
+    else
+      my_cflags += -D__ANDROID_VENDOR_API__=$(BOARD_API_LEVEL)
+    endif
+  else ifneq ($(LOCAL_IN_PRODUCT),)
+    # Product modules have LOCAL_IN_PRODUCT
     my_cflags += -D__ANDROID_PRODUCT__
   endif
 endif
@@ -354,17 +393,15 @@ endif
 # MinGW spits out warnings about -fPIC even for -fpie?!) being ignored because
 # all code is position independent, and then those warnings get promoted to
 # errors.
-ifneq ($(LOCAL_NO_PIC),true)
-  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
-    my_cflags += -fPIE
-    ifndef BUILD_HOST_static
-      ifneq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
-        my_ldflags += -pie
-      endif
+ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+  my_cflags += -fPIE
+  ifndef BUILD_HOST_static
+    ifneq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
+      my_ldflags += -pie
     endif
-  else
-    my_cflags += -fPIC
   endif
+else
+  my_cflags += -fPIC
 endif
 
 ifdef LOCAL_IS_HOST_MODULE
@@ -1137,8 +1174,8 @@ endif
 
 apiimport_postfix := .apiimport
 
-ifneq ($(LOCAL_USE_VNDK),)
-  ifeq ($(LOCAL_USE_VNDK_PRODUCT),true)
+ifneq ($(call module-in-vendor-or-product),)
+  ifeq ($(LOCAL_IN_PRODUCT),true)
     apiimport_postfix := .apiimport.product
   else
     apiimport_postfix := .apiimport.vendor
@@ -1155,14 +1192,14 @@ my_header_libraries := $(foreach l,$(my_header_libraries), \
 ###########################################################
 ## When compiling against the VNDK, use LL-NDK libraries
 ###########################################################
-ifneq ($(LOCAL_USE_VNDK),)
+ifneq ($(call module-in-vendor-or-product),)
   #####################################################
   ## Soong modules may be built three times, once for
   ## /system, once for /vendor and once for /product.
   ## If we're using the VNDK, switch all soong
   ## libraries over to the /vendor or /product variant.
   #####################################################
-  ifeq ($(LOCAL_USE_VNDK_PRODUCT),true)
+  ifeq ($(LOCAL_IN_PRODUCT),true)
     my_whole_static_libraries := $(foreach l,$(my_whole_static_libraries),\
       $(if $(SPLIT_PRODUCT.STATIC_LIBRARIES.$(l)),$(l).product,$(l)))
     my_static_libraries := $(foreach l,$(my_static_libraries),\
@@ -1189,7 +1226,7 @@ endif
 
 # Platform can use vendor public libraries. If a required shared lib is one of
 # the vendor public libraries, the lib is switched to the stub version of the lib.
-ifeq ($(LOCAL_USE_VNDK),)
+ifeq ($(call module-in-vendor-or-product),)
   my_shared_libraries := $(foreach l,$(my_shared_libraries),\
     $(if $(filter $(l),$(VENDOR_PUBLIC_LIBRARIES)),$(l).vendorpublic,$(l)))
 endif
@@ -1241,7 +1278,7 @@ ifdef LOCAL_SDK_VERSION
 my_link_type := native:ndk:$(my_ndk_stl_family):$(my_ndk_stl_link_type)
 my_warn_types := $(my_warn_ndk_types)
 my_allowed_types := $(my_allowed_ndk_types)
-else ifdef LOCAL_USE_VNDK
+else ifeq ($(call module-in-vendor-or-product),true)
     _name := $(patsubst %.vendor,%,$(LOCAL_MODULE))
     _name := $(patsubst %.product,%,$(LOCAL_MODULE))
     ifneq ($(filter $(_name),$(VNDK_CORE_LIBRARIES) $(VNDK_SAMEPROCESS_LIBRARIES) $(LLNDK_LIBRARIES)),)
@@ -1252,7 +1289,7 @@ else ifdef LOCAL_USE_VNDK
         endif
         my_warn_types :=
         my_allowed_types := native:vndk native:vndk_private
-    else ifeq ($(LOCAL_USE_VNDK_PRODUCT),true)
+    else ifeq ($(LOCAL_IN_PRODUCT),true)
         # Modules installed to /product cannot directly depend on modules marked
         # with vendor_available: false
         my_link_type := native:product
@@ -1437,17 +1474,6 @@ built_whole_libraries := \
       $(call intermediates-dir-for, \
         STATIC_LIBRARIES,$(lib),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/$(lib)$(a_suffix))
 
-# We don't care about installed static libraries, since the
-# libraries have already been linked into the module at that point.
-# We do, however, care about the NOTICE files for any static
-# libraries that we use. (see notice_files.mk)
-installed_static_library_notice_file_targets := \
-    $(foreach lib,$(my_static_libraries) $(my_whole_static_libraries), \
-      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-STATIC_LIBRARIES-$(lib))
-
-$(notice_target): | $(installed_static_library_notice_file_targets)
-$(LOCAL_INSTALLED_MODULE): | $(notice_target)
-
 # Default is -fno-rtti.
 ifeq ($(strip $(LOCAL_RTTI_FLAG)),)
 LOCAL_RTTI_FLAG := -fno-rtti
@@ -1566,21 +1592,16 @@ my_ldlibs += $(my_cxx_ldlibs)
 ###########################################################
 ifndef LOCAL_IS_HOST_MODULE
 
-ifdef LOCAL_USE_VNDK
+ifeq ($(call module-in-vendor-or-product),true)
   my_target_global_c_includes :=
   my_target_global_c_system_includes := $(TARGET_OUT_HEADERS)
 else ifdef LOCAL_SDK_VERSION
   my_target_global_c_includes :=
   my_target_global_c_system_includes := $(my_ndk_stl_include_path) $(my_ndk_sysroot_include)
-else ifdef BOARD_VNDK_VERSION
-  my_target_global_c_includes := $(SRC_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
-  my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
 else
   my_target_global_c_includes := $(SRC_HEADERS) \
     $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
-  my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) $(TARGET_OUT_HEADERS) \
+  my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) \
     $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
 endif
 
@@ -1665,16 +1686,10 @@ endif
 ####################################################
 imported_includes :=
 
-ifdef LOCAL_USE_VNDK
+ifeq (true,$(call module-in-vendor-or-product))
   imported_includes += $(call intermediates-dir-for,HEADER_LIBRARIES,device_kernel_headers,$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))
-else ifdef LOCAL_SDK_VERSION
-  # Apps shouldn't need device-specific kernel headers
-else ifdef BOARD_VNDK_VERSION
-  # For devices building with the VNDK, only the VNDK gets device-specific kernel headers by default
-  # In soong, it's entirely opt-in
 else
-  # For older non-VNDK builds, continue adding in kernel headers to everything like we used to
-  imported_includes += $(call intermediates-dir-for,HEADER_LIBRARIES,device_kernel_headers,$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))
+  # everything else should manually specify headers
 endif
 
 imported_includes := $(strip \

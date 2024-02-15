@@ -21,8 +21,12 @@
 #	combo_2nd_arch_prefix -- it's defined if this is loaded for the 2nd arch.
 #
 
-# Build a target string like "linux-arm" or "darwin-x86".
-combo_os_arch := $($(combo_target)OS)-$($(combo_target)$(combo_2nd_arch_prefix)ARCH)
+ifeq ($(combo_target),HOST_)
+  combo_os_arch := $(HOST_OS)
+else
+  # Build a target string like "linux-arm" or "darwin-x86".
+  combo_os_arch := $($(combo_target)OS)-$($(combo_target)$(combo_2nd_arch_prefix)ARCH)
+endif
 
 combo_var_prefix := $(combo_2nd_arch_prefix)$(combo_target)
 

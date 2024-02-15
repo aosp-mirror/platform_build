@@ -223,7 +223,7 @@ _product_config_saved_KATI_ALLOW_RULES := $(.KATI_ALLOW_RULES)
 endif
 
 ifeq (,$(current_product_makefile))
-  $(error Can not locate config makefile for product "$(TARGET_PRODUCT)")
+  $(error Cannot locate config makefile for product "$(TARGET_PRODUCT)")
 endif
 
 ifneq (,$(filter $(TARGET_PRODUCT),$(products_using_starlark_config)))
@@ -236,14 +236,22 @@ else
   $(shell mkdir -p $(OUT_DIR)/rbc)
   $(call dump-variables-rbc, $(OUT_DIR)/rbc/make_vars_pre_product_config.mk)
 
-  $(shell build/soong/scripts/update_out \
-    $(OUT_DIR)/rbc/rbc_product_config_results.mk \
-    build/soong/scripts/rbc-run \
-    $(current_product_makefile) \
-    $(OUT_DIR)/rbc/make_vars_pre_product_config.mk)
+  $(shell $(OUT_DIR)/mk2rbc \
+    --mode=write -r --outdir $(OUT_DIR)/rbc \
+    --launcher=$(OUT_DIR)/rbc/launcher.rbc \
+    --input_variables=$(OUT_DIR)/rbc/make_vars_pre_product_config.mk \
+    --makefile_list=$(OUT_DIR)/.module_paths/configuration.list \
+    $(current_product_makefile))
   ifneq ($(.SHELLSTATUS),0)
     $(error product configuration converter failed: $(.SHELLSTATUS))
   endif
+
+  $(shell build/soong/scripts/update_out $(OUT_DIR)/rbc/rbc_product_config_results.mk \
+    $(OUT_DIR)/rbcrun --mode=rbc $(OUT_DIR)/rbc/launcher.rbc)
+  ifneq ($(.SHELLSTATUS),0)
+    $(error product configuration runner failed: $(.SHELLSTATUS))
+  endif
+
   include $(OUT_DIR)/rbc/rbc_product_config_results.mk
 endif
 
@@ -274,7 +282,11 @@ current_product_makefile :=
 
 #############################################################################
 # Check product include tag allowlist
-BLUEPRINT_INCLUDE_TAGS_ALLOWLIST := com.android.mainline_go com.android.mainline
+BLUEPRINT_INCLUDE_TAGS_ALLOWLIST := \
+  com.android.mainline_go \
+  com.android.mainline \
+  mainline_module_prebuilt_nightly \
+  mainline_module_prebuilt_monthly_release
 .KATI_READONLY := BLUEPRINT_INCLUDE_TAGS_ALLOWLIST
 $(foreach include_tag,$(PRODUCT_INCLUDE_TAGS), \
 	$(if $(filter $(include_tag),$(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST)),,\
@@ -285,7 +297,8 @@ ifeq (, $(PRODUCT_INCLUDE_TAGS))
 # we still analyse it.
 # This means that in setups where we two have two prebuilts of module_sdk, we need a "default" to use in analysis
 # This should be a no-op in aosp and internal since no Android.bp file contains blueprint_package_includes
-PRODUCT_INCLUDE_TAGS += com.android.mainline # Use the big android one by default
+# Use the big android one and main-based prebuilts by default
+PRODUCT_INCLUDE_TAGS += com.android.mainline mainline_module_prebuilt_nightly
 endif
 
 #############################################################################
@@ -407,6 +420,8 @@ PRODUCT_OTA_PUBLIC_KEYS := $(sort $(PRODUCT_OTA_PUBLIC_KEYS))
 PRODUCT_EXTRA_OTA_KEYS := $(sort $(PRODUCT_EXTRA_OTA_KEYS))
 PRODUCT_EXTRA_RECOVERY_KEYS := $(sort $(PRODUCT_EXTRA_RECOVERY_KEYS))
 
+PRODUCT_VALIDATION_CHECKS := $(sort $(PRODUCT_VALIDATION_CHECKS))
+
 # Resolve and setup per-module dex-preopt configs.
 DEXPREOPT_DISABLED_MODULES :=
 # If a module has multiple setups, the first takes precedence.
@@ -485,15 +500,6 @@ ifeq ($(PRODUCT_SET_DEBUGFS_RESTRICTIONS),)
   endif
 endif
 
-ifdef PRODUCT_SHIPPING_API_LEVEL
-  ifneq (,$(call math_gt_or_eq,29,$(PRODUCT_SHIPPING_API_LEVEL)))
-    PRODUCT_PACKAGES += $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29)
-  endif
-  ifneq (,$(call math_gt_or_eq,33,$(PRODUCT_SHIPPING_API_LEVEL)))
-    PRODUCT_PACKAGES += $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_33)
-  endif
-endif
-
 # If build command defines OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS,
 # override PRODUCT_EXTRA_VNDK_VERSIONS with it.
 ifdef OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS
@@ -526,7 +532,8 @@ ifdef OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
     PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE := $(OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE)
   endif
 else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
-  # No shipping level defined
+  # No shipping level defined. Enforce the product interface by default.
+  PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE := true
 else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),29),true)
   # Enforce product interface if PRODUCT_SHIPPING_API_LEVEL is greater than 29.
   PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE := true
@@ -534,33 +541,51 @@ endif
 
 $(KATI_obsolete_var OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE,Use PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE instead)
 
-# If build command defines PRODUCT_USE_PRODUCT_VNDK_OVERRIDE as `false`,
-# PRODUCT_PRODUCT_VNDK_VERSION will not be defined automatically.
-# PRODUCT_USE_PRODUCT_VNDK_OVERRIDE can be used for testing only.
-PRODUCT_USE_PRODUCT_VNDK := false
-ifneq ($(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE),)
-  PRODUCT_USE_PRODUCT_VNDK := $(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE)
-else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
-  # No shipping level defined
-else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),29),true)
-  # Enforce product interface for VNDK if PRODUCT_SHIPPING_API_LEVEL is greater
-  # than 29.
-  PRODUCT_USE_PRODUCT_VNDK := true
+# From Android V, Define PRODUCT_PRODUCT_VNDK_VERSION as current by default.
+# This is required to make all devices have product variants.
+ifndef PRODUCT_PRODUCT_VNDK_VERSION
+  PRODUCT_PRODUCT_VNDK_VERSION := current
 endif
-
-ifeq ($(PRODUCT_USE_PRODUCT_VNDK),true)
-  ifndef PRODUCT_PRODUCT_VNDK_VERSION
-    PRODUCT_PRODUCT_VNDK_VERSION := current
-  endif
-endif
-
-$(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
-$(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK_OVERRIDE,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
 
 ifdef PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS
     $(error PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS is deprecated, consider using RRO for \
       $(PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS))
 endif
+
+# Get the board API level.
+board_api_level := $(PLATFORM_SDK_VERSION)
+ifdef BOARD_API_LEVEL
+  board_api_level := $(BOARD_API_LEVEL)
+else ifdef BOARD_SHIPPING_API_LEVEL
+  # Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
+  board_api_level := $(BOARD_SHIPPING_API_LEVEL)
+endif
+
+# Calculate the VSR vendor API level.
+VSR_VENDOR_API_LEVEL := $(board_api_level)
+
+ifdef PRODUCT_SHIPPING_API_LEVEL
+  VSR_VENDOR_API_LEVEL := $(call math_min,$(PRODUCT_SHIPPING_API_LEVEL),$(board_api_level))
+endif
+.KATI_READONLY := VSR_VENDOR_API_LEVEL
+
+# Boolean variable determining if vendor seapp contexts is enforced
+CHECK_VENDOR_SEAPP_VIOLATIONS := false
+ifneq ($(call math_gt,$(VSR_VENDOR_API_LEVEL),34),)
+  CHECK_VENDOR_SEAPP_VIOLATIONS := true
+else ifneq ($(PRODUCT_CHECK_VENDOR_SEAPP_VIOLATIONS),)
+  CHECK_VENDOR_SEAPP_VIOLATIONS := $(PRODUCT_CHECK_VENDOR_SEAPP_VIOLATIONS)
+endif
+.KATI_READONLY := CHECK_VENDOR_SEAPP_VIOLATIONS
+
+# Boolean variable determining if selinux labels of /dev are enforced
+CHECK_DEV_TYPE_VIOLATIONS := false
+ifneq ($(call math_gt,$(VSR_VENDOR_API_LEVEL),35),)
+  CHECK_DEV_TYPE_VIOLATIONS := true
+else ifneq ($(PRODUCT_CHECK_DEV_TYPE_VIOLATIONS),)
+  CHECK_DEV_TYPE_VIOLATIONS := $(PRODUCT_CHECK_DEV_TYPE_VIOLATIONS)
+endif
+.KATI_READONLY := CHECK_DEV_TYPE_VIOLATIONS
 
 define product-overrides-config
 $$(foreach rule,$$(PRODUCT_$(1)_OVERRIDES),\

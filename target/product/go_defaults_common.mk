@@ -24,10 +24,6 @@ PRODUCT_VENDOR_PROPERTIES += \
 # Speed profile services and wifi-service to reduce RAM and storage.
 PRODUCT_SYSTEM_SERVER_COMPILER_FILTER := speed-profile
 
-# Always preopt extracted APKs to prevent extracting out of the APK for gms
-# modules.
-PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK := true
-
 # Use a profile based boot image for this device. Note that this is currently a
 # generic profile and not Android Go optimized.
 PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE := true
@@ -53,6 +49,3 @@ TARGET_SYSTEM_PROP += \
 # use the go specific handheld_core_hardware.xml from frameworks
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/go_handheld_core_hardware.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/handheld_core_hardware.xml
-
-# Dedupe VNDK libraries with identical core variants.
-TARGET_VNDK_USE_CORE_VARIANT := true

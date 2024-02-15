@@ -102,38 +102,47 @@ PRODUCT_SYSTEM_PROPERTIES += \
 PRODUCT_SYSTEM_PROPERTIES += \
     ro.dalvik.vm.native.bridge?=0
 
-# Different dexopt types for different package update/install times.
-# On eng builds, make "boot" reasons only extract for faster turnaround.
-ifeq (eng,$(TARGET_BUILD_VARIANT))
-    PRODUCT_SYSTEM_PROPERTIES += \
-        pm.dexopt.first-boot?=extract \
-        pm.dexopt.boot-after-ota?=extract
-else
-    PRODUCT_SYSTEM_PROPERTIES += \
-        pm.dexopt.first-boot?=verify \
-        pm.dexopt.boot-after-ota?=verify
-endif
-
 # The install filter is speed-profile in order to enable the use of
 # profiles from the dex metadata files. Note that if a profile is not provided
 # or if it is empty speed-profile is equivalent to (quicken + empty app image).
 # Note that `cmdline` is not strictly needed but it simplifies the management
 # of compilation reason in the platform (as we have a unified, single path,
 # without exceptions).
+# TODO(b/243646876): Remove `pm.dexopt.post-boot`.
 PRODUCT_SYSTEM_PROPERTIES += \
-    pm.dexopt.post-boot?=extract \
+    pm.dexopt.post-boot?=verify \
+    pm.dexopt.first-boot?=verify \
+    pm.dexopt.boot-after-ota?=verify \
     pm.dexopt.boot-after-mainline-update?=verify \
     pm.dexopt.install?=speed-profile \
     pm.dexopt.install-fast?=skip \
     pm.dexopt.install-bulk?=speed-profile \
     pm.dexopt.install-bulk-secondary?=verify \
     pm.dexopt.install-bulk-downgraded?=verify \
-    pm.dexopt.install-bulk-secondary-downgraded?=extract \
+    pm.dexopt.install-bulk-secondary-downgraded?=verify \
     pm.dexopt.bg-dexopt?=speed-profile \
     pm.dexopt.ab-ota?=speed-profile \
     pm.dexopt.inactive?=verify \
     pm.dexopt.cmdline?=verify \
     pm.dexopt.shared?=speed
+
+ifneq (,$(filter eng,$(TARGET_BUILD_VARIANT)))
+    OVERRIDE_DISABLE_DEXOPT_ALL ?= true
+endif
+
+# OVERRIDE_DISABLE_DEXOPT_ALL disables all dexpreopt (build-time) and dexopt (on-device) activities.
+# This option is for faster iteration during development and should never be enabled for production.
+ifneq (,$(filter true,$(OVERRIDE_DISABLE_DEXOPT_ALL)))
+  PRODUCT_SYSTEM_PROPERTIES += \
+    dalvik.vm.disable-art-service-dexopt=true \
+    dalvik.vm.disable-odrefresh=true
+
+  # Disable all dexpreopt activities except for the ART boot image.
+  # We have to dexpreopt the ART boot image because they are used by ART tests. This should not
+  # be too much of a problem for platform developers because a change to framework code should not
+  # trigger dexpreopt for the ART boot image.
+  WITH_DEXPREOPT_ART_BOOT_IMG_ONLY := true
+endif
 
 # Enable resolution of startup const strings.
 PRODUCT_SYSTEM_PROPERTIES += \

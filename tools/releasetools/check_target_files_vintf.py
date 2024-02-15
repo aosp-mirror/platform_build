@@ -129,8 +129,9 @@ def CheckVintfFromExtractedTargetFiles(input_tmp, info_dict=None):
 
   dirmap = GetDirmap(input_tmp)
 
-  # Simulate apexd from target-files.
-  dirmap['/apex'] = PrepareApexDirectory(input_tmp)
+  # Simulate apexd with target-files.
+  # add a mapping('/apex' => ${input_tmp}/APEX) to dirmap
+  PrepareApexDirectory(input_tmp, dirmap)
 
   args_for_skus = GetArgsForSkus(info_dict)
   shipping_api_level_args = GetArgsForShippingApiLevel(info_dict)
@@ -204,7 +205,8 @@ def GetVintfApexUnzipPatterns():
 
   return patterns
 
-def PrepareApexDirectory(inp):
+
+def PrepareApexDirectory(inp, dirmap):
   """ Prepare /apex directory before running checkvintf
 
   Apex binaries do not support dirmaps, in order to use these binaries we
@@ -212,96 +214,25 @@ def PrepareApexDirectory(inp):
   expected device locations.
 
   This simulates how apexd activates APEXes.
-  1. create {inp}/APEX which is treated as a "/" on device.
-  2. copy apexes from target-files to {root}/{partition}/apex.
-  3. mount apexes under {root}/{partition}/apex at {root}/apex.
-  4. generate info files with dump_apex_info.
-
-  We'll get the following layout
-       {inp}/APEX/apex             # Activated APEXes + some info files
-       {inp}/APEX/system/apex      # System APEXes
-       {inp}/APEX/vendor/apex      # Vendor APEXes
-       ...
-
-  Args:
-    inp: path to the directory that contains the extracted target files archive.
-
-  Returns:
-    directory representing /apex on device
+  1. create {inp}/APEX which is treated as a "/apex" on device.
+  2. invoke apexd_host with vendor APEXes.
   """
 
-  deapexer = 'deapexer'
-  debugfs_path = 'debugfs'
-  blkid_path = 'blkid'
-  fsckerofs_path = 'fsck.erofs'
-  if OPTIONS.search_path:
-    debugfs_path = os.path.join(OPTIONS.search_path, 'bin', 'debugfs_static')
-    deapexer_path = os.path.join(OPTIONS.search_path, 'bin', 'deapexer')
-    blkid_path = os.path.join(OPTIONS.search_path, 'bin', 'blkid_static')
-    fsckerofs_path = os.path.join(OPTIONS.search_path, 'bin', 'fsck.erofs')
-    if os.path.isfile(deapexer_path):
-      deapexer = deapexer_path
-
-  def ExtractApexes(path, outp):
-    # Extract all APEXes found in input path.
-    logger.info('Extracting APEXs in %s', path)
-    for f in os.listdir(path):
-      logger.info('  adding APEX %s', os.path.basename(f))
-      apex = os.path.join(path, f)
-      if os.path.isdir(apex) and os.path.isfile(os.path.join(apex, 'apex_manifest.pb')):
-        info = ParseApexManifest(os.path.join(apex, 'apex_manifest.pb'))
-        # Flattened APEXes may have symlinks for libs (linked to /system/lib)
-        # We need to blindly copy them all.
-        shutil.copytree(apex, os.path.join(outp, info.name), symlinks=True)
-      elif os.path.isfile(apex) and apex.endswith(('.apex', '.capex')):
-        cmd = [deapexer,
-               '--debugfs_path', debugfs_path,
-               'info',
-               apex]
-        info = json.loads(common.RunAndCheckOutput(cmd))
-
-        cmd = [deapexer,
-               '--debugfs_path', debugfs_path,
-               '--fsckerofs_path', fsckerofs_path,
-               '--blkid_path', blkid_path,
-               'extract',
-               apex,
-               os.path.join(outp, info['name'])]
-        common.RunAndCheckOutput(cmd)
-      else:
-        logger.info('  .. skipping %s (is it APEX?)', path)
-
-  root_dir_name = 'APEX'
-  root_dir = os.path.join(inp, root_dir_name)
-  extracted_root = os.path.join(root_dir, 'apex')
+  apex_dir = common.MakeTempDir('APEX')
+  # checkvintf needs /apex dirmap
+  dirmap['/apex'] = apex_dir
 
   # Always create /apex directory for dirmap
-  os.makedirs(extracted_root)
+  os.makedirs(apex_dir, exist_ok=True)
 
-  create_info_file = False
+  # Invoke apexd_host to activate vendor APEXes for checkvintf
+  apex_host = os.path.join(OPTIONS.search_path, 'bin', 'apexd_host')
+  cmd = [apex_host, '--tool_path', OPTIONS.search_path]
+  cmd += ['--apex_path', dirmap['/apex']]
+  if '/vendor' in dirmap:
+      cmd += ['--vendor_path', dirmap['/vendor']]
+  common.RunAndCheckOutput(cmd)
 
-  # Loop through search path looking for and processing apex/ directories.
-  for device_path, target_files_rel_paths in DIR_SEARCH_PATHS.items():
-    # checkvintf only needs vendor apexes. skip other partitions for efficiency
-    if device_path not in ['/vendor', '/odm']:
-      continue
-    # First, copy VENDOR/apex/foo.apex to APEX/vendor/apex/foo.apex
-    # Then, extract the contents to APEX/apex/foo/
-    for target_files_rel_path in target_files_rel_paths:
-      inp_partition = os.path.join(inp, target_files_rel_path,"apex")
-      if os.path.exists(inp_partition):
-        apex_dir = root_dir + os.path.join(device_path + "/apex");
-        os.makedirs(root_dir + device_path)
-        shutil.copytree(inp_partition, apex_dir, symlinks=True)
-        ExtractApexes(apex_dir, extracted_root)
-        create_info_file = True
-
-  if create_info_file:
-    ### Dump apex info files
-    dump_cmd = ['dump_apex_info', '--root_dir', root_dir]
-    common.RunAndCheckOutput(dump_cmd)
-
-  return extracted_root
 
 def CheckVintfFromTargetFiles(inp, info_dict=None):
   """

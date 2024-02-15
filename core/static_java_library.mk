@@ -127,6 +127,12 @@ framework_res_package_export := \
 endif
 endif
 
+# transitive-res-packages is only populated for Soong modules for now, but needs
+# to exist so that other Make modules can depend on it.  Create an empty file.
+my_transitive_res_packages := $(intermediates.COMMON)/transitive-res-packages
+$(my_transitive_res_packages):
+	touch $@
+
 import_proguard_flag_files := $(strip $(foreach l,$(LOCAL_STATIC_ANDROID_LIBRARIES) $(LOCAL_STATIC_JAVA_AAR_LIBRARIES),\
     $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/export_proguard_flags))
 $(intermediates.COMMON)/export_proguard_flags: $(import_proguard_flag_files) $(addprefix $(LOCAL_PATH)/,$(LOCAL_EXPORT_PROGUARD_FLAG_FILES))

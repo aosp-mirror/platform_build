@@ -53,5 +53,42 @@ python_test_host {
     libs: [
         "sbom_lib",
     ],
+    version: {
+        py3: {
+            embedded_launcher: true,
+        },
+    },
     test_suites: ["general-tests"],
+}
+
+python_test_host {
+    name: "sbom_data_test",
+    main: "sbom_data_test.py",
+    srcs: [
+        "sbom_data_test.py",
+    ],
+    libs: [
+        "sbom_lib",
+    ],
+    version: {
+        py3: {
+            embedded_launcher: true,
+        },
+    },
+    test_suites: ["general-tests"],
+}
+
+python_binary_host {
+    name: "generate-sbom-framework_res",
+    srcs: [
+        "generate-sbom-framework_res.py",
+    ],
+    version: {
+        py3: {
+            embedded_launcher: true,
+        },
+    },
+    libs: [
+        "sbom_lib",
+    ],
 }

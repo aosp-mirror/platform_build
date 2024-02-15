@@ -1,0 +1,116 @@
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+rust_defaults {
+    name: "aconfig_storage_file.defaults",
+    edition: "2021",
+    lints: "none",
+    srcs: ["src/lib.rs"],
+    rustlibs: [
+        "libanyhow",
+        "libaconfig_storage_protos",
+        "libonce_cell",
+        "libprotobuf",
+        "libtempfile",
+        "libmemmap2",
+        "libcxx",
+        "libthiserror",
+    ],
+}
+
+rust_library {
+    name: "libaconfig_storage_file",
+    crate_name: "aconfig_storage_file",
+    host_supported: true,
+    defaults: ["aconfig_storage_file.defaults"],
+}
+
+genrule {
+    name: "ro.package.map",
+    out: ["tests/tmp.ro.package.map"],
+    srcs: ["tests/package.map"],
+    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
+}
+
+genrule {
+    name: "ro.flag.map",
+    out: ["tests/tmp.ro.flag.map"],
+    srcs: ["tests/flag.map"],
+    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
+}
+
+genrule {
+    name: "ro.flag.val",
+    out: ["tests/tmp.ro.flag.val"],
+    srcs: ["tests/flag.val"],
+    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
+}
+
+rust_test_host {
+    name: "aconfig_storage_file.test",
+    test_suites: ["general-tests"],
+    defaults: ["aconfig_storage_file.defaults"],
+    data: [
+        "tests/package.map",
+        "tests/flag.map",
+        "tests/flag.val",
+    ],
+}
+
+rust_protobuf {
+    name: "libaconfig_storage_protos",
+    protos: ["protos/aconfig_storage_metadata.proto"],
+    crate_name: "aconfig_storage_protos",
+    source_stem: "aconfig_storage_protos",
+    host_supported: true,
+}
+
+cc_library_static {
+    name: "libaconfig_storage_protos_cc",
+    proto: {
+        export_proto_headers: true,
+        type: "lite",
+    },
+    srcs: ["protos/aconfig_storage_metadata.proto"],
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
+    host_supported: true,
+}
+
+genrule {
+    name: "libcxx_aconfig_storage_bridge_code",
+    tools: ["cxxbridge"],
+    cmd: "$(location cxxbridge) $(in) > $(out)",
+    srcs: ["src/lib.rs"],
+    out: ["aconfig_storage/lib.rs.cc"],
+}
+
+genrule {
+    name: "libcxx_aconfig_storage_bridge_header",
+    tools: ["cxxbridge"],
+    cmd: "$(location cxxbridge) $(in) --header > $(out)",
+    srcs: ["src/lib.rs"],
+    out: ["aconfig_storage/lib.rs.h"],
+}
+
+rust_ffi_static {
+    name: "libaconfig_storage_cxx_bridge",
+    crate_name: "aconfig_storage_cxx_bridge",
+    host_supported: true,
+    defaults: ["aconfig_storage_file.defaults"],
+}
+
+cc_library_static {
+    name: "libaconfig_storage_cc",
+    srcs: ["aconfig_storage.cpp"],
+    generated_headers: [
+        "cxx-bridge-header",
+        "libcxx_aconfig_storage_bridge_header"
+    ],
+    generated_sources: ["libcxx_aconfig_storage_bridge_code"],
+    whole_static_libs: ["libaconfig_storage_cxx_bridge"],
+    export_include_dirs: ["include"],
+}
