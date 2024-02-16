@@ -249,6 +249,21 @@ def Modify(filename, contents, before=None):
             undo=lambda: orig.write()
         )
 
+def ChangePublicApi():
+    change = AddJavaField("frameworks/base/core/java/android/provider/Settings.java",
+                 "@android.annotation.SuppressLint(\"UnflaggedApi\") public")
+    orig_current_text = Snapshot("frameworks/base/core/api/current.txt")
+
+    def undo():
+        change.undo()
+        orig_current_text.write()
+
+    return Change(
+        label=change.label,
+        change=change.change,
+        undo=lambda: undo()
+    )
+
 def AddJavaField(filename, prefix):
     return Modify(filename,
                   lambda: f"{prefix} static final int BENCHMARK = {random.randint(0, 1000000)};\n",
@@ -740,9 +755,8 @@ benchmarks:
                       ),
             Benchmark(id="framework_api",
                       title="Add API to Settings.java",
-                      change=AddJavaField("frameworks/base/core/java/android/provider/Settings.java",
-                                          "@android.annotation.SuppressLint(\"UnflaggedApi\") public"),
-                      modules=["framework-minus-apex"],
+                      change=ChangePublicApi(),
+                      modules=["api-stubs-docs-non-updatable-update-current-api", "framework-minus-apex"],
                       preroll=1,
                       postroll=2,
                       ),
