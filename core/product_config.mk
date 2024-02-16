@@ -301,6 +301,35 @@ ifeq (, $(PRODUCT_INCLUDE_TAGS))
 PRODUCT_INCLUDE_TAGS += com.android.mainline mainline_module_prebuilt_nightly
 endif
 
+# AOSP and Google products currently share the same `apex_contributions` in next.
+# This causes issues when building <aosp_product>-next-userdebug in main.
+# Create a temporary allowlist to ignore the google apexes listed in `contents` of apex_contributions of `next`
+# *for aosp products*.
+# TODO(b/308187268): Remove this denylist mechanism
+# Use PRODUCT_PACKAGES to determine if this is an aosp product. aosp products do not use google signed apexes.
+ifeq (,$(findstring com.google.android.conscrypt,$(PRODUCT_PACKAGES)))
+PRODUCT_BUILD_IGNORE_APEX_CONTRIBUTION_CONTENTS += \
+  prebuilt_com.google.android.adservices \
+  prebuilt_com.google.android.appsearch \
+  prebuilt_com.google.android.art \
+  prebuilt_com.google.android.btservices \
+  prebuilt_com.google.android.configinfrastructure \
+  prebuilt_com.google.android.conscrypt \
+  prebuilt_com.google.android.devicelock \
+  prebuilt_com.google.android.healthfitness \
+  prebuilt_com.google.android.ipsec \
+  prebuilt_com.google.android.media \
+  prebuilt_com.google.android.mediaprovider \
+  prebuilt_com.google.android.ondevicepersonalization \
+  prebuilt_com.google.android.os.statsd \
+  prebuilt_com.google.android.rkpd \
+  prebuilt_com.google.android.scheduling \
+  prebuilt_com.google.android.sdkext \
+  prebuilt_com.google.android.tethering \
+  prebuilt_com.google.android.uwb \
+  prebuilt_com.google.android.wifi
+endif
+
 #############################################################################
 
 # Quick check and assign default values
