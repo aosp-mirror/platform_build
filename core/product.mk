@@ -454,8 +454,6 @@ _product_list_vars += PRODUCT_VALIDATION_CHECKS
 
 _product_single_value_vars += PRODUCT_BUILD_FROM_SOURCE_STUB
 
-_product_list_vars += PRODUCT_BUILD_IGNORE_APEX_CONTRIBUTION_CONTENTS
-
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
 
