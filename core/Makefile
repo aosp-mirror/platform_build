@@ -5109,8 +5109,10 @@ ifneq (,$(filter EMPTY_VENDOR_SKU_PLACEHOLDER,$(DEVICE_MANIFEST_SKUS)))
 $(error EMPTY_VENDOR_SKU_PLACEHOLDER is an internal variable and cannot be used for DEIVCE_MANIFEST_SKUS)
 endif
 
-# -- Check system manifest / matrix including fragments (excluding other framework manifests / matrices, e.g. product);
-check_vintf_system_deps := $(filter $(TARGET_OUT)/etc/vintf/%, $(check_vintf_common_srcs))
+# -- Check system and system_ext manifests / matrices including fragments (excluding other framework manifests / matrices, e.g. product);
+check_vintf_system_deps := $(filter $(TARGET_OUT)/etc/vintf/% \
+                                    $(TARGET_OUT_SYSTEM_EXT)/etc/vintf/%, \
+                                    $(check_vintf_common_srcs))
 ifneq ($(check_vintf_system_deps),)
 check_vintf_has_system := true
 
