@@ -5140,8 +5140,9 @@ endif # check_vintf_system_deps
 check_vintf_system_deps :=
 
 # -- Check vendor manifest / matrix including fragments (excluding other device manifests / matrices)
-check_vintf_vendor_deps := $(filter $(TARGET_OUT_VENDOR)/etc/vintf/%, $(check_vintf_common_srcs))
-check_vintf_vendor_deps += $(filter $(TARGET_OUT_VENDOR)/apex/%, $(check_vintf_common_srcs))
+check_vintf_vendor_deps := $(filter $(TARGET_OUT_VENDOR)/etc/vintf/% \
+                                    $(TARGET_OUT_VENDOR)/apex/%, \
+                                    $(check_vintf_common_srcs))
 ifneq ($(strip $(check_vintf_vendor_deps)),)
 check_vintf_has_vendor := true
 check_vintf_vendor_log := $(intermediates)/check_vintf_vendor.log
