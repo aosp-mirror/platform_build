@@ -335,8 +335,6 @@ $(call add_json_bool, KeepVndk, $(filter true,$(KEEP_VNDK)))
 
 $(call add_json_bool, CheckVendorSeappViolations, $(filter true,$(CHECK_VENDOR_SEAPP_VIOLATIONS)))
 
-$(call add_json_list, BuildIgnoreApexContributionContents, $(sort $(PRODUCT_BUILD_IGNORE_APEX_CONTRIBUTION_CONTENTS)))
-
 $(call add_json_map, PartitionVarsForBazelMigrationOnlyDoNotUse)
   $(call add_json_str,  ProductDirectory,    $(dir $(INTERNAL_PRODUCT)))
 
