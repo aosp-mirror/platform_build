@@ -301,6 +301,23 @@ ifeq (, $(PRODUCT_INCLUDE_TAGS))
 PRODUCT_INCLUDE_TAGS += com.android.mainline mainline_module_prebuilt_nightly
 endif
 
+# AOSP and Google products currently share the same `apex_contributions` in next.
+# This causes issues when building <aosp_product>-next-userdebug in main.
+# Create a temporary allowlist to ignore the google apexes listed in `contents` of apex_contributions of `next`
+# *for aosp products*.
+# TODO(b/308187268): Remove this denylist mechanism
+# Use PRODUCT_PACKAGES to determine if this is an aosp product. aosp products do not use google signed apexes.
+ignore_apex_contributions :=
+ifeq (,$(findstring com.google.android.conscrypt,$(PRODUCT_PACKAGES))$(findstring com.google.android.go.conscrypt,$(PRODUCT_PACKAGES)))
+  ignore_apex_contributions := true
+endif
+ifeq (true,$(PRODUCT_MODULE_BUILD_FROM_SOURCE))
+  ignore_apex_contributions := true
+endif
+ifeq (true, $(ignore_apex_contributions))
+PRODUCT_BUILD_IGNORE_APEX_CONTRIBUTION_CONTENTS := true
+endif
+
 #############################################################################
 
 # Quick check and assign default values
