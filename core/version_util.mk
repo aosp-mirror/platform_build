@@ -31,6 +31,7 @@
 #     PLATFORM_VNDK_VERSION
 #     PLATFORM_SYSTEMSDK_VERSIONS
 #     PLATFORM_VERSION_LAST_STABLE
+#     PLATFORM_VERSION_KNOWN_CODENAMES
 #
 
 # Look for an optional file containing overrides of the defaults,
@@ -95,17 +96,10 @@ endif
 PLATFORM_VERSION_LAST_STABLE := $(RELEASE_PLATFORM_VERSION_LAST_STABLE)
 .KATI_READONLY := PLATFORM_VERSION_LAST_STABLE
 
-
-# This are all known codenames. Should this move into the release config?
-PLATFORM_VERSION_KNOWN_CODENAMES := \
-Base Base11 Cupcake Donut Eclair Eclair01 EclairMr1 Froyo Gingerbread GingerbreadMr1 \
-Honeycomb HoneycombMr1 HoneycombMr2 IceCreamSandwich IceCreamSandwichMr1 \
-JellyBean JellyBeanMr1 JellyBeanMr2 Kitkat KitkatWatch Lollipop LollipopMr1 M N NMr1 O OMr1 P \
-Q R S Sv2 Tiramisu UpsideDownCake VanillaIceCream
-
-# Convert from space separated list to comma separated
-PLATFORM_VERSION_KNOWN_CODENAMES := \
-  $(call normalize-comma-list,$(PLATFORM_VERSION_KNOWN_CODENAMES))
+ifdef PLATFORM_VERSION_KNOWN_CODENAMES
+  $(error Do not set PLATFORM_VERSION_KNOWN_CODENAMES directly. Use RELEASE_PLATFORM_VERSION_KNOWN_CODENAMES. value: $(PLATFORM_VERSION_KNOWN_CODENAMES))
+endif
+PLATFORM_VERSION_KNOWN_CODENAMES := $(RELEASE_PLATFORM_VERSION_KNOWN_CODENAMES)
 .KATI_READONLY := PLATFORM_VERSION_KNOWN_CODENAMES
 
 ifndef PLATFORM_VERSION
