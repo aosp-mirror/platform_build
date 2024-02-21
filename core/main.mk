@@ -434,6 +434,8 @@ ifndef is_sdk_build
   # To speedup startup of non-preopted builds, don't verify or compile the boot image.
   ADDITIONAL_SYSTEM_PROPERTIES += dalvik.vm.image-dex2oat-filter=extract
 endif
+# b/323566535
+ADDITIONAL_SYSTEM_PROPERTIES += init.svc_debug.no_fatal.zygote=true
 endif
 
 ## asan ##
