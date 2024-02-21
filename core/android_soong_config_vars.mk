@@ -217,5 +217,12 @@ endif
 
 # Add crashrecovery build flag to soong
 $(call soong_config_set,ANDROID,release_crashrecovery_module,$(RELEASE_CRASHRECOVERY_MODULE))
+ifeq (true,$(RELEASE_CRASHRECOVERY_FILE_MOVE))
+  $(call soong_config_set,ANDROID,crashrecovery_files_in_module,true)
+  $(call soong_config_set,ANDROID,crashrecovery_files_in_platform,false)
+else
+  $(call soong_config_set,ANDROID,crashrecovery_files_in_module,false)
+  $(call soong_config_set,ANDROID,crashrecovery_files_in_platform,true)
+endif
 # Weirdly required because platform_bootclasspath is using AUTO namespace
 $(call soong_config_set,AUTO,release_crashrecovery_module,$(RELEASE_CRASHRECOVERY_MODULE))
