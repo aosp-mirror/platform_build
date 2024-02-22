@@ -65,5 +65,15 @@
       // that using the flag macros to do filtering will get affected.
       "name": "FlagMacrosTests"
     }
+  ],
+  "postsubmit": [
+    {
+      // aconfig_storage read api rust integration tests
+      "name": "aconfig_storage.test.rust"
+    },
+    {
+      // aconfig_storage read api cpp integration tests
+      "name": "aconfig_storage.test.cpp"
+    }
   ]
 }
