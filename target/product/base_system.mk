@@ -225,6 +225,7 @@ PRODUCT_PACKAGES += \
     mke2fs \
     mkfs.erofs \
     monkey \
+    misctrl \
     mtectrl \
     ndc \
     netd \
