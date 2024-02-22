@@ -80,6 +80,9 @@ def build_affected_modules(args: argparse.Namespace):
   # Call the build command with everything.
   build_command = base_build_command(args)
   build_command.extend(modules_to_build)
+  # When not building general-tests we also have to build the general tests
+  # shared libs.
+  build_command.append('general-tests-shared-libs')
 
   run_command(build_command, print_output=True)
 
