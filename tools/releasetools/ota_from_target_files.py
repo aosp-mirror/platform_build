@@ -261,7 +261,7 @@ A/B OTA specific options
       Specify the VABC cow version to be used
 
   --compression_factor
-      Specify the maximum block size to be compressed at once during OTA. supported options: 4k, 8k, 16k, 32k, 64k, 128k
+      Specify the maximum block size to be compressed at once during OTA. supported options: 4k, 8k, 16k, 32k, 64k, 128k, 256k
 """
 
 from __future__ import print_function
@@ -603,7 +603,7 @@ def GetTargetFilesZipForPartialUpdates(input_file, ab_partitions):
 
   This function modifies ab_partitions list with the desired partitions before
   calling the brillo_update_payload script. It also cleans up the reference to
-  the excluded partitions in the info file, e.g misc_info.txt.
+  the excluded partitions in the info file, e.g. misc_info.txt.
 
   Args:
     input_file: The input target-files.zip filename.
@@ -1276,11 +1276,11 @@ def main(argv):
         raise ValueError("Cannot parse value %r for option %r - only "
                          "integers are allowed." % (a, o))
     elif o in ("--compression_factor"):
-        values = ["4k", "8k", "16k", "32k", "64k", "128k"]
+        values = ["4k", "8k", "16k", "32k", "64k", "128k", "256k"]
         if a[:-1].isdigit() and a in values and a.endswith("k"):
             OPTIONS.compression_factor = str(int(a[:-1]) * 1024)
         else:
-            raise ValueError("Please specify value from following options: 4k, 8k, 16k, 32k, 64k, 128k")
+            raise ValueError("Please specify value from following options: 4k, 8k, 16k, 32k, 64k, 128k", "256k")
 
     elif o == "--vabc_cow_version":
       if a.isdigit():
