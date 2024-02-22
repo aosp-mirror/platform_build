@@ -207,7 +207,6 @@ ifndef PLATFORM_BASE_OS
   # If there is no $PLATFORM_BASE_OS set, keep it empty.
   PLATFORM_BASE_OS :=
 endif
-.KATI_READONLY := PLATFORM_BASE_OS
 
 ifndef BUILD_ID
   # Used to signify special builds.  E.g., branches and/or releases,
