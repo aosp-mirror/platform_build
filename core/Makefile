@@ -5110,6 +5110,7 @@ $(error EMPTY_VENDOR_SKU_PLACEHOLDER is an internal variable and cannot be used 
 endif
 
 # -- Check system and system_ext manifests / matrices including fragments (excluding other framework manifests / matrices, e.g. product);
+ifdef BUILDING_SYSTEM_IMAGE
 check_vintf_system_deps := $(filter $(TARGET_OUT)/etc/vintf/% \
                                     $(TARGET_OUT_SYSTEM_EXT)/etc/vintf/%, \
                                     $(check_vintf_common_srcs))
@@ -5138,6 +5139,8 @@ $(call declare-1p-target,$(vintffm_log))
 
 endif # check_vintf_system_deps
 check_vintf_system_deps :=
+
+endif # BUILDING_SYSTEM_IMAGE
 
 # -- Check vendor manifest / matrix including fragments (excluding other device manifests / matrices)
 check_vintf_vendor_deps := $(filter $(TARGET_OUT_VENDOR)/etc/vintf/% \
