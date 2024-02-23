@@ -18,6 +18,7 @@
 PRODUCT_PACKAGES += \
     abx \
     adbd_system_api \
+    aflags \
     am \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
@@ -228,6 +229,7 @@ PRODUCT_PACKAGES += \
     mke2fs \
     mkfs.erofs \
     monkey \
+    misctrl \
     mtectrl \
     ndc \
     netd \
