@@ -402,6 +402,8 @@ $(call add_json_bool, BuildFromSourceStub, $(findstring true,$(PRODUCT_BUILD_FRO
 
 $(call add_json_bool, HiddenapiExportableStubs, $(filter true,$(PRODUCT_HIDDEN_API_EXPORTABLE_STUBS)))
 
+$(call add_json_bool, ExportRuntimeApis, $(filter true,$(PRODUCT_EXPORT_RUNTIME_APIS)))
+
 $(call json_end)
 
 $(file >$(SOONG_VARIABLES).tmp,$(json_contents))
