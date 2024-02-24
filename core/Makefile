@@ -3395,6 +3395,14 @@ endif
 
 FULL_SYSTEMIMAGE_DEPS += $(INTERNAL_ROOT_FILES) $(INSTALLED_FILES_FILE_ROOT)
 
+define write-file-lines
+$(1):
+	@echo Writing $$@
+	rm -f $$@
+	echo -n > $$@
+	$$(foreach f,$(2),echo "$$(f)" >> $$@$$(newline))
+endef
+
 # -----------------------------------------------------------------
 ifdef BUILDING_SYSTEM_IMAGE
 
@@ -3447,14 +3455,6 @@ BUILT_SYSTEMIMAGE :=$= $(systemimage_intermediates)/system.img
 # Used by the bazel sandwich to request the staging dir be built
 $(systemimage_intermediates)/staging_dir.stamp: $(FULL_SYSTEMIMAGE_DEPS)
 	touch $@
-
-define write-file-lines
-$(1):
-	@echo Writing $$@
-	rm -f $$@
-	echo -n > $$@
-	$$(foreach f,$(2),echo "$$(f)" >> $$@$$(newline))
-endef
 
 # $(1): output file
 define build-systemimage-target
