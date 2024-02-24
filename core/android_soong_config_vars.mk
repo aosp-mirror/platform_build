@@ -167,11 +167,6 @@ ifeq (true,$(MODULE_BUILD_FROM_SOURCE))
 $(call add_soong_config_var_value,ANDROID,module_build_from_source,true)
 endif
 
-# Messaging app vars
-ifeq (eng,$(TARGET_BUILD_VARIANT))
-$(call soong_config_set,messaging,build_variant_eng,true)
-endif
-
 # Enable SystemUI optimizations by default unless explicitly set.
 SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
