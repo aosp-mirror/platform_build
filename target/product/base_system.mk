@@ -77,7 +77,6 @@ PRODUCT_PACKAGES += \
     com.android.virt \
     com.android.wifi \
     ContactsProvider \
-    ContactKeysProvider \
     content \
     CtsShimPrebuilt \
     CtsShimPrivPrebuilt \
@@ -92,6 +91,7 @@ PRODUCT_PACKAGES += \
     dump.erofs \
     dumpstate \
     dumpsys \
+    E2eeContactKeysProvider \
     e2fsck \
     enhanced-confirmation.xml \
     ExtShared \
