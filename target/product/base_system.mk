@@ -65,7 +65,6 @@ PRODUCT_PACKAGES += \
     com.android.ondevicepersonalization \
     com.android.os.statsd \
     com.android.permission \
-    com.android.profiling \
     com.android.resolv \
     com.android.rkpd \
     com.android.neuralnetworks \
@@ -328,6 +327,12 @@ ifeq ($(RELEASE_PACKAGE_NFC_STACK),NfcNci)
 else
     PRODUCT_PACKAGES += \
         com.android.nfcservices
+endif
+
+# Check if the build supports Profiling module
+ifeq ($(RELEASE_PACKAGE_PROFILING_MODULE),true)
+    PRODUCT_PACKAGES += \
+       com.android.profiling
 endif
 
 ifeq ($(RELEASE_USE_WEBVIEW_BOOTSTRAP_MODULE),true)
