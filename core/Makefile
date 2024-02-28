@@ -2727,6 +2727,8 @@ $(INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP): $(MKBOOTFS) $(COMPRESSION_COMMAND_
 	$(if $(strip $(recovery_wipe)), \
 	  cp -f $(recovery_wipe) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.wipe)
 	ln -sf prop.default $(TARGET_RECOVERY_ROOT_OUT)/default.prop
+	# Silence warnings in first_stage_console.
+	touch $(TARGET_RECOVERY_ROOT_OUT)/linkerconfig/ld.config.txt
 	$(BOARD_RECOVERY_IMAGE_PREPARE)
 	$(hide) touch $@
 
