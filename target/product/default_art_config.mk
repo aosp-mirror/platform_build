@@ -80,7 +80,6 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.os.statsd:framework-statsd \
     com.android.permission:framework-permission \
     com.android.permission:framework-permission-s \
-    com.android.profiling:framework-profiling \
     com.android.scheduling:framework-scheduling \
     com.android.sdkext:framework-sdkextensions \
     com.android.tethering:framework-connectivity \
@@ -105,6 +104,13 @@ else
     PRODUCT_APEX_BOOT_JARS += \
         com.android.nfcservices:framework-nfc
     $(call soong_config_set,bootclasspath,nfc_apex_bootclasspath_fragment,true)
+endif
+
+# Check if build supports Profiling module.
+ifeq ($(RELEASE_PACKAGE_PROFILING_MODULE),true)
+    PRODUCT_APEX_BOOT_JARS += \
+        com.android.profiling:framework-profiling \
+
 endif
 
 # TODO(b/308174306): Adjust this after multiple prebuilts version is supported.
@@ -157,11 +163,17 @@ PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS := \
     com.android.btservices:service-bluetooth \
     com.android.devicelock:service-devicelock \
     com.android.os.statsd:service-statsd \
-    com.android.profiling:service-profiling \
     com.android.scheduling:service-scheduling \
     com.android.tethering:service-connectivity \
     com.android.uwb:service-uwb \
     com.android.wifi:service-wifi \
+
+# Check if build supports Profiling module.
+ifeq ($(RELEASE_PACKAGE_PROFILING_MODULE),true)
+    PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS += \
+        com.android.profiling:service-profiling \
+
+endif
 
 # Overrides the (apex, jar) pairs above when determining the on-device location. The format is:
 # <old_apex>:<old_jar>:<new_apex>:<new_jar>
