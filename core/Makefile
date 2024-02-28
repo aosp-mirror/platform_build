@@ -465,9 +465,7 @@ $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(1) $(6)
 	)
 	$(if $(1),\
 	  cp $$(PRIVATE_MODULES) $$(PRIVATE_MODULE_DIR)/; \
-	  for MODULE in $$(PRIVATE_LOAD_MODULES); do \
-	    basename $$$$MODULE >> $$(PRIVATE_LOAD_FILE); \
-	  done; \
+	  if [ -n "$$(PRIVATE_LOAD_MODULES)" ]; then basename -a $$(PRIVATE_LOAD_MODULES); fi > $$(PRIVATE_LOAD_FILE); \
 	)
 	# The ln -sf + find -delete sequence is to remove any modules in
 	# PRIVATE_EXTRA_MODULES which have same basename as MODULES in PRIVATE_MODULES
