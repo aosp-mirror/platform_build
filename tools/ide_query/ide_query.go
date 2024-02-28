@@ -1,8 +1,25 @@
+/*
+ * Copyright (C) 2024 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 // Binary ide_query generates and analyzes build artifacts.
 // The produced result can be consumed by IDEs to provide language features.
 package main
 
 import (
+	"bytes"
 	"container/list"
 	"context"
 	"encoding/json"
@@ -21,9 +38,13 @@ import (
 
 // Env contains information about the current environment.
 type Env struct {
-	LunchTarget LunchTarget
-	RepoDir     string
-	OutDir      string
+	LunchTarget    LunchTarget
+	RepoDir        string
+	OutDir         string
+	ClangToolsRoot string
+
+	CcFiles   []string
+	JavaFiles []string
 }
 
 // LunchTarget is a parsed Android lunch target.
@@ -64,6 +85,7 @@ func main() {
 	var env Env
 	env.OutDir = os.Getenv("OUT_DIR")
 	env.RepoDir = os.Getenv("ANDROID_BUILD_TOP")
+	env.ClangToolsRoot = os.Getenv("PREBUILTS_CLANG_TOOLS_ROOT")
 	flag.Var(&env.LunchTarget, "lunch_target", "The lunch target to query")
 	flag.Parse()
 	files := flag.Args()
@@ -73,64 +95,169 @@ func main() {
 		return
 	}
 
-	var javaFiles []string
 	for _, f := range files {
 		switch {
 		case strings.HasSuffix(f, ".java") || strings.HasSuffix(f, ".kt"):
-			javaFiles = append(javaFiles, f)
+			env.JavaFiles = append(env.JavaFiles, f)
+		case strings.HasSuffix(f, ".cc") || strings.HasSuffix(f, ".cpp") || strings.HasSuffix(f, ".h"):
+			env.CcFiles = append(env.CcFiles, f)
 		default:
 			log.Printf("File %q is supported - will be skipped.", f)
 		}
 	}
 
 	ctx := context.Background()
-	javaDepsPath := path.Join(env.RepoDir, env.OutDir, "soong/module_bp_java_deps.json")
-	// TODO(michaelmerg): Figure out if module_bp_java_deps.json is outdated.
+	// TODO(michaelmerg): Figure out if module_bp_java_deps.json and compile_commands.json is outdated.
 	runMake(ctx, env, "nothing")
 
-	javaModules, err := loadJavaModules(javaDepsPath)
+	javaModules, javaFileToModuleMap, err := loadJavaModules(&env)
 	if err != nil {
-		log.Fatalf("Failed to load java modules: %v", err)
+		log.Printf("Failed to load java modules: %v", err)
+	}
+	toMake := getJavaTargets(javaFileToModuleMap)
+
+	ccTargets, status := getCCTargets(ctx, &env)
+	if status != nil && status.Code != pb.Status_OK {
+		log.Fatalf("Failed to query cc targets: %v", *status.Message)
+	}
+	toMake = append(toMake, ccTargets...)
+	fmt.Printf("Running make for modules: %v\n", strings.Join(toMake, ", "))
+	if err := runMake(ctx, env, toMake...); err != nil {
+		log.Printf("Building deps failed: %v", err)
 	}
 
-	fileToModule := make(map[string]*javaModule) // file path -> module
-	for _, f := range javaFiles {
-		for _, m := range javaModules {
-			if !slices.Contains(m.Srcs, f) {
-				continue
-			}
-			if fileToModule[f] != nil {
-				// TODO(michaelmerg): Handle the case where a file is covered by multiple modules.
-				log.Printf("File %q found in module %q but is already covered by module %q", f, m.Name, fileToModule[f].Name)
-				continue
-			}
-			fileToModule[f] = m
+	res := getJavaInputs(&env, javaModules, javaFileToModuleMap)
+	ccAnalysis := getCCInputs(ctx, &env)
+	proto.Merge(res, ccAnalysis)
+
+	res.BuildArtifactRoot = env.OutDir
+	data, err := proto.Marshal(res)
+	if err != nil {
+		log.Fatalf("Failed to marshal result proto: %v", err)
+	}
+
+	err = os.WriteFile(path.Join(env.RepoDir, env.OutDir, "ide_query.pb"), data, 0644)
+	if err != nil {
+		log.Fatalf("Failed to write result proto: %v", err)
+	}
+
+	for _, s := range res.Sources {
+		fmt.Printf("%s: %v (Deps: %d, Generated: %d)\n", s.GetPath(), s.GetStatus(), len(s.GetDeps()), len(s.GetGenerated()))
+	}
+}
+
+func repoState(env *Env) *pb.RepoState {
+	const compDbPath = "soong/development/ide/compdb/compile_commands.json"
+	return &pb.RepoState{
+		RepoDir:        env.RepoDir,
+		ActiveFilePath: env.CcFiles,
+		OutDir:         env.OutDir,
+		CompDbPath:     path.Join(env.OutDir, compDbPath),
+	}
+}
+
+func runCCanalyzer(ctx context.Context, env *Env, mode string, in []byte) ([]byte, error) {
+	ccAnalyzerPath := path.Join(env.ClangToolsRoot, "bin/ide_query_cc_analyzer")
+	outBuffer := new(bytes.Buffer)
+
+	inBuffer := new(bytes.Buffer)
+	inBuffer.Write(in)
+
+	cmd := exec.CommandContext(ctx, ccAnalyzerPath, "--mode="+mode)
+	cmd.Dir = env.RepoDir
+
+	cmd.Stdin = inBuffer
+	cmd.Stdout = outBuffer
+	cmd.Stderr = os.Stderr
+
+	err := cmd.Run()
+
+	return outBuffer.Bytes(), err
+}
+
+// Execute cc_analyzer and get all the targets that needs to be build for analyzing files.
+func getCCTargets(ctx context.Context, env *Env) ([]string, *pb.Status) {
+	state := repoState(env)
+	bytes, err := proto.Marshal(state)
+	if err != nil {
+		log.Fatalln("Failed to serialize state:", err)
+	}
+
+	resp := new(pb.DepsResponse)
+	result, err := runCCanalyzer(ctx, env, "deps", bytes)
+	if marshal_err := proto.Unmarshal(result, resp); marshal_err != nil {
+		return nil, &pb.Status{
+			Code:    pb.Status_FAILURE,
+			Message: proto.String("Malformed response from cc_analyzer: " + marshal_err.Error()),
 		}
 	}
 
-	var toMake []string
-	for _, m := range fileToModule {
-		toMake = append(toMake, m.Name)
+	var targets []string
+	if resp.Status != nil && resp.Status.Code != pb.Status_OK {
+		return targets, resp.Status
 	}
-	fmt.Printf("Running make for modules: %v\n", strings.Join(toMake, ", "))
-	if err := runMake(ctx, env, toMake...); err != nil {
-		log.Fatalf("Failed to run make: %v", err)
+	for _, deps := range resp.Deps {
+		targets = append(targets, deps.BuildTarget...)
 	}
 
+	status := &pb.Status{Code: pb.Status_OK}
+	if err != nil {
+		status = &pb.Status{
+			Code:    pb.Status_FAILURE,
+			Message: proto.String(err.Error()),
+		}
+	}
+	return targets, status
+}
+
+func getCCInputs(ctx context.Context, env *Env) *pb.IdeAnalysis {
+	state := repoState(env)
+	bytes, err := proto.Marshal(state)
+	if err != nil {
+		log.Fatalln("Failed to serialize state:", err)
+	}
+
+	resp := new(pb.IdeAnalysis)
+	result, err := runCCanalyzer(ctx, env, "inputs", bytes)
+	if marshal_err := proto.Unmarshal(result, resp); marshal_err != nil {
+		resp.Status = &pb.Status{
+			Code:    pb.Status_FAILURE,
+			Message: proto.String("Malformed response from cc_analyzer: " + marshal_err.Error()),
+		}
+		return resp
+	}
+
+	if err != nil && (resp.Status == nil || resp.Status.Code == pb.Status_OK) {
+		resp.Status = &pb.Status{
+			Code:    pb.Status_FAILURE,
+			Message: proto.String(err.Error()),
+		}
+	}
+	return resp
+}
+
+func getJavaTargets(javaFileToModuleMap map[string]*javaModule) []string {
+	var targets []string
+	for _, m := range javaFileToModuleMap {
+		targets = append(targets, m.Name)
+	}
+	return targets
+}
+
+func getJavaInputs(env *Env, javaModules map[string]*javaModule, javaFileToModuleMap map[string]*javaModule) *pb.IdeAnalysis {
 	var sources []*pb.SourceFile
 	type depsAndGenerated struct {
 		Deps      []string
 		Generated []*pb.GeneratedFile
 	}
 	moduleToDeps := make(map[string]*depsAndGenerated)
-	for _, f := range files {
+	for _, f := range env.JavaFiles {
 		file := &pb.SourceFile{
-			Path:       f,
-			WorkingDir: env.RepoDir,
+			Path: f,
 		}
 		sources = append(sources, file)
 
-		m := fileToModule[f]
+		m := javaFileToModuleMap[f]
 		if m == nil {
 			file.Status = &pb.Status{
 				Code:    pb.Status_FAILURE,
@@ -167,24 +294,8 @@ func main() {
 		file.Generated = generated
 		file.Deps = deps
 	}
-
-	res := &pb.IdeAnalysis{
-		BuildArtifactRoot: env.OutDir,
-		Sources:           sources,
-		Status:            &pb.Status{Code: pb.Status_OK},
-	}
-	data, err := proto.Marshal(res)
-	if err != nil {
-		log.Fatalf("Failed to marshal result proto: %v", err)
-	}
-
-	err = os.WriteFile(path.Join(env.OutDir, "ide_query.pb"), data, 0644)
-	if err != nil {
-		log.Fatalf("Failed to write result proto: %v", err)
-	}
-
-	for _, s := range sources {
-		fmt.Printf("%s: %v (Deps: %d, Generated: %d)\n", s.GetPath(), s.GetStatus(), len(s.GetDeps()), len(s.GetGenerated()))
+	return &pb.IdeAnalysis{
+		Sources: sources,
 	}
 }
 
@@ -214,26 +325,40 @@ type javaModule struct {
 	SrcJars []string `json:"srcjars,omitempty"`
 }
 
-func loadJavaModules(path string) (map[string]*javaModule, error) {
-	data, err := os.ReadFile(path)
+func loadJavaModules(env *Env) (map[string]*javaModule, map[string]*javaModule, error) {
+	javaDepsPath := path.Join(env.RepoDir, env.OutDir, "soong/module_bp_java_deps.json")
+	data, err := os.ReadFile(javaDepsPath)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	var ret map[string]*javaModule // module name -> module
-	if err = json.Unmarshal(data, &ret); err != nil {
-		return nil, err
+	var moduleMapping map[string]*javaModule // module name -> module
+	if err = json.Unmarshal(data, &moduleMapping); err != nil {
+		return nil, nil, err
 	}
 
-	for name, module := range ret {
+	javaModules := make(map[string]*javaModule)
+	javaFileToModuleMap := make(map[string]*javaModule)
+	for name, module := range moduleMapping {
 		if strings.HasSuffix(name, "-jarjar") || strings.HasSuffix(name, ".impl") {
-			delete(ret, name)
 			continue
 		}
-
 		module.Name = name
+		javaModules[name] = module
+		for _, src := range module.Srcs {
+			if !slices.Contains(env.JavaFiles, src) {
+				// We are only interested in active files.
+				continue
+			}
+			if javaFileToModuleMap[src] != nil {
+				// TODO(michaelmerg): Handle the case where a file is covered by multiple modules.
+				log.Printf("File %q found in module %q but is already covered by module %q", src, module.Name, javaFileToModuleMap[src].Name)
+				continue
+			}
+			javaFileToModuleMap[src] = module
+		}
 	}
-	return ret, nil
+	return javaModules, javaFileToModuleMap, nil
 }
 
 func transitiveDeps(m *javaModule, modules map[string]*javaModule) []string {
