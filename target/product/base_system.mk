@@ -17,7 +17,9 @@
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
     abx \
+    aconfigd \
     adbd_system_api \
+    aflags \
     am \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
@@ -223,6 +225,7 @@ PRODUCT_PACKAGES += \
     mke2fs \
     mkfs.erofs \
     monkey \
+    misctrl \
     mtectrl \
     ndc \
     netd \
@@ -318,6 +321,11 @@ ifeq ($(RELEASE_PACKAGE_NFC_STACK),NfcNci)
 else
     PRODUCT_PACKAGES += \
         com.android.nfcservices
+endif
+
+ifeq ($(RELEASE_USE_WEBVIEW_BOOTSTRAP_MODULE),true)
+    PRODUCT_PACKAGES += \
+        com.android.webview.bootstrap
 endif
 
 # VINTF data for system image

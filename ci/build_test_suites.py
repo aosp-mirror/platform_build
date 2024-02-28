@@ -25,7 +25,7 @@ import pathlib
 import re
 import subprocess
 import sys
-from typing import Any, Dict, Set, Text
+from typing import Any
 
 import test_mapping_module_retriever
 
@@ -80,6 +80,9 @@ def build_affected_modules(args: argparse.Namespace):
   # Call the build command with everything.
   build_command = base_build_command(args)
   build_command.extend(modules_to_build)
+  # When not building general-tests we also have to build the general tests
+  # shared libs.
+  build_command.append('general-tests-shared-libs')
 
   run_command(build_command, print_output=True)
 
@@ -104,7 +107,7 @@ def base_build_command(args: argparse.Namespace) -> list:
 
 def run_command(
     args: list[str],
-    env: Dict[Text, Text] = os.environ,
+    env: dict[str, str] = os.environ,
     print_output: bool = False,
 ) -> str:
   result = subprocess.run(
@@ -129,8 +132,8 @@ def run_command(
 
 
 def find_modules_to_build(
-    change_info: pathlib.Path, extra_required_modules: list[Text]
-) -> Set[Text]:
+    change_info: pathlib.Path, extra_required_modules: list[str]
+) -> set[str]:
   changed_files = find_changed_files(change_info)
 
   test_mappings = test_mapping_module_retriever.GetTestMappings(
@@ -147,7 +150,7 @@ def find_modules_to_build(
   return modules_to_build
 
 
-def find_changed_files(change_info: pathlib.Path) -> Set[Text]:
+def find_changed_files(change_info: pathlib.Path) -> set[str]:
   with open(change_info) as change_info_file:
     change_info_contents = json.load(change_info_file)
 
@@ -164,8 +167,8 @@ def find_changed_files(change_info: pathlib.Path) -> Set[Text]:
 
 
 def find_affected_modules(
-    test_mappings: Dict[str, Any], changed_files: Set[Text]
-) -> Set[Text]:
+    test_mappings: dict[str, Any], changed_files: set[str]
+) -> set[str]:
   modules = set()
 
   # The test_mappings object returned by GetTestMappings is organized as
@@ -200,7 +203,7 @@ def find_affected_modules(
 # TODO(lucafarsi): Share this logic with the original logic in
 # test_mapping_test_retriever.py
 def matches_file_patterns(
-    file_patterns: list[Text], changed_files: Set[Text]
+    file_patterns: list[set], changed_files: set[str]
 ) -> bool:
   for changed_file in changed_files:
     for pattern in file_patterns:
@@ -211,33 +214,45 @@ def matches_file_patterns(
 
 
 def zip_build_outputs(
-    modules_to_build: Set[Text], dist_dir: Text, target_release: Text
+    modules_to_build: set[str], dist_dir: str, target_release: str
 ):
   src_top = os.environ.get('TOP', os.getcwd())
 
   # Call dumpvars to get the necessary things.
   # TODO(lucafarsi): Don't call soong_ui 4 times for this, --dumpvars-mode can
   # do it but it requires parsing.
-  host_out_testcases = get_soong_var('HOST_OUT_TESTCASES', target_release)
-  target_out_testcases = get_soong_var('TARGET_OUT_TESTCASES', target_release)
-  product_out = get_soong_var('PRODUCT_OUT', target_release)
-  soong_host_out = get_soong_var('SOONG_HOST_OUT', target_release)
-  host_out = get_soong_var('HOST_OUT', target_release)
+  host_out_testcases = pathlib.Path(
+      get_soong_var('HOST_OUT_TESTCASES', target_release)
+  )
+  target_out_testcases = pathlib.Path(
+      get_soong_var('TARGET_OUT_TESTCASES', target_release)
+  )
+  product_out = pathlib.Path(get_soong_var('PRODUCT_OUT', target_release))
+  soong_host_out = pathlib.Path(get_soong_var('SOONG_HOST_OUT', target_release))
+  host_out = pathlib.Path(get_soong_var('HOST_OUT', target_release))
 
   # Call the class to package the outputs.
   # TODO(lucafarsi): Move this code into a replaceable class.
   host_paths = []
   target_paths = []
+  host_config_files = []
+  target_config_files = []
   for module in modules_to_build:
     host_path = os.path.join(host_out_testcases, module)
     if os.path.exists(host_path):
       host_paths.append(host_path)
+      collect_config_files(src_top, host_path, host_config_files)
 
     target_path = os.path.join(target_out_testcases, module)
     if os.path.exists(target_path):
       target_paths.append(target_path)
+      collect_config_files(src_top, target_path, target_config_files)
 
-  zip_command = ['time', os.path.join(host_out, 'bin', 'soong_zip')]
+  zip_test_configs_zips(
+      dist_dir, host_out, product_out, host_config_files, target_config_files
+  )
+
+  zip_command = base_zip_command(host_out, dist_dir, 'general-tests.zip')
 
   # Add host testcases.
   zip_command.append('-C')
@@ -274,11 +289,105 @@ def zip_build_outputs(
   zip_command.append('-f')
   zip_command.append(os.path.join(framework_path, 'vts-tradefed.jar'))
 
-  # Zip to the DIST dir.
-  zip_command.append('-o')
-  zip_command.append(os.path.join(dist_dir, 'general-tests.zip'))
-
   run_command(zip_command, print_output=True)
+
+
+def collect_config_files(
+    src_top: pathlib.Path, root_dir: pathlib.Path, config_files: list[str]
+):
+  for root, dirs, files in os.walk(os.path.join(src_top, root_dir)):
+    for file in files:
+      if file.endswith('.config'):
+        config_files.append(os.path.join(root_dir, file))
+
+
+def base_zip_command(
+    host_out: pathlib.Path, dist_dir: pathlib.Path, name: str
+) -> list[str]:
+  return [
+      'time',
+      os.path.join(host_out, 'bin', 'soong_zip'),
+      '-d',
+      '-o',
+      os.path.join(dist_dir, name),
+  ]
+
+
+# generate general-tests_configs.zip which contains all of the .config files
+# that were built and general-tests_list.zip which contains a text file which
+# lists all of the .config files that are in general-tests_configs.zip.
+#
+# general-tests_comfigs.zip is organized as follows:
+# /
+#   host/
+#     testcases/
+#       test_1.config
+#       test_2.config
+#       ...
+#   target/
+#     testcases/
+#       test_1.config
+#       test_2.config
+#       ...
+#
+# So the process is we write out the paths to all the host config files into one
+# file and all the paths to the target config files in another. We also write
+# the paths to all the config files into a third file to use for
+# general-tests_list.zip.
+def zip_test_configs_zips(
+    dist_dir: pathlib.Path,
+    host_out: pathlib.Path,
+    product_out: pathlib.Path,
+    host_config_files: list[str],
+    target_config_files: list[str],
+):
+  with open(
+      os.path.join(host_out, 'host_general-tests_list'), 'w'
+  ) as host_list_file, open(
+      os.path.join(product_out, 'target_general-tests_list'), 'w'
+  ) as target_list_file, open(
+      os.path.join(host_out, 'general-tests_list'), 'w'
+  ) as list_file:
+
+    for config_file in host_config_files:
+      host_list_file.write(config_file + '\n')
+      list_file.write('host/' + os.path.relpath(config_file, host_out) + '\n')
+
+    for config_file in target_config_files:
+      target_list_file.write(config_file + '\n')
+      list_file.write(
+          'target/' + os.path.relpath(config_file, product_out) + '\n'
+      )
+
+  tests_config_zip_command = base_zip_command(
+      host_out, dist_dir, 'general-tests_configs.zip'
+  )
+  tests_config_zip_command.append('-P')
+  tests_config_zip_command.append('host')
+  tests_config_zip_command.append('-C')
+  tests_config_zip_command.append(host_out)
+  tests_config_zip_command.append('-l')
+  tests_config_zip_command.append(
+      os.path.join(host_out, 'host_general-tests_list')
+  )
+  tests_config_zip_command.append('-P')
+  tests_config_zip_command.append('target')
+  tests_config_zip_command.append('-C')
+  tests_config_zip_command.append(product_out)
+  tests_config_zip_command.append('-l')
+  tests_config_zip_command.append(
+      os.path.join(product_out, 'target_general-tests_list')
+  )
+  run_command(tests_config_zip_command, print_output=True)
+
+  tests_list_zip_command = base_zip_command(
+      host_out, dist_dir, 'general-tests_list.zip'
+  )
+  tests_list_zip_command.append('-C')
+  tests_list_zip_command.append(host_out)
+  tests_list_zip_command.append('-f')
+  tests_list_zip_command.append(os.path.join(host_out, 'general-tests_list'))
+  run_command(tests_list_zip_command, print_output=True)
 
 
 def get_soong_var(var: str, target_release: str) -> str:

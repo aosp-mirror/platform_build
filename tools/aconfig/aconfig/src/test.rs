@@ -15,6 +15,9 @@
  */
 
 #[cfg(test)]
+pub use test_utils::*;
+
+#[cfg(test)]
 pub mod test_utils {
     use crate::commands::Input;
     use aconfig_protos::ProtoParsedFlags;
@@ -340,6 +343,3 @@ parsed_flag {
         );
     }
 }
-
-#[cfg(test)]
-pub use test_utils::*;

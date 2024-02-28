@@ -49,6 +49,3 @@ TARGET_SYSTEM_PROP += \
 # use the go specific handheld_core_hardware.xml from frameworks
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/go_handheld_core_hardware.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/handheld_core_hardware.xml
-
-# Dedupe VNDK libraries with identical core variants.
-TARGET_VNDK_USE_CORE_VARIANT := true

@@ -1,0 +1,42 @@
+rust_test {
+    name: "aconfig_storage.test.rust",
+    srcs: [
+        "storage_lib_rust_test.rs"
+    ],
+    rustlibs: [
+        "libanyhow",
+        "libaconfig_storage_file",
+        "libprotobuf",
+        "libtempfile",
+    ],
+    data: [
+        ":ro.package.map",
+        ":ro.flag.map",
+        ":ro.flag.val",
+    ],
+    test_suites: ["general-tests"],
+}
+
+cc_test {
+    name: "aconfig_storage.test.cpp",
+    srcs: [
+        "storage_lib_cc_test.cpp",
+    ],
+    static_libs: [
+        "libgmock",
+        "libaconfig_storage_protos_cc",
+        "libprotobuf-cpp-lite",
+        "libaconfig_storage_cc",
+        "libbase",
+        "liblog",
+    ],
+    data: [
+        ":ro.package.map",
+        ":ro.flag.map",
+        ":ro.flag.val",
+    ],
+    test_suites: [
+        "device-tests",
+        "general-tests",
+    ],
+}

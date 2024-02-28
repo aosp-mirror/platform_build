@@ -152,10 +152,6 @@ ifdef PRODUCT_AVF_ENABLED
 $(call add_soong_config_var_value,ANDROID,avf_enabled,$(PRODUCT_AVF_ENABLED))
 endif
 
-ifdef PRODUCT_AVF_KERNEL_MODULES_ENABLED
-$(call add_soong_config_var_value,ANDROID,avf_kernel_modules_enabled,$(PRODUCT_AVF_KERNEL_MODULES_ENABLED))
-endif
-
 $(call add_soong_config_var_value,ANDROID,release_avf_allow_preinstalled_apps,$(RELEASE_AVF_ALLOW_PREINSTALLED_APPS))
 $(call add_soong_config_var_value,ANDROID,release_avf_enable_device_assignment,$(RELEASE_AVF_ENABLE_DEVICE_ASSIGNMENT))
 $(call add_soong_config_var_value,ANDROID,release_avf_enable_dice_changes,$(RELEASE_AVF_ENABLE_DICE_CHANGES))
@@ -164,6 +160,7 @@ $(call add_soong_config_var_value,ANDROID,release_avf_enable_multi_tenant_microd
 $(call add_soong_config_var_value,ANDROID,release_avf_enable_remote_attestation,$(RELEASE_AVF_ENABLE_REMOTE_ATTESTATION))
 $(call add_soong_config_var_value,ANDROID,release_avf_enable_vendor_modules,$(RELEASE_AVF_ENABLE_VENDOR_MODULES))
 $(call add_soong_config_var_value,ANDROID,release_avf_enable_virt_cpufreq,$(RELEASE_AVF_ENABLE_VIRT_CPUFREQ))
+$(call add_soong_config_var_value,ANDROID,release_avf_microdroid_kernel_version,$(RELEASE_AVF_MICRODROID_KERNEL_VERSION))
 
 $(call add_soong_config_var_value,ANDROID,release_binder_death_recipient_weak_from_jni,$(RELEASE_BINDER_DEATH_RECIPIENT_WEAK_FROM_JNI))
 
@@ -202,5 +199,12 @@ endif
 
 # Add crashrecovery build flag to soong
 $(call soong_config_set,ANDROID,release_crashrecovery_module,$(RELEASE_CRASHRECOVERY_MODULE))
+ifeq (true,$(RELEASE_CRASHRECOVERY_FILE_MOVE))
+  $(call soong_config_set,ANDROID,crashrecovery_files_in_module,true)
+  $(call soong_config_set,ANDROID,crashrecovery_files_in_platform,false)
+else
+  $(call soong_config_set,ANDROID,crashrecovery_files_in_module,false)
+  $(call soong_config_set,ANDROID,crashrecovery_files_in_platform,true)
+endif
 # Weirdly required because platform_bootclasspath is using AUTO namespace
 $(call soong_config_set,AUTO,release_crashrecovery_module,$(RELEASE_CRASHRECOVERY_MODULE))
