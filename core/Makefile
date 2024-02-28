@@ -5719,6 +5719,10 @@ ifneq (,$(strip $(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)))
 	  echo "flash vbmeta_$(partition)" >> $@;)
 endif
 endif # BOARD_AVB_ENABLE
+ifneq (,$(strip $(BOARD_CUSTOMIMAGES_PARTITION_LIST)))
+	$(hide) $(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
+	  echo "flash $(partition)" >> $@;)
+endif
 	$(hide) echo "reboot fastboot" >> $@
 	$(hide) echo "update-super" >> $@
 	$(hide) $(foreach partition,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
