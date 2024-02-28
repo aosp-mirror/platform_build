@@ -154,9 +154,9 @@ endef
 
 ifeq ($(RELEASE_CREATE_ACONFIG_STORAGE_FILE),true)
 $(foreach partition, $(_FLAG_PARTITIONS), \
-	$(eval aconfig_storage_package_map.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/package.map) \
-	$(eval aconfig_storage_flag_map.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/flag.map) \
-	$(eval aconfig_storage_flag_val.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/flag.val) \
+	$(eval aconfig_storage_package_map.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/aconfig/package.map) \
+	$(eval aconfig_storage_flag_map.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/aconfig/flag.map) \
+	$(eval aconfig_storage_flag_val.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/aconfig/flag.val) \
 	$(eval $(call generate-partition-aconfig-storage-file, \
 				$(TARGET_OUT_FLAGS)/$(partition)/package.map, \
 				$(TARGET_OUT_FLAGS)/$(partition)/flag.map, \
