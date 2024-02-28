@@ -31,6 +31,7 @@
 #     PLATFORM_VNDK_VERSION
 #     PLATFORM_SYSTEMSDK_VERSIONS
 #     PLATFORM_VERSION_LAST_STABLE
+#     PLATFORM_VERSION_KNOWN_CODENAMES
 #
 
 # Look for an optional file containing overrides of the defaults,
@@ -95,17 +96,10 @@ endif
 PLATFORM_VERSION_LAST_STABLE := $(RELEASE_PLATFORM_VERSION_LAST_STABLE)
 .KATI_READONLY := PLATFORM_VERSION_LAST_STABLE
 
-
-# This are all known codenames. Should this move into the release config?
-PLATFORM_VERSION_KNOWN_CODENAMES := \
-Base Base11 Cupcake Donut Eclair Eclair01 EclairMr1 Froyo Gingerbread GingerbreadMr1 \
-Honeycomb HoneycombMr1 HoneycombMr2 IceCreamSandwich IceCreamSandwichMr1 \
-JellyBean JellyBeanMr1 JellyBeanMr2 Kitkat KitkatWatch Lollipop LollipopMr1 M N NMr1 O OMr1 P \
-Q R S Sv2 Tiramisu UpsideDownCake VanillaIceCream
-
-# Convert from space separated list to comma separated
-PLATFORM_VERSION_KNOWN_CODENAMES := \
-  $(call normalize-comma-list,$(PLATFORM_VERSION_KNOWN_CODENAMES))
+ifdef PLATFORM_VERSION_KNOWN_CODENAMES
+  $(error Do not set PLATFORM_VERSION_KNOWN_CODENAMES directly. Use RELEASE_PLATFORM_VERSION_KNOWN_CODENAMES. value: $(PLATFORM_VERSION_KNOWN_CODENAMES))
+endif
+PLATFORM_VERSION_KNOWN_CODENAMES := $(RELEASE_PLATFORM_VERSION_KNOWN_CODENAMES)
 .KATI_READONLY := PLATFORM_VERSION_KNOWN_CODENAMES
 
 ifndef PLATFORM_VERSION
@@ -157,21 +151,23 @@ ifndef DEFAULT_APP_TARGET_SDK
 endif
 .KATI_READONLY := DEFAULT_APP_TARGET_SDK
 
-ifndef PLATFORM_VNDK_VERSION
-  # This is the definition of the VNDK version for the current VNDK libraries.
-  # With trunk stable, VNDK will not be frozen but deprecated.
-  # This version will be removed with the VNDK deprecation.
-  ifeq (REL,$(PLATFORM_VERSION_CODENAME))
-    ifdef RELEASE_PLATFORM_VNDK_VERSION
-      PLATFORM_VNDK_VERSION := $(RELEASE_PLATFORM_VNDK_VERSION)
+ifeq ($(KEEP_VNDK),true)
+  ifndef PLATFORM_VNDK_VERSION
+    # This is the definition of the VNDK version for the current VNDK libraries.
+    # With trunk stable, VNDK will not be frozen but deprecated.
+    # This version will be removed with the VNDK deprecation.
+    ifeq (REL,$(PLATFORM_VERSION_CODENAME))
+      ifdef RELEASE_PLATFORM_VNDK_VERSION
+        PLATFORM_VNDK_VERSION := $(RELEASE_PLATFORM_VNDK_VERSION)
+      else
+        PLATFORM_VNDK_VERSION := $(PLATFORM_SDK_VERSION)
+      endif
     else
-      PLATFORM_VNDK_VERSION := $(PLATFORM_SDK_VERSION)
+      PLATFORM_VNDK_VERSION := $(PLATFORM_VERSION_CODENAME)
     endif
-  else
-    PLATFORM_VNDK_VERSION := $(PLATFORM_VERSION_CODENAME)
   endif
+  .KATI_READONLY := PLATFORM_VNDK_VERSION
 endif
-.KATI_READONLY := PLATFORM_VNDK_VERSION
 
 ifndef PLATFORM_SYSTEMSDK_MIN_VERSION
   # This is the oldest version of system SDK that the platform supports. Contrary
