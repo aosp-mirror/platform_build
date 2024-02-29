@@ -21,18 +21,21 @@ function _create_out_symlink_for_cog() {
     OUT_DIR="out"
   fi
 
-  if [[ -L "${OUT_DIR}" ]]; then
+  # getoutdir ensures paths are absolute. envsetup could be called from a
+  # directory other than the root of the source tree
+  local outdir=$(getoutdir)
+  if [[ -L "${outdir}" ]]; then
     return
   fi
-  if [ -d "${OUT_DIR}" ]; then
-    echo -e "\tOutput directory ${OUT_DIR} cannot be present in a Cog workspace."
-    echo -e "\tDelete \"${OUT_DIR}\" or create a symlink from \"${OUT_DIR}\" to a directory outside your workspace."
+  if [ -d "${outdir}" ]; then
+    echo -e "\tOutput directory ${outdir} cannot be present in a Cog workspace."
+    echo -e "\tDelete \"${outdir}\" or create a symlink from \"${outdir}\" to a directory outside your workspace."
     return 1
   fi
 
   DEFAULT_OUTPUT_DIR="${HOME}/.cog/android-build-out"
   mkdir -p ${DEFAULT_OUTPUT_DIR}
-  ln -s ${DEFAULT_OUTPUT_DIR} `pwd`/out
+  ln -s ${DEFAULT_OUTPUT_DIR} ${outdir}
 }
 
 # This function sets up the build environment to be appropriate for Cog.
