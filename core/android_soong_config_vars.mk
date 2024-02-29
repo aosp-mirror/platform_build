@@ -167,11 +167,6 @@ ifeq (true,$(MODULE_BUILD_FROM_SOURCE))
 $(call add_soong_config_var_value,ANDROID,module_build_from_source,true)
 endif
 
-# Messaging app vars
-ifeq (eng,$(TARGET_BUILD_VARIANT))
-$(call soong_config_set,messaging,build_variant_eng,true)
-endif
-
 # Enable SystemUI optimizations by default unless explicitly set.
 SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
@@ -231,5 +226,17 @@ endif
 
 # Add crashrecovery build flag to soong
 $(call soong_config_set,ANDROID,release_crashrecovery_module,$(RELEASE_CRASHRECOVERY_MODULE))
+# Add crashrecovery file move flags to soong, for both platform and module
+ifeq (true,$(RELEASE_CRASHRECOVERY_FILE_MOVE))
+  $(call soong_config_set,ANDROID,crashrecovery_files_in_module,true)
+  $(call soong_config_set,ANDROID,crashrecovery_files_in_platform,false)
+else
+  $(call soong_config_set,ANDROID,crashrecovery_files_in_module,false)
+  $(call soong_config_set,ANDROID,crashrecovery_files_in_platform,true)
+endif
 # Required as platform_bootclasspath is using this namespace
 $(call soong_config_set,bootclasspath,release_crashrecovery_module,$(RELEASE_CRASHRECOVERY_MODULE))
+
+# Enable Profiling module. Also used by platform_bootclasspath.
+$(call soong_config_set,ANDROID,release_package_profiling_module,$(RELEASE_PACKAGE_PROFILING_MODULE))
+$(call soong_config_set,bootclasspath,release_package_profiling_module,$(RELEASE_PACKAGE_PROFILING_MODULE))

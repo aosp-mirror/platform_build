@@ -2727,6 +2727,8 @@ $(INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP): $(MKBOOTFS) $(COMPRESSION_COMMAND_
 	$(if $(strip $(recovery_wipe)), \
 	  cp -f $(recovery_wipe) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.wipe)
 	ln -sf prop.default $(TARGET_RECOVERY_ROOT_OUT)/default.prop
+	# Silence warnings in first_stage_console.
+	touch $(TARGET_RECOVERY_ROOT_OUT)/linkerconfig/ld.config.txt
 	$(BOARD_RECOVERY_IMAGE_PREPARE)
 	$(hide) touch $@
 
@@ -3395,6 +3397,14 @@ endif
 
 FULL_SYSTEMIMAGE_DEPS += $(INTERNAL_ROOT_FILES) $(INSTALLED_FILES_FILE_ROOT)
 
+define write-file-lines
+$(1):
+	@echo Writing $$@
+	rm -f $$@
+	echo -n > $$@
+	$$(foreach f,$(2),echo "$$(f)" >> $$@$$(newline))
+endef
+
 # -----------------------------------------------------------------
 ifdef BUILDING_SYSTEM_IMAGE
 
@@ -3447,14 +3457,6 @@ BUILT_SYSTEMIMAGE :=$= $(systemimage_intermediates)/system.img
 # Used by the bazel sandwich to request the staging dir be built
 $(systemimage_intermediates)/staging_dir.stamp: $(FULL_SYSTEMIMAGE_DEPS)
 	touch $@
-
-define write-file-lines
-$(1):
-	@echo Writing $$@
-	rm -f $$@
-	echo -n > $$@
-	$$(foreach f,$(2),echo "$$(f)" >> $$@$$(newline))
-endef
 
 # $(1): output file
 define build-systemimage-target
@@ -5110,6 +5112,7 @@ $(error EMPTY_VENDOR_SKU_PLACEHOLDER is an internal variable and cannot be used 
 endif
 
 # -- Check system and system_ext manifests / matrices including fragments (excluding other framework manifests / matrices, e.g. product);
+ifdef BUILDING_SYSTEM_IMAGE
 check_vintf_system_deps := $(filter $(TARGET_OUT)/etc/vintf/% \
                                     $(TARGET_OUT_SYSTEM_EXT)/etc/vintf/%, \
                                     $(check_vintf_common_srcs))
@@ -5138,6 +5141,8 @@ $(call declare-1p-target,$(vintffm_log))
 
 endif # check_vintf_system_deps
 check_vintf_system_deps :=
+
+endif # BUILDING_SYSTEM_IMAGE
 
 # -- Check vendor manifest / matrix including fragments (excluding other device manifests / matrices)
 check_vintf_vendor_deps := $(filter $(TARGET_OUT_VENDOR)/etc/vintf/% \
@@ -5714,6 +5719,10 @@ ifneq (,$(strip $(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)))
 	  echo "flash vbmeta_$(partition)" >> $@;)
 endif
 endif # BOARD_AVB_ENABLE
+ifneq (,$(strip $(BOARD_CUSTOMIMAGES_PARTITION_LIST)))
+	$(hide) $(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
+	  echo "flash $(partition)" >> $@;)
+endif
 	$(hide) echo "reboot fastboot" >> $@
 	$(hide) echo "update-super" >> $@
 	$(hide) $(foreach partition,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \

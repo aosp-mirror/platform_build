@@ -335,6 +335,8 @@ $(call add_json_bool, KeepVndk, $(filter true,$(KEEP_VNDK)))
 
 $(call add_json_bool, CheckVendorSeappViolations, $(filter true,$(CHECK_VENDOR_SEAPP_VIOLATIONS)))
 
+$(call add_json_list, BuildIgnoreApexContributionContents, $(sort $(PRODUCT_BUILD_IGNORE_APEX_CONTRIBUTION_CONTENTS)))
+
 $(call add_json_map, PartitionVarsForBazelMigrationOnlyDoNotUse)
   $(call add_json_str,  ProductDirectory,    $(dir $(INTERNAL_PRODUCT)))
 
@@ -397,6 +399,10 @@ $(call add_json_map, PartitionVarsForBazelMigrationOnlyDoNotUse)
 $(call end_json_map)
 
 $(call add_json_bool, BuildFromSourceStub, $(findstring true,$(PRODUCT_BUILD_FROM_SOURCE_STUB) $(BUILD_FROM_SOURCE_STUB)))
+
+$(call add_json_bool, HiddenapiExportableStubs, $(filter true,$(PRODUCT_HIDDEN_API_EXPORTABLE_STUBS)))
+
+$(call add_json_bool, ExportRuntimeApis, $(filter true,$(PRODUCT_EXPORT_RUNTIME_APIS)))
 
 $(call json_end)
 

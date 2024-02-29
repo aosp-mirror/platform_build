@@ -75,11 +75,11 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.media:updatable-media \
     com.android.mediaprovider:framework-mediaprovider \
     com.android.mediaprovider:framework-pdf \
+    com.android.mediaprovider:framework-pdf-v \
     com.android.ondevicepersonalization:framework-ondevicepersonalization \
     com.android.os.statsd:framework-statsd \
     com.android.permission:framework-permission \
     com.android.permission:framework-permission-s \
-    com.android.profiling:framework-profiling \
     com.android.scheduling:framework-scheduling \
     com.android.sdkext:framework-sdkextensions \
     com.android.tethering:framework-connectivity \
@@ -106,11 +106,19 @@ else
     $(call soong_config_set,bootclasspath,nfc_apex_bootclasspath_fragment,true)
 endif
 
+# Check if build supports Profiling module.
+ifeq ($(RELEASE_PACKAGE_PROFILING_MODULE),true)
+    PRODUCT_APEX_BOOT_JARS += \
+        com.android.profiling:framework-profiling \
+
+endif
+
 # TODO(b/308174306): Adjust this after multiple prebuilts version is supported.
 # APEX boot jars that are not in prebuilt apexes.
 # Keep the list sorted by module names and then library names.
 PRODUCT_APEX_BOOT_JARS_FOR_SOURCE_BUILD_ONLY := \
     com.android.mediaprovider:framework-pdf \
+    com.android.mediaprovider:framework-pdf-v \
 
 # List of system_server classpath jars delivered via apex.
 # Keep the list sorted by module names and then library names.
@@ -155,11 +163,17 @@ PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS := \
     com.android.btservices:service-bluetooth \
     com.android.devicelock:service-devicelock \
     com.android.os.statsd:service-statsd \
-    com.android.profiling:service-profiling \
     com.android.scheduling:service-scheduling \
     com.android.tethering:service-connectivity \
     com.android.uwb:service-uwb \
     com.android.wifi:service-wifi \
+
+# Check if build supports Profiling module.
+ifeq ($(RELEASE_PACKAGE_PROFILING_MODULE),true)
+    PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS += \
+        com.android.profiling:service-profiling \
+
+endif
 
 # Overrides the (apex, jar) pairs above when determining the on-device location. The format is:
 # <old_apex>:<old_jar>:<new_apex>:<new_jar>
