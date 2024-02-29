@@ -143,12 +143,6 @@ cc_aconfig_library {
 }
 
 cc_aconfig_library {
-    name: "aconfig_test_cpp_library_exported_variant",
-    aconfig_declarations: "aconfig.test.flags",
-    mode: "exported",
-}
-
-cc_aconfig_library {
     name: "aconfig_test_cpp_library_force_read_only_variant",
     aconfig_declarations: "aconfig.test.flags",
     mode: "force-read-only",
@@ -184,6 +178,14 @@ cc_test {
     test_suites: ["general-tests"],
 }
 
+// TODO(327420679): Enable export mode for native flag library
+/*
+cc_aconfig_library {
+    name: "aconfig_test_cpp_library_exported_variant",
+    aconfig_declarations: "aconfig.test.flags",
+    mode: "exported",
+}
+
 cc_test {
     name: "aconfig.test.cpp.exported_mode",
     srcs: [
@@ -198,6 +200,7 @@ cc_test {
     ],
     test_suites: ["general-tests"],
 }
+*/
 
 cc_test {
     name: "aconfig.test.cpp.force_read_only_mode",
@@ -249,6 +252,8 @@ rust_test {
     test_suites: ["general-tests"],
 }
 
+// TODO(327420679): Enable export mode for native flag library
+/*
 rust_aconfig_library {
     name: "libaconfig_test_rust_library_with_exported_mode",
     crate_name: "aconfig_test_rust_library",
@@ -266,6 +271,7 @@ rust_test {
     ],
     test_suites: ["general-tests"],
 }
+*/
 
 rust_aconfig_library {
     name: "libaconfig_test_rust_library_with_force_read_only_mode",
