@@ -480,6 +480,10 @@ class BuildInfo(object):
     return self.get("virtual_ab_compression_method", "")
 
   @property
+  def vabc_cow_version(self):
+    return self.get("virtual_ab_cow_version", "")
+
+  @property
   def vendor_api_level(self):
     vendor_prop = self.info_dict.get("vendor.build.prop")
     if not vendor_prop:

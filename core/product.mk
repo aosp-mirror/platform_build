@@ -230,6 +230,9 @@ _product_single_value_vars += PRODUCT_SYSTEM_DLKM_BASE_FS_PATH
 # The first API level this product shipped with
 _product_single_value_vars += PRODUCT_SHIPPING_API_LEVEL
 
+# The first vendor API level this product shipped with
+_product_single_value_vars += PRODUCT_SHIPPING_VENDOR_API_LEVEL
+
 _product_list_vars += VENDOR_PRODUCT_RESTRICT_VENDOR_FILES
 _product_list_vars += VENDOR_EXCEPTION_MODULES
 _product_list_vars += VENDOR_EXCEPTION_PATHS
