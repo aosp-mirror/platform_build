@@ -171,10 +171,6 @@ endif
 SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
 
-# Enable Compose in SystemUI by default.
-SYSTEMUI_USE_COMPOSE ?= true
-$(call add_soong_config_var,ANDROID,SYSTEMUI_USE_COMPOSE)
-
 ifdef PRODUCT_AVF_ENABLED
 $(call add_soong_config_var_value,ANDROID,avf_enabled,$(PRODUCT_AVF_ENABLED))
 endif
