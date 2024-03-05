@@ -63,7 +63,7 @@ pub(crate) const HASH_PRIMES: [u32; 29] = [
 ];
 
 /// Storage file location pb file
-pub const STORAGE_LOCATION_FILE: &str = "/metadata/aconfig/storage_files.pb";
+pub const STORAGE_LOCATION_FILE: &str = "/metadata/aconfig/available_storage_file_records.pb";
 
 /// Storage file type enum
 #[derive(Clone, Debug, PartialEq, Eq)]
