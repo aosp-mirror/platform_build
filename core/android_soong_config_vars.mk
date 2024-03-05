@@ -187,6 +187,8 @@ $(call add_soong_config_var_value,ANDROID,release_avf_microdroid_kernel_version,
 
 $(call add_soong_config_var_value,ANDROID,release_binder_death_recipient_weak_from_jni,$(RELEASE_BINDER_DEATH_RECIPIENT_WEAK_FROM_JNI))
 
+$(call add_soong_config_var_value,ANDROID,release_selinux_data_data_ignore,$(RELEASE_SELINUX_DATA_DATA_IGNORE))
+
 # Enable system_server optimizations by default unless explicitly set or if
 # there may be dependent runtime jars.
 # TODO(b/240588226): Remove the off-by-default exceptions after handling
