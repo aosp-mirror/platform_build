@@ -70,12 +70,16 @@
   ],
   "postsubmit": [
     {
+      // aconfig_storage_read_api unit tests
+      "name": "aconfig_storage_read_api.test"
+    },
+    {
       // aconfig_storage read api rust integration tests
-      "name": "aconfig_storage.test.rust"
+      "name": "aconfig_storage_read_api.test.rust"
     },
     {
       // aconfig_storage read api cpp integration tests
-      "name": "aconfig_storage.test.cpp"
+      "name": "aconfig_storage_read_api.test.cpp"
     },
     {
       // aflags CLI unit tests

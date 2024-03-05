@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-#include "aconfig_storage/aconfig_storage.hpp"
+#include "aconfig_storage/aconfig_storage_read_api.hpp"
 #include <gtest/gtest.h>
 #include <protos/aconfig_storage_metadata.pb.h>
 #include <android-base/file.h>
