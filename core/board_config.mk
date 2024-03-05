@@ -287,6 +287,9 @@ $(foreach var,$(_board_true_false_vars), \
 
 include $(BUILD_SYSTEM)/board_config_wifi.mk
 
+# Set up soong config for "soong_config_value_variable".
+-include vendor/google/build/soong/soong_config_namespace/camera.mk
+
 # Default *_CPU_VARIANT_RUNTIME to CPU_VARIANT if unspecified.
 TARGET_CPU_VARIANT_RUNTIME := $(or $(TARGET_CPU_VARIANT_RUNTIME),$(TARGET_CPU_VARIANT))
 TARGET_2ND_CPU_VARIANT_RUNTIME := $(or $(TARGET_2ND_CPU_VARIANT_RUNTIME),$(TARGET_2ND_CPU_VARIANT))
