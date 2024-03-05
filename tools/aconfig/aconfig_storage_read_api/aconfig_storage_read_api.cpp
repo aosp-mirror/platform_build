@@ -1,4 +1,4 @@
-#include "aconfig_storage/aconfig_storage.hpp"
+#include "aconfig_storage/aconfig_storage_read_api.hpp"
 
 #include "rust/cxx.h"
 #include "aconfig_storage/lib.rs.h"
