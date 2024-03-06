@@ -60,27 +60,6 @@ cc_library_static {
     host_supported: true,
 }
 
-genrule {
-    name: "ro.package.map",
-    out: ["tests/tmp.ro.package.map"],
-    srcs: ["tests/package.map"],
-    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
-}
-
-genrule {
-    name: "ro.flag.map",
-    out: ["tests/tmp.ro.flag.map"],
-    srcs: ["tests/flag.map"],
-    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
-}
-
-genrule {
-    name: "ro.flag.val",
-    out: ["tests/tmp.ro.flag.val"],
-    srcs: ["tests/flag.val"],
-    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
-}
-
 // cxx source codegen from rust api
 genrule {
     name: "libcxx_aconfig_storage_read_api_bridge_code",
@@ -118,4 +97,25 @@ cc_library_static {
     generated_sources: ["libcxx_aconfig_storage_read_api_bridge_code"],
     whole_static_libs: ["libaconfig_storage_read_api_cxx_bridge"],
     export_include_dirs: ["include"],
+}
+
+genrule {
+    name: "ro.package.map",
+    out: ["tests/tmp.ro.package.map"],
+    srcs: ["tests/package.map"],
+    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
+}
+
+genrule {
+    name: "ro.flag.map",
+    out: ["tests/tmp.ro.flag.map"],
+    srcs: ["tests/flag.map"],
+    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
+}
+
+genrule {
+    name: "ro.flag.val",
+    out: ["tests/tmp.ro.flag.val"],
+    srcs: ["tests/flag.val"],
+    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
 }

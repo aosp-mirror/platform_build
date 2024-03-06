@@ -1,8 +1,8 @@
 #[cfg(not(feature = "cargo"))]
 mod aconfig_storage_rust_test {
     use aconfig_storage_read_api::{
-        get_boolean_flag_value_impl, get_flag_offset_impl, get_package_offset_impl, PackageOffset,
-        ProtoStorageFiles,
+        get_boolean_flag_value_impl, get_flag_offset_impl, get_package_offset_impl,
+        get_storage_file_version, PackageOffset, ProtoStorageFiles,
     };
     use protobuf::Message;
     use std::io::Write;
@@ -170,5 +170,12 @@ files {
             format!("{:?}", err),
             "InvalidStorageFileOffset(Flag value offset goes beyond the end of the file.)"
         );
+    }
+
+    #[test]
+    fn test_storage_version_query() {
+        assert_eq!(get_storage_file_version("./tests/tmp.ro.package.map").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./tests/tmp.ro.flag.map").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./tests/tmp.ro.flag.val").unwrap(), 1);
     }
 }

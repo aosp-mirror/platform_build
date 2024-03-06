@@ -159,7 +159,7 @@ mod tests {
 
     pub fn create_test_package_table() -> PackageTable {
         let header = PackageTableHeader {
-            version: crate::FILE_VERSION,
+            version: 1234,
             container: String::from("system"),
             file_size: 208,
             num_packages: 3,
@@ -207,5 +207,16 @@ mod tests {
         let reinterpreted_table = PackageTable::from_bytes(&package_table.as_bytes());
         assert!(reinterpreted_table.is_ok());
         assert_eq!(&package_table, &reinterpreted_table.unwrap());
+    }
+
+    #[test]
+    // this test point locks down that version number should be at the top of serialized
+    // bytes
+    fn test_version_number() {
+        let package_table = create_test_package_table();
+        let bytes = &package_table.as_bytes();
+        let mut head = 0;
+        let version = read_u32_from_bytes(bytes, &mut head).unwrap();
+        assert_eq!(version, 1234)
     }
 }
