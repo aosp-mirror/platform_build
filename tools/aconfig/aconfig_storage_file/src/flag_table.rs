@@ -17,10 +17,9 @@
 //! flag table module defines the flag table file format and methods for serialization
 //! and deserialization
 
-use crate::AconfigStorageError::{self, BytesParseFail, HigherStorageFileVersion};
+use crate::AconfigStorageError::{self, BytesParseFail};
 use crate::{get_bucket_index, read_str_from_bytes, read_u16_from_bytes, read_u32_from_bytes};
 use anyhow::anyhow;
-pub type FlagOffset = u16;
 
 /// Flag table header struct
 #[derive(PartialEq, Debug)]
@@ -154,44 +153,6 @@ impl FlagTable {
     }
 }
 
-/// Query flag within package offset
-pub fn find_flag_offset(
-    buf: &[u8],
-    package_id: u32,
-    flag: &str,
-) -> Result<Option<FlagOffset>, AconfigStorageError> {
-    let interpreted_header = FlagTableHeader::from_bytes(buf)?;
-    if interpreted_header.version > crate::FILE_VERSION {
-        return Err(HigherStorageFileVersion(anyhow!(
-            "Cannot read storage file with a higher version of {} with lib version {}",
-            interpreted_header.version,
-            crate::FILE_VERSION
-        )));
-    }
-
-    let num_buckets = (interpreted_header.node_offset - interpreted_header.bucket_offset) / 4;
-    let bucket_index = FlagTableNode::find_bucket_index(package_id, flag, num_buckets);
-
-    let mut pos = (interpreted_header.bucket_offset + 4 * bucket_index) as usize;
-    let mut flag_node_offset = read_u32_from_bytes(buf, &mut pos)? as usize;
-    if flag_node_offset < interpreted_header.node_offset as usize
-        || flag_node_offset >= interpreted_header.file_size as usize
-    {
-        return Ok(None);
-    }
-
-    loop {
-        let interpreted_node = FlagTableNode::from_bytes(&buf[flag_node_offset..])?;
-        if interpreted_node.package_id == package_id && interpreted_node.flag_name == flag {
-            return Ok(Some(interpreted_node.flag_id));
-        }
-        match interpreted_node.next_offset {
-            Some(offset) => flag_node_offset = offset as usize,
-            None => return Ok(None),
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -269,53 +230,5 @@ mod tests {
         let reinterpreted_table = FlagTable::from_bytes(&flag_table.as_bytes());
         assert!(reinterpreted_table.is_ok());
         assert_eq!(&flag_table, &reinterpreted_table.unwrap());
-    }
-
-    #[test]
-    // this test point locks down table query
-    fn test_flag_query() {
-        let flag_table = create_test_flag_table().as_bytes();
-        let baseline = vec![
-            (0, "enabled_ro", 1u16),
-            (0, "enabled_rw", 2u16),
-            (1, "disabled_ro", 0u16),
-            (2, "enabled_ro", 1u16),
-            (1, "enabled_fixed_ro", 1u16),
-            (1, "enabled_ro", 2u16),
-            (2, "enabled_fixed_ro", 0u16),
-            (0, "disabled_rw", 0u16),
-        ];
-        for (package_id, flag_name, expected_offset) in baseline.into_iter() {
-            let flag_offset =
-                find_flag_offset(&flag_table[..], package_id, flag_name).unwrap().unwrap();
-            assert_eq!(flag_offset, expected_offset);
-        }
-    }
-
-    #[test]
-    // this test point locks down table query of a non exist flag
-    fn test_not_existed_flag_query() {
-        let flag_table = create_test_flag_table().as_bytes();
-        let flag_offset = find_flag_offset(&flag_table[..], 1, "disabled_fixed_ro").unwrap();
-        assert_eq!(flag_offset, None);
-        let flag_offset = find_flag_offset(&flag_table[..], 2, "disabled_rw").unwrap();
-        assert_eq!(flag_offset, None);
-    }
-
-    #[test]
-    // this test point locks down query error when file has a higher version
-    fn test_higher_version_storage_file() {
-        let mut table = create_test_flag_table();
-        table.header.version = crate::FILE_VERSION + 1;
-        let flag_table = table.as_bytes();
-        let error = find_flag_offset(&flag_table[..], 0, "enabled_ro").unwrap_err();
-        assert_eq!(
-            format!("{:?}", error),
-            format!(
-                "HigherStorageFileVersion(Cannot read storage file with a higher version of {} with lib version {})",
-                crate::FILE_VERSION + 1,
-                crate::FILE_VERSION
-            )
-        );
     }
 }

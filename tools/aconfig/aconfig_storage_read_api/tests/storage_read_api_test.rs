@@ -1,6 +1,6 @@
 #[cfg(not(feature = "cargo"))]
 mod aconfig_storage_rust_test {
-    use aconfig_storage_file::{
+    use aconfig_storage_read_api::{
         get_boolean_flag_value_impl, get_flag_offset_impl, get_package_offset_impl, PackageOffset,
         ProtoStorageFiles,
     };
