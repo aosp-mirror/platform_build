@@ -36,9 +36,14 @@ pub mod flag_table;
 pub mod flag_value;
 pub mod package_table;
 
+#[cfg(test)]
+mod test_utils;
+
 use anyhow::anyhow;
 use std::collections::hash_map::DefaultHasher;
+use std::fs::File;
 use std::hash::{Hash, Hasher};
+use std::io::Read;
 
 pub use crate::flag_table::{FlagTable, FlagTableHeader, FlagTableNode};
 pub use crate::flag_value::{FlagValueHeader, FlagValueList};
@@ -166,4 +171,88 @@ pub enum AconfigStorageError {
 
     #[error("invalid storage file byte offset")]
     InvalidStorageFileOffset(#[source] anyhow::Error),
+
+    #[error("failed to create file")]
+    FileCreationFail(#[source] anyhow::Error),
+}
+
+/// Read in storage file as bytes
+pub fn read_file_to_bytes(file_path: &str) -> Result<Vec<u8>, AconfigStorageError> {
+    let mut file = File::open(file_path).map_err(|errmsg| {
+        AconfigStorageError::FileReadFail(anyhow!("Failed to open file {}: {}", file_path, errmsg))
+    })?;
+    let mut buffer = Vec::new();
+    file.read_to_end(&mut buffer).map_err(|errmsg| {
+        AconfigStorageError::FileReadFail(anyhow!(
+            "Failed to read 4 bytes from file {}: {}",
+            file_path,
+            errmsg
+        ))
+    })?;
+    Ok(buffer)
+}
+
+/// List flag values from storage files
+pub fn list_flags(
+    package_map: &str,
+    flag_map: &str,
+    flag_val: &str,
+) -> Result<Vec<(String, bool)>, AconfigStorageError> {
+    let package_table = PackageTable::from_bytes(&read_file_to_bytes(package_map)?)?;
+    let flag_table = FlagTable::from_bytes(&read_file_to_bytes(flag_map)?)?;
+    let flag_value_list = FlagValueList::from_bytes(&read_file_to_bytes(flag_val)?)?;
+
+    let mut package_info = vec![("", 0); package_table.header.num_packages as usize];
+    for node in package_table.nodes.iter() {
+        package_info[node.package_id as usize] = (&node.package_name, node.boolean_offset);
+    }
+
+    let mut flags = Vec::new();
+    for node in flag_table.nodes.iter() {
+        let (package_name, package_offset) = package_info[node.package_id as usize];
+        let full_flag_name = String::from(package_name) + "/" + &node.flag_name;
+        let flag_offset = package_offset + node.flag_id as u32;
+        let flag_value = flag_value_list.booleans[flag_offset as usize];
+        flags.push((full_flag_name, flag_value));
+    }
+
+    flags.sort_by(|v1, v2| v1.0.cmp(&v2.0));
+    Ok(flags)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::test_utils::{
+        create_test_flag_table, create_test_flag_value_list, create_test_package_table,
+        write_bytes_to_temp_file,
+    };
+
+    #[test]
+    // this test point locks down the flag list api
+    fn test_list_flag() {
+        let package_table =
+            write_bytes_to_temp_file(&create_test_package_table().as_bytes()).unwrap();
+        let flag_table = write_bytes_to_temp_file(&create_test_flag_table().as_bytes()).unwrap();
+        let flag_value_list =
+            write_bytes_to_temp_file(&create_test_flag_value_list().as_bytes()).unwrap();
+
+        let package_table_path = package_table.path().display().to_string();
+        let flag_table_path = flag_table.path().display().to_string();
+        let flag_value_list_path = flag_value_list.path().display().to_string();
+
+        let flags =
+            list_flags(&package_table_path, &flag_table_path, &flag_value_list_path).unwrap();
+        let expected = [
+            (String::from("com.android.aconfig.storage.test_1/disabled_rw"), false),
+            (String::from("com.android.aconfig.storage.test_1/enabled_ro"), true),
+            (String::from("com.android.aconfig.storage.test_1/enabled_rw"), false),
+            (String::from("com.android.aconfig.storage.test_2/disabled_ro"), false),
+            (String::from("com.android.aconfig.storage.test_2/enabled_fixed_ro"), true),
+            (String::from("com.android.aconfig.storage.test_2/enabled_ro"), true),
+            (String::from("com.android.aconfig.storage.test_4/enabled_fixed_ro"), false),
+            (String::from("com.android.aconfig.storage.test_4/enabled_ro"), true),
+        ];
+        assert_eq!(flags, expected);
+    }
 }
