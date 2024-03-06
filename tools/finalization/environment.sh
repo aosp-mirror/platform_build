@@ -15,7 +15,7 @@ export FINAL_PLATFORM_VERSION='15'
 # We might or might not fix this in future, but for now let's keep it +1.
 export FINAL_PLATFORM_SDK_VERSION='35'
 # Feel free to randomize once in a while to detect buggy version detection code.
-export FINAL_MAINLINE_EXTENSION='58'
+export FINAL_MAINLINE_EXTENSION='13'
 
 # Options:
 # 'unfinalized' - branch is in development state,
