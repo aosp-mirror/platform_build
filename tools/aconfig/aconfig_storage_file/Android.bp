@@ -11,6 +11,9 @@ rust_defaults {
         "libanyhow",
         "libthiserror",
         "libtempfile",
+        "libprotobuf",
+        "libclap",
+        "libaconfig_storage_protos",
     ],
 }
 
@@ -25,4 +28,26 @@ rust_test_host {
     name: "aconfig_storage_file.test",
     test_suites: ["general-tests"],
     defaults: ["aconfig_storage_file.defaults"],
+}
+
+rust_protobuf {
+    name: "libaconfig_storage_protos",
+    protos: ["protos/aconfig_storage_metadata.proto"],
+    crate_name: "aconfig_storage_protos",
+    source_stem: "aconfig_storage_protos",
+    host_supported: true,
+}
+
+cc_library_static {
+    name: "libaconfig_storage_protos_cc",
+    proto: {
+        export_proto_headers: true,
+        type: "lite",
+    },
+    srcs: ["protos/aconfig_storage_metadata.proto"],
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
+    host_supported: true,
 }
