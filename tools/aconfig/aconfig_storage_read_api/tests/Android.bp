@@ -1,11 +1,11 @@
 rust_test {
-    name: "aconfig_storage.test.rust",
+    name: "aconfig_storage_read_api.test.rust",
     srcs: [
-        "storage_lib_rust_test.rs"
+        "storage_read_api_test.rs"
     ],
     rustlibs: [
         "libanyhow",
-        "libaconfig_storage_file",
+        "libaconfig_storage_read_api",
         "libprotobuf",
         "libtempfile",
     ],
@@ -18,15 +18,15 @@ rust_test {
 }
 
 cc_test {
-    name: "aconfig_storage.test.cpp",
+    name: "aconfig_storage_read_api.test.cpp",
     srcs: [
-        "storage_lib_cc_test.cpp",
+        "storage_read_api_test.cpp",
     ],
     static_libs: [
         "libgmock",
         "libaconfig_storage_protos_cc",
         "libprotobuf-cpp-lite",
-        "libaconfig_storage_cc",
+        "libaconfig_storage_read_api_cc",
         "libbase",
         "liblog",
     ],
