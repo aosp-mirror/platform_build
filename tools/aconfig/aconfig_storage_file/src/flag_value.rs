@@ -92,7 +92,7 @@ mod tests {
 
     pub fn create_test_flag_value_list() -> FlagValueList {
         let header = FlagValueHeader {
-            version: crate::FILE_VERSION,
+            version: 1234,
             container: String::from("system"),
             file_size: 34,
             num_flags: 8,
@@ -115,5 +115,16 @@ mod tests {
         let reinterpreted_value_list = FlagValueList::from_bytes(&flag_value_list.as_bytes());
         assert!(reinterpreted_value_list.is_ok());
         assert_eq!(&flag_value_list, &reinterpreted_value_list.unwrap());
+    }
+
+    #[test]
+    // this test point locks down that version number should be at the top of serialized
+    // bytes
+    fn test_version_number() {
+        let flag_value_list = create_test_flag_value_list();
+        let bytes = &flag_value_list.as_bytes();
+        let mut head = 0;
+        let version = read_u32_from_bytes(bytes, &mut head).unwrap();
+        assert_eq!(version, 1234)
     }
 }

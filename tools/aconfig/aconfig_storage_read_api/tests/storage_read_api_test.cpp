@@ -27,6 +27,7 @@ using ::android::base::WriteStringToFile;
 using ::aconfig_storage::test_only_api::get_package_offset_impl;
 using ::aconfig_storage::test_only_api::get_flag_offset_impl;
 using ::aconfig_storage::test_only_api::get_boolean_flag_value_impl;
+using ::aconfig_storage::get_storage_file_version;
 
 void write_storage_location_pb_to_file(std::string const& file_path) {
   auto const test_dir = android::base::GetExecutableDirectory();
@@ -43,6 +44,22 @@ void write_storage_location_pb_to_file(std::string const& file_path) {
   proto.SerializeToString(&content);
   ASSERT_TRUE(WriteStringToFile(content, file_path))
       << "Failed to write a file: " << file_path;
+}
+
+TEST(AconfigStorageTest, test_storage_version_query) {
+  auto const test_dir = android::base::GetExecutableDirectory();
+  auto query = get_storage_file_version(test_dir + "/tests/tmp.ro.package.map");
+  ASSERT_EQ(query.error_message, std::string());
+  ASSERT_TRUE(query.query_success);
+  ASSERT_EQ(query.version_number, 1);
+  query = get_storage_file_version(test_dir + "/tests/tmp.ro.flag.map");
+  ASSERT_EQ(query.error_message, std::string());
+  ASSERT_TRUE(query.query_success);
+  ASSERT_EQ(query.version_number, 1);
+  query = get_storage_file_version(test_dir + "/tests/tmp.ro.flag.val");
+  ASSERT_EQ(query.error_message, std::string());
+  ASSERT_TRUE(query.query_success);
+  ASSERT_EQ(query.version_number, 1);
 }
 
 TEST(AconfigStorageTest, test_package_offset_query) {
