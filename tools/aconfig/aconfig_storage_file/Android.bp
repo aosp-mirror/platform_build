@@ -10,6 +10,7 @@ rust_defaults {
     rustlibs: [
         "libanyhow",
         "libthiserror",
+        "libtempfile",
     ],
 }
 
