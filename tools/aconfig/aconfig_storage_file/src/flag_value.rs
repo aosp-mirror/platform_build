@@ -19,15 +19,33 @@
 
 use crate::AconfigStorageError;
 use crate::{read_str_from_bytes, read_u32_from_bytes, read_u8_from_bytes};
+use std::fmt;
 
 /// Flag value header struct
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 pub struct FlagValueHeader {
     pub version: u32,
     pub container: String,
     pub file_size: u32,
     pub num_flags: u32,
     pub boolean_value_offset: u32,
+}
+
+/// Implement debug print trait for header
+impl fmt::Debug for FlagValueHeader {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(
+            f,
+            "Version: {}, Container: {}, File Size: {}",
+            self.version, self.container, self.file_size
+        )?;
+        writeln!(
+            f,
+            "Num of Flags: {}, Value Offset:{}",
+            self.num_flags, self.boolean_value_offset
+        )?;
+        Ok(())
+    }
 }
 
 impl FlagValueHeader {
@@ -58,10 +76,21 @@ impl FlagValueHeader {
 }
 
 /// Flag value list struct
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 pub struct FlagValueList {
     pub header: FlagValueHeader,
     pub booleans: Vec<bool>,
+}
+
+/// Implement debug print trait for flag value
+impl fmt::Debug for FlagValueList {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(f, "Header:")?;
+        write!(f, "{:?}", self.header)?;
+        writeln!(f, "Values:")?;
+        writeln!(f, "{:?}", self.booleans)?;
+        Ok(())
+    }
 }
 
 impl FlagValueList {
@@ -89,18 +118,7 @@ impl FlagValueList {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    pub fn create_test_flag_value_list() -> FlagValueList {
-        let header = FlagValueHeader {
-            version: 1234,
-            container: String::from("system"),
-            file_size: 34,
-            num_flags: 8,
-            boolean_value_offset: 26,
-        };
-        let booleans: Vec<bool> = vec![false, true, false, false, true, true, false, true];
-        FlagValueList { header, booleans }
-    }
+    use crate::test_utils::create_test_flag_value_list;
 
     #[test]
     // this test point locks down the value list serialization
