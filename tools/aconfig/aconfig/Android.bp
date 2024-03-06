@@ -47,6 +47,7 @@ aconfig_declarations {
 aconfig_declarations {
     name: "aconfig.test.exported.flags",
     package: "com.android.aconfig.test.exported",
+    exportable: true,
     container: "system",
     srcs: ["tests/test_exported.aconfig"],
 }
