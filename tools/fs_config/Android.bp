@@ -35,7 +35,6 @@ cc_binary_host {
     srcs: ["fs_config.c"],
     shared_libs: [
         "libcutils",
-        "libselinux",
     ],
     cflags: ["-Werror"],
 }

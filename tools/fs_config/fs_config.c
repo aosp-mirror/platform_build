@@ -22,9 +22,6 @@
 #include <string.h>
 #include <inttypes.h>
 
-#include <selinux/selinux.h>
-#include <selinux/label.h>
-
 #include "private/android_filesystem_config.h"
 #include "private/fs_config.h"
 
@@ -35,8 +32,8 @@
 //
 // After the first 4 columns, optional key=value pairs are emitted
 // for each file.  Currently, the following keys are supported:
-// * -S: selabel=[selinux_label]
-// * -C: capabilities=[hex capabilities value]
+//
+//   -C: capabilities=[hex capabilities value]
 //
 // Example input:
 //
@@ -48,44 +45,23 @@
 //      system/etc/dbus.conf 1002 1002 440
 //      data/app 1000 1000 771
 //
-//   or if, for example, -S is used:
-//
-//      system/etc/dbus.conf 1002 1002 440 selabel=u:object_r:system_file:s0
-//      data/app 1000 1000 771 selabel=u:object_r:apk_data_file:s0
-//
 // Note that the output will omit the trailing slash from
 // directories.
 
-static struct selabel_handle* get_sehnd(const char* context_file) {
-  struct selinux_opt seopts[] = { { SELABEL_OPT_PATH, context_file } };
-  struct selabel_handle* sehnd = selabel_open(SELABEL_CTX_FILE, seopts, 1);
-
-  if (!sehnd) {
-    perror("error running selabel_open");
-    exit(EXIT_FAILURE);
-  }
-  return sehnd;
-}
-
 static void usage() {
-  fprintf(stderr, "Usage: fs_config [-D product_out_path] [-S context_file] [-R root] [-C]\n");
+  fprintf(stderr, "Usage: fs_config [-D product_out_path] [-R root] [-C]\n");
 }
 
 int main(int argc, char** argv) {
   char buffer[1024];
-  const char* context_file = NULL;
   const char* product_out_path = NULL;
   char* root_path = NULL;
-  struct selabel_handle* sehnd = NULL;
   int print_capabilities = 0;
   int opt;
-  while((opt = getopt(argc, argv, "CS:R:D:")) != -1) {
+  while((opt = getopt(argc, argv, "CR:D:")) != -1) {
     switch(opt) {
     case 'C':
       print_capabilities = 1;
-      break;
-    case 'S':
-      context_file = optarg;
       break;
     case 'R':
       root_path = optarg;
@@ -97,10 +73,6 @@ int main(int argc, char** argv) {
       usage();
       exit(EXIT_FAILURE);
     }
-  }
-
-  if (context_file != NULL) {
-    sehnd = get_sehnd(context_file);
   }
 
   if (root_path != NULL) {
@@ -140,33 +112,6 @@ int main(int argc, char** argv) {
       strcpy(buffer, "");
     }
     printf("%s %d %d %o", buffer, uid, gid, mode);
-
-    if (sehnd != NULL) {
-      size_t buffer_strlen = strnlen(buffer, sizeof(buffer));
-      if (buffer_strlen >= sizeof(buffer)) {
-        fprintf(stderr, "non null terminated buffer, aborting\n");
-        exit(EXIT_FAILURE);
-      }
-      size_t full_name_size = buffer_strlen + 2;
-      char* full_name = (char*) malloc(full_name_size);
-      if (full_name == NULL) {
-        perror("malloc");
-        exit(EXIT_FAILURE);
-      }
-
-      full_name[0] = '/';
-      strncpy(full_name + 1, buffer, full_name_size - 1);
-      full_name[full_name_size - 1] = '\0';
-
-      char* secontext;
-      if (selabel_lookup(sehnd, &secontext, full_name, ( mode | (is_dir ? S_IFDIR : S_IFREG)))) {
-        secontext = strdup("u:object_r:unlabeled:s0");
-      }
-
-      printf(" selabel=%s", secontext);
-      free(full_name);
-      freecon(secontext);
-    }
 
     if (print_capabilities) {
       printf(" capabilities=0x%" PRIx64, capabilities);

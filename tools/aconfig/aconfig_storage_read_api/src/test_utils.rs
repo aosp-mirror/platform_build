@@ -51,6 +51,7 @@ fn set_file_read_write(file: &NamedTempFile) {
     }
 }
 
+#[allow(dead_code)]
 pub(crate) struct TestStorageFile {
     pub file: NamedTempFile,
     pub name: String,

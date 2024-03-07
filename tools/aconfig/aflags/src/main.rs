@@ -16,7 +16,7 @@
 
 //! `aflags` is a device binary to read and write aconfig flags.
 
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use clap::Parser;
 
 mod device_config_source;
@@ -63,8 +63,15 @@ struct Flag {
     value_picked_from: ValuePickedFrom,
 }
 
+impl Flag {
+    fn qualified_name(&self) -> String {
+        format!("{}.{}", self.package, self.name)
+    }
+}
+
 trait FlagSource {
     fn list_flags() -> Result<Vec<Flag>>;
+    fn override_flag(namespace: &str, qualified_name: &str, value: &str) -> Result<()>;
 }
 
 const ABOUT_TEXT: &str = "Tool for reading and writing flags.
@@ -94,6 +101,18 @@ struct Cli {
 enum Command {
     /// List all aconfig flags on this device.
     List,
+
+    /// Enable an aconfig flag on this device, on the next boot.
+    Enable {
+        /// <package>.<flag_name>
+        qualified_name: String,
+    },
+
+    /// Disable an aconfig flag on this device, on the next boot.
+    Disable {
+        /// <package>.<flag_name>
+        qualified_name: String,
+    },
 }
 
 struct PaddingInfo {
@@ -125,6 +144,23 @@ fn format_flag_row(flag: &Flag, info: &PaddingInfo) -> String {
     format!("{pkg:p0$}{name:p1$}{val:p2$}{value_picked_from:p3$}{perm:p4$}{container}\n")
 }
 
+fn set_flag(qualified_name: &str, value: &str) -> Result<()> {
+    let flags_binding = DeviceConfigSource::list_flags()?;
+    let flag = flags_binding.iter().find(|f| f.qualified_name() == qualified_name).ok_or(
+        anyhow!("no aconfig flag '{qualified_name}'. Does the flag have an .aconfig definition?"),
+    )?;
+
+    if let FlagPermission::ReadOnly = flag.permission {
+        return Err(anyhow!(
+            "could not write flag '{qualified_name}', it is read-only for the current release configuration.",
+        ));
+    }
+
+    DeviceConfigSource::override_flag(&flag.namespace, qualified_name, value)?;
+
+    Ok(())
+}
+
 fn list() -> Result<String> {
     let flags = DeviceConfigSource::list_flags()?;
     let padding_info = PaddingInfo {
@@ -154,10 +190,13 @@ fn list() -> Result<String> {
 fn main() {
     let cli = Cli::parse();
     let output = match cli.command {
-        Command::List => list(),
+        Command::List => list().map(Some),
+        Command::Enable { qualified_name } => set_flag(&qualified_name, "true").map(|_| None),
+        Command::Disable { qualified_name } => set_flag(&qualified_name, "false").map(|_| None),
     };
     match output {
-        Ok(text) => println!("{text}"),
-        Err(msg) => println!("Error: {}", msg),
+        Ok(Some(text)) => println!("{text}"),
+        Ok(None) => (),
+        Err(message) => println!("Error: {message}"),
     }
 }

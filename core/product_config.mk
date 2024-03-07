@@ -642,6 +642,15 @@ ifneq ($$(filter-out true false,$$(PRODUCT_BUILD_$(1)_IMAGE)),)
 endif
 endef
 
+ifndef PRODUCT_VIRTUAL_AB_COW_VERSION
+  PRODUCT_VIRTUAL_AB_COW_VERSION := 2
+  ifdef PRODUCT_SHIPPING_API_LEVEL
+    ifeq (true,$(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),34))
+      PRODUCT_VIRTUAL_AB_COW_VERSION := 3
+    endif
+  endif
+endif
+
 # Copy and check the value of each PRODUCT_BUILD_*_IMAGE variable
 $(foreach image, \
     PVMFW \
