@@ -78,7 +78,9 @@ impl TryFrom<&str> for StorageFileSelection {
             "package_map" => Ok(Self::PackageMap),
             "flag_map" => Ok(Self::FlagMap),
             "flag_val" => Ok(Self::FlagVal),
-            _ => Err(anyhow!("Invalid storage file to create")),
+            _ => Err(anyhow!(
+                "Invalid storage file type, valid types are package_map|flag_map|flag_val]"
+            )),
         }
     }
 }
