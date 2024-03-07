@@ -70,6 +70,10 @@
   ],
   "postsubmit": [
     {
+      // aconfig_storage_write_api unit tests
+      "name": "aconfig_storage_write_api.test"
+    },
+    {
       // aconfig_storage_read_api unit tests
       "name": "aconfig_storage_read_api.test"
     },
