@@ -19,15 +19,33 @@
 
 use crate::AconfigStorageError;
 use crate::{read_str_from_bytes, read_u32_from_bytes, read_u8_from_bytes};
+use std::fmt;
 
 /// Flag value header struct
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 pub struct FlagValueHeader {
     pub version: u32,
     pub container: String,
     pub file_size: u32,
     pub num_flags: u32,
     pub boolean_value_offset: u32,
+}
+
+/// Implement debug print trait for header
+impl fmt::Debug for FlagValueHeader {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(
+            f,
+            "Version: {}, Container: {}, File Size: {}",
+            self.version, self.container, self.file_size
+        )?;
+        writeln!(
+            f,
+            "Num of Flags: {}, Value Offset:{}",
+            self.num_flags, self.boolean_value_offset
+        )?;
+        Ok(())
+    }
 }
 
 impl FlagValueHeader {
@@ -58,10 +76,21 @@ impl FlagValueHeader {
 }
 
 /// Flag value list struct
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 pub struct FlagValueList {
     pub header: FlagValueHeader,
     pub booleans: Vec<bool>,
+}
+
+/// Implement debug print trait for flag value
+impl fmt::Debug for FlagValueList {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(f, "Header:")?;
+        write!(f, "{:?}", self.header)?;
+        writeln!(f, "Values:")?;
+        writeln!(f, "{:?}", self.booleans)?;
+        Ok(())
+    }
 }
 
 impl FlagValueList {
@@ -89,18 +118,7 @@ impl FlagValueList {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    pub fn create_test_flag_value_list() -> FlagValueList {
-        let header = FlagValueHeader {
-            version: crate::FILE_VERSION,
-            container: String::from("system"),
-            file_size: 34,
-            num_flags: 8,
-            boolean_value_offset: 26,
-        };
-        let booleans: Vec<bool> = vec![false, true, false, false, true, true, false, true];
-        FlagValueList { header, booleans }
-    }
+    use crate::test_utils::create_test_flag_value_list;
 
     #[test]
     // this test point locks down the value list serialization
@@ -115,5 +133,16 @@ mod tests {
         let reinterpreted_value_list = FlagValueList::from_bytes(&flag_value_list.as_bytes());
         assert!(reinterpreted_value_list.is_ok());
         assert_eq!(&flag_value_list, &reinterpreted_value_list.unwrap());
+    }
+
+    #[test]
+    // this test point locks down that version number should be at the top of serialized
+    // bytes
+    fn test_version_number() {
+        let flag_value_list = create_test_flag_value_list();
+        let bytes = &flag_value_list.as_bytes();
+        let mut head = 0;
+        let version = read_u32_from_bytes(bytes, &mut head).unwrap();
+        assert_eq!(version, 1234)
     }
 }

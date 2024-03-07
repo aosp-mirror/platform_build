@@ -5,6 +5,13 @@
 
 namespace aconfig_storage {
 
+/// Storage version number query result
+struct VersionNumberQuery {
+  bool query_success;
+  std::string error_message;
+  uint32_t version_number;
+};
+
 /// Package offset query result
 struct PackageOffsetQuery {
   bool query_success;
@@ -28,6 +35,12 @@ struct BooleanFlagValueQuery {
   std::string error_message;
   bool flag_value;
 };
+
+/// Get storage file version number
+/// \input file_path: the path to the storage file
+/// \returns a VersionNumberQuery
+VersionNumberQuery get_storage_file_version(
+    std::string const& file_path);
 
 /// Get package offset
 /// \input container: the flag container name

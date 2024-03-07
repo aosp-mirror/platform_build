@@ -20,9 +20,10 @@
 use crate::AconfigStorageError::{self, BytesParseFail};
 use crate::{get_bucket_index, read_str_from_bytes, read_u32_from_bytes};
 use anyhow::anyhow;
+use std::fmt;
 
 /// Package table header struct
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 pub struct PackageTableHeader {
     pub version: u32,
     pub container: String,
@@ -30,6 +31,23 @@ pub struct PackageTableHeader {
     pub num_packages: u32,
     pub bucket_offset: u32,
     pub node_offset: u32,
+}
+
+/// Implement debug print trait for header
+impl fmt::Debug for PackageTableHeader {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(
+            f,
+            "Version: {}, Container: {}, File Size: {}",
+            self.version, self.container, self.file_size
+        )?;
+        writeln!(
+            f,
+            "Num of Packages: {}, Bucket Offset:{}, Node Offset: {}",
+            self.num_packages, self.bucket_offset, self.node_offset
+        )?;
+        Ok(())
+    }
 }
 
 impl PackageTableHeader {
@@ -62,7 +80,7 @@ impl PackageTableHeader {
 }
 
 /// Package table node struct
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 pub struct PackageTableNode {
     pub package_name: String,
     pub package_id: u32,
@@ -70,6 +88,18 @@ pub struct PackageTableNode {
     // boolean flag value array in the flag value file
     pub boolean_offset: u32,
     pub next_offset: Option<u32>,
+}
+
+/// Implement debug print trait for node
+impl fmt::Debug for PackageTableNode {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(
+            f,
+            "Package: {}, Id: {}, Offset: {}, Next: {:?}",
+            self.package_name, self.package_id, self.boolean_offset, self.next_offset
+        )?;
+        Ok(())
+    }
 }
 
 impl PackageTableNode {
@@ -109,11 +139,26 @@ impl PackageTableNode {
 }
 
 /// Package table struct
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 pub struct PackageTable {
     pub header: PackageTableHeader,
     pub buckets: Vec<Option<u32>>,
     pub nodes: Vec<PackageTableNode>,
+}
+
+/// Implement debug print trait for package table
+impl fmt::Debug for PackageTable {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(f, "Header:")?;
+        write!(f, "{:?}", self.header)?;
+        writeln!(f, "Buckets:")?;
+        writeln!(f, "{:?}", self.buckets)?;
+        writeln!(f, "Nodes:")?;
+        for node in self.nodes.iter() {
+            write!(f, "{:?}", node)?;
+        }
+        Ok(())
+    }
 }
 
 impl PackageTable {
@@ -156,38 +201,7 @@ impl PackageTable {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    pub fn create_test_package_table() -> PackageTable {
-        let header = PackageTableHeader {
-            version: crate::FILE_VERSION,
-            container: String::from("system"),
-            file_size: 208,
-            num_packages: 3,
-            bucket_offset: 30,
-            node_offset: 58,
-        };
-        let buckets: Vec<Option<u32>> = vec![Some(58), None, None, Some(108), None, None, None];
-        let first_node = PackageTableNode {
-            package_name: String::from("com.android.aconfig.storage.test_2"),
-            package_id: 1,
-            boolean_offset: 3,
-            next_offset: None,
-        };
-        let second_node = PackageTableNode {
-            package_name: String::from("com.android.aconfig.storage.test_1"),
-            package_id: 0,
-            boolean_offset: 0,
-            next_offset: Some(158),
-        };
-        let third_node = PackageTableNode {
-            package_name: String::from("com.android.aconfig.storage.test_4"),
-            package_id: 2,
-            boolean_offset: 6,
-            next_offset: None,
-        };
-        let nodes = vec![first_node, second_node, third_node];
-        PackageTable { header, buckets, nodes }
-    }
+    use crate::test_utils::create_test_package_table;
 
     #[test]
     // this test point locks down the table serialization
@@ -207,5 +221,16 @@ mod tests {
         let reinterpreted_table = PackageTable::from_bytes(&package_table.as_bytes());
         assert!(reinterpreted_table.is_ok());
         assert_eq!(&package_table, &reinterpreted_table.unwrap());
+    }
+
+    #[test]
+    // this test point locks down that version number should be at the top of serialized
+    // bytes
+    fn test_version_number() {
+        let package_table = create_test_package_table();
+        let bytes = &package_table.as_bytes();
+        let mut head = 0;
+        let version = read_u32_from_bytes(bytes, &mut head).unwrap();
+        assert_eq!(version, 1234)
     }
 }
