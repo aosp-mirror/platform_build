@@ -35,6 +35,7 @@
 pub mod flag_table;
 pub mod flag_value;
 pub mod package_table;
+pub mod protos;
 
 #[cfg(test)]
 mod test_utils;

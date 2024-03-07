@@ -23,13 +23,13 @@ use anyhow::anyhow;
 use memmap2::Mmap;
 use once_cell::sync::Lazy;
 
-use crate::protos::{
-    storage_files::try_from_binary_proto, ProtoStorageFileInfo, ProtoStorageFiles,
-};
 use crate::AconfigStorageError::{
     self, FileReadFail, MapFileFail, ProtobufParseFail, StorageFileNotFound,
 };
 use crate::StorageFileSelection;
+use aconfig_storage_file::protos::{
+    storage_record_pb::try_from_binary_proto, ProtoStorageFileInfo, ProtoStorageFiles,
+};
 
 /// Cache for already mapped files
 static ALL_MAPPED_FILES: Lazy<Mutex<HashMap<String, MappedStorageFileSet>>> = Lazy::new(|| {
@@ -148,7 +148,8 @@ pub(crate) fn get_mapped_file(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::{write_storage_text_to_temp_file, TestStorageFileSet};
+    use crate::test_utils::TestStorageFileSet;
+    use aconfig_storage_file::protos::storage_record_pb::write_proto_to_temp_file;
 
     #[test]
     fn test_find_storage_file_location() {
@@ -170,7 +171,7 @@ files {
     timestamp: 54321
 }
 "#;
-        let file = write_storage_text_to_temp_file(text_proto).unwrap();
+        let file = write_proto_to_temp_file(&text_proto).unwrap();
         let file_full_path = file.path().display().to_string();
         let file_info = find_container_storage_location(&file_full_path, "system").unwrap();
         assert_eq!(file_info.version(), 0);
@@ -235,7 +236,7 @@ files {{
             ro_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
         );
 
-        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
+        let file = write_proto_to_temp_file(&text_proto).unwrap();
         let file_full_path = file.path().display().to_string();
         map_and_verify(
             &file_full_path,
@@ -264,7 +265,7 @@ files {{
             rw_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
         );
 
-        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
+        let file = write_proto_to_temp_file(&text_proto).unwrap();
         let file_full_path = file.path().display().to_string();
         let error = map_container_storage_files(&file_full_path, "system").unwrap_err();
         assert_eq!(
@@ -289,7 +290,7 @@ files {{
             ro_files.package_map.name, rw_files.flag_map.name, ro_files.flag_val.name
         );
 
-        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
+        let file = write_proto_to_temp_file(&text_proto).unwrap();
         let file_full_path = file.path().display().to_string();
         let error = map_container_storage_files(&file_full_path, "system").unwrap_err();
         assert_eq!(
@@ -314,7 +315,7 @@ files {{
             ro_files.package_map.name, ro_files.flag_map.name, rw_files.flag_val.name
         );
 
-        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
+        let file = write_proto_to_temp_file(&text_proto).unwrap();
         let file_full_path = file.path().display().to_string();
         let error = map_container_storage_files(&file_full_path, "system").unwrap_err();
         assert_eq!(
