@@ -20,9 +20,10 @@
 use crate::AconfigStorageError::{self, BytesParseFail};
 use crate::{get_bucket_index, read_str_from_bytes, read_u16_from_bytes, read_u32_from_bytes};
 use anyhow::anyhow;
+use std::fmt;
 
 /// Flag table header struct
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 pub struct FlagTableHeader {
     pub version: u32,
     pub container: String,
@@ -30,6 +31,23 @@ pub struct FlagTableHeader {
     pub num_flags: u32,
     pub bucket_offset: u32,
     pub node_offset: u32,
+}
+
+/// Implement debug print trait for header
+impl fmt::Debug for FlagTableHeader {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(
+            f,
+            "Version: {}, Container: {}, File Size: {}",
+            self.version, self.container, self.file_size
+        )?;
+        writeln!(
+            f,
+            "Num of Flags: {}, Bucket Offset:{}, Node Offset: {}",
+            self.num_flags, self.bucket_offset, self.node_offset
+        )?;
+        Ok(())
+    }
 }
 
 impl FlagTableHeader {
@@ -62,13 +80,25 @@ impl FlagTableHeader {
 }
 
 /// Flag table node struct
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Clone)]
 pub struct FlagTableNode {
     pub package_id: u32,
     pub flag_name: String,
     pub flag_type: u16,
     pub flag_id: u16,
     pub next_offset: Option<u32>,
+}
+
+/// Implement debug print trait for node
+impl fmt::Debug for FlagTableNode {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(
+            f,
+            "Package Id: {}, Flag: {}, Type: {}, Offset: {}, Next: {:?}",
+            self.package_id, self.flag_name, self.flag_type, self.flag_id, self.next_offset
+        )?;
+        Ok(())
+    }
 }
 
 impl FlagTableNode {
@@ -108,11 +138,26 @@ impl FlagTableNode {
     }
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 pub struct FlagTable {
     pub header: FlagTableHeader,
     pub buckets: Vec<Option<u32>>,
     pub nodes: Vec<FlagTableNode>,
+}
+
+/// Implement debug print trait for flag table
+impl fmt::Debug for FlagTable {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(f, "Header:")?;
+        write!(f, "{:?}", self.header)?;
+        writeln!(f, "Buckets:")?;
+        writeln!(f, "{:?}", self.buckets)?;
+        writeln!(f, "Nodes:")?;
+        for node in self.nodes.iter() {
+            write!(f, "{:?}", node)?;
+        }
+        Ok(())
+    }
 }
 
 /// Flag table struct
@@ -156,60 +201,7 @@ impl FlagTable {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    impl FlagTableNode {
-        // create test baseline, syntactic sugar
-        fn new_expected(
-            package_id: u32,
-            flag_name: &str,
-            flag_type: u16,
-            flag_id: u16,
-            next_offset: Option<u32>,
-        ) -> Self {
-            Self { package_id, flag_name: flag_name.to_string(), flag_type, flag_id, next_offset }
-        }
-    }
-
-    pub fn create_test_flag_table() -> FlagTable {
-        let header = FlagTableHeader {
-            version: crate::FILE_VERSION,
-            container: String::from("system"),
-            file_size: 320,
-            num_flags: 8,
-            bucket_offset: 30,
-            node_offset: 98,
-        };
-        let buckets: Vec<Option<u32>> = vec![
-            Some(98),
-            Some(124),
-            None,
-            None,
-            None,
-            Some(177),
-            None,
-            Some(203),
-            None,
-            Some(261),
-            None,
-            None,
-            None,
-            None,
-            None,
-            Some(293),
-            None,
-        ];
-        let nodes = vec![
-            FlagTableNode::new_expected(0, "enabled_ro", 1, 1, None),
-            FlagTableNode::new_expected(0, "enabled_rw", 1, 2, Some(150)),
-            FlagTableNode::new_expected(1, "disabled_ro", 1, 0, None),
-            FlagTableNode::new_expected(2, "enabled_ro", 1, 1, None),
-            FlagTableNode::new_expected(1, "enabled_fixed_ro", 1, 1, Some(235)),
-            FlagTableNode::new_expected(1, "enabled_ro", 1, 2, None),
-            FlagTableNode::new_expected(2, "enabled_fixed_ro", 1, 0, None),
-            FlagTableNode::new_expected(0, "disabled_rw", 1, 0, None),
-        ];
-        FlagTable { header, buckets, nodes }
-    }
+    use crate::test_utils::create_test_flag_table;
 
     #[test]
     // this test point locks down the table serialization
@@ -230,5 +222,16 @@ mod tests {
         let reinterpreted_table = FlagTable::from_bytes(&flag_table.as_bytes());
         assert!(reinterpreted_table.is_ok());
         assert_eq!(&flag_table, &reinterpreted_table.unwrap());
+    }
+
+    #[test]
+    // this test point locks down that version number should be at the top of serialized
+    // bytes
+    fn test_version_number() {
+        let flag_table = create_test_flag_table();
+        let bytes = &flag_table.as_bytes();
+        let mut head = 0;
+        let version = read_u32_from_bytes(bytes, &mut head).unwrap();
+        assert_eq!(version, 1234)
     }
 }
