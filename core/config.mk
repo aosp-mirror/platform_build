@@ -1273,7 +1273,7 @@ endif
 endif
 
 ifeq (true,$(FULL_SYSTEM_OPTIMIZE_JAVA))
-ifeq (,$(SYSTEM_OPTIMIZE_JAVA))
+ifeq (false,$(SYSTEM_OPTIMIZE_JAVA))
 $(error SYSTEM_OPTIMIZE_JAVA must be enabled when FULL_SYSTEM_OPTIMIZE_JAVA is enabled)
 endif
 endif
