@@ -38,14 +38,13 @@ pub mod flag_table_query;
 pub mod flag_value_query;
 pub mod mapped_file;
 pub mod package_table_query;
-pub mod protos;
 
 #[cfg(test)]
 mod test_utils;
 
-pub use crate::protos::ProtoStorageFiles;
 pub use aconfig_storage_file::{
-    read_u32_from_bytes, AconfigStorageError, StorageFileSelection, FILE_VERSION,
+    protos::ProtoStorageFiles, read_u32_from_bytes, AconfigStorageError, StorageFileSelection,
+    FILE_VERSION,
 };
 pub use flag_table_query::FlagOffset;
 pub use package_table_query::PackageOffset;
@@ -380,7 +379,8 @@ pub fn get_boolean_flag_value_cxx(container: &str, offset: u32) -> ffi::BooleanF
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::{write_storage_text_to_temp_file, TestStorageFileSet};
+    use crate::test_utils::TestStorageFileSet;
+    use aconfig_storage_file::protos::storage_record_pb::write_proto_to_temp_file;
 
     fn create_test_storage_files(read_only: bool) -> TestStorageFileSet {
         TestStorageFileSet::new(
@@ -410,7 +410,7 @@ files {{
             ro_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
         );
 
-        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
+        let file = write_proto_to_temp_file(&text_proto).unwrap();
         let file_full_path = file.path().display().to_string();
         let package_offset = get_package_offset_impl(
             &file_full_path,
@@ -461,7 +461,7 @@ files {{
             ro_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
         );
 
-        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
+        let file = write_proto_to_temp_file(&text_proto).unwrap();
         let file_full_path = file.path().display().to_string();
         let baseline = vec![
             (0, "enabled_ro", 1u16),
@@ -500,7 +500,7 @@ files {{
             ro_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
         );
 
-        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
+        let file = write_proto_to_temp_file(&text_proto).unwrap();
         let file_full_path = file.path().display().to_string();
         let baseline: Vec<bool> = vec![false; 8];
         for (offset, expected_value) in baseline.into_iter().enumerate() {
