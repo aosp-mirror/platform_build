@@ -52,13 +52,40 @@ impl ToString for ValuePickedFrom {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum FlagValue {
+    Enabled,
+    Disabled,
+}
+
+impl TryFrom<&str> for FlagValue {
+    type Error = anyhow::Error;
+
+    fn try_from(value: &str) -> std::result::Result<Self, Self::Error> {
+        match value {
+            "true" | "enabled" => Ok(Self::Enabled),
+            "false" | "disabled" => Ok(Self::Disabled),
+            _ => Err(anyhow!("cannot convert string '{}' to FlagValue", value)),
+        }
+    }
+}
+
+impl ToString for FlagValue {
+    fn to_string(&self) -> String {
+        match &self {
+            Self::Enabled => "enabled".into(),
+            Self::Disabled => "disabled".into(),
+        }
+    }
+}
+
 #[derive(Clone)]
 struct Flag {
     namespace: String,
     name: String,
     package: String,
     container: String,
-    value: String,
+    value: FlagValue,
     permission: FlagPermission,
     value_picked_from: ValuePickedFrom,
 }
@@ -126,7 +153,7 @@ fn format_flag_row(flag: &Flag, info: &PaddingInfo) -> String {
     let full_name = flag.qualified_name();
     let p0 = info.longest_flag_col + 1;
 
-    let val = &flag.value;
+    let val = flag.value.to_string();
     let p1 = info.longest_val_col + 1;
 
     let value_picked_from = flag.value_picked_from.to_string();
@@ -161,7 +188,7 @@ fn list() -> Result<String> {
     let flags = DeviceConfigSource::list_flags()?;
     let padding_info = PaddingInfo {
         longest_flag_col: flags.iter().map(|f| f.qualified_name().len()).max().unwrap_or(0),
-        longest_val_col: flags.iter().map(|f| f.value.len()).max().unwrap_or(0),
+        longest_val_col: flags.iter().map(|f| f.value.to_string().len()).max().unwrap_or(0),
         longest_value_picked_from_col: flags
             .iter()
             .map(|f| f.value_picked_from.to_string().len())
