@@ -14,26 +14,9 @@
  * limitations under the License.
  */
 
-use crate::protos::ProtoStorageFiles;
 use anyhow::Result;
-use protobuf::Message;
 use std::fs;
-use std::io::Write;
 use tempfile::NamedTempFile;
-
-pub(crate) fn get_binary_storage_proto_bytes(text_proto: &str) -> Result<Vec<u8>> {
-    let storage_files: ProtoStorageFiles = protobuf::text_format::parse_from_str(text_proto)?;
-    let mut binary_proto = Vec::new();
-    storage_files.write_to_vec(&mut binary_proto)?;
-    Ok(binary_proto)
-}
-
-pub(crate) fn write_storage_text_to_temp_file(text_proto: &str) -> Result<NamedTempFile> {
-    let bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-    let mut file = NamedTempFile::new()?;
-    let _ = file.write_all(&bytes);
-    Ok(file)
-}
 
 fn set_file_read_only(file: &NamedTempFile) {
     let mut perms = fs::metadata(file.path()).unwrap().permissions();
