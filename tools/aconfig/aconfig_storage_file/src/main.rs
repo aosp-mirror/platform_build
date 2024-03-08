@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-//! `aconfig_storage` is a debugging tool to parse storage files
+//! `aconfig-storage` is a debugging tool to parse storage files
 
 use aconfig_storage_file::{
     list_flags, read_file_to_bytes, AconfigStorageError, FlagTable, FlagValueList, PackageTable,
@@ -24,7 +24,7 @@ use aconfig_storage_file::{
 use clap::{builder::ArgAction, Arg, Command};
 
 fn cli() -> Command {
-    Command::new("aconfig_storage_file")
+    Command::new("aconfig-storage")
         .subcommand_required(true)
         .subcommand(
             Command::new("print")
@@ -39,13 +39,13 @@ fn cli() -> Command {
         .subcommand(
             Command::new("list")
                 .arg(
-                    Arg::new("package_map")
-                        .long("package_map")
+                    Arg::new("package-map")
+                        .long("package-map")
                         .required(true)
                         .action(ArgAction::Set),
                 )
-                .arg(Arg::new("flag_map").long("flag_map").required(true).action(ArgAction::Set))
-                .arg(Arg::new("flag_val").long("flag_val").required(true).action(ArgAction::Set)),
+                .arg(Arg::new("flag-map").long("flag-map").required(true).action(ArgAction::Set))
+                .arg(Arg::new("flag-val").long("flag-val").required(true).action(ArgAction::Set)),
         )
 }
 
@@ -80,9 +80,9 @@ fn main() -> Result<(), AconfigStorageError> {
             print_storage_file(file_path, file_type)?
         }
         Some(("list", sub_matches)) => {
-            let package_map = sub_matches.get_one::<String>("package_map").unwrap();
-            let flag_map = sub_matches.get_one::<String>("flag_map").unwrap();
-            let flag_val = sub_matches.get_one::<String>("flag_val").unwrap();
+            let package_map = sub_matches.get_one::<String>("package-map").unwrap();
+            let flag_map = sub_matches.get_one::<String>("flag-map").unwrap();
+            let flag_val = sub_matches.get_one::<String>("flag-val").unwrap();
             let flags = list_flags(package_map, flag_map, flag_val)?;
             for flag in flags.iter() {
                 println!("{}: {}", flag.0, flag.1);
