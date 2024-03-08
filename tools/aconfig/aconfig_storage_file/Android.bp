@@ -6,7 +6,6 @@ rust_defaults {
     name: "aconfig_storage_file.defaults",
     edition: "2021",
     lints: "none",
-    srcs: ["src/lib.rs"],
     rustlibs: [
         "libanyhow",
         "libthiserror",
@@ -22,12 +21,21 @@ rust_library {
     crate_name: "aconfig_storage_file",
     host_supported: true,
     defaults: ["aconfig_storage_file.defaults"],
+    srcs: ["src/lib.rs"],
+}
+
+rust_binary_host {
+    name: "aconfig-storage",
+    defaults: ["aconfig_storage_file.defaults"],
+    srcs: ["src/main.rs"],
+    rustlibs: ["libaconfig_storage_file"],
 }
 
 rust_test_host {
     name: "aconfig_storage_file.test",
     test_suites: ["general-tests"],
     defaults: ["aconfig_storage_file.defaults"],
+    srcs: ["src/lib.rs"],
 }
 
 rust_protobuf {
