@@ -22,16 +22,38 @@ package android.aconfig;
 
 // This protobuf file defines messages used to represent and manage flags in the "aconfig" system
 // The following format requirements apply across various message fields:
-// # name: a lowercase string in snake_case format, no consecutive underscores, and no leading digit
-//    For example adjust_rate is a valid name, while AdjustRate, adjust__rate, and
-//    2adjust_rate are invalid
 //
-// # namespace: a lowercase string in snake_case format, no consecutive underscores, and no leading
-//    digit. For example android_bar_system
+// # name: name of the flag
 //
-// # package: lowercase strings in snake_case format, delimited by dots, no consecutive underscores
-//    and no leading digit in each string. For example com.android.mypackage is a valid name
-//    while com.android.myPackage, com.android.1mypackage are invalid
+//    format: a lowercase string in snake_case format, no consecutive underscores, and no leading
+//      digit. For example adjust_rate is a valid name, while AdjustRate, adjust__rate, and
+//      adjust_rate are invalid
+//
+// # namespace: namespace the flag belongs to
+//
+//    format: a lowercase string in snake_case format, no consecutive underscores, and no leading
+//      digit. For example android_bar_system
+//
+// # package: package to which the flag belongs
+//
+//    format: lowercase strings in snake_case format, delimited by dots, no consecutive underscores
+//      and no leading digit in each string. For example com.android.mypackage is a valid name
+//      while com.android.myPackage, com.android.1mypackage are invalid
+//
+// # container: container as software built in its entirety using the same build environment and
+//    always installed as a single unit
+//
+//    For example the following are all separate containers:
+//        * the system partition
+//        * the vendor partition
+//        * apexes: each APEX is its own container
+//        * APKs: for APKs which are released independently via Play, each APK is its own container.
+//            If an APK is released as part of a Mainline module, or as part of the system partition
+//            via OTA, then they are part of the apex or the system partition container
+//
+//    format: lowercase strings in snake_case format, delimited by dots if multiple, no consecutive
+//      underscores or leading digits in each string. The recommended container values are the
+//      partition names or the module names
 
 // messages used in both aconfig input and output
 
@@ -98,6 +120,7 @@ message flag_declarations {
   repeated flag_declaration flag = 2;
 
   // Container the flag belongs to (optional)
+  // See # container for format detail
   optional string container = 3;
 };
 
@@ -160,6 +183,7 @@ message parsed_flag {
   optional bool is_exported = 10;
 
   // Container the flag belongs to (optional)
+  // See # container for format detail
   optional string container = 11;
 
   // Additional information about the flag, including its purpose and form factors (optional)
