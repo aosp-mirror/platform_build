@@ -8,12 +8,6 @@ function revert_droidstubs_hack() {
     fi
 }
 
-function revert_resources_sdk_int_fix() {
-    if grep -q 'public static final int RESOURCES_SDK_INT = SDK_INT;' "$top/frameworks/base/core/java/android/os/Build.java" ; then
-        patch --strip=1 --no-backup-if-mismatch --directory="$top/frameworks/base" --input=../../build/make/tools/finalization/frameworks_base.revert_resource_sdk_int.diff
-    fi
-}
-
 function apply_prerelease_sdk_hack() {
     if ! grep -q 'STOPSHIP: hack for the pre-release SDK' "$top/frameworks/base/core/java/android/content/pm/parsing/FrameworkParsingPackageUtils.java" ; then
         patch --strip=1 --no-backup-if-mismatch --directory="$top/frameworks/base" --input=../../build/make/tools/finalization/frameworks_base.apply_hack.diff
@@ -29,9 +23,6 @@ function finalize_sdk_rel() {
 
     # let the apps built with pre-release SDK parse
     apply_prerelease_sdk_hack
-
-    # in REL mode, resources would correctly set the resources_sdk_int, no fix required
-    revert_resources_sdk_int_fix
 
     # cts
     echo "$FINAL_PLATFORM_VERSION" > "$top/cts/tests/tests/os/assets/platform_versions.txt"
