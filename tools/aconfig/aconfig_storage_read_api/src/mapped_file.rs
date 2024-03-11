@@ -15,7 +15,7 @@
  */
 
 use std::collections::HashMap;
-use std::fs::File;
+use std::fs::{self, File};
 use std::io::{BufReader, Read};
 use std::sync::{Arc, Mutex};
 
@@ -26,7 +26,7 @@ use once_cell::sync::Lazy;
 use crate::AconfigStorageError::{
     self, FileReadFail, MapFileFail, ProtobufParseFail, StorageFileNotFound,
 };
-use crate::StorageFileSelection;
+use crate::StorageFileType;
 use aconfig_storage_file::protos::{
     storage_record_pb::try_from_binary_proto, ProtoStorageFileInfo, ProtoStorageFiles,
 };
@@ -75,16 +75,14 @@ fn find_container_storage_location(
 
 /// Verify the file is read only and then map it
 fn verify_read_only_and_map(file_path: &str) -> Result<Mmap, AconfigStorageError> {
-    let file = File::open(file_path)
-        .map_err(|errmsg| FileReadFail(anyhow!("Failed to open file {}: {}", file_path, errmsg)))?;
-    let metadata = file.metadata().map_err(|errmsg| {
-        FileReadFail(anyhow!("Failed to find metadata for {}: {}", file_path, errmsg))
-    })?;
-
-    // ensure storage file is read only
-    if !metadata.permissions().readonly() {
+    // ensure file has read only permission
+    let perms = fs::metadata(file_path).unwrap().permissions();
+    if !perms.readonly() {
         return Err(MapFileFail(anyhow!("fail to map non read only storage file {}", file_path)));
     }
+
+    let file = File::open(file_path)
+        .map_err(|errmsg| FileReadFail(anyhow!("Failed to open file {}: {}", file_path, errmsg)))?;
 
     // SAFETY:
     //
@@ -95,10 +93,6 @@ fn verify_read_only_and_map(file_path: &str) -> Result<Mmap, AconfigStorageError
     // which means it is read only. Here in the code, we check explicitly that the file
     // being mapped must only have read permission, otherwise, error out, thus making sure
     // it is safe.
-    //
-    // We should remove this restriction if we need to support mmap non read only file in
-    // the future (by making this api unsafe). But for now, all flags are boot stable, so
-    // the boot flag file copy should be readonly.
     unsafe {
         let mapped_file = Mmap::map(&file).map_err(|errmsg| {
             MapFileFail(anyhow!("fail to map storage file {}: {}", file_path, errmsg))
@@ -123,21 +117,21 @@ fn map_container_storage_files(
 pub(crate) fn get_mapped_file(
     location_pb_file: &str,
     container: &str,
-    file_selection: StorageFileSelection,
+    file_selection: StorageFileType,
 ) -> Result<Arc<Mmap>, AconfigStorageError> {
     let mut all_mapped_files = ALL_MAPPED_FILES.lock().unwrap();
     match all_mapped_files.get(container) {
         Some(mapped_files) => Ok(match file_selection {
-            StorageFileSelection::PackageMap => Arc::clone(&mapped_files.package_map),
-            StorageFileSelection::FlagMap => Arc::clone(&mapped_files.flag_map),
-            StorageFileSelection::FlagVal => Arc::clone(&mapped_files.flag_val),
+            StorageFileType::PackageMap => Arc::clone(&mapped_files.package_map),
+            StorageFileType::FlagMap => Arc::clone(&mapped_files.flag_map),
+            StorageFileType::FlagVal => Arc::clone(&mapped_files.flag_val),
         }),
         None => {
             let mapped_files = map_container_storage_files(location_pb_file, container)?;
             let file_ptr = match file_selection {
-                StorageFileSelection::PackageMap => Arc::clone(&mapped_files.package_map),
-                StorageFileSelection::FlagMap => Arc::clone(&mapped_files.flag_map),
-                StorageFileSelection::FlagVal => Arc::clone(&mapped_files.flag_val),
+                StorageFileType::PackageMap => Arc::clone(&mapped_files.package_map),
+                StorageFileType::FlagMap => Arc::clone(&mapped_files.flag_map),
+                StorageFileType::FlagVal => Arc::clone(&mapped_files.flag_val),
             };
             all_mapped_files.insert(container.to_string(), mapped_files);
             Ok(file_ptr)
@@ -196,11 +190,7 @@ files {
         );
     }
 
-    fn map_and_verify(
-        location_pb_file: &str,
-        file_selection: StorageFileSelection,
-        actual_file: &str,
-    ) {
+    fn map_and_verify(location_pb_file: &str, file_selection: StorageFileType, actual_file: &str) {
         let mut opened_file = File::open(actual_file).unwrap();
         let mut content = Vec::new();
         opened_file.read_to_end(&mut content).unwrap();
@@ -238,13 +228,9 @@ files {{
 
         let file = write_proto_to_temp_file(&text_proto).unwrap();
         let file_full_path = file.path().display().to_string();
-        map_and_verify(
-            &file_full_path,
-            StorageFileSelection::PackageMap,
-            &ro_files.package_map.name,
-        );
-        map_and_verify(&file_full_path, StorageFileSelection::FlagMap, &ro_files.flag_map.name);
-        map_and_verify(&file_full_path, StorageFileSelection::FlagVal, &ro_files.flag_val.name);
+        map_and_verify(&file_full_path, StorageFileType::PackageMap, &ro_files.package_map.name);
+        map_and_verify(&file_full_path, StorageFileType::FlagMap, &ro_files.flag_map.name);
+        map_and_verify(&file_full_path, StorageFileType::FlagVal, &ro_files.flag_val.name);
     }
 
     #[test]

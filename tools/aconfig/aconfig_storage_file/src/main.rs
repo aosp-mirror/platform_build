@@ -18,7 +18,7 @@
 
 use aconfig_storage_file::{
     list_flags, read_file_to_bytes, AconfigStorageError, FlagTable, FlagValueList, PackageTable,
-    StorageFileSelection,
+    StorageFileType,
 };
 
 use clap::{builder::ArgAction, Arg, Command};
@@ -33,7 +33,7 @@ fn cli() -> Command {
                     Arg::new("type")
                         .long("type")
                         .required(true)
-                        .value_parser(|s: &str| StorageFileSelection::try_from(s)),
+                        .value_parser(|s: &str| StorageFileType::try_from(s)),
                 ),
         )
         .subcommand(
@@ -51,19 +51,19 @@ fn cli() -> Command {
 
 fn print_storage_file(
     file_path: &str,
-    file_type: &StorageFileSelection,
+    file_type: &StorageFileType,
 ) -> Result<(), AconfigStorageError> {
     let bytes = read_file_to_bytes(file_path)?;
     match file_type {
-        StorageFileSelection::PackageMap => {
+        StorageFileType::PackageMap => {
             let package_table = PackageTable::from_bytes(&bytes)?;
             println!("{:?}", package_table);
         }
-        StorageFileSelection::FlagMap => {
+        StorageFileType::FlagMap => {
             let flag_table = FlagTable::from_bytes(&bytes)?;
             println!("{:?}", flag_table);
         }
-        StorageFileSelection::FlagVal => {
+        StorageFileType::FlagVal => {
             let flag_value = FlagValueList::from_bytes(&bytes)?;
             println!("{:?}", flag_value);
         }
@@ -76,7 +76,7 @@ fn main() -> Result<(), AconfigStorageError> {
     match matches.subcommand() {
         Some(("print", sub_matches)) => {
             let file_path = sub_matches.get_one::<String>("file").unwrap();
-            let file_type = sub_matches.get_one::<StorageFileSelection>("type").unwrap();
+            let file_type = sub_matches.get_one::<StorageFileType>("type").unwrap();
             print_storage_file(file_path, file_type)?
         }
         Some(("list", sub_matches)) => {
