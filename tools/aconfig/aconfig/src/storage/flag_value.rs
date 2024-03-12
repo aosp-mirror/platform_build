@@ -17,13 +17,14 @@
 use crate::commands::assign_flag_ids;
 use crate::storage::FlagPackage;
 use aconfig_protos::ProtoFlagState;
-use aconfig_storage_file::{FlagValueHeader, FlagValueList, FILE_VERSION};
+use aconfig_storage_file::{FlagValueHeader, FlagValueList, FILE_VERSION, StorageFileType};
 use anyhow::{anyhow, Result};
 
 fn new_header(container: &str, num_flags: u32) -> FlagValueHeader {
     FlagValueHeader {
         version: FILE_VERSION,
         container: String::from(container),
+        file_type: StorageFileType::FlagVal as u8,
         file_size: 0,
         num_flags,
         boolean_value_offset: 0,
@@ -79,9 +80,10 @@ mod tests {
         let expected_header = FlagValueHeader {
             version: FILE_VERSION,
             container: String::from("system"),
-            file_size: 34,
+            file_type: StorageFileType::FlagVal as u8,
+            file_size: 35,
             num_flags: 8,
-            boolean_value_offset: 26,
+            boolean_value_offset: 27,
         };
         assert_eq!(header, &expected_header);
 

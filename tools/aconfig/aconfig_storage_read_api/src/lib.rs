@@ -43,7 +43,7 @@ pub mod package_table_query;
 mod test_utils;
 
 pub use aconfig_storage_file::{
-    protos::ProtoStorageFiles, read_u32_from_bytes, AconfigStorageError, StorageFileSelection,
+    protos::ProtoStorageFiles, read_u32_from_bytes, AconfigStorageError, StorageFileType,
     FILE_VERSION,
 };
 pub use flag_table_query::FlagOffset;
@@ -67,7 +67,7 @@ pub fn get_package_offset_impl(
     container: &str,
     package: &str,
 ) -> Result<Option<PackageOffset>, AconfigStorageError> {
-    let mapped_file = get_mapped_file(pb_file, container, StorageFileSelection::PackageMap)?;
+    let mapped_file = get_mapped_file(pb_file, container, StorageFileType::PackageMap)?;
     find_package_offset(&mapped_file, package)
 }
 
@@ -78,7 +78,7 @@ pub fn get_flag_offset_impl(
     package_id: u32,
     flag: &str,
 ) -> Result<Option<FlagOffset>, AconfigStorageError> {
-    let mapped_file = get_mapped_file(pb_file, container, StorageFileSelection::FlagMap)?;
+    let mapped_file = get_mapped_file(pb_file, container, StorageFileType::FlagMap)?;
     find_flag_offset(&mapped_file, package_id, flag)
 }
 
@@ -88,7 +88,7 @@ pub fn get_boolean_flag_value_impl(
     container: &str,
     offset: u32,
 ) -> Result<bool, AconfigStorageError> {
-    let mapped_file = get_mapped_file(pb_file, container, StorageFileSelection::FlagVal)?;
+    let mapped_file = get_mapped_file(pb_file, container, StorageFileType::FlagVal)?;
     find_boolean_flag_value(&mapped_file, offset)
 }
 
