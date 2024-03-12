@@ -104,11 +104,16 @@ fn read_device_config_output(command: &[&str]) -> Result<String> {
     if !output.status.success() {
         let reason = match output.status.code() {
             Some(code) => {
-                format!("exit code {}, output was {}", code, str::from_utf8(&output.stdout)?)
+                let output = str::from_utf8(&output.stdout)?;
+                if !output.is_empty() {
+                    format!("exit code {code}, output was {output}")
+                } else {
+                    format!("exit code {code}")
+                }
             }
             None => "terminated by signal".to_string(),
         };
-        bail!("failed to execute device_config: {}", reason);
+        bail!("failed to access flag storage: {}", reason);
     }
     Ok(str::from_utf8(&output.stdout)?.to_string())
 }
