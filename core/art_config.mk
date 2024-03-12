@@ -27,8 +27,11 @@ ADDITIONAL_PRODUCT_PROPERTIES += ro.dalvik.vm.enable_uffd_gc=$(config_enable_uff
 # soong variables indicate whether the prebuilt is enabled:
 # - $(m)_module/source_build for art and TOGGLEABLE_PREBUILT_MODULES
 # - ANDROID/module_build_from_source for other mainline modules
+# Note that RELEASE_APEX_BOOT_JARS_PREBUILT_EXCLUDED_LIST is the list of module names
+# and library names of jars that need to be removed. We have to keep separated list per
+# release config due to possibility of different prebuilt content.
 APEX_BOOT_JARS_EXCLUDED :=
-$(foreach pair, $(PRODUCT_APEX_BOOT_JARS_FOR_SOURCE_BUILD_ONLY),\
+$(foreach pair, $(RELEASE_APEX_BOOT_JARS_PREBUILT_EXCLUDED_LIST),\
   $(eval m := $(subst com.android.,,$(call word-colon,1,$(pair)))) \
   $(if $(call soong_config_get,$(m)_module,source_build), \
     $(if $(filter true,$(call soong_config_get,$(m)_module,source_build)),, \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 The Android Open Source Project
+ * Copyright (C) 2024 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,79 +14,117 @@
  * limitations under the License.
  */
 
-use crate::protos::ProtoStorageFiles;
-use anyhow::Result;
-use protobuf::Message;
-use std::fs;
+use crate::flag_table::{FlagTable, FlagTableHeader, FlagTableNode};
+use crate::flag_value::{FlagValueHeader, FlagValueList};
+use crate::package_table::{PackageTable, PackageTableHeader, PackageTableNode};
+use crate::AconfigStorageError;
+
+use anyhow::anyhow;
 use std::io::Write;
 use tempfile::NamedTempFile;
 
-pub(crate) fn get_binary_storage_proto_bytes(text_proto: &str) -> Result<Vec<u8>> {
-    let storage_files: ProtoStorageFiles = protobuf::text_format::parse_from_str(text_proto)?;
-    let mut binary_proto = Vec::new();
-    storage_files.write_to_vec(&mut binary_proto)?;
-    Ok(binary_proto)
+pub(crate) fn create_test_package_table() -> PackageTable {
+    let header = PackageTableHeader {
+        version: 1234,
+        container: String::from("system"),
+        file_size: 208,
+        num_packages: 3,
+        bucket_offset: 30,
+        node_offset: 58,
+    };
+    let buckets: Vec<Option<u32>> = vec![Some(58), None, None, Some(108), None, None, None];
+    let first_node = PackageTableNode {
+        package_name: String::from("com.android.aconfig.storage.test_2"),
+        package_id: 1,
+        boolean_offset: 3,
+        next_offset: None,
+    };
+    let second_node = PackageTableNode {
+        package_name: String::from("com.android.aconfig.storage.test_1"),
+        package_id: 0,
+        boolean_offset: 0,
+        next_offset: Some(158),
+    };
+    let third_node = PackageTableNode {
+        package_name: String::from("com.android.aconfig.storage.test_4"),
+        package_id: 2,
+        boolean_offset: 6,
+        next_offset: None,
+    };
+    let nodes = vec![first_node, second_node, third_node];
+    PackageTable { header, buckets, nodes }
 }
 
-pub(crate) fn write_storage_text_to_temp_file(text_proto: &str) -> Result<NamedTempFile> {
-    let bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-    let mut file = NamedTempFile::new()?;
+impl FlagTableNode {
+    // create test baseline, syntactic sugar
+    fn new_expected(
+        package_id: u32,
+        flag_name: &str,
+        flag_type: u16,
+        flag_id: u16,
+        next_offset: Option<u32>,
+    ) -> Self {
+        Self { package_id, flag_name: flag_name.to_string(), flag_type, flag_id, next_offset }
+    }
+}
+
+pub(crate) fn create_test_flag_table() -> FlagTable {
+    let header = FlagTableHeader {
+        version: 1234,
+        container: String::from("system"),
+        file_size: 320,
+        num_flags: 8,
+        bucket_offset: 30,
+        node_offset: 98,
+    };
+    let buckets: Vec<Option<u32>> = vec![
+        Some(98),
+        Some(124),
+        None,
+        None,
+        None,
+        Some(177),
+        None,
+        Some(203),
+        None,
+        Some(261),
+        None,
+        None,
+        None,
+        None,
+        None,
+        Some(293),
+        None,
+    ];
+    let nodes = vec![
+        FlagTableNode::new_expected(0, "enabled_ro", 1, 1, None),
+        FlagTableNode::new_expected(0, "enabled_rw", 1, 2, Some(150)),
+        FlagTableNode::new_expected(1, "disabled_ro", 1, 0, None),
+        FlagTableNode::new_expected(2, "enabled_ro", 1, 1, None),
+        FlagTableNode::new_expected(1, "enabled_fixed_ro", 1, 1, Some(235)),
+        FlagTableNode::new_expected(1, "enabled_ro", 1, 2, None),
+        FlagTableNode::new_expected(2, "enabled_fixed_ro", 1, 0, None),
+        FlagTableNode::new_expected(0, "disabled_rw", 1, 0, None),
+    ];
+    FlagTable { header, buckets, nodes }
+}
+
+pub(crate) fn create_test_flag_value_list() -> FlagValueList {
+    let header = FlagValueHeader {
+        version: 1234,
+        container: String::from("system"),
+        file_size: 34,
+        num_flags: 8,
+        boolean_value_offset: 26,
+    };
+    let booleans: Vec<bool> = vec![false, true, false, false, true, true, false, true];
+    FlagValueList { header, booleans }
+}
+
+pub(crate) fn write_bytes_to_temp_file(bytes: &[u8]) -> Result<NamedTempFile, AconfigStorageError> {
+    let mut file = NamedTempFile::new().map_err(|_| {
+        AconfigStorageError::FileCreationFail(anyhow!("Failed to create temp file"))
+    })?;
     let _ = file.write_all(&bytes);
     Ok(file)
-}
-
-fn set_file_read_only(file: &NamedTempFile) {
-    let mut perms = fs::metadata(file.path()).unwrap().permissions();
-    if !perms.readonly() {
-        perms.set_readonly(true);
-        fs::set_permissions(file.path(), perms).unwrap();
-    }
-}
-
-fn set_file_read_write(file: &NamedTempFile) {
-    let mut perms = fs::metadata(file.path()).unwrap().permissions();
-    if perms.readonly() {
-        perms.set_readonly(false);
-        fs::set_permissions(file.path(), perms).unwrap();
-    }
-}
-
-pub(crate) struct TestStorageFile {
-    pub file: NamedTempFile,
-    pub name: String,
-}
-
-impl TestStorageFile {
-    pub(crate) fn new(source_file: &str, read_only: bool) -> Result<Self> {
-        let file = NamedTempFile::new()?;
-        fs::copy(source_file, file.path())?;
-        if read_only {
-            set_file_read_only(&file);
-        } else {
-            set_file_read_write(&file);
-        }
-        let name = file.path().display().to_string();
-        Ok(Self { file, name })
-    }
-}
-
-pub(crate) struct TestStorageFileSet {
-    pub package_map: TestStorageFile,
-    pub flag_map: TestStorageFile,
-    pub flag_val: TestStorageFile,
-}
-
-impl TestStorageFileSet {
-    pub(crate) fn new(
-        package_map_path: &str,
-        flag_map_path: &str,
-        flag_val_path: &str,
-        read_only: bool,
-    ) -> Result<Self> {
-        Ok(Self {
-            package_map: TestStorageFile::new(package_map_path, read_only)?,
-            flag_map: TestStorageFile::new(flag_map_path, read_only)?,
-            flag_val: TestStorageFile::new(flag_val_path, read_only)?,
-        })
-    }
 }

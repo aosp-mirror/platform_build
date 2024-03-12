@@ -171,10 +171,6 @@ endif
 SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
 
-# Enable Compose in SystemUI by default.
-SYSTEMUI_USE_COMPOSE ?= true
-$(call add_soong_config_var,ANDROID,SYSTEMUI_USE_COMPOSE)
-
 ifdef PRODUCT_AVF_ENABLED
 $(call add_soong_config_var_value,ANDROID,avf_enabled,$(PRODUCT_AVF_ENABLED))
 endif
@@ -190,6 +186,8 @@ $(call add_soong_config_var_value,ANDROID,release_avf_enable_virt_cpufreq,$(RELE
 $(call add_soong_config_var_value,ANDROID,release_avf_microdroid_kernel_version,$(RELEASE_AVF_MICRODROID_KERNEL_VERSION))
 
 $(call add_soong_config_var_value,ANDROID,release_binder_death_recipient_weak_from_jni,$(RELEASE_BINDER_DEATH_RECIPIENT_WEAK_FROM_JNI))
+
+$(call add_soong_config_var_value,ANDROID,release_selinux_data_data_ignore,$(RELEASE_SELINUX_DATA_DATA_IGNORE))
 
 # Enable system_server optimizations by default unless explicitly set or if
 # there may be dependent runtime jars.

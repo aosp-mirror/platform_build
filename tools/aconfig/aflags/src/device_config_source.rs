@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-use crate::{Flag, FlagPermission, FlagSource, ValuePickedFrom};
+use crate::{Flag, FlagPermission, FlagSource, FlagValue, ValuePickedFrom};
 use aconfig_protos::ProtoFlagPermission as ProtoPermission;
 use aconfig_protos::ProtoFlagState as ProtoState;
 use aconfig_protos::ProtoParsedFlag;
@@ -40,10 +40,9 @@ fn convert_parsed_flag(flag: &ProtoParsedFlag) -> Flag {
     };
 
     let value = match flag.state() {
-        ProtoState::ENABLED => "true",
-        ProtoState::DISABLED => "false",
-    }
-    .to_string();
+        ProtoState::ENABLED => FlagValue::Enabled,
+        ProtoState::DISABLED => FlagValue::Disabled,
+    };
 
     let permission = match flag.permission() {
         ProtoPermission::READ_ONLY => FlagPermission::ReadOnly,
@@ -64,7 +63,7 @@ fn convert_parsed_flag(flag: &ProtoParsedFlag) -> Flag {
 fn read_pb_files() -> Result<Vec<Flag>> {
     let mut flags: BTreeMap<String, Flag> = BTreeMap::new();
     for partition in ["system", "system_ext", "product", "vendor"] {
-        let path = format!("/{}/etc/aconfig_flags.pb", partition);
+        let path = format!("/{partition}/etc/aconfig_flags.pb");
         let Ok(bytes) = fs::read(&path) else {
             eprintln!("warning: failed to read {}", path);
             continue;
@@ -86,23 +85,27 @@ fn read_pb_files() -> Result<Vec<Flag>> {
     Ok(flags.values().cloned().collect())
 }
 
-fn parse_device_config(raw: &str) -> Result<HashMap<String, String>> {
+fn parse_device_config(raw: &str) -> Result<HashMap<String, FlagValue>> {
     let mut flags = HashMap::new();
     let regex = Regex::new(r"(?m)^([[[:alnum:]]_]+/[[[:alnum:]]_\.]+)=(true|false)$")?;
     for capture in regex.captures_iter(raw) {
         let key =
             capture.get(1).ok_or(anyhow!("invalid device_config output"))?.as_str().to_string();
-        let value = capture.get(2).ok_or(anyhow!("invalid device_config output"))?.as_str();
-        flags.insert(key, value.to_string());
+        let value = FlagValue::try_from(
+            capture.get(2).ok_or(anyhow!("invalid device_config output"))?.as_str(),
+        )?;
+        flags.insert(key, value);
     }
     Ok(flags)
 }
 
-fn read_device_config_output(command: &str) -> Result<String> {
-    let output = Command::new("/system/bin/device_config").arg(command).output()?;
+fn read_device_config_output(command: &[&str]) -> Result<String> {
+    let output = Command::new("/system/bin/device_config").args(command).output()?;
     if !output.status.success() {
         let reason = match output.status.code() {
-            Some(code) => format!("exit code {}", code),
+            Some(code) => {
+                format!("exit code {}, output was {}", code, str::from_utf8(&output.stdout)?)
+            }
             None => "terminated by signal".to_string(),
         };
         bail!("failed to execute device_config: {}", reason);
@@ -110,24 +113,24 @@ fn read_device_config_output(command: &str) -> Result<String> {
     Ok(str::from_utf8(&output.stdout)?.to_string())
 }
 
-fn read_device_config_flags() -> Result<HashMap<String, String>> {
-    let list_output = read_device_config_output("list")?;
+fn read_device_config_flags() -> Result<HashMap<String, FlagValue>> {
+    let list_output = read_device_config_output(&["list"])?;
     parse_device_config(&list_output)
 }
 
-fn reconcile(pb_flags: &[Flag], dc_flags: HashMap<String, String>) -> Vec<Flag> {
+fn reconcile(pb_flags: &[Flag], dc_flags: HashMap<String, FlagValue>) -> Vec<Flag> {
     pb_flags
         .iter()
         .map(|f| {
             dc_flags
                 .get(&format!("{}/{}.{}", f.namespace, f.package, f.name))
                 .map(|value| {
-                    if value.eq(&f.value) {
+                    if *value == f.value {
                         Flag { value_picked_from: ValuePickedFrom::Default, ..f.clone() }
                     } else {
                         Flag {
                             value_picked_from: ValuePickedFrom::Server,
-                            value: value.to_string(),
+                            value: *value,
                             ..f.clone()
                         }
                     }
@@ -145,6 +148,10 @@ impl FlagSource for DeviceConfigSource {
         let flags = reconcile(&pb_flags, dc_flags);
         Ok(flags)
     }
+
+    fn override_flag(namespace: &str, qualified_name: &str, value: &str) -> Result<()> {
+        read_device_config_output(&["put", namespace, qualified_name, value]).map(|_| ())
+    }
 }
 
 #[cfg(test)]
@@ -161,9 +168,9 @@ namespace_two/android.flag_one=true
 namespace_two/android.flag_two=nonsense
 "#;
         let expected = HashMap::from([
-            ("namespace_one/com.foo.bar.flag_one".to_string(), "true".to_string()),
-            ("namespace_one/com.foo.bar.flag_two".to_string(), "false".to_string()),
-            ("namespace_two/android.flag_one".to_string(), "true".to_string()),
+            ("namespace_one/com.foo.bar.flag_one".to_string(), FlagValue::Enabled),
+            ("namespace_one/com.foo.bar.flag_two".to_string(), FlagValue::Disabled),
+            ("namespace_two/android.flag_one".to_string(), FlagValue::Enabled),
         ]);
         let actual = parse_device_config(input).unwrap();
         assert_eq!(expected, actual);

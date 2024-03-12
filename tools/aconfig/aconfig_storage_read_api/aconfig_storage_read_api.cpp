@@ -1,15 +1,26 @@
-#include "aconfig_storage/aconfig_storage.hpp"
+#include "aconfig_storage/aconfig_storage_read_api.hpp"
 
 #include "rust/cxx.h"
 #include "aconfig_storage/lib.rs.h"
 
 namespace aconfig_storage {
+/// Get storage file version number
+VersionNumberQuery get_storage_file_version(
+    std::string const& file_path) {
+  auto version_cxx = get_storage_file_version_cxx(
+      rust::Str(file_path.c_str()));
+  auto version = VersionNumberQuery();
+  version.query_success = version_cxx.query_success;
+  version.error_message = std::string(version_cxx.error_message.c_str());
+  version.version_number = version_cxx.version_number;
+  return version;
+}
 
 /// Get package offset
 PackageOffsetQuery get_package_offset(
     std::string const& container,
     std::string const& package) {
-  auto offset_cxx =  get_package_offset_cxx(
+  auto offset_cxx = get_package_offset_cxx(
       rust::Str(container.c_str()),
       rust::Str(package.c_str()));
   auto offset = PackageOffsetQuery();
@@ -26,7 +37,7 @@ FlagOffsetQuery get_flag_offset(
     std::string const& container,
     uint32_t package_id,
     std::string const& flag_name) {
-  auto offset_cxx =  get_flag_offset_cxx(
+  auto offset_cxx = get_flag_offset_cxx(
       rust::Str(container.c_str()),
       package_id,
       rust::Str(flag_name.c_str()));
@@ -42,7 +53,7 @@ FlagOffsetQuery get_flag_offset(
 BooleanFlagValueQuery get_boolean_flag_value(
     std::string const& container,
     uint32_t offset) {
-  auto value_cxx =  get_boolean_flag_value_cxx(
+  auto value_cxx = get_boolean_flag_value_cxx(
       rust::Str(container.c_str()),
       offset);
   auto value = BooleanFlagValueQuery();
