@@ -65,7 +65,7 @@ pub fn find_flag_offset(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::FlagTable;
+    use aconfig_storage_file::{StorageFileType, FlagTable};
 
     // create test baseline, syntactic sugar
     fn new_expected_node(
@@ -88,36 +88,37 @@ mod tests {
         let header = FlagTableHeader {
             version: crate::FILE_VERSION,
             container: String::from("system"),
-            file_size: 320,
+            file_type: StorageFileType::FlagMap as u8,
+            file_size: 321,
             num_flags: 8,
-            bucket_offset: 30,
-            node_offset: 98,
+            bucket_offset: 31,
+            node_offset: 99,
         };
         let buckets: Vec<Option<u32>> = vec![
-            Some(98),
-            Some(124),
+            Some(99),
+            Some(125),
             None,
             None,
             None,
-            Some(177),
+            Some(178),
             None,
-            Some(203),
+            Some(204),
             None,
-            Some(261),
-            None,
-            None,
+            Some(262),
             None,
             None,
             None,
-            Some(293),
+            None,
+            None,
+            Some(294),
             None,
         ];
         let nodes = vec![
             new_expected_node(0, "enabled_ro", 1, 1, None),
-            new_expected_node(0, "enabled_rw", 1, 2, Some(150)),
+            new_expected_node(0, "enabled_rw", 1, 2, Some(151)),
             new_expected_node(1, "disabled_ro", 1, 0, None),
             new_expected_node(2, "enabled_ro", 1, 1, None),
-            new_expected_node(1, "enabled_fixed_ro", 1, 1, Some(235)),
+            new_expected_node(1, "enabled_fixed_ro", 1, 1, Some(236)),
             new_expected_node(1, "enabled_ro", 1, 2, None),
             new_expected_node(2, "enabled_fixed_ro", 1, 0, None),
             new_expected_node(0, "disabled_rw", 1, 0, None),
