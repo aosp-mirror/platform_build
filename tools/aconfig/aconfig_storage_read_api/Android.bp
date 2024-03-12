@@ -74,24 +74,3 @@ cc_library_static {
     whole_static_libs: ["libaconfig_storage_read_api_cxx_bridge"],
     export_include_dirs: ["include"],
 }
-
-genrule {
-    name: "ro.package.map",
-    out: ["tests/tmp.ro.package.map"],
-    srcs: ["tests/package.map"],
-    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
-}
-
-genrule {
-    name: "ro.flag.map",
-    out: ["tests/tmp.ro.flag.map"],
-    srcs: ["tests/flag.map"],
-    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
-}
-
-genrule {
-    name: "ro.flag.val",
-    out: ["tests/tmp.ro.flag.val"],
-    srcs: ["tests/flag.val"],
-    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
-}

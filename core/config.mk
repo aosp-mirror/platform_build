@@ -885,6 +885,7 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := $(filter-out $(PLATFORM_SEPOLICY_VERSION), 
     32.0 \
     33.0 \
     34.0 \
+    202404 \
     )
 
 .KATI_READONLY := \

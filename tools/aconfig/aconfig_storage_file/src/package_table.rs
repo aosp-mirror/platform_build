@@ -17,8 +17,8 @@
 //! package table module defines the package table file format and methods for serialization
 //! and deserialization
 
-use crate::AconfigStorageError::{self, BytesParseFail};
-use crate::{get_bucket_index, read_str_from_bytes, read_u32_from_bytes};
+use crate::{get_bucket_index, read_str_from_bytes, read_u32_from_bytes, read_u8_from_bytes};
+use crate::{AconfigStorageError, StorageFileType};
 use anyhow::anyhow;
 use std::fmt;
 
@@ -27,6 +27,7 @@ use std::fmt;
 pub struct PackageTableHeader {
     pub version: u32,
     pub container: String,
+    pub file_type: u8,
     pub file_size: u32,
     pub num_packages: u32,
     pub bucket_offset: u32,
@@ -38,8 +39,11 @@ impl fmt::Debug for PackageTableHeader {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         writeln!(
             f,
-            "Version: {}, Container: {}, File Size: {}",
-            self.version, self.container, self.file_size
+            "Version: {}, Container: {}, File Type: {:?}, File Size: {}",
+            self.version,
+            self.container,
+            StorageFileType::try_from(self.file_type),
+            self.file_size
         )?;
         writeln!(
             f,
@@ -58,6 +62,7 @@ impl PackageTableHeader {
         let container_bytes = self.container.as_bytes();
         result.extend_from_slice(&(container_bytes.len() as u32).to_le_bytes());
         result.extend_from_slice(container_bytes);
+        result.extend_from_slice(&self.file_type.to_le_bytes());
         result.extend_from_slice(&self.file_size.to_le_bytes());
         result.extend_from_slice(&self.num_packages.to_le_bytes());
         result.extend_from_slice(&self.bucket_offset.to_le_bytes());
@@ -68,14 +73,21 @@ impl PackageTableHeader {
     /// Deserialize from bytes
     pub fn from_bytes(bytes: &[u8]) -> Result<Self, AconfigStorageError> {
         let mut head = 0;
-        Ok(Self {
+        let table = Self {
             version: read_u32_from_bytes(bytes, &mut head)?,
             container: read_str_from_bytes(bytes, &mut head)?,
+            file_type: read_u8_from_bytes(bytes, &mut head)?,
             file_size: read_u32_from_bytes(bytes, &mut head)?,
             num_packages: read_u32_from_bytes(bytes, &mut head)?,
             bucket_offset: read_u32_from_bytes(bytes, &mut head)?,
             node_offset: read_u32_from_bytes(bytes, &mut head)?,
-        })
+        };
+        if table.file_type != StorageFileType::PackageMap as u8 {
+            return Err(AconfigStorageError::BytesParseFail(anyhow!(
+                "binary file is not a package map"
+            )));
+        }
+        Ok(table)
     }
 }
 
@@ -191,7 +203,12 @@ impl PackageTable {
                 Ok(node)
             })
             .collect::<Result<Vec<_>, AconfigStorageError>>()
-            .map_err(|errmsg| BytesParseFail(anyhow!("fail to parse package table: {}", errmsg)))?;
+            .map_err(|errmsg| {
+                AconfigStorageError::BytesParseFail(anyhow!(
+                    "fail to parse package table: {}",
+                    errmsg
+                ))
+            })?;
 
         let table = Self { header, buckets, nodes };
         Ok(table)
@@ -232,5 +249,17 @@ mod tests {
         let mut head = 0;
         let version = read_u32_from_bytes(bytes, &mut head).unwrap();
         assert_eq!(version, 1234)
+    }
+
+    #[test]
+    // this test point locks down file type check
+    fn test_file_type_check() {
+        let mut package_table = create_test_package_table();
+        package_table.header.file_type = 123u8;
+        let error = PackageTable::from_bytes(&package_table.as_bytes()).unwrap_err();
+        assert_eq!(
+            format!("{:?}", error),
+            format!("BytesParseFail(binary file is not a package map)")
+        );
     }
 }

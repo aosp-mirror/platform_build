@@ -17,7 +17,7 @@
 use crate::commands::assign_flag_ids;
 use crate::storage::FlagPackage;
 use aconfig_storage_file::{
-    get_table_size, FlagTable, FlagTableHeader, FlagTableNode, FILE_VERSION,
+    get_table_size, FlagTable, FlagTableHeader, FlagTableNode, FILE_VERSION, StorageFileType
 };
 use anyhow::{anyhow, Result};
 
@@ -25,6 +25,7 @@ fn new_header(container: &str, num_flags: u32) -> FlagTableHeader {
     FlagTableHeader {
         version: FILE_VERSION,
         container: String::from(container),
+        file_type: StorageFileType::FlagMap as u8,
         file_size: 0,
         num_flags,
         bucket_offset: 0,
@@ -168,31 +169,32 @@ mod tests {
         let expected_header = FlagTableHeader {
             version: FILE_VERSION,
             container: String::from("system"),
-            file_size: 320,
+            file_type: StorageFileType::FlagMap as u8,
+            file_size: 321,
             num_flags: 8,
-            bucket_offset: 30,
-            node_offset: 98,
+            bucket_offset: 31,
+            node_offset: 99,
         };
         assert_eq!(header, &expected_header);
 
         let buckets: &Vec<Option<u32>> = &flag_table.as_ref().unwrap().buckets;
         let expected_bucket: Vec<Option<u32>> = vec![
-            Some(98),
-            Some(124),
+            Some(99),
+            Some(125),
             None,
             None,
             None,
-            Some(177),
+            Some(178),
             None,
-            Some(203),
+            Some(204),
             None,
-            Some(261),
-            None,
-            None,
+            Some(262),
             None,
             None,
             None,
-            Some(293),
+            None,
+            None,
+            Some(294),
             None,
         ];
         assert_eq!(buckets, &expected_bucket);
@@ -201,10 +203,10 @@ mod tests {
         assert_eq!(nodes.len(), 8);
 
         assert_eq!(nodes[0], new_expected_node(0, "enabled_ro", 1, 1, None));
-        assert_eq!(nodes[1], new_expected_node(0, "enabled_rw", 1, 2, Some(150)));
+        assert_eq!(nodes[1], new_expected_node(0, "enabled_rw", 1, 2, Some(151)));
         assert_eq!(nodes[2], new_expected_node(1, "disabled_ro", 1, 0, None));
         assert_eq!(nodes[3], new_expected_node(2, "enabled_ro", 1, 1, None));
-        assert_eq!(nodes[4], new_expected_node(1, "enabled_fixed_ro", 1, 1, Some(235)));
+        assert_eq!(nodes[4], new_expected_node(1, "enabled_fixed_ro", 1, 1, Some(236)));
         assert_eq!(nodes[5], new_expected_node(1, "enabled_ro", 1, 2, None));
         assert_eq!(nodes[6], new_expected_node(2, "enabled_fixed_ro", 1, 0, None));
         assert_eq!(nodes[7], new_expected_node(0, "disabled_rw", 1, 0, None));

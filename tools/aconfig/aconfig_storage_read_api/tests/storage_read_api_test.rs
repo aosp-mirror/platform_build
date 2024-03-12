@@ -5,22 +5,43 @@ mod aconfig_storage_rust_test {
         get_storage_file_version, PackageOffset, ProtoStorageFiles,
     };
     use protobuf::Message;
+    use std::fs;
     use std::io::Write;
     use tempfile::NamedTempFile;
 
-    fn write_storage_location_file() -> NamedTempFile {
-        let text_proto = r#"
-files {
+    pub fn copy_to_ro_temp_file(source_file: &str) -> NamedTempFile {
+        let file = NamedTempFile::new().unwrap();
+        fs::copy(source_file, file.path()).unwrap();
+        let file_name = file.path().display().to_string();
+        let mut perms = fs::metadata(file_name).unwrap().permissions();
+        perms.set_readonly(true);
+        fs::set_permissions(file.path(), perms.clone()).unwrap();
+        file
+    }
+
+    fn write_storage_location_file(
+        package_table: &NamedTempFile,
+        flag_table: &NamedTempFile,
+        flag_value: &NamedTempFile,
+    ) -> NamedTempFile {
+        let text_proto = format!(
+            r#"
+files {{
     version: 0
     container: "system"
-    package_map: "./tests/tmp.ro.package.map"
-    flag_map: "./tests/tmp.ro.flag.map"
-    flag_val: "./tests/tmp.ro.flag.val"
+    package_map: "{}"
+    flag_map: "{}"
+    flag_val: "{}"
     timestamp: 12345
-}
-"#;
+}}
+"#,
+            package_table.path().display(),
+            flag_table.path().display(),
+            flag_value.path().display(),
+        );
+
         let storage_files: ProtoStorageFiles =
-            protobuf::text_format::parse_from_str(text_proto).unwrap();
+            protobuf::text_format::parse_from_str(&text_proto).unwrap();
         let mut binary_proto_bytes = Vec::new();
         storage_files.write_to_vec(&mut binary_proto_bytes).unwrap();
         let mut file = NamedTempFile::new().unwrap();
@@ -30,7 +51,11 @@ files {
 
     #[test]
     fn test_package_offset_query() {
-        let file = write_storage_location_file();
+        let package_table = copy_to_ro_temp_file("./package.map");
+        let flag_table = copy_to_ro_temp_file("./flag.map");
+        let flag_value = copy_to_ro_temp_file("./flag.val");
+
+        let file = write_storage_location_file(&package_table, &flag_table, &flag_value);
         let file_full_path = file.path().display().to_string();
 
         let package_offset = get_package_offset_impl(
@@ -74,7 +99,11 @@ files {
 
     #[test]
     fn test_invalid_package_offset_query() {
-        let file = write_storage_location_file();
+        let package_table = copy_to_ro_temp_file("./package.map");
+        let flag_table = copy_to_ro_temp_file("./flag.map");
+        let flag_value = copy_to_ro_temp_file("./flag.val");
+
+        let file = write_storage_location_file(&package_table, &flag_table, &flag_value);
         let file_full_path = file.path().display().to_string();
 
         let package_offset_option = get_package_offset_impl(
@@ -99,7 +128,11 @@ files {
 
     #[test]
     fn test_flag_offset_query() {
-        let file = write_storage_location_file();
+        let package_table = copy_to_ro_temp_file("./package.map");
+        let flag_table = copy_to_ro_temp_file("./flag.map");
+        let flag_value = copy_to_ro_temp_file("./flag.val");
+
+        let file = write_storage_location_file(&package_table, &flag_table, &flag_value);
         let file_full_path = file.path().display().to_string();
 
         let baseline = vec![
@@ -123,7 +156,11 @@ files {
 
     #[test]
     fn test_invalid_flag_offset_query() {
-        let file = write_storage_location_file();
+        let package_table = copy_to_ro_temp_file("./package.map");
+        let flag_table = copy_to_ro_temp_file("./flag.map");
+        let flag_value = copy_to_ro_temp_file("./flag.val");
+
+        let file = write_storage_location_file(&package_table, &flag_table, &flag_value);
         let file_full_path = file.path().display().to_string();
 
         let flag_offset_option =
@@ -143,7 +180,11 @@ files {
 
     #[test]
     fn test_boolean_flag_value_query() {
-        let file = write_storage_location_file();
+        let package_table = copy_to_ro_temp_file("./package.map");
+        let flag_table = copy_to_ro_temp_file("./flag.map");
+        let flag_value = copy_to_ro_temp_file("./flag.val");
+
+        let file = write_storage_location_file(&package_table, &flag_table, &flag_value);
         let file_full_path = file.path().display().to_string();
 
         let baseline: Vec<bool> = vec![false; 8];
@@ -156,7 +197,11 @@ files {
 
     #[test]
     fn test_invalid_boolean_flag_value_query() {
-        let file = write_storage_location_file();
+        let package_table = copy_to_ro_temp_file("./package.map");
+        let flag_table = copy_to_ro_temp_file("./flag.map");
+        let flag_value = copy_to_ro_temp_file("./flag.val");
+
+        let file = write_storage_location_file(&package_table, &flag_table, &flag_value);
         let file_full_path = file.path().display().to_string();
 
         let err = get_boolean_flag_value_impl(&file_full_path, "vendor", 0u32).unwrap_err();
@@ -174,8 +219,8 @@ files {
 
     #[test]
     fn test_storage_version_query() {
-        assert_eq!(get_storage_file_version("./tests/tmp.ro.package.map").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./tests/tmp.ro.flag.map").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./tests/tmp.ro.flag.val").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./package.map").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./flag.map").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./flag.val").unwrap(), 1);
     }
 }
