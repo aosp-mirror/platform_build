@@ -163,6 +163,12 @@ pub enum AconfigStorageError {
     #[error("fail to map storage file")]
     MapFileFail(#[source] anyhow::Error),
 
+    #[error("fail to get mapped file")]
+    ObtainMappedFileFail(#[source] anyhow::Error),
+
+    #[error("fail to flush mapped storage file")]
+    MapFlushFail(#[source] anyhow::Error),
+
     #[error("number of items in hash table exceed limit")]
     HashTableSizeLimit(#[source] anyhow::Error),
 
