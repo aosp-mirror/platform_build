@@ -72,18 +72,19 @@ pub fn find_package_offset(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::PackageTable;
+    use aconfig_storage_file::{StorageFileType, PackageTable};
 
     pub fn create_test_package_table() -> PackageTable {
         let header = PackageTableHeader {
             version: crate::FILE_VERSION,
             container: String::from("system"),
-            file_size: 208,
+            file_type: StorageFileType::PackageMap as u8,
+            file_size: 209,
             num_packages: 3,
-            bucket_offset: 30,
-            node_offset: 58,
+            bucket_offset: 31,
+            node_offset: 59,
         };
-        let buckets: Vec<Option<u32>> = vec![Some(58), None, None, Some(108), None, None, None];
+        let buckets: Vec<Option<u32>> = vec![Some(59), None, None, Some(109), None, None, None];
         let first_node = PackageTableNode {
             package_name: String::from("com.android.aconfig.storage.test_2"),
             package_id: 1,
@@ -94,7 +95,7 @@ mod tests {
             package_name: String::from("com.android.aconfig.storage.test_1"),
             package_id: 0,
             boolean_offset: 0,
-            next_offset: Some(158),
+            next_offset: Some(159),
         };
         let third_node = PackageTableNode {
             package_name: String::from("com.android.aconfig.storage.test_4"),

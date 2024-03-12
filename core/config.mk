@@ -885,6 +885,7 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := $(filter-out $(PLATFORM_SEPOLICY_VERSION), 
     32.0 \
     33.0 \
     34.0 \
+    202404 \
     )
 
 .KATI_READONLY := \
@@ -1273,7 +1274,7 @@ endif
 endif
 
 ifeq (true,$(FULL_SYSTEM_OPTIMIZE_JAVA))
-ifeq (,$(SYSTEM_OPTIMIZE_JAVA))
+ifeq (false,$(SYSTEM_OPTIMIZE_JAVA))
 $(error SYSTEM_OPTIMIZE_JAVA must be enabled when FULL_SYSTEM_OPTIMIZE_JAVA is enabled)
 endif
 endif

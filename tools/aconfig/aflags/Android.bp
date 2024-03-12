@@ -12,6 +12,7 @@ rust_defaults {
         "libaconfig_protos",
         "libanyhow",
         "libclap",
+        "libnix",
         "libprotobuf",
         "libregex",
     ],

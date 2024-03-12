@@ -10,9 +10,9 @@ rust_test {
         "libtempfile",
     ],
     data: [
-        ":ro.package.map",
-        ":ro.flag.map",
-        ":ro.flag.val",
+        "package.map",
+        "flag.map",
+        "flag.val",
     ],
     test_suites: ["general-tests"],
 }
@@ -31,9 +31,9 @@ cc_test {
         "liblog",
     ],
     data: [
-        ":ro.package.map",
-        ":ro.flag.map",
-        ":ro.flag.val",
+        "package.map",
+        "flag.map",
+        "flag.val",
     ],
     test_suites: [
         "device-tests",

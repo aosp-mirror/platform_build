@@ -351,16 +351,16 @@ mod tests {
             }
             return false;
         }
+        @com.android.aconfig.annotations.AssumeTrueForR8
+        private boolean isOptimizationEnabled() {
+            return false;
+        }
         private boolean getValue(String flagName) {
             Boolean value = this.mFlagMap.get(flagName);
             if (value == null) {
                 throw new IllegalArgumentException(flagName + " is not set");
             }
             return value;
-        }
-        @com.android.aconfig.annotations.AssumeTrueForR8
-        private boolean isOptimizationEnabled() {
-            return false;
         }
         private Map<String, Boolean> mFlagMap = new HashMap<>(
             Map.ofEntries(
@@ -558,8 +558,6 @@ mod tests {
 
         let expect_flags_content = r#"
         package com.android.aconfig.test;
-        // TODO(b/303773055): Remove the annotation after access issue is resolved.
-        import android.compat.annotation.UnsupportedAppUsage;
         /** @hide */
         public final class Flags {
             /** @hide */
@@ -569,15 +567,12 @@ mod tests {
             /** @hide */
             public static final String FLAG_ENABLED_RO_EXPORTED = "com.android.aconfig.test.enabled_ro_exported";
 
-            @UnsupportedAppUsage
             public static boolean disabledRwExported() {
                 return FEATURE_FLAGS.disabledRwExported();
             }
-            @UnsupportedAppUsage
             public static boolean enabledFixedRoExported() {
                 return FEATURE_FLAGS.enabledFixedRoExported();
             }
-            @UnsupportedAppUsage
             public static boolean enabledRoExported() {
                 return FEATURE_FLAGS.enabledRoExported();
             }
@@ -587,23 +582,16 @@ mod tests {
 
         let expect_feature_flags_content = r#"
         package com.android.aconfig.test;
-        // TODO(b/303773055): Remove the annotation after access issue is resolved.
-        import android.compat.annotation.UnsupportedAppUsage;
         /** @hide */
         public interface FeatureFlags {
-            @UnsupportedAppUsage
             boolean disabledRwExported();
-            @UnsupportedAppUsage
             boolean enabledFixedRoExported();
-            @UnsupportedAppUsage
             boolean enabledRoExported();
         }
         "#;
 
         let expect_feature_flags_impl_content = r#"
         package com.android.aconfig.test;
-        // TODO(b/303773055): Remove the annotation after access issue is resolved.
-        import android.compat.annotation.UnsupportedAppUsage;
         import android.provider.DeviceConfig;
         import android.provider.DeviceConfig.Properties;
         /** @hide */
@@ -637,7 +625,6 @@ mod tests {
             }
 
             @Override
-            @UnsupportedAppUsage
             public boolean disabledRwExported() {
                 if (!aconfig_test_is_cached) {
                     load_overrides_aconfig_test();
@@ -646,7 +633,6 @@ mod tests {
             }
 
             @Override
-            @UnsupportedAppUsage
             public boolean enabledFixedRoExported() {
                 if (!aconfig_test_is_cached) {
                     load_overrides_aconfig_test();
@@ -655,7 +641,6 @@ mod tests {
             }
 
             @Override
-            @UnsupportedAppUsage
             public boolean enabledRoExported() {
                 if (!aconfig_test_is_cached) {
                     load_overrides_aconfig_test();
@@ -666,8 +651,6 @@ mod tests {
 
         let expect_fake_feature_flags_impl_content = r#"
         package com.android.aconfig.test;
-        // TODO(b/303773055): Remove the annotation after access issue is resolved.
-        import android.compat.annotation.UnsupportedAppUsage;
         import java.util.Arrays;
         import java.util.HashMap;
         import java.util.HashSet;
@@ -679,17 +662,14 @@ mod tests {
                 resetAll();
             }
             @Override
-            @UnsupportedAppUsage
             public boolean disabledRwExported() {
                 return getValue(Flags.FLAG_DISABLED_RW_EXPORTED);
             }
             @Override
-            @UnsupportedAppUsage
             public boolean enabledFixedRoExported() {
                 return getValue(Flags.FLAG_ENABLED_FIXED_RO_EXPORTED);
             }
             @Override
-            @UnsupportedAppUsage
             public boolean enabledRoExported() {
                 return getValue(Flags.FLAG_ENABLED_RO_EXPORTED);
             }
@@ -704,23 +684,12 @@ mod tests {
                     entry.setValue(null);
                 }
             }
-            public boolean isFlagReadOnlyOptimized(String flagName) {
-                if (mReadOnlyFlagsSet.contains(flagName) &&
-                    isOptimizationEnabled()) {
-                        return true;
-                }
-                return false;
-            }
             private boolean getValue(String flagName) {
                 Boolean value = this.mFlagMap.get(flagName);
                 if (value == null) {
                     throw new IllegalArgumentException(flagName + " is not set");
                 }
                 return value;
-            }
-            @com.android.aconfig.annotations.AssumeTrueForR8
-            private boolean isOptimizationEnabled() {
-                return false;
             }
             private Map<String, Boolean> mFlagMap = new HashMap<>(
                 Map.ofEntries(
@@ -1065,16 +1034,16 @@ mod tests {
                 }
                 return false;
             }
+            @com.android.aconfig.annotations.AssumeTrueForR8
+            private boolean isOptimizationEnabled() {
+                return false;
+            }
             private boolean getValue(String flagName) {
                 Boolean value = this.mFlagMap.get(flagName);
                 if (value == null) {
                     throw new IllegalArgumentException(flagName + " is not set");
                 }
                 return value;
-            }
-            @com.android.aconfig.annotations.AssumeTrueForR8
-            private boolean isOptimizationEnabled() {
-                return false;
             }
             private Map<String, Boolean> mFlagMap = new HashMap<>(
                 Map.ofEntries(
