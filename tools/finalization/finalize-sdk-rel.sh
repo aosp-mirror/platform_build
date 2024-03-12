@@ -33,10 +33,6 @@ function finalize_sdk_rel() {
     # in REL mode, resources would correctly set the resources_sdk_int, no fix required
     revert_resources_sdk_int_fix
 
-    # build/make/core/version_defaults.mk
-    # Mark all versions "released".
-    sed -i 's/\(PLATFORM_VERSION_CODENAME\.[^[:space:]]*\) := [^[:space:]]*/\1 := REL/g' "$top/build/make/core/version_defaults.mk"
-
     # cts
     echo "$FINAL_PLATFORM_VERSION" > "$top/cts/tests/tests/os/assets/platform_versions.txt"
     if [ "$FINAL_PLATFORM_CODENAME" != "$CURRENT_PLATFORM_CODENAME" ]; then
@@ -47,18 +43,19 @@ function finalize_sdk_rel() {
     # system/sepolicy
     system/sepolicy/tools/finalize-sdk-rel.sh "$top" "$FINAL_PLATFORM_SDK_VERSION"
 
-    # prebuilts/abi-dumps/ndk
-    mkdir -p "$top/prebuilts/abi-dumps/ndk/$FINAL_PLATFORM_SDK_VERSION"
-    cp -r "$top/prebuilts/abi-dumps/ndk/current/64/" "$top/prebuilts/abi-dumps/ndk/$FINAL_PLATFORM_SDK_VERSION/"
-
     # prebuilts/abi-dumps/platform
     mkdir -p "$top/prebuilts/abi-dumps/platform/$FINAL_PLATFORM_SDK_VERSION"
     cp -r "$top/prebuilts/abi-dumps/platform/current/64/" "$top/prebuilts/abi-dumps/platform/$FINAL_PLATFORM_SDK_VERSION/"
 
-    if [ "$FINAL_STATE" != "sdk" ] || [ "$FINAL_PLATFORM_CODENAME" == "$CURRENT_PLATFORM_CODENAME" ] ; then
+    # TODO(b/309880485)
+    # uncomment and update
+    # prebuilts/abi-dumps/ndk
+    #mkdir -p "$top/prebuilts/abi-dumps/ndk/$FINAL_PLATFORM_SDK_VERSION"
+    #cp -r "$top/prebuilts/abi-dumps/ndk/current/64/" "$top/prebuilts/abi-dumps/ndk/$FINAL_PLATFORM_SDK_VERSION/"
+    #if [ "$FINAL_STATE" != "sdk" ] || [ "$FINAL_PLATFORM_CODENAME" == "$CURRENT_PLATFORM_CODENAME" ] ; then
         # prebuilts/abi-dumps/vndk
-        mv "$top/prebuilts/abi-dumps/vndk/$CURRENT_PLATFORM_CODENAME" "$top/prebuilts/abi-dumps/vndk/$FINAL_PLATFORM_SDK_VERSION"
-    fi;
+        #mv "$top/prebuilts/abi-dumps/vndk/$CURRENT_PLATFORM_CODENAME" "$top/prebuilts/abi-dumps/vndk/$FINAL_PLATFORM_SDK_VERSION"
+    #fi;
 }
 
 finalize_sdk_rel

@@ -1,0 +1,37 @@
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+rust_defaults {
+    name: "aconfig_storage_write_api.defaults",
+    edition: "2021",
+    lints: "none",
+    srcs: ["src/lib.rs"],
+    rustlibs: [
+        "libanyhow",
+        "libtempfile",
+        "libmemmap2",
+        "libcxx",
+        "libthiserror",
+        "libaconfig_storage_file",
+    ],
+}
+
+rust_library {
+    name: "libaconfig_storage_write_api",
+    crate_name: "aconfig_storage_write_api",
+    host_supported: true,
+    defaults: ["aconfig_storage_write_api.defaults"],
+}
+
+rust_test_host {
+    name: "aconfig_storage_write_api.test",
+    test_suites: ["general-tests"],
+    defaults: ["aconfig_storage_write_api.defaults"],
+    data: [
+        "tests/flag.val",
+    ],
+    rustlibs: [
+        "libaconfig_storage_read_api",
+    ],
+}

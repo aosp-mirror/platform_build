@@ -26,7 +26,7 @@ use crate::storage::{
     package_table::create_package_table,
 };
 use aconfig_protos::{ProtoParsedFlag, ProtoParsedFlags};
-use aconfig_storage_file::StorageFileSelection;
+use aconfig_storage_file::StorageFileType;
 
 pub struct FlagPackage<'a> {
     pub package_name: &'a str,
@@ -87,7 +87,7 @@ where
 pub fn generate_storage_file<'a, I>(
     container: &str,
     parsed_flags_vec_iter: I,
-    file: &StorageFileSelection,
+    file: &StorageFileType,
 ) -> Result<Vec<u8>>
 where
     I: Iterator<Item = &'a ProtoParsedFlags>,
@@ -95,15 +95,15 @@ where
     let packages = group_flags_by_package(parsed_flags_vec_iter);
 
     match file {
-        StorageFileSelection::PackageMap => {
+        StorageFileType::PackageMap => {
             let package_table = create_package_table(container, &packages)?;
             Ok(package_table.as_bytes())
         }
-        StorageFileSelection::FlagMap => {
+        StorageFileType::FlagMap => {
             let flag_table = create_flag_table(container, &packages)?;
             Ok(flag_table.as_bytes())
         }
-        StorageFileSelection::FlagVal => {
+        StorageFileType::FlagVal => {
             let flag_value = create_flag_value(container, &packages)?;
             Ok(flag_value.as_bytes())
         }

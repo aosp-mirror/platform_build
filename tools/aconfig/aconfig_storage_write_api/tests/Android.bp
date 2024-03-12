@@ -1,0 +1,19 @@
+
+rust_test {
+    name: "aconfig_storage_write_api.test.rust",
+    srcs: [
+        "storage_write_api_test.rs"
+    ],
+    rustlibs: [
+        "libanyhow",
+        "libaconfig_storage_file",
+        "libaconfig_storage_read_api",
+        "libaconfig_storage_write_api",
+        "libprotobuf",
+        "libtempfile",
+    ],
+    data: [
+        "flag.val",
+    ],
+    test_suites: ["general-tests"],
+}
