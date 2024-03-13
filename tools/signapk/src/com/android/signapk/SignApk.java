@@ -986,15 +986,14 @@ class SignApk {
     }
 
     private static class ZipSections {
-        ByteBuffer beforeCentralDir;
+        DataSource beforeCentralDir;
         ByteBuffer centralDir;
         ByteBuffer eocd;
     }
 
-    private static ZipSections findMainZipSections(ByteBuffer apk)
+    private static ZipSections findMainZipSections(DataSource apk)
             throws IOException, ZipFormatException {
-        apk.slice();
-        ApkUtils.ZipSections sections = ApkUtils.findZipSections(DataSources.asDataSource(apk));
+        ApkUtils.ZipSections sections = ApkUtils.findZipSections(apk);
         long centralDirStartOffset = sections.getZipCentralDirectoryOffset();
         long centralDirSizeBytes = sections.getZipCentralDirectorySizeBytes();
         long centralDirEndOffset = centralDirStartOffset + centralDirSizeBytes;
@@ -1005,25 +1004,18 @@ class SignApk {
                             + ". CD end: " + centralDirEndOffset
                             + ", EoCD start: " + eocdStartOffset);
         }
-        apk.position(0);
-        apk.limit((int) centralDirStartOffset);
-        ByteBuffer beforeCentralDir = apk.slice();
-
-        apk.position((int) centralDirStartOffset);
-        apk.limit((int) centralDirEndOffset);
-        ByteBuffer centralDir = apk.slice();
-
-        apk.position((int) eocdStartOffset);
-        apk.limit(apk.capacity());
-        ByteBuffer eocd = apk.slice();
-
-        apk.position(0);
-        apk.limit(apk.capacity());
 
         ZipSections result = new ZipSections();
-        result.beforeCentralDir = beforeCentralDir;
-        result.centralDir = centralDir;
-        result.eocd = eocd;
+        result.beforeCentralDir = apk.slice(0, centralDirStartOffset);
+
+        long centralDirSize = centralDirEndOffset - centralDirStartOffset;
+        if (centralDirSize >= Integer.MAX_VALUE) throw new IndexOutOfBoundsException();
+        result.centralDir = apk.getByteBuffer(centralDirStartOffset, (int)centralDirSize);
+
+        long eocdSize = apk.size() - eocdStartOffset;
+        if (eocdSize >= Integer.MAX_VALUE) throw new IndexOutOfBoundsException();
+        result.eocd = apk.getByteBuffer(eocdStartOffset, (int)eocdSize);
+
         return result;
     }
 
@@ -1300,7 +1292,8 @@ class SignApk {
                     v1SignedApkBuf.reset();
                     ByteBuffer[] outputChunks = new ByteBuffer[] {v1SignedApk};
 
-                    ZipSections zipSections = findMainZipSections(v1SignedApk);
+                    ZipSections zipSections = findMainZipSections(DataSources.asDataSource(
+                            v1SignedApk));
 
                     ByteBuffer eocd = ByteBuffer.allocate(zipSections.eocd.remaining());
                     eocd.put(zipSections.eocd);
@@ -1312,7 +1305,7 @@ class SignApk {
                     while (true) {
                         ApkSignerEngine.OutputApkSigningBlockRequest2 addV2SignatureRequest =
                                 apkSigner.outputZipSections2(
-                                        DataSources.asDataSource(zipSections.beforeCentralDir),
+                                        zipSections.beforeCentralDir,
                                         DataSources.asDataSource(zipSections.centralDir),
                                         DataSources.asDataSource(eocd));
                         if (addV2SignatureRequest == null) break;
@@ -1330,11 +1323,15 @@ class SignApk {
                         modifiedEocd.order(ByteOrder.LITTLE_ENDIAN);
                         ApkUtils.setZipEocdCentralDirectoryOffset(
                                 modifiedEocd,
-                                zipSections.beforeCentralDir.remaining() + padding +
+                                zipSections.beforeCentralDir.size() + padding +
                                 apkSigningBlock.length);
+                        if (zipSections.beforeCentralDir.size() >= Integer.MAX_VALUE) {
+                            throw new IndexOutOfBoundsException();
+                        }
                         outputChunks =
                                 new ByteBuffer[] {
-                                        zipSections.beforeCentralDir,
+                                        zipSections.beforeCentralDir.getByteBuffer(0,
+                                                (int)zipSections.beforeCentralDir.size()),
                                         ByteBuffer.allocate(padding),
                                         ByteBuffer.wrap(apkSigningBlock),
                                         zipSections.centralDir,
