@@ -29,7 +29,7 @@ mod commands;
 mod dump;
 mod storage;
 
-use aconfig_storage_file::StorageFileSelection;
+use aconfig_storage_file::StorageFileType;
 use codegen::CodegenMode;
 use dump::DumpFormat;
 
@@ -138,7 +138,7 @@ fn cli() -> Command {
                 .arg(
                     Arg::new("file")
                         .long("file")
-                        .value_parser(|s: &str| StorageFileSelection::try_from(s)),
+                        .value_parser(|s: &str| StorageFileType::try_from(s)),
                 )
                 .arg(Arg::new("cache").long("cache").action(ArgAction::Append).required(true))
                 .arg(Arg::new("out").long("out").required(true)),
@@ -285,7 +285,7 @@ fn main() -> Result<()> {
             write_output_to_file_or_stdout(path, &output)?;
         }
         Some(("create-storage", sub_matches)) => {
-            let file = get_required_arg::<StorageFileSelection>(sub_matches, "file")
+            let file = get_required_arg::<StorageFileType>(sub_matches, "file")
                 .context("Invalid storage file selection")?;
             let cache = open_zero_or_more_files(sub_matches, "cache")?;
             let container = get_required_arg::<String>(sub_matches, "container")?;

@@ -14,24 +14,27 @@
  * limitations under the License.
  */
 
-//! flag value query module defines the flag value file read from mapped bytes
+//! flag value update module defines the flag value file write to mapped bytes
 
-use crate::{AconfigStorageError, FILE_VERSION};
-use aconfig_storage_file::{flag_value::FlagValueHeader, read_u8_from_bytes};
+use aconfig_storage_file::{AconfigStorageError, FlagValueHeader, FILE_VERSION};
 use anyhow::anyhow;
 
-/// Query flag value
-pub fn find_boolean_flag_value(buf: &[u8], flag_offset: u32) -> Result<bool, AconfigStorageError> {
+/// Set flag value
+pub fn update_boolean_flag_value(
+    buf: &mut [u8],
+    flag_offset: u32,
+    flag_value: bool,
+) -> Result<(), AconfigStorageError> {
     let interpreted_header = FlagValueHeader::from_bytes(buf)?;
-    if interpreted_header.version > crate::FILE_VERSION {
+    if interpreted_header.version > FILE_VERSION {
         return Err(AconfigStorageError::HigherStorageFileVersion(anyhow!(
-            "Cannot read storage file with a higher version of {} with lib version {}",
+            "Cannot write to storage file with a higher version of {} with lib version {}",
             interpreted_header.version,
             FILE_VERSION
         )));
     }
 
-    let mut head = (interpreted_header.boolean_value_offset + flag_offset) as usize;
+    let head = (interpreted_header.boolean_value_offset + flag_offset) as usize;
 
     // TODO: right now, there is only boolean flags, with more flag value types added
     // later, the end of boolean flag value section should be updated (b/322826265).
@@ -41,44 +44,51 @@ pub fn find_boolean_flag_value(buf: &[u8], flag_offset: u32) -> Result<bool, Aco
         )));
     }
 
-    let val = read_u8_from_bytes(buf, &mut head)?;
-    Ok(val == 1)
+    buf[head] = u8::from(flag_value).to_le_bytes()[0];
+    Ok(())
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::{StorageFileType, FlagValueList};
+    use aconfig_storage_file::{FlagValueList, StorageFileType};
 
     pub fn create_test_flag_value_list() -> FlagValueList {
         let header = FlagValueHeader {
-            version: crate::FILE_VERSION,
+            version: FILE_VERSION,
             container: String::from("system"),
             file_type: StorageFileType::FlagVal as u8,
             file_size: 35,
             num_flags: 8,
             boolean_value_offset: 27,
         };
-        let booleans: Vec<bool> = vec![false, true, false, false, true, true, false, true];
+        let booleans: Vec<bool> = vec![false; 8];
         FlagValueList { header, booleans }
     }
 
     #[test]
-    // this test point locks down flag value query
-    fn test_flag_value_query() {
-        let flag_value_list = create_test_flag_value_list().as_bytes();
-        let baseline: Vec<bool> = vec![false, true, false, false, true, true, false, true];
-        for (offset, expected_value) in baseline.into_iter().enumerate() {
-            let flag_value = find_boolean_flag_value(&flag_value_list[..], offset as u32).unwrap();
-            assert_eq!(flag_value, expected_value);
+    // this test point locks down flag value update
+    fn test_boolean_flag_value_update() {
+        let flag_value_list = create_test_flag_value_list();
+        let value_offset = flag_value_list.header.boolean_value_offset;
+        let mut content = flag_value_list.as_bytes();
+        let true_byte = u8::from(true).to_le_bytes()[0];
+        let false_byte = u8::from(false).to_le_bytes()[0];
+
+        for i in 0..flag_value_list.header.num_flags {
+            let offset = (value_offset + i) as usize;
+            update_boolean_flag_value(&mut content, i, true).unwrap();
+            assert_eq!(content[offset], true_byte);
+            update_boolean_flag_value(&mut content, i, false).unwrap();
+            assert_eq!(content[offset], false_byte);
         }
     }
 
     #[test]
-    // this test point locks down query beyond the end of boolean section
+    // this test point locks down update beyond the end of boolean section
     fn test_boolean_out_of_range() {
-        let flag_value_list = create_test_flag_value_list().as_bytes();
-        let error = find_boolean_flag_value(&flag_value_list[..], 8).unwrap_err();
+        let mut flag_value_list = create_test_flag_value_list().as_bytes();
+        let error = update_boolean_flag_value(&mut flag_value_list[..], 8, true).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
             "InvalidStorageFileOffset(Flag value offset goes beyond the end of the file.)"
@@ -89,15 +99,15 @@ mod tests {
     // this test point locks down query error when file has a higher version
     fn test_higher_version_storage_file() {
         let mut value_list = create_test_flag_value_list();
-        value_list.header.version = crate::FILE_VERSION + 1;
-        let flag_value = value_list.as_bytes();
-        let error = find_boolean_flag_value(&flag_value[..], 4).unwrap_err();
+        value_list.header.version = FILE_VERSION + 1;
+        let mut flag_value = value_list.as_bytes();
+        let error = update_boolean_flag_value(&mut flag_value[..], 4, true).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
             format!(
-                "HigherStorageFileVersion(Cannot read storage file with a higher version of {} with lib version {})",
-                crate::FILE_VERSION + 1,
-                crate::FILE_VERSION
+                "HigherStorageFileVersion(Cannot write to storage file with a higher version of {} with lib version {})",
+                FILE_VERSION + 1,
+                FILE_VERSION
             )
         );
     }

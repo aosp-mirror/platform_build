@@ -64,13 +64,13 @@ pub(crate) const HASH_PRIMES: [u32; 29] = [
 
 /// Storage file type enum
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum StorageFileSelection {
-    PackageMap,
-    FlagMap,
-    FlagVal,
+pub enum StorageFileType {
+    PackageMap = 0,
+    FlagMap = 1,
+    FlagVal = 2,
 }
 
-impl TryFrom<&str> for StorageFileSelection {
+impl TryFrom<&str> for StorageFileType {
     type Error = anyhow::Error;
 
     fn try_from(value: &str) -> std::result::Result<Self, Self::Error> {
@@ -79,8 +79,21 @@ impl TryFrom<&str> for StorageFileSelection {
             "flag_map" => Ok(Self::FlagMap),
             "flag_val" => Ok(Self::FlagVal),
             _ => Err(anyhow!(
-                "Invalid storage file type, valid types are package_map|flag_map|flag_val]"
+                "Invalid storage file type, valid types are package_map|flag_map|flag_val"
             )),
+        }
+    }
+}
+
+impl TryFrom<u8> for StorageFileType {
+    type Error = anyhow::Error;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            x if x == Self::PackageMap as u8 => Ok(Self::PackageMap),
+            x if x == Self::FlagMap as u8 => Ok(Self::FlagMap),
+            x if x == Self::FlagVal as u8 => Ok(Self::FlagVal),
+            _ => Err(anyhow!("Invalid storage file type")),
         }
     }
 }
@@ -162,6 +175,12 @@ pub enum AconfigStorageError {
 
     #[error("fail to map storage file")]
     MapFileFail(#[source] anyhow::Error),
+
+    #[error("fail to get mapped file")]
+    ObtainMappedFileFail(#[source] anyhow::Error),
+
+    #[error("fail to flush mapped storage file")]
+    MapFlushFail(#[source] anyhow::Error),
 
     #[error("number of items in hash table exceed limit")]
     HashTableSizeLimit(#[source] anyhow::Error),

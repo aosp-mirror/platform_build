@@ -27,6 +27,7 @@ pub(crate) fn create_test_package_table() -> PackageTable {
     let header = PackageTableHeader {
         version: 1234,
         container: String::from("system"),
+        file_type: 0,
         file_size: 208,
         num_packages: 3,
         bucket_offset: 30,
@@ -72,6 +73,7 @@ pub(crate) fn create_test_flag_table() -> FlagTable {
     let header = FlagTableHeader {
         version: 1234,
         container: String::from("system"),
+        file_type: 1,
         file_size: 320,
         num_flags: 8,
         bucket_offset: 30,
@@ -113,6 +115,7 @@ pub(crate) fn create_test_flag_value_list() -> FlagValueList {
     let header = FlagValueHeader {
         version: 1234,
         container: String::from("system"),
+        file_type: 2,
         file_size: 34,
         num_flags: 8,
         boolean_value_offset: 26,

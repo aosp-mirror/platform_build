@@ -26,14 +26,6 @@ fn set_file_read_only(file: &NamedTempFile) {
     }
 }
 
-fn set_file_read_write(file: &NamedTempFile) {
-    let mut perms = fs::metadata(file.path()).unwrap().permissions();
-    if perms.readonly() {
-        perms.set_readonly(false);
-        fs::set_permissions(file.path(), perms).unwrap();
-    }
-}
-
 #[allow(dead_code)]
 pub(crate) struct TestStorageFile {
     pub file: NamedTempFile,
@@ -46,8 +38,6 @@ impl TestStorageFile {
         fs::copy(source_file, file.path())?;
         if read_only {
             set_file_read_only(&file);
-        } else {
-            set_file_read_write(&file);
         }
         let name = file.path().display().to_string();
         Ok(Self { file, name })
