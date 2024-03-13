@@ -68,7 +68,6 @@ PRODUCT_PACKAGES += \
     android.hardware.radio.config@1.0 \
     android.hardware.radio.deprecated@1.0 \
     android.hardware.secure_element@1.0 \
-    android.hardware.wifi \
     libaudio-resampler \
     libaudiohal \
     libdrm \
