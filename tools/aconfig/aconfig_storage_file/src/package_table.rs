@@ -235,9 +235,11 @@ mod tests {
             assert_eq!(node, &reinterpreted_node);
         }
 
-        let reinterpreted_table = PackageTable::from_bytes(&package_table.as_bytes());
+        let package_table_bytes = package_table.as_bytes();
+        let reinterpreted_table = PackageTable::from_bytes(&package_table_bytes);
         assert!(reinterpreted_table.is_ok());
         assert_eq!(&package_table, &reinterpreted_table.unwrap());
+        assert_eq!(package_table_bytes.len() as u32, header.file_size);
     }
 
     #[test]
