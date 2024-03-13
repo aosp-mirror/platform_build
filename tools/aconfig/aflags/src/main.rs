@@ -22,7 +22,7 @@ use clap::Parser;
 mod device_config_source;
 use device_config_source::DeviceConfigSource;
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 enum FlagPermission {
     ReadOnly,
     ReadWrite,
@@ -37,7 +37,7 @@ impl ToString for FlagPermission {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 enum ValuePickedFrom {
     Default,
     Server,
@@ -79,13 +79,14 @@ impl ToString for FlagValue {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 struct Flag {
     namespace: String,
     name: String,
     package: String,
     container: String,
     value: FlagValue,
+    staged_value: Option<FlagValue>,
     permission: FlagPermission,
     value_picked_from: ValuePickedFrom,
 }
@@ -93,6 +94,13 @@ struct Flag {
 impl Flag {
     fn qualified_name(&self) -> String {
         format!("{}.{}", self.package, self.name)
+    }
+
+    fn display_staged_value(&self) -> String {
+        match self.staged_value {
+            Some(v) => format!("(->{})", v.to_string()),
+            None => "-".to_string(),
+        }
     }
 }
 
@@ -110,6 +118,10 @@ Rows in the table from the `list` command follow this format:
   * `package`: package set for this flag in its .aconfig definition.
   * `flag_name`: flag name, also set in definition.
   * `value`: the value read from the flag.
+  * `staged_value`: the value on next boot:
+    + `-`: same as current value
+    + `(->enabled) flipped to enabled on boot.
+    + `(->disabled) flipped to disabled on boot.
   * `provenance`: one of:
     + `default`: the flag value comes from its build-time default.
     + `server`: the flag value comes from a server override.
@@ -145,6 +157,7 @@ enum Command {
 struct PaddingInfo {
     longest_flag_col: usize,
     longest_val_col: usize,
+    longest_staged_val_col: usize,
     longest_value_picked_from_col: usize,
     longest_permission_col: usize,
 }
@@ -156,15 +169,20 @@ fn format_flag_row(flag: &Flag, info: &PaddingInfo) -> String {
     let val = flag.value.to_string();
     let p1 = info.longest_val_col + 1;
 
+    let staged_val = flag.display_staged_value();
+    let p2 = info.longest_staged_val_col + 1;
+
     let value_picked_from = flag.value_picked_from.to_string();
-    let p2 = info.longest_value_picked_from_col + 1;
+    let p3 = info.longest_value_picked_from_col + 1;
 
     let perm = flag.permission.to_string();
-    let p3 = info.longest_permission_col + 1;
+    let p4 = info.longest_permission_col + 1;
 
     let container = &flag.container;
 
-    format!("{full_name:p0$}{val:p1$}{value_picked_from:p2$}{perm:p3$}{container}\n")
+    format!(
+        "{full_name:p0$}{val:p1$}{staged_val:p2$}{value_picked_from:p3$}{perm:p4$}{container}\n"
+    )
 }
 
 fn set_flag(qualified_name: &str, value: &str) -> Result<()> {
@@ -188,6 +206,11 @@ fn list() -> Result<String> {
     let padding_info = PaddingInfo {
         longest_flag_col: flags.iter().map(|f| f.qualified_name().len()).max().unwrap_or(0),
         longest_val_col: flags.iter().map(|f| f.value.to_string().len()).max().unwrap_or(0),
+        longest_staged_val_col: flags
+            .iter()
+            .map(|f| f.display_staged_value().len())
+            .max()
+            .unwrap_or(0),
         longest_value_picked_from_col: flags
             .iter()
             .map(|f| f.value_picked_from.to_string().len())
