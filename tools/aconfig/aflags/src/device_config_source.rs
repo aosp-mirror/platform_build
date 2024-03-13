@@ -55,6 +55,7 @@ fn convert_parsed_flag(flag: &ProtoParsedFlag) -> Flag {
         name,
         container,
         value,
+        staged_value: None,
         permission,
         value_picked_from: ValuePickedFrom::Default,
     }
@@ -123,24 +124,56 @@ fn read_device_config_flags() -> Result<HashMap<String, FlagValue>> {
     parse_device_config(&list_output)
 }
 
-fn reconcile(pb_flags: &[Flag], dc_flags: HashMap<String, FlagValue>) -> Vec<Flag> {
+/// Parse the list of newline-separated staged flags.
+///
+/// The output is a newline-sepaarated list of entries which follow this format:
+///   `namespace*flagname=value`
+///
+/// The resulting map maps from `namespace/flagname` to `value`, if a staged flag exists for
+/// `namespace/flagname`.
+fn parse_staged_flags(raw: &str) -> Result<HashMap<String, FlagValue>> {
+    let mut flags = HashMap::new();
+    for line in raw.split('\n') {
+        match (line.find('*'), line.find('=')) {
+            (Some(star_index), Some(equal_index)) => {
+                let namespace = &line[..star_index];
+                let flag = &line[star_index + 1..equal_index];
+                if let Ok(value) = FlagValue::try_from(&line[equal_index + 1..]) {
+                    flags.insert(namespace.to_owned() + "/" + flag, value);
+                }
+            }
+            _ => continue,
+        };
+    }
+    Ok(flags)
+}
+
+fn read_staged_flags() -> Result<HashMap<String, FlagValue>> {
+    let staged_flags_output = read_device_config_output(&["list", "staged"])?;
+    parse_staged_flags(&staged_flags_output)
+}
+
+fn reconcile(
+    pb_flags: &[Flag],
+    dc_flags: HashMap<String, FlagValue>,
+    staged_flags: HashMap<String, FlagValue>,
+) -> Vec<Flag> {
     pb_flags
         .iter()
         .map(|f| {
-            dc_flags
-                .get(&format!("{}/{}.{}", f.namespace, f.package, f.name))
-                .map(|value| {
-                    if *value == f.value {
-                        Flag { value_picked_from: ValuePickedFrom::Default, ..f.clone() }
-                    } else {
-                        Flag {
-                            value_picked_from: ValuePickedFrom::Server,
-                            value: *value,
-                            ..f.clone()
-                        }
-                    }
-                })
-                .unwrap_or(f.clone())
+            let server_override = dc_flags.get(&format!("{}/{}", f.namespace, f.qualified_name()));
+            let (value_picked_from, selected_value) = match server_override {
+                Some(value) if *value != f.value => (ValuePickedFrom::Server, *value),
+                _ => (ValuePickedFrom::Default, f.value),
+            };
+            Flag { value_picked_from, value: selected_value, ..f.clone() }
+        })
+        .map(|f| {
+            let staged_value = staged_flags
+                .get(&format!("{}/{}", f.namespace, f.qualified_name()))
+                .map(|value| if *value != f.value { Some(*value) } else { None })
+                .unwrap_or(None);
+            Flag { staged_value, ..f }
         })
         .collect()
 }
@@ -149,8 +182,9 @@ impl FlagSource for DeviceConfigSource {
     fn list_flags() -> Result<Vec<Flag>> {
         let pb_flags = read_pb_files()?;
         let dc_flags = read_device_config_flags()?;
+        let staged_flags = read_staged_flags()?;
 
-        let flags = reconcile(&pb_flags, dc_flags);
+        let flags = reconcile(&pb_flags, dc_flags, staged_flags);
         Ok(flags)
     }
 
