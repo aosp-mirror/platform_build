@@ -5,6 +5,7 @@ rust_test {
     ],
     rustlibs: [
         "libanyhow",
+        "libaconfig_storage_file",
         "libaconfig_storage_read_api",
         "libprotobuf",
         "libtempfile",
