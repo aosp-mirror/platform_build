@@ -42,54 +42,79 @@ pub mod package_table_query;
 #[cfg(test)]
 mod test_utils;
 
-pub use aconfig_storage_file::{
-    protos::ProtoStorageFiles, read_u32_from_bytes, AconfigStorageError, StorageFileType,
-    FILE_VERSION,
-};
+pub use aconfig_storage_file::{AconfigStorageError, StorageFileType};
 pub use flag_table_query::FlagOffset;
 pub use package_table_query::PackageOffset;
 
+use aconfig_storage_file::{read_u32_from_bytes, FILE_VERSION};
 use flag_table_query::find_flag_offset;
 use flag_value_query::find_boolean_flag_value;
-use mapped_file::get_mapped_file;
 use package_table_query::find_package_offset;
 
 use anyhow::anyhow;
+use memmap2::Mmap;
 use std::fs::File;
 use std::io::Read;
 
 /// Storage file location pb file
 pub const STORAGE_LOCATION_FILE: &str = "/metadata/aconfig/available_storage_file_records.pb";
 
-/// Get package start offset implementation
-pub fn get_package_offset_impl(
-    pb_file: &str,
+/// Get read only mapped storage files.
+///
+/// \input container: the flag package container
+/// \input file_type: stoarge file type enum
+/// \return a result of read only mapped file
+pub fn get_mapped_storage_file(
     container: &str,
-    package: &str,
-) -> Result<Option<PackageOffset>, AconfigStorageError> {
-    let mapped_file = get_mapped_file(pb_file, container, StorageFileType::PackageMap)?;
-    find_package_offset(&mapped_file, package)
+    file_type: StorageFileType,
+) -> Result<Mmap, AconfigStorageError> {
+    crate::mapped_file::get_mapped_file(STORAGE_LOCATION_FILE, container, file_type)
 }
 
-/// Get flag offset implementation
-pub fn get_flag_offset_impl(
-    pb_file: &str,
-    container: &str,
+/// Get package start offset for flags.
+///
+/// \input file: mapped package file
+/// \input package: package name
+///
+/// \return
+/// If a package is found, it returns Ok(Some(PackageOffset))
+/// If a package is not found, it returns Ok(None)
+/// If errors out, it returns an Err(errmsg)
+pub fn get_package_offset(
+    file: &Mmap,
+    package: &str,
+) -> Result<Option<PackageOffset>, AconfigStorageError> {
+    find_package_offset(file, package)
+}
+
+/// Get flag offset within a package given.
+///
+/// \input file: mapped flag file
+/// \input package_id: package id obtained from package mapping file
+/// \input flag: flag name
+///
+/// \return
+/// If a flag is found, it returns Ok(Some(u16))
+/// If a flag is not found, it returns Ok(None)
+/// If errors out, it returns an Err(errmsg)
+pub fn get_flag_offset(
+    file: &Mmap,
     package_id: u32,
     flag: &str,
 ) -> Result<Option<FlagOffset>, AconfigStorageError> {
-    let mapped_file = get_mapped_file(pb_file, container, StorageFileType::FlagMap)?;
-    find_flag_offset(&mapped_file, package_id, flag)
+    find_flag_offset(file, package_id, flag)
 }
 
-/// Get boolean flag value implementation
-pub fn get_boolean_flag_value_impl(
-    pb_file: &str,
-    container: &str,
-    offset: u32,
-) -> Result<bool, AconfigStorageError> {
-    let mapped_file = get_mapped_file(pb_file, container, StorageFileType::FlagVal)?;
-    find_boolean_flag_value(&mapped_file, offset)
+/// Get the boolean flag value.
+///
+/// \input file: mapped flag file
+/// \input offset: flag value offset
+///
+/// \return
+/// If the provide offset is valid, it returns the boolean flag value, otherwise it
+/// returns the error message.
+pub fn get_boolean_flag_value(file: &Mmap, offset: u32) -> Result<bool, AconfigStorageError> {
+    find_boolean_flag_value(file, offset)
 }
 
 /// Get storage file version number
@@ -112,48 +137,6 @@ pub fn get_storage_file_version(file_path: &str) -> Result<u32, AconfigStorageEr
     })?;
     let mut head = 0;
     read_u32_from_bytes(&buffer, &mut head)
-}
-
-/// Get package start offset for flags given the container and package name.
-///
-/// This function would map the corresponding package map file if has not been mapped yet,
-/// and then look for the target package in this mapped file.
-///
-/// If a package is found, it returns Ok(Some(PackageOffset))
-/// If a package is not found, it returns Ok(None)
-/// If errors out such as no such package map file is found, it returns an Err(errmsg)
-pub fn get_package_offset(
-    container: &str,
-    package: &str,
-) -> Result<Option<PackageOffset>, AconfigStorageError> {
-    get_package_offset_impl(STORAGE_LOCATION_FILE, container, package)
-}
-
-/// Get flag offset within a package given the container name, package id and flag name.
-///
-/// This function would map the corresponding flag map file if has not been mapped yet,
-/// and then look for the target flag in this mapped file.
-///
-/// If a flag is found, it returns Ok(Some(u16))
-/// If a flag is not found, it returns Ok(None)
-/// If errors out such as no such flag map file is found, it returns an Err(errmsg)
-pub fn get_flag_offset(
-    container: &str,
-    package_id: u32,
-    flag: &str,
-) -> Result<Option<FlagOffset>, AconfigStorageError> {
-    get_flag_offset_impl(STORAGE_LOCATION_FILE, container, package_id, flag)
-}
-
-/// Get the boolean flag value given the container name and flag global offset
-///
-/// This function would map the corresponding flag value file if has not been mapped yet,
-/// and then look for the target flag value at the specified offset.
-///
-/// If flag value file is successfully mapped and the provide offset is valid, it returns
-/// the boolean flag value, otherwise it returns the error message.
-pub fn get_boolean_flag_value(container: &str, offset: u32) -> Result<bool, AconfigStorageError> {
-    get_boolean_flag_value_impl(STORAGE_LOCATION_FILE, container, offset)
 }
 
 // *************************************** //
@@ -196,36 +179,17 @@ mod ffi {
 
     // Rust export to c++
     extern "Rust" {
-        pub fn get_package_offset_cxx_impl(
-            pb_file: &str,
-            container: &str,
-            package: &str,
-        ) -> PackageOffsetQueryCXX;
-
-        pub fn get_flag_offset_cxx_impl(
-            pb_file: &str,
-            container: &str,
-            package_id: u32,
-            flag: &str,
-        ) -> FlagOffsetQueryCXX;
-
-        pub fn get_boolean_flag_value_cxx_impl(
-            pb_file: &str,
-            container: &str,
-            offset: u32,
-        ) -> BooleanFlagValueQueryCXX;
-
         pub fn get_storage_file_version_cxx(file_path: &str) -> VersionNumberQueryCXX;
 
-        pub fn get_package_offset_cxx(container: &str, package: &str) -> PackageOffsetQueryCXX;
+        pub fn get_package_offset_cxx(file: &[u8], package: &str) -> PackageOffsetQueryCXX;
 
         pub fn get_flag_offset_cxx(
-            container: &str,
+            file: &[u8],
             package_id: u32,
             flag: &str,
         ) -> FlagOffsetQueryCXX;
 
-        pub fn get_boolean_flag_value_cxx(container: &str, offset: u32)
+        pub fn get_boolean_flag_value_cxx(file: &[u8], offset: u32)
             -> BooleanFlagValueQueryCXX;
     }
 }
@@ -324,32 +288,23 @@ impl ffi::VersionNumberQueryCXX {
     }
 }
 
-/// Get package start offset impl cc interlop
-pub fn get_package_offset_cxx_impl(
-    pb_file: &str,
-    container: &str,
-    package: &str,
-) -> ffi::PackageOffsetQueryCXX {
-    ffi::PackageOffsetQueryCXX::new(get_package_offset_impl(pb_file, container, package))
+/// Get package start offset cc interlop
+pub fn get_package_offset_cxx(file: &[u8], package: &str) -> ffi::PackageOffsetQueryCXX {
+    ffi::PackageOffsetQueryCXX::new(find_package_offset(file, package))
 }
 
-/// Get flag start offset impl cc interlop
-pub fn get_flag_offset_cxx_impl(
-    pb_file: &str,
-    container: &str,
+/// Get flag start offset cc interlop
+pub fn get_flag_offset_cxx(
+    file: &[u8],
     package_id: u32,
     flag: &str,
 ) -> ffi::FlagOffsetQueryCXX {
-    ffi::FlagOffsetQueryCXX::new(get_flag_offset_impl(pb_file, container, package_id, flag))
+    ffi::FlagOffsetQueryCXX::new(find_flag_offset(file, package_id, flag))
 }
 
-/// Get boolean flag value impl cc interlop
-pub fn get_boolean_flag_value_cxx_impl(
-    pb_file: &str,
-    container: &str,
-    offset: u32,
-) -> ffi::BooleanFlagValueQueryCXX {
-    ffi::BooleanFlagValueQueryCXX::new(get_boolean_flag_value_impl(pb_file, container, offset))
+/// Get boolean flag value cc interlop
+pub fn get_boolean_flag_value_cxx(file: &[u8], offset: u32) -> ffi::BooleanFlagValueQueryCXX {
+    ffi::BooleanFlagValueQueryCXX::new(find_boolean_flag_value(file, offset))
 }
 
 /// Get storage version number cc interlop
@@ -357,45 +312,19 @@ pub fn get_storage_file_version_cxx(file_path: &str) -> ffi::VersionNumberQueryC
     ffi::VersionNumberQueryCXX::new(get_storage_file_version(file_path))
 }
 
-/// Get package start offset cc interlop
-pub fn get_package_offset_cxx(container: &str, package: &str) -> ffi::PackageOffsetQueryCXX {
-    ffi::PackageOffsetQueryCXX::new(get_package_offset(container, package))
-}
-
-/// Get flag start offset cc interlop
-pub fn get_flag_offset_cxx(
-    container: &str,
-    package_id: u32,
-    flag: &str,
-) -> ffi::FlagOffsetQueryCXX {
-    ffi::FlagOffsetQueryCXX::new(get_flag_offset(container, package_id, flag))
-}
-
-/// Get boolean flag value cc interlop
-pub fn get_boolean_flag_value_cxx(container: &str, offset: u32) -> ffi::BooleanFlagValueQueryCXX {
-    ffi::BooleanFlagValueQueryCXX::new(get_boolean_flag_value(container, offset))
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::TestStorageFileSet;
+    use crate::mapped_file::get_mapped_file;
+    use crate::test_utils::copy_to_temp_file;
     use aconfig_storage_file::protos::storage_record_pb::write_proto_to_temp_file;
+    use tempfile::NamedTempFile;
 
-    fn create_test_storage_files(read_only: bool) -> TestStorageFileSet {
-        TestStorageFileSet::new(
-            "./tests/package.map",
-            "./tests/flag.map",
-            "./tests/flag.val",
-            read_only,
-        )
-        .unwrap()
-    }
+    fn create_test_storage_files(read_only: bool) -> [NamedTempFile; 4] {
+        let package_map = copy_to_temp_file("./tests/package.map", read_only).unwrap();
+        let flag_map = copy_to_temp_file("./tests/flag.map", read_only).unwrap();
+        let flag_val = copy_to_temp_file("./tests/flag.val", read_only).unwrap();
 
-    #[test]
-    // this test point locks down flag package offset query
-    fn test_package_offset_query() {
-        let ro_files = create_test_storage_files(true);
         let text_proto = format!(
             r#"
 files {{
@@ -407,38 +336,40 @@ files {{
     timestamp: 12345
 }}
 "#,
-            ro_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
+            package_map.path().display(),
+            flag_map.path().display(),
+            flag_val.path().display()
         );
+        let pb_file = write_proto_to_temp_file(&text_proto).unwrap();
+        [package_map, flag_map, flag_val, pb_file]
+    }
 
-        let file = write_proto_to_temp_file(&text_proto).unwrap();
-        let file_full_path = file.path().display().to_string();
-        let package_offset = get_package_offset_impl(
-            &file_full_path,
-            "system",
-            "com.android.aconfig.storage.test_1",
-        )
-        .unwrap()
-        .unwrap();
+    #[test]
+    // this test point locks down flag package offset query
+    fn test_package_offset_query() {
+        let [package_map, flag_map, flag_val, pb_file] = create_test_storage_files(true);
+        let pb_file_path = pb_file.path().display().to_string();
+        let package_mapped_file =
+            get_mapped_file(&pb_file_path, "system", StorageFileType::PackageMap).unwrap();
+
+        let package_offset =
+            get_package_offset(&package_mapped_file, "com.android.aconfig.storage.test_1")
+                .unwrap()
+                .unwrap();
         let expected_package_offset = PackageOffset { package_id: 0, boolean_offset: 0 };
         assert_eq!(package_offset, expected_package_offset);
 
-        let package_offset = get_package_offset_impl(
-            &file_full_path,
-            "system",
-            "com.android.aconfig.storage.test_2",
-        )
-        .unwrap()
-        .unwrap();
+        let package_offset =
+            get_package_offset(&package_mapped_file, "com.android.aconfig.storage.test_2")
+                .unwrap()
+                .unwrap();
         let expected_package_offset = PackageOffset { package_id: 1, boolean_offset: 3 };
         assert_eq!(package_offset, expected_package_offset);
 
-        let package_offset = get_package_offset_impl(
-            &file_full_path,
-            "system",
-            "com.android.aconfig.storage.test_4",
-        )
-        .unwrap()
-        .unwrap();
+        let package_offset =
+            get_package_offset(&package_mapped_file, "com.android.aconfig.storage.test_4")
+                .unwrap()
+                .unwrap();
         let expected_package_offset = PackageOffset { package_id: 2, boolean_offset: 6 };
         assert_eq!(package_offset, expected_package_offset);
     }
@@ -446,23 +377,11 @@ files {{
     #[test]
     // this test point locks down flag offset query
     fn test_flag_offset_query() {
-        let ro_files = create_test_storage_files(true);
-        let text_proto = format!(
-            r#"
-files {{
-    version: 0
-    container: "system"
-    package_map: "{}"
-    flag_map: "{}"
-    flag_val: "{}"
-    timestamp: 12345
-}}
-"#,
-            ro_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
-        );
+        let [package_map, flag_map, flag_val, pb_file] = create_test_storage_files(true);
+        let pb_file_path = pb_file.path().display().to_string();
+        let flag_mapped_file =
+            get_mapped_file(&pb_file_path, "system", StorageFileType::FlagMap).unwrap();
 
-        let file = write_proto_to_temp_file(&text_proto).unwrap();
-        let file_full_path = file.path().display().to_string();
         let baseline = vec![
             (0, "enabled_ro", 1u16),
             (0, "enabled_rw", 2u16),
@@ -475,9 +394,7 @@ files {{
         ];
         for (package_id, flag_name, expected_offset) in baseline.into_iter() {
             let flag_offset =
-                get_flag_offset_impl(&file_full_path, "system", package_id, flag_name)
-                    .unwrap()
-                    .unwrap();
+                get_flag_offset(&flag_mapped_file, package_id, flag_name).unwrap().unwrap();
             assert_eq!(flag_offset, expected_offset);
         }
     }
@@ -485,27 +402,13 @@ files {{
     #[test]
     // this test point locks down flag offset query
     fn test_flag_value_query() {
-        let ro_files = create_test_storage_files(true);
-        let text_proto = format!(
-            r#"
-files {{
-    version: 0
-    container: "system"
-    package_map: "{}"
-    flag_map: "{}"
-    flag_val: "{}"
-    timestamp: 12345
-}}
-"#,
-            ro_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
-        );
-
-        let file = write_proto_to_temp_file(&text_proto).unwrap();
-        let file_full_path = file.path().display().to_string();
+        let [package_map, flag_map, flag_val, pb_file] = create_test_storage_files(true);
+        let pb_file_path = pb_file.path().display().to_string();
+        let flag_value_file =
+            get_mapped_file(&pb_file_path, "system", StorageFileType::FlagVal).unwrap();
         let baseline: Vec<bool> = vec![false; 8];
         for (offset, expected_value) in baseline.into_iter().enumerate() {
-            let flag_value =
-                get_boolean_flag_value_impl(&file_full_path, "system", offset as u32).unwrap();
+            let flag_value = get_boolean_flag_value(&flag_value_file, offset as u32).unwrap();
             assert_eq!(flag_value, expected_value);
         }
     }
