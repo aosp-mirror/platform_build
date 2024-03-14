@@ -17,3 +17,26 @@ rust_test {
     ],
     test_suites: ["general-tests"],
 }
+
+cc_test {
+    name: "aconfig_storage_write_api.test.cpp",
+    srcs: [
+        "storage_write_api_test.cpp",
+    ],
+    static_libs: [
+        "libgmock",
+        "libaconfig_storage_protos_cc",
+        "libprotobuf-cpp-lite",
+        "libaconfig_storage_read_api_cc",
+        "libaconfig_storage_write_api_cc",
+        "libbase",
+        "liblog",
+    ],
+    data: [
+        "flag.val",
+    ],
+    test_suites: [
+        "device-tests",
+        "general-tests",
+    ],
+}

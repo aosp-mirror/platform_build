@@ -18,49 +18,15 @@ use anyhow::Result;
 use std::fs;
 use tempfile::NamedTempFile;
 
-fn set_file_read_only(file: &NamedTempFile) {
-    let mut perms = fs::metadata(file.path()).unwrap().permissions();
-    if !perms.readonly() {
+/// Create temp file copy
+pub(crate) fn copy_to_temp_file(source_file: &str, read_only: bool) -> Result<NamedTempFile> {
+    let file = NamedTempFile::new()?;
+    fs::copy(source_file, file.path())?;
+    if read_only {
+        let file_name = file.path().display().to_string();
+        let mut perms = fs::metadata(file_name).unwrap().permissions();
         perms.set_readonly(true);
-        fs::set_permissions(file.path(), perms).unwrap();
+        fs::set_permissions(file.path(), perms.clone()).unwrap();
     }
-}
-
-#[allow(dead_code)]
-pub(crate) struct TestStorageFile {
-    pub file: NamedTempFile,
-    pub name: String,
-}
-
-impl TestStorageFile {
-    pub(crate) fn new(source_file: &str, read_only: bool) -> Result<Self> {
-        let file = NamedTempFile::new()?;
-        fs::copy(source_file, file.path())?;
-        if read_only {
-            set_file_read_only(&file);
-        }
-        let name = file.path().display().to_string();
-        Ok(Self { file, name })
-    }
-}
-
-pub(crate) struct TestStorageFileSet {
-    pub package_map: TestStorageFile,
-    pub flag_map: TestStorageFile,
-    pub flag_val: TestStorageFile,
-}
-
-impl TestStorageFileSet {
-    pub(crate) fn new(
-        package_map_path: &str,
-        flag_map_path: &str,
-        flag_val_path: &str,
-        read_only: bool,
-    ) -> Result<Self> {
-        Ok(Self {
-            package_map: TestStorageFile::new(package_map_path, read_only)?,
-            flag_map: TestStorageFile::new(flag_map_path, read_only)?,
-            flag_val: TestStorageFile::new(flag_val_path, read_only)?,
-        })
-    }
+    Ok(file)
 }

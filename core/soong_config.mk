@@ -404,6 +404,8 @@ $(call add_json_bool, HiddenapiExportableStubs, $(filter true,$(PRODUCT_HIDDEN_A
 
 $(call add_json_bool, ExportRuntimeApis, $(filter true,$(PRODUCT_EXPORT_RUNTIME_APIS)))
 
+$(call add_json_str, AconfigContainerValidation, $(ACONFIG_CONTAINER_VALIDATION))
+
 $(call json_end)
 
 $(file >$(SOONG_VARIABLES).tmp,$(json_contents))
