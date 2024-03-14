@@ -115,9 +115,9 @@ TEST_F(AconfigStorageTest, test_boolean_flag_value_update) {
     auto ro_mapped_file = api::MappedStorageFile();
     ro_mapped_file.file_ptr = mapped_file.file_ptr;
     ro_mapped_file.file_size = mapped_file.file_size;
-    auto value_query = api::get_boolean_flag_value(ro_mapped_file, offset);
-    ASSERT_TRUE(value_query.query_success);
-    ASSERT_TRUE(value_query.flag_value);
+    auto value = api::get_boolean_flag_value(ro_mapped_file, offset);
+    ASSERT_TRUE(value.ok());
+    ASSERT_TRUE(*value);
   }
 }
 
