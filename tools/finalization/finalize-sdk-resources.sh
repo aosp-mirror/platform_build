@@ -9,13 +9,6 @@ function apply_droidstubs_hack() {
     fi
 }
 
-function apply_resources_sdk_int_fix() {
-    if ! grep -q 'public static final int RESOURCES_SDK_INT = SDK_INT;' "$top/frameworks/base/core/java/android/os/Build.java" ; then
-        local base_git_root="$(readlink -f $top/frameworks/base)"
-        patch --strip=1 --no-backup-if-mismatch --directory="$base_git_root" --input=../../build/make/tools/finalization/frameworks_base.apply_resource_sdk_int.diff
-    fi
-}
-
 function finalize_bionic_ndk() {
     # Adding __ANDROID_API_<>__.
     # If this hasn't done then it's not used and not really needed. Still, let's check and add this.
@@ -129,8 +122,12 @@ function finalize_sdk_resources() {
     fi
 
     # cts
-    echo ${FINAL_PLATFORM_VERSION} > "$top/cts/tests/tests/os/assets/platform_releases.txt"
-    sed -i -e "s/EXPECTED_SDK = $((${FINAL_PLATFORM_SDK_VERSION}-1))/EXPECTED_SDK = ${FINAL_PLATFORM_SDK_VERSION}/g" "$top/cts/tests/tests/os/src/android/os/cts/BuildVersionTest.java"
+    if ! grep -q "${FINAL_PLATFORM_VERSION}" "$top/cts/tests/tests/os/assets/platform_releases.txt" ; then
+        echo ${FINAL_PLATFORM_VERSION} >> "$top/cts/tests/tests/os/assets/platform_releases.txt"
+    fi
+    if ! grep -q "$((${FINAL_PLATFORM_SDK_VERSION}-1)), ${FINAL_PLATFORM_VERSION}" "$top/cts/tests/tests/os/src/android/os/cts/BuildVersionTest.java" ; then
+        sed -i -e "s/.*EXPECTED_SDKS = List.of(.*$((${FINAL_PLATFORM_SDK_VERSION}-1))/&, $FINAL_PLATFORM_SDK_VERSION/" "$top/cts/tests/tests/os/src/android/os/cts/BuildVersionTest.java"
+    fi
 
     # libcore
     sed -i "s%$SDK_CODENAME%$SDK_VERSION%g" "$top/libcore/dalvik/src/main/java/dalvik/annotation/compat/VersionCodes.java"
@@ -153,7 +150,6 @@ function finalize_sdk_resources() {
 
     # frameworks/base
     sed -i "s%$SDK_CODENAME%$SDK_VERSION%g" "$top/frameworks/base/core/java/android/os/Build.java"
-    apply_resources_sdk_int_fix
     sed -i -e "/=.*$((${FINAL_PLATFORM_SDK_VERSION}-1)),/a \\    SDK_${FINAL_PLATFORM_CODENAME_JAVA} = ${FINAL_PLATFORM_SDK_VERSION}," "$top/frameworks/base/tools/aapt/SdkConstants.h"
     sed -i -e "/=.*$((${FINAL_PLATFORM_SDK_VERSION}-1)),/a \\  SDK_${FINAL_PLATFORM_CODENAME_JAVA} = ${FINAL_PLATFORM_SDK_VERSION}," "$top/frameworks/base/tools/aapt2/SdkConstants.h"
 

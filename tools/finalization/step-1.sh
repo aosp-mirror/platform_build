@@ -21,15 +21,17 @@ function finalize_step_1_main() {
     local top="$(dirname "$0")"/../../../..
     source $top/build/make/tools/finalization/environment.sh
 
-    local m="$top/build/soong/soong_ui.bash --make-mode TARGET_RELEASE=next TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug"
-
     source $top/build/make/tools/finalization/finalize-sdk-resources.sh
 
     # move all changes to finalization branch/topic and upload to gerrit
     commit_step_1_changes
 
     # build to confirm everything is OK
-    AIDL_FROZEN_REL=true $m
+    local m_next="$top/build/soong/soong_ui.bash --make-mode TARGET_RELEASE=next TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug"
+    AIDL_FROZEN_REL=true $m_next
+
+    local m_fina="$top/build/soong/soong_ui.bash --make-mode TARGET_RELEASE=fina_1 TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug"
+    AIDL_FROZEN_REL=true $m_fina
 }
 
 finalize_step_1_main
