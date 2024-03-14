@@ -82,6 +82,10 @@
       "name": "aconfig_storage_write_api.test.rust"
     },
     {
+      // aconfig_storage write api cpp integration tests
+      "name": "aconfig_storage_write_api.test.cpp"
+    },
+    {
       // aconfig_storage read api rust integration tests
       "name": "aconfig_storage_read_api.test.rust"
     },
