@@ -65,6 +65,45 @@ pub fn set_boolean_flag_value(
     })
 }
 
+// *************************************** //
+// CC INTERLOP
+// *************************************** //
+
+// Exported rust data structure and methods, c++ code will be generated
+#[cxx::bridge]
+mod ffi {
+    // Flag value update return for cc interlop
+    pub struct BooleanFlagValueUpdateCXX {
+        pub update_success: bool,
+        pub error_message: String,
+    }
+
+    // Rust export to c++
+    extern "Rust" {
+        pub fn update_boolean_flag_value_cxx(
+            file: &mut [u8],
+            offset: u32,
+            value: bool,
+        ) -> BooleanFlagValueUpdateCXX;
+    }
+}
+
+pub(crate) fn update_boolean_flag_value_cxx(
+    file: &mut [u8],
+    offset: u32,
+    value: bool,
+) -> ffi::BooleanFlagValueUpdateCXX {
+    match crate::flag_value_update::update_boolean_flag_value(file, offset, value) {
+        Ok(()) => {
+            ffi::BooleanFlagValueUpdateCXX { update_success: true, error_message: String::from("") }
+        }
+        Err(errmsg) => ffi::BooleanFlagValueUpdateCXX {
+            update_success: false,
+            error_message: format!("{:?}", errmsg),
+        },
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
