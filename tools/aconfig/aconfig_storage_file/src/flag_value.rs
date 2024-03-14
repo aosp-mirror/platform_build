@@ -143,9 +143,11 @@ mod tests {
         assert!(reinterpreted_header.is_ok());
         assert_eq!(header, &reinterpreted_header.unwrap());
 
-        let reinterpreted_value_list = FlagValueList::from_bytes(&flag_value_list.as_bytes());
+        let flag_value_bytes = flag_value_list.as_bytes();
+        let reinterpreted_value_list = FlagValueList::from_bytes(&flag_value_bytes);
         assert!(reinterpreted_value_list.is_ok());
         assert_eq!(&flag_value_list, &reinterpreted_value_list.unwrap());
+        assert_eq!(flag_value_bytes.len() as u32, header.file_size);
     }
 
     #[test]
