@@ -145,6 +145,21 @@ def _format_value(val):
     else:
         return val
 
+def equal_flag_declaration(flag, other):
+    """Return true if the flag declarations are equal.
+
+    Args:
+      flag: This flag declaration.
+      other: Another flag declaration.
+
+    Returns:
+      Whether the declarations are the same.
+    """
+    for key in "name", "partitions", "default", "appends":
+        if flag[key] != other[key]:
+            return False
+    return True
+
 def release_config(all_flags, all_values):
     """Return the make variables that should be set for this release config.
 
@@ -163,7 +178,11 @@ def release_config(all_flags, all_values):
     flags_dict = {}
     for flag in all_flags:
         if flag["name"] in flag_names:
-            fail(flag["declared_in"] + ": Duplicate declaration of flag " + flag["name"])
+            if equal_flag_declaration(flag, flags_dict[flag["name"]]):
+                continue
+            else:
+                fail(flag["declared_in"] + ": Duplicate declaration of flag " + flag["name"] +
+                     " (declared first in " + flags_dict[flag["name"]]["declared_in"] + ")")
         flag_names.append(flag["name"])
         flags_dict[flag["name"]] = flag
 
