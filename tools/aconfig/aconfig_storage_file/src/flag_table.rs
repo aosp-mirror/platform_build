@@ -236,9 +236,11 @@ mod tests {
             assert_eq!(node, &reinterpreted_node);
         }
 
-        let reinterpreted_table = FlagTable::from_bytes(&flag_table.as_bytes());
+        let flag_table_bytes = flag_table.as_bytes();
+        let reinterpreted_table = FlagTable::from_bytes(&flag_table_bytes);
         assert!(reinterpreted_table.is_ok());
         assert_eq!(&flag_table, &reinterpreted_table.unwrap());
+        assert_eq!(flag_table_bytes.len() as u32, header.file_size);
     }
 
     #[test]

@@ -822,6 +822,52 @@ def ProcessTargetFiles(input_tf_zip: zipfile.ZipFile, output_tf_zip, misc_info,
   # Write back misc_info with the latest values.
   ReplaceMiscInfoTxt(input_tf_zip, output_tf_zip, misc_info)
 
+# Parse string output of `avbtool info_image`.
+def ParseAvbInfo(info_raw):
+  # line_matcher is for parsing each output line of `avbtool info_image`.
+  # example string input: "      Hash Algorithm:        sha1"
+  # example matched input: ("      ", "Hash Algorithm", "sha1")
+  line_matcher = re.compile(r'^(\s*)([^:]+):\s*(.*)$')
+  # prop_matcher is for parsing value part of 'Prop' in `avbtool info_image`.
+  # example string input: "example_prop_key -> 'example_prop_value'"
+  # example matched output: ("example_prop_key", "example_prop_value")
+  prop_matcher = re.compile(r"(.+)\s->\s'(.+)'")
+  info = {}
+  indent_stack = [[-1, info]]
+  for line_info_raw in info_raw.split('\n'):
+    # Parse the line
+    line_info_parsed = line_matcher.match(line_info_raw)
+    if not line_info_parsed:
+      continue
+    indent = len(line_info_parsed.group(1))
+    key = line_info_parsed.group(2).strip()
+    value = line_info_parsed.group(3).strip()
+
+    # Pop indentation stack
+    while indent <= indent_stack[-1][0]:
+      del indent_stack[-1]
+
+    # Insert information into 'info'.
+    cur_info = indent_stack[-1][1]
+    if value == "":
+      if key == "Descriptors":
+        empty_list = []
+        cur_info[key] = empty_list
+        indent_stack.append([indent, empty_list])
+      else:
+        empty_dict = {}
+        cur_info.append({key:empty_dict})
+        indent_stack.append([indent, empty_dict])
+    elif key == "Prop":
+      prop_parsed = prop_matcher.match(value)
+      if not prop_parsed:
+        raise ValueError(
+            "Failed to parse prop while getting avb information.")
+      cur_info.append({key:{prop_parsed.group(1):prop_parsed.group(2)}})
+    else:
+      cur_info[key] = value
+  return info
+
 def ReplaceKeyInAvbHashtreeFooter(image, new_key, new_algorithm, misc_info):
   # Get avb information about the image by parsing avbtool info_image.
   def GetAvbInfo(avbtool, image_name):
@@ -830,51 +876,7 @@ def ReplaceKeyInAvbHashtreeFooter(image, new_key, new_algorithm, misc_info):
       avbtool, 'info_image',
       '--image', image_name
     ])
-
-    # line_matcher is for parsing each output line of `avbtool info_image`.
-    # example string input: "      Hash Algorithm:        sha1"
-    # example matched input: ("      ", "Hash Algorithm", "sha1")
-    line_matcher = re.compile(r'^(\s*)([^:]+):\s*(.*)$')
-    # prop_matcher is for parsing value part of 'Prop' in `avbtool info_image`.
-    # example string input: "example_prop_key -> 'example_prop_value'"
-    # example matched output: ("example_prop_key", "example_prop_value")
-    prop_matcher = re.compile(r"(.+)\s->\s'(.+)'")
-    info = {}
-    indent_stack = [[-1, info]]
-    for line_info_raw in info_raw.split('\n'):
-      # Parse the line
-      line_info_parsed = line_matcher.match(line_info_raw)
-      if not line_info_parsed:
-        continue
-      indent = len(line_info_parsed.group(1))
-      key = line_info_parsed.group(2).strip()
-      value = line_info_parsed.group(3).strip()
-
-      # Pop indentation stack
-      while indent <= indent_stack[-1][0]:
-        del indent_stack[-1]
-
-      # Insert information into 'info'.
-      cur_info = indent_stack[-1][1]
-      if value == "":
-        if key == "Descriptors":
-          empty_list = []
-          cur_info[key] = empty_list
-          indent_stack.append([indent, empty_list])
-        else:
-          empty_dict = {}
-          cur_info.append({key:empty_dict})
-          indent_stack.append([indent, empty_dict])
-      elif key == "Prop":
-        prop_parsed = prop_matcher.match(value)
-        if not prop_parsed:
-          raise ValueError(
-              "Failed to parse prop while getting avb information.")
-        cur_info.append({key:{prop_parsed.group(1):prop_parsed.group(2)}})
-      else:
-        cur_info[key] = value
-
-    return info
+    return ParseAvbInfo(info_raw)
 
   # Get hashtree descriptor from info
   def GetAvbHashtreeDescriptor(avb_info):
