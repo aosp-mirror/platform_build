@@ -48,7 +48,7 @@ pub fn find_boolean_flag_value(buf: &[u8], flag_offset: u32) -> Result<bool, Aco
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::{StorageFileType, FlagValueList};
+    use aconfig_storage_file::{FlagValueList, StorageFileType};
 
     pub fn create_test_flag_value_list() -> FlagValueList {
         let header = FlagValueHeader {

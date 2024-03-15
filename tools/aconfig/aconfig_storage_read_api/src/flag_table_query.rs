@@ -65,7 +65,7 @@ pub fn find_flag_offset(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::{StorageFileType, FlagTable};
+    use aconfig_storage_file::{FlagTable, StorageFileType};
 
     // create test baseline, syntactic sugar
     fn new_expected_node(

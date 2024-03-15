@@ -114,9 +114,7 @@ files {{
         ];
         for (package_id, flag_name, expected_offset) in baseline.into_iter() {
             let flag_offset =
-                get_flag_offset(&flag_mapped_file, package_id, flag_name)
-                    .unwrap()
-                    .unwrap();
+                get_flag_offset(&flag_mapped_file, package_id, flag_name).unwrap().unwrap();
             assert_eq!(flag_offset, expected_offset);
         }
     }
@@ -128,12 +126,10 @@ files {{
         let flag_mapped_file =
             get_mapped_file(&pb_file_path, "system", StorageFileType::FlagMap).unwrap();
 
-        let flag_offset_option =
-            get_flag_offset(&flag_mapped_file, 0, "none_exist").unwrap();
+        let flag_offset_option = get_flag_offset(&flag_mapped_file, 0, "none_exist").unwrap();
         assert_eq!(flag_offset_option, None);
 
-        let flag_offset_option =
-            get_flag_offset(&flag_mapped_file, 3, "enabled_ro").unwrap();
+        let flag_offset_option = get_flag_offset(&flag_mapped_file, 3, "enabled_ro").unwrap();
         assert_eq!(flag_offset_option, None);
     }
 
@@ -146,8 +142,7 @@ files {{
 
         let baseline: Vec<bool> = vec![false; 8];
         for (offset, expected_value) in baseline.into_iter().enumerate() {
-            let flag_value =
-                get_boolean_flag_value(&flag_value_file, offset as u32).unwrap();
+            let flag_value = get_boolean_flag_value(&flag_value_file, offset as u32).unwrap();
             assert_eq!(flag_value, expected_value);
         }
     }

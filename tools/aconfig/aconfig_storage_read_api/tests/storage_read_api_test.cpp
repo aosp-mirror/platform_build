@@ -93,105 +93,92 @@ class AconfigStorageTest : public ::testing::Test {
 
 /// Test to lock down storage file version query api
 TEST_F(AconfigStorageTest, test_storage_version_query) {
-  auto query = api::get_storage_file_version(package_map);
-  ASSERT_EQ(query.error_message, std::string());
-  ASSERT_TRUE(query.query_success);
-  ASSERT_EQ(query.version_number, 1);
-  query = api::get_storage_file_version(flag_map);
-  ASSERT_EQ(query.error_message, std::string());
-  ASSERT_TRUE(query.query_success);
-  ASSERT_EQ(query.version_number, 1);
-  query = api::get_storage_file_version(flag_val);
-  ASSERT_EQ(query.error_message, std::string());
-  ASSERT_TRUE(query.query_success);
-  ASSERT_EQ(query.version_number, 1);
+  auto version = api::get_storage_file_version(package_map);
+  ASSERT_TRUE(version.ok());
+  ASSERT_EQ(*version, 1);
+  version = api::get_storage_file_version(flag_map);
+  ASSERT_TRUE(version.ok());
+  ASSERT_EQ(*version, 1);
+  version = api::get_storage_file_version(flag_val);
+  ASSERT_TRUE(version.ok());
+  ASSERT_EQ(*version, 1);
 }
 
 /// Negative test to lock down the error when mapping none exist storage files
 TEST_F(AconfigStorageTest, test_none_exist_storage_file_mapping) {
-  auto mapped_file_query = private_api::get_mapped_file_impl(
+  auto mapped_file = private_api::get_mapped_file_impl(
       storage_record_pb, "vendor", api::StorageFileType::package_map);
-  ASSERT_FALSE(mapped_file_query.query_success);
-  ASSERT_EQ(mapped_file_query.error_message,
+  ASSERT_FALSE(mapped_file.ok());
+  ASSERT_EQ(mapped_file.error().message(),
             "Unable to find storage files for container vendor");
 }
 
 /// Negative test to lock down the error when mapping a writeable storage file
 TEST_F(AconfigStorageTest, test_writable_storage_file_mapping) {
-  ASSERT_TRUE(chmod(package_map.c_str(),
-                    S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH) != -1);
-  auto mapped_file_query = private_api::get_mapped_file_impl(
+  ASSERT_TRUE(chmod(package_map.c_str(), 0666) != -1);
+  auto mapped_file = private_api::get_mapped_file_impl(
       storage_record_pb, "system", api::StorageFileType::package_map);
-  ASSERT_FALSE(mapped_file_query.query_success);
-  ASSERT_EQ(mapped_file_query.error_message, "cannot map writeable file");
+  ASSERT_FALSE(mapped_file.ok());
+  ASSERT_EQ(mapped_file.error().message(), "cannot map writeable file");
 
-  ASSERT_TRUE(chmod(flag_map.c_str(),
-                    S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH) != -1);
-  mapped_file_query = private_api::get_mapped_file_impl(
+  ASSERT_TRUE(chmod(flag_map.c_str(), 0666) != -1);
+  mapped_file = private_api::get_mapped_file_impl(
       storage_record_pb, "system", api::StorageFileType::flag_map);
-  ASSERT_FALSE(mapped_file_query.query_success);
-  ASSERT_EQ(mapped_file_query.error_message, "cannot map writeable file");
+  ASSERT_FALSE(mapped_file.ok());
+  ASSERT_EQ(mapped_file.error().message(), "cannot map writeable file");
 
-  ASSERT_TRUE(chmod(flag_val.c_str(),
-                    S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH) != -1);
-  mapped_file_query = private_api::get_mapped_file_impl(
+  ASSERT_TRUE(chmod(flag_val.c_str(), 0666) != -1);
+  mapped_file = private_api::get_mapped_file_impl(
       storage_record_pb, "system", api::StorageFileType::flag_val);
-  ASSERT_FALSE(mapped_file_query.query_success);
-  ASSERT_EQ(mapped_file_query.error_message, "cannot map writeable file");
+  ASSERT_FALSE(mapped_file.ok());
+  ASSERT_EQ(mapped_file.error().message(), "cannot map writeable file");
 }
 
 /// Test to lock down storage package offset query api
 TEST_F(AconfigStorageTest, test_package_offset_query) {
-  auto mapped_file_query = private_api::get_mapped_file_impl(
+  auto mapped_file = private_api::get_mapped_file_impl(
       storage_record_pb, "system", api::StorageFileType::package_map);
-  ASSERT_TRUE(mapped_file_query.query_success);
-  auto mapped_file = mapped_file_query.mapped_file;
+  ASSERT_TRUE(mapped_file.ok());
 
-  auto query = api::get_package_offset(
-      mapped_file, "com.android.aconfig.storage.test_1");
-  ASSERT_EQ(query.error_message, std::string());
-  ASSERT_TRUE(query.query_success);
-  ASSERT_TRUE(query.package_exists);
-  ASSERT_EQ(query.package_id, 0);
-  ASSERT_EQ(query.boolean_offset, 0);
+  auto offset = api::get_package_offset(
+      *mapped_file, "com.android.aconfig.storage.test_1");
+  ASSERT_TRUE(offset.ok());
+  ASSERT_TRUE(offset->package_exists);
+  ASSERT_EQ(offset->package_id, 0);
+  ASSERT_EQ(offset->boolean_offset, 0);
 
-  query = api::get_package_offset(
-      mapped_file, "com.android.aconfig.storage.test_2");
-  ASSERT_EQ(query.error_message, std::string());
-  ASSERT_TRUE(query.query_success);
-  ASSERT_TRUE(query.package_exists);
-  ASSERT_EQ(query.package_id, 1);
-  ASSERT_EQ(query.boolean_offset, 3);
+  offset = api::get_package_offset(
+      *mapped_file, "com.android.aconfig.storage.test_2");
+  ASSERT_TRUE(offset.ok());
+  ASSERT_TRUE(offset->package_exists);
+  ASSERT_EQ(offset->package_id, 1);
+  ASSERT_EQ(offset->boolean_offset, 3);
 
-  query = api::get_package_offset(
-      mapped_file, "com.android.aconfig.storage.test_4");
-  ASSERT_EQ(query.error_message, std::string());
-  ASSERT_TRUE(query.query_success);
-  ASSERT_TRUE(query.package_exists);
-  ASSERT_EQ(query.package_id, 2);
-  ASSERT_EQ(query.boolean_offset, 6);
+  offset = api::get_package_offset(
+      *mapped_file, "com.android.aconfig.storage.test_4");
+  ASSERT_TRUE(offset.ok());
+  ASSERT_TRUE(offset->package_exists);
+  ASSERT_EQ(offset->package_id, 2);
+  ASSERT_EQ(offset->boolean_offset, 6);
 }
 
 /// Test to lock down when querying none exist package
 TEST_F(AconfigStorageTest, test_none_existent_package_offset_query) {
-  auto mapped_file_query = private_api::get_mapped_file_impl(
+  auto mapped_file = private_api::get_mapped_file_impl(
       storage_record_pb, "system", api::StorageFileType::package_map);
-  ASSERT_TRUE(mapped_file_query.query_success);
-  auto mapped_file = mapped_file_query.mapped_file;
+  ASSERT_TRUE(mapped_file.ok());
 
-  auto query = api::get_package_offset(
-      mapped_file, "com.android.aconfig.storage.test_3");
-  ASSERT_EQ(query.error_message, std::string());
-  ASSERT_TRUE(query.query_success);
-  ASSERT_FALSE(query.package_exists);
+  auto offset = api::get_package_offset(
+      *mapped_file, "com.android.aconfig.storage.test_3");
+  ASSERT_TRUE(offset.ok());
+  ASSERT_FALSE(offset->package_exists);
 }
 
 /// Test to lock down storage flag offset query api
 TEST_F(AconfigStorageTest, test_flag_offset_query) {
-  auto mapped_file_query = private_api::get_mapped_file_impl(
+  auto mapped_file = private_api::get_mapped_file_impl(
       storage_record_pb, "system", api::StorageFileType::flag_map);
-  ASSERT_TRUE(mapped_file_query.query_success);
-  auto mapped_file = mapped_file_query.mapped_file;
+  ASSERT_TRUE(mapped_file.ok());
 
   auto baseline = std::vector<std::tuple<int, std::string, int>>{
     {0, "enabled_ro", 1},
@@ -204,56 +191,49 @@ TEST_F(AconfigStorageTest, test_flag_offset_query) {
     {0, "disabled_rw", 0},
   };
   for (auto const&[package_id, flag_name, expected_offset] : baseline) {
-    auto query = api::get_flag_offset(mapped_file, package_id, flag_name);
-    ASSERT_EQ(query.error_message, std::string());
-    ASSERT_TRUE(query.query_success);
-    ASSERT_TRUE(query.flag_exists);
-    ASSERT_EQ(query.flag_offset, expected_offset);
+    auto offset = api::get_flag_offset(*mapped_file, package_id, flag_name);
+    ASSERT_TRUE(offset.ok());
+    ASSERT_TRUE(offset->flag_exists);
+    ASSERT_EQ(offset->flag_offset, expected_offset);
   }
 }
 
 /// Test to lock down when querying none exist flag
 TEST_F(AconfigStorageTest, test_none_existent_flag_offset_query) {
-  auto mapped_file_query = private_api::get_mapped_file_impl(
+  auto mapped_file = private_api::get_mapped_file_impl(
       storage_record_pb, "system", api::StorageFileType::flag_map);
-  ASSERT_TRUE(mapped_file_query.query_success);
-  auto mapped_file = mapped_file_query.mapped_file;
+  ASSERT_TRUE(mapped_file.ok());
 
-  auto query = api::get_flag_offset(mapped_file, 0, "none_exist");
-  ASSERT_EQ(query.error_message, std::string());
-  ASSERT_TRUE(query.query_success);
-  ASSERT_FALSE(query.flag_exists);
+  auto offset = api::get_flag_offset(*mapped_file, 0, "none_exist");
+  ASSERT_TRUE(offset.ok());
+  ASSERT_FALSE(offset->flag_exists);
 
-  query = api::get_flag_offset(mapped_file, 3, "enabled_ro");
-  ASSERT_EQ(query.error_message, std::string());
-  ASSERT_TRUE(query.query_success);
-  ASSERT_FALSE(query.flag_exists);
+  offset = api::get_flag_offset(*mapped_file, 3, "enabled_ro");
+  ASSERT_TRUE(offset.ok());
+  ASSERT_FALSE(offset->flag_exists);
 }
 
 /// Test to lock down storage flag value query api
 TEST_F(AconfigStorageTest, test_boolean_flag_value_query) {
-  auto mapped_file_query = private_api::get_mapped_file_impl(
+  auto mapped_file = private_api::get_mapped_file_impl(
       storage_record_pb, "system", api::StorageFileType::flag_val);
-  ASSERT_TRUE(mapped_file_query.query_success);
-  auto mapped_file = mapped_file_query.mapped_file;
+  ASSERT_TRUE(mapped_file.ok());
 
   for (int offset = 0; offset < 8; ++offset) {
-    auto query = api::get_boolean_flag_value(mapped_file, offset);
-    ASSERT_EQ(query.error_message, std::string());
-    ASSERT_TRUE(query.query_success);
-    ASSERT_FALSE(query.flag_value);
+    auto value = api::get_boolean_flag_value(*mapped_file, offset);
+    ASSERT_TRUE(value.ok());
+    ASSERT_FALSE(*value);
   }
 }
 
 /// Negative test to lock down the error when querying flag value out of range
 TEST_F(AconfigStorageTest, test_invalid_boolean_flag_value_query) {
-  auto mapped_file_query = private_api::get_mapped_file_impl(
+  auto mapped_file = private_api::get_mapped_file_impl(
       storage_record_pb, "system", api::StorageFileType::flag_val);
-  ASSERT_TRUE(mapped_file_query.query_success);
-  auto mapped_file = mapped_file_query.mapped_file;
+  ASSERT_TRUE(mapped_file.ok());
 
-  auto query = api::get_boolean_flag_value(mapped_file, 8);
-  ASSERT_EQ(query.error_message,
+  auto value = api::get_boolean_flag_value(*mapped_file, 8);
+  ASSERT_FALSE(value.ok());
+  ASSERT_EQ(value.error().message(),
             std::string("InvalidStorageFileOffset(Flag value offset goes beyond the end of the file.)"));
-  ASSERT_FALSE(query.query_success);
 }
