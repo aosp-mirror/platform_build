@@ -30,3 +30,7 @@ PRODUCT_BRAND := Android
 PRODUCT_DEVICE := mainline_x86
 
 PRODUCT_BUILD_FROM_SOURCE_STUB := true
+
+ifeq ($(WITHOUT_CHECK_API),true)
+  $(error WITHOUT_CHECK_API cannot be set to true for SDK product builds)
+endif
