@@ -17,7 +17,9 @@
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
     abx \
+    aconfigd \
     adbd_system_api \
+    aflags \
     am \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
@@ -92,15 +94,16 @@ PRODUCT_PACKAGES += \
     ExtShared \
     flags_health_check \
     framework-graphics \
+    framework-location \
     framework-minus-apex \
     framework-minus-apex-install-dependencies \
-    framework-res \
     framework-sysconfig.xml \
     fsck.erofs \
     fsck_msdos \
     fsverity-release-cert-der \
     fs_config_files_system \
     fs_config_dirs_system \
+    gpu_counter_producer \
     group_system \
     gsid \
     gsi_tool \
@@ -223,6 +226,7 @@ PRODUCT_PACKAGES += \
     mke2fs \
     mkfs.erofs \
     monkey \
+    misctrl \
     mtectrl \
     ndc \
     netd \
@@ -235,10 +239,12 @@ PRODUCT_PACKAGES += \
     perfetto \
     ping \
     ping6 \
+    pintool \
     platform.xml \
     pm \
     preinstalled-packages-asl-files.xml \
     preinstalled-packages-platform.xml \
+    preinstalled-packages-strict-signature.xml \
     printflags \
     privapp-permissions-platform.xml \
     prng_seeder \
@@ -259,6 +265,7 @@ PRODUCT_PACKAGES += \
     services \
     settings \
     SettingsProvider \
+    sfdo \
     sgdisk \
     Shell \
     shell_and_utilities_system \
@@ -281,7 +288,6 @@ PRODUCT_PACKAGES += \
     uncrypt \
     usbd \
     vdc \
-    viewcompiler \
     voip-common \
     vold \
     watchdogd \
@@ -318,6 +324,11 @@ ifeq ($(RELEASE_PACKAGE_NFC_STACK),NfcNci)
 else
     PRODUCT_PACKAGES += \
         com.android.nfcservices
+endif
+
+ifeq ($(RELEASE_USE_WEBVIEW_BOOTSTRAP_MODULE),true)
+    PRODUCT_PACKAGES += \
+        com.android.webview.bootstrap
 endif
 
 # VINTF data for system image
@@ -363,14 +374,10 @@ ifeq (,$(DISABLE_WALLPAPER_BACKUP))
     WallpaperBackup
 endif
 
-# Moving angle from vendor to system
-ifeq ($(RELEASE_ANGLE_ON_SYSTEM),true)
 PRODUCT_PACKAGES += \
     libEGL_angle \
     libGLESv1_CM_angle \
     libGLESv2_angle
-$(call soong_config_set,angle,angle_on_system,true)
-endif
 
 # For testing purposes
 ifeq ($(FORCE_AUDIO_SILENT), true)
@@ -407,7 +414,6 @@ PRODUCT_HOST_PACKAGES += \
     unwind_info \
     unwind_reg_info \
     unwind_symbols \
-    viewcompiler \
     tzdata_host \
     tzdata_host_tzdata_apex \
     tzlookup.xml_host_tzdata_apex \
@@ -432,6 +438,7 @@ PRODUCT_PACKAGES_DEBUG := \
     adevice_fingerprint \
     arping \
     dmuserd \
+    evemu-record \
     idlcli \
     init-debug.rc \
     iotop \
@@ -483,6 +490,9 @@ PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/dirty-image-objects:system/etc/dirty-image-objects)
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
+
+# Use the configured release of sqlite
+$(call soong_config_set, libsqlite3, release_package_libsqlite3, $(RELEASE_PACKAGE_LIBSQLITE3))
 
 # Use "image" APEXes always.
 $(call inherit-product,$(SRC_TARGET_DIR)/product/updatable_apex.mk)

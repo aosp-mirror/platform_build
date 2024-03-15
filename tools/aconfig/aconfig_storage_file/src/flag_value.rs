@@ -18,16 +18,39 @@
 //! and deserialization
 
 use crate::{read_str_from_bytes, read_u32_from_bytes, read_u8_from_bytes};
-use anyhow::{anyhow, Result};
+use crate::{AconfigStorageError, StorageFileType};
+use anyhow::anyhow;
+use std::fmt;
 
 /// Flag value header struct
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 pub struct FlagValueHeader {
     pub version: u32,
     pub container: String,
+    pub file_type: u8,
     pub file_size: u32,
     pub num_flags: u32,
     pub boolean_value_offset: u32,
+}
+
+/// Implement debug print trait for header
+impl fmt::Debug for FlagValueHeader {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(
+            f,
+            "Version: {}, Container: {}, File Type: {:?}, File Size: {}",
+            self.version,
+            self.container,
+            StorageFileType::try_from(self.file_type),
+            self.file_size
+        )?;
+        writeln!(
+            f,
+            "Num of Flags: {}, Value Offset:{}",
+            self.num_flags, self.boolean_value_offset
+        )?;
+        Ok(())
+    }
 }
 
 impl FlagValueHeader {
@@ -38,6 +61,7 @@ impl FlagValueHeader {
         let container_bytes = self.container.as_bytes();
         result.extend_from_slice(&(container_bytes.len() as u32).to_le_bytes());
         result.extend_from_slice(container_bytes);
+        result.extend_from_slice(&self.file_type.to_le_bytes());
         result.extend_from_slice(&self.file_size.to_le_bytes());
         result.extend_from_slice(&self.num_flags.to_le_bytes());
         result.extend_from_slice(&self.boolean_value_offset.to_le_bytes());
@@ -45,23 +69,41 @@ impl FlagValueHeader {
     }
 
     /// Deserialize from bytes
-    pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, AconfigStorageError> {
         let mut head = 0;
-        Ok(Self {
+        let list = Self {
             version: read_u32_from_bytes(bytes, &mut head)?,
             container: read_str_from_bytes(bytes, &mut head)?,
+            file_type: read_u8_from_bytes(bytes, &mut head)?,
             file_size: read_u32_from_bytes(bytes, &mut head)?,
             num_flags: read_u32_from_bytes(bytes, &mut head)?,
             boolean_value_offset: read_u32_from_bytes(bytes, &mut head)?,
-        })
+        };
+        if list.file_type != StorageFileType::FlagVal as u8 {
+            return Err(AconfigStorageError::BytesParseFail(anyhow!(
+                "binary file is not a flag value file"
+            )));
+        }
+        Ok(list)
     }
 }
 
 /// Flag value list struct
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 pub struct FlagValueList {
     pub header: FlagValueHeader,
     pub booleans: Vec<bool>,
+}
+
+/// Implement debug print trait for flag value
+impl fmt::Debug for FlagValueList {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(f, "Header:")?;
+        write!(f, "{:?}", self.header)?;
+        writeln!(f, "Values:")?;
+        writeln!(f, "{:?}", self.booleans)?;
+        Ok(())
+    }
 }
 
 impl FlagValueList {
@@ -75,7 +117,7 @@ impl FlagValueList {
     }
 
     /// Deserialize from bytes
-    pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, AconfigStorageError> {
         let header = FlagValueHeader::from_bytes(bytes)?;
         let num_flags = header.num_flags;
         let mut head = header.as_bytes().len();
@@ -86,93 +128,48 @@ impl FlagValueList {
     }
 }
 
-/// Query flag value
-pub fn get_boolean_flag_value(buf: &[u8], flag_offset: u32) -> Result<bool> {
-    let interpreted_header = FlagValueHeader::from_bytes(buf)?;
-    if interpreted_header.version > crate::FILE_VERSION {
-        return Err(anyhow!(
-            "Cannot read storage file with a higher version of {} with lib version {}",
-            interpreted_header.version,
-            crate::FILE_VERSION
-        ));
-    }
-
-    let mut head = (interpreted_header.boolean_value_offset + flag_offset) as usize;
-
-    // TODO: right now, there is only boolean flags, with more flag value types added
-    // later, the end of boolean flag value section should be updated (b/322826265).
-    if head >= interpreted_header.file_size as usize {
-        return Err(anyhow!("Flag value offset goes beyond the end of the file."));
-    }
-
-    let val = read_u8_from_bytes(buf, &mut head)?;
-    Ok(val == 1)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    pub fn create_test_flag_value_list() -> Result<FlagValueList> {
-        let header = FlagValueHeader {
-            version: crate::FILE_VERSION,
-            container: String::from("system"),
-            file_size: 34,
-            num_flags: 8,
-            boolean_value_offset: 26,
-        };
-        let booleans: Vec<bool> = vec![false, true, false, false, true, true, false, true];
-        Ok(FlagValueList { header, booleans })
-    }
+    use crate::test_utils::create_test_flag_value_list;
 
     #[test]
     // this test point locks down the value list serialization
     fn test_serialization() {
-        let flag_value_list = create_test_flag_value_list().unwrap();
+        let flag_value_list = create_test_flag_value_list();
 
         let header: &FlagValueHeader = &flag_value_list.header;
         let reinterpreted_header = FlagValueHeader::from_bytes(&header.as_bytes());
         assert!(reinterpreted_header.is_ok());
         assert_eq!(header, &reinterpreted_header.unwrap());
 
-        let reinterpreted_value_list = FlagValueList::from_bytes(&flag_value_list.as_bytes());
+        let flag_value_bytes = flag_value_list.as_bytes();
+        let reinterpreted_value_list = FlagValueList::from_bytes(&flag_value_bytes);
         assert!(reinterpreted_value_list.is_ok());
         assert_eq!(&flag_value_list, &reinterpreted_value_list.unwrap());
+        assert_eq!(flag_value_bytes.len() as u32, header.file_size);
     }
 
     #[test]
-    // this test point locks down flag value query
-    fn test_flag_value_query() {
-        let flag_value_list = create_test_flag_value_list().unwrap().as_bytes();
-        let baseline: Vec<bool> = vec![false, true, false, false, true, true, false, true];
-        for (offset, expected_value) in baseline.into_iter().enumerate() {
-            let flag_value = get_boolean_flag_value(&flag_value_list[..], offset as u32).unwrap();
-            assert_eq!(flag_value, expected_value);
-        }
+    // this test point locks down that version number should be at the top of serialized
+    // bytes
+    fn test_version_number() {
+        let flag_value_list = create_test_flag_value_list();
+        let bytes = &flag_value_list.as_bytes();
+        let mut head = 0;
+        let version = read_u32_from_bytes(bytes, &mut head).unwrap();
+        assert_eq!(version, 1234)
     }
 
     #[test]
-    // this test point locks down query beyond the end of boolean section
-    fn test_boolean_out_of_range() {
-        let flag_value_list = create_test_flag_value_list().unwrap().as_bytes();
-        let error = get_boolean_flag_value(&flag_value_list[..], 8).unwrap_err();
-        assert_eq!(format!("{:?}", error), "Flag value offset goes beyond the end of the file.");
-    }
-
-    #[test]
-    // this test point locks down query error when file has a higher version
-    fn test_higher_version_storage_file() {
-        let mut value_list = create_test_flag_value_list().unwrap();
-        value_list.header.version = crate::FILE_VERSION + 1;
-        let flag_value = value_list.as_bytes();
-        let error = get_boolean_flag_value(&flag_value[..], 4).unwrap_err();
+    // this test point locks down file type check
+    fn test_file_type_check() {
+        let mut flag_value_list = create_test_flag_value_list();
+        flag_value_list.header.file_type = 123u8;
+        let error = FlagValueList::from_bytes(&flag_value_list.as_bytes()).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
-            format!(
-                "Cannot read storage file with a higher version of {} with lib version {}",
-                crate::FILE_VERSION + 1,
-                crate::FILE_VERSION
-            )
+            format!("BytesParseFail(binary file is not a flag value file)")
         );
     }
 }

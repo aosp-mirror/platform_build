@@ -1,5 +1,4 @@
-#
-# Copyright 2023 The Android Open-Source Project
+# Copyright (C) 2024 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,18 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-# To include ANGLE into the image build, add
-# $(call inherit-product, $(SRC_TARGET_DIR)/product/angle_supported.mk) to the Makefile.
-# By default, this will allow ANGLE binaries to coexist with native GLES drivers.
+# Declare license metadata for non-module files released with products.
 
-ifneq ($(RELEASE_ANGLE_ON_SYSTEM),true)
-PRODUCT_PACKAGES += \
-    libEGL_angle \
-    libGLESv1_CM_angle \
-    libGLESv2_angle
+# Moved here from frameworks/av/media/Android.mk
+$(eval $(call declare-1p-copy-files,frameworks/av/media/libeffects,audio_effects.conf))
+$(eval $(call declare-1p-copy-files,frameworks/av/media/libeffects,audio_effects.xml))
+$(eval $(call declare-1p-copy-files,frameworks/av/media/libstagefright,))
 
-# Set ro.gfx.angle.supported based on if ANGLE is installed in vendor partition
-PRODUCT_VENDOR_PROPERTIES += ro.gfx.angle.supported=true
-endif
+# Moved here from frameworks/av/services/Android.mk
+$(eval $(call declare-1p-copy-files,frameworks/av/services/audiopolicy,))

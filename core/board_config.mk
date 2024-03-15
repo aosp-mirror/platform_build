@@ -287,6 +287,9 @@ $(foreach var,$(_board_true_false_vars), \
 
 include $(BUILD_SYSTEM)/board_config_wifi.mk
 
+# Set up soong config for "soong_config_value_variable".
+-include vendor/google/build/soong/soong_config_namespace/camera.mk
+
 # Default *_CPU_VARIANT_RUNTIME to CPU_VARIANT if unspecified.
 TARGET_CPU_VARIANT_RUNTIME := $(or $(TARGET_CPU_VARIANT_RUNTIME),$(TARGET_CPU_VARIANT))
 TARGET_2ND_CPU_VARIANT_RUNTIME := $(or $(TARGET_2ND_CPU_VARIANT_RUNTIME),$(TARGET_2ND_CPU_VARIANT))
@@ -946,6 +949,11 @@ ifneq ($(TARGET_OTA_ALLOW_NON_AB),true)
   endif
 endif
 
+# For Non A/B full OTA, disable brotli compression.
+ifeq ($(TARGET_OTA_ALLOW_NON_AB),true)
+  BOARD_NON_AB_OTA_DISABLE_COMPRESSION := true
+endif
+
 # Quick check for building generic OTA packages. Currently it only supports A/B OTAs.
 ifeq ($(PRODUCT_BUILD_GENERIC_OTA_PACKAGE),true)
   ifneq ($(AB_OTA_UPDATER),true)
@@ -965,12 +973,15 @@ define check_vndk_version
   $(if $(wildcard $(vndk_path)/*/Android.bp),,$(error VNDK version $(1) not found))
 endef
 
+ifeq ($(KEEP_VNDK),true)
 ifeq ($(BOARD_VNDK_VERSION),$(PLATFORM_VNDK_VERSION))
   $(error BOARD_VNDK_VERSION is equal to PLATFORM_VNDK_VERSION; use BOARD_VNDK_VERSION := current)
 endif
 ifneq ($(BOARD_VNDK_VERSION),current)
   $(call check_vndk_version,$(BOARD_VNDK_VERSION))
 endif
+endif
+
 TARGET_VENDOR_TEST_SUFFIX := /vendor
 
 ifeq (,$(TARGET_BUILD_UNBUNDLED))

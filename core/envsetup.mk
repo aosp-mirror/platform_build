@@ -50,6 +50,25 @@ endef
 # Release config
 include $(BUILD_SYSTEM)/release_config.mk
 
+# Set default value of KEEP_VNDK.
+ifeq ($(RELEASE_DEPRECATE_VNDK),true)
+  KEEP_VNDK ?= false
+else
+  KEEP_VNDK ?= true
+endif
+
+ifeq ($(KEEP_VNDK),true)
+  # Starting in Android U, non-VNDK devices not supported
+  # WARNING: DO NOT CHANGE: if you are downstream of AOSP, and you change this, without
+  # letting upstream know it's important to you, we may do cleanup which breaks this
+  # significantly. Please let us know if you are changing this.
+  ifndef BOARD_VNDK_VERSION
+  # READ WARNING - DO NOT CHANGE
+  BOARD_VNDK_VERSION := current
+  # READ WARNING - DO NOT CHANGE
+  endif
+endif
+
 # ---------------------------------------------------------------
 # Set up version information
 include $(BUILD_SYSTEM)/version_util.mk
