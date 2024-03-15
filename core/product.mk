@@ -230,6 +230,9 @@ _product_single_value_vars += PRODUCT_SYSTEM_DLKM_BASE_FS_PATH
 # The first API level this product shipped with
 _product_single_value_vars += PRODUCT_SHIPPING_API_LEVEL
 
+# The first vendor API level this product shipped with
+_product_single_value_vars += PRODUCT_SHIPPING_VENDOR_API_LEVEL
+
 _product_list_vars += VENDOR_PRODUCT_RESTRICT_VENDOR_FILES
 _product_list_vars += VENDOR_EXCEPTION_MODULES
 _product_list_vars += VENDOR_EXCEPTION_PATHS
@@ -453,6 +456,12 @@ _product_list_vars += PRODUCT_RELEASE_CONFIG_MAPS
 _product_list_vars += PRODUCT_VALIDATION_CHECKS
 
 _product_single_value_vars += PRODUCT_BUILD_FROM_SOURCE_STUB
+
+_product_list_vars += PRODUCT_BUILD_IGNORE_APEX_CONTRIBUTION_CONTENTS
+
+_product_single_value_vars += PRODUCT_HIDDEN_API_EXPORTABLE_STUBS
+
+_product_single_value_vars += PRODUCT_EXPORT_RUNTIME_APIS
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)

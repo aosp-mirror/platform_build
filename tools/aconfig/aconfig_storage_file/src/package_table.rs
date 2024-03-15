@@ -17,18 +17,41 @@
 //! package table module defines the package table file format and methods for serialization
 //! and deserialization
 
-use crate::{get_bucket_index, read_str_from_bytes, read_u32_from_bytes};
-use anyhow::{anyhow, Result};
+use crate::{get_bucket_index, read_str_from_bytes, read_u32_from_bytes, read_u8_from_bytes};
+use crate::{AconfigStorageError, StorageFileType};
+use anyhow::anyhow;
+use std::fmt;
 
 /// Package table header struct
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 pub struct PackageTableHeader {
     pub version: u32,
     pub container: String,
+    pub file_type: u8,
     pub file_size: u32,
     pub num_packages: u32,
     pub bucket_offset: u32,
     pub node_offset: u32,
+}
+
+/// Implement debug print trait for header
+impl fmt::Debug for PackageTableHeader {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(
+            f,
+            "Version: {}, Container: {}, File Type: {:?}, File Size: {}",
+            self.version,
+            self.container,
+            StorageFileType::try_from(self.file_type),
+            self.file_size
+        )?;
+        writeln!(
+            f,
+            "Num of Packages: {}, Bucket Offset:{}, Node Offset: {}",
+            self.num_packages, self.bucket_offset, self.node_offset
+        )?;
+        Ok(())
+    }
 }
 
 impl PackageTableHeader {
@@ -39,6 +62,7 @@ impl PackageTableHeader {
         let container_bytes = self.container.as_bytes();
         result.extend_from_slice(&(container_bytes.len() as u32).to_le_bytes());
         result.extend_from_slice(container_bytes);
+        result.extend_from_slice(&self.file_type.to_le_bytes());
         result.extend_from_slice(&self.file_size.to_le_bytes());
         result.extend_from_slice(&self.num_packages.to_le_bytes());
         result.extend_from_slice(&self.bucket_offset.to_le_bytes());
@@ -47,21 +71,28 @@ impl PackageTableHeader {
     }
 
     /// Deserialize from bytes
-    pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, AconfigStorageError> {
         let mut head = 0;
-        Ok(Self {
+        let table = Self {
             version: read_u32_from_bytes(bytes, &mut head)?,
             container: read_str_from_bytes(bytes, &mut head)?,
+            file_type: read_u8_from_bytes(bytes, &mut head)?,
             file_size: read_u32_from_bytes(bytes, &mut head)?,
             num_packages: read_u32_from_bytes(bytes, &mut head)?,
             bucket_offset: read_u32_from_bytes(bytes, &mut head)?,
             node_offset: read_u32_from_bytes(bytes, &mut head)?,
-        })
+        };
+        if table.file_type != StorageFileType::PackageMap as u8 {
+            return Err(AconfigStorageError::BytesParseFail(anyhow!(
+                "binary file is not a package map"
+            )));
+        }
+        Ok(table)
     }
 }
 
 /// Package table node struct
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 pub struct PackageTableNode {
     pub package_name: String,
     pub package_id: u32,
@@ -69,6 +100,18 @@ pub struct PackageTableNode {
     // boolean flag value array in the flag value file
     pub boolean_offset: u32,
     pub next_offset: Option<u32>,
+}
+
+/// Implement debug print trait for node
+impl fmt::Debug for PackageTableNode {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(
+            f,
+            "Package: {}, Id: {}, Offset: {}, Next: {:?}",
+            self.package_name, self.package_id, self.boolean_offset, self.next_offset
+        )?;
+        Ok(())
+    }
 }
 
 impl PackageTableNode {
@@ -85,7 +128,7 @@ impl PackageTableNode {
     }
 
     /// Deserialize from bytes
-    pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, AconfigStorageError> {
         let mut head = 0;
         let node = Self {
             package_name: read_str_from_bytes(bytes, &mut head)?,
@@ -108,11 +151,26 @@ impl PackageTableNode {
 }
 
 /// Package table struct
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 pub struct PackageTable {
     pub header: PackageTableHeader,
     pub buckets: Vec<Option<u32>>,
     pub nodes: Vec<PackageTableNode>,
+}
+
+/// Implement debug print trait for package table
+impl fmt::Debug for PackageTable {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(f, "Header:")?;
+        write!(f, "{:?}", self.header)?;
+        writeln!(f, "Buckets:")?;
+        writeln!(f, "{:?}", self.buckets)?;
+        writeln!(f, "Nodes:")?;
+        for node in self.nodes.iter() {
+            write!(f, "{:?}", node)?;
+        }
+        Ok(())
+    }
 }
 
 impl PackageTable {
@@ -127,7 +185,7 @@ impl PackageTable {
     }
 
     /// Deserialize from bytes
-    pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, AconfigStorageError> {
         let header = PackageTableHeader::from_bytes(bytes)?;
         let num_packages = header.num_packages;
         let num_buckets = crate::get_table_size(num_packages)?;
@@ -144,98 +202,28 @@ impl PackageTable {
                 head += node.as_bytes().len();
                 Ok(node)
             })
-            .collect::<Result<Vec<_>>>()?;
+            .collect::<Result<Vec<_>, AconfigStorageError>>()
+            .map_err(|errmsg| {
+                AconfigStorageError::BytesParseFail(anyhow!(
+                    "fail to parse package table: {}",
+                    errmsg
+                ))
+            })?;
 
         let table = Self { header, buckets, nodes };
         Ok(table)
     }
 }
 
-/// Package table query return
-#[derive(PartialEq, Debug)]
-pub struct PackageOffset {
-    pub package_id: u32,
-    pub boolean_offset: u32,
-}
-
-/// Query package id and start offset
-pub fn find_package_offset(buf: &[u8], package: &str) -> Result<Option<PackageOffset>> {
-    let interpreted_header = PackageTableHeader::from_bytes(buf)?;
-    if interpreted_header.version > crate::FILE_VERSION {
-        return Err(anyhow!(
-            "Cannot read storage file with a higher version of {} with lib version {}",
-            interpreted_header.version,
-            crate::FILE_VERSION
-        ));
-    }
-
-    let num_buckets = (interpreted_header.node_offset - interpreted_header.bucket_offset) / 4;
-    let bucket_index = PackageTableNode::find_bucket_index(&package, num_buckets);
-
-    let mut pos = (interpreted_header.bucket_offset + 4 * bucket_index) as usize;
-    let mut package_node_offset = read_u32_from_bytes(buf, &mut pos)? as usize;
-    if package_node_offset < interpreted_header.node_offset as usize
-        || package_node_offset >= interpreted_header.file_size as usize
-    {
-        return Ok(None);
-    }
-
-    loop {
-        let interpreted_node = PackageTableNode::from_bytes(&buf[package_node_offset..])?;
-        if interpreted_node.package_name == package {
-            return Ok(Some(PackageOffset {
-                package_id: interpreted_node.package_id,
-                boolean_offset: interpreted_node.boolean_offset,
-            }));
-        }
-        match interpreted_node.next_offset {
-            Some(offset) => package_node_offset = offset as usize,
-            None => return Ok(None),
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    pub fn create_test_package_table() -> Result<PackageTable> {
-        let header = PackageTableHeader {
-            version: crate::FILE_VERSION,
-            container: String::from("system"),
-            file_size: 208,
-            num_packages: 3,
-            bucket_offset: 30,
-            node_offset: 58,
-        };
-        let buckets: Vec<Option<u32>> = vec![Some(58), None, None, Some(108), None, None, None];
-        let first_node = PackageTableNode {
-            package_name: String::from("com.android.aconfig.storage.test_2"),
-            package_id: 1,
-            boolean_offset: 3,
-            next_offset: None,
-        };
-        let second_node = PackageTableNode {
-            package_name: String::from("com.android.aconfig.storage.test_1"),
-            package_id: 0,
-            boolean_offset: 0,
-            next_offset: Some(158),
-        };
-        let third_node = PackageTableNode {
-            package_name: String::from("com.android.aconfig.storage.test_4"),
-            package_id: 2,
-            boolean_offset: 6,
-            next_offset: None,
-        };
-        let nodes = vec![first_node, second_node, third_node];
-        Ok(PackageTable { header, buckets, nodes })
-    }
+    use crate::test_utils::create_test_package_table;
 
     #[test]
     // this test point locks down the table serialization
     fn test_serialization() {
-        let package_table = create_test_package_table().unwrap();
-
+        let package_table = create_test_package_table();
         let header: &PackageTableHeader = &package_table.header;
         let reinterpreted_header = PackageTableHeader::from_bytes(&header.as_bytes());
         assert!(reinterpreted_header.is_ok());
@@ -247,64 +235,33 @@ mod tests {
             assert_eq!(node, &reinterpreted_node);
         }
 
-        let reinterpreted_table = PackageTable::from_bytes(&package_table.as_bytes());
+        let package_table_bytes = package_table.as_bytes();
+        let reinterpreted_table = PackageTable::from_bytes(&package_table_bytes);
         assert!(reinterpreted_table.is_ok());
         assert_eq!(&package_table, &reinterpreted_table.unwrap());
+        assert_eq!(package_table_bytes.len() as u32, header.file_size);
     }
 
     #[test]
-    // this test point locks down table query
-    fn test_package_query() {
-        let package_table = create_test_package_table().unwrap().as_bytes();
-        let package_offset =
-            find_package_offset(&package_table[..], "com.android.aconfig.storage.test_1")
-                .unwrap()
-                .unwrap();
-        let expected_package_offset = PackageOffset { package_id: 0, boolean_offset: 0 };
-        assert_eq!(package_offset, expected_package_offset);
-        let package_offset =
-            find_package_offset(&package_table[..], "com.android.aconfig.storage.test_2")
-                .unwrap()
-                .unwrap();
-        let expected_package_offset = PackageOffset { package_id: 1, boolean_offset: 3 };
-        assert_eq!(package_offset, expected_package_offset);
-        let package_offset =
-            find_package_offset(&package_table[..], "com.android.aconfig.storage.test_4")
-                .unwrap()
-                .unwrap();
-        let expected_package_offset = PackageOffset { package_id: 2, boolean_offset: 6 };
-        assert_eq!(package_offset, expected_package_offset);
+    // this test point locks down that version number should be at the top of serialized
+    // bytes
+    fn test_version_number() {
+        let package_table = create_test_package_table();
+        let bytes = &package_table.as_bytes();
+        let mut head = 0;
+        let version = read_u32_from_bytes(bytes, &mut head).unwrap();
+        assert_eq!(version, 1234)
     }
 
     #[test]
-    // this test point locks down table query of a non exist package
-    fn test_not_existed_package_query() {
-        // this will land at an empty bucket
-        let package_table = create_test_package_table().unwrap().as_bytes();
-        let package_offset =
-            find_package_offset(&package_table[..], "com.android.aconfig.storage.test_3").unwrap();
-        assert_eq!(package_offset, None);
-        // this will land at the end of a linked list
-        let package_offset =
-            find_package_offset(&package_table[..], "com.android.aconfig.storage.test_5").unwrap();
-        assert_eq!(package_offset, None);
-    }
-
-    #[test]
-    // this test point locks down query error when file has a higher version
-    fn test_higher_version_storage_file() {
-        let mut table = create_test_package_table().unwrap();
-        table.header.version = crate::FILE_VERSION + 1;
-        let package_table = table.as_bytes();
-        let error = find_package_offset(&package_table[..], "com.android.aconfig.storage.test_1")
-            .unwrap_err();
+    // this test point locks down file type check
+    fn test_file_type_check() {
+        let mut package_table = create_test_package_table();
+        package_table.header.file_type = 123u8;
+        let error = PackageTable::from_bytes(&package_table.as_bytes()).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
-            format!(
-                "Cannot read storage file with a higher version of {} with lib version {}",
-                crate::FILE_VERSION + 1,
-                crate::FILE_VERSION
-            )
+            format!("BytesParseFail(binary file is not a package map)")
         );
     }
 }

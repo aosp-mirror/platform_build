@@ -50,6 +50,7 @@ PRODUCT_TEST_ONLY_ART_BOOT_IMAGE_JARS := \
 PRODUCT_BOOT_JARS += \
     framework-minus-apex \
     framework-graphics \
+    framework-location \
     ext \
     telephony-common \
     voip-common \
@@ -74,6 +75,7 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.media:updatable-media \
     com.android.mediaprovider:framework-mediaprovider \
     com.android.mediaprovider:framework-pdf \
+    com.android.mediaprovider:framework-pdf-v \
     com.android.ondevicepersonalization:framework-ondevicepersonalization \
     com.android.os.statsd:framework-statsd \
     com.android.permission:framework-permission \
@@ -102,12 +104,6 @@ else
     PRODUCT_APEX_BOOT_JARS := \
         com.android.nfcservices:framework-nfc
 endif
-
-# TODO(b/308174306): Adjust this after multiple prebuilts version is supported.
-# APEX boot jars that are not in prebuilt apexes.
-# Keep the list sorted by module names and then library names.
-PRODUCT_APEX_BOOT_JARS_FOR_SOURCE_BUILD_ONLY := \
-    com.android.mediaprovider:framework-pdf \
 
 # List of system_server classpath jars delivered via apex.
 # Keep the list sorted by module names and then library names.

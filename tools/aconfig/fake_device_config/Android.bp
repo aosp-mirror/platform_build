@@ -15,7 +15,8 @@
 java_library {
 	name: "fake_device_config",
 	srcs: ["src/**/*.java"],
-	sdk_version: "core_current",
+	sdk_version: "none",
+	system_modules: "core-all-system-modules",
 	host_supported: true,
 }
 

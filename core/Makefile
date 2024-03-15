@@ -465,9 +465,7 @@ $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(1) $(6)
 	)
 	$(if $(1),\
 	  cp $$(PRIVATE_MODULES) $$(PRIVATE_MODULE_DIR)/; \
-	  for MODULE in $$(PRIVATE_LOAD_MODULES); do \
-	    basename $$$$MODULE >> $$(PRIVATE_LOAD_FILE); \
-	  done; \
+	  if [ -n "$$(PRIVATE_LOAD_MODULES)" ]; then basename -a $$(PRIVATE_LOAD_MODULES); fi > $$(PRIVATE_LOAD_FILE); \
 	)
 	# The ln -sf + find -delete sequence is to remove any modules in
 	# PRIVATE_EXTRA_MODULES which have same basename as MODULES in PRIVATE_MODULES
@@ -2727,6 +2725,8 @@ $(INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP): $(MKBOOTFS) $(COMPRESSION_COMMAND_
 	$(if $(strip $(recovery_wipe)), \
 	  cp -f $(recovery_wipe) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.wipe)
 	ln -sf prop.default $(TARGET_RECOVERY_ROOT_OUT)/default.prop
+	# Silence warnings in first_stage_console.
+	touch $(TARGET_RECOVERY_ROOT_OUT)/linkerconfig/ld.config.txt
 	$(BOARD_RECOVERY_IMAGE_PREPARE)
 	$(hide) touch $@
 
@@ -3395,6 +3395,14 @@ endif
 
 FULL_SYSTEMIMAGE_DEPS += $(INTERNAL_ROOT_FILES) $(INSTALLED_FILES_FILE_ROOT)
 
+define write-file-lines
+$(1):
+	@echo Writing $$@
+	rm -f $$@
+	echo -n > $$@
+	$$(foreach f,$(2),echo "$$(f)" >> $$@$$(newline))
+endef
+
 # -----------------------------------------------------------------
 ifdef BUILDING_SYSTEM_IMAGE
 
@@ -3447,14 +3455,6 @@ BUILT_SYSTEMIMAGE :=$= $(systemimage_intermediates)/system.img
 # Used by the bazel sandwich to request the staging dir be built
 $(systemimage_intermediates)/staging_dir.stamp: $(FULL_SYSTEMIMAGE_DEPS)
 	touch $@
-
-define write-file-lines
-$(1):
-	@echo Writing $$@
-	rm -f $$@
-	echo -n > $$@
-	$$(foreach f,$(2),echo "$$(f)" >> $$@$$(newline))
-endef
 
 # $(1): output file
 define build-systemimage-target
@@ -5061,9 +5061,12 @@ intermediates := $(call intermediates-dir-for,PACKAGING,check_vintf_all)
 check_vintf_all_deps :=
 
 # -----------------------------------------------------------------
-# Activate vendor APEXes for checkvintf
+# Activate APEXes for checkvintf
 
 apex_dirs := \
+  $(TARGET_OUT)/apex/% \
+  $(TARGET_OUT_PRODUCT)/apex/% \
+  $(TARGET_OUT_SYSTEM_EXT)/apex/% \
   $(TARGET_OUT_VENDOR)/apex/% \
 
 apex_files := $(sort $(filter $(apex_dirs), $(INTERNAL_ALLIMAGES_FILES)))
@@ -5079,7 +5082,10 @@ $(APEX_INFO_FILE): $(HOST_OUT_EXECUTABLES)/apexd_host $(apex_files)
 	@echo $(PRIVATE_APEX_FILES) > /dev/null
 	@rm -rf $(APEX_OUT)
 	@mkdir -p $(APEX_OUT)
-	$< --vendor_path $(TARGET_OUT_VENDOR) \
+	$< --system_path $(TARGET_OUT) \
+	   --system_ext_path $(TARGET_OUT_SYSTEM_EXT) \
+	   --product_path $(TARGET_OUT_PRODUCT) \
+	   --vendor_path $(TARGET_OUT_VENDOR) \
 	   --apex_path $(APEX_OUT)
 
 apex_files :=
@@ -5087,14 +5093,14 @@ apex_dirs :=
 
 # The build system only writes VINTF metadata to */etc/vintf paths. Legacy paths aren't needed here
 # because they are only used for prebuilt images.
-# APEX files in /vendor/apex can have VINTF fragments as well.
+# APEX files in /$partition/apex can have VINTF fragments as well.
 check_vintf_common_srcs_patterns := \
   $(TARGET_OUT)/etc/vintf/% \
   $(TARGET_OUT_VENDOR)/etc/vintf/% \
   $(TARGET_OUT_ODM)/etc/vintf/% \
   $(TARGET_OUT_PRODUCT)/etc/vintf/% \
   $(TARGET_OUT_SYSTEM_EXT)/etc/vintf/% \
-  $(TARGET_OUT_VENDOR)/apex/% \
+  $(apex_dirs)
 
 check_vintf_common_srcs := $(sort $(filter $(check_vintf_common_srcs_patterns),$(INTERNAL_ALLIMAGES_FILES)))
 check_vintf_common_srcs_patterns :=
@@ -5109,15 +5115,20 @@ ifneq (,$(filter EMPTY_VENDOR_SKU_PLACEHOLDER,$(DEVICE_MANIFEST_SKUS)))
 $(error EMPTY_VENDOR_SKU_PLACEHOLDER is an internal variable and cannot be used for DEIVCE_MANIFEST_SKUS)
 endif
 
-# -- Check system manifest / matrix including fragments (excluding other framework manifests / matrices, e.g. product);
-check_vintf_system_deps := $(filter $(TARGET_OUT)/etc/vintf/%, $(check_vintf_common_srcs))
+# -- Check system and system_ext manifests / matrices including fragments (excluding other framework manifests / matrices, e.g. product);
+ifdef BUILDING_SYSTEM_IMAGE
+check_vintf_system_deps := $(filter $(TARGET_OUT)/etc/vintf/% \
+                                    $(TARGET_OUT_SYSTEM_EXT)/etc/vintf/% \
+                                    $(TARGET_OUT)/apex/% \
+                                    $(TARGET_OUT_SYSTEM_EXT)/apex/%, \
+                                    $(check_vintf_common_srcs))
 ifneq ($(check_vintf_system_deps),)
 check_vintf_has_system := true
 
 check_vintf_system_log := $(intermediates)/check_vintf_system.log
 check_vintf_all_deps += $(check_vintf_system_log)
-$(check_vintf_system_log): $(HOST_OUT_EXECUTABLES)/checkvintf $(check_vintf_system_deps)
-	@( $< --check-one --dirmap /system:$(TARGET_OUT) > $@ 2>&1 ) || ( cat $@ && exit 1 )
+$(check_vintf_system_log): $(HOST_OUT_EXECUTABLES)/checkvintf $(check_vintf_system_deps) $(APEX_INFO_FILE)
+	@( $< --check-one --dirmap /system:$(TARGET_OUT) --dirmap /apex:$(APEX_OUT) > $@ 2>&1 ) || ( cat $@ && exit 1 )
 $(call declare-1p-target,$(check_vintf_system_log))
 check_vintf_system_log :=
 
@@ -5126,10 +5137,11 @@ ifneq (true, $(BUILDING_VENDOR_IMAGE))
     vintffm_log := $(intermediates)/vintffm.log
 endif
 check_vintf_all_deps += $(vintffm_log)
-$(vintffm_log): $(HOST_OUT_EXECUTABLES)/vintffm $(check_vintf_system_deps)
+$(vintffm_log): $(HOST_OUT_EXECUTABLES)/vintffm $(check_vintf_system_deps) $(APEX_INFO_FILE)
 	@( $< --check --dirmap /system:$(TARGET_OUT) \
 	  --dirmap /system_ext:$(TARGET_OUT_SYSTEM_EXT) \
 	  --dirmap /product:$(TARGET_OUT_PRODUCT) \
+	  --dirmap /apex:$(APEX_OUT) \
 	  $(VINTF_FRAMEWORK_MANIFEST_FROZEN_DIR) > $@ 2>&1 ) || ( cat $@ && exit 1 )
 
 $(call declare-1p-target,$(vintffm_log))
@@ -5137,9 +5149,12 @@ $(call declare-1p-target,$(vintffm_log))
 endif # check_vintf_system_deps
 check_vintf_system_deps :=
 
+endif # BUILDING_SYSTEM_IMAGE
+
 # -- Check vendor manifest / matrix including fragments (excluding other device manifests / matrices)
-check_vintf_vendor_deps := $(filter $(TARGET_OUT_VENDOR)/etc/vintf/%, $(check_vintf_common_srcs))
-check_vintf_vendor_deps += $(filter $(TARGET_OUT_VENDOR)/apex/%, $(check_vintf_common_srcs))
+check_vintf_vendor_deps := $(filter $(TARGET_OUT_VENDOR)/etc/vintf/% \
+                                    $(TARGET_OUT_VENDOR)/apex/%, \
+                                    $(check_vintf_common_srcs))
 ifneq ($(strip $(check_vintf_vendor_deps)),)
 check_vintf_has_vendor := true
 check_vintf_vendor_log := $(intermediates)/check_vintf_vendor.log
@@ -5711,6 +5726,10 @@ ifneq (,$(strip $(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)))
 	  echo "flash vbmeta_$(partition)" >> $@;)
 endif
 endif # BOARD_AVB_ENABLE
+ifneq (,$(strip $(BOARD_CUSTOMIMAGES_PARTITION_LIST)))
+	$(hide) $(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
+	  echo "flash $(partition)" >> $@;)
+endif
 	$(hide) echo "reboot fastboot" >> $@
 	$(hide) echo "update-super" >> $@
 	$(hide) $(foreach partition,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
@@ -5912,6 +5931,9 @@ endif
 ifeq ($(TARGET_OTA_ALLOW_NON_AB),true)
 	$(hide) echo "allow_non_ab=true" >> $@
 endif
+ifeq ($(BOARD_NON_AB_OTA_DISABLE_COMPRESSION),true)
+	$(hide) echo "board_non_ab_ota_disable_compression=true" >> $@
+endif
 ifdef BOARD_PREBUILT_DTBOIMAGE
 	$(hide) echo "has_dtbo=true" >> $@
 ifeq ($(BOARD_AVB_ENABLE),true)
@@ -6072,7 +6094,7 @@ endif
 # $1: root directory
 # $2: add prefix
 define fs_config
-(cd $(1); find . -type d | sed 's,$$,/,'; find . \! -type d) | cut -c 3- | sort | sed 's,^,$(2),' | $(HOST_OUT_EXECUTABLES)/fs_config -C -D $(TARGET_OUT) -S $(SELINUX_FC) -R "$(2)"
+(cd $(1); find . -type d | sed 's,$$,/,'; find . \! -type d) | cut -c 3- | sort | sed 's,^,$(2),' | $(HOST_OUT_EXECUTABLES)/fs_config -C -D $(TARGET_OUT) -R "$(2)"
 endef
 
 define filter-out-missing-vendor
