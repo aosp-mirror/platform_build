@@ -34,7 +34,8 @@ function finalize_modules_utils() {
     echo "    /** Checks if the device is running on a release version of Android $FINAL_PLATFORM_CODENAME or newer */
     @ChecksSdkIntAtLeast(api = $FINAL_PLATFORM_SDK_VERSION /* BUILD_VERSION_CODES.$FINAL_PLATFORM_CODENAME */)
     public static boolean isAtLeast${FINAL_PLATFORM_CODENAME:0:1}() {
-        return SDK_INT >= $FINAL_PLATFORM_SDK_VERSION;
+        return SDK_INT >= $FINAL_PLATFORM_SDK_VERSION ||
+                (SDK_INT == $(($FINAL_PLATFORM_SDK_VERSION - 1)) && isAtLeastPreReleaseCodename(\"$FINAL_PLATFORM_CODENAME\"));
     }" > "$tmpfile"
 
     local javaFuncRegex='\/\*\*[^{]*isAtLeast'"${shortCodename}"'() {[^{}]*}'
@@ -48,7 +49,11 @@ function finalize_modules_utils() {
            d}' $javaSdkLevel
 
     echo "// Checks if the device is running on release version of Android ${FINAL_PLATFORM_CODENAME:0:1} or newer.
-inline bool IsAtLeast${FINAL_PLATFORM_CODENAME:0:1}() { return android_get_device_api_level() >= $FINAL_PLATFORM_SDK_VERSION; }" > "$tmpfile"
+inline bool IsAtLeast${FINAL_PLATFORM_CODENAME:0:1}() {
+  return android_get_device_api_level() >= $FINAL_PLATFORM_SDK_VERSION ||
+         (android_get_device_api_level() == $(($FINAL_PLATFORM_SDK_VERSION - 1)) &&
+          detail::IsAtLeastPreReleaseCodename(\"$FINAL_PLATFORM_CODENAME\"));
+}" > "$tmpfile"
 
     local cppFuncRegex='\/\/[^{]*IsAtLeast'"${shortCodename}"'() {[^{}]*}'
     local cppFuncReplace="N;N;N;N;N;N; s/$cppFuncRegex/$methodPlaceholder/; /$cppFuncRegex/!{P;D};"

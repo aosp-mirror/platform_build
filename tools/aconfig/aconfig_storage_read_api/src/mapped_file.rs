@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-use std::collections::HashMap;
 use std::fs::{self, File};
 use std::io::{BufReader, Read};
-use std::sync::{Arc, Mutex};
 
 use anyhow::anyhow;
 use memmap2::Mmap;
-use once_cell::sync::Lazy;
 
 use crate::AconfigStorageError::{
     self, FileReadFail, MapFileFail, ProtobufParseFail, StorageFileNotFound,
@@ -30,20 +27,6 @@ use crate::StorageFileType;
 use aconfig_storage_file::protos::{
     storage_record_pb::try_from_binary_proto, ProtoStorageFileInfo, ProtoStorageFiles,
 };
-
-/// Cache for already mapped files
-static ALL_MAPPED_FILES: Lazy<Mutex<HashMap<String, MappedStorageFileSet>>> = Lazy::new(|| {
-    let mapped_files = HashMap::new();
-    Mutex::new(mapped_files)
-});
-
-/// Mapped storage files for a particular container
-#[derive(Debug)]
-struct MappedStorageFileSet {
-    package_map: Arc<Mmap>,
-    flag_map: Arc<Mmap>,
-    flag_val: Arc<Mmap>,
-}
 
 /// Find where storage files are stored for a particular container
 fn find_container_storage_location(
@@ -101,49 +84,26 @@ fn verify_read_only_and_map(file_path: &str) -> Result<Mmap, AconfigStorageError
     }
 }
 
-/// Map all storage files for a particular container
-fn map_container_storage_files(
-    location_pb_file: &str,
-    container: &str,
-) -> Result<MappedStorageFileSet, AconfigStorageError> {
-    let files_location = find_container_storage_location(location_pb_file, container)?;
-    let package_map = Arc::new(verify_read_only_and_map(files_location.package_map())?);
-    let flag_map = Arc::new(verify_read_only_and_map(files_location.flag_map())?);
-    let flag_val = Arc::new(verify_read_only_and_map(files_location.flag_val())?);
-    Ok(MappedStorageFileSet { package_map, flag_map, flag_val })
-}
-
 /// Get a mapped storage file given the container and file type
-pub(crate) fn get_mapped_file(
+pub fn get_mapped_file(
     location_pb_file: &str,
     container: &str,
-    file_selection: StorageFileType,
-) -> Result<Arc<Mmap>, AconfigStorageError> {
-    let mut all_mapped_files = ALL_MAPPED_FILES.lock().unwrap();
-    match all_mapped_files.get(container) {
-        Some(mapped_files) => Ok(match file_selection {
-            StorageFileType::PackageMap => Arc::clone(&mapped_files.package_map),
-            StorageFileType::FlagMap => Arc::clone(&mapped_files.flag_map),
-            StorageFileType::FlagVal => Arc::clone(&mapped_files.flag_val),
-        }),
-        None => {
-            let mapped_files = map_container_storage_files(location_pb_file, container)?;
-            let file_ptr = match file_selection {
-                StorageFileType::PackageMap => Arc::clone(&mapped_files.package_map),
-                StorageFileType::FlagMap => Arc::clone(&mapped_files.flag_map),
-                StorageFileType::FlagVal => Arc::clone(&mapped_files.flag_val),
-            };
-            all_mapped_files.insert(container.to_string(), mapped_files);
-            Ok(file_ptr)
-        }
+    file_type: StorageFileType,
+) -> Result<Mmap, AconfigStorageError> {
+    let files_location = find_container_storage_location(location_pb_file, container)?;
+    match file_type {
+        StorageFileType::PackageMap => verify_read_only_and_map(files_location.package_map()),
+        StorageFileType::FlagMap => verify_read_only_and_map(files_location.flag_map()),
+        StorageFileType::FlagVal => verify_read_only_and_map(files_location.flag_val()),
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::TestStorageFileSet;
+    use crate::test_utils::copy_to_temp_file;
     use aconfig_storage_file::protos::storage_record_pb::write_proto_to_temp_file;
+    use tempfile::NamedTempFile;
 
     #[test]
     fn test_find_storage_file_location() {
@@ -190,125 +150,87 @@ files {
         );
     }
 
-    fn map_and_verify(location_pb_file: &str, file_selection: StorageFileType, actual_file: &str) {
+    fn map_and_verify(location_pb_file: &str, file_type: StorageFileType, actual_file: &str) {
         let mut opened_file = File::open(actual_file).unwrap();
         let mut content = Vec::new();
         opened_file.read_to_end(&mut content).unwrap();
 
-        let mmaped_file = get_mapped_file(location_pb_file, "system", file_selection).unwrap();
+        let mmaped_file = get_mapped_file(location_pb_file, "system", file_type).unwrap();
         assert_eq!(mmaped_file[..], content[..]);
     }
 
-    fn create_test_storage_files(read_only: bool) -> TestStorageFileSet {
-        TestStorageFileSet::new(
-            "./tests/package.map",
-            "./tests/flag.map",
-            "./tests/flag.val",
-            read_only,
-        )
-        .unwrap()
+    fn create_test_storage_files(read_only: bool) -> [NamedTempFile; 4] {
+        let package_map = copy_to_temp_file("./tests/package.map", read_only).unwrap();
+        let flag_map = copy_to_temp_file("./tests/flag.map", read_only).unwrap();
+        let flag_val = copy_to_temp_file("./tests/package.map", read_only).unwrap();
+
+        let text_proto = format!(
+            r#"
+files {{
+    version: 0
+    container: "system"
+    package_map: "{}"
+    flag_map: "{}"
+    flag_val: "{}"
+    timestamp: 12345
+}}
+"#,
+            package_map.path().display(),
+            flag_map.path().display(),
+            flag_val.path().display()
+        );
+        let pb_file = write_proto_to_temp_file(&text_proto).unwrap();
+        [package_map, flag_map, flag_val, pb_file]
     }
 
     #[test]
     fn test_mapped_file_contents() {
-        let ro_files = create_test_storage_files(true);
-        let text_proto = format!(
-            r#"
-files {{
-    version: 0
-    container: "system"
-    package_map: "{}"
-    flag_map: "{}"
-    flag_val: "{}"
-    timestamp: 12345
-}}
-"#,
-            ro_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
+        let [package_map, flag_map, flag_val, pb_file] = create_test_storage_files(true);
+        let pb_file_path = pb_file.path().display().to_string();
+        map_and_verify(
+            &pb_file_path,
+            StorageFileType::PackageMap,
+            &package_map.path().display().to_string(),
         );
-
-        let file = write_proto_to_temp_file(&text_proto).unwrap();
-        let file_full_path = file.path().display().to_string();
-        map_and_verify(&file_full_path, StorageFileType::PackageMap, &ro_files.package_map.name);
-        map_and_verify(&file_full_path, StorageFileType::FlagMap, &ro_files.flag_map.name);
-        map_and_verify(&file_full_path, StorageFileType::FlagVal, &ro_files.flag_val.name);
+        map_and_verify(
+            &pb_file_path,
+            StorageFileType::FlagMap,
+            &flag_map.path().display().to_string(),
+        );
+        map_and_verify(
+            &pb_file_path,
+            StorageFileType::FlagVal,
+            &flag_val.path().display().to_string(),
+        );
     }
 
     #[test]
     fn test_map_non_read_only_file() {
-        let ro_files = create_test_storage_files(true);
-        let rw_files = create_test_storage_files(false);
-        let text_proto = format!(
-            r#"
-files {{
-    version: 0
-    container: "system"
-    package_map: "{}"
-    flag_map: "{}"
-    flag_val: "{}"
-    timestamp: 12345
-}}
-"#,
-            rw_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
-        );
-
-        let file = write_proto_to_temp_file(&text_proto).unwrap();
-        let file_full_path = file.path().display().to_string();
-        let error = map_container_storage_files(&file_full_path, "system").unwrap_err();
+        let [package_map, flag_map, flag_val, pb_file] = create_test_storage_files(false);
+        let pb_file_path = pb_file.path().display().to_string();
+        let error =
+            get_mapped_file(&pb_file_path, "system", StorageFileType::PackageMap).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
             format!(
                 "MapFileFail(fail to map non read only storage file {})",
-                rw_files.package_map.name
+                package_map.path().display()
             )
         );
-
-        let text_proto = format!(
-            r#"
-files {{
-    version: 0
-    container: "system"
-    package_map: "{}"
-    flag_map: "{}"
-    flag_val: "{}"
-    timestamp: 12345
-}}
-"#,
-            ro_files.package_map.name, rw_files.flag_map.name, ro_files.flag_val.name
-        );
-
-        let file = write_proto_to_temp_file(&text_proto).unwrap();
-        let file_full_path = file.path().display().to_string();
-        let error = map_container_storage_files(&file_full_path, "system").unwrap_err();
+        let error = get_mapped_file(&pb_file_path, "system", StorageFileType::FlagMap).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
             format!(
                 "MapFileFail(fail to map non read only storage file {})",
-                rw_files.flag_map.name
+                flag_map.path().display()
             )
         );
-
-        let text_proto = format!(
-            r#"
-files {{
-    version: 0
-    container: "system"
-    package_map: "{}"
-    flag_map: "{}"
-    flag_val: "{}"
-    timestamp: 12345
-}}
-"#,
-            ro_files.package_map.name, ro_files.flag_map.name, rw_files.flag_val.name
-        );
-
-        let file = write_proto_to_temp_file(&text_proto).unwrap();
-        let file_full_path = file.path().display().to_string();
-        let error = map_container_storage_files(&file_full_path, "system").unwrap_err();
+        let error = get_mapped_file(&pb_file_path, "system", StorageFileType::FlagVal).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
             format!(
                 "MapFileFail(fail to map non read only storage file {})",
-                rw_files.flag_val.name
+                flag_val.path().display()
             )
         );
     }
