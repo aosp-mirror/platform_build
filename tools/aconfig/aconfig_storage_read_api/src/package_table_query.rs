@@ -72,7 +72,7 @@ pub fn find_package_offset(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::{StorageFileType, PackageTable};
+    use aconfig_storage_file::{PackageTable, StorageFileType};
 
     pub fn create_test_package_table() -> PackageTable {
         let header = PackageTableHeader {
