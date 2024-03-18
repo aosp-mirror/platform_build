@@ -119,12 +119,17 @@ define _declare-release-config
 endef
 
 # Include the config map files and populate _flag_declaration_files.
+# If the file is found more than once, only include it the first time.
 _flag_declaration_files :=
+_included_config_map_files :=
 $(foreach f, $(config_map_files), \
     $(eval FLAG_DECLARATION_FILES:= ) \
-    $(eval _included := $(f)) \
-    $(eval include $(f)) \
-    $(eval _flag_declaration_files += $(FLAG_DECLARATION_FILES)) \
+    $(if $(filter $(_included_config_map_files),$(f)),,\
+        $(eval _included := $(f)) \
+        $(eval include $(f)) \
+        $(eval _flag_declaration_files += $(FLAG_DECLARATION_FILES)) \
+        $(eval _included_config_map_files += $(f)) \
+    ) \
 )
 FLAG_DECLARATION_FILES :=
 
