@@ -224,13 +224,7 @@ LOCAL_REQUIRED_MODULES += \
     vndkcorevariant.libraries.txt \
     $(addsuffix .vendor,$(VNDK_CORE_LIBRARIES)) \
     $(addsuffix .vendor,$(VNDK_SAMEPROCESS_LIBRARIES)) \
-    $(VNDK_USING_CORE_VARIANT_LIBRARIES) \
-    com.android.vndk.current
-
-# Install VNDK apex on vendor partition if VNDK is unfrozen
-ifdef UNFROZEN_VNDK
-LOCAL_REQUIRED_MODULES += com.android.vndk.current.on_vendor
-endif
+    $(VNDK_USING_CORE_VARIANT_LIBRARIES)
 
 LOCAL_ADDITIONAL_DEPENDENCIES += $(call module-built-files,\
     $(addsuffix .vendor,$(VNDK_CORE_LIBRARIES) $(VNDK_SAMEPROCESS_LIBRARIES)))
