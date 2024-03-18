@@ -21,3 +21,12 @@ $(eval $(call declare-1p-copy-files,frameworks/av/media/libstagefright,))
 
 # Moved here from frameworks/av/services/Android.mk
 $(eval $(call declare-1p-copy-files,frameworks/av/services/audiopolicy,))
+
+# Moved here from frameworks/base/Android.mk
+$(eval $(call declare-1p-copy-files,frameworks/base,.ogg))
+$(eval $(call declare-1p-copy-files,frameworks/base,.kl))
+$(eval $(call declare-1p-copy-files,frameworks/base,.kcm))
+$(eval $(call declare-1p-copy-files,frameworks/base,.idc))
+$(eval $(call declare-1p-copy-files,frameworks/base,dirty-image-objects))
+$(eval $(call declare-1p-copy-files,frameworks/base/config,))
+$(eval $(call declare-1p-copy-files,frameworks/native/data,))
