@@ -36,16 +36,15 @@ REQUIRED_MODULES = frozenset(
 )
 
 
-def build_test_suites(argv):
+def build_test_suites(argv, extra_targets: set[str]):
   args = parse_args(argv)
 
-  if not os.environ.get('BUILD_NUMBER')[0] == 'P':
-    build_everything(args)
-    return
-
-  # Call the class to map changed files to modules to build.
-  # TODO(lucafarsi): Move this into a replaceable class.
-  build_affected_modules(args)
+  if is_optimization_enabled():
+    # Call the class to map changed files to modules to build.
+    # TODO(lucafarsi): Move this into a replaceable class.
+    build_affected_modules(args, extra_targets)
+  else:
+    build_everything(args, extra_targets)
 
 
 def parse_args(argv):
@@ -60,25 +59,32 @@ def parse_args(argv):
   )
   argparser.add_argument('--dist_dir')
   argparser.add_argument('--change_info', nargs='?')
-  argparser.add_argument('--extra_required_modules', nargs='*')
 
   return argparser.parse_args()
 
 
-def build_everything(args: argparse.Namespace):
-  build_command = base_build_command(args)
+def is_optimization_enabled() -> bool:
+  # TODO(lucafarsi): switch back to building only affected general-tests modules
+  # in presubmit once ready.
+  # if os.environ.get('BUILD_NUMBER')[0] == 'P':
+  #   return True
+  return False
+
+
+def build_everything(args: argparse.Namespace, extra_targets: set[str]):
+  build_command = base_build_command(args, extra_targets)
   build_command.append('general-tests')
 
   run_command(build_command, print_output=True)
 
 
-def build_affected_modules(args: argparse.Namespace):
+def build_affected_modules(args: argparse.Namespace, extra_targets: set[str]):
   modules_to_build = find_modules_to_build(
       pathlib.Path(args.change_info), args.extra_required_modules
   )
 
   # Call the build command with everything.
-  build_command = base_build_command(args)
+  build_command = base_build_command(args, extra_targets)
   build_command.extend(modules_to_build)
   # When not building general-tests we also have to build the general tests
   # shared libs.
@@ -89,7 +95,7 @@ def build_affected_modules(args: argparse.Namespace):
   zip_build_outputs(modules_to_build, args.dist_dir, args.target_release)
 
 
-def base_build_command(args: argparse.Namespace) -> list:
+def base_build_command(args: argparse.Namespace, extra_targets: set[str]) -> list:
   build_command = []
   build_command.append('time')
   build_command.append('./build/soong/soong_ui.bash')
@@ -100,7 +106,7 @@ def base_build_command(args: argparse.Namespace) -> list:
   build_command.append('TARGET_RELEASE=' + args.target_release)
   if args.with_dexpreopt_boot_img_and_system_server_only:
     build_command.append('WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY=true')
-  build_command.extend(args.extra_targets)
+  build_command.extend(extra_targets)
 
   return build_command
 
@@ -404,5 +410,5 @@ def get_soong_var(var: str, target_release: str) -> str:
   return value
 
 
-def main(argv):
-  build_test_suites(sys.argv)
+def main(argv, extra_targets: set[str]):
+  build_test_suites(argv, extra_targets)
