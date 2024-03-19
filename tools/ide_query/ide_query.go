@@ -307,6 +307,7 @@ func runMake(ctx context.Context, env Env, modules ...string) error {
 		"TARGET_PRODUCT=" + env.LunchTarget.Product,
 		"TARGET_RELEASE=" + env.LunchTarget.Release,
 		"TARGET_BUILD_VARIANT=" + env.LunchTarget.Variant,
+		"-k",
 	}
 	args = append(args, modules...)
 	cmd := exec.CommandContext(ctx, "build/soong/soong_ui.bash", args...)

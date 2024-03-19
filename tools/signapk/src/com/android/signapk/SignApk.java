@@ -987,6 +987,9 @@ class SignApk {
 
     private static class ZipSections {
         DataSource beforeCentralDir;
+
+        // The following fields are still valid after closing the backing DataSource.
+        long beforeCentralDirSize;
         ByteBuffer centralDir;
         ByteBuffer eocd;
     }
@@ -1006,7 +1009,9 @@ class SignApk {
         }
 
         ZipSections result = new ZipSections();
+
         result.beforeCentralDir = apk.slice(0, centralDirStartOffset);
+        result.beforeCentralDirSize = result.beforeCentralDir.size();
 
         long centralDirSize = centralDirEndOffset - centralDirStartOffset;
         if (centralDirSize >= Integer.MAX_VALUE) throw new IndexOutOfBoundsException();
@@ -1270,11 +1275,8 @@ class SignApk {
                     // signatures)
                     apkSigner.inputApkSigningBlock(null);
 
-                    // Build the output APK in memory, by copying input APK's ZIP entries across
-                    // and then signing the output APK.
-                    ByteArrayOutputStream v1SignedApkBuf = new ByteArrayOutputStream();
                     CountingOutputStream outputJarCounter =
-                            new CountingOutputStream(v1SignedApkBuf);
+                            new CountingOutputStream(outputFile);
                     JarOutputStream outputJar = new JarOutputStream(outputJarCounter);
                     // Use maximum compression for compressed entries because the APK lives forever
                     // on the system partition.
@@ -1287,10 +1289,13 @@ class SignApk {
                         addV1Signature(apkSigner, addV1SignatureRequest, outputJar, timestamp);
                         addV1SignatureRequest.done();
                     }
+
+                    // close output and switch to input mode
                     outputJar.close();
-                    ByteBuffer v1SignedApk = ByteBuffer.wrap(v1SignedApkBuf.toByteArray());
-                    v1SignedApkBuf.reset();
-                    ByteBuffer[] outputChunks = new ByteBuffer[] {v1SignedApk};
+                    outputJar = null;
+                    outputJarCounter = null;
+                    outputFile = null;
+                    RandomAccessFile v1SignedApk = new RandomAccessFile(outputFilename, "r");
 
                     ZipSections zipSections = findMainZipSections(DataSources.asDataSource(
                             v1SignedApk));
@@ -1299,6 +1304,9 @@ class SignApk {
                     eocd.put(zipSections.eocd);
                     eocd.flip();
                     eocd.order(ByteOrder.LITTLE_ENDIAN);
+
+                    ByteBuffer[] outputChunks = new ByteBuffer[] {};
+
                     // This loop is supposed to be iterated twice at most.
                     // The second pass is to align the file size after amending EOCD comments
                     // with assumption that re-generated signing block would be the same size.
@@ -1325,13 +1333,8 @@ class SignApk {
                                 modifiedEocd,
                                 zipSections.beforeCentralDir.size() + padding +
                                 apkSigningBlock.length);
-                        if (zipSections.beforeCentralDir.size() >= Integer.MAX_VALUE) {
-                            throw new IndexOutOfBoundsException();
-                        }
                         outputChunks =
                                 new ByteBuffer[] {
-                                        zipSections.beforeCentralDir.getByteBuffer(0,
-                                                (int)zipSections.beforeCentralDir.size()),
                                         ByteBuffer.allocate(padding),
                                         ByteBuffer.wrap(apkSigningBlock),
                                         zipSections.centralDir,
@@ -1345,7 +1348,7 @@ class SignApk {
 
                         // Calculate the file size
                         eocd = modifiedEocd;
-                        int fileSize = 0;
+                        long fileSize = zipSections.beforeCentralDirSize;
                         for (ByteBuffer buf : outputChunks) {
                             fileSize += buf.remaining();
                         }
@@ -1354,7 +1357,7 @@ class SignApk {
                             break;
                         }
                         // Pad EOCD comment to align the file size.
-                        int commentLen = alignment - fileSize % alignment;
+                        int commentLen = alignment - (int)(fileSize % alignment);
                         modifiedEocd = ByteBuffer.allocate(eocd.remaining() + commentLen);
                         modifiedEocd.put(eocd);
                         modifiedEocd.rewind();
@@ -1364,6 +1367,12 @@ class SignApk {
                         // re-iterate the loop with modified EOCD.
                         eocd = modifiedEocd;
                     }
+
+                    // close input and switch back to output mode
+                    v1SignedApk.close();
+                    v1SignedApk = null;
+                    outputFile = new FileOutputStream(outputFilename, true);
+                    outputFile.getChannel().truncate(zipSections.beforeCentralDirSize);
 
                     // This assumes outputChunks are array-backed. To avoid this assumption, the
                     // code could be rewritten to use FileChannel.

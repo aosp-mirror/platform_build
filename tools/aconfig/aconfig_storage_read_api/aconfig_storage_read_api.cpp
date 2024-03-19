@@ -1,6 +1,5 @@
 #include <android-base/file.h>
 #include <android-base/logging.h>
-#include <android-base/result.h>
 #include <protos/aconfig_storage_metadata.pb.h>
 
 #include <sys/mman.h>
@@ -97,40 +96,21 @@ static Result<MappedStorageFile> map_storage_file(std::string const& file) {
 namespace private_internal_api {
 
 /// Get mapped file implementation.
-MappedStorageFileQuery get_mapped_file_impl(
+Result<MappedStorageFile> get_mapped_file_impl(
     std::string const& pb_file,
     std::string const& container,
     StorageFileType file_type) {
-  auto query =  MappedStorageFileQuery();
-
   auto file_result = find_storage_file(pb_file, container, file_type);
   if (!file_result.ok()) {
-    query.query_success = false;
-    query.error_message = file_result.error().message();
-    query.mapped_file.file_ptr = nullptr;
-    query.mapped_file.file_size = 0;
-    return query;
+    return Error() << file_result.error();
   }
-
-  auto mapped_file_result = map_storage_file(*file_result);
-  if (!mapped_file_result.ok()) {
-    query.query_success = false;
-    query.error_message = mapped_file_result.error().message();
-    query.mapped_file.file_ptr = nullptr;
-    query.mapped_file.file_size = 0;
-  } else {
-    query.query_success = true;
-    query.error_message = "";
-    query.mapped_file = *mapped_file_result;
-  }
-
-  return query;
+  return map_storage_file(*file_result);
 }
 
 } // namespace private internal api
 
 /// Get mapped storage file
-MappedStorageFileQuery get_mapped_file(
+Result<MappedStorageFile> get_mapped_file(
     std::string const& container,
     StorageFileType file_type) {
   return private_internal_api::get_mapped_file_impl(
@@ -138,61 +118,65 @@ MappedStorageFileQuery get_mapped_file(
 }
 
 /// Get storage file version number
-VersionNumberQuery get_storage_file_version(
+Result<uint32_t> get_storage_file_version(
     std::string const& file_path) {
   auto version_cxx = get_storage_file_version_cxx(
       rust::Str(file_path.c_str()));
-  auto version = VersionNumberQuery();
-  version.query_success = version_cxx.query_success;
-  version.error_message = std::string(version_cxx.error_message.c_str());
-  version.version_number = version_cxx.version_number;
-  return version;
+  if (version_cxx.query_success) {
+    return version_cxx.version_number;
+  } else {
+    return Error() << version_cxx.error_message;
+  }
 }
 
 /// Get package offset
-PackageOffsetQuery get_package_offset(
+Result<PackageOffset> get_package_offset(
     MappedStorageFile const& file,
     std::string const& package) {
   auto content = rust::Slice<const uint8_t>(
       static_cast<uint8_t*>(file.file_ptr), file.file_size);
   auto offset_cxx = get_package_offset_cxx(content, rust::Str(package.c_str()));
-  auto offset = PackageOffsetQuery();
-  offset.query_success = offset_cxx.query_success;
-  offset.error_message = std::string(offset_cxx.error_message.c_str());
-  offset.package_exists = offset_cxx.package_exists;
-  offset.package_id = offset_cxx.package_id;
-  offset.boolean_offset = offset_cxx.boolean_offset;
-  return offset;
+  if (offset_cxx.query_success) {
+    auto offset = PackageOffset();
+    offset.package_exists = offset_cxx.package_exists;
+    offset.package_id = offset_cxx.package_id;
+    offset.boolean_offset = offset_cxx.boolean_offset;
+    return offset;
+  } else {
+    return Error() << offset_cxx.error_message;
+  }
 }
 
 /// Get flag offset
-FlagOffsetQuery get_flag_offset(
+Result<FlagOffset> get_flag_offset(
     MappedStorageFile const& file,
     uint32_t package_id,
     std::string const& flag_name){
   auto content = rust::Slice<const uint8_t>(
       static_cast<uint8_t*>(file.file_ptr), file.file_size);
   auto offset_cxx = get_flag_offset_cxx(content, package_id, rust::Str(flag_name.c_str()));
-  auto offset = FlagOffsetQuery();
-  offset.query_success = offset_cxx.query_success;
-  offset.error_message = std::string(offset_cxx.error_message.c_str());
-  offset.flag_exists = offset_cxx.flag_exists;
-  offset.flag_offset = offset_cxx.flag_offset;
-  return offset;
+  if (offset_cxx.query_success) {
+    auto offset = FlagOffset();
+    offset.flag_exists = offset_cxx.flag_exists;
+    offset.flag_offset = offset_cxx.flag_offset;
+    return offset;
+  } else {
+   return Error() << offset_cxx.error_message;
+  }
 }
 
 /// Get boolean flag value
-BooleanFlagValueQuery get_boolean_flag_value(
+Result<bool> get_boolean_flag_value(
     MappedStorageFile const& file,
     uint32_t offset) {
   auto content = rust::Slice<const uint8_t>(
       static_cast<uint8_t*>(file.file_ptr), file.file_size);
   auto value_cxx = get_boolean_flag_value_cxx(content, offset);
-  auto value = BooleanFlagValueQuery();
-  value.query_success = value_cxx.query_success;
-  value.error_message = std::string(value_cxx.error_message.c_str());
-  value.flag_value = value_cxx.flag_value;
-  return value;
+  if (value_cxx.query_success) {
+    return value_cxx.flag_value;
+  } else {
+    return Error() << value_cxx.error_message;
+  }
 }
 
 } // namespace aconfig_storage
