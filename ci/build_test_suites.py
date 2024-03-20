@@ -36,15 +36,15 @@ REQUIRED_MODULES = frozenset(
 )
 
 
-def build_test_suites(argv, extra_targets: set[str]):
+def build_test_suites(argv):
   args = parse_args(argv)
 
   if is_optimization_enabled():
     # Call the class to map changed files to modules to build.
     # TODO(lucafarsi): Move this into a replaceable class.
-    build_affected_modules(args, extra_targets)
+    build_affected_modules(args)
   else:
-    build_everything(args, extra_targets)
+    build_everything(args)
 
 
 def parse_args(argv):
@@ -71,20 +71,20 @@ def is_optimization_enabled() -> bool:
   return False
 
 
-def build_everything(args: argparse.Namespace, extra_targets: set[str]):
-  build_command = base_build_command(args, extra_targets)
+def build_everything(args: argparse.Namespace):
+  build_command = base_build_command(args, args.extra_targets)
   build_command.append('general-tests')
 
   run_command(build_command, print_output=True)
 
 
-def build_affected_modules(args: argparse.Namespace, extra_targets: set[str]):
+def build_affected_modules(args: argparse.Namespace):
   modules_to_build = find_modules_to_build(
       pathlib.Path(args.change_info), args.extra_required_modules
   )
 
   # Call the build command with everything.
-  build_command = base_build_command(args, extra_targets)
+  build_command = base_build_command(args, args.extra_targets)
   build_command.extend(modules_to_build)
   # When not building general-tests we also have to build the general tests
   # shared libs.
@@ -410,5 +410,5 @@ def get_soong_var(var: str, target_release: str) -> str:
   return value
 
 
-def main(argv, extra_targets: set[str]):
-  build_test_suites(argv, extra_targets)
+def main(argv):
+  build_test_suites(argv)
