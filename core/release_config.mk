@@ -133,6 +133,18 @@ $(foreach f, $(config_map_files), \
 )
 FLAG_DECLARATION_FILES :=
 
+# Verify that all inherited/overridden release configs are declared.
+$(foreach config,$(_all_release_configs),\
+  $(foreach r,$(all_release_configs.$(r).OVERRIDES),\
+    $(if $(strip $(_all_release_configs.$(r).FILES)$(_all_release_configs.$(r).OVERRIDES)),,\
+    $(error Release config $(config) [declared in: $(_all_release_configs.$(r).DECLARED_IN)] inherits from non-existent $(r).)\
+)))
+# Verify that alias configs do not have config files.
+$(foreach r,$(_all_release_configs),\
+  $(if $(_all_release_configs.$(r).ALIAS),$(if $(_all_release_configs.$(r).FILES),\
+    $(error Alias release config "$(r)" may not specify release config files $(_all_release_configs.$(r).FILES))\
+)))
+
 ifeq ($(TARGET_RELEASE),)
     # We allow some internal paths to explicitly set TARGET_RELEASE to the
     # empty string.  For the most part, 'make' treats unset and empty string as
@@ -148,8 +160,12 @@ ifeq ($(TARGET_RELEASE),)
     TARGET_RELEASE = trunk_staging
 endif
 
-ifeq ($(filter $(_all_release_configs), $(TARGET_RELEASE)),)
-    $(error No release config found for TARGET_RELEASE: $(TARGET_RELEASE). Available releases are: $(_all_release_configs))
+# During pass 1 of product config, using a non-existent release config is not an error.
+# We can safely assume that we are doing pass 1 if DUMP_MANY_VARS=="PRODUCT_RELEASE_CONFIG_MAPS".
+ifneq (PRODUCT_RELEASE_CONFIG_MAPS,$(DUMP_MANY_VARS))
+    ifeq ($(filter $(_all_release_configs), $(TARGET_RELEASE)),)
+        $(error No release config found for TARGET_RELEASE: $(TARGET_RELEASE). Available releases are: $(_all_release_configs))
+    endif
 endif
 
 # Choose flag files
@@ -177,7 +193,7 @@ $(call _apply-release-config-overrides,$(TARGET_RELEASE))
 define declare-release-config
 $(error declare-release-config can only be called from inside release_config_map.mk files)
 endef
-define apply-release-config-overrides
+define _apply-release-config-overrides
 $(error invalid use of apply-release-config-overrides)
 endef
 
@@ -191,12 +207,6 @@ else
 TARGET_RELEASE:=
 endif
 .KATI_READONLY := TARGET_RELEASE
-
-# Verify that alias configs do not have config files.
-$(foreach r,$(_all_release_configs),\
-  $(if $(_all_release_configs.$(r).ALIAS),$(if $(_all_release_configs.$(r).FILES),\
-    $(error Alias release config "$(r)" may not specify release config files $(_all_release_configs.$(r).FILES))\
-)))
 
 $(foreach config, $(_all_release_configs), \
     $(eval _all_release_configs.$(config).DECLARED_IN:= ) \
