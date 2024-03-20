@@ -57,7 +57,7 @@ use std::fs::File;
 use std::io::Read;
 
 /// Storage file location pb file
-pub const STORAGE_LOCATION_FILE: &str = "/metadata/aconfig/available_storage_file_records.pb";
+pub const STORAGE_LOCATION_FILE: &str = "/metadata/aconfig/boot/available_storage_file_records.pb";
 
 /// Get read only mapped storage files.
 ///
