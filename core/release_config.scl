@@ -53,6 +53,7 @@ _all_flags_schema = {
                     for t in _valid_types
                 ],
             },
+            "origin": {"type": "string"},
             "declared_in": {"type": "string"},
         },
         "optional_keys": {
@@ -80,13 +81,14 @@ _all_values_schema = {
     },
 }
 
-def flag(name, partitions, default, *, appends = False):
+def flag(name, partitions, default, *, origin = "Unknown", appends = False):
     """Declare a flag.
 
     Args:
       name: name of the flag
       partitions: the partitions where this should be recorded.
       default: the default value of the flag.
+      origin: The origin of this flag.
       appends: Whether new values should be append (not replace) the old.
 
     Returns:
@@ -112,6 +114,7 @@ def flag(name, partitions, default, *, appends = False):
         "partitions": partitions,
         "default": default,
         "appends": appends,
+        "origin": origin,
     }
 
 def value(name, value):
@@ -158,7 +161,10 @@ def equal_flag_declaration(flag, other):
     for key in "name", "partitions", "default", "appends":
         if flag[key] != other[key]:
             return False
-    return True
+    # For now, allow Unknown to match any other origin.
+    if flag["origin"] == "Unknown" or other["origin"] == "Unknown":
+        return True
+    return flag["origin"] == other["origin"]
 
 def release_config(all_flags, all_values):
     """Return the make variables that should be set for this release config.
@@ -234,5 +240,6 @@ def release_config(all_flags, all_values):
         result["_ALL_RELEASE_FLAGS." + flag["name"] + ".VALUE"] = val
         result["_ALL_RELEASE_FLAGS." + flag["name"] + ".DECLARED_IN"] = flag["declared_in"]
         result["_ALL_RELEASE_FLAGS." + flag["name"] + ".SET_IN"] = set_in
+        result["_ALL_RELEASE_FLAGS." + flag["name"] + ".ORIGIN"] = flag["origin"]
 
     return result
