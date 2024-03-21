@@ -116,10 +116,10 @@ PRODUCT_PACKAGES += \
     $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34)
 
 # Include all zygote init scripts. "ro.zygote" will select one of them.
-PRODUCT_COPY_FILES += \
-    system/core/rootdir/init.zygote32.rc:system/etc/init/hw/init.zygote32.rc \
-    system/core/rootdir/init.zygote64.rc:system/etc/init/hw/init.zygote64.rc \
-    system/core/rootdir/init.zygote64_32.rc:system/etc/init/hw/init.zygote64_32.rc \
+PRODUCT_PACKAGES += \
+    init.zygote32.rc \
+    init.zygote64.rc \
+    init.zygote64_32.rc
 
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true

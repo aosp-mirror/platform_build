@@ -57,7 +57,7 @@ use std::fs::File;
 use std::io::Read;
 
 /// Storage file location pb file
-pub const STORAGE_LOCATION_FILE: &str = "/metadata/aconfig/available_storage_file_records.pb";
+pub const STORAGE_LOCATION_FILE: &str = "/metadata/aconfig/boot/available_storage_file_records.pb";
 
 /// Get read only mapped storage files.
 ///
@@ -183,14 +183,9 @@ mod ffi {
 
         pub fn get_package_offset_cxx(file: &[u8], package: &str) -> PackageOffsetQueryCXX;
 
-        pub fn get_flag_offset_cxx(
-            file: &[u8],
-            package_id: u32,
-            flag: &str,
-        ) -> FlagOffsetQueryCXX;
+        pub fn get_flag_offset_cxx(file: &[u8], package_id: u32, flag: &str) -> FlagOffsetQueryCXX;
 
-        pub fn get_boolean_flag_value_cxx(file: &[u8], offset: u32)
-            -> BooleanFlagValueQueryCXX;
+        pub fn get_boolean_flag_value_cxx(file: &[u8], offset: u32) -> BooleanFlagValueQueryCXX;
     }
 }
 
@@ -294,11 +289,7 @@ pub fn get_package_offset_cxx(file: &[u8], package: &str) -> ffi::PackageOffsetQ
 }
 
 /// Get flag start offset cc interlop
-pub fn get_flag_offset_cxx(
-    file: &[u8],
-    package_id: u32,
-    flag: &str,
-) -> ffi::FlagOffsetQueryCXX {
+pub fn get_flag_offset_cxx(file: &[u8], package_id: u32, flag: &str) -> ffi::FlagOffsetQueryCXX {
     ffi::FlagOffsetQueryCXX::new(find_flag_offset(file, package_id, flag))
 }
 

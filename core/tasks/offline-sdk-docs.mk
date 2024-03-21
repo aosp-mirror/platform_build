@@ -13,9 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# BUILD_ID is usually used to specify the branch name
-# (like "MAIN") or a branch name and a release candidate
-# (like "CRB01").  It must be a single word, and is
-# capitalized by convention.
 
-BUILD_ID=350008000
+# sdk.atree needs to copy the whole dir: $(OUT_DOCS)/offline-sdk to the final zip.
+# So keep offline-sdk-timestamp target here, and unzip offline-sdk-docs.zip to
+# $(OUT_DOCS)/offline-sdk.
+$(OUT_DOCS)/offline-sdk-timestamp: $(OUT_DOCS)/offline-sdk-docs-docs.zip
+	$(hide) rm -rf $(OUT_DOCS)/offline-sdk
+	$(hide) mkdir -p $(OUT_DOCS)/offline-sdk
+	( unzip -qo $< -d $(OUT_DOCS)/offline-sdk && touch -f $@ ) || exit 1
+
+.PHONY: docs offline-sdk-docs
+docs offline-sdk-docs: $(OUT_DOCS)/offline-sdk-timestamp
