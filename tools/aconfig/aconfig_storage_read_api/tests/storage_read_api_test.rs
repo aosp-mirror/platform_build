@@ -9,20 +9,16 @@ mod aconfig_storage_rust_test {
     use std::fs;
     use tempfile::NamedTempFile;
 
-    pub fn copy_to_ro_temp_file(source_file: &str) -> NamedTempFile {
+    pub fn copy_to_temp_file(source_file: &str) -> NamedTempFile {
         let file = NamedTempFile::new().unwrap();
         fs::copy(source_file, file.path()).unwrap();
-        let file_name = file.path().display().to_string();
-        let mut perms = fs::metadata(file_name).unwrap().permissions();
-        perms.set_readonly(true);
-        fs::set_permissions(file.path(), perms.clone()).unwrap();
         file
     }
 
     fn create_test_storage_files() -> [NamedTempFile; 4] {
-        let package_map = copy_to_ro_temp_file("./package.map");
-        let flag_map = copy_to_ro_temp_file("./flag.map");
-        let flag_val = copy_to_ro_temp_file("./flag.val");
+        let package_map = copy_to_temp_file("./package.map");
+        let flag_map = copy_to_temp_file("./flag.map");
+        let flag_val = copy_to_temp_file("./flag.val");
 
         let text_proto = format!(
             r#"
@@ -47,8 +43,11 @@ files {{
     fn test_unavailable_stoarge() {
         let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
-        let err =
-            get_mapped_file(&pb_file_path, "vendor", StorageFileType::PackageMap).unwrap_err();
+        // SAFETY:
+        // The safety here is ensured as the test process will not write to temp storage file
+        let err = unsafe {
+            get_mapped_file(&pb_file_path, "vendor", StorageFileType::PackageMap).unwrap_err()
+        };
         assert_eq!(
             format!("{:?}", err),
             "StorageFileNotFound(Storage file does not exist for vendor)"
@@ -59,8 +58,11 @@ files {{
     fn test_package_offset_query() {
         let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
-        let package_mapped_file =
-            get_mapped_file(&pb_file_path, "system", StorageFileType::PackageMap).unwrap();
+        // SAFETY:
+        // The safety here is ensured as the test process will not write to temp storage file
+        let package_mapped_file = unsafe {
+            get_mapped_file(&pb_file_path, "system", StorageFileType::PackageMap).unwrap()
+        };
 
         let package_offset =
             get_package_offset(&package_mapped_file, "com.android.aconfig.storage.test_1")
@@ -88,8 +90,12 @@ files {{
     fn test_none_exist_package_offset_query() {
         let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
-        let package_mapped_file =
-            get_mapped_file(&pb_file_path, "system", StorageFileType::PackageMap).unwrap();
+        // SAFETY:
+        // The safety here is ensured as the test process will not write to temp storage file
+        let package_mapped_file = unsafe {
+            get_mapped_file(&pb_file_path, "system", StorageFileType::PackageMap).unwrap()
+        };
+
         let package_offset_option =
             get_package_offset(&package_mapped_file, "com.android.aconfig.storage.test_3").unwrap();
         assert_eq!(package_offset_option, None);
@@ -99,8 +105,10 @@ files {{
     fn test_flag_offset_query() {
         let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
+        // SAFETY:
+        // The safety here is ensured as the test process will not write to temp storage file
         let flag_mapped_file =
-            get_mapped_file(&pb_file_path, "system", StorageFileType::FlagMap).unwrap();
+            unsafe { get_mapped_file(&pb_file_path, "system", StorageFileType::FlagMap).unwrap() };
 
         let baseline = vec![
             (0, "enabled_ro", 1u16),
@@ -123,9 +131,10 @@ files {{
     fn test_none_exist_flag_offset_query() {
         let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
+        // SAFETY:
+        // The safety here is ensured as the test process will not write to temp storage file
         let flag_mapped_file =
-            get_mapped_file(&pb_file_path, "system", StorageFileType::FlagMap).unwrap();
-
+            unsafe { get_mapped_file(&pb_file_path, "system", StorageFileType::FlagMap).unwrap() };
         let flag_offset_option = get_flag_offset(&flag_mapped_file, 0, "none_exist").unwrap();
         assert_eq!(flag_offset_option, None);
 
@@ -137,9 +146,10 @@ files {{
     fn test_boolean_flag_value_query() {
         let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
+        // SAFETY:
+        // The safety here is ensured as the test process will not write to temp storage file
         let flag_value_file =
-            get_mapped_file(&pb_file_path, "system", StorageFileType::FlagVal).unwrap();
-
+            unsafe { get_mapped_file(&pb_file_path, "system", StorageFileType::FlagVal).unwrap() };
         let baseline: Vec<bool> = vec![false; 8];
         for (offset, expected_value) in baseline.into_iter().enumerate() {
             let flag_value = get_boolean_flag_value(&flag_value_file, offset as u32).unwrap();
@@ -151,9 +161,10 @@ files {{
     fn test_invalid_boolean_flag_value_query() {
         let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
+        // SAFETY:
+        // The safety here is ensured as the test process will not write to temp storage file
         let flag_value_file =
-            get_mapped_file(&pb_file_path, "system", StorageFileType::FlagVal).unwrap();
-
+            unsafe { get_mapped_file(&pb_file_path, "system", StorageFileType::FlagVal).unwrap() };
         let err = get_boolean_flag_value(&flag_value_file, 8u32).unwrap_err();
         assert_eq!(
             format!("{:?}", err),
