@@ -1085,7 +1085,12 @@ function cproj()
 }
 
 function adb() {
-   command adb "${@}"
+    local ADB=$(which adb)
+    if [ -z "$ADB" ]; then
+        echo "Command adb not found; try lunch (and building) first?"
+        return 1
+    fi
+    $ADB "${@}"
 }
 
 # simplified version of ps; output in the form
