@@ -117,7 +117,7 @@ llvm::Expected<std::unique_ptr<clang::tooling::CompilationDatabase>> LoadCompDB(
       result.mutable_status()->set_code(::ide_query::Status::FAILURE);
       result.mutable_status()->set_message("Command working dir " +
                                            working_dir.str() +
-                                           "outside repository " + repo_dir);
+                                           " outside repository " + repo_dir);
       continue;
     }
     working_dir = working_dir.ltrim('/');
