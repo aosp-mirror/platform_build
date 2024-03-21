@@ -315,26 +315,7 @@ ifeq (true,$(PRODUCT_MODULE_BUILD_FROM_SOURCE))
   ignore_apex_contributions := true
 endif
 ifeq (true, $(ignore_apex_contributions))
-PRODUCT_BUILD_IGNORE_APEX_CONTRIBUTION_CONTENTS += \
-  prebuilt_com.google.android.adservices \
-  prebuilt_com.google.android.appsearch \
-  prebuilt_com.google.android.art \
-  prebuilt_com.google.android.btservices \
-  prebuilt_com.google.android.configinfrastructure \
-  prebuilt_com.google.android.conscrypt \
-  prebuilt_com.google.android.devicelock \
-  prebuilt_com.google.android.healthfitness \
-  prebuilt_com.google.android.ipsec \
-  prebuilt_com.google.android.media \
-  prebuilt_com.google.android.mediaprovider \
-  prebuilt_com.google.android.ondevicepersonalization \
-  prebuilt_com.google.android.os.statsd \
-  prebuilt_com.google.android.rkpd \
-  prebuilt_com.google.android.scheduling \
-  prebuilt_com.google.android.sdkext \
-  prebuilt_com.google.android.tethering \
-  prebuilt_com.google.android.uwb \
-  prebuilt_com.google.android.wifi
+PRODUCT_BUILD_IGNORE_APEX_CONTRIBUTION_CONTENTS := true
 endif
 
 #############################################################################
