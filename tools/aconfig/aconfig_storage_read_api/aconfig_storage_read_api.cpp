@@ -18,7 +18,7 @@ namespace aconfig_storage {
 
 /// Storage location pb file
 static constexpr char kAvailableStorageRecordsPb[] =
-    "/metadata/aconfig/available_storage_file_records.pb";
+    "/metadata/aconfig/boot/available_storage_file_records.pb";
 
 /// Read aconfig storage records pb file
 static Result<storage_records_pb> read_storage_records_pb(std::string const& pb_file) {
