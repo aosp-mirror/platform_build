@@ -912,13 +912,12 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     # and install time performance. All OTA's with
     # both the source build and target build with VIRTUAL_AB_COW_VERSION = 3
     # can support the new format. Otherwise, fallback on older versions
-    if not OPTIONS.vabc_cow_version:
-      if not source_info.vabc_cow_version or not target_info.vabc_cow_version:
-        OPTIONS.vabc_cow_version = 2
-      elif source_info.vabc_cow_version != target_info.vabc_cow_version:
-        OPTIONS.vabc_cow_version = min(source_info.vabc_cow_version, target_info.vabc_cow_version)
-      if OPTIONS.vabc_cow_version:
-        logger.info("Source or Target doesn't have VABC_COW_VERSION specified, using version: " + OPTIONS.vabc_cow_version)
+    if not source_info.vabc_cow_version or not target_info.vabc_cow_version:
+      logger.info("Source or Target doesn't have VABC_COW_VERSION specified, default to version 2")
+      OPTIONS.vabc_cow_version = 2
+    elif source_info.vabc_cow_version != target_info.vabc_cow_version:
+      logger.info("Source and Target have different cow VABC_COW_VERSION specified, default to minimum version")
+      OPTIONS.vabc_cow_version = min(source_info.vabc_cow_version, target_info.vabc_cow_version)
     # Virtual AB Compression was introduced in Androd S.
     # Later, we backported VABC to Android R. But verity support was not
     # backported, so if VABC is used and we are on Android R, disable
