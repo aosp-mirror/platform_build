@@ -1515,6 +1515,7 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
         'super_group_a_group_size': '1000',
         'super_group_b_partition_list': 'product',
         'super_group_b_group_size': '2000',
+        'vabc_cow_version': '2',
     }
     self.assertEqual(merged_dict, expected_merged_dict)
 
@@ -1525,6 +1526,7 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
         'dynamic_partition_list': 'system',
         'super_group_a_partition_list': 'system',
         'super_group_a_group_size': '5000',
+        'vabc_cow_version': '3',
     }
     vendor_dict = {
         'use_dynamic_partitions': 'true',
@@ -1546,6 +1548,7 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
         'super_group_a_group_size': '1000',
         'super_group_b_partition_list': 'product',
         'super_group_b_group_size': '2000',
+        'vabc_cow_version': '2',
     }
     self.assertEqual(merged_dict, expected_merged_dict)
 
