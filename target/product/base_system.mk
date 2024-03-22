@@ -240,6 +240,7 @@ PRODUCT_PACKAGES += \
     package-shareduid-allowlist.xml \
     passwd_system \
     perfetto \
+    perfetto-extras \
     ping \
     ping6 \
     pintool \
