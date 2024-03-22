@@ -237,6 +237,7 @@ PRODUCT_PACKAGES += \
     PackageInstaller \
     passwd_system \
     perfetto \
+    perfetto-extras \
     ping \
     ping6 \
     pintool \
