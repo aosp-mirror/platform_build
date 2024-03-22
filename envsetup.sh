@@ -1093,7 +1093,9 @@ function cproj()
 # that my Mac has /usr/local/bin/adb installed by default and on the default
 # path.
 function adb() {
-    local ADB=$(which adb)
+    # We need `command which` because zsh has a built-in `which` that's more
+    # like `type`.
+    local ADB=$(command which adb)
     if [ -z "$ADB" ]; then
         echo "Command adb not found; try lunch (and building) first?"
         return 1
