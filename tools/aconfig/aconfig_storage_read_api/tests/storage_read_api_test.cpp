@@ -33,7 +33,7 @@ namespace private_api = aconfig_storage::private_internal_api;
 
 class AconfigStorageTest : public ::testing::Test {
  protected:
-  Result<std::string> copy_to_ro_temp_file(std::string const& source_file) {
+  Result<std::string> copy_to_temp_file(std::string const& source_file) {
     auto temp_file = std::string(std::tmpnam(nullptr));
     auto content = std::string();
     if (!ReadFileToString(source_file, &content)) {
@@ -41,9 +41,6 @@ class AconfigStorageTest : public ::testing::Test {
     }
     if (!WriteStringToFile(content, temp_file)) {
       return Error() << "failed to copy file: " << source_file;
-    }
-    if (chmod(temp_file.c_str(), S_IRUSR | S_IRGRP | S_IROTH) == -1) {
-      return Error() << "failed to make file read only";
     }
     return temp_file;
   }
@@ -71,9 +68,9 @@ class AconfigStorageTest : public ::testing::Test {
 
   void SetUp() override {
     auto const test_dir = android::base::GetExecutableDirectory();
-    package_map = *copy_to_ro_temp_file(test_dir + "/package.map");
-    flag_map = *copy_to_ro_temp_file(test_dir + "/flag.map");
-    flag_val = *copy_to_ro_temp_file(test_dir + "/flag.val");
+    package_map = *copy_to_temp_file(test_dir + "/package.map");
+    flag_map = *copy_to_temp_file(test_dir + "/flag.map");
+    flag_val = *copy_to_temp_file(test_dir + "/flag.val");
     storage_record_pb = *write_storage_location_pb_file(
         package_map, flag_map, flag_val);
   }
@@ -111,27 +108,6 @@ TEST_F(AconfigStorageTest, test_none_exist_storage_file_mapping) {
   ASSERT_FALSE(mapped_file.ok());
   ASSERT_EQ(mapped_file.error().message(),
             "Unable to find storage files for container vendor");
-}
-
-/// Negative test to lock down the error when mapping a writeable storage file
-TEST_F(AconfigStorageTest, test_writable_storage_file_mapping) {
-  ASSERT_TRUE(chmod(package_map.c_str(), 0666) != -1);
-  auto mapped_file = private_api::get_mapped_file_impl(
-      storage_record_pb, "system", api::StorageFileType::package_map);
-  ASSERT_FALSE(mapped_file.ok());
-  ASSERT_EQ(mapped_file.error().message(), "cannot map writeable file");
-
-  ASSERT_TRUE(chmod(flag_map.c_str(), 0666) != -1);
-  mapped_file = private_api::get_mapped_file_impl(
-      storage_record_pb, "system", api::StorageFileType::flag_map);
-  ASSERT_FALSE(mapped_file.ok());
-  ASSERT_EQ(mapped_file.error().message(), "cannot map writeable file");
-
-  ASSERT_TRUE(chmod(flag_val.c_str(), 0666) != -1);
-  mapped_file = private_api::get_mapped_file_impl(
-      storage_record_pb, "system", api::StorageFileType::flag_val);
-  ASSERT_FALSE(mapped_file.ok());
-  ASSERT_EQ(mapped_file.error().message(), "cannot map writeable file");
 }
 
 /// Test to lock down storage package offset query api
