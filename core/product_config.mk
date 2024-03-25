@@ -308,7 +308,7 @@ endif
 # TODO(b/308187268): Remove this denylist mechanism
 # Use PRODUCT_PACKAGES to determine if this is an aosp product. aosp products do not use google signed apexes.
 ignore_apex_contributions :=
-ifeq (,$(findstring com.google.android.conscrypt,$(PRODUCT_PACKAGES)))
+ifeq (,$(findstring com.google.android.conscrypt,$(PRODUCT_PACKAGES))$(findstring com.google.android.go.conscrypt,$(PRODUCT_PACKAGES)))
   ignore_apex_contributions := true
 endif
 ifeq (true,$(PRODUCT_MODULE_BUILD_FROM_SOURCE))
