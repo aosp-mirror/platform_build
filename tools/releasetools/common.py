@@ -2456,7 +2456,7 @@ def GetMinSdkVersion(apk_name):
     m = re.match(r'(?:minSdkVersion|sdkVersion):\'([^\']*)\'', line)
     if m:
       return m.group(1)
-  raise ExternalError("No minSdkVersion returned by aapt2")
+  raise ExternalError("No minSdkVersion returned by aapt2 for apk: {}".format(apk_name))
 
 
 def GetMinSdkVersionInt(apk_name, codename_to_api_level_map):
