@@ -413,7 +413,7 @@ else
   # When VSR vendor API level >= 34, binary alignment will be 65536.
   ifeq ($(call math_gt_or_eq,$(VSR_VENDOR_API_LEVEL),34),true)
     ifeq ($(TARGET_ARCH),arm64)
-      TARGET_MAX_PAGE_SIZE_SUPPORTED := 65536
+      TARGET_MAX_PAGE_SIZE_SUPPORTED := 16384
     endif
   endif
 endif
@@ -432,8 +432,8 @@ TARGET_NO_BIONIC_PAGE_SIZE_MACRO := false
 ifdef PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO
   TARGET_NO_BIONIC_PAGE_SIZE_MACRO := $(PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO)
   ifeq ($(TARGET_NO_BIONIC_PAGE_SIZE_MACRO),true)
-      ifneq ($(TARGET_MAX_PAGE_SIZE_SUPPORTED),65536)
-          $(error TARGET_MAX_PAGE_SIZE_SUPPORTED has to be 65536 to support page size agnostic)
+      ifeq (,$(filter 16384 65536,$(TARGET_MAX_PAGE_SIZE_SUPPORTED)))
+          $(error TARGET_MAX_PAGE_SIZE_SUPPORTED has to be either 16384 or 65536 to support page size agnostic)
       endif
   endif
 endif
