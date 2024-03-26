@@ -271,6 +271,10 @@ def IsOtaPackage(fp):
 
 def IsEntryOtaPackage(input_zip, filename):
   with input_zip.open(filename, "r") as fp:
+    external_attr = input_zip.getinfo(filename).external_attr
+    if stat.S_ISLNK(external_attr >> 16):
+      return IsEntryOtaPackage(input_zip,
+          os.path.join(os.path.dirname(filename), fp.read().decode()))
     return IsOtaPackage(fp)
 
 
