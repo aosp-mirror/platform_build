@@ -17,6 +17,9 @@
 # This is a simple product that uses configures the minimum amount
 # needed to build the SDK (without the emulator).
 
+# Ensure all trunk-stable flags are available.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/build_variables.mk)
+
 # In order to build the bootclasspath sources, the bootclasspath needs to
 # be setup via default_art_config.mk. The sources only really make sense
 # together with a device (e.g. the emulator). So if the SDK sources change

@@ -1,4 +1,5 @@
-# Copyright (C) 2020 The Android Open Source Project
+#
+# Copyright (C) 2024 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,11 +14,8 @@
 # limitations under the License.
 #
 
-# Ensure all trunk-stable flags are available.
-include build/make/target/product/build_variables.mk
+# This file contains the trunk-stable flags that should be exported to all
+# Android targets.
 
-TARGET_ARCH_SUITE := mainline_sdk
-
-HOST_CROSS_OS := linux_bionic
-HOST_CROSS_ARCH := x86_64
-HOST_CROSS_2ND_ARCH :=
+# Use the configured release of sqlite
+$(call soong_config_set, libsqlite3, release_package_libsqlite3, $(RELEASE_PACKAGE_LIBSQLITE3))
