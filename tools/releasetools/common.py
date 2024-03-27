@@ -955,6 +955,13 @@ def LoadInfoDict(input_file, repacking=False):
   d["build.prop"] = d["system.build.prop"]
 
   if d.get("avb_enable") == "true":
+    build_info = BuildInfo(d, use_legacy_id=True)
+    # Set up the salt for partitions without build.prop
+    if build_info.fingerprint:
+      if "fingerprint" not in d:
+        d["fingerprint"] = build_info.fingerprint
+      if "avb_salt" not in d:
+        d["avb_salt"] = sha256(build_info.fingerprint.encode()).hexdigest()
     # Set the vbmeta digest if exists
     try:
       d["vbmeta_digest"] = read_helper("META/vbmeta_digest.txt").rstrip()
