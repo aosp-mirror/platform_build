@@ -64,11 +64,17 @@ pub const STORAGE_LOCATION_FILE: &str = "/metadata/aconfig/boot/available_storag
 /// \input container: the flag package container
 /// \input file_type: stoarge file type enum
 /// \return a result of read only mapped file
-pub fn get_mapped_storage_file(
+///
+/// # Safety
+///
+/// The memory mapped file may have undefined behavior if there are writes to this
+/// file after being mapped. Ensure no writes can happen to this file while this
+/// mapping stays alive.
+pub unsafe fn get_mapped_storage_file(
     container: &str,
     file_type: StorageFileType,
 ) -> Result<Mmap, AconfigStorageError> {
-    crate::mapped_file::get_mapped_file(STORAGE_LOCATION_FILE, container, file_type)
+    unsafe { crate::mapped_file::get_mapped_file(STORAGE_LOCATION_FILE, container, file_type) }
 }
 
 /// Get package start offset for flags.
@@ -311,10 +317,10 @@ mod tests {
     use aconfig_storage_file::protos::storage_record_pb::write_proto_to_temp_file;
     use tempfile::NamedTempFile;
 
-    fn create_test_storage_files(read_only: bool) -> [NamedTempFile; 4] {
-        let package_map = copy_to_temp_file("./tests/package.map", read_only).unwrap();
-        let flag_map = copy_to_temp_file("./tests/flag.map", read_only).unwrap();
-        let flag_val = copy_to_temp_file("./tests/flag.val", read_only).unwrap();
+    fn create_test_storage_files() -> [NamedTempFile; 4] {
+        let package_map = copy_to_temp_file("./tests/package.map").unwrap();
+        let flag_map = copy_to_temp_file("./tests/flag.map").unwrap();
+        let flag_val = copy_to_temp_file("./tests/flag.val").unwrap();
 
         let text_proto = format!(
             r#"
@@ -338,10 +344,11 @@ files {{
     #[test]
     // this test point locks down flag package offset query
     fn test_package_offset_query() {
-        let [package_map, flag_map, flag_val, pb_file] = create_test_storage_files(true);
+        let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
-        let package_mapped_file =
-            get_mapped_file(&pb_file_path, "system", StorageFileType::PackageMap).unwrap();
+        let package_mapped_file = unsafe {
+            get_mapped_file(&pb_file_path, "system", StorageFileType::PackageMap).unwrap()
+        };
 
         let package_offset =
             get_package_offset(&package_mapped_file, "com.android.aconfig.storage.test_1")
@@ -368,10 +375,10 @@ files {{
     #[test]
     // this test point locks down flag offset query
     fn test_flag_offset_query() {
-        let [package_map, flag_map, flag_val, pb_file] = create_test_storage_files(true);
+        let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         let flag_mapped_file =
-            get_mapped_file(&pb_file_path, "system", StorageFileType::FlagMap).unwrap();
+            unsafe { get_mapped_file(&pb_file_path, "system", StorageFileType::FlagMap).unwrap() };
 
         let baseline = vec![
             (0, "enabled_ro", 1u16),
@@ -393,10 +400,10 @@ files {{
     #[test]
     // this test point locks down flag offset query
     fn test_flag_value_query() {
-        let [package_map, flag_map, flag_val, pb_file] = create_test_storage_files(true);
+        let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         let flag_value_file =
-            get_mapped_file(&pb_file_path, "system", StorageFileType::FlagVal).unwrap();
+            unsafe { get_mapped_file(&pb_file_path, "system", StorageFileType::FlagVal).unwrap() };
         let baseline: Vec<bool> = vec![false; 8];
         for (offset, expected_value) in baseline.into_iter().enumerate() {
             let flag_value = get_boolean_flag_value(&flag_value_file, offset as u32).unwrap();
@@ -407,7 +414,6 @@ files {{
     #[test]
     // this test point locks down flag storage file version number query api
     fn test_storage_version_query() {
-        let _ro_files = create_test_storage_files(true);
         assert_eq!(get_storage_file_version("./tests/package.map").unwrap(), 1);
         assert_eq!(get_storage_file_version("./tests/flag.map").unwrap(), 1);
         assert_eq!(get_storage_file_version("./tests/flag.val").unwrap(), 1);
