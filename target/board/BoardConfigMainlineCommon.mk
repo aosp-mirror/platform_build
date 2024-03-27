@@ -2,6 +2,9 @@
 #
 # Common compile-time definitions for mainline images.
 
+# Ensure all trunk-stable flags are available.
+include build/make/target/product/build_variables.mk
+
 # The generic product target doesn't have any hardware-specific pieces.
 TARGET_NO_BOOTLOADER := true
 TARGET_NO_RECOVERY := true

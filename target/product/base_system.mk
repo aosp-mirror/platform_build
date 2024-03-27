@@ -501,8 +501,8 @@ PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
 
-# Use the configured release of sqlite
-$(call soong_config_set, libsqlite3, release_package_libsqlite3, $(RELEASE_PACKAGE_LIBSQLITE3))
+# Ensure all trunk-stable flags are available.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/build_variables.mk)
 
 # Use "image" APEXes always.
 $(call inherit-product,$(SRC_TARGET_DIR)/product/updatable_apex.mk)
