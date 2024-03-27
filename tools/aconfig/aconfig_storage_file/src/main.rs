@@ -17,8 +17,8 @@
 //! `aconfig-storage` is a debugging tool to parse storage files
 
 use aconfig_storage_file::{
-    list_flags, read_file_to_bytes, AconfigStorageError, FlagTable, FlagValueList, PackageTable,
-    StorageFileType,
+    list_flags, read_file_to_bytes, AconfigStorageError, FlagInfoList, FlagTable, FlagValueList,
+    PackageTable, StorageFileType,
 };
 
 use clap::{builder::ArgAction, Arg, Command};
@@ -66,6 +66,10 @@ fn print_storage_file(
         StorageFileType::FlagVal => {
             let flag_value = FlagValueList::from_bytes(&bytes)?;
             println!("{:?}", flag_value);
+        }
+        StorageFileType::FlagInfo => {
+            let flag_info = FlagInfoList::from_bytes(&bytes)?;
+            println!("{:?}", flag_info);
         }
     }
     Ok(())
