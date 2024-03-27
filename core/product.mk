@@ -421,6 +421,12 @@ _product_single_value_vars += PRODUCT_AVF_ENABLED
 # If true, kernel with modules will be used for Microdroid VMs.
 _product_single_value_vars += PRODUCT_AVF_KERNEL_MODULES_ENABLED
 
+# If true, the memory controller will be force-enabled in the cgroup v2 hierarchy
+_product_single_value_vars += PRODUCT_MEMCG_V2_FORCE_ENABLED
+
+# If true, the cgroup v2 hierarchy will be split into apps/system subtrees
+_product_single_value_vars += PRODUCT_CGROUP_V2_SYS_APP_ISOLATION_ENABLED
+
 # List of .json files to be merged/compiled into vendor/etc/linker.config.pb
 _product_list_vars += PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS
 
