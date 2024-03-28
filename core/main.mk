@@ -221,20 +221,6 @@ ADDITIONAL_SYSTEM_PROPERTIES += $(foreach s,$(SANITIZE_TARGET),ro.sanitize.$(s)=
 # mount system_other partition.
 ADDITIONAL_SYSTEM_PROPERTIES += ro.postinstall.fstab.prefix=/system
 
-# -----------------------------------------------------------------
-# ADDITIONAL_VENDOR_PROPERTIES will be installed in vendor/build.prop if
-# property_overrides_split_enabled is true. Otherwise it will be installed in
-# /system/build.prop
-ifeq ($(KEEP_VNDK),true)
-ifdef BOARD_VNDK_VERSION
-  ifeq ($(BOARD_VNDK_VERSION),current)
-    ADDITIONAL_VENDOR_PROPERTIES := ro.vndk.version=$(PLATFORM_VNDK_VERSION)
-  else
-    ADDITIONAL_VENDOR_PROPERTIES := ro.vndk.version=$(BOARD_VNDK_VERSION)
-  endif
-endif
-endif
-
 # Add cpu properties for bionic and ART.
 ADDITIONAL_VENDOR_PROPERTIES += ro.bionic.arch=$(TARGET_ARCH)
 ADDITIONAL_VENDOR_PROPERTIES += ro.bionic.cpu_variant=$(TARGET_CPU_VARIANT_RUNTIME)
@@ -344,18 +330,6 @@ endif
 ifdef AB_OTA_UPDATER
 ADDITIONAL_VENDOR_PROPERTIES += \
     ro.build.ab_update=$(AB_OTA_UPDATER)
-endif
-
-# Set ro.product.vndk.version to PLATFORM_VNDK_VERSION only if
-# KEEP_VNDK is true, PRODUCT_PRODUCT_VNDK_VERSION is current and
-# PLATFORM_VNDK_VERSION is less than or equal to 35.
-# ro.product.vndk.version must be removed for the other future builds.
-ifeq ($(KEEP_VNDK)|$(PRODUCT_PRODUCT_VNDK_VERSION),true|current)
-ifeq ($(call math_is_number,$(PLATFORM_VNDK_VERSION)),true)
-ifeq ($(call math_lt_or_eq,$(PLATFORM_VNDK_VERSION),35),true)
-ADDITIONAL_PRODUCT_PROPERTIES += ro.product.vndk.version=$(PLATFORM_VNDK_VERSION)
-endif
-endif
 endif
 
 ADDITIONAL_PRODUCT_PROPERTIES += ro.build.characteristics=$(TARGET_AAPT_CHARACTERISTICS)
