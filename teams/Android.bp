@@ -4364,3 +4364,10 @@ team {
   // go/trendy/manage/engineers/4943966050844672
   trendy_team_id: "4943966050844672",
 }
+
+team {
+  name: "trendy_team_android_platform_performance_testing",
+
+  // go/trendy/manage/engineers/5810097836621824
+  trendy_team_id: "5810097836621824",
+}
