@@ -121,7 +121,7 @@ func main() {
 		log.Fatalf("Failed to query cc targets: %v", *status.Message)
 	}
 	toMake = append(toMake, ccTargets...)
-	fmt.Printf("Running make for modules: %v\n", strings.Join(toMake, ", "))
+	fmt.Fprintf(os.Stderr, "Running make for modules: %v\n", strings.Join(toMake, ", "))
 	if err := runMake(ctx, env, toMake...); err != nil {
 		log.Printf("Building deps failed: %v", err)
 	}
@@ -136,13 +136,13 @@ func main() {
 		log.Fatalf("Failed to marshal result proto: %v", err)
 	}
 
-	err = os.WriteFile(path.Join(env.RepoDir, env.OutDir, "ide_query.pb"), data, 0644)
+	_, err = os.Stdout.Write(data)
 	if err != nil {
 		log.Fatalf("Failed to write result proto: %v", err)
 	}
 
 	for _, s := range res.Sources {
-		fmt.Printf("%s: %v (Deps: %d, Generated: %d)\n", s.GetPath(), s.GetStatus(), len(s.GetDeps()), len(s.GetGenerated()))
+		fmt.Fprintf(os.Stderr, "%s: %v (Deps: %d, Generated: %d)\n", s.GetPath(), s.GetStatus(), len(s.GetDeps()), len(s.GetGenerated()))
 	}
 }
 
@@ -307,11 +307,12 @@ func runMake(ctx context.Context, env Env, modules ...string) error {
 		"TARGET_PRODUCT=" + env.LunchTarget.Product,
 		"TARGET_RELEASE=" + env.LunchTarget.Release,
 		"TARGET_BUILD_VARIANT=" + env.LunchTarget.Variant,
+		"-k",
 	}
 	args = append(args, modules...)
 	cmd := exec.CommandContext(ctx, "build/soong/soong_ui.bash", args...)
 	cmd.Dir = env.RepoDir
-	cmd.Stdout = os.Stdout
+	cmd.Stdout = os.Stderr
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
 }

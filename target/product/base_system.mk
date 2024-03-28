@@ -237,6 +237,7 @@ PRODUCT_PACKAGES += \
     PackageInstaller \
     passwd_system \
     perfetto \
+    perfetto-extras \
     ping \
     ping6 \
     pintool \
@@ -420,13 +421,12 @@ PRODUCT_HOST_PACKAGES += \
     tz_version_host \
     tz_version_host_tzdata_apex \
 
+PRODUCT_PACKAGES += init.usb.rc init.usb.configfs.rc
 
 PRODUCT_COPY_FILES += \
-    system/core/rootdir/init.usb.rc:system/etc/init/hw/init.usb.rc \
-    system/core/rootdir/init.usb.configfs.rc:system/etc/init/hw/init.usb.configfs.rc \
     system/core/rootdir/etc/hosts:system/etc/hosts
 
-PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:system/etc/init/hw/init.zygote32.rc
+PRODUCT_PACKAGES += init.zygote32.rc
 PRODUCT_VENDOR_PROPERTIES += ro.zygote?=zygote32
 
 PRODUCT_SYSTEM_PROPERTIES += debug.atrace.tags.enableflags=0
@@ -491,8 +491,8 @@ PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
 
-# Use the configured release of sqlite
-$(call soong_config_set, libsqlite3, release_package_libsqlite3, $(RELEASE_PACKAGE_LIBSQLITE3))
+# Ensure all trunk-stable flags are available.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/build_variables.mk)
 
 # Use "image" APEXes always.
 $(call inherit-product,$(SRC_TARGET_DIR)/product/updatable_apex.mk)

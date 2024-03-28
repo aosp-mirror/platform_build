@@ -407,35 +407,22 @@ ifdef PRODUCT_MAX_PAGE_SIZE_SUPPORTED
 else ifeq ($(strip $(call is-low-mem-device)),true)
   # Low memory device will have 4096 binary alignment.
   TARGET_MAX_PAGE_SIZE_SUPPORTED := 4096
-else
-  # The default binary alignment for userspace is 4096.
+else ifeq ($(call math_lt,$(VSR_VENDOR_API_LEVEL),34),true)
   TARGET_MAX_PAGE_SIZE_SUPPORTED := 4096
-  # When VSR vendor API level >= 34, binary alignment will be 65536.
-  ifeq ($(call math_gt_or_eq,$(VSR_VENDOR_API_LEVEL),34),true)
-    ifeq ($(TARGET_ARCH),arm64)
-      TARGET_MAX_PAGE_SIZE_SUPPORTED := 65536
-    endif
-  endif
+else ifeq (,$(filter arm64 x86_64,$(TARGET_ARCH)))
+  # TARGET_MAX_PAGE_SIZE_SUPPORTED > 4096 is only supported in arm64 and
+  # x86_64 targets.
+  TARGET_MAX_PAGE_SIZE_SUPPORTED := 4096
+else
+  # The default binary alignment for userspace is 16384.
+  TARGET_MAX_PAGE_SIZE_SUPPORTED := 16384
 endif
 .KATI_READONLY := TARGET_MAX_PAGE_SIZE_SUPPORTED
 
-# Only arm64 and x86_64 archs supports TARGET_MAX_PAGE_SIZE_SUPPORTED greater than 4096.
-ifneq ($(TARGET_MAX_PAGE_SIZE_SUPPORTED),4096)
-  ifeq (,$(filter arm64 x86_64,$(TARGET_ARCH)))
-    $(error TARGET_MAX_PAGE_SIZE_SUPPORTED=$(TARGET_MAX_PAGE_SIZE_SUPPORTED) is greater than 4096. Only supported in arm64 and x86_64 archs)
-  endif
-endif
-
-# Boolean variable determining if AOSP is page size agnostic. This means
-# that AOSP can use a kernel configured with 4k/16k/64k PAGE SIZES.
+# Boolean variable determining if AOSP relies on bionic's PAGE_SIZE macro.
 TARGET_NO_BIONIC_PAGE_SIZE_MACRO := false
 ifdef PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO
   TARGET_NO_BIONIC_PAGE_SIZE_MACRO := $(PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO)
-  ifeq ($(TARGET_NO_BIONIC_PAGE_SIZE_MACRO),true)
-      ifneq ($(TARGET_MAX_PAGE_SIZE_SUPPORTED),65536)
-          $(error TARGET_MAX_PAGE_SIZE_SUPPORTED has to be 65536 to support page size agnostic)
-      endif
-  endif
 endif
 .KATI_READONLY := TARGET_NO_BIONIC_PAGE_SIZE_MACRO
 
@@ -679,11 +666,6 @@ ifeq (,$(strip $(BOARD_CUSTOM_MKBOOTIMG)))
 MKBOOTIMG := $(HOST_OUT_EXECUTABLES)/mkbootimg$(HOST_EXECUTABLE_SUFFIX)
 else
 MKBOOTIMG := $(BOARD_CUSTOM_MKBOOTIMG)
-endif
-ifeq (,$(strip $(BOARD_CUSTOM_BPTTOOL)))
-BPTTOOL := $(HOST_OUT_EXECUTABLES)/bpttool$(HOST_EXECUTABLE_SUFFIX)
-else
-BPTTOOL := $(BOARD_CUSTOM_BPTTOOL)
 endif
 ifeq (,$(strip $(BOARD_CUSTOM_AVBTOOL)))
 AVBTOOL := $(HOST_OUT_EXECUTABLES)/avbtool$(HOST_EXECUTABLE_SUFFIX)
