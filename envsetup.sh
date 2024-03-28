@@ -1084,8 +1084,23 @@ function cproj()
     echo "can't find Android.mk"
 }
 
+# Ensure that we're always using the adb in the tree. This works around the fact
+# that bash caches $PATH lookups, so if you use adb before lunching/building the
+# one in your tree, you'll continue to get /usr/bin/adb or whatever even after
+# you have the one from your current tree on your path. Historically this would
+# cause confusion because glinux had adb in /usr/bin/ by default, though that
+# doesn't appear to be the case on my rodete hosts; it is however still the case
+# that my Mac has /usr/local/bin/adb installed by default and on the default
+# path.
 function adb() {
-   command adb "${@}"
+    # We need `command which` because zsh has a built-in `which` that's more
+    # like `type`.
+    local ADB=$(command which adb)
+    if [ -z "$ADB" ]; then
+        echo "Command adb not found; try lunch (and building) first?"
+        return 1
+    fi
+    $ADB "${@}"
 }
 
 # simplified version of ps; output in the form

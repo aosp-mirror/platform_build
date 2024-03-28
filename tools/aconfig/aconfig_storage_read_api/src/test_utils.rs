@@ -19,14 +19,8 @@ use std::fs;
 use tempfile::NamedTempFile;
 
 /// Create temp file copy
-pub(crate) fn copy_to_temp_file(source_file: &str, read_only: bool) -> Result<NamedTempFile> {
+pub(crate) fn copy_to_temp_file(source_file: &str) -> Result<NamedTempFile> {
     let file = NamedTempFile::new()?;
     fs::copy(source_file, file.path())?;
-    if read_only {
-        let file_name = file.path().display().to_string();
-        let mut perms = fs::metadata(file_name).unwrap().permissions();
-        perms.set_readonly(true);
-        fs::set_permissions(file.path(), perms.clone()).unwrap();
-    }
     Ok(file)
 }

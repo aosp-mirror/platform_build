@@ -18,7 +18,7 @@ namespace aconfig_storage {
 
 /// Storage location pb file
 static constexpr char kAvailableStorageRecordsPb[] =
-    "/metadata/aconfig/available_storage_file_records.pb";
+    "/metadata/aconfig/boot/available_storage_file_records.pb";
 
 /// Read aconfig storage records pb file
 static Result<storage_records_pb> read_storage_records_pb(std::string const& pb_file) {
@@ -74,11 +74,6 @@ static Result<MappedStorageFile> map_storage_file(std::string const& file) {
   if (fstat(fd, &fd_stat) < 0) {
     return Error() << "fstat failed";
   }
-
-  if ((fd_stat.st_mode & (S_IWUSR | S_IWGRP | S_IWOTH)) != 0) {
-    return Error() << "cannot map writeable file";
-  }
-
   size_t file_size = fd_stat.st_size;
 
   void* const map_result = mmap(nullptr, file_size, PROT_READ, MAP_SHARED, fd, 0);
