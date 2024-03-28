@@ -317,9 +317,7 @@ pub fn dump_parsed_flags(
 }
 
 fn find_unique_package(parsed_flags: &[ProtoParsedFlag]) -> Option<&str> {
-    let Some(package) = parsed_flags.first().map(|pf| pf.package()) else {
-        return None;
-    };
+    let package = parsed_flags.first().map(|pf| pf.package())?;
     if parsed_flags.iter().any(|pf| pf.package() != package) {
         return None;
     }
@@ -327,9 +325,7 @@ fn find_unique_package(parsed_flags: &[ProtoParsedFlag]) -> Option<&str> {
 }
 
 fn find_unique_container(parsed_flags: &ProtoParsedFlags) -> Option<&str> {
-    let Some(container) = parsed_flags.parsed_flag.first().map(|pf| pf.container()) else {
-        return None;
-    };
+    let container = parsed_flags.parsed_flag.first().map(|pf| pf.container())?;
     if parsed_flags.parsed_flag.iter().any(|pf| pf.container() != container) {
         return None;
     }
