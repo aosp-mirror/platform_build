@@ -992,7 +992,7 @@ endif
 # BOARD_API_LEVEL for vendor API surface
 ifdef RELEASE_BOARD_API_LEVEL
   ifdef BOARD_API_LEVEL
-    $(error BOARD_API_LEVEL must not set manully. The build system automatically sets this value.)
+    $(error BOARD_API_LEVEL must not be set manually. The build system automatically sets this value.)
   endif
   BOARD_API_LEVEL := $(RELEASE_BOARD_API_LEVEL)
   .KATI_READONLY := BOARD_API_LEVEL
