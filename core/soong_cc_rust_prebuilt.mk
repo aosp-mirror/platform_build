@@ -38,14 +38,6 @@ ifndef LOCAL_UNINSTALLABLE_MODULE
   endif
 endif
 
-# Don't install modules of current VNDK when it is told so
-ifeq ($(TARGET_SKIP_CURRENT_VNDK),true)
-  ifeq ($(LOCAL_SOONG_VNDK_VERSION),$(PLATFORM_VNDK_VERSION))
-    LOCAL_UNINSTALLABLE_MODULE := true
-  endif
-endif
-
-
 # Use the Soong output as the checkbuild target instead of LOCAL_BUILT_MODULE
 # to avoid checkbuilds making an extra copy of every module.
 LOCAL_CHECKED_MODULE := $(LOCAL_PREBUILT_MODULE_FILE)
