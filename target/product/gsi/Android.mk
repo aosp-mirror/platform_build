@@ -5,23 +5,6 @@ LOCAL_PATH:= $(call my-dir)
 INTERNAL_VNDK_LIB_LIST := $(SOONG_VNDK_LIBRARIES_FILE)
 
 #####################################################################
-# This is the up-to-date list of vndk libs.
-LATEST_VNDK_LIB_LIST := $(LOCAL_PATH)/current.txt
-ifeq ($(KEEP_VNDK),true)
-UNFROZEN_VNDK := true
-ifeq (REL,$(PLATFORM_VERSION_CODENAME))
-    # Use frozen vndk lib list only if "34 >= PLATFORM_VNDK_VERSION"
-    ifeq ($(call math_gt_or_eq,34,$(PLATFORM_VNDK_VERSION)),true)
-        LATEST_VNDK_LIB_LIST := $(LOCAL_PATH)/$(PLATFORM_VNDK_VERSION).txt
-        ifeq ($(wildcard $(LATEST_VNDK_LIB_LIST)),)
-            $(error $(LATEST_VNDK_LIB_LIST) file not found. Please copy "$(LOCAL_PATH)/current.txt" to "$(LATEST_VNDK_LIB_LIST)" and commit a CL for release branch)
-        endif
-        UNFROZEN_VNDK :=
-    endif
-endif
-endif
-
-#####################################################################
 # Check the generate list against the latest list stored in the
 # source tree
 .PHONY: check-vndk-list
@@ -159,11 +142,7 @@ define filter-abi-dump-names
 $(notdir $(call filter-abi-dump-paths,$(1),$(2)))
 endef
 
-ifdef RELEASE_BOARD_API_LEVEL
-    VNDK_ABI_DUMP_DIR := prebuilts/abi-dumps/vndk/$(RELEASE_BOARD_API_LEVEL)
-else
-    VNDK_ABI_DUMP_DIR := prebuilts/abi-dumps/vndk/$(PLATFORM_VNDK_VERSION)
-endif
+
 ifeq (REL,$(PLATFORM_VERSION_CODENAME))
     NDK_ABI_DUMP_DIR := prebuilts/abi-dumps/ndk/$(PLATFORM_SDK_VERSION)
     PLATFORM_ABI_DUMP_DIR := prebuilts/abi-dumps/platform/$(PLATFORM_SDK_VERSION)
@@ -171,7 +150,6 @@ else
     NDK_ABI_DUMP_DIR := prebuilts/abi-dumps/ndk/current
     PLATFORM_ABI_DUMP_DIR := prebuilts/abi-dumps/platform/current
 endif
-VNDK_ABI_DUMPS := $(call find-abi-dump-paths,$(VNDK_ABI_DUMP_DIR))
 NDK_ABI_DUMPS := $(call find-abi-dump-paths,$(NDK_ABI_DUMP_DIR))
 PLATFORM_ABI_DUMPS := $(call find-abi-dump-paths,$(PLATFORM_ABI_DUMP_DIR))
 
