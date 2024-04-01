@@ -24,7 +24,7 @@ mod aconfig_storage_rust_test {
             r#"
 files {{
     version: 0
-    container: "system"
+    container: "mockup"
     package_map: "{}"
     flag_map: "{}"
     flag_val: "{}"
@@ -61,7 +61,7 @@ files {{
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
         let package_mapped_file = unsafe {
-            get_mapped_file(&pb_file_path, "system", StorageFileType::PackageMap).unwrap()
+            get_mapped_file(&pb_file_path, "mockup", StorageFileType::PackageMap).unwrap()
         };
 
         let package_offset =
@@ -93,7 +93,7 @@ files {{
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
         let package_mapped_file = unsafe {
-            get_mapped_file(&pb_file_path, "system", StorageFileType::PackageMap).unwrap()
+            get_mapped_file(&pb_file_path, "mockup", StorageFileType::PackageMap).unwrap()
         };
 
         let package_offset_option =
@@ -108,7 +108,7 @@ files {{
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
         let flag_mapped_file =
-            unsafe { get_mapped_file(&pb_file_path, "system", StorageFileType::FlagMap).unwrap() };
+            unsafe { get_mapped_file(&pb_file_path, "mockup", StorageFileType::FlagMap).unwrap() };
 
         let baseline = vec![
             (0, "enabled_ro", 1u16),
@@ -134,7 +134,7 @@ files {{
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
         let flag_mapped_file =
-            unsafe { get_mapped_file(&pb_file_path, "system", StorageFileType::FlagMap).unwrap() };
+            unsafe { get_mapped_file(&pb_file_path, "mockup", StorageFileType::FlagMap).unwrap() };
         let flag_offset_option = get_flag_offset(&flag_mapped_file, 0, "none_exist").unwrap();
         assert_eq!(flag_offset_option, None);
 
@@ -149,8 +149,8 @@ files {{
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
         let flag_value_file =
-            unsafe { get_mapped_file(&pb_file_path, "system", StorageFileType::FlagVal).unwrap() };
-        let baseline: Vec<bool> = vec![false; 8];
+            unsafe { get_mapped_file(&pb_file_path, "mockup", StorageFileType::FlagVal).unwrap() };
+        let baseline: Vec<bool> = vec![false, true, true, false, true, true, true, true];
         for (offset, expected_value) in baseline.into_iter().enumerate() {
             let flag_value = get_boolean_flag_value(&flag_value_file, offset as u32).unwrap();
             assert_eq!(flag_value, expected_value);
@@ -164,7 +164,7 @@ files {{
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
         let flag_value_file =
-            unsafe { get_mapped_file(&pb_file_path, "system", StorageFileType::FlagVal).unwrap() };
+            unsafe { get_mapped_file(&pb_file_path, "mockup", StorageFileType::FlagVal).unwrap() };
         let err = get_boolean_flag_value(&flag_value_file, 8u32).unwrap_err();
         assert_eq!(
             format!("{:?}", err),
