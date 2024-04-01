@@ -18,7 +18,7 @@ pub mod flag_table;
 pub mod flag_value;
 pub mod package_table;
 
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use std::collections::{HashMap, HashSet};
 
 use crate::storage::{
@@ -107,6 +107,7 @@ where
             let flag_value = create_flag_value(container, &packages)?;
             Ok(flag_value.as_bytes())
         }
+        _ => Err(anyhow!("aconfig does not support the creation of this storage file type")),
     }
 }
 
