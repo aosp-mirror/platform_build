@@ -122,30 +122,38 @@ mod tests {
                 "com.android.aconfig.storage.test_1",
                 "storage_test_1.aconfig",
                 include_bytes!("../../tests/storage_test_1.aconfig").as_slice(),
+                "storage_test_1.value",
+                include_bytes!("../../tests/storage_test_1.values").as_slice(),
             ),
             (
                 "com.android.aconfig.storage.test_2",
                 "storage_test_2.aconfig",
                 include_bytes!("../../tests/storage_test_2.aconfig").as_slice(),
+                "storage_test_2.value",
+                include_bytes!("../../tests/storage_test_2.values").as_slice(),
             ),
             (
                 "com.android.aconfig.storage.test_4",
                 "storage_test_4.aconfig",
                 include_bytes!("../../tests/storage_test_4.aconfig").as_slice(),
+                "storage_test_4.value",
+                include_bytes!("../../tests/storage_test_4.values").as_slice(),
             ),
         ];
-
         aconfig_files
             .into_iter()
-            .map(|(pkg, file, content)| {
+            .map(|(pkg, aconfig_file, aconfig_content, value_file, value_content)| {
                 let bytes = crate::commands::parse_flags(
                     pkg,
                     Some("system"),
                     vec![Input {
-                        source: format!("tests/{}", file).to_string(),
-                        reader: Box::new(content),
+                        source: format!("tests/{}", aconfig_file).to_string(),
+                        reader: Box::new(aconfig_content),
                     }],
-                    vec![],
+                    vec![Input {
+                        source: format!("tests/{}", value_file).to_string(),
+                        reader: Box::new(value_content),
+                    }],
                     crate::commands::DEFAULT_FLAG_PERMISSION,
                 )
                 .unwrap();
