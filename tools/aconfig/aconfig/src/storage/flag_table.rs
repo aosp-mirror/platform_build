@@ -17,7 +17,7 @@
 use crate::commands::assign_flag_ids;
 use crate::storage::FlagPackage;
 use aconfig_storage_file::{
-    get_table_size, FlagTable, FlagTableHeader, FlagTableNode, FILE_VERSION, StorageFileType
+    get_table_size, FlagTable, FlagTableHeader, FlagTableNode, StorageFileType, FILE_VERSION,
 };
 use anyhow::{anyhow, Result};
 
