@@ -97,15 +97,15 @@ where
     match file {
         StorageFileType::PackageMap => {
             let package_table = create_package_table(container, &packages)?;
-            Ok(package_table.as_bytes())
+            Ok(package_table.into_bytes())
         }
         StorageFileType::FlagMap => {
             let flag_table = create_flag_table(container, &packages)?;
-            Ok(flag_table.as_bytes())
+            Ok(flag_table.into_bytes())
         }
         StorageFileType::FlagVal => {
             let flag_value = create_flag_value(container, &packages)?;
-            Ok(flag_value.as_bytes())
+            Ok(flag_value.into_bytes())
         }
         _ => Err(anyhow!("aconfig does not support the creation of this storage file type")),
     }

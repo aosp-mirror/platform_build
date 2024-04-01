@@ -259,10 +259,10 @@ mod tests {
     // this test point locks down the flag list api
     fn test_list_flag() {
         let package_table =
-            write_bytes_to_temp_file(&create_test_package_table().as_bytes()).unwrap();
-        let flag_table = write_bytes_to_temp_file(&create_test_flag_table().as_bytes()).unwrap();
+            write_bytes_to_temp_file(&create_test_package_table().into_bytes()).unwrap();
+        let flag_table = write_bytes_to_temp_file(&create_test_flag_table().into_bytes()).unwrap();
         let flag_value_list =
-            write_bytes_to_temp_file(&create_test_flag_value_list().as_bytes()).unwrap();
+            write_bytes_to_temp_file(&create_test_flag_value_list().into_bytes()).unwrap();
 
         let package_table_path = package_table.path().display().to_string();
         let flag_table_path = flag_table.path().display().to_string();
