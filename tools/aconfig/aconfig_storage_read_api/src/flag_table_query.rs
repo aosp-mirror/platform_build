@@ -65,7 +65,7 @@ pub fn find_flag_offset(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::{FlagTable, StorageFileType};
+    use aconfig_storage_file::{FlagTable, StorageFileType, StoredFlagType};
 
     // create test baseline, syntactic sugar
     fn new_expected_node(
@@ -78,7 +78,7 @@ mod tests {
         FlagTableNode {
             package_id,
             flag_name: flag_name.to_string(),
-            flag_type,
+            flag_type: StoredFlagType::try_from(flag_type).unwrap(),
             flag_id,
             next_offset,
         }

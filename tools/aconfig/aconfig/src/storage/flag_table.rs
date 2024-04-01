@@ -16,8 +16,10 @@
 
 use crate::commands::assign_flag_ids;
 use crate::storage::FlagPackage;
+use aconfig_protos::ProtoFlagPermission;
 use aconfig_storage_file::{
-    get_table_size, FlagTable, FlagTableHeader, FlagTableNode, StorageFileType, FILE_VERSION,
+    get_table_size, FlagTable, FlagTableHeader, FlagTableNode, StorageFileType, StoredFlagType,
+    FILE_VERSION,
 };
 use anyhow::{anyhow, Result};
 
@@ -45,7 +47,7 @@ impl FlagTableNodeWrapper {
     fn new(
         package_id: u32,
         flag_name: &str,
-        flag_type: u16,
+        flag_type: StoredFlagType,
         flag_id: u16,
         num_buckets: u32,
     ) -> Self {
@@ -70,11 +72,14 @@ impl FlagTableNodeWrapper {
                 let fid = flag_ids
                     .get(pf.name())
                     .ok_or(anyhow!(format!("missing flag id for {}", pf.name())))?;
-                // all flags are boolean value at the moment, thus using the last bit.
-                // When more flag value types are supported, flag value type information
-                // should come from the parsed flag, and we will set the flag_type bit
-                // mask properly.
-                let flag_type = 1;
+                let flag_type = if pf.is_fixed_read_only() {
+                    StoredFlagType::FixedReadOnlyBoolean
+                } else {
+                    match pf.permission() {
+                        ProtoFlagPermission::READ_WRITE => StoredFlagType::ReadWriteBoolean,
+                        ProtoFlagPermission::READ_ONLY => StoredFlagType::ReadOnlyBoolean,
+                    }
+                };
                 Ok(Self::new(package.package_id, pf.name(), flag_type, *fid, num_buckets))
             })
             .collect::<Result<Vec<_>>>()
@@ -147,7 +152,7 @@ mod tests {
         FlagTableNode {
             package_id,
             flag_name: flag_name.to_string(),
-            flag_type,
+            flag_type: StoredFlagType::try_from(flag_type).unwrap(),
             flag_id,
             next_offset,
         }
@@ -203,12 +208,12 @@ mod tests {
         assert_eq!(nodes.len(), 8);
 
         assert_eq!(nodes[0], new_expected_node(0, "enabled_ro", 1, 1, None));
-        assert_eq!(nodes[1], new_expected_node(0, "enabled_rw", 1, 2, Some(151)));
+        assert_eq!(nodes[1], new_expected_node(0, "enabled_rw", 0, 2, Some(151)));
         assert_eq!(nodes[2], new_expected_node(1, "disabled_ro", 1, 0, None));
         assert_eq!(nodes[3], new_expected_node(2, "enabled_ro", 1, 1, None));
-        assert_eq!(nodes[4], new_expected_node(1, "enabled_fixed_ro", 1, 1, Some(236)));
+        assert_eq!(nodes[4], new_expected_node(1, "enabled_fixed_ro", 2, 1, Some(236)));
         assert_eq!(nodes[5], new_expected_node(1, "enabled_ro", 1, 2, None));
-        assert_eq!(nodes[6], new_expected_node(2, "enabled_fixed_ro", 1, 0, None));
-        assert_eq!(nodes[7], new_expected_node(0, "disabled_rw", 1, 0, None));
+        assert_eq!(nodes[6], new_expected_node(2, "enabled_fixed_ro", 2, 0, None));
+        assert_eq!(nodes[7], new_expected_node(0, "disabled_rw", 0, 0, None));
     }
 }

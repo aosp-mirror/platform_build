@@ -88,7 +88,7 @@ mod tests {
         assert_eq!(header, &expected_header);
 
         let booleans: &Vec<bool> = &flag_value_list.as_ref().unwrap().booleans;
-        let expected_booleans: Vec<bool> = vec![false; header.num_flags as usize];
+        let expected_booleans: Vec<bool> = vec![false, true, true, false, true, true, true, true];
         assert_eq!(booleans, &expected_booleans);
     }
 }
