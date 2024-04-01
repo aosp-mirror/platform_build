@@ -17,7 +17,7 @@
 use crate::commands::assign_flag_ids;
 use crate::storage::FlagPackage;
 use aconfig_storage_file::{
-    get_table_size, FlagTable, FlagTableHeader, FlagTableNode, FILE_VERSION, StorageFileType
+    get_table_size, FlagTable, FlagTableHeader, FlagTableNode, StorageFileType, FILE_VERSION,
 };
 use anyhow::{anyhow, Result};
 
@@ -95,10 +95,10 @@ pub fn create_flag_table(container: &str, packages: &[FlagPackage]) -> Result<Fl
         .concat();
 
     // initialize all header fields
-    header.bucket_offset = header.as_bytes().len() as u32;
+    header.bucket_offset = header.into_bytes().len() as u32;
     header.node_offset = header.bucket_offset + num_buckets * 4;
     header.file_size = header.node_offset
-        + node_wrappers.iter().map(|x| x.node.as_bytes().len()).sum::<usize>() as u32;
+        + node_wrappers.iter().map(|x| x.node.into_bytes().len()).sum::<usize>() as u32;
 
     // sort nodes by bucket index for efficiency
     node_wrappers.sort_by(|a, b| a.bucket_index.cmp(&b.bucket_index));
@@ -116,7 +116,7 @@ pub fn create_flag_table(container: &str, packages: &[FlagPackage]) -> Result<Fl
         if buckets[node_bucket_idx as usize].is_none() {
             buckets[node_bucket_idx as usize] = Some(offset);
         }
-        offset += node_wrappers[i].node.as_bytes().len() as u32;
+        offset += node_wrappers[i].node.into_bytes().len() as u32;
 
         if let Some(index) = next_node_bucket_idx {
             if index == node_bucket_idx {

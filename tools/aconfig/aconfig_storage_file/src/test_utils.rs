@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+use crate::flag_info::{FlagInfoHeader, FlagInfoList, FlagInfoNode};
 use crate::flag_table::{FlagTable, FlagTableHeader, FlagTableNode};
 use crate::flag_value::{FlagValueHeader, FlagValueList};
 use crate::package_table::{PackageTable, PackageTableHeader, PackageTableNode};
@@ -122,6 +123,19 @@ pub(crate) fn create_test_flag_value_list() -> FlagValueList {
     };
     let booleans: Vec<bool> = vec![false, true, false, false, true, true, false, true];
     FlagValueList { header, booleans }
+}
+
+pub(crate) fn create_test_flag_info_list() -> FlagInfoList {
+    let header = FlagInfoHeader {
+        version: 1234,
+        container: String::from("system"),
+        file_type: StorageFileType::FlagInfo as u8,
+        file_size: 35,
+        num_flags: 8,
+        boolean_flag_offset: 27,
+    };
+    let nodes: Vec<FlagInfoNode> = vec![FlagInfoNode { attributes: 0 }; 8];
+    FlagInfoList { header, nodes }
 }
 
 pub(crate) fn write_bytes_to_temp_file(bytes: &[u8]) -> Result<NamedTempFile, AconfigStorageError> {

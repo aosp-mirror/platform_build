@@ -32,6 +32,7 @@
 //! apis. DO NOT DIRECTLY USE THESE APIS IN YOUR SOURCE CODE. For auto generated flag apis
 //! please refer to the g3doc go/android-flags
 
+pub mod flag_info;
 pub mod flag_table;
 pub mod flag_value;
 pub mod package_table;
@@ -46,6 +47,7 @@ use std::fs::File;
 use std::hash::{Hash, Hasher};
 use std::io::Read;
 
+pub use crate::flag_info::{FlagInfoHeader, FlagInfoList, FlagInfoNode};
 pub use crate::flag_table::{FlagTable, FlagTableHeader, FlagTableNode};
 pub use crate::flag_value::{FlagValueHeader, FlagValueList};
 pub use crate::package_table::{PackageTable, PackageTableHeader, PackageTableNode};
@@ -68,6 +70,7 @@ pub enum StorageFileType {
     PackageMap = 0,
     FlagMap = 1,
     FlagVal = 2,
+    FlagInfo = 3,
 }
 
 impl TryFrom<&str> for StorageFileType {
@@ -78,6 +81,7 @@ impl TryFrom<&str> for StorageFileType {
             "package_map" => Ok(Self::PackageMap),
             "flag_map" => Ok(Self::FlagMap),
             "flag_val" => Ok(Self::FlagVal),
+            "flag_info" => Ok(Self::FlagInfo),
             _ => Err(anyhow!(
                 "Invalid storage file type, valid types are package_map|flag_map|flag_val"
             )),
@@ -93,6 +97,7 @@ impl TryFrom<u8> for StorageFileType {
             x if x == Self::PackageMap as u8 => Ok(Self::PackageMap),
             x if x == Self::FlagMap as u8 => Ok(Self::FlagMap),
             x if x == Self::FlagVal as u8 => Ok(Self::FlagVal),
+            x if x == Self::FlagInfo as u8 => Ok(Self::FlagInfo),
             _ => Err(anyhow!("Invalid storage file type")),
         }
     }
@@ -219,7 +224,7 @@ pub fn list_flags(
     package_map: &str,
     flag_map: &str,
     flag_val: &str,
-) -> Result<Vec<(String, bool)>, AconfigStorageError> {
+) -> Result<Vec<(String, String, bool)>, AconfigStorageError> {
     let package_table = PackageTable::from_bytes(&read_file_to_bytes(package_map)?)?;
     let flag_table = FlagTable::from_bytes(&read_file_to_bytes(flag_map)?)?;
     let flag_value_list = FlagValueList::from_bytes(&read_file_to_bytes(flag_val)?)?;
@@ -232,10 +237,9 @@ pub fn list_flags(
     let mut flags = Vec::new();
     for node in flag_table.nodes.iter() {
         let (package_name, package_offset) = package_info[node.package_id as usize];
-        let full_flag_name = String::from(package_name) + "/" + &node.flag_name;
         let flag_offset = package_offset + node.flag_id as u32;
         let flag_value = flag_value_list.booleans[flag_offset as usize];
-        flags.push((full_flag_name, flag_value));
+        flags.push((String::from(package_name), node.flag_name.clone(), flag_value));
     }
 
     flags.sort_by(|v1, v2| v1.0.cmp(&v2.0));
@@ -254,10 +258,10 @@ mod tests {
     // this test point locks down the flag list api
     fn test_list_flag() {
         let package_table =
-            write_bytes_to_temp_file(&create_test_package_table().as_bytes()).unwrap();
-        let flag_table = write_bytes_to_temp_file(&create_test_flag_table().as_bytes()).unwrap();
+            write_bytes_to_temp_file(&create_test_package_table().into_bytes()).unwrap();
+        let flag_table = write_bytes_to_temp_file(&create_test_flag_table().into_bytes()).unwrap();
         let flag_value_list =
-            write_bytes_to_temp_file(&create_test_flag_value_list().as_bytes()).unwrap();
+            write_bytes_to_temp_file(&create_test_flag_value_list().into_bytes()).unwrap();
 
         let package_table_path = package_table.path().display().to_string();
         let flag_table_path = flag_table.path().display().to_string();
@@ -266,14 +270,30 @@ mod tests {
         let flags =
             list_flags(&package_table_path, &flag_table_path, &flag_value_list_path).unwrap();
         let expected = [
-            (String::from("com.android.aconfig.storage.test_1/disabled_rw"), false),
-            (String::from("com.android.aconfig.storage.test_1/enabled_ro"), true),
-            (String::from("com.android.aconfig.storage.test_1/enabled_rw"), false),
-            (String::from("com.android.aconfig.storage.test_2/disabled_ro"), false),
-            (String::from("com.android.aconfig.storage.test_2/enabled_fixed_ro"), true),
-            (String::from("com.android.aconfig.storage.test_2/enabled_ro"), true),
-            (String::from("com.android.aconfig.storage.test_4/enabled_fixed_ro"), false),
-            (String::from("com.android.aconfig.storage.test_4/enabled_ro"), true),
+            (String::from("com.android.aconfig.storage.test_1"), String::from("enabled_ro"), true),
+            (String::from("com.android.aconfig.storage.test_1"), String::from("enabled_rw"), false),
+            (
+                String::from("com.android.aconfig.storage.test_1"),
+                String::from("disabled_rw"),
+                false,
+            ),
+            (
+                String::from("com.android.aconfig.storage.test_2"),
+                String::from("disabled_ro"),
+                false,
+            ),
+            (
+                String::from("com.android.aconfig.storage.test_2"),
+                String::from("enabled_fixed_ro"),
+                true,
+            ),
+            (String::from("com.android.aconfig.storage.test_2"), String::from("enabled_ro"), true),
+            (String::from("com.android.aconfig.storage.test_4"), String::from("enabled_ro"), true),
+            (
+                String::from("com.android.aconfig.storage.test_4"),
+                String::from("enabled_fixed_ro"),
+                false,
+            ),
         ];
         assert_eq!(flags, expected);
     }

@@ -17,7 +17,8 @@
 use anyhow::Result;
 
 use aconfig_storage_file::{
-    get_table_size, PackageTable, PackageTableHeader, PackageTableNode, FILE_VERSION, StorageFileType
+    get_table_size, PackageTable, PackageTableHeader, PackageTableNode, StorageFileType,
+    FILE_VERSION,
 };
 
 use crate::storage::FlagPackage;
@@ -65,10 +66,10 @@ pub fn create_package_table(container: &str, packages: &[FlagPackage]) -> Result
         packages.iter().map(|pkg| PackageTableNodeWrapper::new(pkg, num_buckets)).collect();
 
     // initialize all header fields
-    header.bucket_offset = header.as_bytes().len() as u32;
+    header.bucket_offset = header.into_bytes().len() as u32;
     header.node_offset = header.bucket_offset + num_buckets * 4;
     header.file_size = header.node_offset
-        + node_wrappers.iter().map(|x| x.node.as_bytes().len()).sum::<usize>() as u32;
+        + node_wrappers.iter().map(|x| x.node.into_bytes().len()).sum::<usize>() as u32;
 
     // sort node_wrappers by bucket index for efficiency
     node_wrappers.sort_by(|a, b| a.bucket_index.cmp(&b.bucket_index));
@@ -86,7 +87,7 @@ pub fn create_package_table(container: &str, packages: &[FlagPackage]) -> Result
         if buckets[node_bucket_idx as usize].is_none() {
             buckets[node_bucket_idx as usize] = Some(offset);
         }
-        offset += node_wrappers[i].node.as_bytes().len() as u32;
+        offset += node_wrappers[i].node.into_bytes().len() as u32;
 
         if let Some(index) = next_node_bucket_idx {
             if index == node_bucket_idx {

@@ -20,7 +20,7 @@
       // aconfig C++ integration tests (test mode auto-generated code)
       "name": "aconfig.test.cpp.test_mode"
     },
-    // TODO(327420679): Enable export mode for native flag library
+    // TODO(b/327420679): Enable export mode for native flag library
     // {
     //   // aconfig C++ integration tests (exported mode auto-generated code)
     //   "name": "aconfig.test.cpp.exported_mode"
@@ -33,7 +33,7 @@
       // aconfig Rust integration tests (test mode auto-generated code)
       "name": "aconfig.test_mode.test.rust"
     },
-    // TODO(327420679): Enable export mode for native flag library
+    // TODO(b/327420679): Enable export mode for native flag library
     // {
     //   // aconfig Rust integration tests (exported mode auto-generated code)
     //   "name": "aconfig.exported_mode.test.rust"
