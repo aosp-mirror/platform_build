@@ -53,7 +53,7 @@ pub fn create_flag_value(container: &str, packages: &[FlagPackage]) -> Result<Fl
     }
 
     // initialize all header fields
-    list.header.boolean_value_offset = list.header.as_bytes().len() as u32;
+    list.header.boolean_value_offset = list.header.into_bytes().len() as u32;
     list.header.file_size = list.header.boolean_value_offset + num_flags;
 
     Ok(list)

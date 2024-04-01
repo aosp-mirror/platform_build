@@ -110,7 +110,7 @@ mod tests {
     #[test]
     // this test point locks down table query
     fn test_package_query() {
-        let package_table = create_test_package_table().as_bytes();
+        let package_table = create_test_package_table().into_bytes();
         let package_offset =
             find_package_offset(&package_table[..], "com.android.aconfig.storage.test_1")
                 .unwrap()
@@ -135,7 +135,7 @@ mod tests {
     // this test point locks down table query of a non exist package
     fn test_not_existed_package_query() {
         // this will land at an empty bucket
-        let package_table = create_test_package_table().as_bytes();
+        let package_table = create_test_package_table().into_bytes();
         let package_offset =
             find_package_offset(&package_table[..], "com.android.aconfig.storage.test_3").unwrap();
         assert_eq!(package_offset, None);
@@ -150,7 +150,7 @@ mod tests {
     fn test_higher_version_storage_file() {
         let mut table = create_test_package_table();
         table.header.version = crate::FILE_VERSION + 1;
-        let package_table = table.as_bytes();
+        let package_table = table.into_bytes();
         let error = find_package_offset(&package_table[..], "com.android.aconfig.storage.test_1")
             .unwrap_err();
         assert_eq!(
