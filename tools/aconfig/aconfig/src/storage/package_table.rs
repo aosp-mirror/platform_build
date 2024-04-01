@@ -17,7 +17,8 @@
 use anyhow::Result;
 
 use aconfig_storage_file::{
-    get_table_size, PackageTable, PackageTableHeader, PackageTableNode, FILE_VERSION, StorageFileType
+    get_table_size, PackageTable, PackageTableHeader, PackageTableNode, StorageFileType,
+    FILE_VERSION,
 };
 
 use crate::storage::FlagPackage;
