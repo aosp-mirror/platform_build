@@ -71,7 +71,7 @@ mod tests {
     fn test_boolean_flag_value_update() {
         let flag_value_list = create_test_flag_value_list();
         let value_offset = flag_value_list.header.boolean_value_offset;
-        let mut content = flag_value_list.as_bytes();
+        let mut content = flag_value_list.into_bytes();
         let true_byte = u8::from(true).to_le_bytes()[0];
         let false_byte = u8::from(false).to_le_bytes()[0];
 
@@ -87,7 +87,7 @@ mod tests {
     #[test]
     // this test point locks down update beyond the end of boolean section
     fn test_boolean_out_of_range() {
-        let mut flag_value_list = create_test_flag_value_list().as_bytes();
+        let mut flag_value_list = create_test_flag_value_list().into_bytes();
         let error = update_boolean_flag_value(&mut flag_value_list[..], 8, true).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
@@ -100,7 +100,7 @@ mod tests {
     fn test_higher_version_storage_file() {
         let mut value_list = create_test_flag_value_list();
         value_list.header.version = FILE_VERSION + 1;
-        let mut flag_value = value_list.as_bytes();
+        let mut flag_value = value_list.into_bytes();
         let error = update_boolean_flag_value(&mut flag_value[..], 4, true).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
