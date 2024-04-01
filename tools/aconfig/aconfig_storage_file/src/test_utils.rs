@@ -18,7 +18,7 @@ use crate::flag_info::{FlagInfoHeader, FlagInfoList, FlagInfoNode};
 use crate::flag_table::{FlagTable, FlagTableHeader, FlagTableNode};
 use crate::flag_value::{FlagValueHeader, FlagValueList};
 use crate::package_table::{PackageTable, PackageTableHeader, PackageTableNode};
-use crate::{AconfigStorageError, StorageFileType};
+use crate::{AconfigStorageError, StorageFileType, StoredFlagType};
 
 use anyhow::anyhow;
 use std::io::Write;
@@ -66,7 +66,13 @@ impl FlagTableNode {
         flag_id: u16,
         next_offset: Option<u32>,
     ) -> Self {
-        Self { package_id, flag_name: flag_name.to_string(), flag_type, flag_id, next_offset }
+        Self {
+            package_id,
+            flag_name: flag_name.to_string(),
+            flag_type: StoredFlagType::try_from(flag_type).unwrap(),
+            flag_id,
+            next_offset,
+        }
     }
 }
 

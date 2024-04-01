@@ -52,7 +52,7 @@ pub use crate::flag_table::{FlagTable, FlagTableHeader, FlagTableNode};
 pub use crate::flag_value::{FlagValueHeader, FlagValueList};
 pub use crate::package_table::{PackageTable, PackageTableHeader, PackageTableNode};
 
-use crate::AconfigStorageError::{BytesParseFail, HashTableSizeLimit};
+use crate::AconfigStorageError::{BytesParseFail, HashTableSizeLimit, InvalidStoredFlagType};
 
 /// Storage file version
 pub const FILE_VERSION: u32 = 1;
@@ -83,7 +83,7 @@ impl TryFrom<&str> for StorageFileType {
             "flag_val" => Ok(Self::FlagVal),
             "flag_info" => Ok(Self::FlagInfo),
             _ => Err(anyhow!(
-                "Invalid storage file type, valid types are package_map|flag_map|flag_val"
+                "Invalid storage file type, valid types are package_map|flag_map|flag_val|flag_info"
             )),
         }
     }
@@ -99,6 +99,27 @@ impl TryFrom<u8> for StorageFileType {
             x if x == Self::FlagVal as u8 => Ok(Self::FlagVal),
             x if x == Self::FlagInfo as u8 => Ok(Self::FlagInfo),
             _ => Err(anyhow!("Invalid storage file type")),
+        }
+    }
+}
+
+/// Flag type enum as stored by storage file
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum StoredFlagType {
+    ReadWriteBoolean = 0,
+    ReadOnlyBoolean = 1,
+    FixedReadOnlyBoolean = 2,
+}
+
+impl TryFrom<u16> for StoredFlagType {
+    type Error = AconfigStorageError;
+
+    fn try_from(value: u16) -> Result<Self, Self::Error> {
+        match value {
+            x if x == Self::ReadWriteBoolean as u16 => Ok(Self::ReadWriteBoolean),
+            x if x == Self::ReadOnlyBoolean as u16 => Ok(Self::ReadOnlyBoolean),
+            x if x == Self::FixedReadOnlyBoolean as u16 => Ok(Self::FixedReadOnlyBoolean),
+            _ => Err(InvalidStoredFlagType(anyhow!("Invalid stored flag type"))),
         }
     }
 }
@@ -201,6 +222,9 @@ pub enum AconfigStorageError {
 
     #[error("failed to create file")]
     FileCreationFail(#[source] anyhow::Error),
+
+    #[error("invalid stored flag type")]
+    InvalidStoredFlagType(#[source] anyhow::Error),
 }
 
 /// Read in storage file as bytes
