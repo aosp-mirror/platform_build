@@ -129,7 +129,7 @@ mod tests {
     #[test]
     // this test point locks down table query
     fn test_flag_query() {
-        let flag_table = create_test_flag_table().as_bytes();
+        let flag_table = create_test_flag_table().into_bytes();
         let baseline = vec![
             (0, "enabled_ro", 1u16),
             (0, "enabled_rw", 2u16),
@@ -150,7 +150,7 @@ mod tests {
     #[test]
     // this test point locks down table query of a non exist flag
     fn test_not_existed_flag_query() {
-        let flag_table = create_test_flag_table().as_bytes();
+        let flag_table = create_test_flag_table().into_bytes();
         let flag_offset = find_flag_offset(&flag_table[..], 1, "disabled_fixed_ro").unwrap();
         assert_eq!(flag_offset, None);
         let flag_offset = find_flag_offset(&flag_table[..], 2, "disabled_rw").unwrap();
@@ -162,7 +162,7 @@ mod tests {
     fn test_higher_version_storage_file() {
         let mut table = create_test_flag_table();
         table.header.version = crate::FILE_VERSION + 1;
-        let flag_table = table.as_bytes();
+        let flag_table = table.into_bytes();
         let error = find_flag_offset(&flag_table[..], 0, "enabled_ro").unwrap_err();
         assert_eq!(
             format!("{:?}", error),

@@ -55,7 +55,7 @@ impl fmt::Debug for FlagInfoHeader {
 
 impl FlagInfoHeader {
     /// Serialize to bytes
-    pub fn as_bytes(&self) -> Vec<u8> {
+    pub fn into_bytes(&self) -> Vec<u8> {
         let mut result = Vec::new();
         result.extend_from_slice(&self.version.to_le_bytes());
         let container_bytes = self.container.as_bytes();
@@ -118,7 +118,7 @@ impl fmt::Debug for FlagInfoNode {
 
 impl FlagInfoNode {
     /// Serialize to bytes
-    pub fn as_bytes(&self) -> Vec<u8> {
+    pub fn into_bytes(&self) -> Vec<u8> {
         let mut result = Vec::new();
         result.extend_from_slice(&self.attributes.to_le_bytes());
         result
@@ -154,10 +154,10 @@ impl fmt::Debug for FlagInfoList {
 
 impl FlagInfoList {
     /// Serialize to bytes
-    pub fn as_bytes(&self) -> Vec<u8> {
+    pub fn into_bytes(&self) -> Vec<u8> {
         [
-            self.header.as_bytes(),
-            self.nodes.iter().map(|v| v.as_bytes()).collect::<Vec<_>>().concat(),
+            self.header.into_bytes(),
+            self.nodes.iter().map(|v| v.into_bytes()).collect::<Vec<_>>().concat(),
         ]
         .concat()
     }
@@ -166,11 +166,11 @@ impl FlagInfoList {
     pub fn from_bytes(bytes: &[u8]) -> Result<Self, AconfigStorageError> {
         let header = FlagInfoHeader::from_bytes(bytes)?;
         let num_flags = header.num_flags;
-        let mut head = header.as_bytes().len();
+        let mut head = header.into_bytes().len();
         let nodes = (0..num_flags)
             .map(|_| {
                 let node = FlagInfoNode::from_bytes(&bytes[head..])?;
-                head += node.as_bytes().len();
+                head += node.into_bytes().len();
                 Ok(node)
             })
             .collect::<Result<Vec<_>, AconfigStorageError>>()
@@ -196,17 +196,17 @@ mod tests {
         let flag_info_list = create_test_flag_info_list();
 
         let header: &FlagInfoHeader = &flag_info_list.header;
-        let reinterpreted_header = FlagInfoHeader::from_bytes(&header.as_bytes());
+        let reinterpreted_header = FlagInfoHeader::from_bytes(&header.into_bytes());
         assert!(reinterpreted_header.is_ok());
         assert_eq!(header, &reinterpreted_header.unwrap());
 
         let nodes: &Vec<FlagInfoNode> = &flag_info_list.nodes;
         for node in nodes.iter() {
-            let reinterpreted_node = FlagInfoNode::from_bytes(&node.as_bytes()).unwrap();
+            let reinterpreted_node = FlagInfoNode::from_bytes(&node.into_bytes()).unwrap();
             assert_eq!(node, &reinterpreted_node);
         }
 
-        let flag_info_bytes = flag_info_list.as_bytes();
+        let flag_info_bytes = flag_info_list.into_bytes();
         let reinterpreted_info_list = FlagInfoList::from_bytes(&flag_info_bytes);
         assert!(reinterpreted_info_list.is_ok());
         assert_eq!(&flag_info_list, &reinterpreted_info_list.unwrap());
@@ -218,7 +218,7 @@ mod tests {
     // bytes
     fn test_version_number() {
         let flag_info_list = create_test_flag_info_list();
-        let bytes = &flag_info_list.as_bytes();
+        let bytes = &flag_info_list.into_bytes();
         let mut head = 0;
         let version = read_u32_from_bytes(bytes, &mut head).unwrap();
         assert_eq!(version, 1234)
@@ -229,7 +229,7 @@ mod tests {
     fn test_file_type_check() {
         let mut flag_info_list = create_test_flag_info_list();
         flag_info_list.header.file_type = 123u8;
-        let error = FlagInfoList::from_bytes(&flag_info_list.as_bytes()).unwrap_err();
+        let error = FlagInfoList::from_bytes(&flag_info_list.into_bytes()).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
             format!("BytesParseFail(binary file is not a flag info file)")
