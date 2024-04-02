@@ -22,6 +22,11 @@ rust_library {
     host_supported: true,
     defaults: ["aconfig_storage_file.defaults"],
     srcs: ["src/lib.rs"],
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
+    min_sdk_version: "29",
 }
 
 rust_binary_host {
@@ -44,6 +49,11 @@ rust_protobuf {
     crate_name: "aconfig_storage_protos",
     source_stem: "aconfig_storage_protos",
     host_supported: true,
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
+    min_sdk_version: "29",
 }
 
 cc_library_static {

@@ -41,8 +41,7 @@
 # which has OWNERS control.  If it isn't let others define their own.
 # TODO: Remove wildcard for build/release one when all branch manifests
 # have updated.
-config_map_files := $(wildcard build/trunk_release/release_config_map.mk) \
-    $(wildcard build/release/release_config_map.mk) \
+config_map_files := $(wildcard build/release/release_config_map.mk) \
     $(wildcard vendor/google_shared/build/release/release_config_map.mk) \
     $(if $(wildcard vendor/google/release/release_config_map.mk), \
         vendor/google/release/release_config_map.mk, \

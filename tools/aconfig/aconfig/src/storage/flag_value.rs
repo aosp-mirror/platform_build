@@ -17,7 +17,7 @@
 use crate::commands::assign_flag_ids;
 use crate::storage::FlagPackage;
 use aconfig_protos::ProtoFlagState;
-use aconfig_storage_file::{FlagValueHeader, FlagValueList, FILE_VERSION, StorageFileType};
+use aconfig_storage_file::{FlagValueHeader, FlagValueList, StorageFileType, FILE_VERSION};
 use anyhow::{anyhow, Result};
 
 fn new_header(container: &str, num_flags: u32) -> FlagValueHeader {
@@ -53,7 +53,7 @@ pub fn create_flag_value(container: &str, packages: &[FlagPackage]) -> Result<Fl
     }
 
     // initialize all header fields
-    list.header.boolean_value_offset = list.header.as_bytes().len() as u32;
+    list.header.boolean_value_offset = list.header.into_bytes().len() as u32;
     list.header.file_size = list.header.boolean_value_offset + num_flags;
 
     Ok(list)
@@ -64,31 +64,19 @@ mod tests {
     use super::*;
     use crate::storage::{group_flags_by_package, tests::parse_all_test_flags};
 
-    pub fn create_test_flag_value_list() -> Result<FlagValueList> {
+    pub fn create_test_flag_value_list_from_source() -> Result<FlagValueList> {
         let caches = parse_all_test_flags();
         let packages = group_flags_by_package(caches.iter());
-        create_flag_value("system", &packages)
+        create_flag_value("mockup", &packages)
     }
 
     #[test]
     // this test point locks down the flag value creation and each field
     fn test_list_contents() {
-        let flag_value_list = create_test_flag_value_list();
+        let flag_value_list = create_test_flag_value_list_from_source();
         assert!(flag_value_list.is_ok());
-
-        let header: &FlagValueHeader = &flag_value_list.as_ref().unwrap().header;
-        let expected_header = FlagValueHeader {
-            version: FILE_VERSION,
-            container: String::from("system"),
-            file_type: StorageFileType::FlagVal as u8,
-            file_size: 35,
-            num_flags: 8,
-            boolean_value_offset: 27,
-        };
-        assert_eq!(header, &expected_header);
-
-        let booleans: &Vec<bool> = &flag_value_list.as_ref().unwrap().booleans;
-        let expected_booleans: Vec<bool> = vec![false; header.num_flags as usize];
-        assert_eq!(booleans, &expected_booleans);
+        let expected_flag_value_list =
+            aconfig_storage_file::test_utils::create_test_flag_value_list();
+        assert_eq!(flag_value_list.unwrap(), expected_flag_value_list);
     }
 }

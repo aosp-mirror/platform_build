@@ -65,71 +65,12 @@ pub fn find_flag_offset(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::{FlagTable, StorageFileType};
-
-    // create test baseline, syntactic sugar
-    fn new_expected_node(
-        package_id: u32,
-        flag_name: &str,
-        flag_type: u16,
-        flag_id: u16,
-        next_offset: Option<u32>,
-    ) -> FlagTableNode {
-        FlagTableNode {
-            package_id,
-            flag_name: flag_name.to_string(),
-            flag_type,
-            flag_id,
-            next_offset,
-        }
-    }
-
-    pub fn create_test_flag_table() -> FlagTable {
-        let header = FlagTableHeader {
-            version: crate::FILE_VERSION,
-            container: String::from("system"),
-            file_type: StorageFileType::FlagMap as u8,
-            file_size: 321,
-            num_flags: 8,
-            bucket_offset: 31,
-            node_offset: 99,
-        };
-        let buckets: Vec<Option<u32>> = vec![
-            Some(99),
-            Some(125),
-            None,
-            None,
-            None,
-            Some(178),
-            None,
-            Some(204),
-            None,
-            Some(262),
-            None,
-            None,
-            None,
-            None,
-            None,
-            Some(294),
-            None,
-        ];
-        let nodes = vec![
-            new_expected_node(0, "enabled_ro", 1, 1, None),
-            new_expected_node(0, "enabled_rw", 1, 2, Some(151)),
-            new_expected_node(1, "disabled_ro", 1, 0, None),
-            new_expected_node(2, "enabled_ro", 1, 1, None),
-            new_expected_node(1, "enabled_fixed_ro", 1, 1, Some(236)),
-            new_expected_node(1, "enabled_ro", 1, 2, None),
-            new_expected_node(2, "enabled_fixed_ro", 1, 0, None),
-            new_expected_node(0, "disabled_rw", 1, 0, None),
-        ];
-        FlagTable { header, buckets, nodes }
-    }
+    use aconfig_storage_file::test_utils::create_test_flag_table;
 
     #[test]
     // this test point locks down table query
     fn test_flag_query() {
-        let flag_table = create_test_flag_table().as_bytes();
+        let flag_table = create_test_flag_table().into_bytes();
         let baseline = vec![
             (0, "enabled_ro", 1u16),
             (0, "enabled_rw", 2u16),
@@ -150,7 +91,7 @@ mod tests {
     #[test]
     // this test point locks down table query of a non exist flag
     fn test_not_existed_flag_query() {
-        let flag_table = create_test_flag_table().as_bytes();
+        let flag_table = create_test_flag_table().into_bytes();
         let flag_offset = find_flag_offset(&flag_table[..], 1, "disabled_fixed_ro").unwrap();
         assert_eq!(flag_offset, None);
         let flag_offset = find_flag_offset(&flag_table[..], 2, "disabled_rw").unwrap();
@@ -162,7 +103,7 @@ mod tests {
     fn test_higher_version_storage_file() {
         let mut table = create_test_flag_table();
         table.header.version = crate::FILE_VERSION + 1;
-        let flag_table = table.as_bytes();
+        let flag_table = table.into_bytes();
         let error = find_flag_offset(&flag_table[..], 0, "enabled_ro").unwrap_err();
         assert_eq!(
             format!("{:?}", error),

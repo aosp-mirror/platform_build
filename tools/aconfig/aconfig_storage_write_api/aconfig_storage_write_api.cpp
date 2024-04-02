@@ -58,7 +58,7 @@ static Result<std::string> find_storage_file(
 static Result<MappedFlagValueFile> map_storage_file(std::string const& file) {
   struct stat file_stat;
   if (stat(file.c_str(), &file_stat) < 0) {
-    return Error() << "fstat failed";
+    return ErrnoError() << "stat failed";
   }
 
   if ((file_stat.st_mode & (S_IWUSR | S_IWGRP | S_IWOTH)) == 0) {
@@ -69,13 +69,13 @@ static Result<MappedFlagValueFile> map_storage_file(std::string const& file) {
 
   const int fd = open(file.c_str(), O_RDWR | O_NOFOLLOW | O_CLOEXEC);
   if (fd == -1) {
-    return Error() << "failed to open " << file;
+    return ErrnoError() << "failed to open " << file;
   };
 
   void* const map_result =
       mmap(nullptr, file_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
   if (map_result == MAP_FAILED) {
-    return Error() << "mmap failed";
+    return ErrnoError() << "mmap failed";
   }
 
   auto mapped_file = MappedFlagValueFile();
@@ -95,7 +95,12 @@ Result<MappedFlagValueFile> get_mapped_flag_value_file_impl(
   if (!file_result.ok()) {
     return Error() << file_result.error();
   }
-  return map_storage_file(*file_result);
+  auto mapped_result = map_storage_file(*file_result);
+  if (!mapped_result.ok()) {
+    return Error() << "failed to map " << *file_result << ": "
+                   << mapped_result.error();
+  }
+  return *mapped_result;
 }
 
 } // namespace private internal api

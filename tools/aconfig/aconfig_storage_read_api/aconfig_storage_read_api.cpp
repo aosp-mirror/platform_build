@@ -67,18 +67,18 @@ static Result<std::string> find_storage_file(
 static Result<MappedStorageFile> map_storage_file(std::string const& file) {
   int fd = open(file.c_str(), O_CLOEXEC | O_NOFOLLOW | O_RDONLY);
   if (fd == -1) {
-    return Error() << "failed to open " << file;
+    return ErrnoError() << "failed to open " << file;
   };
 
   struct stat fd_stat;
   if (fstat(fd, &fd_stat) < 0) {
-    return Error() << "fstat failed";
+    return ErrnoError() << "fstat failed";
   }
   size_t file_size = fd_stat.st_size;
 
   void* const map_result = mmap(nullptr, file_size, PROT_READ, MAP_SHARED, fd, 0);
   if (map_result == MAP_FAILED) {
-    return Error() << "mmap failed";
+    return ErrnoError() << "mmap failed";
   }
 
   auto mapped_file = MappedStorageFile();

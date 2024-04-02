@@ -55,7 +55,7 @@ class AconfigStorageTest : public ::testing::Test {
     auto proto = storage_files();
     auto* info = proto.add_files();
     info->set_version(0);
-    info->set_container("system");
+    info->set_container("mockup");
     info->set_package_map("some_package.map");
     info->set_flag_map("some_flag.map");
     info->set_flag_val(flag_val);
@@ -97,15 +97,16 @@ TEST_F(AconfigStorageTest, test_none_exist_storage_file_mapping) {
 TEST_F(AconfigStorageTest, test_non_writable_storage_file_mapping) {
   ASSERT_TRUE(chmod(flag_val.c_str(), S_IRUSR | S_IRGRP | S_IROTH) != -1);
   auto mapped_file_result = private_api::get_mapped_flag_value_file_impl(
-      storage_record_pb, "system");
+      storage_record_pb, "mockup");
   ASSERT_FALSE(mapped_file_result.ok());
-  ASSERT_EQ(mapped_file_result.error().message(), "cannot map nonwriteable file");
+  auto it = mapped_file_result.error().message().find("cannot map nonwriteable file");
+  ASSERT_TRUE(it != std::string::npos) << mapped_file_result.error().message();
 }
 
 /// Test to lock down storage flag value update api
 TEST_F(AconfigStorageTest, test_boolean_flag_value_update) {
   auto mapped_file_result = private_api::get_mapped_flag_value_file_impl(
-      storage_record_pb, "system");
+      storage_record_pb, "mockup");
   ASSERT_TRUE(mapped_file_result.ok());
   auto mapped_file = *mapped_file_result;
 
@@ -124,7 +125,7 @@ TEST_F(AconfigStorageTest, test_boolean_flag_value_update) {
 /// Negative test to lock down the error when querying flag value out of range
 TEST_F(AconfigStorageTest, test_invalid_boolean_flag_value_update) {
   auto mapped_file_result = private_api::get_mapped_flag_value_file_impl(
-      storage_record_pb, "system");
+      storage_record_pb, "mockup");
   ASSERT_TRUE(mapped_file_result.ok());
   auto mapped_file = *mapped_file_result;
   auto update_result = api::set_boolean_flag_value(mapped_file, 8, true);

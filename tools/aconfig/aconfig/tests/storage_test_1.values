@@ -1,0 +1,18 @@
+flag_value {
+    package: "com.android.aconfig.storage.test_1"
+    name: "enabled_rw"
+    state: ENABLED
+    permission: READ_WRITE
+}
+flag_value {
+    package: "com.android.aconfig.storage.test_1"
+    name: "disabled_rw"
+    state: DISABLED
+    permission: READ_WRITE
+}
+flag_value {
+    package: "com.android.aconfig.storage.test_1"
+    name: "enabled_ro"
+    state: ENABLED
+    permission: READ_ONLY
+}

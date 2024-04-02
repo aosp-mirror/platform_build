@@ -973,15 +973,6 @@ define check_vndk_version
   $(if $(wildcard $(vndk_path)/*/Android.bp),,$(error VNDK version $(1) not found))
 endef
 
-ifeq ($(KEEP_VNDK),true)
-ifeq ($(BOARD_VNDK_VERSION),$(PLATFORM_VNDK_VERSION))
-  $(error BOARD_VNDK_VERSION is equal to PLATFORM_VNDK_VERSION; use BOARD_VNDK_VERSION := current)
-endif
-ifneq ($(BOARD_VNDK_VERSION),current)
-  $(call check_vndk_version,$(BOARD_VNDK_VERSION))
-endif
-endif
-
 TARGET_VENDOR_TEST_SUFFIX := /vendor
 
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
@@ -1001,7 +992,7 @@ endif
 # BOARD_API_LEVEL for vendor API surface
 ifdef RELEASE_BOARD_API_LEVEL
   ifdef BOARD_API_LEVEL
-    $(error BOARD_API_LEVEL must not set manully. The build system automatically sets this value.)
+    $(error BOARD_API_LEVEL must not be set manually. The build system automatically sets this value.)
   endif
   BOARD_API_LEVEL := $(RELEASE_BOARD_API_LEVEL)
   .KATI_READONLY := BOARD_API_LEVEL
