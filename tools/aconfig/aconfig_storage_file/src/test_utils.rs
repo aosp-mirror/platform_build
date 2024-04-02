@@ -24,10 +24,10 @@ use anyhow::anyhow;
 use std::io::Write;
 use tempfile::NamedTempFile;
 
-pub(crate) fn create_test_package_table() -> PackageTable {
+pub fn create_test_package_table() -> PackageTable {
     let header = PackageTableHeader {
-        version: 1234,
-        container: String::from("system"),
+        version: 1,
+        container: String::from("mockup"),
         file_type: StorageFileType::PackageMap as u8,
         file_size: 209,
         num_packages: 3,
@@ -76,10 +76,10 @@ impl FlagTableNode {
     }
 }
 
-pub(crate) fn create_test_flag_table() -> FlagTable {
+pub fn create_test_flag_table() -> FlagTable {
     let header = FlagTableHeader {
-        version: 1234,
-        container: String::from("system"),
+        version: 1,
+        container: String::from("mockup"),
         file_type: StorageFileType::FlagMap as u8,
         file_size: 321,
         num_flags: 8,
@@ -107,34 +107,34 @@ pub(crate) fn create_test_flag_table() -> FlagTable {
     ];
     let nodes = vec![
         FlagTableNode::new_expected(0, "enabled_ro", 1, 1, None),
-        FlagTableNode::new_expected(0, "enabled_rw", 1, 2, Some(151)),
+        FlagTableNode::new_expected(0, "enabled_rw", 0, 2, Some(151)),
         FlagTableNode::new_expected(1, "disabled_ro", 1, 0, None),
         FlagTableNode::new_expected(2, "enabled_ro", 1, 1, None),
-        FlagTableNode::new_expected(1, "enabled_fixed_ro", 1, 1, Some(236)),
+        FlagTableNode::new_expected(1, "enabled_fixed_ro", 2, 1, Some(236)),
         FlagTableNode::new_expected(1, "enabled_ro", 1, 2, None),
-        FlagTableNode::new_expected(2, "enabled_fixed_ro", 1, 0, None),
-        FlagTableNode::new_expected(0, "disabled_rw", 1, 0, None),
+        FlagTableNode::new_expected(2, "enabled_fixed_ro", 2, 0, None),
+        FlagTableNode::new_expected(0, "disabled_rw", 0, 0, None),
     ];
     FlagTable { header, buckets, nodes }
 }
 
-pub(crate) fn create_test_flag_value_list() -> FlagValueList {
+pub fn create_test_flag_value_list() -> FlagValueList {
     let header = FlagValueHeader {
-        version: 1234,
-        container: String::from("system"),
+        version: 1,
+        container: String::from("mockup"),
         file_type: StorageFileType::FlagVal as u8,
         file_size: 35,
         num_flags: 8,
         boolean_value_offset: 27,
     };
-    let booleans: Vec<bool> = vec![false, true, false, false, true, true, false, true];
+    let booleans: Vec<bool> = vec![false, true, true, false, true, true, true, true];
     FlagValueList { header, booleans }
 }
 
-pub(crate) fn create_test_flag_info_list() -> FlagInfoList {
+pub fn create_test_flag_info_list() -> FlagInfoList {
     let header = FlagInfoHeader {
         version: 1234,
-        container: String::from("system"),
+        container: String::from("mockup"),
         file_type: StorageFileType::FlagInfo as u8,
         file_size: 35,
         num_flags: 8,
@@ -144,7 +144,7 @@ pub(crate) fn create_test_flag_info_list() -> FlagInfoList {
     FlagInfoList { header, nodes }
 }
 
-pub(crate) fn write_bytes_to_temp_file(bytes: &[u8]) -> Result<NamedTempFile, AconfigStorageError> {
+pub fn write_bytes_to_temp_file(bytes: &[u8]) -> Result<NamedTempFile, AconfigStorageError> {
     let mut file = NamedTempFile::new().map_err(|_| {
         AconfigStorageError::FileCreationFail(anyhow!("Failed to create temp file"))
     })?;

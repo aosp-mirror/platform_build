@@ -326,7 +326,7 @@ mod tests {
             r#"
 files {{
     version: 0
-    container: "system"
+    container: "mockup"
     package_map: "{}"
     flag_map: "{}"
     flag_val: "{}"
@@ -347,7 +347,7 @@ files {{
         let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         let package_mapped_file = unsafe {
-            get_mapped_file(&pb_file_path, "system", StorageFileType::PackageMap).unwrap()
+            get_mapped_file(&pb_file_path, "mockup", StorageFileType::PackageMap).unwrap()
         };
 
         let package_offset =
@@ -378,7 +378,7 @@ files {{
         let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         let flag_mapped_file =
-            unsafe { get_mapped_file(&pb_file_path, "system", StorageFileType::FlagMap).unwrap() };
+            unsafe { get_mapped_file(&pb_file_path, "mockup", StorageFileType::FlagMap).unwrap() };
 
         let baseline = vec![
             (0, "enabled_ro", 1u16),
@@ -403,8 +403,8 @@ files {{
         let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         let flag_value_file =
-            unsafe { get_mapped_file(&pb_file_path, "system", StorageFileType::FlagVal).unwrap() };
-        let baseline: Vec<bool> = vec![false; 8];
+            unsafe { get_mapped_file(&pb_file_path, "mockup", StorageFileType::FlagVal).unwrap() };
+        let baseline: Vec<bool> = vec![false, true, true, false, true, true, true, true];
         for (offset, expected_value) in baseline.into_iter().enumerate() {
             let flag_value = get_boolean_flag_value(&flag_value_file, offset as u32).unwrap();
             assert_eq!(flag_value, expected_value);
