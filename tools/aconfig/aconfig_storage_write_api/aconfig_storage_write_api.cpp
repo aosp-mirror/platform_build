@@ -62,7 +62,7 @@ static Result<MappedFlagValueFile> map_storage_file(std::string const& file) {
   }
 
   if ((file_stat.st_mode & (S_IWUSR | S_IWGRP | S_IWOTH)) == 0) {
-    return ErrnoError() << "cannot map nonwriteable file";
+    return Error() << "cannot map nonwriteable file";
   }
 
   size_t file_size = file_stat.st_size;

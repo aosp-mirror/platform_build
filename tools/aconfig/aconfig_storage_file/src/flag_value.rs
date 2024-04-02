@@ -158,7 +158,7 @@ mod tests {
         let bytes = &flag_value_list.into_bytes();
         let mut head = 0;
         let version = read_u32_from_bytes(bytes, &mut head).unwrap();
-        assert_eq!(version, 1234)
+        assert_eq!(version, 1);
     }
 
     #[test]

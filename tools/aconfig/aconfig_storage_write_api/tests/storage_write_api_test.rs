@@ -15,7 +15,7 @@ mod aconfig_storage_write_api_test {
             r#"
 files {{
     version: 0
-    container: "system"
+    container: "mockup"
     package_map: "some_package_map"
     flag_map: "some_flag_map"
     flag_val: "{}"
@@ -59,7 +59,7 @@ files {{
         // SAFETY:
         // The safety here is ensured as only this single threaded test process will
         // write to this file
-        let mut file = unsafe { get_mapped_file(&record_pb_path, "system").unwrap() };
+        let mut file = unsafe { get_mapped_file(&record_pb_path, "mockup").unwrap() };
         for i in 0..8 {
             set_boolean_flag_value(&mut file, i, true).unwrap();
             let value = get_boolean_flag_value_at_offset(&flag_value_path, i);

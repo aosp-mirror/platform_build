@@ -52,7 +52,7 @@ class AconfigStorageTest : public ::testing::Test {
     auto proto = storage_files();
     auto* info = proto.add_files();
     info->set_version(0);
-    info->set_container("system");
+    info->set_container("mockup");
     info->set_package_map(package_map);
     info->set_flag_map(flag_map);
     info->set_flag_val(flag_val);
@@ -113,7 +113,7 @@ TEST_F(AconfigStorageTest, test_none_exist_storage_file_mapping) {
 /// Test to lock down storage package offset query api
 TEST_F(AconfigStorageTest, test_package_offset_query) {
   auto mapped_file = private_api::get_mapped_file_impl(
-      storage_record_pb, "system", api::StorageFileType::package_map);
+      storage_record_pb, "mockup", api::StorageFileType::package_map);
   ASSERT_TRUE(mapped_file.ok());
 
   auto offset = api::get_package_offset(
@@ -141,7 +141,7 @@ TEST_F(AconfigStorageTest, test_package_offset_query) {
 /// Test to lock down when querying none exist package
 TEST_F(AconfigStorageTest, test_none_existent_package_offset_query) {
   auto mapped_file = private_api::get_mapped_file_impl(
-      storage_record_pb, "system", api::StorageFileType::package_map);
+      storage_record_pb, "mockup", api::StorageFileType::package_map);
   ASSERT_TRUE(mapped_file.ok());
 
   auto offset = api::get_package_offset(
@@ -153,7 +153,7 @@ TEST_F(AconfigStorageTest, test_none_existent_package_offset_query) {
 /// Test to lock down storage flag offset query api
 TEST_F(AconfigStorageTest, test_flag_offset_query) {
   auto mapped_file = private_api::get_mapped_file_impl(
-      storage_record_pb, "system", api::StorageFileType::flag_map);
+      storage_record_pb, "mockup", api::StorageFileType::flag_map);
   ASSERT_TRUE(mapped_file.ok());
 
   auto baseline = std::vector<std::tuple<int, std::string, int>>{
@@ -177,7 +177,7 @@ TEST_F(AconfigStorageTest, test_flag_offset_query) {
 /// Test to lock down when querying none exist flag
 TEST_F(AconfigStorageTest, test_none_existent_flag_offset_query) {
   auto mapped_file = private_api::get_mapped_file_impl(
-      storage_record_pb, "system", api::StorageFileType::flag_map);
+      storage_record_pb, "mockup", api::StorageFileType::flag_map);
   ASSERT_TRUE(mapped_file.ok());
 
   auto offset = api::get_flag_offset(*mapped_file, 0, "none_exist");
@@ -192,20 +192,22 @@ TEST_F(AconfigStorageTest, test_none_existent_flag_offset_query) {
 /// Test to lock down storage flag value query api
 TEST_F(AconfigStorageTest, test_boolean_flag_value_query) {
   auto mapped_file = private_api::get_mapped_file_impl(
-      storage_record_pb, "system", api::StorageFileType::flag_val);
+      storage_record_pb, "mockup", api::StorageFileType::flag_val);
   ASSERT_TRUE(mapped_file.ok());
 
+  auto expected_value = std::vector<bool>{
+    false, true, true, false, true, true, true, true};
   for (int offset = 0; offset < 8; ++offset) {
     auto value = api::get_boolean_flag_value(*mapped_file, offset);
     ASSERT_TRUE(value.ok());
-    ASSERT_FALSE(*value);
+    ASSERT_EQ(*value, expected_value[offset]);
   }
 }
 
 /// Negative test to lock down the error when querying flag value out of range
 TEST_F(AconfigStorageTest, test_invalid_boolean_flag_value_query) {
   auto mapped_file = private_api::get_mapped_file_impl(
-      storage_record_pb, "system", api::StorageFileType::flag_val);
+      storage_record_pb, "mockup", api::StorageFileType::flag_val);
   ASSERT_TRUE(mapped_file.ok());
 
   auto value = api::get_boolean_flag_value(*mapped_file, 8);

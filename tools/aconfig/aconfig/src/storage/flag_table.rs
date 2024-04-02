@@ -141,79 +141,18 @@ mod tests {
     use super::*;
     use crate::storage::{group_flags_by_package, tests::parse_all_test_flags};
 
-    // create test baseline, syntactic sugar
-    fn new_expected_node(
-        package_id: u32,
-        flag_name: &str,
-        flag_type: u16,
-        flag_id: u16,
-        next_offset: Option<u32>,
-    ) -> FlagTableNode {
-        FlagTableNode {
-            package_id,
-            flag_name: flag_name.to_string(),
-            flag_type: StoredFlagType::try_from(flag_type).unwrap(),
-            flag_id,
-            next_offset,
-        }
-    }
-
-    fn create_test_flag_table() -> Result<FlagTable> {
+    fn create_test_flag_table_from_source() -> Result<FlagTable> {
         let caches = parse_all_test_flags();
         let packages = group_flags_by_package(caches.iter());
-        create_flag_table("system", &packages)
+        create_flag_table("mockup", &packages)
     }
 
     #[test]
     // this test point locks down the table creation and each field
     fn test_table_contents() {
-        let flag_table = create_test_flag_table();
+        let flag_table = create_test_flag_table_from_source();
         assert!(flag_table.is_ok());
-
-        let header: &FlagTableHeader = &flag_table.as_ref().unwrap().header;
-        let expected_header = FlagTableHeader {
-            version: FILE_VERSION,
-            container: String::from("system"),
-            file_type: StorageFileType::FlagMap as u8,
-            file_size: 321,
-            num_flags: 8,
-            bucket_offset: 31,
-            node_offset: 99,
-        };
-        assert_eq!(header, &expected_header);
-
-        let buckets: &Vec<Option<u32>> = &flag_table.as_ref().unwrap().buckets;
-        let expected_bucket: Vec<Option<u32>> = vec![
-            Some(99),
-            Some(125),
-            None,
-            None,
-            None,
-            Some(178),
-            None,
-            Some(204),
-            None,
-            Some(262),
-            None,
-            None,
-            None,
-            None,
-            None,
-            Some(294),
-            None,
-        ];
-        assert_eq!(buckets, &expected_bucket);
-
-        let nodes: &Vec<FlagTableNode> = &flag_table.as_ref().unwrap().nodes;
-        assert_eq!(nodes.len(), 8);
-
-        assert_eq!(nodes[0], new_expected_node(0, "enabled_ro", 1, 1, None));
-        assert_eq!(nodes[1], new_expected_node(0, "enabled_rw", 0, 2, Some(151)));
-        assert_eq!(nodes[2], new_expected_node(1, "disabled_ro", 1, 0, None));
-        assert_eq!(nodes[3], new_expected_node(2, "enabled_ro", 1, 1, None));
-        assert_eq!(nodes[4], new_expected_node(1, "enabled_fixed_ro", 2, 1, Some(236)));
-        assert_eq!(nodes[5], new_expected_node(1, "enabled_ro", 1, 2, None));
-        assert_eq!(nodes[6], new_expected_node(2, "enabled_fixed_ro", 2, 0, None));
-        assert_eq!(nodes[7], new_expected_node(0, "disabled_rw", 0, 0, None));
+        let expected_flag_table = aconfig_storage_file::test_utils::create_test_flag_table();
+        assert_eq!(flag_table.unwrap(), expected_flag_table);
     }
 }
