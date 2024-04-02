@@ -282,7 +282,7 @@ message SBOMRef {
   optional string element_id = 3;
 }
 
-// Identifier for a third-package package.
+// Identifier for a third-party package.
 // See go/tp-metadata-id.
 message Identifier {
   // The type of the identifier. Either an "ecosystem" value from
@@ -338,7 +338,19 @@ message Identifier {
   //  - "PrebuiltByAlphabet": This type should be used for archives of primarily
   //  Google-owned source code (may contain non-Google-owned dependencies),
   //  which has been built using production Google infrastructure, and copied
-  //  into third_party.
+  //  into Android. The "value" field is the URL of the prebuilt artifact or
+  //  the relative path of the artifact to the root of a package.
+  //  Example:
+  //    identifier {
+  //      type: "PrebuiltByAlphabet",
+  //      version: "1",
+  //      value: "v1/arm84_hdpi.apk",
+  //    }
+  //    identifier {
+  //      type: "PrebuiltByAlphabet",
+  //      version: "2",
+  //      value: "v2/x86_64_xhdpi.apk",
+  //    }
   //
   //  - "LocalSource": The "value" field is the URL identifying where the local
   //  copy of the package source code can be found.
