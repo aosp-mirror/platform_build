@@ -66,7 +66,7 @@ mod tests {
     #[test]
     // this test point locks down flag value query
     fn test_flag_value_query() {
-        let flag_value_list = create_test_flag_value_list().as_bytes();
+        let flag_value_list = create_test_flag_value_list().into_bytes();
         let baseline: Vec<bool> = vec![false, true, false, false, true, true, false, true];
         for (offset, expected_value) in baseline.into_iter().enumerate() {
             let flag_value = find_boolean_flag_value(&flag_value_list[..], offset as u32).unwrap();
@@ -77,7 +77,7 @@ mod tests {
     #[test]
     // this test point locks down query beyond the end of boolean section
     fn test_boolean_out_of_range() {
-        let flag_value_list = create_test_flag_value_list().as_bytes();
+        let flag_value_list = create_test_flag_value_list().into_bytes();
         let error = find_boolean_flag_value(&flag_value_list[..], 8).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
@@ -90,7 +90,7 @@ mod tests {
     fn test_higher_version_storage_file() {
         let mut value_list = create_test_flag_value_list();
         value_list.header.version = crate::FILE_VERSION + 1;
-        let flag_value = value_list.as_bytes();
+        let flag_value = value_list.into_bytes();
         let error = find_boolean_flag_value(&flag_value[..], 4).unwrap_err();
         assert_eq!(
             format!("{:?}", error),

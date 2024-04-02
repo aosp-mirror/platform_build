@@ -72,45 +72,12 @@ pub fn find_package_offset(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::{PackageTable, StorageFileType};
-
-    pub fn create_test_package_table() -> PackageTable {
-        let header = PackageTableHeader {
-            version: crate::FILE_VERSION,
-            container: String::from("system"),
-            file_type: StorageFileType::PackageMap as u8,
-            file_size: 209,
-            num_packages: 3,
-            bucket_offset: 31,
-            node_offset: 59,
-        };
-        let buckets: Vec<Option<u32>> = vec![Some(59), None, None, Some(109), None, None, None];
-        let first_node = PackageTableNode {
-            package_name: String::from("com.android.aconfig.storage.test_2"),
-            package_id: 1,
-            boolean_offset: 3,
-            next_offset: None,
-        };
-        let second_node = PackageTableNode {
-            package_name: String::from("com.android.aconfig.storage.test_1"),
-            package_id: 0,
-            boolean_offset: 0,
-            next_offset: Some(159),
-        };
-        let third_node = PackageTableNode {
-            package_name: String::from("com.android.aconfig.storage.test_4"),
-            package_id: 2,
-            boolean_offset: 6,
-            next_offset: None,
-        };
-        let nodes = vec![first_node, second_node, third_node];
-        PackageTable { header, buckets, nodes }
-    }
+    use aconfig_storage_file::test_utils::create_test_package_table;
 
     #[test]
     // this test point locks down table query
     fn test_package_query() {
-        let package_table = create_test_package_table().as_bytes();
+        let package_table = create_test_package_table().into_bytes();
         let package_offset =
             find_package_offset(&package_table[..], "com.android.aconfig.storage.test_1")
                 .unwrap()
@@ -135,7 +102,7 @@ mod tests {
     // this test point locks down table query of a non exist package
     fn test_not_existed_package_query() {
         // this will land at an empty bucket
-        let package_table = create_test_package_table().as_bytes();
+        let package_table = create_test_package_table().into_bytes();
         let package_offset =
             find_package_offset(&package_table[..], "com.android.aconfig.storage.test_3").unwrap();
         assert_eq!(package_offset, None);
@@ -150,7 +117,7 @@ mod tests {
     fn test_higher_version_storage_file() {
         let mut table = create_test_package_table();
         table.header.version = crate::FILE_VERSION + 1;
-        let package_table = table.as_bytes();
+        let package_table = table.into_bytes();
         let error = find_package_offset(&package_table[..], "com.android.aconfig.storage.test_1")
             .unwrap_err();
         assert_eq!(
