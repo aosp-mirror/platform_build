@@ -34,6 +34,9 @@ PRODUCT_DEVICE := mainline_x86
 
 PRODUCT_BUILD_FROM_SOURCE_STUB := true
 
+# Use sources of mainline modules
+PRODUCT_MODULE_BUILD_FROM_SOURCE := true
+
 ifeq ($(WITHOUT_CHECK_API),true)
   $(error WITHOUT_CHECK_API cannot be set to true for SDK product builds)
 endif
