@@ -17,7 +17,7 @@
 use crate::commands::assign_flag_ids;
 use crate::storage::FlagPackage;
 use aconfig_protos::ProtoFlagState;
-use aconfig_storage_file::{FlagValueHeader, FlagValueList, FILE_VERSION, StorageFileType};
+use aconfig_storage_file::{FlagValueHeader, FlagValueList, StorageFileType, FILE_VERSION};
 use anyhow::{anyhow, Result};
 
 fn new_header(container: &str, num_flags: u32) -> FlagValueHeader {
@@ -53,7 +53,7 @@ pub fn create_flag_value(container: &str, packages: &[FlagPackage]) -> Result<Fl
     }
 
     // initialize all header fields
-    list.header.boolean_value_offset = list.header.as_bytes().len() as u32;
+    list.header.boolean_value_offset = list.header.into_bytes().len() as u32;
     list.header.file_size = list.header.boolean_value_offset + num_flags;
 
     Ok(list)

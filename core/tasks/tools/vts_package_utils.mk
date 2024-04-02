@@ -21,7 +21,7 @@ define target-native-copy-pairs
 $(foreach m,$(1),\
   $(eval _built_files := $(strip $(ALL_MODULES.$(m).BUILT_INSTALLED)\
   $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).BUILT_INSTALLED)))\
-  $(foreach i, $(_built_files),\
+  $(foreach i, $(sort $(_built_files)),\
     $(eval bui_ins := $(subst :,$(space),$(i)))\
     $(eval ins := $(word 2,$(bui_ins)))\
     $(if $(filter $(TARGET_OUT_ROOT)/%,$(ins)),\
