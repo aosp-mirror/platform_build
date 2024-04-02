@@ -21,7 +21,7 @@ use crate::{
     get_bucket_index, read_str_from_bytes, read_u16_from_bytes, read_u32_from_bytes,
     read_u8_from_bytes,
 };
-use crate::{AconfigStorageError, StorageFileType};
+use crate::{AconfigStorageError, StorageFileType, StoredFlagType};
 use anyhow::anyhow;
 use std::fmt;
 
@@ -99,7 +99,7 @@ impl FlagTableHeader {
 pub struct FlagTableNode {
     pub package_id: u32,
     pub flag_name: String,
-    pub flag_type: u16,
+    pub flag_type: StoredFlagType,
     pub flag_id: u16,
     pub next_offset: Option<u32>,
 }
@@ -109,7 +109,7 @@ impl fmt::Debug for FlagTableNode {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         writeln!(
             f,
-            "Package Id: {}, Flag: {}, Type: {}, Offset: {}, Next: {:?}",
+            "Package Id: {}, Flag: {}, Type: {:?}, Offset: {}, Next: {:?}",
             self.package_id, self.flag_name, self.flag_type, self.flag_id, self.next_offset
         )?;
         Ok(())
@@ -124,7 +124,7 @@ impl FlagTableNode {
         let name_bytes = self.flag_name.as_bytes();
         result.extend_from_slice(&(name_bytes.len() as u32).to_le_bytes());
         result.extend_from_slice(name_bytes);
-        result.extend_from_slice(&self.flag_type.to_le_bytes());
+        result.extend_from_slice(&(self.flag_type as u16).to_le_bytes());
         result.extend_from_slice(&self.flag_id.to_le_bytes());
         result.extend_from_slice(&self.next_offset.unwrap_or(0).to_le_bytes());
         result
@@ -136,7 +136,7 @@ impl FlagTableNode {
         let node = Self {
             package_id: read_u32_from_bytes(bytes, &mut head)?,
             flag_name: read_str_from_bytes(bytes, &mut head)?,
-            flag_type: read_u16_from_bytes(bytes, &mut head)?,
+            flag_type: StoredFlagType::try_from(read_u16_from_bytes(bytes, &mut head)?)?,
             flag_id: read_u16_from_bytes(bytes, &mut head)?,
             next_offset: match read_u32_from_bytes(bytes, &mut head)? {
                 0 => None,
@@ -251,7 +251,7 @@ mod tests {
         let bytes = &flag_table.into_bytes();
         let mut head = 0;
         let version = read_u32_from_bytes(bytes, &mut head).unwrap();
-        assert_eq!(version, 1234)
+        assert_eq!(version, 1);
     }
 
     #[test]

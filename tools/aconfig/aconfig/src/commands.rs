@@ -218,7 +218,11 @@ pub fn create_cpp_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec
     generate_cpp_code(&package, modified_parsed_flags.into_iter(), codegen_mode)
 }
 
-pub fn create_rust_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<OutputFile> {
+pub fn create_rust_lib(
+    mut input: Input,
+    codegen_mode: CodegenMode,
+    allow_instrumentation: bool,
+) -> Result<OutputFile> {
     // // TODO(327420679): Enable export mode for native flag library
     ensure!(
         codegen_mode != CodegenMode::Exported,
@@ -230,8 +234,14 @@ pub fn create_rust_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Ou
         bail!("no parsed flags, or the parsed flags use different packages");
     };
     let package = package.to_string();
-    let _flag_ids = assign_flag_ids(&package, modified_parsed_flags.iter())?;
-    generate_rust_code(&package, modified_parsed_flags.into_iter(), codegen_mode)
+    let flag_ids = assign_flag_ids(&package, modified_parsed_flags.iter())?;
+    generate_rust_code(
+        &package,
+        flag_ids,
+        modified_parsed_flags.into_iter(),
+        codegen_mode,
+        allow_instrumentation,
+    )
 }
 
 pub fn create_storage(
