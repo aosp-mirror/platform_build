@@ -10,3 +10,6 @@ per-file version_defaults.mk = amhk@google.com,gurpreetgs@google.com,mkhokhlova@
 
 # For Ravenwood test configs
 per-file ravenwood_test_config_template.xml = jsharkey@google.com,omakoto@google.com
+
+# For binary_translation
+per-file berberis_test.mk = levarum@google.com,khim@google.com,dimitry@google.com
