@@ -332,6 +332,43 @@ pub fn create_flag_info(
     Ok(())
 }
 
+// *************************************** //
+// CC INTERLOP
+// *************************************** //
+#[cxx::bridge]
+mod ffi {
+    pub struct FlagInfoCreationCXX {
+        pub success: bool,
+        pub error_message: String,
+    }
+
+    extern "Rust" {
+        pub fn create_flag_info_cxx(
+            package_map: &str,
+            flag_map: &str,
+            flag_info_out: &str,
+        ) -> FlagInfoCreationCXX;
+    }
+}
+
+/// Create flag info file cc interlop
+pub fn create_flag_info_cxx(
+    package_map: &str,
+    flag_map: &str,
+    flag_info_out: &str,
+) -> ffi::FlagInfoCreationCXX {
+    match create_flag_info(package_map, flag_map, flag_info_out) {
+        Ok(()) => ffi::FlagInfoCreationCXX {
+            success: true,
+            error_message: String::from(""),
+        },
+        Err(errmsg) => ffi::FlagInfoCreationCXX {
+            success: false,
+            error_message: format!("{:?}", errmsg),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
