@@ -552,20 +552,27 @@ ifdef PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS
       $(PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS))
 endif
 
-# Get the board API level.
-board_api_level := $(PLATFORM_SDK_VERSION)
-ifdef BOARD_API_LEVEL
-  board_api_level := $(BOARD_API_LEVEL)
-else ifdef BOARD_SHIPPING_API_LEVEL
-  # Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
-  board_api_level := $(BOARD_SHIPPING_API_LEVEL)
-endif
+# This table maps sdk version 35 to vendor api level 202404 and assumes yearly
+# release for the same month.
+define sdk-to-vendor-api-level
+  $(if $(call math_lt_or_eq,$(1),34),$(1),20$(call int_subtract,$(1),11)04)
+endef
 
-# Calculate the VSR vendor API level.
-VSR_VENDOR_API_LEVEL := $(board_api_level)
-
-ifdef PRODUCT_SHIPPING_API_LEVEL
-  VSR_VENDOR_API_LEVEL := $(call math_min,$(PRODUCT_SHIPPING_API_LEVEL),$(board_api_level))
+ifdef PRODUCT_SHIPPING_VENDOR_API_LEVEL
+# Follow the version that is set manually.
+  VSR_VENDOR_API_LEVEL := $(PRODUCT_SHIPPING_VENDOR_API_LEVEL)
+else
+  # VSR API level is the vendor api level of the product shipping API level.
+  VSR_VENDOR_API_LEVEL := $(call sdk-to-vendor-api-level,$(PLATFORM_SDK_VERSION))
+  ifdef PRODUCT_SHIPPING_API_LEVEL
+    VSR_VENDOR_API_LEVEL := $(call sdk-to-vendor-api-level,$(PRODUCT_SHIPPING_API_LEVEL))
+  endif
+  ifdef BOARD_SHIPPING_API_LEVEL
+    # Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
+    # In this case, the VSR API level is the minimum of the PRODUCT_SHIPPING_API_LEVEL
+    # and RELEASE_BOARD_API_LEVEL
+    VSR_VENDOR_API_LEVEL := $(call math_min,$(VSR_VENDOR_API_LEVEL),$(RELEASE_BOARD_API_LEVEL))
+  endif
 endif
 .KATI_READONLY := VSR_VENDOR_API_LEVEL
 
@@ -580,7 +587,7 @@ endif
 
 # Boolean variable determining if selinux labels of /dev are enforced
 CHECK_DEV_TYPE_VIOLATIONS := false
-ifneq ($(call math_gt,$(VSR_VENDOR_API_LEVEL),35),)
+ifneq ($(call math_gt,$(VSR_VENDOR_API_LEVEL),202404),)
   CHECK_DEV_TYPE_VIOLATIONS := true
 else ifneq ($(PRODUCT_CHECK_DEV_TYPE_VIOLATIONS),)
   CHECK_DEV_TYPE_VIOLATIONS := $(PRODUCT_CHECK_DEV_TYPE_VIOLATIONS)
