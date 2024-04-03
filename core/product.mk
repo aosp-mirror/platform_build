@@ -325,6 +325,13 @@ _product_single_value_vars += \
 # set this variable to prevent OTA failures.
 _product_list_vars += PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 
+# If set to true, this product forces HIDL to be enabled by declaring android.hidl.manager
+# and android.hidl.token in the framework manifest. The product will also need to add the
+# 'hwservicemanager' service to PRODUCT_PACKAGES if its SHIPPING_API_LEVEL is greater than 34.
+# This should only be used during bringup for devices that are targeting FCM 202404 and still
+# have partner-owned HIDL interfaces that are being converted to AIDL.
+_product_single_value_vars += PRODUCT_HIDL_ENABLED
+
 # If set to true, this product builds a generic OTA package, which installs generic system images
 # onto matching devices. The product may only build a subset of system images (e.g. only
 # system.img), so devices need to install the package in a system-only OTA manner.
