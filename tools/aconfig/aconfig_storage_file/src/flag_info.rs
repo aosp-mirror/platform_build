@@ -130,6 +130,11 @@ impl FlagInfoNode {
         let node = Self { attributes: read_u8_from_bytes(bytes, &mut head)? };
         Ok(node)
     }
+
+    /// Create flag info node
+    pub fn create(is_flag_rw: bool) -> Self {
+        Self { attributes: if is_flag_rw { FlagInfoBit::IsReadWrite as u8 } else { 0u8 } }
+    }
 }
 
 /// Flag info list struct
@@ -221,7 +226,7 @@ mod tests {
         let bytes = &flag_info_list.into_bytes();
         let mut head = 0;
         let version = read_u32_from_bytes(bytes, &mut head).unwrap();
-        assert_eq!(version, 1234)
+        assert_eq!(version, 1);
     }
 
     #[test]
