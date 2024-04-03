@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2022 The Android Open-Source Project
+# Copyright (C) 2023 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,9 +14,12 @@
 # limitations under the License.
 #
 
-# This file should be used only for T launching devices. We maintain
-# this file just for backward compatibility for T launch devices
-# so that build doesn't break.
-#
-# All U+ launching devices should instead use vabc_features.mk.
-$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/vabc_features.mk)
+BERBERIS_DIR := frameworks/libs/binary_translation
+
+# Berberis includes some components which may conflict with other packages.
+# Only build it when requested explicitly.
+ifeq ($(BUILD_BERBERIS),true)
+
+include $(BERBERIS_DIR)/tests/run_host_tests.mk
+
+endif  # BUILD_BERBERIS

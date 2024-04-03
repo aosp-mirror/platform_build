@@ -40,6 +40,7 @@ pub mod protos;
 pub mod test_utils;
 
 use anyhow::anyhow;
+use std::cmp::Ordering;
 use std::collections::hash_map::DefaultHasher;
 use std::fs::File;
 use std::hash::{Hash, Hasher};
@@ -122,6 +123,48 @@ impl TryFrom<u16> for StoredFlagType {
     }
 }
 
+/// Storage query api error
+#[non_exhaustive]
+#[derive(thiserror::Error, Debug)]
+pub enum AconfigStorageError {
+    #[error("failed to read the file")]
+    FileReadFail(#[source] anyhow::Error),
+
+    #[error("fail to parse protobuf")]
+    ProtobufParseFail(#[source] anyhow::Error),
+
+    #[error("storage files not found for this container")]
+    StorageFileNotFound(#[source] anyhow::Error),
+
+    #[error("fail to map storage file")]
+    MapFileFail(#[source] anyhow::Error),
+
+    #[error("fail to get mapped file")]
+    ObtainMappedFileFail(#[source] anyhow::Error),
+
+    #[error("fail to flush mapped storage file")]
+    MapFlushFail(#[source] anyhow::Error),
+
+    #[error("number of items in hash table exceed limit")]
+    HashTableSizeLimit(#[source] anyhow::Error),
+
+    #[error("failed to parse bytes into data")]
+    BytesParseFail(#[source] anyhow::Error),
+
+    #[error("cannot parse storage files with a higher version")]
+    HigherStorageFileVersion(#[source] anyhow::Error),
+
+    #[error("invalid storage file byte offset")]
+    InvalidStorageFileOffset(#[source] anyhow::Error),
+
+    #[error("failed to create file")]
+    FileCreationFail(#[source] anyhow::Error),
+
+    #[error("invalid stored flag type")]
+    InvalidStoredFlagType(#[source] anyhow::Error),
+}
+
+
 /// Get the right hash table size given number of entries in the table. Use a
 /// load factor of 0.5 for performance.
 pub fn get_table_size(entries: u32) -> Result<u32, AconfigStorageError> {
@@ -184,47 +227,6 @@ pub(crate) fn read_str_from_bytes(
     Ok(val)
 }
 
-/// Storage query api error
-#[non_exhaustive]
-#[derive(thiserror::Error, Debug)]
-pub enum AconfigStorageError {
-    #[error("failed to read the file")]
-    FileReadFail(#[source] anyhow::Error),
-
-    #[error("fail to parse protobuf")]
-    ProtobufParseFail(#[source] anyhow::Error),
-
-    #[error("storage files not found for this container")]
-    StorageFileNotFound(#[source] anyhow::Error),
-
-    #[error("fail to map storage file")]
-    MapFileFail(#[source] anyhow::Error),
-
-    #[error("fail to get mapped file")]
-    ObtainMappedFileFail(#[source] anyhow::Error),
-
-    #[error("fail to flush mapped storage file")]
-    MapFlushFail(#[source] anyhow::Error),
-
-    #[error("number of items in hash table exceed limit")]
-    HashTableSizeLimit(#[source] anyhow::Error),
-
-    #[error("failed to parse bytes into data")]
-    BytesParseFail(#[source] anyhow::Error),
-
-    #[error("cannot parse storage files with a higher version")]
-    HigherStorageFileVersion(#[source] anyhow::Error),
-
-    #[error("invalid storage file byte offset")]
-    InvalidStorageFileOffset(#[source] anyhow::Error),
-
-    #[error("failed to create file")]
-    FileCreationFail(#[source] anyhow::Error),
-
-    #[error("invalid stored flag type")]
-    InvalidStoredFlagType(#[source] anyhow::Error),
-}
-
 /// Read in storage file as bytes
 pub fn read_file_to_bytes(file_path: &str) -> Result<Vec<u8>, AconfigStorageError> {
     let mut file = File::open(file_path).map_err(|errmsg| {
@@ -233,7 +235,7 @@ pub fn read_file_to_bytes(file_path: &str) -> Result<Vec<u8>, AconfigStorageErro
     let mut buffer = Vec::new();
     file.read_to_end(&mut buffer).map_err(|errmsg| {
         AconfigStorageError::FileReadFail(anyhow!(
-            "Failed to read 4 bytes from file {}: {}",
+            "Failed to read bytes from file {}: {}",
             file_path,
             errmsg
         ))
@@ -246,7 +248,7 @@ pub fn list_flags(
     package_map: &str,
     flag_map: &str,
     flag_val: &str,
-) -> Result<Vec<(String, String, bool)>, AconfigStorageError> {
+) -> Result<Vec<(String, String, StoredFlagType, bool)>, AconfigStorageError> {
     let package_table = PackageTable::from_bytes(&read_file_to_bytes(package_map)?)?;
     let flag_table = FlagTable::from_bytes(&read_file_to_bytes(flag_map)?)?;
     let flag_value_list = FlagValueList::from_bytes(&read_file_to_bytes(flag_val)?)?;
@@ -261,10 +263,15 @@ pub fn list_flags(
         let (package_name, package_offset) = package_info[node.package_id as usize];
         let flag_offset = package_offset + node.flag_id as u32;
         let flag_value = flag_value_list.booleans[flag_offset as usize];
-        flags.push((String::from(package_name), node.flag_name.clone(), flag_value));
+        flags.push((String::from(package_name), node.flag_name.clone(), node.flag_type, flag_value));
     }
 
-    flags.sort_by(|v1, v2| v1.0.cmp(&v2.0));
+    flags.sort_by(|v1, v2| {
+        match v1.0.cmp(&v2.0) {
+            Ordering::Equal => v1.1.cmp(&v2.1),
+            other => other,
+        }
+    });
     Ok(flags)
 }
 
@@ -292,29 +299,53 @@ mod tests {
         let flags =
             list_flags(&package_table_path, &flag_table_path, &flag_value_list_path).unwrap();
         let expected = [
-            (String::from("com.android.aconfig.storage.test_1"), String::from("enabled_ro"), true),
-            (String::from("com.android.aconfig.storage.test_1"), String::from("enabled_rw"), true),
             (
                 String::from("com.android.aconfig.storage.test_1"),
                 String::from("disabled_rw"),
+                StoredFlagType::ReadWriteBoolean,
                 false,
+            ),
+            (
+                String::from("com.android.aconfig.storage.test_1"),
+                String::from("enabled_ro"),
+                StoredFlagType::ReadOnlyBoolean,
+                true
+            ),
+            (
+                String::from("com.android.aconfig.storage.test_1"),
+                String::from("enabled_rw"),
+                StoredFlagType::ReadWriteBoolean,
+                true
             ),
             (
                 String::from("com.android.aconfig.storage.test_2"),
                 String::from("disabled_ro"),
+                StoredFlagType::ReadOnlyBoolean,
                 false,
             ),
             (
                 String::from("com.android.aconfig.storage.test_2"),
                 String::from("enabled_fixed_ro"),
+                StoredFlagType::FixedReadOnlyBoolean,
                 true,
             ),
-            (String::from("com.android.aconfig.storage.test_2"), String::from("enabled_ro"), true),
-            (String::from("com.android.aconfig.storage.test_4"), String::from("enabled_ro"), true),
+            (
+                String::from("com.android.aconfig.storage.test_2"),
+                String::from("enabled_ro"),
+                StoredFlagType::ReadOnlyBoolean,
+                true
+            ),
             (
                 String::from("com.android.aconfig.storage.test_4"),
                 String::from("enabled_fixed_ro"),
+                StoredFlagType::FixedReadOnlyBoolean,
                 true,
+            ),
+            (
+                String::from("com.android.aconfig.storage.test_4"),
+                String::from("enabled_ro"),
+                StoredFlagType::ReadOnlyBoolean,
+                true
             ),
         ];
         assert_eq!(flags, expected);
