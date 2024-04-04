@@ -3,7 +3,7 @@
 use aconfig_storage_read_api::\{StorageFileType, get_mapped_storage_file, get_boolean_flag_value, get_package_offset};
 use std::path::Path;
 use std::io::Write;
-use log::\{info, error, LevelFilter};
+use log::\{log, LevelFilter, Level};
 
 static STORAGE_MIGRATION_MARKER_FILE: &str =
     "/metadata/aconfig/storage_test_mission_1";
@@ -73,41 +73,41 @@ pub fn {flag.name}() -> bool \{
         let package_map = match get_mapped_storage_file("{flag.container}", StorageFileType::PackageMap) \{
             Ok(file) => file,
             Err(err) => \{
-                error!("failed to read flag '{flag.name}': \{}", err);
+                log!(Level::Error, "AconfigTestMission1: error: failed to read flag '{flag.name}': \{err}");
                 return result;
             }
         };
         let package_offset = match get_package_offset(&package_map, "{package}") \{
             Ok(Some(offset)) => offset,
             Ok(None) => \{
-                error!("failed to read flag '{flag.name}', not found in package map");
+                log!(Level::Error, "AconfigTestMission1: error: failed to read flag '{flag.name}': did not find offset");
                 return result;
             },
             Err(err) => \{
-                error!("failed to read flag '{flag.name}': \{}", err);
+                log!(Level::Error, "AconfigTestMission1: error: failed to read flag '{flag.name}': \{err}");
                 return result;
             }
         };
         let flag_val_map = match get_mapped_storage_file("{flag.container}", StorageFileType::FlagVal) \{
             Ok(val_map) => val_map,
             Err(err) => \{
-                error!("failed to read flag '{flag.name}': \{}", err);
+                log!(Level::Error, "AconfigTestMission1: error: failed to read flag '{flag.name}': \{err}");
                 return result;
             }
         };
         let value = match get_boolean_flag_value(&flag_val_map, {flag.flag_offset} + package_offset.boolean_offset) \{
             Ok(val) => val,
             Err(err) => \{
-                error!("failed to read flag '{flag.name}': \{}", err);
+                log!(Level::Error, "AconfigTestMission1: error: failed to read flag '{flag.name}': \{err}");
                 return result;
             }
         };
 
         if result != value \{
-            error!("error: flag mismatch for '{flag.name}'. Legacy storage was \{result}, new storage was \{value}")
+            log!(Level::Error, "AconfigTestMission1: error: flag mismatch for '{flag.name}'. Legacy storage was \{result}, new storage was \{value}");
         } else \{
             let default_value = {flag.default_value};
-            info!("success! flag '{flag.name}' contained correct value. Legacy storage was \{default_value}, new storage was \{value}")
+            log!(Level::Info, "AconfigTestMission1: success! flag '{flag.name}' contained correct value. Legacy storage was \{default_value}, new storage was \{value}");
         }
     }
 
