@@ -6,7 +6,6 @@ import android.compat.annotation.UnsupportedAppUsage;
 /** @hide */
 public interface FeatureFlags \{
 {{ for item in flag_elements }}
-    @com.android.aconfig.annotations.AconfigFlagAccessor
 {{ -if not item.is_read_write }}
 {{ -if item.default_value }}
     @com.android.aconfig.annotations.AssumeTrueForR8
@@ -15,6 +14,7 @@ public interface FeatureFlags \{
 {{ -endif- }}
 {{ -endif }}
 {{ -if not library_exported }}
+    @com.android.aconfig.annotations.AconfigFlagAccessor
     @UnsupportedAppUsage
 {{ -endif }}
     boolean {item.method_name}();

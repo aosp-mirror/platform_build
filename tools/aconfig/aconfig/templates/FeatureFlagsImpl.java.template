@@ -45,9 +45,9 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ endfor- }}
 {{ -endif }}{#- end of runtime_lookup_required #}
 {{ -for flag in flag_elements }}
-    @com.android.aconfig.annotations.AconfigFlagAccessor
     @Override
 {{ -if not library_exported }}
+    @com.android.aconfig.annotations.AconfigFlagAccessor
     @UnsupportedAppUsage
 {{ -endif }}
     public boolean {flag.method_name}() \{
@@ -67,9 +67,9 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
 /** @hide */
 public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ for flag in flag_elements }}
-    @com.android.aconfig.annotations.AconfigFlagAccessor
     @Override
 {{ -if not library_exported }}
+    @com.android.aconfig.annotations.AconfigFlagAccessor
     @UnsupportedAppUsage
 {{ -endif }}
     public boolean {flag.method_name}() \{
