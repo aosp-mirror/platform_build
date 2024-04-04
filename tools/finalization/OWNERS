@@ -1,5 +1,7 @@
 include platform/build/soong:/OWNERS
-smoreland@google.com
-alexbuy@google.com
+amhk@google.com
+gurpreetgs@google.com
+michaelwr@google.com
 patb@google.com
+smoreland@google.com
 zyy@google.com

@@ -110,11 +110,11 @@ mod tests {
 use aconfig_storage_read_api::{StorageFileType, get_mapped_storage_file, get_boolean_flag_value, get_package_offset};
 use std::path::Path;
 use std::io::Write;
-use log::{info, error, LevelFilter};
+use log::{log, LevelFilter, Level};
 
 static STORAGE_MIGRATION_MARKER_FILE: &str =
     "/metadata/aconfig/storage_test_mission_1";
-static MIGRATION_LOG_TAG: &str = "AconfigStorageTestMission1";
+static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 
 /// flag provider
 pub struct FlagProvider;
@@ -513,11 +513,11 @@ pub fn reset_flags() {
 use aconfig_storage_read_api::{StorageFileType, get_mapped_storage_file, get_boolean_flag_value, get_package_offset};
 use std::path::Path;
 use std::io::Write;
-use log::{info, error, LevelFilter};
+use log::{log, LevelFilter, Level};
 
 static STORAGE_MIGRATION_MARKER_FILE: &str =
     "/metadata/aconfig/storage_test_mission_1";
-static MIGRATION_LOG_TAG: &str = "AconfigStorageTestMission1";
+static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 
 /// flag provider
 pub struct FlagProvider;
@@ -546,20 +546,17 @@ lazy_static::lazy_static! {
 impl FlagProvider {
     /// query flag disabled_rw_exported
     pub fn disabled_rw_exported(&self) -> bool {
-        let result = *CACHED_disabled_rw_exported;
-        result
+        *CACHED_disabled_rw_exported
     }
 
     /// query flag enabled_fixed_ro_exported
     pub fn enabled_fixed_ro_exported(&self) -> bool {
-        let result = *CACHED_enabled_fixed_ro_exported;
-        result
+        *CACHED_enabled_fixed_ro_exported
     }
 
     /// query flag enabled_ro_exported
     pub fn enabled_ro_exported(&self) -> bool {
-        let result = *CACHED_enabled_ro_exported;
-        result
+        *CACHED_enabled_ro_exported
     }
 }
 
@@ -590,11 +587,11 @@ pub fn enabled_ro_exported() -> bool {
 use aconfig_storage_read_api::{StorageFileType, get_mapped_storage_file, get_boolean_flag_value, get_package_offset};
 use std::path::Path;
 use std::io::Write;
-use log::{info, error, LevelFilter};
+use log::{log, LevelFilter, Level};
 
 static STORAGE_MIGRATION_MARKER_FILE: &str =
     "/metadata/aconfig/storage_test_mission_1";
-static MIGRATION_LOG_TAG: &str = "AconfigStorageTestMission1";
+static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 
 /// flag provider
 pub struct FlagProvider;
@@ -602,344 +599,32 @@ pub struct FlagProvider;
 impl FlagProvider {
     /// query flag disabled_ro
     pub fn disabled_ro(&self) -> bool {
-        let result = false;
-
-        if !Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() {
-            return result;
-        }
-
-        // This will be called multiple times. Subsequent calls after the first
-        // are noops.
-        logger::init(
-            logger::Config::default()
-                .with_tag_on_device(MIGRATION_LOG_TAG)
-                .with_max_level(LevelFilter::Info),
-        );
-
-        unsafe {
-            let package_map = match get_mapped_storage_file("system", StorageFileType::PackageMap) {
-                Ok(file) => file,
-                Err(err) => {
-                    error!("failed to read flag 'disabled_ro': {}", err);
-                    return result;
-                }
-            };
-            let package_offset = match get_package_offset(&package_map, "com.android.aconfig.test") {
-                Ok(Some(offset)) => offset,
-                Ok(None) => {
-                    error!("failed to read flag 'disabled_ro', not found in package map");
-                    return result;
-                },
-                Err(err) => {
-                    error!("failed to read flag 'disabled_ro': {}", err);
-                    return result;
-                }
-            };
-            let flag_val_map = match get_mapped_storage_file("system", StorageFileType::FlagVal) {
-                Ok(val_map) => val_map,
-                Err(err) => {
-                    error!("failed to read flag 'disabled_ro': {}", err);
-                    return result;
-                }
-            };
-            let value = match get_boolean_flag_value(&flag_val_map, 0 + package_offset.boolean_offset) {
-                Ok(val) => val,
-                Err(err) => {
-                    error!("failed to read flag 'disabled_ro': {}", err);
-                    return result;
-                }
-            };
-            if false != value {
-                let default_value = false;
-                error!("flag mismatch for 'disabled_ro'. Legacy storage was {default_value}, new storage was {value}")
-            }
-        }
-        result
+        false
     }
 
     /// query flag disabled_rw
     pub fn disabled_rw(&self) -> bool {
-        let result = false;
-
-        if !Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() {
-            return result;
-        }
-
-        // This will be called multiple times. Subsequent calls after the first
-        // are noops.
-        logger::init(
-            logger::Config::default()
-                .with_tag_on_device(MIGRATION_LOG_TAG)
-                .with_max_level(LevelFilter::Info),
-        );
-
-        unsafe {
-            let package_map = match get_mapped_storage_file("system", StorageFileType::PackageMap) {
-                Ok(file) => file,
-                Err(err) => {
-                    error!("failed to read flag 'disabled_rw': {}", err);
-                    return result;
-                }
-            };
-            let package_offset = match get_package_offset(&package_map, "com.android.aconfig.test") {
-                Ok(Some(offset)) => offset,
-                Ok(None) => {
-                    error!("failed to read flag 'disabled_rw', not found in package map");
-                    return result;
-                },
-                Err(err) => {
-                    error!("failed to read flag 'disabled_rw': {}", err);
-                    return result;
-                }
-            };
-            let flag_val_map = match get_mapped_storage_file("system", StorageFileType::FlagVal) {
-                Ok(val_map) => val_map,
-                Err(err) => {
-                    error!("failed to read flag 'disabled_rw': {}", err);
-                    return result;
-                }
-            };
-            let value = match get_boolean_flag_value(&flag_val_map, 1 + package_offset.boolean_offset) {
-                Ok(val) => val,
-                Err(err) => {
-                    error!("failed to read flag 'disabled_rw': {}", err);
-                    return result;
-                }
-            };
-            if false != value {
-                let default_value = false;
-                error!("flag mismatch for 'disabled_rw'. Legacy storage was {default_value}, new storage was {value}")
-            }
-        }
-        result
+        false
     }
 
     /// query flag disabled_rw_in_other_namespace
     pub fn disabled_rw_in_other_namespace(&self) -> bool {
-        let result = false;
-
-        if !Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() {
-            return result;
-        }
-
-        // This will be called multiple times. Subsequent calls after the first
-        // are noops.
-        logger::init(
-            logger::Config::default()
-                .with_tag_on_device(MIGRATION_LOG_TAG)
-                .with_max_level(LevelFilter::Info),
-        );
-
-        unsafe {
-            let package_map = match get_mapped_storage_file("system", StorageFileType::PackageMap) {
-                Ok(file) => file,
-                Err(err) => {
-                    error!("failed to read flag 'disabled_rw_in_other_namespace': {}", err);
-                    return result;
-                }
-            };
-            let package_offset = match get_package_offset(&package_map, "com.android.aconfig.test") {
-                Ok(Some(offset)) => offset,
-                Ok(None) => {
-                    error!("failed to read flag 'disabled_rw_in_other_namespace', not found in package map");
-                    return result;
-                },
-                Err(err) => {
-                    error!("failed to read flag 'disabled_rw_in_other_namespace': {}", err);
-                    return result;
-                }
-            };
-            let flag_val_map = match get_mapped_storage_file("system", StorageFileType::FlagVal) {
-                Ok(val_map) => val_map,
-                Err(err) => {
-                    error!("failed to read flag 'disabled_rw_in_other_namespace': {}", err);
-                    return result;
-                }
-            };
-            let value = match get_boolean_flag_value(&flag_val_map, 2 + package_offset.boolean_offset) {
-                Ok(val) => val,
-                Err(err) => {
-                    error!("failed to read flag 'disabled_rw_in_other_namespace': {}", err);
-                    return result;
-                }
-            };
-            if false != value {
-                let default_value = false;
-                error!("flag mismatch for 'disabled_rw_in_other_namespace'. Legacy storage was {default_value}, new storage was {value}")
-            }
-        }
-        result
+        false
     }
 
     /// query flag enabled_fixed_ro
     pub fn enabled_fixed_ro(&self) -> bool {
-        let result = true;
-
-        if !Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() {
-            return result;
-        }
-
-        // This will be called multiple times. Subsequent calls after the first
-        // are noops.
-        logger::init(
-            logger::Config::default()
-                .with_tag_on_device(MIGRATION_LOG_TAG)
-                .with_max_level(LevelFilter::Info),
-        );
-
-        unsafe {
-            let package_map = match get_mapped_storage_file("system", StorageFileType::PackageMap) {
-                Ok(file) => file,
-                Err(err) => {
-                    error!("failed to read flag 'enabled_fixed_ro': {}", err);
-                    return result;
-                }
-            };
-            let package_offset = match get_package_offset(&package_map, "com.android.aconfig.test") {
-                Ok(Some(offset)) => offset,
-                Ok(None) => {
-                    error!("failed to read flag 'enabled_fixed_ro', not found in package map");
-                    return result;
-                },
-                Err(err) => {
-                    error!("failed to read flag 'enabled_fixed_ro': {}", err);
-                    return result;
-                }
-            };
-            let flag_val_map = match get_mapped_storage_file("system", StorageFileType::FlagVal) {
-                Ok(val_map) => val_map,
-                Err(err) => {
-                    error!("failed to read flag 'enabled_fixed_ro': {}", err);
-                    return result;
-                }
-            };
-            let value = match get_boolean_flag_value(&flag_val_map, 3 + package_offset.boolean_offset) {
-                Ok(val) => val,
-                Err(err) => {
-                    error!("failed to read flag 'enabled_fixed_ro': {}", err);
-                    return result;
-                }
-            };
-            if true != value {
-                let default_value = true;
-                error!("flag mismatch for 'enabled_fixed_ro'. Legacy storage was {default_value}, new storage was {value}")
-            }
-        }
-        result
+        true
     }
 
     /// query flag enabled_ro
     pub fn enabled_ro(&self) -> bool {
-        let result = true;
-
-        if !Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() {
-            return result;
-        }
-
-        // This will be called multiple times. Subsequent calls after the first
-        // are noops.
-        logger::init(
-            logger::Config::default()
-                .with_tag_on_device(MIGRATION_LOG_TAG)
-                .with_max_level(LevelFilter::Info),
-        );
-
-        unsafe {
-            let package_map = match get_mapped_storage_file("system", StorageFileType::PackageMap) {
-                Ok(file) => file,
-                Err(err) => {
-                    error!("failed to read flag 'enabled_ro': {}", err);
-                    return result;
-                }
-            };
-            let package_offset = match get_package_offset(&package_map, "com.android.aconfig.test") {
-                Ok(Some(offset)) => offset,
-                Ok(None) => {
-                    error!("failed to read flag 'enabled_ro', not found in package map");
-                    return result;
-                },
-                Err(err) => {
-                    error!("failed to read flag 'enabled_ro': {}", err);
-                    return result;
-                }
-            };
-            let flag_val_map = match get_mapped_storage_file("system", StorageFileType::FlagVal) {
-                Ok(val_map) => val_map,
-                Err(err) => {
-                    error!("failed to read flag 'enabled_ro': {}", err);
-                    return result;
-                }
-            };
-            let value = match get_boolean_flag_value(&flag_val_map, 4 + package_offset.boolean_offset) {
-                Ok(val) => val,
-                Err(err) => {
-                    error!("failed to read flag 'enabled_ro': {}", err);
-                    return result;
-                }
-            };
-            if true != value {
-                let default_value = true;
-                error!("flag mismatch for 'enabled_ro'. Legacy storage was {default_value}, new storage was {value}")
-            }
-        }
-        result
+        true
     }
 
     /// query flag enabled_rw
     pub fn enabled_rw(&self) -> bool {
-        let result = true;
-
-        if !Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() {
-            return result;
-        }
-
-        // This will be called multiple times. Subsequent calls after the first
-        // are noops.
-        logger::init(
-            logger::Config::default()
-                .with_tag_on_device(MIGRATION_LOG_TAG)
-                .with_max_level(LevelFilter::Info),
-        );
-
-        unsafe {
-            let package_map = match get_mapped_storage_file("system", StorageFileType::PackageMap) {
-                Ok(file) => file,
-                Err(err) => {
-                    error!("failed to read flag 'enabled_rw': {}", err);
-                    return result;
-                }
-            };
-            let package_offset = match get_package_offset(&package_map, "com.android.aconfig.test") {
-                Ok(Some(offset)) => offset,
-                Ok(None) => {
-                    error!("failed to read flag 'enabled_rw', not found in package map");
-                    return result;
-                },
-                Err(err) => {
-                    error!("failed to read flag 'enabled_rw': {}", err);
-                    return result;
-                }
-            };
-            let flag_val_map = match get_mapped_storage_file("system", StorageFileType::FlagVal) {
-                Ok(val_map) => val_map,
-                Err(err) => {
-                    error!("failed to read flag 'enabled_rw': {}", err);
-                    return result;
-                }
-            };
-            let value = match get_boolean_flag_value(&flag_val_map, 5 + package_offset.boolean_offset) {
-                Ok(val) => val,
-                Err(err) => {
-                    error!("failed to read flag 'enabled_rw': {}", err);
-                    return result;
-                }
-            };
-            if true != value {
-                let default_value = true;
-                error!("flag mismatch for 'enabled_rw'. Legacy storage was {default_value}, new storage was {value}")
-            }
-        }
-        result
+        true
     }
 }
 
@@ -1020,16 +705,16 @@ pub fn enabled_rw() -> bool {
 
     #[test]
     fn test_generate_rust_code_for_test() {
-        test_generate_rust_code(CodegenMode::Test, true);
+        test_generate_rust_code(CodegenMode::Test, false);
     }
 
     #[test]
     fn test_generate_rust_code_for_exported() {
-        test_generate_rust_code(CodegenMode::Exported, true);
+        test_generate_rust_code(CodegenMode::Exported, false);
     }
 
     #[test]
     fn test_generate_rust_code_for_force_read_only() {
-        test_generate_rust_code(CodegenMode::ForceReadOnly, true);
+        test_generate_rust_code(CodegenMode::ForceReadOnly, false);
     }
 }
