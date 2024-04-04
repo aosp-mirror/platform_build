@@ -13,12 +13,13 @@ function commit_step_1_changes() {
                        -m "Ignore-AOSP-First: $FINAL_PLATFORM_CODENAME Finalization
 Bug: $FINAL_BUG_ID
 Test: build";
-            repo upload --cbr --no-verify -o nokeycheck -t -y . ;
+            repo upload '"$repo_upload_dry_run_arg"' --cbr --no-verify -o nokeycheck -t -y . ;
         fi'
 }
 
 function finalize_step_1_main() {
     local top="$(dirname "$0")"/../../../..
+    source $top/build/make/tools/finalization/command-line-options.sh
     source $top/build/make/tools/finalization/environment.sh
 
     source $top/build/make/tools/finalization/finalize-sdk-resources.sh
@@ -34,4 +35,4 @@ function finalize_step_1_main() {
     AIDL_FROZEN_REL=true $m_fina
 }
 
-finalize_step_1_main
+finalize_step_1_main $@
