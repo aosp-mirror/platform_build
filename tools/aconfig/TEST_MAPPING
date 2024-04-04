@@ -39,6 +39,10 @@
     //   "name": "aconfig.exported_mode.test.rust"
     // },
     {
+      // aflags CLI unit tests
+      "name": "aflags.test"
+    },
+    {
       // printflags unit tests
       "name": "printflags.test"
     },
@@ -92,11 +96,6 @@
     {
       // aconfig_storage write api cpp integration tests
       "name": "aconfig_storage_write_api.test.cpp"
-    },
-    {
-      // aflags CLI unit tests
-      // TODO(b/326062088): add to presubmit once proven in postsubmit.
-      "name": "aflags.test"
     }
   ]
 }

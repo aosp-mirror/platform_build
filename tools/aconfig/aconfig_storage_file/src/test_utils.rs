@@ -133,14 +133,15 @@ pub fn create_test_flag_value_list() -> FlagValueList {
 
 pub fn create_test_flag_info_list() -> FlagInfoList {
     let header = FlagInfoHeader {
-        version: 1234,
+        version: 1,
         container: String::from("mockup"),
         file_type: StorageFileType::FlagInfo as u8,
         file_size: 35,
         num_flags: 8,
         boolean_flag_offset: 27,
     };
-    let nodes: Vec<FlagInfoNode> = vec![FlagInfoNode { attributes: 0 }; 8];
+    let is_flag_rw = [true, false, true, false, false, false, false, false];
+    let nodes = is_flag_rw.iter().map(|&rw| FlagInfoNode::create(rw)).collect();
     FlagInfoList { header, nodes }
 }
 
