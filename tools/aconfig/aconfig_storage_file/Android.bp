@@ -12,6 +12,7 @@ rust_defaults {
         "libtempfile",
         "libprotobuf",
         "libclap",
+        "libcxx",
         "libaconfig_storage_protos",
     ],
 }
@@ -68,4 +69,47 @@ cc_library_static {
         "//apex_available:anyapex",
     ],
     host_supported: true,
+}
+
+// cxx source codegen from rust api
+genrule {
+    name: "libcxx_aconfig_storage_file_bridge_code",
+    tools: ["cxxbridge"],
+    cmd: "$(location cxxbridge) $(in) > $(out)",
+    srcs: ["src/lib.rs"],
+    out: ["aconfig_storage/lib.rs.cc"],
+}
+
+// cxx header codegen from rust api
+genrule {
+    name: "libcxx_aconfig_storage_file_bridge_header",
+    tools: ["cxxbridge"],
+    cmd: "$(location cxxbridge) $(in) --header > $(out)",
+    srcs: ["src/lib.rs"],
+    out: ["aconfig_storage/lib.rs.h"],
+}
+
+// a static cc lib based on generated code
+rust_ffi_static {
+    name: "libaconfig_storage_file_cxx_bridge",
+    crate_name: "aconfig_storage_file_cxx_bridge",
+    host_supported: true,
+    srcs: ["src/lib.rs"],
+    defaults: ["aconfig_storage_file.defaults"],
+}
+
+// flag storage file cc interface
+cc_library_static {
+    name: "libaconfig_storage_file_cc",
+    srcs: ["aconfig_storage_file.cpp"],
+    generated_headers: [
+        "cxx-bridge-header",
+        "libcxx_aconfig_storage_file_bridge_header",
+    ],
+    generated_sources: ["libcxx_aconfig_storage_file_bridge_code"],
+    whole_static_libs: ["libaconfig_storage_file_cxx_bridge"],
+    export_include_dirs: ["include"],
+    static_libs: [
+        "libbase",
+    ],
 }
