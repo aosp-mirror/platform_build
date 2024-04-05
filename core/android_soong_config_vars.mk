@@ -81,12 +81,6 @@ ifneq (,$(filter tv,$(subst $(comma),$(space),${PRODUCT_CHARACTERISTICS})))
   BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
 endif
 
-# ATV based devices do not seem to work with prebuilts, so build from source
-# for now and fix in a follow up.
-ifneq (,${PRODUCT_IS_ATV})
-  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
-endif
-
 ifneq (,$(MODULE_BUILD_FROM_SOURCE))
   # Keep an explicit setting.
 else ifeq (,$(filter docs sdk win_sdk sdk_addon,$(MAKECMDGOALS))$(findstring com.google.android.conscrypt,$(PRODUCT_PACKAGES))$(findstring com.google.android.go.conscrypt,$(PRODUCT_PACKAGES)))
