@@ -44,16 +44,14 @@ use std::cmp::Ordering;
 use std::collections::hash_map::DefaultHasher;
 use std::fs::File;
 use std::hash::{Hash, Hasher};
-use std::io::{Read, Write};
+use std::io::Read;
 
 pub use crate::flag_info::{FlagInfoHeader, FlagInfoList, FlagInfoNode};
 pub use crate::flag_table::{FlagTable, FlagTableHeader, FlagTableNode};
 pub use crate::flag_value::{FlagValueHeader, FlagValueList};
 pub use crate::package_table::{PackageTable, PackageTableHeader, PackageTableNode};
 
-use crate::AconfigStorageError::{
-    BytesParseFail, FileCreationFail, HashTableSizeLimit, InvalidStoredFlagType,
-};
+use crate::AconfigStorageError::{BytesParseFail, HashTableSizeLimit, InvalidStoredFlagType};
 
 /// Storage file version
 pub const FILE_VERSION: u32 = 1;
@@ -279,104 +277,13 @@ pub fn list_flags(
     Ok(flags)
 }
 
-/// Create flag info file
-pub fn create_flag_info(
-    package_map: &str,
-    flag_map: &str,
-    flag_info_out: &str,
-) -> Result<(), AconfigStorageError> {
-    let package_table = PackageTable::from_bytes(&read_file_to_bytes(package_map)?)?;
-    let flag_table = FlagTable::from_bytes(&read_file_to_bytes(flag_map)?)?;
-
-    if package_table.header.container != flag_table.header.container {
-        return Err(FileCreationFail(anyhow!(
-            "container for package map {} and flag map {} does not match",
-            package_table.header.container,
-            flag_table.header.container,
-        )));
-    }
-
-    let mut package_offsets = vec![0; package_table.header.num_packages as usize];
-    for node in package_table.nodes.iter() {
-        package_offsets[node.package_id as usize] = node.boolean_offset;
-    }
-
-    let mut is_flag_rw = vec![false; flag_table.header.num_flags as usize];
-    for node in flag_table.nodes.iter() {
-        let flag_offset = package_offsets[node.package_id as usize] + node.flag_id as u32;
-        is_flag_rw[flag_offset as usize] = node.flag_type == StoredFlagType::ReadWriteBoolean;
-    }
-
-    let mut list = FlagInfoList {
-        header: FlagInfoHeader {
-            version: FILE_VERSION,
-            container: flag_table.header.container,
-            file_type: StorageFileType::FlagInfo as u8,
-            file_size: 0,
-            num_flags: flag_table.header.num_flags,
-            boolean_flag_offset: 0,
-        },
-        nodes: is_flag_rw.iter().map(|&rw| FlagInfoNode::create(rw)).collect(),
-    };
-
-    list.header.boolean_flag_offset = list.header.into_bytes().len() as u32;
-    list.header.file_size = list.into_bytes().len() as u32;
-
-    let mut file = File::create(flag_info_out).map_err(|errmsg| {
-        FileCreationFail(anyhow!("fail to create file {}: {}", flag_info_out, errmsg))
-    })?;
-    file.write_all(&list.into_bytes()).map_err(|errmsg| {
-        FileCreationFail(anyhow!("fail to write to file {}: {}", flag_info_out, errmsg))
-    })?;
-
-    Ok(())
-}
-
-// *************************************** //
-// CC INTERLOP
-// *************************************** //
-#[cxx::bridge]
-mod ffi {
-    pub struct FlagInfoCreationCXX {
-        pub success: bool,
-        pub error_message: String,
-    }
-
-    extern "Rust" {
-        pub fn create_flag_info_cxx(
-            package_map: &str,
-            flag_map: &str,
-            flag_info_out: &str,
-        ) -> FlagInfoCreationCXX;
-    }
-}
-
-/// Create flag info file cc interlop
-pub fn create_flag_info_cxx(
-    package_map: &str,
-    flag_map: &str,
-    flag_info_out: &str,
-) -> ffi::FlagInfoCreationCXX {
-    match create_flag_info(package_map, flag_map, flag_info_out) {
-        Ok(()) => ffi::FlagInfoCreationCXX {
-            success: true,
-            error_message: String::from(""),
-        },
-        Err(errmsg) => ffi::FlagInfoCreationCXX {
-            success: false,
-            error_message: format!("{:?}", errmsg),
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::test_utils::{
-        create_test_flag_info_list, create_test_flag_table, create_test_flag_value_list,
-        create_test_package_table, write_bytes_to_temp_file,
+        create_test_flag_table, create_test_flag_value_list, create_test_package_table,
+        write_bytes_to_temp_file,
     };
-    use tempfile::NamedTempFile;
 
     #[test]
     // this test point locks down the flag list api
@@ -444,32 +351,5 @@ mod tests {
             ),
         ];
         assert_eq!(flags, expected);
-    }
-
-    fn create_empty_temp_file() -> Result<NamedTempFile, AconfigStorageError> {
-        let file = NamedTempFile::new().map_err(|_| {
-            AconfigStorageError::FileCreationFail(anyhow!("Failed to create temp file"))
-        })?;
-        Ok(file)
-    }
-
-    #[test]
-    // this test point locks down the flag info creation
-    fn test_create_flag_info() {
-        let package_table =
-            write_bytes_to_temp_file(&create_test_package_table().into_bytes()).unwrap();
-        let flag_table = write_bytes_to_temp_file(&create_test_flag_table().into_bytes()).unwrap();
-        let flag_info = create_empty_temp_file().unwrap();
-
-        let package_table_path = package_table.path().display().to_string();
-        let flag_table_path = flag_table.path().display().to_string();
-        let flag_info_path = flag_info.path().display().to_string();
-
-        assert!(create_flag_info(&package_table_path, &flag_table_path, &flag_info_path).is_ok());
-
-        let flag_info =
-            FlagInfoList::from_bytes(&read_file_to_bytes(&flag_info_path).unwrap()).unwrap();
-        let expected_flag_info = create_test_flag_info_list();
-        assert_eq!(flag_info, expected_flag_info);
     }
 }
