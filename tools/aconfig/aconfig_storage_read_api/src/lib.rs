@@ -197,6 +197,13 @@ mod ffi {
         pub flag_value: bool,
     }
 
+    // Flag info query return for cc interlop
+    pub struct BooleanFlagAttributeQueryCXX {
+        pub query_success: bool,
+        pub error_message: String,
+        pub flag_attribute: u8,
+    }
+
     // Rust export to c++
     extern "Rust" {
         pub fn get_storage_file_version_cxx(file_path: &str) -> VersionNumberQueryCXX;
@@ -206,6 +213,8 @@ mod ffi {
         pub fn get_flag_offset_cxx(file: &[u8], package_id: u32, flag: &str) -> FlagOffsetQueryCXX;
 
         pub fn get_boolean_flag_value_cxx(file: &[u8], offset: u32) -> BooleanFlagValueQueryCXX;
+
+        pub fn get_boolean_flag_attribute_cxx(file: &[u8], offset: u32) -> BooleanFlagAttributeQueryCXX;
     }
 }
 
@@ -284,6 +293,22 @@ impl ffi::BooleanFlagValueQueryCXX {
     }
 }
 
+/// Implement the flag info interlop return type, create from actual flag info api return type
+impl ffi::BooleanFlagAttributeQueryCXX {
+    pub(crate) fn new(info_result: Result<u8, AconfigStorageError>) -> Self {
+        match info_result {
+            Ok(info) => {
+                Self { query_success: true, error_message: String::from(""), flag_attribute: info }
+            }
+            Err(errmsg) => Self {
+                query_success: false,
+                error_message: format!("{:?}", errmsg),
+                flag_attribute: 0u8,
+            },
+        }
+    }
+}
+
 /// Implement the storage version number interlop return type, create from actual version number
 /// api return type
 impl ffi::VersionNumberQueryCXX {
@@ -316,6 +341,11 @@ pub fn get_flag_offset_cxx(file: &[u8], package_id: u32, flag: &str) -> ffi::Fla
 /// Get boolean flag value cc interlop
 pub fn get_boolean_flag_value_cxx(file: &[u8], offset: u32) -> ffi::BooleanFlagValueQueryCXX {
     ffi::BooleanFlagValueQueryCXX::new(find_boolean_flag_value(file, offset))
+}
+
+/// Get boolean flag attribute cc interlop
+pub fn get_boolean_flag_attribute_cxx(file: &[u8], offset: u32) -> ffi::BooleanFlagAttributeQueryCXX {
+    ffi::BooleanFlagAttributeQueryCXX::new(find_boolean_flag_attribute(file, offset))
 }
 
 /// Get storage version number cc interlop

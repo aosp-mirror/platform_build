@@ -54,6 +54,8 @@ static Result<std::string> find_storage_file(
           return entry.flag_map();
         case StorageFileType::flag_val:
           return entry.flag_val();
+        case StorageFileType::flag_info:
+          return entry.flag_info();
         default:
           return Error() << "Invalid file type " << file_type;
       }
@@ -174,4 +176,17 @@ Result<bool> get_boolean_flag_value(
   }
 }
 
+/// Get boolean flag attribute
+Result<uint8_t> get_boolean_flag_attribute(
+    MappedStorageFile const& file,
+    uint32_t offset) {
+  auto content = rust::Slice<const uint8_t>(
+      static_cast<uint8_t*>(file.file_ptr), file.file_size);
+  auto info_cxx = get_boolean_flag_attribute_cxx(content, offset);
+  if (info_cxx.query_success) {
+    return info_cxx.flag_attribute;
+  } else {
+    return Error() << info_cxx.error_message;
+  }
+}
 } // namespace aconfig_storage

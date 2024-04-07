@@ -47,7 +47,8 @@ class AconfigStorageTest : public ::testing::Test {
 
   Result<std::string> write_storage_location_pb_file(std::string const& package_map,
                                                      std::string const& flag_map,
-                                                     std::string const& flag_val) {
+                                                     std::string const& flag_val,
+                                                     std::string const& flag_info) {
     auto temp_file = std::tmpnam(nullptr);
     auto proto = storage_files();
     auto* info = proto.add_files();
@@ -56,6 +57,7 @@ class AconfigStorageTest : public ::testing::Test {
     info->set_package_map(package_map);
     info->set_flag_map(flag_map);
     info->set_flag_val(flag_val);
+    info->set_flag_info(flag_info);
     info->set_timestamp(12345);
 
     auto content = std::string();
@@ -71,20 +73,23 @@ class AconfigStorageTest : public ::testing::Test {
     package_map = *copy_to_temp_file(test_dir + "/package.map");
     flag_map = *copy_to_temp_file(test_dir + "/flag.map");
     flag_val = *copy_to_temp_file(test_dir + "/flag.val");
+    flag_info = *copy_to_temp_file(test_dir + "/flag.info");
     storage_record_pb = *write_storage_location_pb_file(
-        package_map, flag_map, flag_val);
+        package_map, flag_map, flag_val, flag_info);
   }
 
   void TearDown() override {
     std::remove(package_map.c_str());
     std::remove(flag_map.c_str());
     std::remove(flag_val.c_str());
+    std::remove(flag_info.c_str());
     std::remove(storage_record_pb.c_str());
   }
 
   std::string package_map;
   std::string flag_map;
   std::string flag_val;
+  std::string flag_info;
   std::string storage_record_pb;
 };
 
@@ -214,4 +219,34 @@ TEST_F(AconfigStorageTest, test_invalid_boolean_flag_value_query) {
   ASSERT_FALSE(value.ok());
   ASSERT_EQ(value.error().message(),
             std::string("InvalidStorageFileOffset(Flag value offset goes beyond the end of the file.)"));
+}
+
+/// Test to lock down storage flag info query api
+TEST_F(AconfigStorageTest, test_boolean_flag_info_query) {
+  auto mapped_file = private_api::get_mapped_file_impl(
+      storage_record_pb, "mockup", api::StorageFileType::flag_info);
+  ASSERT_TRUE(mapped_file.ok());
+
+  auto expected_value = std::vector<bool>{
+    true, false, true, false, false, false, false, false};
+  for (int offset = 0; offset < 8; ++offset) {
+    auto attribute = api::get_boolean_flag_attribute(*mapped_file, offset);
+    ASSERT_TRUE(attribute.ok());
+    ASSERT_EQ(*attribute & static_cast<uint8_t>(api::FlagInfoBit::IsSticky), 0);
+    ASSERT_EQ((*attribute & static_cast<uint8_t>(api::FlagInfoBit::IsReadWrite)) != 0,
+              expected_value[offset]);
+    ASSERT_EQ(*attribute & static_cast<uint8_t>(api::FlagInfoBit::HasOverride), 0);
+  }
+}
+
+/// Negative test to lock down the error when querying flag info out of range
+TEST_F(AconfigStorageTest, test_invalid_boolean_flag_info_query) {
+  auto mapped_file = private_api::get_mapped_file_impl(
+      storage_record_pb, "mockup", api::StorageFileType::flag_info);
+  ASSERT_TRUE(mapped_file.ok());
+
+  auto attribute = api::get_boolean_flag_attribute(*mapped_file, 8);
+  ASSERT_FALSE(attribute.ok());
+  ASSERT_EQ(attribute.error().message(),
+            std::string("InvalidStorageFileOffset(Flag info offset goes beyond the end of the file.)"));
 }

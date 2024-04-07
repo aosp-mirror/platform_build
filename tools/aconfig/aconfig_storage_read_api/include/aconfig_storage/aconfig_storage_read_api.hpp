@@ -10,7 +10,8 @@ namespace aconfig_storage {
 enum StorageFileType {
   package_map,
   flag_map,
-  flag_val
+  flag_val,
+  flag_info
 };
 
 /// Mapped storage file
@@ -76,10 +77,24 @@ android::base::Result<FlagOffset> get_flag_offset(
 
 /// Get boolean flag value
 /// \input file: mapped storage file
-/// \input offset: the boolean flag value byte offset in the file
+/// \input offset: the boolean flag value offset in the file
 /// \returns the boolean flag value
 android::base::Result<bool> get_boolean_flag_value(
     MappedStorageFile const& file,
     uint32_t offset);
 
+/// Flag info enum, to be consistent with the one defined in src/lib.rs
+enum FlagInfoBit {
+  IsSticky = 1<<0,
+  IsReadWrite = 1<<1,
+  HasOverride = 1<<2,
+};
+
+/// Get boolean flag attribute
+/// \input file: mapped storage file
+/// \input offset: the boolean flag info offset in the file
+/// \returns the boolean flag attribute
+android::base::Result<uint8_t> get_boolean_flag_attribute(
+    MappedStorageFile const& file,
+    uint32_t offset);
 } // namespace aconfig_storage
