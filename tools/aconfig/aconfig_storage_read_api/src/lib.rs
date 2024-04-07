@@ -34,6 +34,7 @@
 //! apis. DO NOT DIRECTLY USE THESE APIS IN YOUR SOURCE CODE. For auto generated flag apis
 //! please refer to the g3doc go/android-flags
 
+pub mod flag_info_query;
 pub mod flag_table_query;
 pub mod flag_value_query;
 pub mod mapped_file;
@@ -47,6 +48,7 @@ pub use flag_table_query::FlagOffset;
 pub use package_table_query::PackageOffset;
 
 use aconfig_storage_file::{read_u32_from_bytes, FILE_VERSION};
+use flag_info_query::find_boolean_flag_attribute;
 use flag_table_query::find_flag_offset;
 use flag_value_query::find_boolean_flag_value;
 use package_table_query::find_package_offset;
@@ -143,6 +145,18 @@ pub fn get_storage_file_version(file_path: &str) -> Result<u32, AconfigStorageEr
     })?;
     let mut head = 0;
     read_u32_from_bytes(&buffer, &mut head)
+}
+
+/// Get the boolean flag attribute.
+///
+/// \input file: mapped flag info file
+/// \input offset: boolean flag offset
+///
+/// \return
+/// If the provide offset is valid, it returns the boolean flag attribute bitfiled, otherwise it
+/// returns the error message.
+pub fn get_boolean_flag_attribute(file: &Mmap, offset: u32) -> Result<u8, AconfigStorageError> {
+    find_boolean_flag_attribute(file, offset)
 }
 
 // *************************************** //
@@ -315,12 +329,14 @@ mod tests {
     use crate::mapped_file::get_mapped_file;
     use crate::test_utils::copy_to_temp_file;
     use aconfig_storage_file::protos::storage_record_pb::write_proto_to_temp_file;
+    use aconfig_storage_file::FlagInfoBit;
     use tempfile::NamedTempFile;
 
-    fn create_test_storage_files() -> [NamedTempFile; 4] {
+    fn create_test_storage_files() -> [NamedTempFile; 5] {
         let package_map = copy_to_temp_file("./tests/package.map").unwrap();
         let flag_map = copy_to_temp_file("./tests/flag.map").unwrap();
         let flag_val = copy_to_temp_file("./tests/flag.val").unwrap();
+        let flag_info = copy_to_temp_file("./tests/flag.info").unwrap();
 
         let text_proto = format!(
             r#"
@@ -330,21 +346,23 @@ files {{
     package_map: "{}"
     flag_map: "{}"
     flag_val: "{}"
+    flag_info: "{}"
     timestamp: 12345
 }}
 "#,
             package_map.path().display(),
             flag_map.path().display(),
-            flag_val.path().display()
+            flag_val.path().display(),
+            flag_info.path().display()
         );
         let pb_file = write_proto_to_temp_file(&text_proto).unwrap();
-        [package_map, flag_map, flag_val, pb_file]
+        [package_map, flag_map, flag_val, flag_info, pb_file]
     }
 
     #[test]
     // this test point locks down flag package offset query
     fn test_package_offset_query() {
-        let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
+        let [_package_map, _flag_map, _flag_val, _flag_info, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         let package_mapped_file = unsafe {
             get_mapped_file(&pb_file_path, "mockup", StorageFileType::PackageMap).unwrap()
@@ -375,7 +393,7 @@ files {{
     #[test]
     // this test point locks down flag offset query
     fn test_flag_offset_query() {
-        let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
+        let [_package_map, _flag_map, _flag_val, _flag_info, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         let flag_mapped_file =
             unsafe { get_mapped_file(&pb_file_path, "mockup", StorageFileType::FlagMap).unwrap() };
@@ -398,9 +416,9 @@ files {{
     }
 
     #[test]
-    // this test point locks down flag offset query
+    // this test point locks down flag value query
     fn test_flag_value_query() {
-        let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
+        let [_package_map, _flag_map, _flag_val, _flag_info, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         let flag_value_file =
             unsafe { get_mapped_file(&pb_file_path, "mockup", StorageFileType::FlagVal).unwrap() };
@@ -412,10 +430,27 @@ files {{
     }
 
     #[test]
+    // this test point locks donw flag info query
+    fn test_flag_info_query() {
+        let [_package_map, _flag_map, _flag_val, _flag_info, pb_file] = create_test_storage_files();
+        let pb_file_path = pb_file.path().display().to_string();
+        let flag_info_file =
+            unsafe { get_mapped_file(&pb_file_path, "mockup", StorageFileType::FlagInfo).unwrap() };
+        let is_rw: Vec<bool> = vec![true, false, true, false, false, false, false, false];
+        for (offset, expected_value) in is_rw.into_iter().enumerate() {
+            let attribute = get_boolean_flag_attribute(&flag_info_file, offset as u32).unwrap();
+            assert!((attribute & FlagInfoBit::IsSticky as u8) == 0u8);
+            assert_eq!((attribute & FlagInfoBit::IsReadWrite as u8) != 0u8, expected_value);
+            assert!((attribute & FlagInfoBit::HasOverride as u8) == 0u8);
+        }
+    }
+
+    #[test]
     // this test point locks down flag storage file version number query api
     fn test_storage_version_query() {
         assert_eq!(get_storage_file_version("./tests/package.map").unwrap(), 1);
         assert_eq!(get_storage_file_version("./tests/flag.map").unwrap(), 1);
         assert_eq!(get_storage_file_version("./tests/flag.val").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./tests/flag.info").unwrap(), 1);
     }
 }

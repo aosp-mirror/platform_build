@@ -48,26 +48,13 @@ pub fn find_boolean_flag_value(buf: &[u8], flag_offset: u32) -> Result<bool, Aco
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::{FlagValueList, StorageFileType};
-
-    pub fn create_test_flag_value_list() -> FlagValueList {
-        let header = FlagValueHeader {
-            version: crate::FILE_VERSION,
-            container: String::from("system"),
-            file_type: StorageFileType::FlagVal as u8,
-            file_size: 35,
-            num_flags: 8,
-            boolean_value_offset: 27,
-        };
-        let booleans: Vec<bool> = vec![false, true, false, false, true, true, false, true];
-        FlagValueList { header, booleans }
-    }
+    use aconfig_storage_file::test_utils::create_test_flag_value_list;
 
     #[test]
     // this test point locks down flag value query
     fn test_flag_value_query() {
         let flag_value_list = create_test_flag_value_list().into_bytes();
-        let baseline: Vec<bool> = vec![false, true, false, false, true, true, false, true];
+        let baseline: Vec<bool> = vec![false, true, true, false, true, true, true, true];
         for (offset, expected_value) in baseline.into_iter().enumerate() {
             let flag_value = find_boolean_flag_value(&flag_value_list[..], offset as u32).unwrap();
             assert_eq!(flag_value, expected_value);

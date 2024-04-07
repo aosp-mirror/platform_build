@@ -46,7 +46,7 @@ use std::fs::File;
 use std::hash::{Hash, Hasher};
 use std::io::Read;
 
-pub use crate::flag_info::{FlagInfoHeader, FlagInfoList, FlagInfoNode};
+pub use crate::flag_info::{FlagInfoHeader, FlagInfoList, FlagInfoNode, FlagInfoBit};
 pub use crate::flag_table::{FlagTable, FlagTableHeader, FlagTableNode};
 pub use crate::flag_value::{FlagValueHeader, FlagValueList};
 pub use crate::package_table::{PackageTable, PackageTableHeader, PackageTableNode};

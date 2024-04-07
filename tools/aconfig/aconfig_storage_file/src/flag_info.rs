@@ -91,9 +91,9 @@ impl FlagInfoHeader {
 /// bit field for flag info
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum FlagInfoBit {
-    IsSticky = 0,
-    IsReadWrite = 1,
-    HasOverride = 2,
+    IsSticky = 1 << 0,
+    IsReadWrite = 1 << 1,
+    HasOverride = 1 << 2,
 }
 
 /// Flag info node struct
@@ -108,9 +108,9 @@ impl fmt::Debug for FlagInfoNode {
         writeln!(
             f,
             "sticky: {}, readwrite: {}, override: {}",
-            self.attributes & (FlagInfoBit::IsSticky as u8),
-            self.attributes & (FlagInfoBit::IsReadWrite as u8),
-            self.attributes & (FlagInfoBit::HasOverride as u8),
+            self.attributes & (FlagInfoBit::IsSticky as u8) != 0,
+            self.attributes & (FlagInfoBit::IsReadWrite as u8) != 0,
+            self.attributes & (FlagInfoBit::HasOverride as u8) != 0,
         )?;
         Ok(())
     }
