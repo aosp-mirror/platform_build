@@ -1,7 +1,7 @@
 #[cfg(not(feature = "cargo"))]
 mod aconfig_storage_rust_test {
     use aconfig_storage_file::protos::storage_record_pb::write_proto_to_temp_file;
-    use aconfig_storage_file::{FlagInfoBit, StorageFileType};
+    use aconfig_storage_file::{FlagInfoBit, StorageFileType, StoredFlagType};
     use aconfig_storage_read_api::{
         get_boolean_flag_attribute, get_boolean_flag_value, get_flag_offset, get_package_offset,
         get_storage_file_version, mapped_file::get_mapped_file, PackageOffset,
@@ -114,19 +114,20 @@ files {{
             unsafe { get_mapped_file(&pb_file_path, "mockup", StorageFileType::FlagMap).unwrap() };
 
         let baseline = vec![
-            (0, "enabled_ro", 1u16),
-            (0, "enabled_rw", 2u16),
-            (1, "disabled_ro", 0u16),
-            (2, "enabled_ro", 1u16),
-            (1, "enabled_fixed_ro", 1u16),
-            (1, "enabled_ro", 2u16),
-            (2, "enabled_fixed_ro", 0u16),
-            (0, "disabled_rw", 0u16),
+            (0, "enabled_ro", StoredFlagType::ReadOnlyBoolean, 1u16),
+            (0, "enabled_rw", StoredFlagType::ReadWriteBoolean, 2u16),
+            (1, "disabled_ro", StoredFlagType::ReadOnlyBoolean, 0u16),
+            (2, "enabled_ro", StoredFlagType::ReadOnlyBoolean, 1u16),
+            (1, "enabled_fixed_ro", StoredFlagType::FixedReadOnlyBoolean, 1u16),
+            (1, "enabled_ro", StoredFlagType::ReadOnlyBoolean, 2u16),
+            (2, "enabled_fixed_ro", StoredFlagType::FixedReadOnlyBoolean, 0u16),
+            (0, "disabled_rw", StoredFlagType::ReadWriteBoolean, 0u16),
         ];
-        for (package_id, flag_name, expected_offset) in baseline.into_iter() {
+        for (package_id, flag_name, flag_type, flag_id) in baseline.into_iter() {
             let flag_offset =
                 get_flag_offset(&flag_mapped_file, package_id, flag_name).unwrap().unwrap();
-            assert_eq!(flag_offset, expected_offset);
+            assert_eq!(flag_offset.flag_type, flag_type);
+            assert_eq!(flag_offset.flag_id, flag_id);
         }
     }
 

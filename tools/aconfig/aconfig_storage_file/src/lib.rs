@@ -103,6 +103,7 @@ impl TryFrom<u8> for StorageFileType {
 }
 
 /// Flag type enum as stored by storage file
+/// ONLY APPEND, NEVER REMOVE FOR BACKWARD COMPATOBILITY. THE MAX IS U16.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum StoredFlagType {
     ReadWriteBoolean = 0,
