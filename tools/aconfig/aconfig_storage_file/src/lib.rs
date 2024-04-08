@@ -46,7 +46,7 @@ use std::fs::File;
 use std::hash::{Hash, Hasher};
 use std::io::Read;
 
-pub use crate::flag_info::{FlagInfoHeader, FlagInfoList, FlagInfoNode, FlagInfoBit};
+pub use crate::flag_info::{FlagInfoBit, FlagInfoHeader, FlagInfoList, FlagInfoNode};
 pub use crate::flag_table::{FlagTable, FlagTableHeader, FlagTableNode};
 pub use crate::flag_value::{FlagValueHeader, FlagValueList};
 pub use crate::package_table::{PackageTable, PackageTableHeader, PackageTableNode};
@@ -255,13 +255,13 @@ pub fn list_flags(
 
     let mut package_info = vec![("", 0); package_table.header.num_packages as usize];
     for node in package_table.nodes.iter() {
-        package_info[node.package_id as usize] = (&node.package_name, node.boolean_offset);
+        package_info[node.package_id as usize] = (&node.package_name, node.boolean_start_index);
     }
 
     let mut flags = Vec::new();
     for node in flag_table.nodes.iter() {
         let (package_name, package_offset) = package_info[node.package_id as usize];
-        let flag_offset = package_offset + node.flag_id as u32;
+        let flag_offset = package_offset + node.flag_index as u32;
         let flag_value = flag_value_list.booleans[flag_offset as usize];
         flags.push((
             String::from(package_name),
