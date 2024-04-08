@@ -490,7 +490,6 @@ class BuildInfo(object):
       return -1
 
     props = [
-        "ro.board.api_level",
         "ro.board.first_api_level",
         "ro.product.first_api_level",
     ]
