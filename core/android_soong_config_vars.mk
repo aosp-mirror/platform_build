@@ -74,34 +74,6 @@ ifdef TARGET_BOARD_AUTO
   $(call add_soong_config_var_value, ANDROID, target_board_auto, $(TARGET_BOARD_AUTO))
 endif
 
-# Ensure that those mainline modules who have individually toggleable prebuilts
-# are controlled by the MODULE_BUILD_FROM_SOURCE environment variable by
-# default.
-INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
-  adservices \
-  appsearch \
-  btservices \
-  devicelock \
-  configinfrastructure \
-  conscrypt \
-  healthfitness \
-  ipsec \
-  media \
-  mediaprovider \
-  ondevicepersonalization \
-  permission \
-  rkpd \
-  scheduling \
-  sdkext \
-  statsd \
-  tethering \
-  uwb \
-  wifi \
-
-$(foreach m, $(INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES),\
-  $(if $(call soong_config_get,$(m)_module,source_build),,\
-    $(call soong_config_set,$(m)_module,source_build,$(MODULE_BUILD_FROM_SOURCE))))
-
 # Apex build mode variables
 ifdef APEX_BUILD_FOR_PRE_S_DEVICES
 $(call add_soong_config_var_value,ANDROID,library_linking_strategy,prefer_static)
