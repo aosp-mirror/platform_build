@@ -104,6 +104,9 @@ TEST_F(AconfigStorageTest, test_storage_version_query) {
   version = api::get_storage_file_version(flag_val);
   ASSERT_TRUE(version.ok());
   ASSERT_EQ(*version, 1);
+  version = api::get_storage_file_version(flag_info);
+  ASSERT_TRUE(version.ok());
+  ASSERT_EQ(*version, 1);
 }
 
 /// Negative test to lock down the error when mapping none exist storage files
@@ -115,48 +118,48 @@ TEST_F(AconfigStorageTest, test_none_exist_storage_file_mapping) {
             "Unable to find storage files for container vendor");
 }
 
-/// Test to lock down storage package offset query api
-TEST_F(AconfigStorageTest, test_package_offset_query) {
+/// Test to lock down storage package context query api
+TEST_F(AconfigStorageTest, test_package_context_query) {
   auto mapped_file = private_api::get_mapped_file_impl(
       storage_record_pb, "mockup", api::StorageFileType::package_map);
   ASSERT_TRUE(mapped_file.ok());
 
-  auto offset = api::get_package_offset(
+  auto context = api::get_package_read_context(
       *mapped_file, "com.android.aconfig.storage.test_1");
-  ASSERT_TRUE(offset.ok());
-  ASSERT_TRUE(offset->package_exists);
-  ASSERT_EQ(offset->package_id, 0);
-  ASSERT_EQ(offset->boolean_offset, 0);
+  ASSERT_TRUE(context.ok());
+  ASSERT_TRUE(context->package_exists);
+  ASSERT_EQ(context->package_id, 0);
+  ASSERT_EQ(context->boolean_start_index, 0);
 
-  offset = api::get_package_offset(
+  context = api::get_package_read_context(
       *mapped_file, "com.android.aconfig.storage.test_2");
-  ASSERT_TRUE(offset.ok());
-  ASSERT_TRUE(offset->package_exists);
-  ASSERT_EQ(offset->package_id, 1);
-  ASSERT_EQ(offset->boolean_offset, 3);
+  ASSERT_TRUE(context.ok());
+  ASSERT_TRUE(context->package_exists);
+  ASSERT_EQ(context->package_id, 1);
+  ASSERT_EQ(context->boolean_start_index, 3);
 
-  offset = api::get_package_offset(
+  context = api::get_package_read_context(
       *mapped_file, "com.android.aconfig.storage.test_4");
-  ASSERT_TRUE(offset.ok());
-  ASSERT_TRUE(offset->package_exists);
-  ASSERT_EQ(offset->package_id, 2);
-  ASSERT_EQ(offset->boolean_offset, 6);
+  ASSERT_TRUE(context.ok());
+  ASSERT_TRUE(context->package_exists);
+  ASSERT_EQ(context->package_id, 2);
+  ASSERT_EQ(context->boolean_start_index, 6);
 }
 
 /// Test to lock down when querying none exist package
-TEST_F(AconfigStorageTest, test_none_existent_package_offset_query) {
+TEST_F(AconfigStorageTest, test_none_existent_package_context_query) {
   auto mapped_file = private_api::get_mapped_file_impl(
       storage_record_pb, "mockup", api::StorageFileType::package_map);
   ASSERT_TRUE(mapped_file.ok());
 
-  auto offset = api::get_package_offset(
+  auto context = api::get_package_read_context(
       *mapped_file, "com.android.aconfig.storage.test_3");
-  ASSERT_TRUE(offset.ok());
-  ASSERT_FALSE(offset->package_exists);
+  ASSERT_TRUE(context.ok());
+  ASSERT_FALSE(context->package_exists);
 }
 
-/// Test to lock down storage flag offset query api
-TEST_F(AconfigStorageTest, test_flag_offset_query) {
+/// Test to lock down storage flag context query api
+TEST_F(AconfigStorageTest, test_flag_context_query) {
   auto mapped_file = private_api::get_mapped_file_impl(
       storage_record_pb, "mockup", api::StorageFileType::flag_map);
   ASSERT_TRUE(mapped_file.ok());
@@ -171,28 +174,28 @@ TEST_F(AconfigStorageTest, test_flag_offset_query) {
     {2, "enabled_fixed_ro", api::StoredFlagType::FixedReadOnlyBoolean, 0},
     {0, "disabled_rw", api::StoredFlagType::ReadWriteBoolean, 0},
   };
-  for (auto const&[package_id, flag_name, flag_type, flag_id] : baseline) {
-    auto offset = api::get_flag_offset(*mapped_file, package_id, flag_name);
-    ASSERT_TRUE(offset.ok());
-    ASSERT_TRUE(offset->flag_exists);
-    ASSERT_EQ(offset->flag_type, flag_type);
-    ASSERT_EQ(offset->flag_id, flag_id);
+  for (auto const&[package_id, flag_name, flag_type, flag_index] : baseline) {
+    auto context = api::get_flag_read_context(*mapped_file, package_id, flag_name);
+    ASSERT_TRUE(context.ok());
+    ASSERT_TRUE(context->flag_exists);
+    ASSERT_EQ(context->flag_type, flag_type);
+    ASSERT_EQ(context->flag_index, flag_index);
   }
 }
 
 /// Test to lock down when querying none exist flag
-TEST_F(AconfigStorageTest, test_none_existent_flag_offset_query) {
+TEST_F(AconfigStorageTest, test_none_existent_flag_context_query) {
   auto mapped_file = private_api::get_mapped_file_impl(
       storage_record_pb, "mockup", api::StorageFileType::flag_map);
   ASSERT_TRUE(mapped_file.ok());
 
-  auto offset = api::get_flag_offset(*mapped_file, 0, "none_exist");
-  ASSERT_TRUE(offset.ok());
-  ASSERT_FALSE(offset->flag_exists);
+  auto context = api::get_flag_read_context(*mapped_file, 0, "none_exist");
+  ASSERT_TRUE(context.ok());
+  ASSERT_FALSE(context->flag_exists);
 
-  offset = api::get_flag_offset(*mapped_file, 3, "enabled_ro");
-  ASSERT_TRUE(offset.ok());
-  ASSERT_FALSE(offset->flag_exists);
+  context = api::get_flag_read_context(*mapped_file, 3, "enabled_ro");
+  ASSERT_TRUE(context.ok());
+  ASSERT_FALSE(context->flag_exists);
 }
 
 /// Test to lock down storage flag value query api
@@ -203,10 +206,10 @@ TEST_F(AconfigStorageTest, test_boolean_flag_value_query) {
 
   auto expected_value = std::vector<bool>{
     false, true, true, false, true, true, true, true};
-  for (int offset = 0; offset < 8; ++offset) {
-    auto value = api::get_boolean_flag_value(*mapped_file, offset);
+  for (int index = 0; index < 8; ++index) {
+    auto value = api::get_boolean_flag_value(*mapped_file, index);
     ASSERT_TRUE(value.ok());
-    ASSERT_EQ(*value, expected_value[offset]);
+    ASSERT_EQ(*value, expected_value[index]);
   }
 }
 
@@ -230,12 +233,12 @@ TEST_F(AconfigStorageTest, test_boolean_flag_info_query) {
 
   auto expected_value = std::vector<bool>{
     true, false, true, false, false, false, false, false};
-  for (int offset = 0; offset < 8; ++offset) {
-    auto attribute = api::get_boolean_flag_attribute(*mapped_file, offset);
+  for (int index = 0; index < 8; ++index) {
+    auto attribute = api::get_boolean_flag_attribute(*mapped_file, index);
     ASSERT_TRUE(attribute.ok());
     ASSERT_EQ(*attribute & static_cast<uint8_t>(api::FlagInfoBit::IsSticky), 0);
     ASSERT_EQ((*attribute & static_cast<uint8_t>(api::FlagInfoBit::IsReadWrite)) != 0,
-              expected_value[offset]);
+              expected_value[index]);
     ASSERT_EQ(*attribute & static_cast<uint8_t>(api::FlagInfoBit::HasOverride), 0);
   }
 }
