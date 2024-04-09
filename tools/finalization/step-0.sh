@@ -9,7 +9,7 @@ function commit_step_0_changes() {
     set +e
     repo forall -c '\
         if [[ $(git status --short) ]]; then
-            repo start "VINTF-$FINAL_BOARD_API_LEVEL-Finalization" ;
+            repo start "'$repo_branch'" ;
             git add -A . ;
             git commit -m "Vendor API level $FINAL_BOARD_API_LEVEL is now frozen" \
                        -m "Ignore-AOSP-First: VINTF $FINAL_BOARD_API_LEVEL Finalization
@@ -21,8 +21,9 @@ Test: build";
 
 function finalize_step_0_main() {
     local top="$(dirname "$0")"/../../../..
-    source $top/build/make/tools/finalization/command-line-options.sh
     source $top/build/make/tools/finalization/environment.sh
+    local repo_branch="VINTF-$FINAL_BOARD_API_LEVEL-Finalization"
+    source $top/build/make/tools/finalization/command-line-options.sh
 
     local m="$top/build/soong/soong_ui.bash --make-mode TARGET_RELEASE=next TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug"
 
