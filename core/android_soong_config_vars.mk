@@ -44,12 +44,6 @@ ifeq (,$(BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE))
   BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := false
 endif
 
-# ART does not provide linux_bionic variants needed for products that
-# set HOST_CROSS_OS=linux_bionic.
-ifeq (linux_bionic,${HOST_CROSS_OS})
-  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
-endif
-
 # ART does not provide host side arm64 variants needed for products that
 # set HOST_CROSS_ARCH=arm64.
 ifeq (arm64,${HOST_CROSS_ARCH})
