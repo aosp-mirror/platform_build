@@ -4,7 +4,7 @@
 function commit_step_2_changes() {
     repo forall -c '\
         if [[ $(git status --short) ]]; then
-            repo start "$FINAL_PLATFORM_CODENAME-SDK-Finalization-Rel" ;
+            repo start "'$repo_branch'" ;
             git add -A . ;
             git commit -m "$FINAL_PLATFORM_CODENAME/$FINAL_PLATFORM_SDK_VERSION is now REL" \
                        -m "Ignore-AOSP-First: $FINAL_PLATFORM_CODENAME Finalization
@@ -17,8 +17,9 @@ Test: build";
 
 function finalize_step_2_main() {
     local top="$(dirname "$0")"/../../../..
-    source $top/build/make/tools/finalization/command-line-options.sh
     source $top/build/make/tools/finalization/environment.sh
+    local repo_branch="$FINAL_PLATFORM_CODENAME-SDK-Finalization-Rel"
+    source $top/build/make/tools/finalization/command-line-options.sh
 
     # prebuilts etc
     source $top/build/make/tools/finalization/finalize-sdk-rel.sh
