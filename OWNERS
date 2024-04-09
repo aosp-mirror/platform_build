@@ -4,4 +4,3 @@ include platform/build/soong:/OWNERS
 # round the world timzeone coverage.
 per-file envsetup.sh = joeo@google.com, jingwen@google.com, lberki@google.com
 per-file shell_utils.sh = joeo@google.com, jingwen@google.com, lberki@google.com
-
