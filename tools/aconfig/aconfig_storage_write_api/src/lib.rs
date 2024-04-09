@@ -206,6 +206,18 @@ mod ffi {
         pub error_message: String,
     }
 
+    // Flag is sticky update return for cc interlop
+    pub struct FlagIsStickyUpdateCXX {
+        pub update_success: bool,
+        pub error_message: String,
+    }
+
+    // Flag has override update return for cc interlop
+    pub struct FlagHasOverrideUpdateCXX {
+        pub update_success: bool,
+        pub error_message: String,
+    }
+
     // Flag info file creation return for cc interlop
     pub struct FlagInfoCreationCXX {
         pub success: bool,
@@ -219,6 +231,20 @@ mod ffi {
             offset: u32,
             value: bool,
         ) -> BooleanFlagValueUpdateCXX;
+
+        pub fn update_flag_is_sticky_cxx(
+            file: &mut [u8],
+            flag_type: u16,
+            offset: u32,
+            value: bool,
+        ) -> FlagIsStickyUpdateCXX;
+
+        pub fn update_flag_has_override_cxx(
+            file: &mut [u8],
+            flag_type: u16,
+            offset: u32,
+            value: bool,
+        ) -> FlagHasOverrideUpdateCXX;
 
         pub fn create_flag_info_cxx(
             package_map: &str,
@@ -241,6 +267,58 @@ pub(crate) fn update_boolean_flag_value_cxx(
             update_success: false,
             error_message: format!("{:?}", errmsg),
         },
+    }
+}
+
+pub(crate) fn update_flag_is_sticky_cxx(
+    file: &mut [u8],
+    flag_type: u16,
+    offset: u32,
+    value: bool,
+) -> ffi::FlagIsStickyUpdateCXX {
+    match FlagValueType::try_from(flag_type) {
+        Ok(value_type) => {
+            match crate::flag_info_update::update_flag_is_sticky(file, value_type, offset, value) {
+                Ok(()) => ffi::FlagIsStickyUpdateCXX {
+                    update_success: true,
+                    error_message: String::from("")
+                },
+                Err(errmsg) => ffi::FlagIsStickyUpdateCXX {
+                    update_success: false,
+                    error_message: format!("{:?}", errmsg),
+                },
+            }
+        }
+        Err(errmsg) => ffi::FlagIsStickyUpdateCXX {
+            update_success: false,
+            error_message: format!("{:?}", errmsg),
+        }
+    }
+}
+
+pub(crate) fn update_flag_has_override_cxx(
+    file: &mut [u8],
+    flag_type: u16,
+    offset: u32,
+    value: bool,
+) -> ffi::FlagHasOverrideUpdateCXX {
+    match FlagValueType::try_from(flag_type) {
+        Ok(value_type) => {
+            match crate::flag_info_update::update_flag_has_override(file, value_type, offset, value) {
+                Ok(()) => ffi::FlagHasOverrideUpdateCXX {
+                    update_success: true,
+                    error_message: String::from("")
+                },
+                Err(errmsg) => ffi::FlagHasOverrideUpdateCXX {
+                    update_success: false,
+                    error_message: format!("{:?}", errmsg),
+                },
+            }
+        }
+        Err(errmsg) => ffi::FlagHasOverrideUpdateCXX {
+            update_success: false,
+            error_message: format!("{:?}", errmsg),
+        }
     }
 }
 

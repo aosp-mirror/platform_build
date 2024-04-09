@@ -51,7 +51,9 @@ pub use crate::flag_table::{FlagTable, FlagTableHeader, FlagTableNode};
 pub use crate::flag_value::{FlagValueHeader, FlagValueList};
 pub use crate::package_table::{PackageTable, PackageTableHeader, PackageTableNode};
 
-use crate::AconfigStorageError::{BytesParseFail, HashTableSizeLimit, InvalidStoredFlagType};
+use crate::AconfigStorageError::{
+    BytesParseFail, HashTableSizeLimit, InvalidFlagValueType, InvalidStoredFlagType,
+};
 
 /// Storage file version
 pub const FILE_VERSION: u32 = 1;
@@ -125,7 +127,7 @@ impl TryFrom<u16> for StoredFlagType {
 }
 
 /// Flag value type enum, one FlagValueType maps to many StoredFlagType
-/// ONLY APPEND, NEVER REMOVE FOR BACKWARD COMPATIBILITY.
+/// ONLY APPEND, NEVER REMOVE FOR BACKWARD COMPATIBILITY. THE MAX IS U16
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum FlagValueType {
     Boolean = 0,
@@ -139,6 +141,17 @@ impl TryFrom<StoredFlagType> for FlagValueType {
             StoredFlagType::ReadWriteBoolean => Ok(Self::Boolean),
             StoredFlagType::ReadOnlyBoolean => Ok(Self::Boolean),
             StoredFlagType::FixedReadOnlyBoolean => Ok(Self::Boolean),
+        }
+    }
+}
+
+impl TryFrom<u16> for FlagValueType {
+    type Error = AconfigStorageError;
+
+    fn try_from(value: u16) -> Result<Self, Self::Error> {
+        match value {
+            x if x == Self::Boolean as u16 => Ok(Self::Boolean),
+            _ => Err(InvalidFlagValueType(anyhow!("Invalid flag value type"))),
         }
     }
 }
@@ -182,6 +195,9 @@ pub enum AconfigStorageError {
 
     #[error("invalid stored flag type")]
     InvalidStoredFlagType(#[source] anyhow::Error),
+
+    #[error("invalid flag value type")]
+    InvalidFlagValueType(#[source] anyhow::Error),
 }
 
 /// Get the right hash table size given number of entries in the table. Use a

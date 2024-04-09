@@ -31,6 +31,7 @@ rust_test_host {
     defaults: ["aconfig_storage_write_api.defaults"],
     data: [
         "tests/flag.val",
+        "tests/flag.info",
     ],
     rustlibs: [
         "libaconfig_storage_read_api",
@@ -75,6 +76,7 @@ cc_library_static {
     whole_static_libs: ["libaconfig_storage_write_api_cxx_bridge"],
     export_include_dirs: ["include"],
     static_libs: [
+        "libaconfig_storage_read_api_cc",
         "libaconfig_storage_protos_cc",
         "libprotobuf-cpp-lite",
         "libbase",
