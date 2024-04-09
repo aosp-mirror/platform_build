@@ -14,6 +14,7 @@ rust_defaults {
         "libcxx",
         "libthiserror",
         "libaconfig_storage_file",
+        "libaconfig_storage_read_api",
     ],
 }
 
@@ -68,7 +69,7 @@ cc_library_static {
     srcs: ["aconfig_storage_write_api.cpp"],
     generated_headers: [
         "cxx-bridge-header",
-        "libcxx_aconfig_storage_write_api_bridge_header"
+        "libcxx_aconfig_storage_write_api_bridge_header",
     ],
     generated_sources: ["libcxx_aconfig_storage_write_api_bridge_code"],
     whole_static_libs: ["libaconfig_storage_write_api_cxx_bridge"],

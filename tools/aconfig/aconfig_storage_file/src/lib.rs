@@ -103,7 +103,7 @@ impl TryFrom<u8> for StorageFileType {
 }
 
 /// Flag type enum as stored by storage file
-/// ONLY APPEND, NEVER REMOVE FOR BACKWARD COMPATOBILITY. THE MAX IS U16.
+/// ONLY APPEND, NEVER REMOVE FOR BACKWARD COMPATIBILITY. THE MAX IS U16.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum StoredFlagType {
     ReadWriteBoolean = 0,
@@ -120,6 +120,25 @@ impl TryFrom<u16> for StoredFlagType {
             x if x == Self::ReadOnlyBoolean as u16 => Ok(Self::ReadOnlyBoolean),
             x if x == Self::FixedReadOnlyBoolean as u16 => Ok(Self::FixedReadOnlyBoolean),
             _ => Err(InvalidStoredFlagType(anyhow!("Invalid stored flag type"))),
+        }
+    }
+}
+
+/// Flag value type enum, one FlagValueType maps to many StoredFlagType
+/// ONLY APPEND, NEVER REMOVE FOR BACKWARD COMPATIBILITY.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum FlagValueType {
+    Boolean = 0,
+}
+
+impl TryFrom<StoredFlagType> for FlagValueType {
+    type Error = AconfigStorageError;
+
+    fn try_from(value: StoredFlagType) -> Result<Self, Self::Error> {
+        match value {
+            StoredFlagType::ReadWriteBoolean => Ok(Self::Boolean),
+            StoredFlagType::ReadOnlyBoolean => Ok(Self::Boolean),
+            StoredFlagType::FixedReadOnlyBoolean => Ok(Self::Boolean),
         }
     }
 }
