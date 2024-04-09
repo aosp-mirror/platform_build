@@ -39,4 +39,5 @@ cc_test {
         "device-tests",
         "general-tests",
     ],
+    ldflags: ["-Wl,--allow-multiple-definition"],
 }
