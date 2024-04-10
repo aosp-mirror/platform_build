@@ -1,10 +1,10 @@
 #[cfg(not(feature = "cargo"))]
 mod aconfig_storage_rust_test {
     use aconfig_storage_file::protos::storage_record_pb::write_proto_to_temp_file;
-    use aconfig_storage_file::StorageFileType;
+    use aconfig_storage_file::{FlagInfoBit, StorageFileType};
     use aconfig_storage_read_api::{
-        get_boolean_flag_value, get_flag_offset, get_package_offset, get_storage_file_version,
-        mapped_file::get_mapped_file, PackageOffset,
+        get_boolean_flag_attribute, get_boolean_flag_value, get_flag_offset, get_package_offset,
+        get_storage_file_version, mapped_file::get_mapped_file, PackageOffset,
     };
     use std::fs;
     use tempfile::NamedTempFile;
@@ -15,10 +15,11 @@ mod aconfig_storage_rust_test {
         file
     }
 
-    fn create_test_storage_files() -> [NamedTempFile; 4] {
+    fn create_test_storage_files() -> [NamedTempFile; 5] {
         let package_map = copy_to_temp_file("./package.map");
         let flag_map = copy_to_temp_file("./flag.map");
         let flag_val = copy_to_temp_file("./flag.val");
+        let flag_info = copy_to_temp_file("./flag.info");
 
         let text_proto = format!(
             r#"
@@ -28,20 +29,22 @@ files {{
     package_map: "{}"
     flag_map: "{}"
     flag_val: "{}"
+    flag_info: "{}"
     timestamp: 12345
 }}
 "#,
             package_map.path().display(),
             flag_map.path().display(),
-            flag_val.path().display()
+            flag_val.path().display(),
+            flag_info.path().display()
         );
         let pb_file = write_proto_to_temp_file(&text_proto).unwrap();
-        [package_map, flag_map, flag_val, pb_file]
+        [package_map, flag_map, flag_val, flag_info, pb_file]
     }
 
     #[test]
     fn test_unavailable_stoarge() {
-        let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
+        let [_package_map, _flag_map, _flag_val, _flag_info, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
@@ -56,7 +59,7 @@ files {{
 
     #[test]
     fn test_package_offset_query() {
-        let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
+        let [_package_map, _flag_map, _flag_val, _flag_info, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
@@ -88,7 +91,7 @@ files {{
 
     #[test]
     fn test_none_exist_package_offset_query() {
-        let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
+        let [_package_map, _flag_map, _flag_val, _flag_info, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
@@ -103,7 +106,7 @@ files {{
 
     #[test]
     fn test_flag_offset_query() {
-        let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
+        let [_package_map, _flag_map, _flag_val, _flag_info, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
@@ -129,7 +132,7 @@ files {{
 
     #[test]
     fn test_none_exist_flag_offset_query() {
-        let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
+        let [_package_map, _flag_map, _flag_val, _flag_info, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
@@ -144,7 +147,7 @@ files {{
 
     #[test]
     fn test_boolean_flag_value_query() {
-        let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
+        let [_package_map, _flag_map, _flag_val, _flag_info, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
@@ -159,7 +162,7 @@ files {{
 
     #[test]
     fn test_invalid_boolean_flag_value_query() {
-        let [_package_map, _flag_map, _flag_val, pb_file] = create_test_storage_files();
+        let [_package_map, _flag_map, _flag_val, _flag_info, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
@@ -173,9 +176,42 @@ files {{
     }
 
     #[test]
+    fn test_flag_info_query() {
+        let [_package_map, _flag_map, _flag_val, _flag_info, pb_file] = create_test_storage_files();
+        let pb_file_path = pb_file.path().display().to_string();
+        // SAFETY:
+        // The safety here is ensured as the test process will not write to temp storage file
+        let flag_info_file =
+            unsafe { get_mapped_file(&pb_file_path, "mockup", StorageFileType::FlagInfo).unwrap() };
+        let is_rw: Vec<bool> = vec![true, false, true, false, false, false, false, false];
+        for (offset, expected_value) in is_rw.into_iter().enumerate() {
+            let attribute = get_boolean_flag_attribute(&flag_info_file, offset as u32).unwrap();
+            assert!((attribute & FlagInfoBit::IsSticky as u8) == 0u8);
+            assert_eq!((attribute & FlagInfoBit::IsReadWrite as u8) != 0u8, expected_value);
+            assert!((attribute & FlagInfoBit::HasOverride as u8) == 0u8);
+        }
+    }
+
+    #[test]
+    fn test_invalid_boolean_flag_info_query() {
+        let [_package_map, _flag_map, _flag_val, _flag_info, pb_file] = create_test_storage_files();
+        let pb_file_path = pb_file.path().display().to_string();
+        // SAFETY:
+        // The safety here is ensured as the test process will not write to temp storage file
+        let flag_info_file =
+            unsafe { get_mapped_file(&pb_file_path, "mockup", StorageFileType::FlagInfo).unwrap() };
+        let err = get_boolean_flag_attribute(&flag_info_file, 8u32).unwrap_err();
+        assert_eq!(
+            format!("{:?}", err),
+            "InvalidStorageFileOffset(Flag info offset goes beyond the end of the file.)"
+        );
+    }
+
+    #[test]
     fn test_storage_version_query() {
         assert_eq!(get_storage_file_version("./package.map").unwrap(), 1);
         assert_eq!(get_storage_file_version("./flag.map").unwrap(), 1);
         assert_eq!(get_storage_file_version("./flag.val").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./flag.info").unwrap(), 1);
     }
 }
