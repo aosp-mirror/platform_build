@@ -21,7 +21,7 @@ use aconfig_storage_file::{flag_value::FlagValueHeader, read_u8_from_bytes};
 use anyhow::anyhow;
 
 /// Query flag value
-pub fn find_boolean_flag_value(buf: &[u8], flag_offset: u32) -> Result<bool, AconfigStorageError> {
+pub fn find_boolean_flag_value(buf: &[u8], flag_index: u32) -> Result<bool, AconfigStorageError> {
     let interpreted_header = FlagValueHeader::from_bytes(buf)?;
     if interpreted_header.version > crate::FILE_VERSION {
         return Err(AconfigStorageError::HigherStorageFileVersion(anyhow!(
@@ -31,10 +31,8 @@ pub fn find_boolean_flag_value(buf: &[u8], flag_offset: u32) -> Result<bool, Aco
         )));
     }
 
-    let mut head = (interpreted_header.boolean_value_offset + flag_offset) as usize;
-
-    // TODO: right now, there is only boolean flags, with more flag value types added
-    // later, the end of boolean flag value section should be updated (b/322826265).
+    // Find byte offset to the flag value, each boolean flag cost one byte to store
+    let mut head = (interpreted_header.boolean_value_offset + flag_index) as usize;
     if head >= interpreted_header.file_size as usize {
         return Err(AconfigStorageError::InvalidStorageFileOffset(anyhow!(
             "Flag value offset goes beyond the end of the file."

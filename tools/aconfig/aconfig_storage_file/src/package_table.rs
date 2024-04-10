@@ -96,9 +96,9 @@ impl PackageTableHeader {
 pub struct PackageTableNode {
     pub package_name: String,
     pub package_id: u32,
-    // offset of the first boolean flag in this flag package with respect to the start of
-    // boolean flag value array in the flag value file
-    pub boolean_offset: u32,
+    // The index of the first boolean flag in this aconfig package among all boolean
+    // flags in this container.
+    pub boolean_start_index: u32,
     pub next_offset: Option<u32>,
 }
 
@@ -107,8 +107,8 @@ impl fmt::Debug for PackageTableNode {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         writeln!(
             f,
-            "Package: {}, Id: {}, Offset: {}, Next: {:?}",
-            self.package_name, self.package_id, self.boolean_offset, self.next_offset
+            "Package: {}, Id: {}, Boolean flag start index: {}, Next: {:?}",
+            self.package_name, self.package_id, self.boolean_start_index, self.next_offset
         )?;
         Ok(())
     }
@@ -122,7 +122,7 @@ impl PackageTableNode {
         result.extend_from_slice(&(name_bytes.len() as u32).to_le_bytes());
         result.extend_from_slice(name_bytes);
         result.extend_from_slice(&self.package_id.to_le_bytes());
-        result.extend_from_slice(&self.boolean_offset.to_le_bytes());
+        result.extend_from_slice(&self.boolean_start_index.to_le_bytes());
         result.extend_from_slice(&self.next_offset.unwrap_or(0).to_le_bytes());
         result
     }
@@ -133,7 +133,7 @@ impl PackageTableNode {
         let node = Self {
             package_name: read_str_from_bytes(bytes, &mut head)?,
             package_id: read_u32_from_bytes(bytes, &mut head)?,
-            boolean_offset: read_u32_from_bytes(bytes, &mut head)?,
+            boolean_start_index: read_u32_from_bytes(bytes, &mut head)?,
             next_offset: match read_u32_from_bytes(bytes, &mut head)? {
                 0 => None,
                 val => Some(val),

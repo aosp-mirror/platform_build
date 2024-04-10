@@ -55,16 +55,16 @@ pub unsafe fn get_mapped_flag_value_file(container: &str) -> Result<MmapMut, Aco
 /// Set boolean flag value thru mapped file and flush the change to file
 ///
 /// \input mapped_file: the mapped flag value file
-/// \input offset: flag value offset
+/// \input index: flag index
 /// \input value: updated flag value
 /// \return a result of ()
 ///
 pub fn set_boolean_flag_value(
     file: &mut MmapMut,
-    offset: u32,
+    index: u32,
     value: bool,
 ) -> Result<(), AconfigStorageError> {
-    crate::flag_value_update::update_boolean_flag_value(file, offset, value)?;
+    crate::flag_value_update::update_boolean_flag_value(file, index, value)?;
     file.flush().map_err(|errmsg| {
         AconfigStorageError::MapFlushFail(anyhow!("fail to flush storage file: {}", errmsg))
     })
@@ -106,15 +106,15 @@ pub fn create_flag_info(
         )));
     }
 
-    let mut package_offsets = vec![0; package_table.header.num_packages as usize];
+    let mut package_start_index = vec![0; package_table.header.num_packages as usize];
     for node in package_table.nodes.iter() {
-        package_offsets[node.package_id as usize] = node.boolean_offset;
+        package_start_index[node.package_id as usize] = node.boolean_start_index;
     }
 
     let mut is_flag_rw = vec![false; flag_table.header.num_flags as usize];
     for node in flag_table.nodes.iter() {
-        let flag_offset = package_offsets[node.package_id as usize] + node.flag_id as u32;
-        is_flag_rw[flag_offset as usize] = node.flag_type == StoredFlagType::ReadWriteBoolean;
+        let flag_index = package_start_index[node.package_id as usize] + node.flag_index as u32;
+        is_flag_rw[flag_index as usize] = node.flag_type == StoredFlagType::ReadWriteBoolean;
     }
 
     let mut list = FlagInfoList {

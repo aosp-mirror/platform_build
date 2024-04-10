@@ -24,17 +24,17 @@ use anyhow::anyhow;
 
 /// Flag table query return
 #[derive(PartialEq, Debug)]
-pub struct FlagOffset {
+pub struct FlagReadContext {
     pub flag_type: StoredFlagType,
-    pub flag_id: u16,
+    pub flag_index: u16,
 }
 
-/// Query flag within package offset
-pub fn find_flag_offset(
+/// Query flag read context: flag type and within package flag index
+pub fn find_flag_read_context(
     buf: &[u8],
     package_id: u32,
     flag: &str,
-) -> Result<Option<FlagOffset>, AconfigStorageError> {
+) -> Result<Option<FlagReadContext>, AconfigStorageError> {
     let interpreted_header = FlagTableHeader::from_bytes(buf)?;
     if interpreted_header.version > crate::FILE_VERSION {
         return Err(AconfigStorageError::HigherStorageFileVersion(anyhow!(
@@ -58,9 +58,9 @@ pub fn find_flag_offset(
     loop {
         let interpreted_node = FlagTableNode::from_bytes(&buf[flag_node_offset..])?;
         if interpreted_node.package_id == package_id && interpreted_node.flag_name == flag {
-            return Ok(Some(FlagOffset {
+            return Ok(Some(FlagReadContext {
                 flag_type: interpreted_node.flag_type,
-                flag_id: interpreted_node.flag_id,
+                flag_index: interpreted_node.flag_index,
             }));
         }
         match interpreted_node.next_offset {
@@ -89,11 +89,11 @@ mod tests {
             (2, "enabled_fixed_ro", StoredFlagType::FixedReadOnlyBoolean, 0u16),
             (0, "disabled_rw", StoredFlagType::ReadWriteBoolean, 0u16),
         ];
-        for (package_id, flag_name, flag_type, flag_id) in baseline.into_iter() {
-            let flag_offset =
-                find_flag_offset(&flag_table[..], package_id, flag_name).unwrap().unwrap();
-            assert_eq!(flag_offset.flag_type, flag_type);
-            assert_eq!(flag_offset.flag_id, flag_id);
+        for (package_id, flag_name, flag_type, flag_index) in baseline.into_iter() {
+            let flag_context =
+                find_flag_read_context(&flag_table[..], package_id, flag_name).unwrap().unwrap();
+            assert_eq!(flag_context.flag_type, flag_type);
+            assert_eq!(flag_context.flag_index, flag_index);
         }
     }
 
@@ -101,10 +101,10 @@ mod tests {
     // this test point locks down table query of a non exist flag
     fn test_not_existed_flag_query() {
         let flag_table = create_test_flag_table().into_bytes();
-        let flag_offset = find_flag_offset(&flag_table[..], 1, "disabled_fixed_ro").unwrap();
-        assert_eq!(flag_offset, None);
-        let flag_offset = find_flag_offset(&flag_table[..], 2, "disabled_rw").unwrap();
-        assert_eq!(flag_offset, None);
+        let flag_context = find_flag_read_context(&flag_table[..], 1, "disabled_fixed_ro").unwrap();
+        assert_eq!(flag_context, None);
+        let flag_context = find_flag_read_context(&flag_table[..], 2, "disabled_rw").unwrap();
+        assert_eq!(flag_context, None);
     }
 
     #[test]
@@ -113,7 +113,7 @@ mod tests {
         let mut table = create_test_flag_table();
         table.header.version = crate::FILE_VERSION + 1;
         let flag_table = table.into_bytes();
-        let error = find_flag_offset(&flag_table[..], 0, "enabled_ro").unwrap_err();
+        let error = find_flag_read_context(&flag_table[..], 0, "enabled_ro").unwrap_err();
         assert_eq!(
             format!("{:?}", error),
             format!(

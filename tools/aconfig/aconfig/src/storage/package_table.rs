@@ -48,7 +48,7 @@ impl PackageTableNodeWrapper {
         let node = PackageTableNode {
             package_name: String::from(package.package_name),
             package_id: package.package_id,
-            boolean_offset: package.boolean_offset,
+            boolean_start_index: package.boolean_start_index,
             next_offset: None,
         };
         let bucket_index = PackageTableNode::find_bucket_index(package.package_name, num_buckets);

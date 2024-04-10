@@ -3,8 +3,9 @@ mod aconfig_storage_rust_test {
     use aconfig_storage_file::protos::storage_record_pb::write_proto_to_temp_file;
     use aconfig_storage_file::{FlagInfoBit, StorageFileType, StoredFlagType};
     use aconfig_storage_read_api::{
-        get_boolean_flag_attribute, get_boolean_flag_value, get_flag_offset, get_package_offset,
-        get_storage_file_version, mapped_file::get_mapped_file, PackageOffset,
+        get_boolean_flag_attribute, get_boolean_flag_value, get_flag_read_context,
+        get_package_read_context, get_storage_file_version, mapped_file::get_mapped_file,
+        PackageReadContext,
     };
     use std::fs;
     use tempfile::NamedTempFile;
@@ -58,7 +59,7 @@ files {{
     }
 
     #[test]
-    fn test_package_offset_query() {
+    fn test_package_context_query() {
         let [_package_map, _flag_map, _flag_val, _flag_info, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         // SAFETY:
@@ -67,30 +68,30 @@ files {{
             get_mapped_file(&pb_file_path, "mockup", StorageFileType::PackageMap).unwrap()
         };
 
-        let package_offset =
-            get_package_offset(&package_mapped_file, "com.android.aconfig.storage.test_1")
+        let package_context =
+            get_package_read_context(&package_mapped_file, "com.android.aconfig.storage.test_1")
                 .unwrap()
                 .unwrap();
-        let expected_package_offset = PackageOffset { package_id: 0, boolean_offset: 0 };
-        assert_eq!(package_offset, expected_package_offset);
+        let expected_package_context = PackageReadContext { package_id: 0, boolean_start_index: 0 };
+        assert_eq!(package_context, expected_package_context);
 
-        let package_offset =
-            get_package_offset(&package_mapped_file, "com.android.aconfig.storage.test_2")
+        let package_context =
+            get_package_read_context(&package_mapped_file, "com.android.aconfig.storage.test_2")
                 .unwrap()
                 .unwrap();
-        let expected_package_offset = PackageOffset { package_id: 1, boolean_offset: 3 };
-        assert_eq!(package_offset, expected_package_offset);
+        let expected_package_context = PackageReadContext { package_id: 1, boolean_start_index: 3 };
+        assert_eq!(package_context, expected_package_context);
 
-        let package_offset =
-            get_package_offset(&package_mapped_file, "com.android.aconfig.storage.test_4")
+        let package_context =
+            get_package_read_context(&package_mapped_file, "com.android.aconfig.storage.test_4")
                 .unwrap()
                 .unwrap();
-        let expected_package_offset = PackageOffset { package_id: 2, boolean_offset: 6 };
-        assert_eq!(package_offset, expected_package_offset);
+        let expected_package_context = PackageReadContext { package_id: 2, boolean_start_index: 6 };
+        assert_eq!(package_context, expected_package_context);
     }
 
     #[test]
-    fn test_none_exist_package_offset_query() {
+    fn test_none_exist_package_context_query() {
         let [_package_map, _flag_map, _flag_val, _flag_info, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         // SAFETY:
@@ -99,13 +100,14 @@ files {{
             get_mapped_file(&pb_file_path, "mockup", StorageFileType::PackageMap).unwrap()
         };
 
-        let package_offset_option =
-            get_package_offset(&package_mapped_file, "com.android.aconfig.storage.test_3").unwrap();
-        assert_eq!(package_offset_option, None);
+        let package_context_option =
+            get_package_read_context(&package_mapped_file, "com.android.aconfig.storage.test_3")
+                .unwrap();
+        assert_eq!(package_context_option, None);
     }
 
     #[test]
-    fn test_flag_offset_query() {
+    fn test_flag_context_query() {
         let [_package_map, _flag_map, _flag_val, _flag_info, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         // SAFETY:
@@ -123,27 +125,29 @@ files {{
             (2, "enabled_fixed_ro", StoredFlagType::FixedReadOnlyBoolean, 0u16),
             (0, "disabled_rw", StoredFlagType::ReadWriteBoolean, 0u16),
         ];
-        for (package_id, flag_name, flag_type, flag_id) in baseline.into_iter() {
-            let flag_offset =
-                get_flag_offset(&flag_mapped_file, package_id, flag_name).unwrap().unwrap();
-            assert_eq!(flag_offset.flag_type, flag_type);
-            assert_eq!(flag_offset.flag_id, flag_id);
+        for (package_id, flag_name, flag_type, flag_index) in baseline.into_iter() {
+            let flag_context =
+                get_flag_read_context(&flag_mapped_file, package_id, flag_name).unwrap().unwrap();
+            assert_eq!(flag_context.flag_type, flag_type);
+            assert_eq!(flag_context.flag_index, flag_index);
         }
     }
 
     #[test]
-    fn test_none_exist_flag_offset_query() {
+    fn test_none_exist_flag_context_query() {
         let [_package_map, _flag_map, _flag_val, _flag_info, pb_file] = create_test_storage_files();
         let pb_file_path = pb_file.path().display().to_string();
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
         let flag_mapped_file =
             unsafe { get_mapped_file(&pb_file_path, "mockup", StorageFileType::FlagMap).unwrap() };
-        let flag_offset_option = get_flag_offset(&flag_mapped_file, 0, "none_exist").unwrap();
-        assert_eq!(flag_offset_option, None);
+        let flag_context_option =
+            get_flag_read_context(&flag_mapped_file, 0, "none_exist").unwrap();
+        assert_eq!(flag_context_option, None);
 
-        let flag_offset_option = get_flag_offset(&flag_mapped_file, 3, "enabled_ro").unwrap();
-        assert_eq!(flag_offset_option, None);
+        let flag_context_option =
+            get_flag_read_context(&flag_mapped_file, 3, "enabled_ro").unwrap();
+        assert_eq!(flag_context_option, None);
     }
 
     #[test]
