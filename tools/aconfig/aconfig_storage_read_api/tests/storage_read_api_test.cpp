@@ -161,21 +161,22 @@ TEST_F(AconfigStorageTest, test_flag_offset_query) {
       storage_record_pb, "mockup", api::StorageFileType::flag_map);
   ASSERT_TRUE(mapped_file.ok());
 
-  auto baseline = std::vector<std::tuple<int, std::string, int>>{
-    {0, "enabled_ro", 1},
-    {0, "enabled_rw", 2},
-    {1, "disabled_ro", 0},
-    {2, "enabled_ro", 1},
-    {1, "enabled_fixed_ro", 1},
-    {1, "enabled_ro", 2},
-    {2, "enabled_fixed_ro", 0},
-    {0, "disabled_rw", 0},
+  auto baseline = std::vector<std::tuple<int, std::string, api::StoredFlagType, int>>{
+    {0, "enabled_ro", api::StoredFlagType::ReadOnlyBoolean, 1},
+    {0, "enabled_rw", api::StoredFlagType::ReadWriteBoolean, 2},
+    {1, "disabled_ro", api::StoredFlagType::ReadOnlyBoolean, 0},
+    {2, "enabled_ro", api::StoredFlagType::ReadOnlyBoolean, 1},
+    {1, "enabled_fixed_ro", api::StoredFlagType::FixedReadOnlyBoolean, 1},
+    {1, "enabled_ro", api::StoredFlagType::ReadOnlyBoolean, 2},
+    {2, "enabled_fixed_ro", api::StoredFlagType::FixedReadOnlyBoolean, 0},
+    {0, "disabled_rw", api::StoredFlagType::ReadWriteBoolean, 0},
   };
-  for (auto const&[package_id, flag_name, expected_offset] : baseline) {
+  for (auto const&[package_id, flag_name, flag_type, flag_id] : baseline) {
     auto offset = api::get_flag_offset(*mapped_file, package_id, flag_name);
     ASSERT_TRUE(offset.ok());
     ASSERT_TRUE(offset->flag_exists);
-    ASSERT_EQ(offset->flag_offset, expected_offset);
+    ASSERT_EQ(offset->flag_type, flag_type);
+    ASSERT_EQ(offset->flag_id, flag_id);
   }
 }
 

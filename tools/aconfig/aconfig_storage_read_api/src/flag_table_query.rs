@@ -18,11 +18,16 @@
 
 use crate::{AconfigStorageError, FILE_VERSION};
 use aconfig_storage_file::{
-    flag_table::FlagTableHeader, flag_table::FlagTableNode, read_u32_from_bytes,
+    flag_table::FlagTableHeader, flag_table::FlagTableNode, read_u32_from_bytes, StoredFlagType,
 };
 use anyhow::anyhow;
 
-pub type FlagOffset = u16;
+/// Flag table query return
+#[derive(PartialEq, Debug)]
+pub struct FlagOffset {
+    pub flag_type: StoredFlagType,
+    pub flag_id: u16,
+}
 
 /// Query flag within package offset
 pub fn find_flag_offset(
@@ -53,7 +58,10 @@ pub fn find_flag_offset(
     loop {
         let interpreted_node = FlagTableNode::from_bytes(&buf[flag_node_offset..])?;
         if interpreted_node.package_id == package_id && interpreted_node.flag_name == flag {
-            return Ok(Some(interpreted_node.flag_id));
+            return Ok(Some(FlagOffset {
+                flag_type: interpreted_node.flag_type,
+                flag_id: interpreted_node.flag_id,
+            }));
         }
         match interpreted_node.next_offset {
             Some(offset) => flag_node_offset = offset as usize,
@@ -72,19 +80,20 @@ mod tests {
     fn test_flag_query() {
         let flag_table = create_test_flag_table().into_bytes();
         let baseline = vec![
-            (0, "enabled_ro", 1u16),
-            (0, "enabled_rw", 2u16),
-            (1, "disabled_ro", 0u16),
-            (2, "enabled_ro", 1u16),
-            (1, "enabled_fixed_ro", 1u16),
-            (1, "enabled_ro", 2u16),
-            (2, "enabled_fixed_ro", 0u16),
-            (0, "disabled_rw", 0u16),
+            (0, "enabled_ro", StoredFlagType::ReadOnlyBoolean, 1u16),
+            (0, "enabled_rw", StoredFlagType::ReadWriteBoolean, 2u16),
+            (1, "disabled_ro", StoredFlagType::ReadOnlyBoolean, 0u16),
+            (2, "enabled_ro", StoredFlagType::ReadOnlyBoolean, 1u16),
+            (1, "enabled_fixed_ro", StoredFlagType::FixedReadOnlyBoolean, 1u16),
+            (1, "enabled_ro", StoredFlagType::ReadOnlyBoolean, 2u16),
+            (2, "enabled_fixed_ro", StoredFlagType::FixedReadOnlyBoolean, 0u16),
+            (0, "disabled_rw", StoredFlagType::ReadWriteBoolean, 0u16),
         ];
-        for (package_id, flag_name, expected_offset) in baseline.into_iter() {
+        for (package_id, flag_name, flag_type, flag_id) in baseline.into_iter() {
             let flag_offset =
                 find_flag_offset(&flag_table[..], package_id, flag_name).unwrap().unwrap();
-            assert_eq!(flag_offset, expected_offset);
+            assert_eq!(flag_offset.flag_type, flag_type);
+            assert_eq!(flag_offset.flag_id, flag_id);
         }
     }
 

@@ -187,7 +187,8 @@ mod ffi {
         pub query_success: bool,
         pub error_message: String,
         pub flag_exists: bool,
-        pub flag_offset: u16,
+        pub flag_type: u16,
+        pub flag_id: u16,
     }
 
     // Flag value query return for cc interlop
@@ -214,7 +215,10 @@ mod ffi {
 
         pub fn get_boolean_flag_value_cxx(file: &[u8], offset: u32) -> BooleanFlagValueQueryCXX;
 
-        pub fn get_boolean_flag_attribute_cxx(file: &[u8], offset: u32) -> BooleanFlagAttributeQueryCXX;
+        pub fn get_boolean_flag_attribute_cxx(
+            file: &[u8],
+            offset: u32,
+        ) -> BooleanFlagAttributeQueryCXX;
     }
 }
 
@@ -258,20 +262,23 @@ impl ffi::FlagOffsetQueryCXX {
                     query_success: true,
                     error_message: String::from(""),
                     flag_exists: true,
-                    flag_offset: offset,
+                    flag_type: offset.flag_type as u16,
+                    flag_id: offset.flag_id,
                 },
                 None => Self {
                     query_success: true,
                     error_message: String::from(""),
                     flag_exists: false,
-                    flag_offset: 0,
+                    flag_type: 0u16,
+                    flag_id: 0u16,
                 },
             },
             Err(errmsg) => Self {
                 query_success: false,
                 error_message: format!("{:?}", errmsg),
                 flag_exists: false,
-                flag_offset: 0,
+                flag_type: 0u16,
+                flag_id: 0u16,
             },
         }
     }
@@ -344,7 +351,10 @@ pub fn get_boolean_flag_value_cxx(file: &[u8], offset: u32) -> ffi::BooleanFlagV
 }
 
 /// Get boolean flag attribute cc interlop
-pub fn get_boolean_flag_attribute_cxx(file: &[u8], offset: u32) -> ffi::BooleanFlagAttributeQueryCXX {
+pub fn get_boolean_flag_attribute_cxx(
+    file: &[u8],
+    offset: u32,
+) -> ffi::BooleanFlagAttributeQueryCXX {
     ffi::BooleanFlagAttributeQueryCXX::new(find_boolean_flag_attribute(file, offset))
 }
 
@@ -359,7 +369,7 @@ mod tests {
     use crate::mapped_file::get_mapped_file;
     use crate::test_utils::copy_to_temp_file;
     use aconfig_storage_file::protos::storage_record_pb::write_proto_to_temp_file;
-    use aconfig_storage_file::FlagInfoBit;
+    use aconfig_storage_file::{FlagInfoBit, StoredFlagType};
     use tempfile::NamedTempFile;
 
     fn create_test_storage_files() -> [NamedTempFile; 5] {
@@ -429,19 +439,20 @@ files {{
             unsafe { get_mapped_file(&pb_file_path, "mockup", StorageFileType::FlagMap).unwrap() };
 
         let baseline = vec![
-            (0, "enabled_ro", 1u16),
-            (0, "enabled_rw", 2u16),
-            (1, "disabled_ro", 0u16),
-            (2, "enabled_ro", 1u16),
-            (1, "enabled_fixed_ro", 1u16),
-            (1, "enabled_ro", 2u16),
-            (2, "enabled_fixed_ro", 0u16),
-            (0, "disabled_rw", 0u16),
+            (0, "enabled_ro", StoredFlagType::ReadOnlyBoolean, 1u16),
+            (0, "enabled_rw", StoredFlagType::ReadWriteBoolean, 2u16),
+            (1, "disabled_ro", StoredFlagType::ReadOnlyBoolean, 0u16),
+            (2, "enabled_ro", StoredFlagType::ReadOnlyBoolean, 1u16),
+            (1, "enabled_fixed_ro", StoredFlagType::FixedReadOnlyBoolean, 1u16),
+            (1, "enabled_ro", StoredFlagType::ReadOnlyBoolean, 2u16),
+            (2, "enabled_fixed_ro", StoredFlagType::FixedReadOnlyBoolean, 0u16),
+            (0, "disabled_rw", StoredFlagType::ReadWriteBoolean, 0u16),
         ];
-        for (package_id, flag_name, expected_offset) in baseline.into_iter() {
+        for (package_id, flag_name, flag_type, flag_id) in baseline.into_iter() {
             let flag_offset =
                 get_flag_offset(&flag_mapped_file, package_id, flag_name).unwrap().unwrap();
-            assert_eq!(flag_offset, expected_offset);
+            assert_eq!(flag_offset.flag_type, flag_type);
+            assert_eq!(flag_offset.flag_id, flag_id);
         }
     }
 
