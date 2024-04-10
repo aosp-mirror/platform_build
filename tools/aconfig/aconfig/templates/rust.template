@@ -1,6 +1,6 @@
 //! codegenerated rust flag lib
 
-use aconfig_storage_read_api::\{StorageFileType, get_mapped_storage_file, get_boolean_flag_value, get_package_offset};
+// use aconfig_storage_read_api::\{StorageFileType, get_mapped_storage_file, get_boolean_flag_value, get_package_offset};
 use std::path::Path;
 use std::io::Write;
 use log::\{log, LevelFilter, Level};
@@ -61,6 +61,7 @@ pub fn {flag.name}() -> bool \{
         return result;
     }
 
+    /*
     // This will be called multiple times. Subsequent calls after the first
     // are noops.
     logger::init(
@@ -110,6 +111,8 @@ pub fn {flag.name}() -> bool \{
             log!(Level::Info, "AconfigTestMission1: success! flag '{flag.name}' contained correct value. Legacy storage was \{default_value}, new storage was \{value}");
         }
     }
+
+    */
 
     result
     {{ endif }}
