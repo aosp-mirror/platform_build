@@ -27,10 +27,18 @@ struct PackageOffset {
   uint32_t boolean_offset;
 };
 
+/// Flag type enum, to be consistent with the one defined in aconfig_storage_file/src/lib.rs
+enum StoredFlagType {
+  ReadWriteBoolean = 0,
+  ReadOnlyBoolean = 1,
+  FixedReadOnlyBoolean = 2,
+};
+
 /// Flag offset query result
 struct FlagOffset {
   bool flag_exists;
-  uint16_t flag_offset;
+  StoredFlagType flag_type;
+  uint16_t flag_id;
 };
 
 /// DO NOT USE APIS IN THE FOLLOWING NAMESPACE DIRECTLY
@@ -83,7 +91,7 @@ android::base::Result<bool> get_boolean_flag_value(
     MappedStorageFile const& file,
     uint32_t offset);
 
-/// Flag info enum, to be consistent with the one defined in src/lib.rs
+/// Flag info enum, to be consistent with the one defined in aconfig_storage_file/src/lib.rs
 enum FlagInfoBit {
   IsSticky = 1<<0,
   IsReadWrite = 1<<1,

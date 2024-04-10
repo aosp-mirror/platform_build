@@ -155,7 +155,8 @@ Result<FlagOffset> get_flag_offset(
   if (offset_cxx.query_success) {
     auto offset = FlagOffset();
     offset.flag_exists = offset_cxx.flag_exists;
-    offset.flag_offset = offset_cxx.flag_offset;
+    offset.flag_type = static_cast<StoredFlagType>(offset_cxx.flag_type);
+    offset.flag_id = offset_cxx.flag_id;
     return offset;
   } else {
    return Error() << offset_cxx.error_message;
