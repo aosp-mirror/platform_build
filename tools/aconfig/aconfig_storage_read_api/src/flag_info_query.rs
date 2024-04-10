@@ -21,10 +21,7 @@ use aconfig_storage_file::{flag_info::FlagInfoHeader, read_u8_from_bytes};
 use anyhow::anyhow;
 
 /// Get flag attribute bitfield
-pub fn find_boolean_flag_attribute(
-    buf: &[u8],
-    flag_offset: u32,
-) -> Result<u8, AconfigStorageError> {
+pub fn find_boolean_flag_attribute(buf: &[u8], flag_index: u32) -> Result<u8, AconfigStorageError> {
     let interpreted_header = FlagInfoHeader::from_bytes(buf)?;
     if interpreted_header.version > crate::FILE_VERSION {
         return Err(AconfigStorageError::HigherStorageFileVersion(anyhow!(
@@ -34,8 +31,8 @@ pub fn find_boolean_flag_attribute(
         )));
     }
 
-    let mut head = (interpreted_header.boolean_flag_offset + flag_offset) as usize;
-
+    // Find the byte offset to the flag info, each flag info now takes one byte
+    let mut head = (interpreted_header.boolean_flag_offset + flag_index) as usize;
     if head >= interpreted_header.file_size as usize {
         return Err(AconfigStorageError::InvalidStorageFileOffset(anyhow!(
             "Flag info offset goes beyond the end of the file."

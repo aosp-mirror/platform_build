@@ -38,19 +38,19 @@ pub fn create_test_package_table() -> PackageTable {
     let first_node = PackageTableNode {
         package_name: String::from("com.android.aconfig.storage.test_2"),
         package_id: 1,
-        boolean_offset: 3,
+        boolean_start_index: 3,
         next_offset: None,
     };
     let second_node = PackageTableNode {
         package_name: String::from("com.android.aconfig.storage.test_1"),
         package_id: 0,
-        boolean_offset: 0,
+        boolean_start_index: 0,
         next_offset: Some(159),
     };
     let third_node = PackageTableNode {
         package_name: String::from("com.android.aconfig.storage.test_4"),
         package_id: 2,
-        boolean_offset: 6,
+        boolean_start_index: 6,
         next_offset: None,
     };
     let nodes = vec![first_node, second_node, third_node];
@@ -63,14 +63,14 @@ impl FlagTableNode {
         package_id: u32,
         flag_name: &str,
         flag_type: u16,
-        flag_id: u16,
+        flag_index: u16,
         next_offset: Option<u32>,
     ) -> Self {
         Self {
             package_id,
             flag_name: flag_name.to_string(),
             flag_type: StoredFlagType::try_from(flag_type).unwrap(),
-            flag_id,
+            flag_index,
             next_offset,
         }
     }

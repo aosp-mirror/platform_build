@@ -100,7 +100,8 @@ pub struct FlagTableNode {
     pub package_id: u32,
     pub flag_name: String,
     pub flag_type: StoredFlagType,
-    pub flag_id: u16,
+    // within package flag index of this flag type
+    pub flag_index: u16,
     pub next_offset: Option<u32>,
 }
 
@@ -109,8 +110,8 @@ impl fmt::Debug for FlagTableNode {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         writeln!(
             f,
-            "Package Id: {}, Flag: {}, Type: {:?}, Offset: {}, Next: {:?}",
-            self.package_id, self.flag_name, self.flag_type, self.flag_id, self.next_offset
+            "Package Id: {}, Flag: {}, Type: {:?}, Index: {}, Next: {:?}",
+            self.package_id, self.flag_name, self.flag_type, self.flag_index, self.next_offset
         )?;
         Ok(())
     }
@@ -125,7 +126,7 @@ impl FlagTableNode {
         result.extend_from_slice(&(name_bytes.len() as u32).to_le_bytes());
         result.extend_from_slice(name_bytes);
         result.extend_from_slice(&(self.flag_type as u16).to_le_bytes());
-        result.extend_from_slice(&self.flag_id.to_le_bytes());
+        result.extend_from_slice(&self.flag_index.to_le_bytes());
         result.extend_from_slice(&self.next_offset.unwrap_or(0).to_le_bytes());
         result
     }
@@ -137,7 +138,7 @@ impl FlagTableNode {
             package_id: read_u32_from_bytes(bytes, &mut head)?,
             flag_name: read_str_from_bytes(bytes, &mut head)?,
             flag_type: StoredFlagType::try_from(read_u16_from_bytes(bytes, &mut head)?)?,
-            flag_id: read_u16_from_bytes(bytes, &mut head)?,
+            flag_index: read_u16_from_bytes(bytes, &mut head)?,
             next_offset: match read_u32_from_bytes(bytes, &mut head)? {
                 0 => None,
                 val => Some(val),
