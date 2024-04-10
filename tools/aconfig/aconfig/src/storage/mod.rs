@@ -33,9 +33,9 @@ pub struct FlagPackage<'a> {
     pub package_id: u32,
     pub flag_names: HashSet<&'a str>,
     pub boolean_flags: Vec<&'a ProtoParsedFlag>,
-    // offset of the first boolean flag in this flag package with respect to the start of
-    // boolean flag value array in the flag value file
-    pub boolean_offset: u32,
+    // The index of the first boolean flag in this aconfig package among all boolean
+    // flags in this container.
+    pub boolean_start_index: u32,
 }
 
 impl<'a> FlagPackage<'a> {
@@ -45,7 +45,7 @@ impl<'a> FlagPackage<'a> {
             package_id,
             flag_names: HashSet::new(),
             boolean_flags: vec![],
-            boolean_offset: 0,
+            boolean_start_index: 0,
         }
     }
 
@@ -73,12 +73,11 @@ where
         }
     }
 
-    // calculate package flag value start offset, in flag value file, each boolean
-    // is stored as a single byte
-    let mut boolean_offset = 0;
+    // cacluate boolean flag start index for each package
+    let mut boolean_start_index = 0;
     for p in packages.iter_mut() {
-        p.boolean_offset = boolean_offset;
-        boolean_offset += p.boolean_flags.len() as u32;
+        p.boolean_start_index = boolean_start_index;
+        boolean_start_index += p.boolean_flags.len() as u32;
     }
 
     packages
@@ -184,7 +183,7 @@ mod tests {
         assert!(packages[0].flag_names.contains("enabled_rw"));
         assert!(packages[0].flag_names.contains("disabled_rw"));
         assert!(packages[0].flag_names.contains("enabled_ro"));
-        assert_eq!(packages[0].boolean_offset, 0);
+        assert_eq!(packages[0].boolean_start_index, 0);
 
         assert_eq!(packages[1].package_name, "com.android.aconfig.storage.test_2");
         assert_eq!(packages[1].package_id, 1);
@@ -192,13 +191,13 @@ mod tests {
         assert!(packages[1].flag_names.contains("enabled_ro"));
         assert!(packages[1].flag_names.contains("disabled_ro"));
         assert!(packages[1].flag_names.contains("enabled_fixed_ro"));
-        assert_eq!(packages[1].boolean_offset, 3);
+        assert_eq!(packages[1].boolean_start_index, 3);
 
         assert_eq!(packages[2].package_name, "com.android.aconfig.storage.test_4");
         assert_eq!(packages[2].package_id, 2);
         assert_eq!(packages[2].flag_names.len(), 2);
         assert!(packages[2].flag_names.contains("enabled_ro"));
         assert!(packages[2].flag_names.contains("enabled_fixed_ro"));
-        assert_eq!(packages[2].boolean_offset, 6);
+        assert_eq!(packages[2].boolean_start_index, 6);
     }
 }

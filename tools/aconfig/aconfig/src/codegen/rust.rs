@@ -107,7 +107,7 @@ mod tests {
 
     const PROD_EXPECTED: &str = r#"
 //! codegenerated rust flag lib
-use aconfig_storage_read_api::{StorageFileType, get_mapped_storage_file, get_boolean_flag_value, get_package_offset};
+// use aconfig_storage_read_api::{StorageFileType, get_mapped_storage_file, get_boolean_flag_value, get_package_offset};
 use std::path::Path;
 use std::io::Write;
 use log::{log, LevelFilter, Level};
@@ -510,7 +510,7 @@ pub fn reset_flags() {
 
     const EXPORTED_EXPECTED: &str = r#"
 //! codegenerated rust flag lib
-use aconfig_storage_read_api::{StorageFileType, get_mapped_storage_file, get_boolean_flag_value, get_package_offset};
+// use aconfig_storage_read_api::{StorageFileType, get_mapped_storage_file, get_boolean_flag_value, get_package_offset};
 use std::path::Path;
 use std::io::Write;
 use log::{log, LevelFilter, Level};
@@ -584,7 +584,7 @@ pub fn enabled_ro_exported() -> bool {
 
     const FORCE_READ_ONLY_EXPECTED: &str = r#"
 //! codegenerated rust flag lib
-use aconfig_storage_read_api::{StorageFileType, get_mapped_storage_file, get_boolean_flag_value, get_package_offset};
+// use aconfig_storage_read_api::{StorageFileType, get_mapped_storage_file, get_boolean_flag_value, get_package_offset};
 use std::path::Path;
 use std::io::Write;
 use log::{log, LevelFilter, Level};
