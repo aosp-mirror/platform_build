@@ -48,7 +48,7 @@ impl FlagTableNodeWrapper {
         package_id: u32,
         flag_name: &str,
         flag_type: StoredFlagType,
-        flag_id: u16,
+        flag_index: u16,
         num_buckets: u32,
     ) -> Self {
         let bucket_index = FlagTableNode::find_bucket_index(package_id, flag_name, num_buckets);
@@ -56,7 +56,7 @@ impl FlagTableNodeWrapper {
             package_id,
             flag_name: flag_name.to_string(),
             flag_type,
-            flag_id,
+            flag_index,
             next_offset: None,
         };
         Self { node, bucket_index }

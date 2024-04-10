@@ -22,7 +22,7 @@ use anyhow::anyhow;
 /// Set flag value
 pub fn update_boolean_flag_value(
     buf: &mut [u8],
-    flag_offset: u32,
+    flag_index: u32,
     flag_value: bool,
 ) -> Result<(), AconfigStorageError> {
     let interpreted_header = FlagValueHeader::from_bytes(buf)?;
@@ -34,10 +34,8 @@ pub fn update_boolean_flag_value(
         )));
     }
 
-    let head = (interpreted_header.boolean_value_offset + flag_offset) as usize;
-
-    // TODO: right now, there is only boolean flags, with more flag value types added
-    // later, the end of boolean flag value section should be updated (b/322826265).
+    // get byte offset to the flag
+    let head = (interpreted_header.boolean_value_offset + flag_index) as usize;
     if head >= interpreted_header.file_size as usize {
         return Err(AconfigStorageError::InvalidStorageFileOffset(anyhow!(
             "Flag value offset goes beyond the end of the file."

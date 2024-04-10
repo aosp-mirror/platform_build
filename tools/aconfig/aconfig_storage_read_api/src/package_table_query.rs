@@ -24,16 +24,16 @@ use anyhow::anyhow;
 
 /// Package table query return
 #[derive(PartialEq, Debug)]
-pub struct PackageOffset {
+pub struct PackageReadContext {
     pub package_id: u32,
-    pub boolean_offset: u32,
+    pub boolean_start_index: u32,
 }
 
-/// Query package id and start offset
-pub fn find_package_offset(
+/// Query package read context: package id and start index
+pub fn find_package_read_context(
     buf: &[u8],
     package: &str,
-) -> Result<Option<PackageOffset>, AconfigStorageError> {
+) -> Result<Option<PackageReadContext>, AconfigStorageError> {
     let interpreted_header = PackageTableHeader::from_bytes(buf)?;
     if interpreted_header.version > FILE_VERSION {
         return Err(AconfigStorageError::HigherStorageFileVersion(anyhow!(
@@ -57,9 +57,9 @@ pub fn find_package_offset(
     loop {
         let interpreted_node = PackageTableNode::from_bytes(&buf[package_node_offset..])?;
         if interpreted_node.package_name == package {
-            return Ok(Some(PackageOffset {
+            return Ok(Some(PackageReadContext {
                 package_id: interpreted_node.package_id,
-                boolean_offset: interpreted_node.boolean_offset,
+                boolean_start_index: interpreted_node.boolean_start_index,
             }));
         }
         match interpreted_node.next_offset {
@@ -78,24 +78,24 @@ mod tests {
     // this test point locks down table query
     fn test_package_query() {
         let package_table = create_test_package_table().into_bytes();
-        let package_offset =
-            find_package_offset(&package_table[..], "com.android.aconfig.storage.test_1")
+        let package_context =
+            find_package_read_context(&package_table[..], "com.android.aconfig.storage.test_1")
                 .unwrap()
                 .unwrap();
-        let expected_package_offset = PackageOffset { package_id: 0, boolean_offset: 0 };
-        assert_eq!(package_offset, expected_package_offset);
-        let package_offset =
-            find_package_offset(&package_table[..], "com.android.aconfig.storage.test_2")
+        let expected_package_context = PackageReadContext { package_id: 0, boolean_start_index: 0 };
+        assert_eq!(package_context, expected_package_context);
+        let package_context =
+            find_package_read_context(&package_table[..], "com.android.aconfig.storage.test_2")
                 .unwrap()
                 .unwrap();
-        let expected_package_offset = PackageOffset { package_id: 1, boolean_offset: 3 };
-        assert_eq!(package_offset, expected_package_offset);
-        let package_offset =
-            find_package_offset(&package_table[..], "com.android.aconfig.storage.test_4")
+        let expected_package_context = PackageReadContext { package_id: 1, boolean_start_index: 3 };
+        assert_eq!(package_context, expected_package_context);
+        let package_context =
+            find_package_read_context(&package_table[..], "com.android.aconfig.storage.test_4")
                 .unwrap()
                 .unwrap();
-        let expected_package_offset = PackageOffset { package_id: 2, boolean_offset: 6 };
-        assert_eq!(package_offset, expected_package_offset);
+        let expected_package_context = PackageReadContext { package_id: 2, boolean_start_index: 6 };
+        assert_eq!(package_context, expected_package_context);
     }
 
     #[test]
@@ -103,13 +103,15 @@ mod tests {
     fn test_not_existed_package_query() {
         // this will land at an empty bucket
         let package_table = create_test_package_table().into_bytes();
-        let package_offset =
-            find_package_offset(&package_table[..], "com.android.aconfig.storage.test_3").unwrap();
-        assert_eq!(package_offset, None);
+        let package_context =
+            find_package_read_context(&package_table[..], "com.android.aconfig.storage.test_3")
+                .unwrap();
+        assert_eq!(package_context, None);
         // this will land at the end of a linked list
-        let package_offset =
-            find_package_offset(&package_table[..], "com.android.aconfig.storage.test_5").unwrap();
-        assert_eq!(package_offset, None);
+        let package_context =
+            find_package_read_context(&package_table[..], "com.android.aconfig.storage.test_5")
+                .unwrap();
+        assert_eq!(package_context, None);
     }
 
     #[test]
@@ -118,8 +120,9 @@ mod tests {
         let mut table = create_test_package_table();
         table.header.version = crate::FILE_VERSION + 1;
         let package_table = table.into_bytes();
-        let error = find_package_offset(&package_table[..], "com.android.aconfig.storage.test_1")
-            .unwrap_err();
+        let error =
+            find_package_read_context(&package_table[..], "com.android.aconfig.storage.test_1")
+                .unwrap_err();
         assert_eq!(
             format!("{:?}", error),
             format!(
