@@ -44,12 +44,6 @@ ifeq (,$(BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE))
   BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := false
 endif
 
-# ART does not provide host side arm64 variants needed for products that
-# set HOST_CROSS_ARCH=arm64.
-ifeq (arm64,${HOST_CROSS_ARCH})
-  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
-endif
-
 ifneq (,$(MODULE_BUILD_FROM_SOURCE))
   # Keep an explicit setting.
 else ifeq (,$(filter docs sdk win_sdk sdk_addon,$(MAKECMDGOALS))$(findstring com.google.android.conscrypt,$(PRODUCT_PACKAGES))$(findstring com.google.android.go.conscrypt,$(PRODUCT_PACKAGES)))
