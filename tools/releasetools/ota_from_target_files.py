@@ -1288,7 +1288,7 @@ def main(argv):
       assert len(words) >= 1 and len(words) <= 2
       OPTIONS.vabc_compression_param = a.lower()
       if len(words) == 2:
-        if not words[1].isdigit():
+        if not words[1].lstrip("-").isdigit():
           raise ValueError("Cannot parse value %r for option $COMPRESSION_LEVEL - only "
                            "integers are allowed." % words[1])
     elif o == "--security_patch_level":
