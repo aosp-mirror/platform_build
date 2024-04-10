@@ -38,6 +38,7 @@ rust_test_host {
         "tests/package.map",
         "tests/flag.map",
         "tests/flag.val",
+        "tests/flag.info",
     ],
 }
 

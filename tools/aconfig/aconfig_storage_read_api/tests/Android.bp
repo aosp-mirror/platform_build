@@ -14,6 +14,7 @@ rust_test {
         "package.map",
         "flag.map",
         "flag.val",
+        "flag.info",
     ],
     test_suites: ["general-tests"],
 }
@@ -35,6 +36,7 @@ cc_test {
         "package.map",
         "flag.map",
         "flag.val",
+        "flag.info",
     ],
     test_suites: [
         "device-tests",
