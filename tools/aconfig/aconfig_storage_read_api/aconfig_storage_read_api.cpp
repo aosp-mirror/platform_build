@@ -54,6 +54,8 @@ static Result<std::string> find_storage_file(
           return entry.flag_map();
         case StorageFileType::flag_val:
           return entry.flag_val();
+        case StorageFileType::flag_info:
+          return entry.flag_info();
         default:
           return Error() << "Invalid file type " << file_type;
       }
@@ -124,49 +126,50 @@ Result<uint32_t> get_storage_file_version(
   }
 }
 
-/// Get package offset
-Result<PackageOffset> get_package_offset(
+/// Get package context
+Result<PackageReadContext> get_package_read_context(
     MappedStorageFile const& file,
     std::string const& package) {
   auto content = rust::Slice<const uint8_t>(
       static_cast<uint8_t*>(file.file_ptr), file.file_size);
-  auto offset_cxx = get_package_offset_cxx(content, rust::Str(package.c_str()));
-  if (offset_cxx.query_success) {
-    auto offset = PackageOffset();
-    offset.package_exists = offset_cxx.package_exists;
-    offset.package_id = offset_cxx.package_id;
-    offset.boolean_offset = offset_cxx.boolean_offset;
-    return offset;
+  auto context_cxx = get_package_read_context_cxx(content, rust::Str(package.c_str()));
+  if (context_cxx.query_success) {
+    auto context = PackageReadContext();
+    context.package_exists = context_cxx.package_exists;
+    context.package_id = context_cxx.package_id;
+    context.boolean_start_index = context_cxx.boolean_start_index;
+    return context;
   } else {
-    return Error() << offset_cxx.error_message;
+    return Error() << context_cxx.error_message;
   }
 }
 
-/// Get flag offset
-Result<FlagOffset> get_flag_offset(
+/// Get flag read context
+Result<FlagReadContext> get_flag_read_context(
     MappedStorageFile const& file,
     uint32_t package_id,
     std::string const& flag_name){
   auto content = rust::Slice<const uint8_t>(
       static_cast<uint8_t*>(file.file_ptr), file.file_size);
-  auto offset_cxx = get_flag_offset_cxx(content, package_id, rust::Str(flag_name.c_str()));
-  if (offset_cxx.query_success) {
-    auto offset = FlagOffset();
-    offset.flag_exists = offset_cxx.flag_exists;
-    offset.flag_offset = offset_cxx.flag_offset;
-    return offset;
+  auto context_cxx = get_flag_read_context_cxx(content, package_id, rust::Str(flag_name.c_str()));
+  if (context_cxx.query_success) {
+    auto context = FlagReadContext();
+    context.flag_exists = context_cxx.flag_exists;
+    context.flag_type = static_cast<StoredFlagType>(context_cxx.flag_type);
+    context.flag_index = context_cxx.flag_index;
+    return context;
   } else {
-   return Error() << offset_cxx.error_message;
+   return Error() << context_cxx.error_message;
   }
 }
 
 /// Get boolean flag value
 Result<bool> get_boolean_flag_value(
     MappedStorageFile const& file,
-    uint32_t offset) {
+    uint32_t index) {
   auto content = rust::Slice<const uint8_t>(
       static_cast<uint8_t*>(file.file_ptr), file.file_size);
-  auto value_cxx = get_boolean_flag_value_cxx(content, offset);
+  auto value_cxx = get_boolean_flag_value_cxx(content, index);
   if (value_cxx.query_success) {
     return value_cxx.flag_value;
   } else {
@@ -174,4 +177,17 @@ Result<bool> get_boolean_flag_value(
   }
 }
 
+/// Get boolean flag attribute
+Result<uint8_t> get_boolean_flag_attribute(
+    MappedStorageFile const& file,
+    uint32_t index) {
+  auto content = rust::Slice<const uint8_t>(
+      static_cast<uint8_t*>(file.file_ptr), file.file_size);
+  auto info_cxx = get_boolean_flag_attribute_cxx(content, index);
+  if (info_cxx.query_success) {
+    return info_cxx.flag_attribute;
+  } else {
+    return Error() << info_cxx.error_message;
+  }
+}
 } // namespace aconfig_storage
