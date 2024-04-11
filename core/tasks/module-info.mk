@@ -39,7 +39,7 @@ $(MODULE_INFO_JSON): $(SOONG_MODULE_INFO)
 			$(call write-optional-json-list, "srcjars", $(sort $(ALL_MODULES.$(m).SRCJARS))) \
 			$(call write-optional-json-list, "classes_jar", $(sort $(ALL_MODULES.$(m).CLASSES_JAR))) \
 			$(call write-optional-json-list, "test_mainline_modules", $(sort $(ALL_MODULES.$(m).TEST_MAINLINE_MODULES))) \
-			$(call write-optional-json-bool, $(ALL_MODULES.$(m).IS_UNIT_TEST)) \
+			$(call write-optional-json-bool, "is_unit_test", $(ALL_MODULES.$(m).IS_UNIT_TEST)) \
 			$(call write-optional-json-list, "test_options_tags", $(sort $(ALL_MODULES.$(m).TEST_OPTIONS_TAGS))) \
 			$(call write-optional-json-list, "data", $(sort $(ALL_MODULES.$(m).TEST_DATA))) \
 			$(call write-optional-json-list, "runtime_dependencies", $(sort $(ALL_MODULES.$(m).LOCAL_RUNTIME_LIBRARIES))) \
