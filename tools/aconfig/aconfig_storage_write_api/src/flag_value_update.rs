@@ -49,20 +49,7 @@ pub fn update_boolean_flag_value(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::{FlagValueList, StorageFileType};
-
-    pub fn create_test_flag_value_list() -> FlagValueList {
-        let header = FlagValueHeader {
-            version: FILE_VERSION,
-            container: String::from("system"),
-            file_type: StorageFileType::FlagVal as u8,
-            file_size: 35,
-            num_flags: 8,
-            boolean_value_offset: 27,
-        };
-        let booleans: Vec<bool> = vec![false; 8];
-        FlagValueList { header, booleans }
-    }
+    use aconfig_storage_file::test_utils::create_test_flag_value_list;
 
     #[test]
     // this test point locks down flag value update
