@@ -41,14 +41,14 @@ pub fn create_flag_value(container: &str, packages: &[FlagPackage]) -> Result<Fl
     };
 
     for pkg in packages.iter() {
-        let start_offset = pkg.boolean_offset as usize;
+        let start_index = pkg.boolean_start_index as usize;
         let flag_ids = assign_flag_ids(pkg.package_name, pkg.boolean_flags.iter().copied())?;
         for pf in pkg.boolean_flags.iter() {
             let fid = flag_ids
                 .get(pf.name())
                 .ok_or(anyhow!(format!("missing flag id for {}", pf.name())))?;
 
-            list.booleans[start_offset + (*fid as usize)] = pf.state() == ProtoFlagState::ENABLED;
+            list.booleans[start_index + (*fid as usize)] = pf.state() == ProtoFlagState::ENABLED;
         }
     }
 
