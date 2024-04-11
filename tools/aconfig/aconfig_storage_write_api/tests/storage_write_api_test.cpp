@@ -170,7 +170,8 @@ TEST_F(AconfigStorageTest, test_flag_is_sticky_update) {
     auto ro_mapped_file = api::MappedStorageFile();
     ro_mapped_file.file_ptr = mapped_file.file_ptr;
     ro_mapped_file.file_size = mapped_file.file_size;
-    auto attribute = api::get_boolean_flag_attribute(ro_mapped_file, offset);
+    auto attribute = api::get_flag_attribute(
+        ro_mapped_file, api::FlagValueType::Boolean, offset);
     ASSERT_TRUE(attribute.ok());
     ASSERT_TRUE(*attribute & api::FlagInfoBit::IsSticky);
 
@@ -179,7 +180,8 @@ TEST_F(AconfigStorageTest, test_flag_is_sticky_update) {
     ASSERT_TRUE(update_result.ok());
     ro_mapped_file.file_ptr = mapped_file.file_ptr;
     ro_mapped_file.file_size = mapped_file.file_size;
-    attribute = api::get_boolean_flag_attribute(ro_mapped_file, offset);
+    attribute = api::get_flag_attribute(
+        ro_mapped_file, api::FlagValueType::Boolean, offset);
     ASSERT_TRUE(attribute.ok());
     ASSERT_FALSE(*attribute & api::FlagInfoBit::IsSticky);
   }
@@ -199,7 +201,8 @@ TEST_F(AconfigStorageTest, test_flag_has_override_update) {
     auto ro_mapped_file = api::MappedStorageFile();
     ro_mapped_file.file_ptr = mapped_file.file_ptr;
     ro_mapped_file.file_size = mapped_file.file_size;
-    auto attribute = api::get_boolean_flag_attribute(ro_mapped_file, offset);
+    auto attribute = api::get_flag_attribute(
+        ro_mapped_file, api::FlagValueType::Boolean, offset);
     ASSERT_TRUE(attribute.ok());
     ASSERT_TRUE(*attribute & api::FlagInfoBit::HasOverride);
 
@@ -208,7 +211,8 @@ TEST_F(AconfigStorageTest, test_flag_has_override_update) {
     ASSERT_TRUE(update_result.ok());
     ro_mapped_file.file_ptr = mapped_file.file_ptr;
     ro_mapped_file.file_size = mapped_file.file_size;
-    attribute = api::get_boolean_flag_attribute(ro_mapped_file, offset);
+    attribute = api::get_flag_attribute(
+        ro_mapped_file, api::FlagValueType::Boolean, offset);
     ASSERT_TRUE(attribute.ok());
     ASSERT_FALSE(*attribute & api::FlagInfoBit::HasOverride);
   }
