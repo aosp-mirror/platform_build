@@ -38,7 +38,8 @@ static Result<storage_records_pb> read_storage_records_pb(std::string const& pb_
 /// Get storage file path
 static Result<std::string> find_storage_file(
     std::string const& pb_file,
-    std::string const& container) {
+    std::string const& container,
+    StorageFileType file_type) {
   auto records_pb = read_storage_records_pb(pb_file);
   if (!records_pb.ok()) {
     return Error() << "Unable to read storage records from " << pb_file
@@ -47,15 +48,26 @@ static Result<std::string> find_storage_file(
 
   for (auto& entry : records_pb->files()) {
     if (entry.container() == container) {
-        return entry.flag_val();
+      switch(file_type) {
+        case StorageFileType::package_map:
+          return entry.package_map();
+        case StorageFileType::flag_map:
+          return entry.flag_map();
+        case StorageFileType::flag_val:
+          return entry.flag_val();
+        case StorageFileType::flag_info:
+          return entry.flag_info();
+        default:
+          return Error() << "Invalid file type " << file_type;
+      }
     }
   }
 
-  return Error() << "Unable to find storage files for container " << container;;
+  return Error() << "Unable to find storage files for container " << container;
 }
 
 /// Map a storage file
-static Result<MappedFlagValueFile> map_storage_file(std::string const& file) {
+static Result<MutableMappedStorageFile> map_storage_file(std::string const& file) {
   struct stat file_stat;
   if (stat(file.c_str(), &file_stat) < 0) {
     return ErrnoError() << "stat failed";
@@ -78,7 +90,7 @@ static Result<MappedFlagValueFile> map_storage_file(std::string const& file) {
     return ErrnoError() << "mmap failed";
   }
 
-  auto mapped_file = MappedFlagValueFile();
+  auto mapped_file = MutableMappedStorageFile();
   mapped_file.file_ptr = map_result;
   mapped_file.file_size = file_size;
 
@@ -87,39 +99,74 @@ static Result<MappedFlagValueFile> map_storage_file(std::string const& file) {
 
 namespace private_internal_api {
 
-/// Get mapped file implementation.
-Result<MappedFlagValueFile> get_mapped_flag_value_file_impl(
+/// Get mutable mapped file implementation.
+Result<MutableMappedStorageFile> get_mutable_mapped_file_impl(
     std::string const& pb_file,
-    std::string const& container) {
-  auto file_result = find_storage_file(pb_file, container);
+    std::string const& container,
+    StorageFileType file_type) {
+  if (file_type != StorageFileType::flag_val &&
+      file_type != StorageFileType::flag_info) {
+    return Error() << "Cannot create mutable mapped file for this file type";
+  }
+
+  auto file_result = find_storage_file(pb_file, container, file_type);
   if (!file_result.ok()) {
     return Error() << file_result.error();
   }
-  auto mapped_result = map_storage_file(*file_result);
-  if (!mapped_result.ok()) {
-    return Error() << "failed to map " << *file_result << ": "
-                   << mapped_result.error();
-  }
-  return *mapped_result;
+
+  return map_storage_file(*file_result);
 }
 
 } // namespace private internal api
 
-/// Get mapped writeable flag value file
-Result<MappedFlagValueFile> get_mapped_flag_value_file(
-    std::string const& container) {
-  return private_internal_api::get_mapped_flag_value_file_impl(
-      kPersistStorageRecordsPb, container);
+/// Get mutable mapped file
+Result<MutableMappedStorageFile> get_mutable_mapped_file(
+    std::string const& container,
+    StorageFileType file_type) {
+  return private_internal_api::get_mutable_mapped_file_impl(
+      kPersistStorageRecordsPb, container, file_type);
 }
 
 /// Set boolean flag value
 Result<void> set_boolean_flag_value(
-    const MappedFlagValueFile& file,
+    const MutableMappedStorageFile& file,
     uint32_t offset,
     bool value) {
   auto content = rust::Slice<uint8_t>(
       static_cast<uint8_t*>(file.file_ptr), file.file_size);
   auto update_cxx = update_boolean_flag_value_cxx(content, offset, value);
+  if (!update_cxx.update_success) {
+    return Error() << std::string(update_cxx.error_message.c_str());
+  }
+  return {};
+}
+
+/// Set if flag is sticky
+Result<void> set_flag_is_sticky(
+    const MutableMappedStorageFile& file,
+    FlagValueType value_type,
+    uint32_t offset,
+    bool value) {
+  auto content = rust::Slice<uint8_t>(
+      static_cast<uint8_t*>(file.file_ptr), file.file_size);
+  auto update_cxx = update_flag_is_sticky_cxx(
+      content, static_cast<uint16_t>(value_type), offset, value);
+  if (!update_cxx.update_success) {
+    return Error() << std::string(update_cxx.error_message.c_str());
+  }
+  return {};
+}
+
+/// Set if flag has override
+Result<void> set_flag_has_override(
+    const MutableMappedStorageFile& file,
+    FlagValueType value_type,
+    uint32_t offset,
+    bool value) {
+  auto content = rust::Slice<uint8_t>(
+      static_cast<uint8_t*>(file.file_ptr), file.file_size);
+  auto update_cxx = update_flag_has_override_cxx(
+      content, static_cast<uint16_t>(value_type), offset, value);
   if (!update_cxx.update_success) {
     return Error() << std::string(update_cxx.error_message.c_str());
   }
