@@ -2,7 +2,7 @@
 mod aconfig_storage_write_api_test {
     use aconfig_storage_file::protos::ProtoStorageFiles;
     use aconfig_storage_file::{FlagInfoBit, FlagValueType, StorageFileType};
-    use aconfig_storage_read_api::flag_info_query::find_boolean_flag_attribute;
+    use aconfig_storage_read_api::flag_info_query::find_flag_attribute;
     use aconfig_storage_read_api::flag_value_query::find_boolean_flag_value;
     use aconfig_storage_write_api::{
         mapped_file::get_mapped_file, set_boolean_flag_value, set_flag_has_override,
@@ -55,11 +55,11 @@ files {{
     }
 
     /// Get flag attribute at offset
-    fn get_flag_attribute_at_offset(file: &str, offset: u32) -> u8 {
+    fn get_flag_attribute_at_offset(file: &str, value_type: FlagValueType, offset: u32) -> u8 {
         let mut f = File::open(file).unwrap();
         let mut bytes = Vec::new();
         f.read_to_end(&mut bytes).unwrap();
-        find_boolean_flag_attribute(&bytes, offset).unwrap()
+        find_flag_attribute(&bytes, value_type, offset).unwrap()
     }
 
     #[test]
@@ -107,10 +107,12 @@ files {{
         };
         for i in 0..8 {
             set_flag_is_sticky(&mut file, FlagValueType::Boolean, i, true).unwrap();
-            let attribute = get_flag_attribute_at_offset(&flag_info_path, i);
+            let attribute =
+                get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
             assert!((attribute & (FlagInfoBit::IsSticky as u8)) != 0);
             set_flag_is_sticky(&mut file, FlagValueType::Boolean, i, false).unwrap();
-            let attribute = get_flag_attribute_at_offset(&flag_info_path, i);
+            let attribute =
+                get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
             assert!((attribute & (FlagInfoBit::IsSticky as u8)) == 0);
         }
     }
@@ -133,10 +135,12 @@ files {{
         };
         for i in 0..8 {
             set_flag_has_override(&mut file, FlagValueType::Boolean, i, true).unwrap();
-            let attribute = get_flag_attribute_at_offset(&flag_info_path, i);
+            let attribute =
+                get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
             assert!((attribute & (FlagInfoBit::HasOverride as u8)) != 0);
             set_flag_has_override(&mut file, FlagValueType::Boolean, i, false).unwrap();
-            let attribute = get_flag_attribute_at_offset(&flag_info_path, i);
+            let attribute =
+                get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
             assert!((attribute & (FlagInfoBit::HasOverride as u8)) == 0);
         }
     }

@@ -281,7 +281,7 @@ pub(crate) fn update_flag_is_sticky_cxx(
             match crate::flag_info_update::update_flag_is_sticky(file, value_type, offset, value) {
                 Ok(()) => ffi::FlagIsStickyUpdateCXX {
                     update_success: true,
-                    error_message: String::from("")
+                    error_message: String::from(""),
                 },
                 Err(errmsg) => ffi::FlagIsStickyUpdateCXX {
                     update_success: false,
@@ -292,7 +292,7 @@ pub(crate) fn update_flag_is_sticky_cxx(
         Err(errmsg) => ffi::FlagIsStickyUpdateCXX {
             update_success: false,
             error_message: format!("{:?}", errmsg),
-        }
+        },
     }
 }
 
@@ -304,10 +304,11 @@ pub(crate) fn update_flag_has_override_cxx(
 ) -> ffi::FlagHasOverrideUpdateCXX {
     match FlagValueType::try_from(flag_type) {
         Ok(value_type) => {
-            match crate::flag_info_update::update_flag_has_override(file, value_type, offset, value) {
+            match crate::flag_info_update::update_flag_has_override(file, value_type, offset, value)
+            {
                 Ok(()) => ffi::FlagHasOverrideUpdateCXX {
                     update_success: true,
-                    error_message: String::from("")
+                    error_message: String::from(""),
                 },
                 Err(errmsg) => ffi::FlagHasOverrideUpdateCXX {
                     update_success: false,
@@ -318,7 +319,7 @@ pub(crate) fn update_flag_has_override_cxx(
         Err(errmsg) => ffi::FlagHasOverrideUpdateCXX {
             update_success: false,
             error_message: format!("{:?}", errmsg),
-        }
+        },
     }
 }
 
@@ -346,7 +347,7 @@ mod tests {
         write_bytes_to_temp_file,
     };
     use aconfig_storage_file::FlagInfoBit;
-    use aconfig_storage_read_api::flag_info_query::find_boolean_flag_attribute;
+    use aconfig_storage_read_api::flag_info_query::find_flag_attribute;
     use aconfig_storage_read_api::flag_value_query::find_boolean_flag_value;
     use std::fs::File;
     use std::io::Read;
@@ -402,11 +403,11 @@ files {{
         }
     }
 
-    fn get_flag_attribute_at_offset(file: &str, offset: u32) -> u8 {
+    fn get_flag_attribute_at_offset(file: &str, value_type: FlagValueType, offset: u32) -> u8 {
         let mut f = File::open(&file).unwrap();
         let mut bytes = Vec::new();
         f.read_to_end(&mut bytes).unwrap();
-        find_boolean_flag_attribute(&bytes, offset).unwrap()
+        find_flag_attribute(&bytes, value_type, offset).unwrap()
     }
 
     #[test]
@@ -442,10 +443,10 @@ files {{
             .unwrap();
             for i in 0..8 {
                 set_flag_is_sticky(&mut file, FlagValueType::Boolean, i, true).unwrap();
-                let attribute = get_flag_attribute_at_offset(&flag_info_path, i);
+                let attribute = get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
                 assert!((attribute & (FlagInfoBit::IsSticky as u8)) != 0);
                 set_flag_is_sticky(&mut file, FlagValueType::Boolean, i, false).unwrap();
-                let attribute = get_flag_attribute_at_offset(&flag_info_path, i);
+                let attribute = get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
                 assert!((attribute & (FlagInfoBit::IsSticky as u8)) == 0);
             }
         }
@@ -484,10 +485,10 @@ files {{
             .unwrap();
             for i in 0..8 {
                 set_flag_has_override(&mut file, FlagValueType::Boolean, i, true).unwrap();
-                let attribute = get_flag_attribute_at_offset(&flag_info_path, i);
+                let attribute = get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
                 assert!((attribute & (FlagInfoBit::HasOverride as u8)) != 0);
                 set_flag_has_override(&mut file, FlagValueType::Boolean, i, false).unwrap();
-                let attribute = get_flag_attribute_at_offset(&flag_info_path, i);
+                let attribute = get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
                 assert!((attribute & (FlagInfoBit::HasOverride as u8)) == 0);
             }
         }

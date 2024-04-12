@@ -95,7 +95,7 @@ pub fn update_flag_has_override(
 mod tests {
     use super::*;
     use aconfig_storage_file::test_utils::create_test_flag_info_list;
-    use aconfig_storage_read_api::flag_info_query::find_boolean_flag_attribute;
+    use aconfig_storage_read_api::flag_info_query::find_flag_attribute;
 
     #[test]
     // this test point locks down is sticky update
@@ -104,10 +104,10 @@ mod tests {
         let mut buf = flag_info_list.into_bytes();
         for i in 0..flag_info_list.header.num_flags {
             update_flag_is_sticky(&mut buf, FlagValueType::Boolean, i, true).unwrap();
-            let attribute = find_boolean_flag_attribute(&buf, i).unwrap();
+            let attribute = find_flag_attribute(&buf, FlagValueType::Boolean, i).unwrap();
             assert!((attribute & (FlagInfoBit::IsSticky as u8)) != 0);
             update_flag_is_sticky(&mut buf, FlagValueType::Boolean, i, false).unwrap();
-            let attribute = find_boolean_flag_attribute(&buf, i).unwrap();
+            let attribute = find_flag_attribute(&buf, FlagValueType::Boolean, i).unwrap();
             assert!((attribute & (FlagInfoBit::IsSticky as u8)) == 0);
         }
     }
@@ -119,10 +119,10 @@ mod tests {
         let mut buf = flag_info_list.into_bytes();
         for i in 0..flag_info_list.header.num_flags {
             update_flag_has_override(&mut buf, FlagValueType::Boolean, i, true).unwrap();
-            let attribute = find_boolean_flag_attribute(&buf, i).unwrap();
+            let attribute = find_flag_attribute(&buf, FlagValueType::Boolean, i).unwrap();
             assert!((attribute & (FlagInfoBit::HasOverride as u8)) != 0);
             update_flag_has_override(&mut buf, FlagValueType::Boolean, i, false).unwrap();
-            let attribute = find_boolean_flag_attribute(&buf, i).unwrap();
+            let attribute = find_flag_attribute(&buf, FlagValueType::Boolean, i).unwrap();
             assert!((attribute & (FlagInfoBit::HasOverride as u8)) == 0);
         }
     }
