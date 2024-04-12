@@ -1,9 +1,9 @@
 #[cfg(not(feature = "cargo"))]
 mod aconfig_storage_rust_test {
     use aconfig_storage_file::protos::storage_record_pb::write_proto_to_temp_file;
-    use aconfig_storage_file::{FlagInfoBit, StorageFileType, StoredFlagType};
+    use aconfig_storage_file::{FlagInfoBit, FlagValueType, StorageFileType, StoredFlagType};
     use aconfig_storage_read_api::{
-        get_boolean_flag_attribute, get_boolean_flag_value, get_flag_read_context,
+        get_boolean_flag_value, get_flag_attribute, get_flag_read_context,
         get_package_read_context, get_storage_file_version, mapped_file::get_mapped_file,
         PackageReadContext,
     };
@@ -190,7 +190,8 @@ files {{
             unsafe { get_mapped_file(&pb_file_path, "mockup", StorageFileType::FlagInfo).unwrap() };
         let is_rw: Vec<bool> = vec![true, false, true, false, false, false, false, false];
         for (offset, expected_value) in is_rw.into_iter().enumerate() {
-            let attribute = get_boolean_flag_attribute(&flag_info_file, offset as u32).unwrap();
+            let attribute =
+                get_flag_attribute(&flag_info_file, FlagValueType::Boolean, offset as u32).unwrap();
             assert!((attribute & FlagInfoBit::IsSticky as u8) == 0u8);
             assert_eq!((attribute & FlagInfoBit::IsReadWrite as u8) != 0u8, expected_value);
             assert!((attribute & FlagInfoBit::HasOverride as u8) == 0u8);
@@ -205,7 +206,7 @@ files {{
         // The safety here is ensured as the test process will not write to temp storage file
         let flag_info_file =
             unsafe { get_mapped_file(&pb_file_path, "mockup", StorageFileType::FlagInfo).unwrap() };
-        let err = get_boolean_flag_attribute(&flag_info_file, 8u32).unwrap_err();
+        let err = get_flag_attribute(&flag_info_file, FlagValueType::Boolean, 8u32).unwrap_err();
         assert_eq!(
             format!("{:?}", err),
             "InvalidStorageFileOffset(Flag info offset goes beyond the end of the file.)"
