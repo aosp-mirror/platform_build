@@ -17,11 +17,15 @@
 //! flag value query module defines the flag value file read from mapped bytes
 
 use crate::{AconfigStorageError, FILE_VERSION};
-use aconfig_storage_file::{flag_info::FlagInfoHeader, read_u8_from_bytes};
+use aconfig_storage_file::{flag_info::FlagInfoHeader, read_u8_from_bytes, FlagValueType};
 use anyhow::anyhow;
 
 /// Get flag attribute bitfield
-pub fn find_boolean_flag_attribute(buf: &[u8], flag_index: u32) -> Result<u8, AconfigStorageError> {
+pub fn find_flag_attribute(
+    buf: &[u8],
+    flag_type: FlagValueType,
+    flag_index: u32,
+) -> Result<u8, AconfigStorageError> {
     let interpreted_header = FlagInfoHeader::from_bytes(buf)?;
     if interpreted_header.version > crate::FILE_VERSION {
         return Err(AconfigStorageError::HigherStorageFileVersion(anyhow!(
@@ -31,8 +35,11 @@ pub fn find_boolean_flag_attribute(buf: &[u8], flag_index: u32) -> Result<u8, Ac
         )));
     }
 
-    // Find the byte offset to the flag info, each flag info now takes one byte
-    let mut head = (interpreted_header.boolean_flag_offset + flag_index) as usize;
+    // get byte offset to the flag info
+    let mut head = match flag_type {
+        FlagValueType::Boolean => (interpreted_header.boolean_flag_offset + flag_index) as usize,
+    };
+
     if head >= interpreted_header.file_size as usize {
         return Err(AconfigStorageError::InvalidStorageFileOffset(anyhow!(
             "Flag info offset goes beyond the end of the file."
@@ -53,7 +60,8 @@ mod tests {
     fn test_is_flag_sticky() {
         let flag_info_list = create_test_flag_info_list().into_bytes();
         for offset in 0..8 {
-            let attribute = find_boolean_flag_attribute(&flag_info_list[..], offset).unwrap();
+            let attribute =
+                find_flag_attribute(&flag_info_list[..], FlagValueType::Boolean, offset).unwrap();
             assert_eq!((attribute & FlagInfoBit::IsSticky as u8) != 0u8, false);
         }
     }
@@ -64,7 +72,8 @@ mod tests {
         let flag_info_list = create_test_flag_info_list().into_bytes();
         let baseline: Vec<bool> = vec![true, false, true, false, false, false, false, false];
         for offset in 0..8 {
-            let attribute = find_boolean_flag_attribute(&flag_info_list[..], offset).unwrap();
+            let attribute =
+                find_flag_attribute(&flag_info_list[..], FlagValueType::Boolean, offset).unwrap();
             assert_eq!(
                 (attribute & FlagInfoBit::IsReadWrite as u8) != 0u8,
                 baseline[offset as usize]
@@ -77,7 +86,8 @@ mod tests {
     fn test_flag_has_override() {
         let flag_info_list = create_test_flag_info_list().into_bytes();
         for offset in 0..8 {
-            let attribute = find_boolean_flag_attribute(&flag_info_list[..], offset).unwrap();
+            let attribute =
+                find_flag_attribute(&flag_info_list[..], FlagValueType::Boolean, offset).unwrap();
             assert_eq!((attribute & FlagInfoBit::HasOverride as u8) != 0u8, false);
         }
     }
@@ -86,7 +96,8 @@ mod tests {
     // this test point locks down query beyond the end of boolean section
     fn test_boolean_out_of_range() {
         let flag_info_list = create_test_flag_info_list().into_bytes();
-        let error = find_boolean_flag_attribute(&flag_info_list[..], 8).unwrap_err();
+        let error =
+            find_flag_attribute(&flag_info_list[..], FlagValueType::Boolean, 8).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
             "InvalidStorageFileOffset(Flag info offset goes beyond the end of the file.)"
@@ -99,7 +110,7 @@ mod tests {
         let mut info_list = create_test_flag_info_list();
         info_list.header.version = crate::FILE_VERSION + 1;
         let flag_info = info_list.into_bytes();
-        let error = find_boolean_flag_attribute(&flag_info[..], 4).unwrap_err();
+        let error = find_flag_attribute(&flag_info[..], FlagValueType::Boolean, 4).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
             format!(

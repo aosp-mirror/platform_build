@@ -234,7 +234,7 @@ TEST_F(AconfigStorageTest, test_boolean_flag_info_query) {
   auto expected_value = std::vector<bool>{
     true, false, true, false, false, false, false, false};
   for (int index = 0; index < 8; ++index) {
-    auto attribute = api::get_boolean_flag_attribute(*mapped_file, index);
+    auto attribute = api::get_flag_attribute(*mapped_file, api::FlagValueType::Boolean, index);
     ASSERT_TRUE(attribute.ok());
     ASSERT_EQ(*attribute & static_cast<uint8_t>(api::FlagInfoBit::IsSticky), 0);
     ASSERT_EQ((*attribute & static_cast<uint8_t>(api::FlagInfoBit::IsReadWrite)) != 0,
@@ -249,7 +249,7 @@ TEST_F(AconfigStorageTest, test_invalid_boolean_flag_info_query) {
       storage_record_pb, "mockup", api::StorageFileType::flag_info);
   ASSERT_TRUE(mapped_file.ok());
 
-  auto attribute = api::get_boolean_flag_attribute(*mapped_file, 8);
+  auto attribute = api::get_flag_attribute(*mapped_file, api::FlagValueType::Boolean, 8);
   ASSERT_FALSE(attribute.ok());
   ASSERT_EQ(attribute.error().message(),
             std::string("InvalidStorageFileOffset(Flag info offset goes beyond the end of the file.)"));
