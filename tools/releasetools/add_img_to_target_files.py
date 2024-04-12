@@ -1055,6 +1055,20 @@ def AddImagesToTargetFiles(filename):
     for call in add_partition_calls:
       add_partition(*call)
   else:
+    # When calling avbtool make_vbmeta_image, it uses the `partitions`
+    # dictionary to include the options for --include_descriptors_from_image.
+    # The vbmeta image is different if the order of the
+    # --include_descriptors_from_image changes. As the images are generated
+    # parallelly and entries are added on completion of image creation,
+    # this `partitions` dict might be indeterministic as the order of
+    # completion of image creation cannot be predicted.
+    # To address this issue, add keys to the dict `partitions` with null values
+    # in the order they are listed in the variable `add_partition_calls`, and
+    # then the values are updated by `add_partition` keeping the order of the
+    # items. This ensures generated vbmeta.img is the same for the same input.
+    for call in add_partition_calls:
+      if call[1]:
+        partitions[call[0]] = None
     with ThreadPoolExecutor(max_workers=len(add_partition_calls)) as executor:
       for future in [executor.submit(add_partition, *call) for call in add_partition_calls]:
         future.result()
