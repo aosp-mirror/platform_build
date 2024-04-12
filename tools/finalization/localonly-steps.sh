@@ -10,8 +10,9 @@ function finalize_locally() {
     local m="$top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=aosp_arm64 TARGET_RELEASE=fina_1 TARGET_BUILD_VARIANT=userdebug DIST_DIR=out/dist"
 
     # adb keys
-    $m adb
-    LOGNAME=android-eng HOSTNAME=google.com "$top/out/host/linux-x86/bin/adb" keygen "$top/vendor/google/security/adb/${FINAL_PLATFORM_VERSION}.adb_key"
+    # The keys are already generated for Android 15. Keeping the command (commented out) for future reference.
+    # $m adb
+    # LOGNAME=android-eng HOSTNAME=google.com "$top/out/host/linux-x86/bin/adb" keygen "$top/vendor/google/security/adb/${FINAL_PLATFORM_VERSION}.adb_key"
 
     # Build Platform SDKs.
     $top/build/soong/soong_ui.bash --make-mode TARGET_PRODUCT=sdk TARGET_RELEASE=fina_1 TARGET_BUILD_VARIANT=userdebug sdk dist sdk_repo DIST_DIR=out/dist
