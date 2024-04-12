@@ -422,7 +422,7 @@ endif
 # Boolean variable determining if AOSP relies on bionic's PAGE_SIZE macro.
 ifdef PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO
   TARGET_NO_BIONIC_PAGE_SIZE_MACRO := $(PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO)
-else ifeq ($(call math_lt,$(VSR_VENDOR_API_LEVEL),34),true)
+else ifeq ($(call math_lt,$(VSR_VENDOR_API_LEVEL),35),true)
   TARGET_NO_BIONIC_PAGE_SIZE_MACRO := false
 else
   TARGET_NO_BIONIC_PAGE_SIZE_MACRO := true
