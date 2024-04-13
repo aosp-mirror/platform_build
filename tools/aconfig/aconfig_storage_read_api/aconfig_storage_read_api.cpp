@@ -106,6 +106,19 @@ Result<MappedStorageFile> get_mapped_file_impl(
 
 } // namespace private internal api
 
+/// Map from StoredFlagType to FlagValueType
+android::base::Result<FlagValueType> map_to_flag_value_type(
+    StoredFlagType stored_type) {
+  switch (stored_type) {
+    case StoredFlagType::ReadWriteBoolean:
+    case StoredFlagType::ReadOnlyBoolean:
+    case StoredFlagType::FixedReadOnlyBoolean:
+      return FlagValueType::Boolean;
+    default:
+      return Error() << "Unsupported stored flag type";
+  }
+}
+
 /// Get mapped storage file
 Result<MappedStorageFile> get_mapped_file(
     std::string const& container,
@@ -178,12 +191,14 @@ Result<bool> get_boolean_flag_value(
 }
 
 /// Get boolean flag attribute
-Result<uint8_t> get_boolean_flag_attribute(
+Result<uint8_t> get_flag_attribute(
     MappedStorageFile const& file,
+    FlagValueType value_type,
     uint32_t index) {
   auto content = rust::Slice<const uint8_t>(
       static_cast<uint8_t*>(file.file_ptr), file.file_size);
-  auto info_cxx = get_boolean_flag_attribute_cxx(content, index);
+  auto info_cxx = get_flag_attribute_cxx(
+      content, static_cast<uint16_t>(value_type), index);
   if (info_cxx.query_success) {
     return info_cxx.flag_attribute;
   } else {
