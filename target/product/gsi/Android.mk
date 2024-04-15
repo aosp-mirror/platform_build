@@ -34,6 +34,9 @@ $(patsubst $(tag_patterns),%,$(filter $(tag_patterns),$(2)))
 endef
 
 # Subsets of LSDUMP_PATHS.
+.PHONY: findlsdumps_APEX
+findlsdumps_APEX: $(LSDUMP_PATHS_FILE) $(call filter-abi-dump-paths,APEX,$(LSDUMP_PATHS))
+
 .PHONY: findlsdumps_LLNDK
 findlsdumps_LLNDK: $(LSDUMP_PATHS_FILE) $(call filter-abi-dump-paths,LLNDK,$(LSDUMP_PATHS))
 
@@ -48,7 +51,7 @@ findlsdumps: $(LSDUMP_PATHS_FILE) $(foreach p,$(LSDUMP_PATHS),$(call word-colon,
 
 #####################################################################
 # Check that all ABI reference dumps have corresponding
-# NDK/VNDK/PLATFORM libraries.
+# APEX/LLNDK/PLATFORM libraries.
 
 # $(1): The directory containing ABI dumps.
 # Return a list of ABI dump paths ending with .so.lsdump.
@@ -90,7 +93,7 @@ $(check-abi-dump-list-timestamp):
 
 	# TODO(b/314010764): Remove LLNDK tag after PLATFORM_SDK_VERSION is upgraded to 35.
 	$(eval added_platform_abi_dumps := $(strip $(sort $(filter-out \
-	  $(call filter-abi-dump-names,LLNDK PLATFORM,$(PRIVATE_LSDUMP_PATHS)) \
+	  $(call filter-abi-dump-names,APEX LLNDK PLATFORM,$(PRIVATE_LSDUMP_PATHS)) \
 	  $(addsuffix .lsdump,$(PRIVATE_STUB_LIBRARIES)), \
 	  $(notdir $(PLATFORM_ABI_DUMPS))))))
 	$(if $(added_platform_abi_dumps), \
