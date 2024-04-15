@@ -1524,7 +1524,7 @@ def GetAvbPartitionsArg(partitions,
       AVB_ARG_NAME_CHAIN_PARTITION: []
   }
 
-  for partition, path in partitions.items():
+  for partition, path in sorted(partitions.items()):
     avb_partition_arg = GetAvbPartitionArg(partition, path, info_dict)
     if not avb_partition_arg:
       continue
@@ -1612,7 +1612,7 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions,
       "avb_custom_vbmeta_images_partition_list", "").strip().split()]
 
   avb_partitions = {}
-  for partition, path in partitions.items():
+  for partition, path in sorted(partitions.items()):
     if partition not in needed_partitions:
       continue
     assert (partition in AVB_PARTITIONS or
