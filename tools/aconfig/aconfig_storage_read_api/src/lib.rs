@@ -45,12 +45,12 @@ pub mod package_table_query;
 #[cfg(test)]
 mod test_utils;
 
-pub use aconfig_storage_file::{AconfigStorageError, StorageFileType};
+pub use aconfig_storage_file::{AconfigStorageError, FlagValueType, StorageFileType};
 pub use flag_table_query::FlagReadContext;
 pub use package_table_query::PackageReadContext;
 
 use aconfig_storage_file::{read_u32_from_bytes, FILE_VERSION};
-use flag_info_query::find_boolean_flag_attribute;
+use flag_info_query::find_flag_attribute;
 use flag_table_query::find_flag_read_context;
 use flag_value_query::find_boolean_flag_value;
 use package_table_query::find_package_read_context;
@@ -149,16 +149,21 @@ pub fn get_storage_file_version(file_path: &str) -> Result<u32, AconfigStorageEr
     read_u32_from_bytes(&buffer, &mut head)
 }
 
-/// Get the boolean flag attribute.
+/// Get the flag attribute.
 ///
 /// \input file: mapped flag info file
-/// \input index: boolean flag index
+/// \input flag_type: flag value type
+/// \input flag_index: flag index
 ///
 /// \return
-/// If the provide offset is valid, it returns the boolean flag attribute bitfiled, otherwise it
+/// If the provide offset is valid, it returns the flag attribute bitfiled, otherwise it
 /// returns the error message.
-pub fn get_boolean_flag_attribute(file: &Mmap, index: u32) -> Result<u8, AconfigStorageError> {
-    find_boolean_flag_attribute(file, index)
+pub fn get_flag_attribute(
+    file: &Mmap,
+    flag_type: FlagValueType,
+    flag_index: u32,
+) -> Result<u8, AconfigStorageError> {
+    find_flag_attribute(file, flag_type, flag_index)
 }
 
 // *************************************** //
@@ -201,7 +206,7 @@ mod ffi {
     }
 
     // Flag info query return for cc interlop
-    pub struct BooleanFlagAttributeQueryCXX {
+    pub struct FlagAttributeQueryCXX {
         pub query_success: bool,
         pub error_message: String,
         pub flag_attribute: u8,
@@ -224,10 +229,11 @@ mod ffi {
 
         pub fn get_boolean_flag_value_cxx(file: &[u8], offset: u32) -> BooleanFlagValueQueryCXX;
 
-        pub fn get_boolean_flag_attribute_cxx(
+        pub fn get_flag_attribute_cxx(
             file: &[u8],
-            offset: u32,
-        ) -> BooleanFlagAttributeQueryCXX;
+            flag_type: u16,
+            flag_index: u32,
+        ) -> FlagAttributeQueryCXX;
     }
 }
 
@@ -312,7 +318,7 @@ impl ffi::BooleanFlagValueQueryCXX {
 }
 
 /// Implement the flag info interlop return type, create from actual flag info api return type
-impl ffi::BooleanFlagAttributeQueryCXX {
+impl ffi::FlagAttributeQueryCXX {
     pub(crate) fn new(info_result: Result<u8, AconfigStorageError>) -> Self {
         match info_result {
             Ok(info) => {
@@ -365,12 +371,18 @@ pub fn get_boolean_flag_value_cxx(file: &[u8], offset: u32) -> ffi::BooleanFlagV
     ffi::BooleanFlagValueQueryCXX::new(find_boolean_flag_value(file, offset))
 }
 
-/// Get boolean flag attribute cc interlop
-pub fn get_boolean_flag_attribute_cxx(
+/// Get flag attribute cc interlop
+pub fn get_flag_attribute_cxx(
     file: &[u8],
-    offset: u32,
-) -> ffi::BooleanFlagAttributeQueryCXX {
-    ffi::BooleanFlagAttributeQueryCXX::new(find_boolean_flag_attribute(file, offset))
+    flag_type: u16,
+    flag_index: u32,
+) -> ffi::FlagAttributeQueryCXX {
+    match FlagValueType::try_from(flag_type) {
+        Ok(value_type) => {
+            ffi::FlagAttributeQueryCXX::new(find_flag_attribute(file, value_type, flag_index))
+        }
+        Err(errmsg) => ffi::FlagAttributeQueryCXX::new(Err(errmsg)),
+    }
 }
 
 /// Get storage version number cc interlop
@@ -494,7 +506,8 @@ files {{
             unsafe { get_mapped_file(&pb_file_path, "mockup", StorageFileType::FlagInfo).unwrap() };
         let is_rw: Vec<bool> = vec![true, false, true, false, false, false, false, false];
         for (offset, expected_value) in is_rw.into_iter().enumerate() {
-            let attribute = get_boolean_flag_attribute(&flag_info_file, offset as u32).unwrap();
+            let attribute =
+                get_flag_attribute(&flag_info_file, FlagValueType::Boolean, offset as u32).unwrap();
             assert!((attribute & FlagInfoBit::IsSticky as u8) == 0u8);
             assert_eq!((attribute & FlagInfoBit::IsReadWrite as u8) != 0u8, expected_value);
             assert!((attribute & FlagInfoBit::HasOverride as u8) == 0u8);

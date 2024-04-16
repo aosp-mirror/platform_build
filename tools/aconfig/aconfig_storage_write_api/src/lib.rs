@@ -17,6 +17,7 @@
 //! `aconfig_storage_write_api` is a crate that defines write apis to update flag value
 //! in storage file. It provides one api to interface with storage files.
 
+pub mod flag_info_update;
 pub mod flag_value_update;
 pub mod mapped_file;
 
@@ -24,8 +25,8 @@ pub mod mapped_file;
 mod test_utils;
 
 use aconfig_storage_file::{
-    AconfigStorageError, FlagInfoHeader, FlagInfoList, FlagInfoNode, FlagTable, PackageTable,
-    StorageFileType, StoredFlagType, FILE_VERSION,
+    AconfigStorageError, FlagInfoHeader, FlagInfoList, FlagInfoNode, FlagTable, FlagValueType,
+    PackageTable, StorageFileType, StoredFlagType, FILE_VERSION,
 };
 
 use anyhow::anyhow;
@@ -36,10 +37,11 @@ use std::io::{Read, Write};
 /// Storage file location pb file
 pub const STORAGE_LOCATION_FILE: &str = "/metadata/aconfig/persistent_storage_file_records.pb";
 
-/// Get mmaped flag value file given the container name
+/// Get read write mapped storage files.
 ///
 /// \input container: the flag package container
-/// \return a result of mapped file
+/// \input file_type: storage file type enum
+/// \return a result of read write mapped file
 ///
 ///
 /// # Safety
@@ -48,8 +50,11 @@ pub const STORAGE_LOCATION_FILE: &str = "/metadata/aconfig/persistent_storage_fi
 /// file not thru this memory mapped file or there are concurrent writes to this
 /// memory mapped file. Ensure all writes to the underlying file are thru this memory
 /// mapped file and there are no concurrent writes.
-pub unsafe fn get_mapped_flag_value_file(container: &str) -> Result<MmapMut, AconfigStorageError> {
-    unsafe { crate::mapped_file::get_mapped_file(STORAGE_LOCATION_FILE, container) }
+pub unsafe fn get_mapped_storage_file(
+    container: &str,
+    file_type: StorageFileType,
+) -> Result<MmapMut, AconfigStorageError> {
+    unsafe { crate::mapped_file::get_mapped_file(STORAGE_LOCATION_FILE, container, file_type) }
 }
 
 /// Set boolean flag value thru mapped file and flush the change to file
@@ -65,6 +70,44 @@ pub fn set_boolean_flag_value(
     value: bool,
 ) -> Result<(), AconfigStorageError> {
     crate::flag_value_update::update_boolean_flag_value(file, index, value)?;
+    file.flush().map_err(|errmsg| {
+        AconfigStorageError::MapFlushFail(anyhow!("fail to flush storage file: {}", errmsg))
+    })
+}
+
+/// Set if flag is sticky thru mapped file and flush the change to file
+///
+/// \input mapped_file: the mapped flag info file
+/// \input index: flag index
+/// \input value: updated flag sticky value
+/// \return a result of ()
+///
+pub fn set_flag_is_sticky(
+    file: &mut MmapMut,
+    flag_type: FlagValueType,
+    index: u32,
+    value: bool,
+) -> Result<(), AconfigStorageError> {
+    crate::flag_info_update::update_flag_is_sticky(file, flag_type, index, value)?;
+    file.flush().map_err(|errmsg| {
+        AconfigStorageError::MapFlushFail(anyhow!("fail to flush storage file: {}", errmsg))
+    })
+}
+
+/// Set if flag has override thru mapped file and flush the change to file
+///
+/// \input mapped_file: the mapped flag info file
+/// \input index: flag index
+/// \input value: updated flag has override value
+/// \return a result of ()
+///
+pub fn set_flag_has_override(
+    file: &mut MmapMut,
+    flag_type: FlagValueType,
+    index: u32,
+    value: bool,
+) -> Result<(), AconfigStorageError> {
+    crate::flag_info_update::update_flag_has_override(file, flag_type, index, value)?;
     file.flush().map_err(|errmsg| {
         AconfigStorageError::MapFlushFail(anyhow!("fail to flush storage file: {}", errmsg))
     })
@@ -163,6 +206,18 @@ mod ffi {
         pub error_message: String,
     }
 
+    // Flag is sticky update return for cc interlop
+    pub struct FlagIsStickyUpdateCXX {
+        pub update_success: bool,
+        pub error_message: String,
+    }
+
+    // Flag has override update return for cc interlop
+    pub struct FlagHasOverrideUpdateCXX {
+        pub update_success: bool,
+        pub error_message: String,
+    }
+
     // Flag info file creation return for cc interlop
     pub struct FlagInfoCreationCXX {
         pub success: bool,
@@ -176,6 +231,20 @@ mod ffi {
             offset: u32,
             value: bool,
         ) -> BooleanFlagValueUpdateCXX;
+
+        pub fn update_flag_is_sticky_cxx(
+            file: &mut [u8],
+            flag_type: u16,
+            offset: u32,
+            value: bool,
+        ) -> FlagIsStickyUpdateCXX;
+
+        pub fn update_flag_has_override_cxx(
+            file: &mut [u8],
+            flag_type: u16,
+            offset: u32,
+            value: bool,
+        ) -> FlagHasOverrideUpdateCXX;
 
         pub fn create_flag_info_cxx(
             package_map: &str,
@@ -195,6 +264,59 @@ pub(crate) fn update_boolean_flag_value_cxx(
             ffi::BooleanFlagValueUpdateCXX { update_success: true, error_message: String::from("") }
         }
         Err(errmsg) => ffi::BooleanFlagValueUpdateCXX {
+            update_success: false,
+            error_message: format!("{:?}", errmsg),
+        },
+    }
+}
+
+pub(crate) fn update_flag_is_sticky_cxx(
+    file: &mut [u8],
+    flag_type: u16,
+    offset: u32,
+    value: bool,
+) -> ffi::FlagIsStickyUpdateCXX {
+    match FlagValueType::try_from(flag_type) {
+        Ok(value_type) => {
+            match crate::flag_info_update::update_flag_is_sticky(file, value_type, offset, value) {
+                Ok(()) => ffi::FlagIsStickyUpdateCXX {
+                    update_success: true,
+                    error_message: String::from(""),
+                },
+                Err(errmsg) => ffi::FlagIsStickyUpdateCXX {
+                    update_success: false,
+                    error_message: format!("{:?}", errmsg),
+                },
+            }
+        }
+        Err(errmsg) => ffi::FlagIsStickyUpdateCXX {
+            update_success: false,
+            error_message: format!("{:?}", errmsg),
+        },
+    }
+}
+
+pub(crate) fn update_flag_has_override_cxx(
+    file: &mut [u8],
+    flag_type: u16,
+    offset: u32,
+    value: bool,
+) -> ffi::FlagHasOverrideUpdateCXX {
+    match FlagValueType::try_from(flag_type) {
+        Ok(value_type) => {
+            match crate::flag_info_update::update_flag_has_override(file, value_type, offset, value)
+            {
+                Ok(()) => ffi::FlagHasOverrideUpdateCXX {
+                    update_success: true,
+                    error_message: String::from(""),
+                },
+                Err(errmsg) => ffi::FlagHasOverrideUpdateCXX {
+                    update_success: false,
+                    error_message: format!("{:?}", errmsg),
+                },
+            }
+        }
+        Err(errmsg) => ffi::FlagHasOverrideUpdateCXX {
             update_success: false,
             error_message: format!("{:?}", errmsg),
         },
@@ -224,6 +346,8 @@ mod tests {
         create_test_flag_info_list, create_test_flag_table, create_test_package_table,
         write_bytes_to_temp_file,
     };
+    use aconfig_storage_file::FlagInfoBit;
+    use aconfig_storage_read_api::flag_info_query::find_flag_attribute;
     use aconfig_storage_read_api::flag_value_query::find_boolean_flag_value;
     use std::fs::File;
     use std::io::Read;
@@ -248,6 +372,7 @@ files {{
     package_map: "some_package.map"
     flag_map: "some_flag.map"
     flag_val: "{}"
+    flag_info: "some_flag.info"
     timestamp: 12345
 }}
 "#,
@@ -260,7 +385,12 @@ files {{
         // The safety here is guaranteed as only this single threaded test process will
         // write to this file
         unsafe {
-            let mut file = crate::mapped_file::get_mapped_file(&record_pb_path, "system").unwrap();
+            let mut file = crate::mapped_file::get_mapped_file(
+                &record_pb_path,
+                "system",
+                StorageFileType::FlagVal,
+            )
+            .unwrap();
             for i in 0..8 {
                 set_boolean_flag_value(&mut file, i, true).unwrap();
                 let value = get_boolean_flag_value_at_offset(&flag_value_path, i);
@@ -269,6 +399,97 @@ files {{
                 set_boolean_flag_value(&mut file, i, false).unwrap();
                 let value = get_boolean_flag_value_at_offset(&flag_value_path, i);
                 assert_eq!(value, false);
+            }
+        }
+    }
+
+    fn get_flag_attribute_at_offset(file: &str, value_type: FlagValueType, offset: u32) -> u8 {
+        let mut f = File::open(&file).unwrap();
+        let mut bytes = Vec::new();
+        f.read_to_end(&mut bytes).unwrap();
+        find_flag_attribute(&bytes, value_type, offset).unwrap()
+    }
+
+    #[test]
+    fn test_set_flag_is_sticky() {
+        let flag_info_file = copy_to_temp_file("./tests/flag.info", false).unwrap();
+        let flag_info_path = flag_info_file.path().display().to_string();
+        let text_proto = format!(
+            r#"
+    files {{
+        version: 0
+        container: "system"
+        package_map: "some_package.map"
+        flag_map: "some_flag.map"
+        flag_val: "some_flag.val"
+        flag_info: "{}"
+        timestamp: 12345
+    }}
+    "#,
+            flag_info_path
+        );
+        let record_pb_file = write_proto_to_temp_file(&text_proto).unwrap();
+        let record_pb_path = record_pb_file.path().display().to_string();
+
+        // SAFETY:
+        // The safety here is guaranteed as only this single threaded test process will
+        // write to this file
+        unsafe {
+            let mut file = crate::mapped_file::get_mapped_file(
+                &record_pb_path,
+                "system",
+                StorageFileType::FlagInfo,
+            )
+            .unwrap();
+            for i in 0..8 {
+                set_flag_is_sticky(&mut file, FlagValueType::Boolean, i, true).unwrap();
+                let attribute = get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
+                assert!((attribute & (FlagInfoBit::IsSticky as u8)) != 0);
+                set_flag_is_sticky(&mut file, FlagValueType::Boolean, i, false).unwrap();
+                let attribute = get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
+                assert!((attribute & (FlagInfoBit::IsSticky as u8)) == 0);
+            }
+        }
+    }
+
+    #[test]
+    fn test_set_flag_has_override() {
+        let flag_info_file = copy_to_temp_file("./tests/flag.info", false).unwrap();
+        let flag_info_path = flag_info_file.path().display().to_string();
+        let text_proto = format!(
+            r#"
+    files {{
+        version: 0
+        container: "system"
+        package_map: "some_package.map"
+        flag_map: "some_flag.map"
+        flag_val: "some_flag.val"
+        flag_info: "{}"
+        timestamp: 12345
+    }}
+    "#,
+            flag_info_path
+        );
+        let record_pb_file = write_proto_to_temp_file(&text_proto).unwrap();
+        let record_pb_path = record_pb_file.path().display().to_string();
+
+        // SAFETY:
+        // The safety here is guaranteed as only this single threaded test process will
+        // write to this file
+        unsafe {
+            let mut file = crate::mapped_file::get_mapped_file(
+                &record_pb_path,
+                "system",
+                StorageFileType::FlagInfo,
+            )
+            .unwrap();
+            for i in 0..8 {
+                set_flag_has_override(&mut file, FlagValueType::Boolean, i, true).unwrap();
+                let attribute = get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
+                assert!((attribute & (FlagInfoBit::HasOverride as u8)) != 0);
+                set_flag_has_override(&mut file, FlagValueType::Boolean, i, false).unwrap();
+                let attribute = get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
+                assert!((attribute & (FlagInfoBit::HasOverride as u8)) == 0);
             }
         }
     }
