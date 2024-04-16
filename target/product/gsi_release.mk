@@ -44,9 +44,6 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
-# Disable the build-time debugfs restrictions on GSI builds
-PRODUCT_SET_DEBUGFS_RESTRICTIONS := false
-
 # GSI specific tasks on boot
 PRODUCT_PACKAGES += \
     gsi_skip_mount.cfg \
