@@ -17,6 +17,7 @@
 
 package com.android.checkflaggedapis
 
+import android.aconfig.Aconfig
 import com.android.tools.metalava.model.BaseItemVisitor
 import com.android.tools.metalava.model.FieldItem
 import com.android.tools.metalava.model.text.ApiFile
@@ -98,6 +99,15 @@ The tool will exit with a non-zero exit code if any flagged APIs are found to be
               """)
           .path(mustExist = true, canBeDir = false, mustBeReadable = true)
           .required()
+  private val flagValuesPath by
+      option("--flag-values")
+          .help(
+              """
+            Path to aconfig parsed_flags binary proto file.
+            Tip: `m all_aconfig_declarations` will generate a file that includes all information about all flags.
+            """)
+          .path(mustExist = true, canBeDir = false, mustBeReadable = true)
+          .required()
 
   override fun run() {
     @Suppress("UNUSED_VARIABLE")
@@ -105,6 +115,8 @@ The tool will exit with a non-zero exit code if any flagged APIs are found to be
         apiSignaturePath.toFile().inputStream().use {
           parseApiSignature(apiSignaturePath.toString(), it)
         }
+    @Suppress("UNUSED_VARIABLE")
+    val flags = flagValuesPath.toFile().inputStream().use { parseFlagValues(it) }
     throw ProgramResult(0)
   }
 }
@@ -130,6 +142,13 @@ internal fun parseApiSignature(path: String, input: InputStream): Set<Pair<Symbo
   val codebase = ApiFile.parseApi(path, input)
   codebase.accept(visitor)
   return output
+}
+
+internal fun parseFlagValues(input: InputStream): Map<Flag, Boolean> {
+  val parsedFlags = Aconfig.parsed_flags.parseFrom(input).getParsedFlagList()
+  return parsedFlags.associateBy(
+      { Flag("${it.getPackage()}.${it.getName()}") },
+      { it.getState() == Aconfig.flag_state.ENABLED })
 }
 
 fun main(args: Array<String>) = CheckCommand().main(args)
