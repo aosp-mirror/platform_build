@@ -13,16 +13,37 @@
 // limitations under the License.
 
 package {
+    default_team: "trendy_team_updatable_sdk_apis",
     default_applicable_licenses: ["Android-Apache-2.0"],
 }
 
-java_binary_host {
-    name: "check-flagged-apis",
+java_defaults {
+    name: "check-flagged-apis-defaults",
     srcs: [
-        "src/**/*.kt",
+        "src/com/android/checkflaggedapis/Main.kt",
     ],
     static_libs: [
         "metalava-tools-common-m2-deps",
     ],
+}
+
+java_binary_host {
+    name: "check-flagged-apis",
+    defaults: [
+        "check-flagged-apis-defaults",
+    ],
     main_class: "com.android.checkflaggedapis.Main",
+}
+
+java_test_host {
+    name: "check-flagged-apis-test",
+    defaults: [
+        "check-flagged-apis-defaults",
+    ],
+    srcs: [
+        "src/com/android/checkflaggedapis/CheckFlaggedApisTest.kt",
+    ],
+    static_libs: [
+        "tradefed",
+    ],
 }
