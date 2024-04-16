@@ -23,6 +23,7 @@ java_defaults {
         "src/com/android/checkflaggedapis/Main.kt",
     ],
     static_libs: [
+        "metalava-signature-reader",
         "metalava-tools-common-m2-deps",
     ],
 }

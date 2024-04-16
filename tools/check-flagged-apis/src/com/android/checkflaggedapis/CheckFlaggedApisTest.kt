@@ -17,10 +17,28 @@ package com.android.checkflaggedapis
 
 import com.android.tradefed.testtype.DeviceJUnit4ClassRunner
 import com.android.tradefed.testtype.junit4.BaseHostJUnit4Test
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 
+private val API_SIGNATURE =
+    """
+      // Signature format: 2.0
+      package android {
+        public final class Clazz {
+          ctor public Clazz();
+          field @FlaggedApi("android.flag.foo") public static final int FOO = 1; // 0x1
+        }
+      }
+"""
+        .trim()
+
 @RunWith(DeviceJUnit4ClassRunner::class)
 class CheckFlaggedApisTest : BaseHostJUnit4Test() {
-  @Test fun testPlaceholder() {}
+  @Test
+  fun testParseApiSignature() {
+    val expected = setOf(Pair(Symbol("android.Clazz.FOO"), Flag("android.flag.foo")))
+    val actual = parseApiSignature("in-memory", API_SIGNATURE.byteInputStream())
+    assertEquals(expected, actual)
+  }
 }
