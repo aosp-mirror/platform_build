@@ -238,6 +238,7 @@ PRODUCT_PACKAGES += \
     org.apache.http.legacy \
     otacerts \
     PackageInstaller \
+    package-shareduid-allowlist.xml \
     passwd_system \
     perfetto \
     ping \
