@@ -21,5 +21,8 @@ java_binary_host {
     srcs: [
         "src/**/*.kt",
     ],
+    static_libs: [
+        "metalava-tools-common-m2-deps",
+    ],
     main_class: "com.android.checkflaggedapis.Main",
 }

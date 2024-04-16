@@ -17,4 +17,14 @@
 
 package com.android.checkflaggedapis
 
-fun main() = println("hello world")
+import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.ProgramResult
+
+class CheckCommand : CliktCommand() {
+  override fun run() {
+    println("hello world")
+    throw ProgramResult(0)
+  }
+}
+
+fun main(args: Array<String>) = CheckCommand().main(args)
