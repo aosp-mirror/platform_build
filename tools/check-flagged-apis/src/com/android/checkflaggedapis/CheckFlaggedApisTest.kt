@@ -52,6 +52,18 @@ private val PARSED_FLAGS =
       ByteArrayInputStream(binaryProto.toByteArray())
     }()
 
+private val API_VERSIONS =
+    """
+      <?xml version="1.0" encoding="utf-8"?>
+      <api version="3">
+        <class name="android/Clazz" since="1">
+          <method name="&lt;init>()V"/>
+          <field name="FOO"/>
+        </class>
+      </api>
+"""
+        .trim()
+
 @RunWith(DeviceJUnit4ClassRunner::class)
 class CheckFlaggedApisTest : BaseHostJUnit4Test() {
   @Test
@@ -65,6 +77,13 @@ class CheckFlaggedApisTest : BaseHostJUnit4Test() {
   fun testParseFlagValues() {
     val expected: Map<Flag, Boolean> = mapOf(Flag("android.flag.foo") to true)
     val actual = parseFlagValues(PARSED_FLAGS)
+    assertEquals(expected, actual)
+  }
+
+  @Test
+  fun testParseApiVersions() {
+    val expected: Set<Symbol> = setOf(Symbol("android.Clazz.FOO"))
+    val actual = parseApiVersions(API_VERSIONS.byteInputStream())
     assertEquals(expected, actual)
   }
 }
