@@ -52,8 +52,6 @@ $(call add_json_str,  Platform_version_known_codenames,  $(PLATFORM_VERSION_KNOW
 
 $(call add_json_bool, Release_aidl_use_unfrozen,         $(RELEASE_AIDL_USE_UNFROZEN))
 
-$(call add_json_str,  Platform_min_supported_target_sdk_version, $(PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION))
-
 $(call add_json_bool, Allow_missing_dependencies,        $(filter true,$(ALLOW_MISSING_DEPENDENCIES)))
 $(call add_json_bool, Unbundled_build,                   $(TARGET_BUILD_UNBUNDLED))
 $(call add_json_list, Unbundled_build_apps,              $(TARGET_BUILD_APPS))

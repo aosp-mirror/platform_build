@@ -14,6 +14,7 @@ rust_defaults {
         "libcxx",
         "libthiserror",
         "libaconfig_storage_file",
+        "libaconfig_storage_read_api",
     ],
 }
 
@@ -30,6 +31,7 @@ rust_test_host {
     defaults: ["aconfig_storage_write_api.defaults"],
     data: [
         "tests/flag.val",
+        "tests/flag.info",
     ],
     rustlibs: [
         "libaconfig_storage_read_api",
@@ -68,12 +70,13 @@ cc_library_static {
     srcs: ["aconfig_storage_write_api.cpp"],
     generated_headers: [
         "cxx-bridge-header",
-        "libcxx_aconfig_storage_write_api_bridge_header"
+        "libcxx_aconfig_storage_write_api_bridge_header",
     ],
     generated_sources: ["libcxx_aconfig_storage_write_api_bridge_code"],
     whole_static_libs: ["libaconfig_storage_write_api_cxx_bridge"],
     export_include_dirs: ["include"],
     static_libs: [
+        "libaconfig_storage_read_api_cc",
         "libaconfig_storage_protos_cc",
         "libprotobuf-cpp-lite",
         "libbase",
