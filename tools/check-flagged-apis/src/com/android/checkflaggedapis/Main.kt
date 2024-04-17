@@ -28,6 +28,8 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.path
 import java.io.InputStream
+import javax.xml.parsers.DocumentBuilderFactory
+import org.w3c.dom.Node
 
 /**
  * Class representing the fully qualified name of a class, method or field.
@@ -108,6 +110,16 @@ The tool will exit with a non-zero exit code if any flagged APIs are found to be
             """)
           .path(mustExist = true, canBeDir = false, mustBeReadable = true)
           .required()
+  private val apiVersionsPath by
+      option("--api-versions")
+          .help(
+              """
+            Path to API versions XML file.
+            Usually named xml-versions.xml.
+            Tip: `m sdk dist` will generate a file that includes all platform and mainline APIs.
+            """)
+          .path(mustExist = true, canBeDir = false, mustBeReadable = true)
+          .required()
 
   override fun run() {
     @Suppress("UNUSED_VARIABLE")
@@ -117,6 +129,8 @@ The tool will exit with a non-zero exit code if any flagged APIs are found to be
         }
     @Suppress("UNUSED_VARIABLE")
     val flags = flagValuesPath.toFile().inputStream().use { parseFlagValues(it) }
+    @Suppress("UNUSED_VARIABLE")
+    val exportedSymbols = apiVersionsPath.toFile().inputStream().use { parseApiVersions(it) }
     throw ProgramResult(0)
   }
 }
@@ -149,6 +163,26 @@ internal fun parseFlagValues(input: InputStream): Map<Flag, Boolean> {
   return parsedFlags.associateBy(
       { Flag("${it.getPackage()}.${it.getName()}") },
       { it.getState() == Aconfig.flag_state.ENABLED })
+}
+
+internal fun parseApiVersions(input: InputStream): Set<Symbol> {
+  fun Node.getAttribute(name: String): String? = getAttributes()?.getNamedItem(name)?.getNodeValue()
+
+  val output = mutableSetOf<Symbol>()
+  val factory = DocumentBuilderFactory.newInstance()
+  val parser = factory.newDocumentBuilder()
+  val document = parser.parse(input)
+  val fields = document.getElementsByTagName("field")
+  // ktfmt doesn't understand the `..<` range syntax; explicitly call .rangeUntil instead
+  for (i in 0.rangeUntil(fields.getLength())) {
+    val field = fields.item(i)
+    val fieldName = field.getAttribute("name")
+    val className =
+        requireNotNull(field.getParentNode()) { "Bad XML: top level <field> element" }
+            .getAttribute("name")
+    output.add(Symbol.create("$className.$fieldName"))
+  }
+  return output
 }
 
 fun main(args: Array<String>) = CheckCommand().main(args)
