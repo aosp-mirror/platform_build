@@ -57,6 +57,19 @@ internal value class Symbol(val name: String) {
   override fun toString(): String = name.toString()
 }
 
+/**
+ * Class representing the fully qualified name of an aconfig flag.
+ *
+ * This includes both the flag's package and name, separated by a dot, e.g.:
+ * <pre>
+ *   com.android.aconfig.test.disabled_ro
+ * <pre>
+ */
+@JvmInline
+internal value class Flag(val name: String) {
+  override fun toString(): String = name.toString()
+}
+
 class CheckCommand : CliktCommand() {
   override fun run() {
     println("hello world")
