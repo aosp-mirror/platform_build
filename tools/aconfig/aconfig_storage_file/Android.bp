@@ -56,7 +56,7 @@ rust_protobuf {
     min_sdk_version: "29",
 }
 
-cc_library_static {
+cc_library {
     name: "libaconfig_storage_protos_cc",
     proto: {
         export_proto_headers: true,

@@ -66,8 +66,31 @@ static Result<std::string> find_storage_file(
   return Error() << "Unable to find storage files for container " << container;
 }
 
+
+namespace private_internal_api {
+
+/// Get mutable mapped file implementation.
+Result<MutableMappedStorageFile> get_mutable_mapped_file_impl(
+    std::string const& pb_file,
+    std::string const& container,
+    StorageFileType file_type) {
+  if (file_type != StorageFileType::flag_val &&
+      file_type != StorageFileType::flag_info) {
+    return Error() << "Cannot create mutable mapped file for this file type";
+  }
+
+  auto file_result = find_storage_file(pb_file, container, file_type);
+  if (!file_result.ok()) {
+    return Error() << file_result.error();
+  }
+
+  return map_mutable_storage_file(*file_result);
+}
+
+} // namespace private internal api
+
 /// Map a storage file
-static Result<MutableMappedStorageFile> map_storage_file(std::string const& file) {
+Result<MutableMappedStorageFile> map_mutable_storage_file(std::string const& file) {
   struct stat file_stat;
   if (stat(file.c_str(), &file_stat) < 0) {
     return ErrnoError() << "stat failed";
@@ -96,28 +119,6 @@ static Result<MutableMappedStorageFile> map_storage_file(std::string const& file
 
   return mapped_file;
 }
-
-namespace private_internal_api {
-
-/// Get mutable mapped file implementation.
-Result<MutableMappedStorageFile> get_mutable_mapped_file_impl(
-    std::string const& pb_file,
-    std::string const& container,
-    StorageFileType file_type) {
-  if (file_type != StorageFileType::flag_val &&
-      file_type != StorageFileType::flag_info) {
-    return Error() << "Cannot create mutable mapped file for this file type";
-  }
-
-  auto file_result = find_storage_file(pb_file, container, file_type);
-  if (!file_result.ok()) {
-    return Error() << file_result.error();
-  }
-
-  return map_storage_file(*file_result);
-}
-
-} // namespace private internal api
 
 /// Get mutable mapped file
 Result<MutableMappedStorageFile> get_mutable_mapped_file(
