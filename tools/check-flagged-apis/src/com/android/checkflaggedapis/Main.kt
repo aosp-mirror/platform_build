@@ -17,8 +17,17 @@
 
 package com.android.checkflaggedapis
 
+import android.aconfig.Aconfig
+import com.android.tools.metalava.model.BaseItemVisitor
+import com.android.tools.metalava.model.FieldItem
+import com.android.tools.metalava.model.text.ApiFile
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.ProgramResult
+import com.github.ajalt.clikt.parameters.options.help
+import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.options.required
+import com.github.ajalt.clikt.parameters.types.path
+import java.io.InputStream
 
 /**
  * Class representing the fully qualified name of a class, method or field.
@@ -70,11 +79,76 @@ internal value class Flag(val name: String) {
   override fun toString(): String = name.toString()
 }
 
-class CheckCommand : CliktCommand() {
+class CheckCommand :
+    CliktCommand(
+        help =
+            """
+Check that all flagged APIs are used in the correct way.
+
+This tool reads the API signature file and checks that all flagged APIs are used in the correct way.
+
+The tool will exit with a non-zero exit code if any flagged APIs are found to be used in the incorrect way.
+""") {
+  private val apiSignaturePath by
+      option("--api-signature")
+          .help(
+              """
+              Path to API signature file.
+              Usually named *current.txt.
+              Tip: `m frameworks-base-api-current.txt` will generate a file that includes all platform and mainline APIs.
+              """)
+          .path(mustExist = true, canBeDir = false, mustBeReadable = true)
+          .required()
+  private val flagValuesPath by
+      option("--flag-values")
+          .help(
+              """
+            Path to aconfig parsed_flags binary proto file.
+            Tip: `m all_aconfig_declarations` will generate a file that includes all information about all flags.
+            """)
+          .path(mustExist = true, canBeDir = false, mustBeReadable = true)
+          .required()
+
   override fun run() {
-    println("hello world")
+    @Suppress("UNUSED_VARIABLE")
+    val flaggedSymbols =
+        apiSignaturePath.toFile().inputStream().use {
+          parseApiSignature(apiSignaturePath.toString(), it)
+        }
+    @Suppress("UNUSED_VARIABLE")
+    val flags = flagValuesPath.toFile().inputStream().use { parseFlagValues(it) }
     throw ProgramResult(0)
   }
+}
+
+internal fun parseApiSignature(path: String, input: InputStream): Set<Pair<Symbol, Flag>> {
+  // TODO(334870672): add support for classes and metods
+  val output = mutableSetOf<Pair<Symbol, Flag>>()
+  val visitor =
+      object : BaseItemVisitor() {
+        override fun visitField(field: FieldItem) {
+          val flag =
+              field.modifiers
+                  .findAnnotation("android.annotation.FlaggedApi")
+                  ?.findAttribute("value")
+                  ?.value
+                  ?.value() as? String
+          if (flag != null) {
+            val symbol = Symbol.create(field.baselineElementId())
+            output.add(Pair(symbol, Flag(flag)))
+          }
+        }
+      }
+  val codebase = ApiFile.parseApi(path, input)
+  codebase.accept(visitor)
+  return output
+}
+
+internal fun parseFlagValues(input: InputStream): Map<Flag, Boolean> {
+  val parsedFlags = Aconfig.parsed_flags.parseFrom(input).getParsedFlagList()
+  return parsedFlags.associateBy(
+      { Flag("${it.getPackage()}.${it.getName()}") },
+      { it.getState() == Aconfig.flag_state.ENABLED })
 }
 
 fun main(args: Array<String>) = CheckCommand().main(args)
