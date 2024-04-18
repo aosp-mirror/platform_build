@@ -26,6 +26,10 @@ Result<MutableMappedStorageFile> get_mutable_mapped_file_impl(
 
 } // namespace private_internal_api
 
+/// Map a storage file
+Result<MutableMappedStorageFile> map_mutable_storage_file(
+    std::string const& file);
+
 /// Get mapped writeable storage file
 Result<MutableMappedStorageFile> get_mutable_mapped_file(
     std::string const& container,
