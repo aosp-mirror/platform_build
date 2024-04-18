@@ -745,7 +745,7 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
     os.rename(source_path, target_path)
 
   # Write new ab_partitions.txt file
-  new_ab_partitions = os.paht.join(input_file, AB_PARTITIONS)
+  new_ab_partitions = os.path.join(input_file, AB_PARTITIONS)
   with open(new_ab_partitions, 'w') as f:
     for partition in ab_partitions:
       if (partition in dynamic_partition_list and
