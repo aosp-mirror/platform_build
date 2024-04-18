@@ -9,6 +9,7 @@ rust_defaults {
     lints: "android",
     srcs: ["src/main.rs"],
     rustlibs: [
+        "libaconfig_device_paths",
         "libaconfig_protos",
         "libaconfig_storage_read_api",
         "libaconfig_storage_file",

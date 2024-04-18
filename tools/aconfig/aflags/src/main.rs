@@ -25,6 +25,8 @@ use device_config_source::DeviceConfigSource;
 mod aconfig_storage_source;
 use aconfig_storage_source::AconfigStorageSource;
 
+mod load_protos;
+
 #[derive(Clone, PartialEq, Debug)]
 enum FlagPermission {
     ReadOnly,

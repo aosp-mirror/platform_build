@@ -443,10 +443,12 @@ files {{
             .unwrap();
             for i in 0..8 {
                 set_flag_is_sticky(&mut file, FlagValueType::Boolean, i, true).unwrap();
-                let attribute = get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
+                let attribute =
+                    get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
                 assert!((attribute & (FlagInfoBit::IsSticky as u8)) != 0);
                 set_flag_is_sticky(&mut file, FlagValueType::Boolean, i, false).unwrap();
-                let attribute = get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
+                let attribute =
+                    get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
                 assert!((attribute & (FlagInfoBit::IsSticky as u8)) == 0);
             }
         }
@@ -485,10 +487,12 @@ files {{
             .unwrap();
             for i in 0..8 {
                 set_flag_has_override(&mut file, FlagValueType::Boolean, i, true).unwrap();
-                let attribute = get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
+                let attribute =
+                    get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
                 assert!((attribute & (FlagInfoBit::HasOverride as u8)) != 0);
                 set_flag_has_override(&mut file, FlagValueType::Boolean, i, false).unwrap();
-                let attribute = get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
+                let attribute =
+                    get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
                 assert!((attribute & (FlagInfoBit::HasOverride as u8)) == 0);
             }
         }
