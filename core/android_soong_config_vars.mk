@@ -132,6 +132,10 @@ ifdef PRODUCT_AVF_ENABLED
 $(call add_soong_config_var_value,ANDROID,avf_enabled,$(PRODUCT_AVF_ENABLED))
 endif
 
+ifdef PRODUCT_AVF_MICRODROID_GUEST_GKI_VERSION
+$(call add_soong_config_var_value,ANDROID,avf_microdroid_guest_gki_version,$(PRODUCT_AVF_MICRODROID_GUEST_GKI_VERSION))
+endif
+
 ifdef PRODUCT_MEMCG_V2_FORCE_ENABLED
 $(call add_soong_config_var_value,ANDROID,memcg_v2_force_enabled,$(PRODUCT_MEMCG_V2_FORCE_ENABLED))
 endif
