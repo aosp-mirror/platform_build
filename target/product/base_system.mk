@@ -495,10 +495,8 @@ PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE := \
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/preloaded-classes:system/etc/preloaded-classes)
 
-# Note: it is acceptable to not have a dirty-image-objects file. In that case, the special bin
-#       for known dirty objects in the image will be empty.
-PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
-    frameworks/base/config/dirty-image-objects:system/etc/dirty-image-objects)
+# Enable dirty image object binning to reduce dirty pages in the image.
+PRODUCT_PACKAGES += dirty-image-objects
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
 
