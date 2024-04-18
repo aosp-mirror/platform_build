@@ -603,8 +603,6 @@ else
 prebuilt_build_tools_bin := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/asan/bin
 endif
 
-USE_PREBUILT_SDK_TOOLS_IN_PLACE := true
-
 # Work around for b/68406220
 # This should match the soong version.
 USE_D8 := true
