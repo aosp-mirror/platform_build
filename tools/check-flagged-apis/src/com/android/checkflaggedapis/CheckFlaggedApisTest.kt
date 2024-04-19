@@ -16,14 +16,13 @@
 package com.android.checkflaggedapis
 
 import android.aconfig.Aconfig
-import com.android.tradefed.testtype.DeviceJUnit4ClassRunner
-import com.android.tradefed.testtype.junit4.BaseHostJUnit4Test
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
 private val API_SIGNATURE =
     """
@@ -64,8 +63,8 @@ private fun generateFlagsProto(fooState: Aconfig.flag_state): InputStream {
   return ByteArrayInputStream(binaryProto.toByteArray())
 }
 
-@RunWith(DeviceJUnit4ClassRunner::class)
-class CheckFlaggedApisTest : BaseHostJUnit4Test() {
+@RunWith(JUnit4::class)
+class CheckFlaggedApisTest {
   @Test
   fun testParseApiSignature() {
     val expected = setOf(Pair(Symbol("android.Clazz.FOO"), Flag("android.flag.foo")))
