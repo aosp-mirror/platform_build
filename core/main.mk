@@ -1908,7 +1908,7 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
   $(api_xmls):
 	$(hide) echo "Converting API file to XML: $@"
 	$(hide) mkdir -p $(dir $@)
-	$(hide) $(APICHECK_COMMAND) --input-api-jar $< --api-xml $@
+	$(hide) $(APICHECK_COMMAND) jar-to-jdiff $< $@
 
   $(foreach xml,$(sort $(api_xmls)),$(call declare-1p-target,$(xml),))
 
