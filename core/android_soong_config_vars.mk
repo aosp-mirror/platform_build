@@ -161,6 +161,8 @@ $(call add_soong_config_var_value,ANDROID,release_package_libandroid_runtime_pun
 
 $(call add_soong_config_var_value,ANDROID,release_selinux_data_data_ignore,$(RELEASE_SELINUX_DATA_DATA_IGNORE))
 
+$(call add_soong_config_var_value,ANDROID,release_write_appcompat_override_system_properties,$(RELEASE_WRITE_APPCOMPAT_OVERRIDE_SYSTEM_PROPERTIES))
+
 # Enable system_server optimizations by default unless explicitly set or if
 # there may be dependent runtime jars.
 # TODO(b/240588226): Remove the off-by-default exceptions after handling
