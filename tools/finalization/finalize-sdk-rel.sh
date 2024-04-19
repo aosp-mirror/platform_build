@@ -33,15 +33,7 @@ function finalize_sdk_rel() {
     fi
     git -C "$top/cts" mv hostsidetests/theme/assets/${FINAL_PLATFORM_CODENAME} hostsidetests/theme/assets/${FINAL_PLATFORM_SDK_VERSION}
 
-    # prebuilts/abi-dumps/platform
-    mkdir -p "$top/prebuilts/abi-dumps/platform/$FINAL_PLATFORM_SDK_VERSION"
-    cp -r "$top/prebuilts/abi-dumps/platform/current/64/" "$top/prebuilts/abi-dumps/platform/$FINAL_PLATFORM_SDK_VERSION/"
-
-    # TODO(b/309880485)
-    # uncomment and update
-    # prebuilts/abi-dumps/ndk
-    #mkdir -p "$top/prebuilts/abi-dumps/ndk/$FINAL_PLATFORM_SDK_VERSION"
-    #cp -r "$top/prebuilts/abi-dumps/ndk/current/64/" "$top/prebuilts/abi-dumps/ndk/$FINAL_PLATFORM_SDK_VERSION/"
+    # TODO(b/333532038): Create ABI dumps in prebuilts/abi-dumps/platform
 }
 
 finalize_sdk_rel
