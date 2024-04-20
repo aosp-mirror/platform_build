@@ -434,8 +434,7 @@ PRODUCT_HOST_PACKAGES += \
 
 PRODUCT_PACKAGES += init.usb.rc init.usb.configfs.rc
 
-PRODUCT_COPY_FILES += \
-    system/core/rootdir/etc/hosts:system/etc/hosts
+PRODUCT_PACKAGES += etc_hosts
 
 PRODUCT_PACKAGES += init.zygote32.rc
 PRODUCT_VENDOR_PROPERTIES += ro.zygote?=zygote32
