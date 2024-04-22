@@ -14,6 +14,22 @@
 
 # Declare license metadata for non-module files released with products.
 
+# Moved here from device/generic/car/Android.mk
+$(eval $(call declare-1p-copy-files,device/generic/car,))
+
+# Moved here from device/generic/trusty/Android.mk
+$(eval $(call declare-1p-copy-files,device/generic/trusty,))
+
+# Moved here from device/generic/uml/Android.mk
+$(eval $(call declare-1p-copy-files,device/generic/uml,))
+
+# Moved here from device/google_car/common/Android.mk
+$(eval $(call declare-1p-copy-files,device/google_car/common,))
+
+# Moved here from device/google/atv/Android.mk
+$(eval $(call declare-1p-copy-files,device/google/atv,atv-component-overrides.xml))
+$(eval $(call declare-1p-copy-files,device/google/atv,tv_core_hardware.xml))
+
 # Moved here from device/sample/Android.mk
 $(eval $(call declare-1p-copy-files,device/sample,))
 
