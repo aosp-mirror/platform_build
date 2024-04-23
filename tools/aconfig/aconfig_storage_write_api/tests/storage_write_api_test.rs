@@ -5,8 +5,8 @@ mod aconfig_storage_write_api_test {
     use aconfig_storage_read_api::flag_info_query::find_flag_attribute;
     use aconfig_storage_read_api::flag_value_query::find_boolean_flag_value;
     use aconfig_storage_write_api::{
-        mapped_file::get_mapped_file, set_boolean_flag_value, set_flag_has_override,
-        set_flag_is_sticky,
+        mapped_file::get_mapped_file, set_boolean_flag_value, set_flag_has_local_override,
+        set_flag_has_server_override,
     };
 
     use protobuf::Message;
@@ -90,8 +90,8 @@ files {{
     }
 
     #[test]
-    /// Test to lock down flag is sticky update api
-    fn test_set_flag_is_sticky() {
+    /// Test to lock down flag has server override update api
+    fn test_set_flag_has_server_override() {
         let flag_value_file = copy_to_temp_rw_file("./flag.val");
         let flag_info_file = copy_to_temp_rw_file("./flag.info");
         let flag_value_path = flag_value_file.path().display().to_string();
@@ -106,20 +106,20 @@ files {{
             get_mapped_file(&record_pb_path, "mockup", StorageFileType::FlagInfo).unwrap()
         };
         for i in 0..8 {
-            set_flag_is_sticky(&mut file, FlagValueType::Boolean, i, true).unwrap();
+            set_flag_has_server_override(&mut file, FlagValueType::Boolean, i, true).unwrap();
             let attribute =
                 get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
-            assert!((attribute & (FlagInfoBit::IsSticky as u8)) != 0);
-            set_flag_is_sticky(&mut file, FlagValueType::Boolean, i, false).unwrap();
+            assert!((attribute & (FlagInfoBit::HasServerOverride as u8)) != 0);
+            set_flag_has_server_override(&mut file, FlagValueType::Boolean, i, false).unwrap();
             let attribute =
                 get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
-            assert!((attribute & (FlagInfoBit::IsSticky as u8)) == 0);
+            assert!((attribute & (FlagInfoBit::HasServerOverride as u8)) == 0);
         }
     }
 
     #[test]
-    /// Test to lock down flag is sticky update api
-    fn test_set_flag_has_override() {
+    /// Test to lock down flag has local override update api
+    fn test_set_flag_has_local_override() {
         let flag_value_file = copy_to_temp_rw_file("./flag.val");
         let flag_info_file = copy_to_temp_rw_file("./flag.info");
         let flag_value_path = flag_value_file.path().display().to_string();
@@ -134,14 +134,14 @@ files {{
             get_mapped_file(&record_pb_path, "mockup", StorageFileType::FlagInfo).unwrap()
         };
         for i in 0..8 {
-            set_flag_has_override(&mut file, FlagValueType::Boolean, i, true).unwrap();
+            set_flag_has_local_override(&mut file, FlagValueType::Boolean, i, true).unwrap();
             let attribute =
                 get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
-            assert!((attribute & (FlagInfoBit::HasOverride as u8)) != 0);
-            set_flag_has_override(&mut file, FlagValueType::Boolean, i, false).unwrap();
+            assert!((attribute & (FlagInfoBit::HasLocalOverride as u8)) != 0);
+            set_flag_has_local_override(&mut file, FlagValueType::Boolean, i, false).unwrap();
             let attribute =
                 get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
-            assert!((attribute & (FlagInfoBit::HasOverride as u8)) == 0);
+            assert!((attribute & (FlagInfoBit::HasLocalOverride as u8)) == 0);
         }
     }
 }

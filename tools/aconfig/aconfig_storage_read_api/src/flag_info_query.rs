@@ -56,13 +56,13 @@ mod tests {
     use aconfig_storage_file::{test_utils::create_test_flag_info_list, FlagInfoBit};
 
     #[test]
-    // this test point locks down query if flag is sticky
+    // this test point locks down query if flag has server override
     fn test_is_flag_sticky() {
         let flag_info_list = create_test_flag_info_list().into_bytes();
         for offset in 0..8 {
             let attribute =
                 find_flag_attribute(&flag_info_list[..], FlagValueType::Boolean, offset).unwrap();
-            assert_eq!((attribute & FlagInfoBit::IsSticky as u8) != 0u8, false);
+            assert_eq!((attribute & FlagInfoBit::HasServerOverride as u8) != 0u8, false);
         }
     }
 
@@ -82,13 +82,13 @@ mod tests {
     }
 
     #[test]
-    // this test point locks down query if flag has override
+    // this test point locks down query if flag has local override
     fn test_flag_has_override() {
         let flag_info_list = create_test_flag_info_list().into_bytes();
         for offset in 0..8 {
             let attribute =
                 find_flag_attribute(&flag_info_list[..], FlagValueType::Boolean, offset).unwrap();
-            assert_eq!((attribute & FlagInfoBit::HasOverride as u8) != 0u8, false);
+            assert_eq!((attribute & FlagInfoBit::HasLocalOverride as u8) != 0u8, false);
         }
     }
 

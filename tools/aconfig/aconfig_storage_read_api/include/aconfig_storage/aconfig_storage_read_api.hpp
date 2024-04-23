@@ -32,9 +32,9 @@ enum FlagValueType {
 /// Flag info enum, to be consistent with the one defined in
 /// aconfig_storage_file/src/flag_info.rs
 enum FlagInfoBit {
-  IsSticky = 1<<0,
+  HasServerOverride = 1<<0,
   IsReadWrite = 1<<1,
-  HasOverride = 1<<2,
+  HasLocalOverride = 1<<2,
 };
 
 /// Mapped storage file
