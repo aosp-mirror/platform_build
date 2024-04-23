@@ -343,6 +343,10 @@ endif
 ADDITIONAL_PRODUCT_PROPERTIES += \
     ro.product.cpu.pagesize.max=$(TARGET_MAX_PAGE_SIZE_SUPPORTED)
 
+ifeq ($(PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO),true)
+ADDITIONAL_PRODUCT_PROPERTIES += ro.product.build.no_bionic_page_size_macro=true
+endif
+
 # -----------------------------------------------------------------
 ###
 ### In this section we set up the things that are different
@@ -1908,7 +1912,7 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
   $(api_xmls):
 	$(hide) echo "Converting API file to XML: $@"
 	$(hide) mkdir -p $(dir $@)
-	$(hide) $(APICHECK_COMMAND) --input-api-jar $< --api-xml $@
+	$(hide) $(APICHECK_COMMAND) jar-to-jdiff $< $@
 
   $(foreach xml,$(sort $(api_xmls)),$(call declare-1p-target,$(xml),))
 

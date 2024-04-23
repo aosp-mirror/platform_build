@@ -14,77 +14,16 @@
  * limitations under the License.
  */
 
-use crate::{Flag, FlagPermission, FlagSource, FlagValue, ValuePickedFrom};
-use aconfig_protos::ProtoFlagPermission as ProtoPermission;
-use aconfig_protos::ProtoFlagState as ProtoState;
-use aconfig_protos::ProtoParsedFlag;
-use aconfig_protos::ProtoParsedFlags;
+use crate::load_protos;
+use crate::{Flag, FlagSource, FlagValue, ValuePickedFrom};
+
 use anyhow::{anyhow, bail, Result};
 use regex::Regex;
-use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::process::Command;
-use std::{fs, str};
+use std::str;
 
 pub struct DeviceConfigSource {}
-
-fn convert_parsed_flag(flag: &ProtoParsedFlag) -> Flag {
-    let namespace = flag.namespace().to_string();
-    let package = flag.package().to_string();
-    let name = flag.name().to_string();
-
-    let container = if flag.container().is_empty() {
-        "system".to_string()
-    } else {
-        flag.container().to_string()
-    };
-
-    let value = match flag.state() {
-        ProtoState::ENABLED => FlagValue::Enabled,
-        ProtoState::DISABLED => FlagValue::Disabled,
-    };
-
-    let permission = match flag.permission() {
-        ProtoPermission::READ_ONLY => FlagPermission::ReadOnly,
-        ProtoPermission::READ_WRITE => FlagPermission::ReadWrite,
-    };
-
-    Flag {
-        namespace,
-        package,
-        name,
-        container,
-        value,
-        staged_value: None,
-        permission,
-        value_picked_from: ValuePickedFrom::Default,
-    }
-}
-
-fn read_pb_files() -> Result<Vec<Flag>> {
-    let mut flags: BTreeMap<String, Flag> = BTreeMap::new();
-    for partition in ["system", "system_ext", "product", "vendor"] {
-        let path = format!("/{partition}/etc/aconfig_flags.pb");
-        let Ok(bytes) = fs::read(&path) else {
-            eprintln!("warning: failed to read {}", path);
-            continue;
-        };
-        let parsed_flags: ProtoParsedFlags = protobuf::Message::parse_from_bytes(&bytes)?;
-        for flag in parsed_flags.parsed_flag {
-            let key = format!("{}.{}", flag.package(), flag.name());
-            let container = if flag.container().is_empty() {
-                "system".to_string()
-            } else {
-                flag.container().to_string()
-            };
-
-            if container.eq(partition) {
-                flags.insert(key, convert_parsed_flag(&flag));
-            }
-        }
-    }
-    Ok(flags.values().cloned().collect())
-}
 
 fn parse_device_config(raw: &str) -> Result<HashMap<String, FlagValue>> {
     let mut flags = HashMap::new();
@@ -180,7 +119,7 @@ fn reconcile(
 
 impl FlagSource for DeviceConfigSource {
     fn list_flags() -> Result<Vec<Flag>> {
-        let pb_flags = read_pb_files()?;
+        let pb_flags = load_protos::load()?;
         let dc_flags = read_device_config_flags()?;
         let staged_flags = read_staged_flags()?;
 
