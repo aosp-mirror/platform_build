@@ -61,32 +61,32 @@ fn get_flag_attribute_and_offset(
     Ok((attribute, head))
 }
 
-/// Set if flag is sticky
-pub fn update_flag_is_sticky(
+/// Set if flag has server override
+pub fn update_flag_has_server_override(
     buf: &mut [u8],
     flag_type: FlagValueType,
     flag_index: u32,
     value: bool,
 ) -> Result<(), AconfigStorageError> {
     let (attribute, head) = get_flag_attribute_and_offset(buf, flag_type, flag_index)?;
-    let is_sticky = (attribute & (FlagInfoBit::IsSticky as u8)) != 0;
-    if is_sticky != value {
-        buf[head] = (attribute ^ FlagInfoBit::IsSticky as u8).to_le_bytes()[0];
+    let has_override = (attribute & (FlagInfoBit::HasServerOverride as u8)) != 0;
+    if has_override != value {
+        buf[head] = (attribute ^ FlagInfoBit::HasServerOverride as u8).to_le_bytes()[0];
     }
     Ok(())
 }
 
-/// Set if flag has override
-pub fn update_flag_has_override(
+/// Set if flag has local override
+pub fn update_flag_has_local_override(
     buf: &mut [u8],
     flag_type: FlagValueType,
     flag_index: u32,
     value: bool,
 ) -> Result<(), AconfigStorageError> {
     let (attribute, head) = get_flag_attribute_and_offset(buf, flag_type, flag_index)?;
-    let has_override = (attribute & (FlagInfoBit::HasOverride as u8)) != 0;
+    let has_override = (attribute & (FlagInfoBit::HasLocalOverride as u8)) != 0;
     if has_override != value {
-        buf[head] = (attribute ^ FlagInfoBit::HasOverride as u8).to_le_bytes()[0];
+        buf[head] = (attribute ^ FlagInfoBit::HasLocalOverride as u8).to_le_bytes()[0];
     }
     Ok(())
 }
@@ -98,32 +98,32 @@ mod tests {
     use aconfig_storage_read_api::flag_info_query::find_flag_attribute;
 
     #[test]
-    // this test point locks down is sticky update
-    fn test_update_flag_is_sticky() {
+    // this test point locks down has server override update
+    fn test_update_flag_has_server_override() {
         let flag_info_list = create_test_flag_info_list();
         let mut buf = flag_info_list.into_bytes();
         for i in 0..flag_info_list.header.num_flags {
-            update_flag_is_sticky(&mut buf, FlagValueType::Boolean, i, true).unwrap();
+            update_flag_has_server_override(&mut buf, FlagValueType::Boolean, i, true).unwrap();
             let attribute = find_flag_attribute(&buf, FlagValueType::Boolean, i).unwrap();
-            assert!((attribute & (FlagInfoBit::IsSticky as u8)) != 0);
-            update_flag_is_sticky(&mut buf, FlagValueType::Boolean, i, false).unwrap();
+            assert!((attribute & (FlagInfoBit::HasServerOverride as u8)) != 0);
+            update_flag_has_server_override(&mut buf, FlagValueType::Boolean, i, false).unwrap();
             let attribute = find_flag_attribute(&buf, FlagValueType::Boolean, i).unwrap();
-            assert!((attribute & (FlagInfoBit::IsSticky as u8)) == 0);
+            assert!((attribute & (FlagInfoBit::HasServerOverride as u8)) == 0);
         }
     }
 
     #[test]
-    // this test point locks down has override update
-    fn test_update_flag_has_override() {
+    // this test point locks down has local override update
+    fn test_update_flag_has_local_override() {
         let flag_info_list = create_test_flag_info_list();
         let mut buf = flag_info_list.into_bytes();
         for i in 0..flag_info_list.header.num_flags {
-            update_flag_has_override(&mut buf, FlagValueType::Boolean, i, true).unwrap();
+            update_flag_has_local_override(&mut buf, FlagValueType::Boolean, i, true).unwrap();
             let attribute = find_flag_attribute(&buf, FlagValueType::Boolean, i).unwrap();
-            assert!((attribute & (FlagInfoBit::HasOverride as u8)) != 0);
-            update_flag_has_override(&mut buf, FlagValueType::Boolean, i, false).unwrap();
+            assert!((attribute & (FlagInfoBit::HasLocalOverride as u8)) != 0);
+            update_flag_has_local_override(&mut buf, FlagValueType::Boolean, i, false).unwrap();
             let attribute = find_flag_attribute(&buf, FlagValueType::Boolean, i).unwrap();
-            assert!((attribute & (FlagInfoBit::HasOverride as u8)) == 0);
+            assert!((attribute & (FlagInfoBit::HasLocalOverride as u8)) == 0);
         }
     }
 }
