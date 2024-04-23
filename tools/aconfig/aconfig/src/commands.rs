@@ -242,10 +242,7 @@ pub fn create_storage(
     let parsed_flags_vec: Vec<ProtoParsedFlags> = caches
         .into_iter()
         .map(|mut input| input.try_parse_flags())
-        .collect::<Result<Vec<_>>>()?
-        .into_iter()
-        .filter(|pfs| find_unique_container(pfs) == Some(container))
-        .collect();
+        .collect::<Result<Vec<_>>>()?;
     generate_storage_file(container, parsed_flags_vec.iter(), file)
 }
 
@@ -322,14 +319,6 @@ fn find_unique_package(parsed_flags: &[ProtoParsedFlag]) -> Option<&str> {
         return None;
     }
     Some(package)
-}
-
-fn find_unique_container(parsed_flags: &ProtoParsedFlags) -> Option<&str> {
-    let container = parsed_flags.parsed_flag.first().map(|pf| pf.container())?;
-    if parsed_flags.parsed_flag.iter().any(|pf| pf.container() != container) {
-        return None;
-    }
-    Some(container)
 }
 
 pub fn modify_parsed_flags_based_on_mode(
