@@ -41,15 +41,15 @@ Result<void> set_boolean_flag_value(
     uint32_t offset,
     bool value);
 
-/// Set if flag is sticky
-Result<void> set_flag_is_sticky(
+/// Set if flag has server override
+Result<void> set_flag_has_server_override(
     const MutableMappedStorageFile& file,
     FlagValueType value_type,
     uint32_t offset,
     bool value);
 
-/// Set if flag has override
-Result<void> set_flag_has_override(
+/// Set if flag has local override
+Result<void> set_flag_has_local_override(
     const MutableMappedStorageFile& file,
     FlagValueType value_type,
     uint32_t offset,

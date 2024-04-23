@@ -236,10 +236,10 @@ TEST_F(AconfigStorageTest, test_boolean_flag_info_query) {
   for (int index = 0; index < 8; ++index) {
     auto attribute = api::get_flag_attribute(*mapped_file, api::FlagValueType::Boolean, index);
     ASSERT_TRUE(attribute.ok());
-    ASSERT_EQ(*attribute & static_cast<uint8_t>(api::FlagInfoBit::IsSticky), 0);
+    ASSERT_EQ(*attribute & static_cast<uint8_t>(api::FlagInfoBit::HasServerOverride), 0);
     ASSERT_EQ((*attribute & static_cast<uint8_t>(api::FlagInfoBit::IsReadWrite)) != 0,
               expected_value[index]);
-    ASSERT_EQ(*attribute & static_cast<uint8_t>(api::FlagInfoBit::HasOverride), 0);
+    ASSERT_EQ(*attribute & static_cast<uint8_t>(api::FlagInfoBit::HasLocalOverride), 0);
   }
 }
 
