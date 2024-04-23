@@ -6,9 +6,9 @@ flag_value {
 }
 flag_value {
     package: "com.android.aconfig.storage.test_2"
-    name: "disabled_ro"
+    name: "disabled_rw"
     state: DISABLED
-    permission: READ_ONLY
+    permission: READ_WRITE
 }
 flag_value {
     package: "com.android.aconfig.storage.test_2"
