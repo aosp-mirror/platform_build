@@ -304,6 +304,7 @@ func runMake(ctx context.Context, env Env, modules ...string) error {
 	args := []string{
 		"--make-mode",
 		"ANDROID_BUILD_ENVIRONMENT_CONFIG=googler-cog",
+		"SOONG_GEN_COMPDB=1",
 		"TARGET_PRODUCT=" + env.LunchTarget.Product,
 		"TARGET_RELEASE=" + env.LunchTarget.Release,
 		"TARGET_BUILD_VARIANT=" + env.LunchTarget.Variant,

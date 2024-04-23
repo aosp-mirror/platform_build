@@ -46,6 +46,6 @@ java_test_host {
         "src/com/android/checkflaggedapis/CheckFlaggedApisTest.kt",
     ],
     static_libs: [
-        "tradefed",
+        "junit",
     ],
 }

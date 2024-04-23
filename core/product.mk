@@ -453,6 +453,9 @@ _product_single_value_vars += PRODUCT_ENABLE_UFFD_GC
 # specified we default to COW version 2 in update_engine for backwards compatibility
 _product_single_value_vars += PRODUCT_VIRTUAL_AB_COW_VERSION
 
+# Specifies maximum bytes to be compressed at once during ota. Options: 4096, 8192, 16384, 32768, 65536, 131072, 262144.
+_product_single_value_vars += PRODUCT_VIRTUAL_AB_COMPRESSION_FACTOR
+
 # If set, determines whether the build system checks vendor seapp contexts violations.
 _product_single_value_vars += PRODUCT_CHECK_VENDOR_SEAPP_VIOLATIONS
 
@@ -474,6 +477,10 @@ _product_single_value_vars += PRODUCT_BUILD_IGNORE_APEX_CONTRIBUTION_CONTENTS
 _product_single_value_vars += PRODUCT_HIDDEN_API_EXPORTABLE_STUBS
 
 _product_single_value_vars += PRODUCT_EXPORT_RUNTIME_APIS
+
+# If set, determines which version of the GKI is used as guest kernel for Microdroid VMs.
+# TODO(b/325991735): link to documentation once it is done.
+_product_single_value_vars += PRODUCT_AVF_MICRODROID_GUEST_GKI_VERSION
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)

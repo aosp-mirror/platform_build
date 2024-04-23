@@ -75,39 +75,39 @@ pub fn set_boolean_flag_value(
     })
 }
 
-/// Set if flag is sticky thru mapped file and flush the change to file
+/// Set if flag is has server override thru mapped file and flush the change to file
 ///
 /// \input mapped_file: the mapped flag info file
 /// \input index: flag index
-/// \input value: updated flag sticky value
+/// \input value: updated flag has server override value
 /// \return a result of ()
 ///
-pub fn set_flag_is_sticky(
+pub fn set_flag_has_server_override(
     file: &mut MmapMut,
     flag_type: FlagValueType,
     index: u32,
     value: bool,
 ) -> Result<(), AconfigStorageError> {
-    crate::flag_info_update::update_flag_is_sticky(file, flag_type, index, value)?;
+    crate::flag_info_update::update_flag_has_server_override(file, flag_type, index, value)?;
     file.flush().map_err(|errmsg| {
         AconfigStorageError::MapFlushFail(anyhow!("fail to flush storage file: {}", errmsg))
     })
 }
 
-/// Set if flag has override thru mapped file and flush the change to file
+/// Set if flag has local override thru mapped file and flush the change to file
 ///
 /// \input mapped_file: the mapped flag info file
 /// \input index: flag index
-/// \input value: updated flag has override value
+/// \input value: updated flag has local override value
 /// \return a result of ()
 ///
-pub fn set_flag_has_override(
+pub fn set_flag_has_local_override(
     file: &mut MmapMut,
     flag_type: FlagValueType,
     index: u32,
     value: bool,
 ) -> Result<(), AconfigStorageError> {
-    crate::flag_info_update::update_flag_has_override(file, flag_type, index, value)?;
+    crate::flag_info_update::update_flag_has_local_override(file, flag_type, index, value)?;
     file.flush().map_err(|errmsg| {
         AconfigStorageError::MapFlushFail(anyhow!("fail to flush storage file: {}", errmsg))
     })
@@ -206,14 +206,14 @@ mod ffi {
         pub error_message: String,
     }
 
-    // Flag is sticky update return for cc interlop
-    pub struct FlagIsStickyUpdateCXX {
+    // Flag has server override update return for cc interlop
+    pub struct FlagHasServerOverrideUpdateCXX {
         pub update_success: bool,
         pub error_message: String,
     }
 
-    // Flag has override update return for cc interlop
-    pub struct FlagHasOverrideUpdateCXX {
+    // Flag has local override update return for cc interlop
+    pub struct FlagHasLocalOverrideUpdateCXX {
         pub update_success: bool,
         pub error_message: String,
     }
@@ -232,19 +232,19 @@ mod ffi {
             value: bool,
         ) -> BooleanFlagValueUpdateCXX;
 
-        pub fn update_flag_is_sticky_cxx(
+        pub fn update_flag_has_server_override_cxx(
             file: &mut [u8],
             flag_type: u16,
             offset: u32,
             value: bool,
-        ) -> FlagIsStickyUpdateCXX;
+        ) -> FlagHasServerOverrideUpdateCXX;
 
-        pub fn update_flag_has_override_cxx(
+        pub fn update_flag_has_local_override_cxx(
             file: &mut [u8],
             flag_type: u16,
             offset: u32,
             value: bool,
-        ) -> FlagHasOverrideUpdateCXX;
+        ) -> FlagHasLocalOverrideUpdateCXX;
 
         pub fn create_flag_info_cxx(
             package_map: &str,
@@ -270,53 +270,56 @@ pub(crate) fn update_boolean_flag_value_cxx(
     }
 }
 
-pub(crate) fn update_flag_is_sticky_cxx(
+pub(crate) fn update_flag_has_server_override_cxx(
     file: &mut [u8],
     flag_type: u16,
     offset: u32,
     value: bool,
-) -> ffi::FlagIsStickyUpdateCXX {
+) -> ffi::FlagHasServerOverrideUpdateCXX {
     match FlagValueType::try_from(flag_type) {
         Ok(value_type) => {
-            match crate::flag_info_update::update_flag_is_sticky(file, value_type, offset, value) {
-                Ok(()) => ffi::FlagIsStickyUpdateCXX {
+            match crate::flag_info_update::update_flag_has_server_override(
+                file, value_type, offset, value,
+            ) {
+                Ok(()) => ffi::FlagHasServerOverrideUpdateCXX {
                     update_success: true,
                     error_message: String::from(""),
                 },
-                Err(errmsg) => ffi::FlagIsStickyUpdateCXX {
+                Err(errmsg) => ffi::FlagHasServerOverrideUpdateCXX {
                     update_success: false,
                     error_message: format!("{:?}", errmsg),
                 },
             }
         }
-        Err(errmsg) => ffi::FlagIsStickyUpdateCXX {
+        Err(errmsg) => ffi::FlagHasServerOverrideUpdateCXX {
             update_success: false,
             error_message: format!("{:?}", errmsg),
         },
     }
 }
 
-pub(crate) fn update_flag_has_override_cxx(
+pub(crate) fn update_flag_has_local_override_cxx(
     file: &mut [u8],
     flag_type: u16,
     offset: u32,
     value: bool,
-) -> ffi::FlagHasOverrideUpdateCXX {
+) -> ffi::FlagHasLocalOverrideUpdateCXX {
     match FlagValueType::try_from(flag_type) {
         Ok(value_type) => {
-            match crate::flag_info_update::update_flag_has_override(file, value_type, offset, value)
-            {
-                Ok(()) => ffi::FlagHasOverrideUpdateCXX {
+            match crate::flag_info_update::update_flag_has_local_override(
+                file, value_type, offset, value,
+            ) {
+                Ok(()) => ffi::FlagHasLocalOverrideUpdateCXX {
                     update_success: true,
                     error_message: String::from(""),
                 },
-                Err(errmsg) => ffi::FlagHasOverrideUpdateCXX {
+                Err(errmsg) => ffi::FlagHasLocalOverrideUpdateCXX {
                     update_success: false,
                     error_message: format!("{:?}", errmsg),
                 },
             }
         }
-        Err(errmsg) => ffi::FlagHasOverrideUpdateCXX {
+        Err(errmsg) => ffi::FlagHasLocalOverrideUpdateCXX {
             update_success: false,
             error_message: format!("{:?}", errmsg),
         },
@@ -411,7 +414,7 @@ files {{
     }
 
     #[test]
-    fn test_set_flag_is_sticky() {
+    fn test_set_flag_has_server_override() {
         let flag_info_file = copy_to_temp_file("./tests/flag.info", false).unwrap();
         let flag_info_path = flag_info_file.path().display().to_string();
         let text_proto = format!(
@@ -442,18 +445,20 @@ files {{
             )
             .unwrap();
             for i in 0..8 {
-                set_flag_is_sticky(&mut file, FlagValueType::Boolean, i, true).unwrap();
-                let attribute = get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
-                assert!((attribute & (FlagInfoBit::IsSticky as u8)) != 0);
-                set_flag_is_sticky(&mut file, FlagValueType::Boolean, i, false).unwrap();
-                let attribute = get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
-                assert!((attribute & (FlagInfoBit::IsSticky as u8)) == 0);
+                set_flag_has_server_override(&mut file, FlagValueType::Boolean, i, true).unwrap();
+                let attribute =
+                    get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
+                assert!((attribute & (FlagInfoBit::HasServerOverride as u8)) != 0);
+                set_flag_has_server_override(&mut file, FlagValueType::Boolean, i, false).unwrap();
+                let attribute =
+                    get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
+                assert!((attribute & (FlagInfoBit::HasServerOverride as u8)) == 0);
             }
         }
     }
 
     #[test]
-    fn test_set_flag_has_override() {
+    fn test_set_flag_has_local_override() {
         let flag_info_file = copy_to_temp_file("./tests/flag.info", false).unwrap();
         let flag_info_path = flag_info_file.path().display().to_string();
         let text_proto = format!(
@@ -484,12 +489,14 @@ files {{
             )
             .unwrap();
             for i in 0..8 {
-                set_flag_has_override(&mut file, FlagValueType::Boolean, i, true).unwrap();
-                let attribute = get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
-                assert!((attribute & (FlagInfoBit::HasOverride as u8)) != 0);
-                set_flag_has_override(&mut file, FlagValueType::Boolean, i, false).unwrap();
-                let attribute = get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
-                assert!((attribute & (FlagInfoBit::HasOverride as u8)) == 0);
+                set_flag_has_local_override(&mut file, FlagValueType::Boolean, i, true).unwrap();
+                let attribute =
+                    get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
+                assert!((attribute & (FlagInfoBit::HasLocalOverride as u8)) != 0);
+                set_flag_has_local_override(&mut file, FlagValueType::Boolean, i, false).unwrap();
+                let attribute =
+                    get_flag_attribute_at_offset(&flag_info_path, FlagValueType::Boolean, i);
+                assert!((attribute & (FlagInfoBit::HasLocalOverride as u8)) == 0);
             }
         }
     }

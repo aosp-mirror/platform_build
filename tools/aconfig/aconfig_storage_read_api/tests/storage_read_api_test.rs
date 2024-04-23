@@ -192,9 +192,9 @@ files {{
         for (offset, expected_value) in is_rw.into_iter().enumerate() {
             let attribute =
                 get_flag_attribute(&flag_info_file, FlagValueType::Boolean, offset as u32).unwrap();
-            assert!((attribute & FlagInfoBit::IsSticky as u8) == 0u8);
+            assert!((attribute & FlagInfoBit::HasServerOverride as u8) == 0u8);
             assert_eq!((attribute & FlagInfoBit::IsReadWrite as u8) != 0u8, expected_value);
-            assert!((attribute & FlagInfoBit::HasOverride as u8) == 0u8);
+            assert!((attribute & FlagInfoBit::HasLocalOverride as u8) == 0u8);
         }
     }
 
