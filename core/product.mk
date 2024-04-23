@@ -478,6 +478,10 @@ _product_single_value_vars += PRODUCT_HIDDEN_API_EXPORTABLE_STUBS
 
 _product_single_value_vars += PRODUCT_EXPORT_RUNTIME_APIS
 
+# If set, determines which version of the GKI is used as guest kernel for Microdroid VMs.
+# TODO(b/325991735): link to documentation once it is done.
+_product_single_value_vars += PRODUCT_AVF_MICRODROID_GUEST_GKI_VERSION
+
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
 
