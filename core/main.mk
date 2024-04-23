@@ -1222,8 +1222,7 @@ endef
 # Returns modules included automatically as a result of certain BoardConfig
 # variables being set.
 define auto-included-modules
-  $(if $(and $(BOARD_VNDK_VERSION),$(filter true,$(KEEP_VNDK))),vndk_package) \
-  $(if $(filter true,$(KEEP_VNDK)),,llndk_in_system) \
+  llndk_in_system \
   $(if $(DEVICE_MANIFEST_FILE),vendor_manifest.xml) \
   $(if $(DEVICE_MANIFEST_SKUS),$(foreach sku, $(DEVICE_MANIFEST_SKUS),vendor_manifest_$(sku).xml)) \
   $(if $(ODM_MANIFEST_FILES),odm_manifest.xml) \
@@ -1909,7 +1908,7 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
   $(api_xmls):
 	$(hide) echo "Converting API file to XML: $@"
 	$(hide) mkdir -p $(dir $@)
-	$(hide) $(APICHECK_COMMAND) --input-api-jar $< --api-xml $@
+	$(hide) $(APICHECK_COMMAND) jar-to-jdiff $< $@
 
   $(foreach xml,$(sort $(api_xmls)),$(call declare-1p-target,$(xml),))
 

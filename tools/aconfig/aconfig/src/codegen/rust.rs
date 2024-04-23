@@ -20,26 +20,32 @@ use tinytemplate::TinyTemplate;
 
 use aconfig_protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
 
+use std::collections::HashMap;
+
 use crate::codegen;
 use crate::codegen::CodegenMode;
 use crate::commands::OutputFile;
 
 pub fn generate_rust_code<I>(
     package: &str,
+    flag_ids: HashMap<String, u16>,
     parsed_flags_iter: I,
     codegen_mode: CodegenMode,
+    allow_instrumentation: bool,
 ) -> Result<OutputFile>
 where
     I: Iterator<Item = ProtoParsedFlag>,
 {
-    let template_flags: Vec<TemplateParsedFlag> =
-        parsed_flags_iter.map(|pf| TemplateParsedFlag::new(package, &pf)).collect();
+    let template_flags: Vec<TemplateParsedFlag> = parsed_flags_iter
+        .map(|pf| TemplateParsedFlag::new(package, flag_ids.clone(), &pf))
+        .collect();
     let has_readwrite = template_flags.iter().any(|item| item.readwrite);
     let context = TemplateContext {
         package: package.to_string(),
         template_flags,
         modules: package.split('.').map(|s| s.to_string()).collect::<Vec<_>>(),
         has_readwrite,
+        allow_instrumentation,
     };
     let mut template = TinyTemplate::new();
     template.add_template(
@@ -62,6 +68,7 @@ struct TemplateContext {
     pub template_flags: Vec<TemplateParsedFlag>,
     pub modules: Vec<String>,
     pub has_readwrite: bool,
+    pub allow_instrumentation: bool,
 }
 
 #[derive(Serialize)]
@@ -69,25 +76,28 @@ struct TemplateParsedFlag {
     pub readwrite: bool,
     pub default_value: String,
     pub name: String,
+    pub container: String,
+    pub flag_offset: u16,
     pub device_config_namespace: String,
     pub device_config_flag: String,
 }
 
 impl TemplateParsedFlag {
     #[allow(clippy::nonminimal_bool)]
-    fn new(package: &str, pf: &ProtoParsedFlag) -> Self {
-        let template = TemplateParsedFlag {
+    fn new(package: &str, flag_offsets: HashMap<String, u16>, pf: &ProtoParsedFlag) -> Self {
+        Self {
             readwrite: pf.permission() == ProtoFlagPermission::READ_WRITE,
             default_value: match pf.state() {
                 ProtoFlagState::ENABLED => "true".to_string(),
                 ProtoFlagState::DISABLED => "false".to_string(),
             },
             name: pf.name().to_string(),
+            container: pf.container().to_string(),
+            flag_offset: *flag_offsets.get(pf.name()).expect("didnt find package offset :("),
             device_config_namespace: pf.namespace().to_string(),
             device_config_flag: codegen::create_device_config_ident(package, pf.name())
                 .expect("values checked at flag parse time"),
-        };
-        template
+        }
     }
 }
 
@@ -97,6 +107,14 @@ mod tests {
 
     const PROD_EXPECTED: &str = r#"
 //! codegenerated rust flag lib
+// use aconfig_storage_read_api::{StorageFileType, get_mapped_storage_file, get_boolean_flag_value, get_package_offset};
+use std::path::Path;
+use std::io::Write;
+use log::{log, LevelFilter, Level};
+
+static STORAGE_MIGRATION_MARKER_FILE: &str =
+    "/metadata/aconfig/storage_test_mission_1";
+static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 
 /// flag provider
 pub struct FlagProvider;
@@ -492,6 +510,14 @@ pub fn reset_flags() {
 
     const EXPORTED_EXPECTED: &str = r#"
 //! codegenerated rust flag lib
+// use aconfig_storage_read_api::{StorageFileType, get_mapped_storage_file, get_boolean_flag_value, get_package_offset};
+use std::path::Path;
+use std::io::Write;
+use log::{log, LevelFilter, Level};
+
+static STORAGE_MIGRATION_MARKER_FILE: &str =
+    "/metadata/aconfig/storage_test_mission_1";
+static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 
 /// flag provider
 pub struct FlagProvider;
@@ -558,6 +584,14 @@ pub fn enabled_ro_exported() -> bool {
 
     const FORCE_READ_ONLY_EXPECTED: &str = r#"
 //! codegenerated rust flag lib
+// use aconfig_storage_read_api::{StorageFileType, get_mapped_storage_file, get_boolean_flag_value, get_package_offset};
+use std::path::Path;
+use std::io::Write;
+use log::{log, LevelFilter, Level};
+
+static STORAGE_MIGRATION_MARKER_FILE: &str =
+    "/metadata/aconfig/storage_test_mission_1";
+static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 
 /// flag provider
 pub struct FlagProvider;
@@ -633,14 +667,22 @@ pub fn enabled_rw() -> bool {
     true
 }
 "#;
+    use crate::commands::assign_flag_ids;
 
-    fn test_generate_rust_code(mode: CodegenMode) {
+    fn test_generate_rust_code(mode: CodegenMode, instrumentation: bool) {
         let parsed_flags = crate::test::parse_test_flags();
         let modified_parsed_flags =
             crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
-        let generated =
-            generate_rust_code(crate::test::TEST_PACKAGE, modified_parsed_flags.into_iter(), mode)
-                .unwrap();
+        let flag_ids =
+            assign_flag_ids(crate::test::TEST_PACKAGE, modified_parsed_flags.iter()).unwrap();
+        let generated = generate_rust_code(
+            crate::test::TEST_PACKAGE,
+            flag_ids,
+            modified_parsed_flags.into_iter(),
+            mode,
+            instrumentation,
+        )
+        .unwrap();
         assert_eq!("src/lib.rs", format!("{}", generated.path.display()));
         assert_eq!(
             None,
@@ -658,21 +700,21 @@ pub fn enabled_rw() -> bool {
 
     #[test]
     fn test_generate_rust_code_for_prod() {
-        test_generate_rust_code(CodegenMode::Production);
+        test_generate_rust_code(CodegenMode::Production, false);
     }
 
     #[test]
     fn test_generate_rust_code_for_test() {
-        test_generate_rust_code(CodegenMode::Test);
+        test_generate_rust_code(CodegenMode::Test, false);
     }
 
     #[test]
     fn test_generate_rust_code_for_exported() {
-        test_generate_rust_code(CodegenMode::Exported);
+        test_generate_rust_code(CodegenMode::Exported, false);
     }
 
     #[test]
     fn test_generate_rust_code_for_force_read_only() {
-        test_generate_rust_code(CodegenMode::ForceReadOnly);
+        test_generate_rust_code(CodegenMode::ForceReadOnly, false);
     }
 }

@@ -420,9 +420,12 @@ endif
 .KATI_READONLY := TARGET_MAX_PAGE_SIZE_SUPPORTED
 
 # Boolean variable determining if AOSP relies on bionic's PAGE_SIZE macro.
-TARGET_NO_BIONIC_PAGE_SIZE_MACRO := false
 ifdef PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO
   TARGET_NO_BIONIC_PAGE_SIZE_MACRO := $(PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO)
+else ifeq ($(call math_lt,$(VSR_VENDOR_API_LEVEL),35),true)
+  TARGET_NO_BIONIC_PAGE_SIZE_MACRO := false
+else
+  TARGET_NO_BIONIC_PAGE_SIZE_MACRO := true
 endif
 .KATI_READONLY := TARGET_NO_BIONIC_PAGE_SIZE_MACRO
 
@@ -599,8 +602,6 @@ prebuilt_build_tools_bin := $(prebuilt_build_tools_bin_noasan)
 else
 prebuilt_build_tools_bin := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/asan/bin
 endif
-
-USE_PREBUILT_SDK_TOOLS_IN_PLACE := true
 
 # Work around for b/68406220
 # This should match the soong version.

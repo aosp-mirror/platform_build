@@ -30,10 +30,10 @@ function finalize_step_2_main() {
 
     # build to confirm everything is OK
     local m_next="$top/build/soong/soong_ui.bash --make-mode TARGET_RELEASE=next TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug"
-    AIDL_FROZEN_REL=true $m_next
+    $m_next
 
     local m_fina="$top/build/soong/soong_ui.bash --make-mode TARGET_RELEASE=fina_2 TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug"
-    AIDL_FROZEN_REL=true $m_fina
+    $m_fina
 }
 
 finalize_step_2_main

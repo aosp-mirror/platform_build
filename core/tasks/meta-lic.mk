@@ -14,6 +14,9 @@
 
 # Declare license metadata for non-module files released with products.
 
+# Moved here from device/sample/Android.mk
+$(eval $(call declare-1p-copy-files,device/sample,))
+
 # Moved here from frameworks/av/media/Android.mk
 $(eval $(call declare-1p-copy-files,frameworks/av/media/libeffects,audio_effects.conf))
 $(eval $(call declare-1p-copy-files,frameworks/av/media/libeffects,audio_effects.xml))

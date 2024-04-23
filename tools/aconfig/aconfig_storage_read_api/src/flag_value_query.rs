@@ -21,7 +21,7 @@ use aconfig_storage_file::{flag_value::FlagValueHeader, read_u8_from_bytes};
 use anyhow::anyhow;
 
 /// Query flag value
-pub fn find_boolean_flag_value(buf: &[u8], flag_offset: u32) -> Result<bool, AconfigStorageError> {
+pub fn find_boolean_flag_value(buf: &[u8], flag_index: u32) -> Result<bool, AconfigStorageError> {
     let interpreted_header = FlagValueHeader::from_bytes(buf)?;
     if interpreted_header.version > crate::FILE_VERSION {
         return Err(AconfigStorageError::HigherStorageFileVersion(anyhow!(
@@ -31,10 +31,8 @@ pub fn find_boolean_flag_value(buf: &[u8], flag_offset: u32) -> Result<bool, Aco
         )));
     }
 
-    let mut head = (interpreted_header.boolean_value_offset + flag_offset) as usize;
-
-    // TODO: right now, there is only boolean flags, with more flag value types added
-    // later, the end of boolean flag value section should be updated (b/322826265).
+    // Find byte offset to the flag value, each boolean flag cost one byte to store
+    let mut head = (interpreted_header.boolean_value_offset + flag_index) as usize;
     if head >= interpreted_header.file_size as usize {
         return Err(AconfigStorageError::InvalidStorageFileOffset(anyhow!(
             "Flag value offset goes beyond the end of the file."
@@ -48,26 +46,13 @@ pub fn find_boolean_flag_value(buf: &[u8], flag_offset: u32) -> Result<bool, Aco
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::{FlagValueList, StorageFileType};
-
-    pub fn create_test_flag_value_list() -> FlagValueList {
-        let header = FlagValueHeader {
-            version: crate::FILE_VERSION,
-            container: String::from("system"),
-            file_type: StorageFileType::FlagVal as u8,
-            file_size: 35,
-            num_flags: 8,
-            boolean_value_offset: 27,
-        };
-        let booleans: Vec<bool> = vec![false, true, false, false, true, true, false, true];
-        FlagValueList { header, booleans }
-    }
+    use aconfig_storage_file::test_utils::create_test_flag_value_list;
 
     #[test]
     // this test point locks down flag value query
     fn test_flag_value_query() {
         let flag_value_list = create_test_flag_value_list().into_bytes();
-        let baseline: Vec<bool> = vec![false, true, false, false, true, true, false, true];
+        let baseline: Vec<bool> = vec![false, true, true, false, true, true, true, true];
         for (offset, expected_value) in baseline.into_iter().enumerate() {
             let flag_value = find_boolean_flag_value(&flag_value_list[..], offset as u32).unwrap();
             assert_eq!(flag_value, expected_value);

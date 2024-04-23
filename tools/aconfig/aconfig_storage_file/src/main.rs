@@ -88,8 +88,8 @@ fn main() -> Result<(), AconfigStorageError> {
             let flag_map = sub_matches.get_one::<String>("flag-map").unwrap();
             let flag_val = sub_matches.get_one::<String>("flag-val").unwrap();
             let flags = list_flags(package_map, flag_map, flag_val)?;
-            for flag in flags.iter() {
-                println!("{}: {}", flag.0, flag.1);
+            for (package_name, flag_name, flag_type, flag_value) in flags.iter() {
+                println!("{} {} {:?} {}", package_name, flag_name, flag_type, flag_value);
             }
         }
         _ => unreachable!(),

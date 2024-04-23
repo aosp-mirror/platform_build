@@ -38,6 +38,7 @@ rust_test_host {
         "tests/package.map",
         "tests/flag.map",
         "tests/flag.val",
+        "tests/flag.info",
     ],
 }
 
@@ -68,7 +69,7 @@ rust_ffi_static {
 }
 
 // flag read api cc interface
-cc_library_static {
+cc_library {
     name: "libaconfig_storage_read_api_cc",
     srcs: ["aconfig_storage_read_api.cpp"],
     generated_headers: [
@@ -82,5 +83,10 @@ cc_library_static {
         "libaconfig_storage_protos_cc",
         "libprotobuf-cpp-lite",
         "libbase",
+        "liblog",
+    ],
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
     ],
 }

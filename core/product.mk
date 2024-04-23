@@ -325,6 +325,13 @@ _product_single_value_vars += \
 # set this variable to prevent OTA failures.
 _product_list_vars += PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 
+# If set to true, this product forces HIDL to be enabled by declaring android.hidl.manager
+# and android.hidl.token in the framework manifest. The product will also need to add the
+# 'hwservicemanager' service to PRODUCT_PACKAGES if its SHIPPING_API_LEVEL is greater than 34.
+# This should only be used during bringup for devices that are targeting FCM 202404 and still
+# have partner-owned HIDL interfaces that are being converted to AIDL.
+_product_single_value_vars += PRODUCT_HIDL_ENABLED
+
 # If set to true, this product builds a generic OTA package, which installs generic system images
 # onto matching devices. The product may only build a subset of system images (e.g. only
 # system.img), so devices need to install the package in a system-only OTA manner.
@@ -421,6 +428,12 @@ _product_single_value_vars += PRODUCT_AVF_ENABLED
 # If true, kernel with modules will be used for Microdroid VMs.
 _product_single_value_vars += PRODUCT_AVF_KERNEL_MODULES_ENABLED
 
+# If true, the memory controller will be force-enabled in the cgroup v2 hierarchy
+_product_single_value_vars += PRODUCT_MEMCG_V2_FORCE_ENABLED
+
+# If true, the cgroup v2 hierarchy will be split into apps/system subtrees
+_product_single_value_vars += PRODUCT_CGROUP_V2_SYS_APP_ISOLATION_ENABLED
+
 # List of .json files to be merged/compiled into vendor/etc/linker.config.pb
 _product_list_vars += PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS
 
@@ -439,6 +452,9 @@ _product_single_value_vars += PRODUCT_ENABLE_UFFD_GC
 # Specifies COW version to be used by update_engine and libsnapshot. If this value is not
 # specified we default to COW version 2 in update_engine for backwards compatibility
 _product_single_value_vars += PRODUCT_VIRTUAL_AB_COW_VERSION
+
+# Specifies maximum bytes to be compressed at once during ota. Options: 4096, 8192, 16384, 32768, 65536, 131072, 262144.
+_product_single_value_vars += PRODUCT_VIRTUAL_AB_COMPRESSION_FACTOR
 
 # If set, determines whether the build system checks vendor seapp contexts violations.
 _product_single_value_vars += PRODUCT_CHECK_VENDOR_SEAPP_VIOLATIONS

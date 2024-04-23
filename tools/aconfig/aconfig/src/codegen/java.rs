@@ -181,26 +181,35 @@ mod tests {
     /** @hide */
     public interface FeatureFlags {
         @com.android.aconfig.annotations.AssumeFalseForR8
+        @com.android.aconfig.annotations.AconfigFlagAccessor
         @UnsupportedAppUsage
         boolean disabledRo();
+        @com.android.aconfig.annotations.AconfigFlagAccessor
         @UnsupportedAppUsage
         boolean disabledRw();
+        @com.android.aconfig.annotations.AconfigFlagAccessor
         @UnsupportedAppUsage
         boolean disabledRwExported();
+        @com.android.aconfig.annotations.AconfigFlagAccessor
         @UnsupportedAppUsage
         boolean disabledRwInOtherNamespace();
         @com.android.aconfig.annotations.AssumeTrueForR8
+        @com.android.aconfig.annotations.AconfigFlagAccessor
         @UnsupportedAppUsage
         boolean enabledFixedRo();
         @com.android.aconfig.annotations.AssumeTrueForR8
+        @com.android.aconfig.annotations.AconfigFlagAccessor
         @UnsupportedAppUsage
         boolean enabledFixedRoExported();
         @com.android.aconfig.annotations.AssumeTrueForR8
+        @com.android.aconfig.annotations.AconfigFlagAccessor
         @UnsupportedAppUsage
         boolean enabledRo();
         @com.android.aconfig.annotations.AssumeTrueForR8
+        @com.android.aconfig.annotations.AconfigFlagAccessor
         @UnsupportedAppUsage
         boolean enabledRoExported();
+        @com.android.aconfig.annotations.AconfigFlagAccessor
         @UnsupportedAppUsage
         boolean enabledRw();
     }
@@ -232,42 +241,51 @@ mod tests {
         public static final String FLAG_ENABLED_RW = "com.android.aconfig.test.enabled_rw";
 
         @com.android.aconfig.annotations.AssumeFalseForR8
+        @com.android.aconfig.annotations.AconfigFlagAccessor
         @UnsupportedAppUsage
         public static boolean disabledRo() {
             return FEATURE_FLAGS.disabledRo();
         }
+        @com.android.aconfig.annotations.AconfigFlagAccessor
         @UnsupportedAppUsage
         public static boolean disabledRw() {
             return FEATURE_FLAGS.disabledRw();
         }
+        @com.android.aconfig.annotations.AconfigFlagAccessor
         @UnsupportedAppUsage
         public static boolean disabledRwExported() {
             return FEATURE_FLAGS.disabledRwExported();
         }
+        @com.android.aconfig.annotations.AconfigFlagAccessor
         @UnsupportedAppUsage
         public static boolean disabledRwInOtherNamespace() {
             return FEATURE_FLAGS.disabledRwInOtherNamespace();
         }
         @com.android.aconfig.annotations.AssumeTrueForR8
+        @com.android.aconfig.annotations.AconfigFlagAccessor
         @UnsupportedAppUsage
         public static boolean enabledFixedRo() {
             return FEATURE_FLAGS.enabledFixedRo();
         }
         @com.android.aconfig.annotations.AssumeTrueForR8
+        @com.android.aconfig.annotations.AconfigFlagAccessor
         @UnsupportedAppUsage
         public static boolean enabledFixedRoExported() {
             return FEATURE_FLAGS.enabledFixedRoExported();
         }
         @com.android.aconfig.annotations.AssumeTrueForR8
+        @com.android.aconfig.annotations.AconfigFlagAccessor
         @UnsupportedAppUsage
         public static boolean enabledRo() {
             return FEATURE_FLAGS.enabledRo();
         }
         @com.android.aconfig.annotations.AssumeTrueForR8
+        @com.android.aconfig.annotations.AconfigFlagAccessor
         @UnsupportedAppUsage
         public static boolean enabledRoExported() {
             return FEATURE_FLAGS.enabledRoExported();
         }
+        @com.android.aconfig.annotations.AconfigFlagAccessor
         @UnsupportedAppUsage
         public static boolean enabledRw() {
             return FEATURE_FLAGS.enabledRw();
@@ -458,13 +476,14 @@ mod tests {
                 other_namespace_is_cached = true;
             }
 
-
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean disabledRo() {
                 return false;
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean disabledRw() {
                 if (!aconfig_test_is_cached) {
@@ -473,6 +492,7 @@ mod tests {
                 return disabledRw;
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean disabledRwExported() {
                 if (!aconfig_test_is_cached) {
@@ -481,6 +501,7 @@ mod tests {
                 return disabledRwExported;
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean disabledRwInOtherNamespace() {
                 if (!other_namespace_is_cached) {
@@ -489,26 +510,31 @@ mod tests {
                 return disabledRwInOtherNamespace;
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean enabledFixedRo() {
                 return true;
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean enabledFixedRoExported() {
                 return true;
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean enabledRo() {
                 return true;
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean enabledRoExported() {
                 return true;
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean enabledRw() {
                 if (!aconfig_test_is_cached) {
@@ -566,7 +592,6 @@ mod tests {
             public static final String FLAG_ENABLED_FIXED_RO_EXPORTED = "com.android.aconfig.test.enabled_fixed_ro_exported";
             /** @hide */
             public static final String FLAG_ENABLED_RO_EXPORTED = "com.android.aconfig.test.enabled_ro_exported";
-
             public static boolean disabledRwExported() {
                 return FEATURE_FLAGS.disabledRwExported();
             }
@@ -623,7 +648,6 @@ mod tests {
                 }
                 aconfig_test_is_cached = true;
             }
-
             @Override
             public boolean disabledRwExported() {
                 if (!aconfig_test_is_cached) {
@@ -631,7 +655,6 @@ mod tests {
                 }
                 return disabledRwExported;
             }
-
             @Override
             public boolean enabledFixedRoExported() {
                 if (!aconfig_test_is_cached) {
@@ -639,7 +662,6 @@ mod tests {
                 }
                 return enabledFixedRoExported;
             }
-
             @Override
             public boolean enabledRoExported() {
                 if (!aconfig_test_is_cached) {
@@ -762,54 +784,63 @@ mod tests {
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean disabledRo() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean disabledRw() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean disabledRwExported() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean disabledRwInOtherNamespace() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean enabledFixedRo() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean enabledFixedRoExported() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean enabledRo() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean enabledRoExported() {
                 throw new UnsupportedOperationException(
                     "Method is not implemented.");
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean enabledRw() {
                 throw new UnsupportedOperationException(
@@ -862,21 +893,27 @@ mod tests {
         /** @hide */
         public interface FeatureFlags {
             @com.android.aconfig.annotations.AssumeFalseForR8
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             boolean disabledRo();
             @com.android.aconfig.annotations.AssumeFalseForR8
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             boolean disabledRw();
             @com.android.aconfig.annotations.AssumeFalseForR8
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             boolean disabledRwInOtherNamespace();
             @com.android.aconfig.annotations.AssumeTrueForR8
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             boolean enabledFixedRo();
             @com.android.aconfig.annotations.AssumeTrueForR8
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             boolean enabledRo();
             @com.android.aconfig.annotations.AssumeTrueForR8
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             boolean enabledRw();
         }"#;
@@ -888,31 +925,37 @@ mod tests {
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean disabledRo() {
                 return false;
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean disabledRw() {
                 return false;
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean disabledRwInOtherNamespace() {
                 return false;
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean enabledFixedRo() {
                 return true;
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean enabledRo() {
                 return true;
             }
             @Override
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean enabledRw() {
                 return true;
@@ -938,33 +981,38 @@ mod tests {
             public static final String FLAG_ENABLED_RO = "com.android.aconfig.test.enabled_ro";
             /** @hide */
             public static final String FLAG_ENABLED_RW = "com.android.aconfig.test.enabled_rw";
-
             @com.android.aconfig.annotations.AssumeFalseForR8
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public static boolean disabledRo() {
                 return FEATURE_FLAGS.disabledRo();
             }
             @com.android.aconfig.annotations.AssumeFalseForR8
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public static boolean disabledRw() {
                 return FEATURE_FLAGS.disabledRw();
             }
             @com.android.aconfig.annotations.AssumeFalseForR8
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public static boolean disabledRwInOtherNamespace() {
                 return FEATURE_FLAGS.disabledRwInOtherNamespace();
             }
             @com.android.aconfig.annotations.AssumeTrueForR8
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public static boolean enabledFixedRo() {
                 return FEATURE_FLAGS.enabledFixedRo();
             }
             @com.android.aconfig.annotations.AssumeTrueForR8
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public static boolean enabledRo() {
                 return FEATURE_FLAGS.enabledRo();
             }
             @com.android.aconfig.annotations.AssumeTrueForR8
+            @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public static boolean enabledRw() {
                 return FEATURE_FLAGS.enabledRw();

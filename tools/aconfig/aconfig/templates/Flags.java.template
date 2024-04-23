@@ -18,6 +18,7 @@ public final class Flags \{
 {{ -endif }}
 {{ -endif }}
 {{ -if not library_exported }}
+    @com.android.aconfig.annotations.AconfigFlagAccessor
     @UnsupportedAppUsage
 {{ -endif }}
     public static boolean {item.method_name}() \{

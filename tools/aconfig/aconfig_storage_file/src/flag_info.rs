@@ -91,9 +91,9 @@ impl FlagInfoHeader {
 /// bit field for flag info
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum FlagInfoBit {
-    IsSticky = 0,
-    IsReadWrite = 1,
-    HasOverride = 2,
+    IsSticky = 1 << 0,
+    IsReadWrite = 1 << 1,
+    HasOverride = 1 << 2,
 }
 
 /// Flag info node struct
@@ -108,9 +108,9 @@ impl fmt::Debug for FlagInfoNode {
         writeln!(
             f,
             "sticky: {}, readwrite: {}, override: {}",
-            self.attributes & (FlagInfoBit::IsSticky as u8),
-            self.attributes & (FlagInfoBit::IsReadWrite as u8),
-            self.attributes & (FlagInfoBit::HasOverride as u8),
+            self.attributes & (FlagInfoBit::IsSticky as u8) != 0,
+            self.attributes & (FlagInfoBit::IsReadWrite as u8) != 0,
+            self.attributes & (FlagInfoBit::HasOverride as u8) != 0,
         )?;
         Ok(())
     }
@@ -129,6 +129,11 @@ impl FlagInfoNode {
         let mut head = 0;
         let node = Self { attributes: read_u8_from_bytes(bytes, &mut head)? };
         Ok(node)
+    }
+
+    /// Create flag info node
+    pub fn create(is_flag_rw: bool) -> Self {
+        Self { attributes: if is_flag_rw { FlagInfoBit::IsReadWrite as u8 } else { 0u8 } }
     }
 }
 
@@ -221,7 +226,7 @@ mod tests {
         let bytes = &flag_info_list.into_bytes();
         let mut head = 0;
         let version = read_u32_from_bytes(bytes, &mut head).unwrap();
-        assert_eq!(version, 1234)
+        assert_eq!(version, 1);
     }
 
     #[test]
