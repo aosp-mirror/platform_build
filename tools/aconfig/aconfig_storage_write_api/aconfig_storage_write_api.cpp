@@ -142,15 +142,15 @@ Result<void> set_boolean_flag_value(
   return {};
 }
 
-/// Set if flag is sticky
-Result<void> set_flag_is_sticky(
+/// Set if flag has server override
+Result<void> set_flag_has_server_override(
     const MutableMappedStorageFile& file,
     FlagValueType value_type,
     uint32_t offset,
     bool value) {
   auto content = rust::Slice<uint8_t>(
       static_cast<uint8_t*>(file.file_ptr), file.file_size);
-  auto update_cxx = update_flag_is_sticky_cxx(
+  auto update_cxx = update_flag_has_server_override_cxx(
       content, static_cast<uint16_t>(value_type), offset, value);
   if (!update_cxx.update_success) {
     return Error() << std::string(update_cxx.error_message.c_str());
@@ -158,15 +158,15 @@ Result<void> set_flag_is_sticky(
   return {};
 }
 
-/// Set if flag has override
-Result<void> set_flag_has_override(
+/// Set if flag has local override
+Result<void> set_flag_has_local_override(
     const MutableMappedStorageFile& file,
     FlagValueType value_type,
     uint32_t offset,
     bool value) {
   auto content = rust::Slice<uint8_t>(
       static_cast<uint8_t*>(file.file_ptr), file.file_size);
-  auto update_cxx = update_flag_has_override_cxx(
+  auto update_cxx = update_flag_has_local_override_cxx(
       content, static_cast<uint16_t>(value_type), offset, value);
   if (!update_cxx.update_success) {
     return Error() << std::string(update_cxx.error_message.c_str());
