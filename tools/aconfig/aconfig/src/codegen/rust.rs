@@ -113,7 +113,7 @@ use std::io::Write;
 use log::{log, LevelFilter, Level};
 
 static STORAGE_MIGRATION_MARKER_FILE: &str =
-    "/metadata/aconfig/storage_test_mission_1";
+    "/metadata/aconfig_test_missions/mission_1";
 static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 
 /// flag provider
@@ -516,7 +516,7 @@ use std::io::Write;
 use log::{log, LevelFilter, Level};
 
 static STORAGE_MIGRATION_MARKER_FILE: &str =
-    "/metadata/aconfig/storage_test_mission_1";
+    "/metadata/aconfig_test_missions/mission_1";
 static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 
 /// flag provider
@@ -590,7 +590,7 @@ use std::io::Write;
 use log::{log, LevelFilter, Level};
 
 static STORAGE_MIGRATION_MARKER_FILE: &str =
-    "/metadata/aconfig/storage_test_mission_1";
+    "/metadata/aconfig_test_missions/mission_1";
 static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 
 /// flag provider
