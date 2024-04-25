@@ -357,8 +357,8 @@ mod tests {
             ),
             (
                 String::from("com.android.aconfig.storage.test_2"),
-                String::from("disabled_ro"),
-                StoredFlagType::ReadOnlyBoolean,
+                String::from("disabled_rw"),
+                StoredFlagType::ReadWriteBoolean,
                 false,
             ),
             (
@@ -381,8 +381,8 @@ mod tests {
             ),
             (
                 String::from("com.android.aconfig.storage.test_4"),
-                String::from("enabled_ro"),
-                StoredFlagType::ReadOnlyBoolean,
+                String::from("enabled_rw"),
+                StoredFlagType::ReadWriteBoolean,
                 true,
             ),
         ];
