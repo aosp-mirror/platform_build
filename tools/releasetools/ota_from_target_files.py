@@ -195,6 +195,8 @@ A/B OTA specific options
       ro.product.* properties are overridden by the 'import' statement.
       The file expects one property per line, and each line has the following
       format: 'prop_name=value1,value2'. e.g. 'ro.boot.product.sku=std,pro'
+      The path specified can either be relative to the current working directory
+      or the path to a file inside of input_target_files.
 
   --skip_postinstall
       Skip the postinstall hooks when generating an A/B OTA package (default:
@@ -1048,6 +1050,10 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   from check_target_files_vintf import CheckVintfIfTrebleEnabled
   CheckVintfIfTrebleEnabled(target_file, target_info)
 
+  # Allow boot_variable_file to also exist in target-files
+  if OPTIONS.boot_variable_file:
+    if not os.path.isfile(OPTIONS.boot_variable_file):
+      OPTIONS.boot_variable_file = os.path.join(target_file, OPTIONS.boot_variable_file)
   # Metadata to comply with Android OTA package format.
   metadata = GetPackageMetadata(target_info, source_info)
   # Generate payload.
