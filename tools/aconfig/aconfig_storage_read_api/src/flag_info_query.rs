@@ -70,7 +70,7 @@ mod tests {
     // this test point locks down query if flag is readwrite
     fn test_is_flag_readwrite() {
         let flag_info_list = create_test_flag_info_list().into_bytes();
-        let baseline: Vec<bool> = vec![true, false, true, false, false, false, false, false];
+        let baseline: Vec<bool> = vec![true, false, true, true, false, false, false, true];
         for offset in 0..8 {
             let attribute =
                 find_flag_attribute(&flag_info_list[..], FlagValueType::Boolean, offset).unwrap();
