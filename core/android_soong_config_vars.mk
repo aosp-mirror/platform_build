@@ -78,34 +78,6 @@ ifdef TARGET_BOARD_AUTO
   $(call add_soong_config_var_value, ANDROID, target_board_auto, $(TARGET_BOARD_AUTO))
 endif
 
-# Ensure that those mainline modules who have individually toggleable prebuilts
-# are controlled by the MODULE_BUILD_FROM_SOURCE environment variable by
-# default.
-INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
-  adservices \
-  appsearch \
-  btservices \
-  devicelock \
-  configinfrastructure \
-  conscrypt \
-  healthfitness \
-  ipsec \
-  media \
-  mediaprovider \
-  ondevicepersonalization \
-  permission \
-  rkpd \
-  scheduling \
-  sdkext \
-  statsd \
-  tethering \
-  uwb \
-  wifi \
-
-$(foreach m, $(INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES),\
-  $(if $(call soong_config_get,$(m)_module,source_build),,\
-    $(call soong_config_set,$(m)_module,source_build,$(MODULE_BUILD_FROM_SOURCE))))
-
 # Apex build mode variables
 ifdef APEX_BUILD_FOR_PRE_S_DEVICES
 $(call add_soong_config_var_value,ANDROID,library_linking_strategy,prefer_static)
@@ -164,6 +136,8 @@ $(call add_soong_config_var_value,ANDROID,release_binder_death_recipient_weak_fr
 $(call add_soong_config_var_value,ANDROID,release_package_libandroid_runtime_punch_holes,$(RELEASE_PACKAGE_LIBANDROID_RUNTIME_PUNCH_HOLES))
 
 $(call add_soong_config_var_value,ANDROID,release_selinux_data_data_ignore,$(RELEASE_SELINUX_DATA_DATA_IGNORE))
+
+$(call add_soong_config_var_value,ANDROID,release_write_appcompat_override_system_properties,$(RELEASE_WRITE_APPCOMPAT_OVERRIDE_SYSTEM_PROPERTIES))
 
 # Enable system_server optimizations by default unless explicitly set or if
 # there may be dependent runtime jars.
