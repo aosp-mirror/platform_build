@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Copyright (C) 2024 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +16,13 @@
 
 # Run check-flagged-apis for public APIs and the three @SystemApi flavours
 # Usage: lunch <your-target> && source <this script>
+
+source $(cd $(dirname $BASH_SOURCE) &> /dev/null && pwd)/../../shell_utils.sh
+require_top
+
+function m() {
+    $(gettop)/build/soong/soong_ui.bash --build-mode --all-modules --dir="$(pwd)" "$@"
+}
 
 function build() {
     m sdk dist && m \
