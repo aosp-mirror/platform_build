@@ -189,14 +189,14 @@ mod tests {
         assert_eq!(packages[1].package_id, 1);
         assert_eq!(packages[1].flag_names.len(), 3);
         assert!(packages[1].flag_names.contains("enabled_ro"));
-        assert!(packages[1].flag_names.contains("disabled_ro"));
+        assert!(packages[1].flag_names.contains("disabled_rw"));
         assert!(packages[1].flag_names.contains("enabled_fixed_ro"));
         assert_eq!(packages[1].boolean_start_index, 3);
 
         assert_eq!(packages[2].package_name, "com.android.aconfig.storage.test_4");
         assert_eq!(packages[2].package_id, 2);
         assert_eq!(packages[2].flag_names.len(), 2);
-        assert!(packages[2].flag_names.contains("enabled_ro"));
+        assert!(packages[2].flag_names.contains("enabled_rw"));
         assert!(packages[2].flag_names.contains("enabled_fixed_ro"));
         assert_eq!(packages[2].boolean_start_index, 6);
     }

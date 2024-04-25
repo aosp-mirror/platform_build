@@ -34,15 +34,9 @@ use memmap2::MmapMut;
 use std::fs::File;
 use std::io::{Read, Write};
 
-/// Storage file location pb file
-pub const STORAGE_LOCATION_FILE: &str = "/metadata/aconfig/persistent_storage_file_records.pb";
-
 /// Get read write mapped storage files.
 ///
-/// \input container: the flag package container
-/// \input file_type: storage file type enum
-/// \return a result of read write mapped file
-///
+/// \input file_path: path to the storage file
 ///
 /// # Safety
 ///
@@ -50,11 +44,8 @@ pub const STORAGE_LOCATION_FILE: &str = "/metadata/aconfig/persistent_storage_fi
 /// file not thru this memory mapped file or there are concurrent writes to this
 /// memory mapped file. Ensure all writes to the underlying file are thru this memory
 /// mapped file and there are no concurrent writes.
-pub unsafe fn get_mapped_storage_file(
-    container: &str,
-    file_type: StorageFileType,
-) -> Result<MmapMut, AconfigStorageError> {
-    unsafe { crate::mapped_file::get_mapped_file(STORAGE_LOCATION_FILE, container, file_type) }
+pub unsafe fn map_mutable_storage_file(file_path: &str) -> Result<MmapMut, AconfigStorageError> {
+    crate::mapped_file::map_file(file_path)
 }
 
 /// Set boolean flag value thru mapped file and flush the change to file
@@ -344,7 +335,6 @@ pub(crate) fn create_flag_info_cxx(
 mod tests {
     use super::*;
     use crate::test_utils::copy_to_temp_file;
-    use aconfig_storage_file::protos::storage_record_pb::write_proto_to_temp_file;
     use aconfig_storage_file::test_utils::{
         create_test_flag_info_list, create_test_flag_table, create_test_package_table,
         write_bytes_to_temp_file,
@@ -367,33 +357,12 @@ mod tests {
     fn test_set_boolean_flag_value() {
         let flag_value_file = copy_to_temp_file("./tests/flag.val", false).unwrap();
         let flag_value_path = flag_value_file.path().display().to_string();
-        let text_proto = format!(
-            r#"
-files {{
-    version: 0
-    container: "system"
-    package_map: "some_package.map"
-    flag_map: "some_flag.map"
-    flag_val: "{}"
-    flag_info: "some_flag.info"
-    timestamp: 12345
-}}
-"#,
-            flag_value_path
-        );
-        let record_pb_file = write_proto_to_temp_file(&text_proto).unwrap();
-        let record_pb_path = record_pb_file.path().display().to_string();
 
         // SAFETY:
         // The safety here is guaranteed as only this single threaded test process will
         // write to this file
         unsafe {
-            let mut file = crate::mapped_file::get_mapped_file(
-                &record_pb_path,
-                "system",
-                StorageFileType::FlagVal,
-            )
-            .unwrap();
+            let mut file = map_mutable_storage_file(&flag_value_path).unwrap();
             for i in 0..8 {
                 set_boolean_flag_value(&mut file, i, true).unwrap();
                 let value = get_boolean_flag_value_at_offset(&flag_value_path, i);
@@ -417,33 +386,12 @@ files {{
     fn test_set_flag_has_server_override() {
         let flag_info_file = copy_to_temp_file("./tests/flag.info", false).unwrap();
         let flag_info_path = flag_info_file.path().display().to_string();
-        let text_proto = format!(
-            r#"
-    files {{
-        version: 0
-        container: "system"
-        package_map: "some_package.map"
-        flag_map: "some_flag.map"
-        flag_val: "some_flag.val"
-        flag_info: "{}"
-        timestamp: 12345
-    }}
-    "#,
-            flag_info_path
-        );
-        let record_pb_file = write_proto_to_temp_file(&text_proto).unwrap();
-        let record_pb_path = record_pb_file.path().display().to_string();
 
         // SAFETY:
         // The safety here is guaranteed as only this single threaded test process will
         // write to this file
         unsafe {
-            let mut file = crate::mapped_file::get_mapped_file(
-                &record_pb_path,
-                "system",
-                StorageFileType::FlagInfo,
-            )
-            .unwrap();
+            let mut file = map_mutable_storage_file(&flag_info_path).unwrap();
             for i in 0..8 {
                 set_flag_has_server_override(&mut file, FlagValueType::Boolean, i, true).unwrap();
                 let attribute =
@@ -461,33 +409,12 @@ files {{
     fn test_set_flag_has_local_override() {
         let flag_info_file = copy_to_temp_file("./tests/flag.info", false).unwrap();
         let flag_info_path = flag_info_file.path().display().to_string();
-        let text_proto = format!(
-            r#"
-    files {{
-        version: 0
-        container: "system"
-        package_map: "some_package.map"
-        flag_map: "some_flag.map"
-        flag_val: "some_flag.val"
-        flag_info: "{}"
-        timestamp: 12345
-    }}
-    "#,
-            flag_info_path
-        );
-        let record_pb_file = write_proto_to_temp_file(&text_proto).unwrap();
-        let record_pb_path = record_pb_file.path().display().to_string();
 
         // SAFETY:
         // The safety here is guaranteed as only this single threaded test process will
         // write to this file
         unsafe {
-            let mut file = crate::mapped_file::get_mapped_file(
-                &record_pb_path,
-                "system",
-                StorageFileType::FlagInfo,
-            )
-            .unwrap();
+            let mut file = map_mutable_storage_file(&flag_info_path).unwrap();
             for i in 0..8 {
                 set_flag_has_local_override(&mut file, FlagValueType::Boolean, i, true).unwrap();
                 let attribute =
