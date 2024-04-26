@@ -49,6 +49,23 @@ $(eval $(call declare-copy-files-license-metadata,device/google/coral,display_19
 $(eval $(call declare-1p-copy-files,device/google/coral,audio_policy_configuration.xml))
 $(eval $(call declare-1p-copy-files,device/google/coral,display_19260504575090817.xml))
 
+# Moved here from device/google/gs101/Android.mk
+$(eval $(call declare-copy-files-license-metadata,device/google/gs101,default-permissions.xml,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/gs101,libnfc-nci.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/gs101,fstab.postinstall,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/gs101,ueventd.rc,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/gs101,wpa_supplicant.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/gs101,hals.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/gs101,media_profiles_V1_0.xml,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/gs101,media_codecs_performance.xml,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/gs101,device_state_configuration.xml,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/gs101,task_profiles.json,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/gs101,p2p_supplicant_overlay.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/gs101,wpa_supplicant.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/gs101,wpa_supplicant_overlay.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+
+$(eval $(call declare-1p-copy-files,device/google/gs101,audio_policy_configuration.xml))
+
 # Moved here from device/sample/Android.mk
 $(eval $(call declare-1p-copy-files,device/sample,))
 
