@@ -22,6 +22,7 @@ import com.android.tools.metalava.model.BaseItemVisitor
 import com.android.tools.metalava.model.ClassItem
 import com.android.tools.metalava.model.FieldItem
 import com.android.tools.metalava.model.Item
+import com.android.tools.metalava.model.MethodItem
 import com.android.tools.metalava.model.text.ApiFile
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.ProgramResult
@@ -187,6 +188,25 @@ internal fun parseApiSignature(path: String, input: InputStream): Set<Pair<Symbo
           }
         }
 
+        override fun visitMethod(method: MethodItem) {
+          getFlagOrNull(method)?.let { flag ->
+            val name = buildString {
+              append(method.containingClass().qualifiedName())
+              append(".")
+              append(method.name())
+              append("(")
+              // TODO(334870672): replace this early return with proper parsing of the command line
+              // arguments, followed by translation to Lname/of/class; + III format
+              if (!method.parameters().isEmpty()) {
+                return
+              }
+              append(")")
+            }
+            val symbol = Symbol.create(name)
+            output.add(Pair(symbol, flag))
+          }
+        }
+
         private fun getFlagOrNull(item: Item): Flag? {
           return item.modifiers
               .findAnnotation("android.annotation.FlaggedApi")
@@ -238,6 +258,29 @@ internal fun parseApiVersions(input: InputStream): Set<Symbol> {
         requireNotNull(field.getParentNode()) { "Bad XML: top level <field> element" }
             .getAttribute("name")
     output.add(Symbol.create("$className.$fieldName"))
+  }
+
+  val methods = document.getElementsByTagName("method")
+  // ktfmt doesn't understand the `..<` range syntax; explicitly call .rangeUntil instead
+  for (i in 0.rangeUntil(methods.getLength())) {
+    val method = methods.item(i)
+    val methodSignature =
+        requireNotNull(method.getAttribute("name")) {
+          "Bad XML: <method> element without name attribute"
+        }
+    val methodSignatureParts = methodSignature.split(Regex("\\(|\\)"))
+    if (methodSignatureParts.size != 3) {
+      throw Exception("Bad XML: method signature '$methodSignature': debug $methodSignatureParts")
+    }
+    var (methodName, methodArgs, methodReturnValue) = methodSignatureParts
+    val packageAndClassName =
+        requireNotNull(method.getParentNode()?.getAttribute("name")) {
+          "Bad XML: top level <method> element, or <class> element missing name attribute"
+        }
+    if (methodName == "<init>") {
+      methodName = packageAndClassName.split("/").last()
+    }
+    output.add(Symbol.create("$packageAndClassName.$methodName($methodArgs)"))
   }
 
   return output
