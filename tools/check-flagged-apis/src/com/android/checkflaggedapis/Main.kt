@@ -207,7 +207,10 @@ internal fun parseApiVersions(input: InputStream): Set<Symbol> {
   // ktfmt doesn't understand the `..<` range syntax; explicitly call .rangeUntil instead
   for (i in 0.rangeUntil(fields.getLength())) {
     val field = fields.item(i)
-    val fieldName = field.getAttribute("name")
+    val fieldName =
+        requireNotNull(field.getAttribute("name")) {
+          "Bad XML: <field> element without name attribute"
+        }
     val className =
         requireNotNull(field.getParentNode()) { "Bad XML: top level <field> element" }
             .getAttribute("name")
