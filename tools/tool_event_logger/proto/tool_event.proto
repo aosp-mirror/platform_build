@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package tools.asuite.tool_event_logger;
+
+message ToolEvent {
+  // Occurs immediately upon execution of the tool.
+  message InvocationStarted {
+    string command_args = 1;
+    string cwd = 2;
+    string os = 3;
+  }
+
+  // Occurs when tool exits for any reason.
+  message InvocationStopped {
+    int32 exit_code = 2;
+    string exit_log = 3;
+  }
+
+  // ------------------------
+  // FIELDS FOR ToolEvent
+  // ------------------------
+  // Random string generated to identify the invocation.
+  string invocation_id = 1;
+  // Internal user name.
+  string user_name = 2;
+  // The root of Android source.
+  string source_root = 3;
+  // Name of the tool used.
+  string tool_tag = 6;
+
+  oneof event {
+    InvocationStarted invocation_started = 4;
+    InvocationStopped invocation_stopped = 5;
+  }
+}
