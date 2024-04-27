@@ -49,7 +49,7 @@ import org.w3c.dom.Node
 @JvmInline
 internal value class Symbol(val name: String) {
   companion object {
-    private val FORBIDDEN_CHARS = listOf('/', '#', '$')
+    private val FORBIDDEN_CHARS = listOf('#', '$')
 
     /** Create a new Symbol from a String that may include delimiters other than dot. */
     fun create(name: String): Symbol {
@@ -243,7 +243,7 @@ internal fun parseApiVersions(input: InputStream): Set<Symbol> {
         requireNotNull(cls.getAttribute("name")) {
           "Bad XML: <class> element without name attribute"
         }
-    output.add(Symbol.create(className))
+    output.add(Symbol.create(className.replace("/", ".")))
   }
 
   val fields = document.getElementsByTagName("field")
@@ -255,9 +255,8 @@ internal fun parseApiVersions(input: InputStream): Set<Symbol> {
           "Bad XML: <field> element without name attribute"
         }
     val className =
-        requireNotNull(field.getParentNode()) { "Bad XML: top level <field> element" }
-            .getAttribute("name")
-    output.add(Symbol.create("$className.$fieldName"))
+        requireNotNull(field.getParentNode()?.getAttribute("name")) { "Bad XML: top level <field> element" }
+    output.add(Symbol.create("${className.replace("/", ".")}.$fieldName"))
   }
 
   val methods = document.getElementsByTagName("method")
@@ -280,7 +279,7 @@ internal fun parseApiVersions(input: InputStream): Set<Symbol> {
     if (methodName == "<init>") {
       methodName = packageAndClassName.split("/").last()
     }
-    output.add(Symbol.create("$packageAndClassName.$methodName($methodArgs)"))
+    output.add(Symbol.create("${packageAndClassName.replace("/", ".")}.$methodName($methodArgs)"))
   }
 
   return output
