@@ -214,8 +214,8 @@ pub fn create_cpp_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec
         bail!("no parsed flags, or the parsed flags use different packages");
     };
     let package = package.to_string();
-    let _flag_ids = assign_flag_ids(&package, modified_parsed_flags.iter())?;
-    generate_cpp_code(&package, modified_parsed_flags.into_iter(), codegen_mode)
+    let flag_ids = assign_flag_ids(&package, modified_parsed_flags.iter())?;
+    generate_cpp_code(&package, modified_parsed_flags.into_iter(), codegen_mode, flag_ids, false)
 }
 
 pub fn create_rust_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<OutputFile> {
