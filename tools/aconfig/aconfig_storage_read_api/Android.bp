@@ -109,3 +109,11 @@ cc_library {
     },
     double_loadable: true,
 }
+
+cc_defaults {
+    name: "aconfig_lib_cc_static_link.defaults",
+    shared_libs: [
+        "libaconfig_storage_read_api_cc",
+        "liblog",
+    ],
+}

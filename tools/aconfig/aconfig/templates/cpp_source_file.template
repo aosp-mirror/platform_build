@@ -3,7 +3,6 @@
 {{ if allow_instrumentation }}
 #include <sys/stat.h>
 #include "aconfig_storage/aconfig_storage_read_api.hpp"
-#include <protos/aconfig_storage_metadata.pb.h>
 #include <android/log.h>
 
 #define ALOGI(msg, ...)                                                        \
