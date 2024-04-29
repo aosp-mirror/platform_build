@@ -202,7 +202,11 @@ pub fn create_java_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Ve
     generate_java_code(&package, modified_parsed_flags.into_iter(), codegen_mode)
 }
 
-pub fn create_cpp_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec<OutputFile>> {
+pub fn create_cpp_lib(
+    mut input: Input,
+    codegen_mode: CodegenMode,
+    allow_instrumentation: bool,
+) -> Result<Vec<OutputFile>> {
     // TODO(327420679): Enable export mode for native flag library
     ensure!(
         codegen_mode != CodegenMode::Exported,
@@ -215,7 +219,13 @@ pub fn create_cpp_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec
     };
     let package = package.to_string();
     let flag_ids = assign_flag_ids(&package, modified_parsed_flags.iter())?;
-    generate_cpp_code(&package, modified_parsed_flags.into_iter(), codegen_mode, flag_ids, false)
+    generate_cpp_code(
+        &package,
+        modified_parsed_flags.into_iter(),
+        codegen_mode,
+        flag_ids,
+        allow_instrumentation,
+    )
 }
 
 pub fn create_rust_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<OutputFile> {
