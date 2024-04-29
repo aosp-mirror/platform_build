@@ -83,6 +83,12 @@ fn cli() -> Command {
                         .long("mode")
                         .value_parser(EnumValueParser::<CodegenMode>::new())
                         .default_value("production"),
+                )
+                .arg(
+                    Arg::new("allow-instrumentation")
+                        .long("allow-instrumentation")
+                        .value_parser(clap::value_parser!(bool))
+                        .default_value("false"),
                 ),
         )
         .subcommand(
@@ -241,8 +247,10 @@ fn main() -> Result<()> {
         Some(("create-cpp-lib", sub_matches)) => {
             let cache = open_single_file(sub_matches, "cache")?;
             let mode = get_required_arg::<CodegenMode>(sub_matches, "mode")?;
-            let generated_files =
-                commands::create_cpp_lib(cache, *mode).context("failed to create cpp lib")?;
+            let allow_instrumentation =
+                get_required_arg::<bool>(sub_matches, "allow-instrumentation")?;
+            let generated_files = commands::create_cpp_lib(cache, *mode, *allow_instrumentation)
+                .context("failed to create cpp lib")?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
             generated_files
                 .iter()
