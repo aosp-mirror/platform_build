@@ -269,7 +269,7 @@ internal fun parseApiVersions(input: InputStream): Set<Symbol> {
         }
     val methodSignatureParts = methodSignature.split(Regex("\\(|\\)"))
     if (methodSignatureParts.size != 3) {
-      throw Exception("Bad XML: method signature '$methodSignature': debug $methodSignatureParts")
+      throw Exception("Bad XML: method signature '$methodSignature'")
     }
     var (methodName, methodArgs, methodReturnValue) = methodSignatureParts
     val packageAndClassName =
