@@ -428,10 +428,16 @@ mod tests {
 
     /** @hide */
     public class FakeFeatureFlagsImpl extends CustomFeatureFlags {
-        private Map<String, Boolean> mFlagMap = new HashMap<>();
+        private final Map<String, Boolean> mFlagMap = new HashMap<>();
+        private final FeatureFlags mDefaults;
 
         public FakeFeatureFlagsImpl() {
+            this(null);
+        }
+
+        public FakeFeatureFlagsImpl(FeatureFlags defaults) {
             super(null);
+            mDefaults = defaults;
             // Initialize the map with null values
             for (String flagName : getFlagNames()) {
                 mFlagMap.put(flagName, null);
@@ -441,10 +447,13 @@ mod tests {
         @Override
         protected boolean getValue(String flagName, Predicate<FeatureFlags> getter) {
             Boolean value = this.mFlagMap.get(flagName);
-            if (value == null) {
-                throw new IllegalArgumentException(flagName + " is not set");
+            if (value != null) {
+                return value;
             }
-            return value;
+            if (mDefaults != null) {
+                return getter.test(mDefaults);
+            }
+            throw new IllegalArgumentException(flagName + " is not set");
         }
 
         public void setFlag(String flagName, boolean value) {
