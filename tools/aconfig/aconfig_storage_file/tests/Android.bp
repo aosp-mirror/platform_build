@@ -1,0 +1,23 @@
+
+cc_test {
+    name: "aconfig_storage_file.test.cpp",
+    team: "trendy_team_android_core_experiments",
+    srcs: [
+        "storage_file_test.cpp",
+    ],
+    static_libs: [
+        "libgmock",
+        "libaconfig_storage_file_cc",
+        "libbase",
+    ],
+    data: [
+        "package.map",
+        "flag.map",
+        "flag.val",
+        "flag.info",
+    ],
+    test_suites: [
+        "device-tests",
+        "general-tests",
+    ],
+}
