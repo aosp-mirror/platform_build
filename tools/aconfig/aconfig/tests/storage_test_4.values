@@ -1,8 +1,8 @@
 flag_value {
     package: "com.android.aconfig.storage.test_4"
-    name: "enabled_ro"
+    name: "enabled_rw"
     state: ENABLED
-    permission: READ_ONLY
+    permission: READ_WRITE
 }
 flag_value {
     package: "com.android.aconfig.storage.test_4"

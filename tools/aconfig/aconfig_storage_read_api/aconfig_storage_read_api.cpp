@@ -65,8 +65,24 @@ static Result<std::string> find_storage_file(
   return Error() << "Unable to find storage files for container " << container;;
 }
 
+namespace private_internal_api {
+
+/// Get mapped file implementation.
+Result<MappedStorageFile> get_mapped_file_impl(
+    std::string const& pb_file,
+    std::string const& container,
+    StorageFileType file_type) {
+  auto file_result = find_storage_file(pb_file, container, file_type);
+  if (!file_result.ok()) {
+    return Error() << file_result.error();
+  }
+  return map_storage_file(*file_result);
+}
+
+} // namespace private internal api
+
 /// Map a storage file
-static Result<MappedStorageFile> map_storage_file(std::string const& file) {
+Result<MappedStorageFile> map_storage_file(std::string const& file) {
   int fd = open(file.c_str(), O_CLOEXEC | O_NOFOLLOW | O_RDONLY);
   if (fd == -1) {
     return ErrnoError() << "failed to open " << file;
@@ -89,22 +105,6 @@ static Result<MappedStorageFile> map_storage_file(std::string const& file) {
 
   return mapped_file;
 }
-
-namespace private_internal_api {
-
-/// Get mapped file implementation.
-Result<MappedStorageFile> get_mapped_file_impl(
-    std::string const& pb_file,
-    std::string const& container,
-    StorageFileType file_type) {
-  auto file_result = find_storage_file(pb_file, container, file_type);
-  if (!file_result.ok()) {
-    return Error() << file_result.error();
-  }
-  return map_storage_file(*file_result);
-}
-
-} // namespace private internal api
 
 /// Map from StoredFlagType to FlagValueType
 android::base::Result<FlagValueType> map_to_flag_value_type(

@@ -314,6 +314,14 @@ endif
 ifeq (true,$(PRODUCT_MODULE_BUILD_FROM_SOURCE))
   ignore_apex_contributions := true
 endif
+ifneq ($(EMMA_INSTRUMENT)$(EMMA_INSTRUMENT_STATIC)$(EMMA_INSTRUMENT_FRAMEWORK)$(CLANG_COVERAGE)$(NATIVE_COVERAGE_PATHS),)
+# Coverage builds for TARGET_RELEASE=foo should always build from source,
+# even if TARGET_RELEASE=foo uses prebuilt mainline modules.
+# This is necessary because the checked-in prebuilts were generated with
+# instrumentation turned off.
+  ignore_apex_contributions := true
+endif
+
 ifeq (true, $(ignore_apex_contributions))
 PRODUCT_BUILD_IGNORE_APEX_CONTRIBUTION_CONTENTS := true
 endif

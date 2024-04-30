@@ -167,8 +167,8 @@ TEST_F(AconfigStorageTest, test_flag_context_query) {
   auto baseline = std::vector<std::tuple<int, std::string, api::StoredFlagType, int>>{
     {0, "enabled_ro", api::StoredFlagType::ReadOnlyBoolean, 1},
     {0, "enabled_rw", api::StoredFlagType::ReadWriteBoolean, 2},
-    {1, "disabled_ro", api::StoredFlagType::ReadOnlyBoolean, 0},
-    {2, "enabled_ro", api::StoredFlagType::ReadOnlyBoolean, 1},
+    {2, "enabled_rw", api::StoredFlagType::ReadWriteBoolean, 1},
+    {1, "disabled_rw", api::StoredFlagType::ReadWriteBoolean, 0},
     {1, "enabled_fixed_ro", api::StoredFlagType::FixedReadOnlyBoolean, 1},
     {1, "enabled_ro", api::StoredFlagType::ReadOnlyBoolean, 2},
     {2, "enabled_fixed_ro", api::StoredFlagType::FixedReadOnlyBoolean, 0},

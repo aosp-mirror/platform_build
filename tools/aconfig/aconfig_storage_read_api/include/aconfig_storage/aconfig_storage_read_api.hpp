@@ -67,6 +67,11 @@ android::base::Result<MappedStorageFile> get_mapped_file_impl(
 
 } // namespace private_internal_api
 
+/// Map a storage file
+android::base::Result<MappedStorageFile> map_storage_file(
+    std::string const& file);
+
+
 /// Map from StoredFlagType to FlagValueType
 /// \input stored_type: stored flag type in the storage file
 /// \returns the flag value type enum

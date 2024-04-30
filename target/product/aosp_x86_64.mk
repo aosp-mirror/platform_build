@@ -57,7 +57,8 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_product.mk)
 # All components inherited here go to vendor image
 #
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86_64/device.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/non_ab_device.mk)
+AB_OTA_UPDATER := true
+AB_OTA_PARTITIONS ?= system
 
 #
 # Special settings for GSI releasing

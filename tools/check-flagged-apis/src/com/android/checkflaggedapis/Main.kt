@@ -19,7 +19,10 @@ package com.android.checkflaggedapis
 
 import android.aconfig.Aconfig
 import com.android.tools.metalava.model.BaseItemVisitor
+import com.android.tools.metalava.model.ClassItem
 import com.android.tools.metalava.model.FieldItem
+import com.android.tools.metalava.model.Item
+import com.android.tools.metalava.model.MethodItem
 import com.android.tools.metalava.model.text.ApiFile
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.ProgramResult
@@ -46,7 +49,7 @@ import org.w3c.dom.Node
 @JvmInline
 internal value class Symbol(val name: String) {
   companion object {
-    private val FORBIDDEN_CHARS = listOf('/', '#', '$')
+    private val FORBIDDEN_CHARS = listOf('#', '$')
 
     /** Create a new Symbol from a String that may include delimiters other than dot. */
     fun create(name: String): Symbol {
@@ -167,21 +170,49 @@ The tool will exit with a non-zero exit code if any flagged APIs are found to be
 }
 
 internal fun parseApiSignature(path: String, input: InputStream): Set<Pair<Symbol, Flag>> {
-  // TODO(334870672): add support for classes and metods
+  // TODO(334870672): add support for metods
   val output = mutableSetOf<Pair<Symbol, Flag>>()
   val visitor =
       object : BaseItemVisitor() {
-        override fun visitField(field: FieldItem) {
-          val flag =
-              field.modifiers
-                  .findAnnotation("android.annotation.FlaggedApi")
-                  ?.findAttribute("value")
-                  ?.value
-                  ?.value() as? String
-          if (flag != null) {
-            val symbol = Symbol.create(field.baselineElementId())
-            output.add(Pair(symbol, Flag(flag)))
+        override fun visitClass(cls: ClassItem) {
+          getFlagOrNull(cls)?.let { flag ->
+            val symbol = Symbol.create(cls.baselineElementId())
+            output.add(Pair(symbol, flag))
           }
+        }
+
+        override fun visitField(field: FieldItem) {
+          getFlagOrNull(field)?.let { flag ->
+            val symbol = Symbol.create(field.baselineElementId())
+            output.add(Pair(symbol, flag))
+          }
+        }
+
+        override fun visitMethod(method: MethodItem) {
+          getFlagOrNull(method)?.let { flag ->
+            val name = buildString {
+              append(method.containingClass().qualifiedName())
+              append(".")
+              append(method.name())
+              append("(")
+              // TODO(334870672): replace this early return with proper parsing of the command line
+              // arguments, followed by translation to Lname/of/class; + III format
+              if (!method.parameters().isEmpty()) {
+                return
+              }
+              append(")")
+            }
+            val symbol = Symbol.create(name)
+            output.add(Pair(symbol, flag))
+          }
+        }
+
+        private fun getFlagOrNull(item: Item): Flag? {
+          return item.modifiers
+              .findAnnotation("android.annotation.FlaggedApi")
+              ?.findAttribute("value")
+              ?.value
+              ?.let { Flag(it.value() as String) }
         }
       }
   val codebase = ApiFile.parseApi(path, input)
@@ -203,16 +234,54 @@ internal fun parseApiVersions(input: InputStream): Set<Symbol> {
   val factory = DocumentBuilderFactory.newInstance()
   val parser = factory.newDocumentBuilder()
   val document = parser.parse(input)
+
+  val classes = document.getElementsByTagName("class")
+  // ktfmt doesn't understand the `..<` range syntax; explicitly call .rangeUntil instead
+  for (i in 0.rangeUntil(classes.getLength())) {
+    val cls = classes.item(i)
+    val className =
+        requireNotNull(cls.getAttribute("name")) {
+          "Bad XML: <class> element without name attribute"
+        }
+    output.add(Symbol.create(className.replace("/", ".")))
+  }
+
   val fields = document.getElementsByTagName("field")
   // ktfmt doesn't understand the `..<` range syntax; explicitly call .rangeUntil instead
   for (i in 0.rangeUntil(fields.getLength())) {
     val field = fields.item(i)
-    val fieldName = field.getAttribute("name")
+    val fieldName =
+        requireNotNull(field.getAttribute("name")) {
+          "Bad XML: <field> element without name attribute"
+        }
     val className =
-        requireNotNull(field.getParentNode()) { "Bad XML: top level <field> element" }
-            .getAttribute("name")
-    output.add(Symbol.create("$className.$fieldName"))
+        requireNotNull(field.getParentNode()?.getAttribute("name")) { "Bad XML: top level <field> element" }
+    output.add(Symbol.create("${className.replace("/", ".")}.$fieldName"))
   }
+
+  val methods = document.getElementsByTagName("method")
+  // ktfmt doesn't understand the `..<` range syntax; explicitly call .rangeUntil instead
+  for (i in 0.rangeUntil(methods.getLength())) {
+    val method = methods.item(i)
+    val methodSignature =
+        requireNotNull(method.getAttribute("name")) {
+          "Bad XML: <method> element without name attribute"
+        }
+    val methodSignatureParts = methodSignature.split(Regex("\\(|\\)"))
+    if (methodSignatureParts.size != 3) {
+      throw Exception("Bad XML: method signature '$methodSignature'")
+    }
+    var (methodName, methodArgs, methodReturnValue) = methodSignatureParts
+    val packageAndClassName =
+        requireNotNull(method.getParentNode()?.getAttribute("name")) {
+          "Bad XML: top level <method> element, or <class> element missing name attribute"
+        }
+    if (methodName == "<init>") {
+      methodName = packageAndClassName.split("/").last()
+    }
+    output.add(Symbol.create("${packageAndClassName.replace("/", ".")}.$methodName($methodArgs)"))
+  }
+
   return output
 }
 

@@ -1,0 +1,70 @@
+package {package_name};
+
+{{ if not library_exported- }}
+// TODO(b/303773055): Remove the annotation after access issue is resolved.
+import android.compat.annotation.UnsupportedAppUsage;
+{{ -endif }}
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
+
+/** @hide */
+public class CustomFeatureFlags implements FeatureFlags \{
+
+    private BiPredicate<String, Predicate<FeatureFlags>> mGetValueImpl;
+
+    public CustomFeatureFlags(BiPredicate<String, Predicate<FeatureFlags>> getValueImpl) \{
+        mGetValueImpl = getValueImpl;
+    }
+
+{{ -for item in flag_elements}}
+    @Override
+{{ if not library_exported }}    @UnsupportedAppUsage{{ -endif }}
+    public boolean {item.method_name}() \{
+        return getValue(Flags.FLAG_{item.flag_name_constant_suffix},
+            FeatureFlags::{item.method_name});
+    }
+{{ endfor }}
+
+{{ -if not library_exported }}
+    public boolean isFlagReadOnlyOptimized(String flagName) \{
+        if (mReadOnlyFlagsSet.contains(flagName) &&
+            isOptimizationEnabled()) \{
+                return true;
+        }
+        return false;
+    }
+
+    @com.android.aconfig.annotations.AssumeTrueForR8
+    private boolean isOptimizationEnabled() \{
+        return false;
+    }
+{{ -endif }}
+
+    protected boolean getValue(String flagName, Predicate<FeatureFlags> getter) \{
+        return mGetValueImpl.test(flagName, getter);
+    }
+
+    public List<String> getFlagNames() \{
+        return Arrays.asList(
+            {{ -for item in flag_elements }}
+            Flags.FLAG_{item.flag_name_constant_suffix}
+            {{ -if not @last }},{{ endif }}
+            {{ -endfor }}
+        );
+    }
+
+    private Set<String> mReadOnlyFlagsSet = new HashSet<>(
+        Arrays.asList(
+            {{ -for item in flag_elements }}
+            {{ -if not item.is_read_write }}
+            Flags.FLAG_{item.flag_name_constant_suffix},
+            {{ -endif }}
+            {{ -endfor }}
+            ""{# The empty string here is to resolve the ending comma #}
+        )
+    );
+}
