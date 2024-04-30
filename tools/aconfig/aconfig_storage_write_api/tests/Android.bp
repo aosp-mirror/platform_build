@@ -1,8 +1,7 @@
-
 rust_test {
     name: "aconfig_storage_write_api.test.rust",
     srcs: [
-        "storage_write_api_test.rs"
+        "storage_write_api_test.rs",
     ],
     rustlibs: [
         "libanyhow",
@@ -14,6 +13,7 @@ rust_test {
     ],
     data: [
         "flag.val",
+        "flag.info",
     ],
     test_suites: ["general-tests"],
 }
@@ -34,9 +34,11 @@ cc_test {
     ],
     data: [
         "flag.val",
+        "flag.info",
     ],
     test_suites: [
         "device-tests",
         "general-tests",
     ],
+    ldflags: ["-Wl,--allow-multiple-definition"],
 }

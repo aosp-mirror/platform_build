@@ -221,20 +221,6 @@ ADDITIONAL_SYSTEM_PROPERTIES += $(foreach s,$(SANITIZE_TARGET),ro.sanitize.$(s)=
 # mount system_other partition.
 ADDITIONAL_SYSTEM_PROPERTIES += ro.postinstall.fstab.prefix=/system
 
-# -----------------------------------------------------------------
-# ADDITIONAL_VENDOR_PROPERTIES will be installed in vendor/build.prop if
-# property_overrides_split_enabled is true. Otherwise it will be installed in
-# /system/build.prop
-ifeq ($(KEEP_VNDK),true)
-ifdef BOARD_VNDK_VERSION
-  ifeq ($(BOARD_VNDK_VERSION),current)
-    ADDITIONAL_VENDOR_PROPERTIES := ro.vndk.version=$(PLATFORM_VNDK_VERSION)
-  else
-    ADDITIONAL_VENDOR_PROPERTIES := ro.vndk.version=$(BOARD_VNDK_VERSION)
-  endif
-endif
-endif
-
 # Add cpu properties for bionic and ART.
 ADDITIONAL_VENDOR_PROPERTIES += ro.bionic.arch=$(TARGET_ARCH)
 ADDITIONAL_VENDOR_PROPERTIES += ro.bionic.cpu_variant=$(TARGET_CPU_VARIANT_RUNTIME)
@@ -346,18 +332,6 @@ ADDITIONAL_VENDOR_PROPERTIES += \
     ro.build.ab_update=$(AB_OTA_UPDATER)
 endif
 
-# Set ro.product.vndk.version to PLATFORM_VNDK_VERSION only if
-# KEEP_VNDK is true, PRODUCT_PRODUCT_VNDK_VERSION is current and
-# PLATFORM_VNDK_VERSION is less than or equal to 35.
-# ro.product.vndk.version must be removed for the other future builds.
-ifeq ($(KEEP_VNDK)|$(PRODUCT_PRODUCT_VNDK_VERSION),true|current)
-ifeq ($(call math_is_number,$(PLATFORM_VNDK_VERSION)),true)
-ifeq ($(call math_lt_or_eq,$(PLATFORM_VNDK_VERSION),35),true)
-ADDITIONAL_PRODUCT_PROPERTIES += ro.product.vndk.version=$(PLATFORM_VNDK_VERSION)
-endif
-endif
-endif
-
 ADDITIONAL_PRODUCT_PROPERTIES += ro.build.characteristics=$(TARGET_AAPT_CHARACTERISTICS)
 
 ifeq ($(AB_OTA_UPDATER),true)
@@ -368,6 +342,10 @@ endif
 # Set this property for VTS to skip large page size tests on unsupported devices.
 ADDITIONAL_PRODUCT_PROPERTIES += \
     ro.product.cpu.pagesize.max=$(TARGET_MAX_PAGE_SIZE_SUPPORTED)
+
+ifeq ($(PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO),true)
+ADDITIONAL_PRODUCT_PROPERTIES += ro.product.build.no_bionic_page_size_macro=true
+endif
 
 # -----------------------------------------------------------------
 ###
@@ -1248,8 +1226,7 @@ endef
 # Returns modules included automatically as a result of certain BoardConfig
 # variables being set.
 define auto-included-modules
-  $(if $(and $(BOARD_VNDK_VERSION),$(filter true,$(KEEP_VNDK))),vndk_package) \
-  $(if $(filter true,$(KEEP_VNDK)),,llndk_in_system) \
+  llndk_in_system \
   $(if $(DEVICE_MANIFEST_FILE),vendor_manifest.xml) \
   $(if $(DEVICE_MANIFEST_SKUS),$(foreach sku, $(DEVICE_MANIFEST_SKUS),vendor_manifest_$(sku).xml)) \
   $(if $(ODM_MANIFEST_FILES),odm_manifest.xml) \
@@ -1935,7 +1912,7 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
   $(api_xmls):
 	$(hide) echo "Converting API file to XML: $@"
 	$(hide) mkdir -p $(dir $@)
-	$(hide) $(APICHECK_COMMAND) --input-api-jar $< --api-xml $@
+	$(hide) $(APICHECK_COMMAND) jar-to-jdiff $< $@
 
   $(foreach xml,$(sort $(api_xmls)),$(call declare-1p-target,$(xml),))
 

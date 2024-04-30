@@ -29,7 +29,7 @@ use aconfig_storage_file::protos::{
 };
 
 /// Find where storage files are stored for a particular container
-fn find_container_storage_location(
+pub fn find_container_storage_location(
     location_pb_file: &str,
     container: &str,
 ) -> Result<ProtoStorageFileInfo, AconfigStorageError> {
@@ -91,6 +91,7 @@ pub unsafe fn get_mapped_file(
         StorageFileType::PackageMap => unsafe { map_file(files_location.package_map()) },
         StorageFileType::FlagMap => unsafe { map_file(files_location.flag_map()) },
         StorageFileType::FlagVal => unsafe { map_file(files_location.flag_val()) },
+        StorageFileType::FlagInfo => unsafe { map_file(files_location.flag_info()) },
     }
 }
 

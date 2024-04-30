@@ -50,7 +50,7 @@ def get_referenced_projects(git_dirs, files):
         referenced_dirs.add(d)
         prev_dir = d
         break
-  return [d[0:-1] for d in referenced_dirs]
+  return referenced_dirs
 
 
 def main(argv):
@@ -63,9 +63,11 @@ def main(argv):
                   help="The TARGET_BUILD_VARIANTS to check. If not provided just uses whatever has"
                         + " already been built, or eng if --products is supplied")
   ap.add_argument("--modules", nargs="*",
-                  help="The build modules to check, or droid it not supplied")
+                  help="The build modules to check, or droid if not supplied")
   ap.add_argument("--why", nargs="*",
                   help="Also print the input files used in these projects, or \"*\" for all")
+  ap.add_argument("--unused", help="List the unused git projects for the given modules rather than"
+                        + "the used ones. Ignores --why", action="store_true")
   args = ap.parse_args(argv[1:])
 
   modules = args.modules if args.modules else ["droid"]
@@ -92,15 +94,21 @@ def main(argv):
 
   sources = sorted(sources)
 
-  # Print the list of git directories that has one or more of the sources in it
-  for project in sorted(get_referenced_projects(get_git_dirs(), sources)):
-    print(project)
-    if args.why:
-      if "*" in args.why or project in args.why:
-        prefix = project + "/"
-        for f in sources:
-          if f.startswith(prefix):
-            print("  " + f)
+  if args.unused:
+    # Print the list of git directories that don't contain sources
+    used_git_dirs = set(get_git_dirs())
+    for project in sorted(used_git_dirs.difference(set(get_referenced_projects(used_git_dirs, sources)))):
+      print(project[0:-1])
+  else:
+    # Print the list of git directories that has one or more of the sources in it
+    for project in sorted(get_referenced_projects(get_git_dirs(), sources)):
+      print(project[0:-1])
+      if args.why:
+        if "*" in args.why or project[0:-1] in args.why:
+          prefix = project
+          for f in sources:
+            if f.startswith(prefix):
+              print("  " + f)
 
 
 if __name__ == "__main__":

@@ -490,7 +490,6 @@ class BuildInfo(object):
       return -1
 
     props = [
-        "ro.board.api_level",
         "ro.board.first_api_level",
         "ro.product.first_api_level",
     ]
@@ -955,6 +954,13 @@ def LoadInfoDict(input_file, repacking=False):
   d["build.prop"] = d["system.build.prop"]
 
   if d.get("avb_enable") == "true":
+    build_info = BuildInfo(d, use_legacy_id=True)
+    # Set up the salt for partitions without build.prop
+    if build_info.fingerprint:
+      if "fingerprint" not in d:
+        d["fingerprint"] = build_info.fingerprint
+      if "avb_salt" not in d:
+        d["avb_salt"] = sha256(build_info.fingerprint.encode()).hexdigest()
     # Set the vbmeta digest if exists
     try:
       d["vbmeta_digest"] = read_helper("META/vbmeta_digest.txt").rstrip()
@@ -1517,7 +1523,7 @@ def GetAvbPartitionsArg(partitions,
       AVB_ARG_NAME_CHAIN_PARTITION: []
   }
 
-  for partition, path in partitions.items():
+  for partition, path in sorted(partitions.items()):
     avb_partition_arg = GetAvbPartitionArg(partition, path, info_dict)
     if not avb_partition_arg:
       continue
@@ -1605,7 +1611,7 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions,
       "avb_custom_vbmeta_images_partition_list", "").strip().split()]
 
   avb_partitions = {}
-  for partition, path in partitions.items():
+  for partition, path in sorted(partitions.items()):
     if partition not in needed_partitions:
       continue
     assert (partition in AVB_PARTITIONS or

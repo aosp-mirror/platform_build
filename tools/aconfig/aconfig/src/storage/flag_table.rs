@@ -16,8 +16,10 @@
 
 use crate::commands::assign_flag_ids;
 use crate::storage::FlagPackage;
+use aconfig_protos::ProtoFlagPermission;
 use aconfig_storage_file::{
-    get_table_size, FlagTable, FlagTableHeader, FlagTableNode, FILE_VERSION, StorageFileType
+    get_table_size, FlagTable, FlagTableHeader, FlagTableNode, StorageFileType, StoredFlagType,
+    FILE_VERSION,
 };
 use anyhow::{anyhow, Result};
 
@@ -45,8 +47,8 @@ impl FlagTableNodeWrapper {
     fn new(
         package_id: u32,
         flag_name: &str,
-        flag_type: u16,
-        flag_id: u16,
+        flag_type: StoredFlagType,
+        flag_index: u16,
         num_buckets: u32,
     ) -> Self {
         let bucket_index = FlagTableNode::find_bucket_index(package_id, flag_name, num_buckets);
@@ -54,7 +56,7 @@ impl FlagTableNodeWrapper {
             package_id,
             flag_name: flag_name.to_string(),
             flag_type,
-            flag_id,
+            flag_index,
             next_offset: None,
         };
         Self { node, bucket_index }
@@ -70,11 +72,14 @@ impl FlagTableNodeWrapper {
                 let fid = flag_ids
                     .get(pf.name())
                     .ok_or(anyhow!(format!("missing flag id for {}", pf.name())))?;
-                // all flags are boolean value at the moment, thus using the last bit.
-                // When more flag value types are supported, flag value type information
-                // should come from the parsed flag, and we will set the flag_type bit
-                // mask properly.
-                let flag_type = 1;
+                let flag_type = if pf.is_fixed_read_only() {
+                    StoredFlagType::FixedReadOnlyBoolean
+                } else {
+                    match pf.permission() {
+                        ProtoFlagPermission::READ_WRITE => StoredFlagType::ReadWriteBoolean,
+                        ProtoFlagPermission::READ_ONLY => StoredFlagType::ReadOnlyBoolean,
+                    }
+                };
                 Ok(Self::new(package.package_id, pf.name(), flag_type, *fid, num_buckets))
             })
             .collect::<Result<Vec<_>>>()
@@ -95,10 +100,10 @@ pub fn create_flag_table(container: &str, packages: &[FlagPackage]) -> Result<Fl
         .concat();
 
     // initialize all header fields
-    header.bucket_offset = header.as_bytes().len() as u32;
+    header.bucket_offset = header.into_bytes().len() as u32;
     header.node_offset = header.bucket_offset + num_buckets * 4;
     header.file_size = header.node_offset
-        + node_wrappers.iter().map(|x| x.node.as_bytes().len()).sum::<usize>() as u32;
+        + node_wrappers.iter().map(|x| x.node.into_bytes().len()).sum::<usize>() as u32;
 
     // sort nodes by bucket index for efficiency
     node_wrappers.sort_by(|a, b| a.bucket_index.cmp(&b.bucket_index));
@@ -116,7 +121,7 @@ pub fn create_flag_table(container: &str, packages: &[FlagPackage]) -> Result<Fl
         if buckets[node_bucket_idx as usize].is_none() {
             buckets[node_bucket_idx as usize] = Some(offset);
         }
-        offset += node_wrappers[i].node.as_bytes().len() as u32;
+        offset += node_wrappers[i].node.into_bytes().len() as u32;
 
         if let Some(index) = next_node_bucket_idx {
             if index == node_bucket_idx {
@@ -136,79 +141,18 @@ mod tests {
     use super::*;
     use crate::storage::{group_flags_by_package, tests::parse_all_test_flags};
 
-    // create test baseline, syntactic sugar
-    fn new_expected_node(
-        package_id: u32,
-        flag_name: &str,
-        flag_type: u16,
-        flag_id: u16,
-        next_offset: Option<u32>,
-    ) -> FlagTableNode {
-        FlagTableNode {
-            package_id,
-            flag_name: flag_name.to_string(),
-            flag_type,
-            flag_id,
-            next_offset,
-        }
-    }
-
-    fn create_test_flag_table() -> Result<FlagTable> {
+    fn create_test_flag_table_from_source() -> Result<FlagTable> {
         let caches = parse_all_test_flags();
         let packages = group_flags_by_package(caches.iter());
-        create_flag_table("system", &packages)
+        create_flag_table("mockup", &packages)
     }
 
     #[test]
     // this test point locks down the table creation and each field
     fn test_table_contents() {
-        let flag_table = create_test_flag_table();
+        let flag_table = create_test_flag_table_from_source();
         assert!(flag_table.is_ok());
-
-        let header: &FlagTableHeader = &flag_table.as_ref().unwrap().header;
-        let expected_header = FlagTableHeader {
-            version: FILE_VERSION,
-            container: String::from("system"),
-            file_type: StorageFileType::FlagMap as u8,
-            file_size: 321,
-            num_flags: 8,
-            bucket_offset: 31,
-            node_offset: 99,
-        };
-        assert_eq!(header, &expected_header);
-
-        let buckets: &Vec<Option<u32>> = &flag_table.as_ref().unwrap().buckets;
-        let expected_bucket: Vec<Option<u32>> = vec![
-            Some(99),
-            Some(125),
-            None,
-            None,
-            None,
-            Some(178),
-            None,
-            Some(204),
-            None,
-            Some(262),
-            None,
-            None,
-            None,
-            None,
-            None,
-            Some(294),
-            None,
-        ];
-        assert_eq!(buckets, &expected_bucket);
-
-        let nodes: &Vec<FlagTableNode> = &flag_table.as_ref().unwrap().nodes;
-        assert_eq!(nodes.len(), 8);
-
-        assert_eq!(nodes[0], new_expected_node(0, "enabled_ro", 1, 1, None));
-        assert_eq!(nodes[1], new_expected_node(0, "enabled_rw", 1, 2, Some(151)));
-        assert_eq!(nodes[2], new_expected_node(1, "disabled_ro", 1, 0, None));
-        assert_eq!(nodes[3], new_expected_node(2, "enabled_ro", 1, 1, None));
-        assert_eq!(nodes[4], new_expected_node(1, "enabled_fixed_ro", 1, 1, Some(236)));
-        assert_eq!(nodes[5], new_expected_node(1, "enabled_ro", 1, 2, None));
-        assert_eq!(nodes[6], new_expected_node(2, "enabled_fixed_ro", 1, 0, None));
-        assert_eq!(nodes[7], new_expected_node(0, "disabled_rw", 1, 0, None));
+        let expected_flag_table = aconfig_storage_file::test_utils::create_test_flag_table();
+        assert_eq!(flag_table.unwrap(), expected_flag_table);
     }
 }

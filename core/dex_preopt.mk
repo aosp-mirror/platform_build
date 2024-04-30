@@ -123,22 +123,28 @@ $(boot_zip): $(bootclasspath_jars) $(system_server_jars) $(SOONG_ZIP) $(MERGE_ZI
 
 $(call dist-for-goals, droidcore, $(boot_zip))
 
-ifneq (,$(filter true,$(ART_MODULE_BUILD_FROM_SOURCE) $(MODULE_BUILD_FROM_SOURCE)))
 # Build the system_server.zip which contains the Apex system server jars and standalone system server jars
+system_server_dex2oat_dir := $(SOONG_OUT_DIR)/system_server_dexjars
 system_server_zip := $(PRODUCT_OUT)/system_server.zip
+# non_updatable_system_server_jars contains jars in /system and /system_ext that are not part of an apex.
+non_updatable_system_server_jars := \
+  $(foreach m,$(PRODUCT_SYSTEM_SERVER_JARS),\
+    $(system_server_dex2oat_dir)/$(call word-colon,2,$(m)).jar)
+
 apex_system_server_jars := \
   $(foreach m,$(PRODUCT_APEX_SYSTEM_SERVER_JARS),\
-    $(PRODUCT_OUT)/apex/$(call word-colon,1,$(m))/javalib/$(call word-colon,2,$(m)).jar)
+    $(system_server_dex2oat_dir)/$(call word-colon,2,$(m)).jar)
 
 apex_standalone_system_server_jars := \
   $(foreach m,$(PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS),\
-    $(PRODUCT_OUT)/apex/$(call word-colon,1,$(m))/javalib/$(call word-colon,2,$(m)).jar)
+    $(system_server_dex2oat_dir)/$(call word-colon,2,$(m)).jar)
 
 standalone_system_server_jars := \
   $(foreach m,$(PRODUCT_STANDALONE_SYSTEM_SERVER_JARS),\
-    $(PRODUCT_OUT)/apex/$(call word-colon,1,$(m))/javalib/$(call word-colon,2,$(m)).jar)
+    $(system_server_dex2oat_dir)/$(call word-colon,2,$(m)).jar)
 
-$(system_server_zip): PRIVATE_SYSTEM_SERVER_JARS := $(system_server_jars)
+$(system_server_zip): PRIVATE_SYSTEM_SERVER_DEX2OAT_DIR := $(system_server_dex2oat_dir)
+$(system_server_zip): PRIVATE_SYSTEM_SERVER_JARS := $(non_updatable_system_server_jars)
 $(system_server_zip): PRIVATE_APEX_SYSTEM_SERVER_JARS := $(apex_system_server_jars)
 $(system_server_zip): PRIVATE_APEX_STANDALONE_SYSTEM_SERVER_JARS := $(apex_standalone_system_server_jars)
 $(system_server_zip): PRIVATE_STANDALONE_SYSTEM_SERVER_JARS := $(standalone_system_server_jars)
@@ -146,14 +152,13 @@ $(system_server_zip): $(system_server_jars) $(apex_system_server_jars) $(apex_st
 	@echo "Create system server package: $@"
 	rm -f $@
 	$(SOONG_ZIP) -o $@ \
-	  -C $(PRODUCT_OUT) $(addprefix -f ,$(PRIVATE_SYSTEM_SERVER_JARS)) \
-	  -C $(PRODUCT_OUT) $(addprefix -f ,$(PRIVATE_APEX_SYSTEM_SERVER_JARS)) \
-          -C $(PRODUCT_OUT) $(addprefix -f ,$(PRIVATE_APEX_STANDALONE_SYSTEM_SERVER_JARS)) \
-	  -C $(PRODUCT_OUT) $(addprefix -f ,$(PRIVATE_STANDALONE_SYSTEM_SERVER_JARS))
+	  -C $(PRIVATE_SYSTEM_SERVER_DEX2OAT_DIR) $(addprefix -f ,$(PRIVATE_SYSTEM_SERVER_JARS)) \
+	  -C $(PRIVATE_SYSTEM_SERVER_DEX2OAT_DIR) $(addprefix -f ,$(PRIVATE_APEX_SYSTEM_SERVER_JARS)) \
+	  -C $(PRIVATE_SYSTEM_SERVER_DEX2OAT_DIR) $(addprefix -f ,$(PRIVATE_APEX_STANDALONE_SYSTEM_SERVER_JARS)) \
+	  -C $(PRIVATE_SYSTEM_SERVER_DEX2OAT_DIR) $(addprefix -f ,$(PRIVATE_STANDALONE_SYSTEM_SERVER_JARS))
 
 $(call dist-for-goals, droidcore, $(system_server_zip))
 
-endif  #ART_MODULE_BUILD_FROM_SOURCE || MODULE_BUILD_FROM_SOURCE
 endif  #PRODUCT_USES_DEFAULT_ART_CONFIG
 endif  #WITH_DEXPREOPT_ART_BOOT_IMG_ONLY
 endif  #WITH_DEXPREOPT

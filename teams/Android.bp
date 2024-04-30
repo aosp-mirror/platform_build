@@ -732,7 +732,7 @@ team {
 }
 
 team {
-    name: "trendy_team_deprecated_systemui_gfx",
+    name: "trendy_team_ailabs",
 
     // go/trendy/manage/engineers/6673470538285056
     trendy_team_id: "6673470538285056",
@@ -4370,4 +4370,11 @@ team {
 
   // go/trendy/manage/engineers/5810097836621824
   trendy_team_id: "5810097836621824",
+}
+
+team {
+    name: "trendy_team_adte",
+
+    // go/trendy/manage/engineers/5551098528825344
+    trendy_team_id: "5551098528825344",
 }
