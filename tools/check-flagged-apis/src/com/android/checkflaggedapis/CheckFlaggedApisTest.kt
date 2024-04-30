@@ -31,8 +31,9 @@ private val API_SIGNATURE =
       // Signature format: 2.0
       package android {
         @FlaggedApi("android.flag.foo") public final class Clazz {
-          ctor public Clazz();
+          ctor @FlaggedApi("android.flag.foo") public Clazz();
           field @FlaggedApi("android.flag.foo") public static final int FOO = 1; // 0x1
+          method @FlaggedApi("android.flag.foo") public int getErrorCode();
         }
         @FlaggedApi("android.flag.bar") public static class Clazz.Builder {
         }
@@ -47,6 +48,7 @@ private val API_VERSIONS =
         <class name="android/Clazz" since="1">
           <method name="&lt;init>()V"/>
           <field name="FOO"/>
+          <method name="getErrorCode()I"/>
         </class>
         <class name="android/Clazz${"$"}Builder" since="2">
         </class>
@@ -88,7 +90,9 @@ class CheckFlaggedApisTest {
     val expected =
         setOf(
             Pair(Symbol("android.Clazz"), Flag("android.flag.foo")),
+            Pair(Symbol("android.Clazz.Clazz()"), Flag("android.flag.foo")),
             Pair(Symbol("android.Clazz.FOO"), Flag("android.flag.foo")),
+            Pair(Symbol("android.Clazz.getErrorCode()"), Flag("android.flag.foo")),
             Pair(Symbol("android.Clazz.Builder"), Flag("android.flag.bar")),
         )
     val actual = parseApiSignature("in-memory", API_SIGNATURE.byteInputStream())
@@ -108,7 +112,9 @@ class CheckFlaggedApisTest {
     val expected: Set<Symbol> =
         setOf(
             Symbol("android.Clazz"),
+            Symbol("android.Clazz.Clazz()"),
             Symbol("android.Clazz.FOO"),
+            Symbol("android.Clazz.getErrorCode()"),
             Symbol("android.Clazz.Builder"),
         )
     val actual = parseApiVersions(API_VERSIONS.byteInputStream())
@@ -131,7 +137,11 @@ class CheckFlaggedApisTest {
     val expected =
         setOf<ApiError>(
             DisabledFlaggedApiIsPresentError(Symbol("android.Clazz"), Flag("android.flag.foo")),
+            DisabledFlaggedApiIsPresentError(
+                Symbol("android.Clazz.Clazz()"), Flag("android.flag.foo")),
             DisabledFlaggedApiIsPresentError(Symbol("android.Clazz.FOO"), Flag("android.flag.foo")),
+            DisabledFlaggedApiIsPresentError(
+                Symbol("android.Clazz.getErrorCode()"), Flag("android.flag.foo")),
             DisabledFlaggedApiIsPresentError(
                 Symbol("android.Clazz.Builder"), Flag("android.flag.bar")),
         )

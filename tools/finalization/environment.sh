@@ -22,7 +22,7 @@ export FINAL_MAINLINE_EXTENSION='13'
 # 'vintf' - VINTF is finalized
 # 'sdk' - VINTF and SDK/API are finalized
 # 'rel' - branch is finalized, switched to REL
-export FINAL_STATE='vintf'
+export FINAL_STATE='sdk'
 
 export BUILD_FROM_SOURCE_STUB=true
 
