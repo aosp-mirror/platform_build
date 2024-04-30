@@ -23,6 +23,11 @@ rust_library {
     crate_name: "aconfig_storage_read_api",
     host_supported: true,
     defaults: ["aconfig_storage_read_api.defaults"],
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
+    min_sdk_version: "29",
 }
 
 rust_test_host {
@@ -33,6 +38,7 @@ rust_test_host {
         "tests/package.map",
         "tests/flag.map",
         "tests/flag.val",
+        "tests/flag.info",
     ],
 }
 
@@ -59,23 +65,55 @@ rust_ffi_static {
     name: "libaconfig_storage_read_api_cxx_bridge",
     crate_name: "aconfig_storage_read_api_cxx_bridge",
     host_supported: true,
+    vendor_available: true,
+    product_available: true,
     defaults: ["aconfig_storage_read_api.defaults"],
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
+    min_sdk_version: "29",
 }
 
 // flag read api cc interface
-cc_library_static {
+cc_library {
     name: "libaconfig_storage_read_api_cc",
     srcs: ["aconfig_storage_read_api.cpp"],
     generated_headers: [
         "cxx-bridge-header",
-        "libcxx_aconfig_storage_read_api_bridge_header"
+        "libcxx_aconfig_storage_read_api_bridge_header",
     ],
     generated_sources: ["libcxx_aconfig_storage_read_api_bridge_code"],
     whole_static_libs: ["libaconfig_storage_read_api_cxx_bridge"],
     export_include_dirs: ["include"],
+    host_supported: true,
+    vendor_available: true,
+    product_available: true,
     static_libs: [
         "libaconfig_storage_protos_cc",
         "libprotobuf-cpp-lite",
         "libbase",
+    ],
+    shared_libs: [
+        "liblog",
+    ],
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
+    min_sdk_version: "29",
+    target: {
+        linux: {
+            version_script: "libaconfig_storage_read_api_cc.map",
+        },
+    },
+    double_loadable: true,
+}
+
+cc_defaults {
+    name: "aconfig_lib_cc_static_link.defaults",
+    shared_libs: [
+        "libaconfig_storage_read_api_cc",
+        "liblog",
     ],
 }

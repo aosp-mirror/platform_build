@@ -133,10 +133,10 @@ function finalize_aidl_vndk_sdk_resources() {
     sed -i -e "s/sepolicy_major_vers := .*/sepolicy_major_vers := ${FINAL_PLATFORM_SDK_VERSION}/g" "$top/build/make/core/config.mk"
     cp "$top/build/make/target/product/gsi/current.txt" "$top/build/make/target/product/gsi/$FINAL_PLATFORM_SDK_VERSION.txt"
 
-    # build/bazel
+    # build/soong
     local codename_version="\"${FINAL_PLATFORM_CODENAME}\": ${FINAL_PLATFORM_SDK_VERSION}"
-    if ! grep -q "$codename_version" "$top/build/bazel/rules/common/api_constants.bzl" ; then
-        sed -i -e "/:.*$((${FINAL_PLATFORM_SDK_VERSION}-1)),/a \\    $codename_version," "$top/build/bazel/rules/common/api_constants.bzl"
+    if ! grep -q "$codename_version" "$top/build/soong/android/api_levels.go" ; then
+        sed -i -e "/:.*$((${FINAL_PLATFORM_SDK_VERSION}-1)),/a \\\t\t$codename_version," "$top/build/soong/android/api_levels.go"
     fi
 
     # cts

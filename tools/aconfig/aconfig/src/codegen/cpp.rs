@@ -16,6 +16,7 @@
 
 use anyhow::{ensure, Result};
 use serde::Serialize;
+use std::collections::HashMap;
 use std::path::PathBuf;
 use tinytemplate::TinyTemplate;
 
@@ -29,13 +30,15 @@ pub fn generate_cpp_code<I>(
     package: &str,
     parsed_flags_iter: I,
     codegen_mode: CodegenMode,
+    flag_ids: HashMap<String, u16>,
+    allow_instrumentation: bool,
 ) -> Result<Vec<OutputFile>>
 where
     I: Iterator<Item = ProtoParsedFlag>,
 {
     let mut readwrite_count = 0;
     let class_elements: Vec<ClassElement> = parsed_flags_iter
-        .map(|pf| create_class_element(package, &pf, &mut readwrite_count))
+        .map(|pf| create_class_element(package, &pf, flag_ids.clone(), &mut readwrite_count))
         .collect();
     let readwrite = readwrite_count > 0;
     let has_fixed_read_only = class_elements.iter().any(|item| item.is_fixed_read_only);
@@ -53,6 +56,7 @@ where
         readwrite_count,
         is_test_mode: codegen_mode == CodegenMode::Test,
         class_elements,
+        allow_instrumentation,
     };
 
     let files = [
@@ -96,6 +100,7 @@ pub struct Context<'a> {
     pub readwrite_count: i32,
     pub is_test_mode: bool,
     pub class_elements: Vec<ClassElement>,
+    pub allow_instrumentation: bool,
 }
 
 #[derive(Serialize)]
@@ -106,11 +111,18 @@ pub struct ClassElement {
     pub default_value: String,
     pub flag_name: String,
     pub flag_macro: String,
+    pub flag_offset: u16,
     pub device_config_namespace: String,
     pub device_config_flag: String,
+    pub container: String,
 }
 
-fn create_class_element(package: &str, pf: &ProtoParsedFlag, rw_count: &mut i32) -> ClassElement {
+fn create_class_element(
+    package: &str,
+    pf: &ProtoParsedFlag,
+    flag_ids: HashMap<String, u16>,
+    rw_count: &mut i32,
+) -> ClassElement {
     ClassElement {
         readwrite_idx: if pf.permission() == ProtoFlagPermission::READ_WRITE {
             let index = *rw_count;
@@ -128,9 +140,11 @@ fn create_class_element(package: &str, pf: &ProtoParsedFlag, rw_count: &mut i32)
         },
         flag_name: pf.name().to_string(),
         flag_macro: pf.name().to_uppercase(),
+        flag_offset: *flag_ids.get(pf.name()).expect("values checked at flag parse time"),
         device_config_namespace: pf.namespace().to_string(),
         device_config_flag: codegen::create_device_config_ident(package, pf.name())
             .expect("values checked at flag parse time"),
+        container: pf.container().to_string(),
     }
 }
 
@@ -1162,18 +1176,27 @@ bool com_android_aconfig_test_enabled_ro() {
     return true;
 }
 "#;
+    use crate::commands::assign_flag_ids;
 
     fn test_generate_cpp_code(
         parsed_flags: ProtoParsedFlags,
         mode: CodegenMode,
         expected_header: &str,
         expected_src: &str,
+        allow_instrumentation: bool,
     ) {
         let modified_parsed_flags =
             crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
-        let generated =
-            generate_cpp_code(crate::test::TEST_PACKAGE, modified_parsed_flags.into_iter(), mode)
-                .unwrap();
+        let flag_ids =
+            assign_flag_ids(crate::test::TEST_PACKAGE, modified_parsed_flags.iter()).unwrap();
+        let generated = generate_cpp_code(
+            crate::test::TEST_PACKAGE,
+            modified_parsed_flags.into_iter(),
+            mode,
+            flag_ids,
+            allow_instrumentation,
+        )
+        .unwrap();
         let mut generated_files_map = HashMap::new();
         for file in generated {
             generated_files_map.insert(
@@ -1211,6 +1234,7 @@ bool com_android_aconfig_test_enabled_ro() {
             CodegenMode::Production,
             EXPORTED_PROD_HEADER_EXPECTED,
             PROD_SOURCE_FILE_EXPECTED,
+            false,
         );
     }
 
@@ -1222,6 +1246,7 @@ bool com_android_aconfig_test_enabled_ro() {
             CodegenMode::Test,
             EXPORTED_TEST_HEADER_EXPECTED,
             TEST_SOURCE_FILE_EXPECTED,
+            false,
         );
     }
 
@@ -1233,6 +1258,7 @@ bool com_android_aconfig_test_enabled_ro() {
             CodegenMode::Exported,
             EXPORTED_EXPORTED_HEADER_EXPECTED,
             EXPORTED_SOURCE_FILE_EXPECTED,
+            false,
         );
     }
 
@@ -1244,6 +1270,7 @@ bool com_android_aconfig_test_enabled_ro() {
             CodegenMode::ForceReadOnly,
             EXPORTED_FORCE_READ_ONLY_HEADER_EXPECTED,
             FORCE_READ_ONLY_SOURCE_FILE_EXPECTED,
+            false,
         );
     }
 
@@ -1255,6 +1282,7 @@ bool com_android_aconfig_test_enabled_ro() {
             CodegenMode::Production,
             READ_ONLY_EXPORTED_PROD_HEADER_EXPECTED,
             READ_ONLY_PROD_SOURCE_FILE_EXPECTED,
+            false,
         );
     }
 }

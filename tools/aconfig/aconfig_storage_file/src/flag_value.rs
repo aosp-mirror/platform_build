@@ -55,7 +55,7 @@ impl fmt::Debug for FlagValueHeader {
 
 impl FlagValueHeader {
     /// Serialize to bytes
-    pub fn as_bytes(&self) -> Vec<u8> {
+    pub fn into_bytes(&self) -> Vec<u8> {
         let mut result = Vec::new();
         result.extend_from_slice(&self.version.to_le_bytes());
         let container_bytes = self.container.as_bytes();
@@ -108,9 +108,9 @@ impl fmt::Debug for FlagValueList {
 
 impl FlagValueList {
     /// Serialize to bytes
-    pub fn as_bytes(&self) -> Vec<u8> {
+    pub fn into_bytes(&self) -> Vec<u8> {
         [
-            self.header.as_bytes(),
+            self.header.into_bytes(),
             self.booleans.iter().map(|&v| u8::from(v).to_le_bytes()).collect::<Vec<_>>().concat(),
         ]
         .concat()
@@ -120,7 +120,7 @@ impl FlagValueList {
     pub fn from_bytes(bytes: &[u8]) -> Result<Self, AconfigStorageError> {
         let header = FlagValueHeader::from_bytes(bytes)?;
         let num_flags = header.num_flags;
-        let mut head = header.as_bytes().len();
+        let mut head = header.into_bytes().len();
         let booleans =
             (0..num_flags).map(|_| read_u8_from_bytes(bytes, &mut head).unwrap() == 1).collect();
         let list = Self { header, booleans };
@@ -139,11 +139,11 @@ mod tests {
         let flag_value_list = create_test_flag_value_list();
 
         let header: &FlagValueHeader = &flag_value_list.header;
-        let reinterpreted_header = FlagValueHeader::from_bytes(&header.as_bytes());
+        let reinterpreted_header = FlagValueHeader::from_bytes(&header.into_bytes());
         assert!(reinterpreted_header.is_ok());
         assert_eq!(header, &reinterpreted_header.unwrap());
 
-        let flag_value_bytes = flag_value_list.as_bytes();
+        let flag_value_bytes = flag_value_list.into_bytes();
         let reinterpreted_value_list = FlagValueList::from_bytes(&flag_value_bytes);
         assert!(reinterpreted_value_list.is_ok());
         assert_eq!(&flag_value_list, &reinterpreted_value_list.unwrap());
@@ -155,10 +155,10 @@ mod tests {
     // bytes
     fn test_version_number() {
         let flag_value_list = create_test_flag_value_list();
-        let bytes = &flag_value_list.as_bytes();
+        let bytes = &flag_value_list.into_bytes();
         let mut head = 0;
         let version = read_u32_from_bytes(bytes, &mut head).unwrap();
-        assert_eq!(version, 1234)
+        assert_eq!(version, 1);
     }
 
     #[test]
@@ -166,7 +166,7 @@ mod tests {
     fn test_file_type_check() {
         let mut flag_value_list = create_test_flag_value_list();
         flag_value_list.header.file_type = 123u8;
-        let error = FlagValueList::from_bytes(&flag_value_list.as_bytes()).unwrap_err();
+        let error = FlagValueList::from_bytes(&flag_value_list.into_bytes()).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
             format!("BytesParseFail(binary file is not a flag value file)")

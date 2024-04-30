@@ -36,6 +36,11 @@ PRODUCT_PACKAGES += \
     Stk \
     Tag \
 
+ifeq ($(RELEASE_AVATAR_PICKER_APP),true)
+  PRODUCT_PACKAGES += \
+    AvatarPicker
+endif
+
 # OTA support
 PRODUCT_PACKAGES += \
     recovery-refresh \
@@ -68,7 +73,6 @@ PRODUCT_PACKAGES += \
     android.hardware.radio.config@1.0 \
     android.hardware.radio.deprecated@1.0 \
     android.hardware.secure_element@1.0 \
-    android.hardware.wifi \
     libaudio-resampler \
     libaudiohal \
     libdrm \

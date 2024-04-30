@@ -54,6 +54,8 @@ static Result<std::string> find_storage_file(
           return entry.flag_map();
         case StorageFileType::flag_val:
           return entry.flag_val();
+        case StorageFileType::flag_info:
+          return entry.flag_info();
         default:
           return Error() << "Invalid file type " << file_type;
       }
@@ -61,31 +63,6 @@ static Result<std::string> find_storage_file(
   }
 
   return Error() << "Unable to find storage files for container " << container;;
-}
-
-/// Map a storage file
-static Result<MappedStorageFile> map_storage_file(std::string const& file) {
-  int fd = open(file.c_str(), O_CLOEXEC | O_NOFOLLOW | O_RDONLY);
-  if (fd == -1) {
-    return Error() << "failed to open " << file;
-  };
-
-  struct stat fd_stat;
-  if (fstat(fd, &fd_stat) < 0) {
-    return Error() << "fstat failed";
-  }
-  size_t file_size = fd_stat.st_size;
-
-  void* const map_result = mmap(nullptr, file_size, PROT_READ, MAP_SHARED, fd, 0);
-  if (map_result == MAP_FAILED) {
-    return Error() << "mmap failed";
-  }
-
-  auto mapped_file = MappedStorageFile();
-  mapped_file.file_ptr = map_result;
-  mapped_file.file_size = file_size;
-
-  return mapped_file;
 }
 
 namespace private_internal_api {
@@ -103,6 +80,44 @@ Result<MappedStorageFile> get_mapped_file_impl(
 }
 
 } // namespace private internal api
+
+/// Map a storage file
+Result<MappedStorageFile> map_storage_file(std::string const& file) {
+  int fd = open(file.c_str(), O_CLOEXEC | O_NOFOLLOW | O_RDONLY);
+  if (fd == -1) {
+    return ErrnoError() << "failed to open " << file;
+  };
+
+  struct stat fd_stat;
+  if (fstat(fd, &fd_stat) < 0) {
+    return ErrnoError() << "fstat failed";
+  }
+  size_t file_size = fd_stat.st_size;
+
+  void* const map_result = mmap(nullptr, file_size, PROT_READ, MAP_SHARED, fd, 0);
+  if (map_result == MAP_FAILED) {
+    return ErrnoError() << "mmap failed";
+  }
+
+  auto mapped_file = MappedStorageFile();
+  mapped_file.file_ptr = map_result;
+  mapped_file.file_size = file_size;
+
+  return mapped_file;
+}
+
+/// Map from StoredFlagType to FlagValueType
+android::base::Result<FlagValueType> map_to_flag_value_type(
+    StoredFlagType stored_type) {
+  switch (stored_type) {
+    case StoredFlagType::ReadWriteBoolean:
+    case StoredFlagType::ReadOnlyBoolean:
+    case StoredFlagType::FixedReadOnlyBoolean:
+      return FlagValueType::Boolean;
+    default:
+      return Error() << "Unsupported stored flag type";
+  }
+}
 
 /// Get mapped storage file
 Result<MappedStorageFile> get_mapped_file(
@@ -124,49 +139,50 @@ Result<uint32_t> get_storage_file_version(
   }
 }
 
-/// Get package offset
-Result<PackageOffset> get_package_offset(
+/// Get package context
+Result<PackageReadContext> get_package_read_context(
     MappedStorageFile const& file,
     std::string const& package) {
   auto content = rust::Slice<const uint8_t>(
       static_cast<uint8_t*>(file.file_ptr), file.file_size);
-  auto offset_cxx = get_package_offset_cxx(content, rust::Str(package.c_str()));
-  if (offset_cxx.query_success) {
-    auto offset = PackageOffset();
-    offset.package_exists = offset_cxx.package_exists;
-    offset.package_id = offset_cxx.package_id;
-    offset.boolean_offset = offset_cxx.boolean_offset;
-    return offset;
+  auto context_cxx = get_package_read_context_cxx(content, rust::Str(package.c_str()));
+  if (context_cxx.query_success) {
+    auto context = PackageReadContext();
+    context.package_exists = context_cxx.package_exists;
+    context.package_id = context_cxx.package_id;
+    context.boolean_start_index = context_cxx.boolean_start_index;
+    return context;
   } else {
-    return Error() << offset_cxx.error_message;
+    return Error() << context_cxx.error_message;
   }
 }
 
-/// Get flag offset
-Result<FlagOffset> get_flag_offset(
+/// Get flag read context
+Result<FlagReadContext> get_flag_read_context(
     MappedStorageFile const& file,
     uint32_t package_id,
     std::string const& flag_name){
   auto content = rust::Slice<const uint8_t>(
       static_cast<uint8_t*>(file.file_ptr), file.file_size);
-  auto offset_cxx = get_flag_offset_cxx(content, package_id, rust::Str(flag_name.c_str()));
-  if (offset_cxx.query_success) {
-    auto offset = FlagOffset();
-    offset.flag_exists = offset_cxx.flag_exists;
-    offset.flag_offset = offset_cxx.flag_offset;
-    return offset;
+  auto context_cxx = get_flag_read_context_cxx(content, package_id, rust::Str(flag_name.c_str()));
+  if (context_cxx.query_success) {
+    auto context = FlagReadContext();
+    context.flag_exists = context_cxx.flag_exists;
+    context.flag_type = static_cast<StoredFlagType>(context_cxx.flag_type);
+    context.flag_index = context_cxx.flag_index;
+    return context;
   } else {
-   return Error() << offset_cxx.error_message;
+   return Error() << context_cxx.error_message;
   }
 }
 
 /// Get boolean flag value
 Result<bool> get_boolean_flag_value(
     MappedStorageFile const& file,
-    uint32_t offset) {
+    uint32_t index) {
   auto content = rust::Slice<const uint8_t>(
       static_cast<uint8_t*>(file.file_ptr), file.file_size);
-  auto value_cxx = get_boolean_flag_value_cxx(content, offset);
+  auto value_cxx = get_boolean_flag_value_cxx(content, index);
   if (value_cxx.query_success) {
     return value_cxx.flag_value;
   } else {
@@ -174,4 +190,19 @@ Result<bool> get_boolean_flag_value(
   }
 }
 
+/// Get boolean flag attribute
+Result<uint8_t> get_flag_attribute(
+    MappedStorageFile const& file,
+    FlagValueType value_type,
+    uint32_t index) {
+  auto content = rust::Slice<const uint8_t>(
+      static_cast<uint8_t*>(file.file_ptr), file.file_size);
+  auto info_cxx = get_flag_attribute_cxx(
+      content, static_cast<uint16_t>(value_type), index);
+  if (info_cxx.query_success) {
+    return info_cxx.flag_attribute;
+  } else {
+    return Error() << info_cxx.error_message;
+  }
+}
 } // namespace aconfig_storage

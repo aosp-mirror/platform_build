@@ -56,7 +56,7 @@ impl fmt::Debug for PackageTableHeader {
 
 impl PackageTableHeader {
     /// Serialize to bytes
-    pub fn as_bytes(&self) -> Vec<u8> {
+    pub fn into_bytes(&self) -> Vec<u8> {
         let mut result = Vec::new();
         result.extend_from_slice(&self.version.to_le_bytes());
         let container_bytes = self.container.as_bytes();
@@ -96,9 +96,9 @@ impl PackageTableHeader {
 pub struct PackageTableNode {
     pub package_name: String,
     pub package_id: u32,
-    // offset of the first boolean flag in this flag package with respect to the start of
-    // boolean flag value array in the flag value file
-    pub boolean_offset: u32,
+    // The index of the first boolean flag in this aconfig package among all boolean
+    // flags in this container.
+    pub boolean_start_index: u32,
     pub next_offset: Option<u32>,
 }
 
@@ -107,8 +107,8 @@ impl fmt::Debug for PackageTableNode {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         writeln!(
             f,
-            "Package: {}, Id: {}, Offset: {}, Next: {:?}",
-            self.package_name, self.package_id, self.boolean_offset, self.next_offset
+            "Package: {}, Id: {}, Boolean flag start index: {}, Next: {:?}",
+            self.package_name, self.package_id, self.boolean_start_index, self.next_offset
         )?;
         Ok(())
     }
@@ -116,13 +116,13 @@ impl fmt::Debug for PackageTableNode {
 
 impl PackageTableNode {
     /// Serialize to bytes
-    pub fn as_bytes(&self) -> Vec<u8> {
+    pub fn into_bytes(&self) -> Vec<u8> {
         let mut result = Vec::new();
         let name_bytes = self.package_name.as_bytes();
         result.extend_from_slice(&(name_bytes.len() as u32).to_le_bytes());
         result.extend_from_slice(name_bytes);
         result.extend_from_slice(&self.package_id.to_le_bytes());
-        result.extend_from_slice(&self.boolean_offset.to_le_bytes());
+        result.extend_from_slice(&self.boolean_start_index.to_le_bytes());
         result.extend_from_slice(&self.next_offset.unwrap_or(0).to_le_bytes());
         result
     }
@@ -133,7 +133,7 @@ impl PackageTableNode {
         let node = Self {
             package_name: read_str_from_bytes(bytes, &mut head)?,
             package_id: read_u32_from_bytes(bytes, &mut head)?,
-            boolean_offset: read_u32_from_bytes(bytes, &mut head)?,
+            boolean_start_index: read_u32_from_bytes(bytes, &mut head)?,
             next_offset: match read_u32_from_bytes(bytes, &mut head)? {
                 0 => None,
                 val => Some(val),
@@ -175,11 +175,11 @@ impl fmt::Debug for PackageTable {
 
 impl PackageTable {
     /// Serialize to bytes
-    pub fn as_bytes(&self) -> Vec<u8> {
+    pub fn into_bytes(&self) -> Vec<u8> {
         [
-            self.header.as_bytes(),
+            self.header.into_bytes(),
             self.buckets.iter().map(|v| v.unwrap_or(0).to_le_bytes()).collect::<Vec<_>>().concat(),
-            self.nodes.iter().map(|v| v.as_bytes()).collect::<Vec<_>>().concat(),
+            self.nodes.iter().map(|v| v.into_bytes()).collect::<Vec<_>>().concat(),
         ]
         .concat()
     }
@@ -189,7 +189,7 @@ impl PackageTable {
         let header = PackageTableHeader::from_bytes(bytes)?;
         let num_packages = header.num_packages;
         let num_buckets = crate::get_table_size(num_packages)?;
-        let mut head = header.as_bytes().len();
+        let mut head = header.into_bytes().len();
         let buckets = (0..num_buckets)
             .map(|_| match read_u32_from_bytes(bytes, &mut head).unwrap() {
                 0 => None,
@@ -199,7 +199,7 @@ impl PackageTable {
         let nodes = (0..num_packages)
             .map(|_| {
                 let node = PackageTableNode::from_bytes(&bytes[head..])?;
-                head += node.as_bytes().len();
+                head += node.into_bytes().len();
                 Ok(node)
             })
             .collect::<Result<Vec<_>, AconfigStorageError>>()
@@ -225,17 +225,17 @@ mod tests {
     fn test_serialization() {
         let package_table = create_test_package_table();
         let header: &PackageTableHeader = &package_table.header;
-        let reinterpreted_header = PackageTableHeader::from_bytes(&header.as_bytes());
+        let reinterpreted_header = PackageTableHeader::from_bytes(&header.into_bytes());
         assert!(reinterpreted_header.is_ok());
         assert_eq!(header, &reinterpreted_header.unwrap());
 
         let nodes: &Vec<PackageTableNode> = &package_table.nodes;
         for node in nodes.iter() {
-            let reinterpreted_node = PackageTableNode::from_bytes(&node.as_bytes()).unwrap();
+            let reinterpreted_node = PackageTableNode::from_bytes(&node.into_bytes()).unwrap();
             assert_eq!(node, &reinterpreted_node);
         }
 
-        let package_table_bytes = package_table.as_bytes();
+        let package_table_bytes = package_table.into_bytes();
         let reinterpreted_table = PackageTable::from_bytes(&package_table_bytes);
         assert!(reinterpreted_table.is_ok());
         assert_eq!(&package_table, &reinterpreted_table.unwrap());
@@ -247,10 +247,10 @@ mod tests {
     // bytes
     fn test_version_number() {
         let package_table = create_test_package_table();
-        let bytes = &package_table.as_bytes();
+        let bytes = &package_table.into_bytes();
         let mut head = 0;
         let version = read_u32_from_bytes(bytes, &mut head).unwrap();
-        assert_eq!(version, 1234)
+        assert_eq!(version, 1);
     }
 
     #[test]
@@ -258,7 +258,7 @@ mod tests {
     fn test_file_type_check() {
         let mut package_table = create_test_package_table();
         package_table.header.file_type = 123u8;
-        let error = PackageTable::from_bytes(&package_table.as_bytes()).unwrap_err();
+        let error = PackageTable::from_bytes(&package_table.into_bytes()).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
             format!("BytesParseFail(binary file is not a package map)")

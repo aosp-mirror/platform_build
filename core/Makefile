@@ -1128,10 +1128,15 @@ $(foreach \
 
 BOARD_VENDOR_RAMDISK_FRAGMENT.16K.PREBUILT := $(BUILT_RAMDISK_16K_TARGET)
 
+ifndef BOARD_KERNEL_MODULES_LOAD_16K
+  BOARD_KERNEL_MODULES_LOAD_16K := $(BOARD_KERNEL_MODULES_16K)
+endif
+
 $(BUILT_RAMDISK_16K_TARGET): $(DEPMOD) $(MKBOOTFS) $(EXTRACT_KERNEL) $(COMPRESSION_COMMAND_DEPS)
 $(BUILT_RAMDISK_16K_TARGET): $(foreach file,$(BOARD_KERNEL_MODULES_16K),$(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0/$(notdir $(file)))
 	$(DEPMOD) -b $(RAMDISK_16K_STAGING_DIR) 0.0
-	for MODULE in $(BOARD_KERNEL_MODULES_16K); do \
+	rm -f $(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0/modules.load
+	for MODULE in $(BOARD_KERNEL_MODULES_LOAD_16K); do \
 		basename $$MODULE >> $(RAMDISK_16K_STAGING_DIR)/lib/modules/0.0/modules.load ; \
 	done;
 	rm -rf $(TARGET_OUT_RAMDISK_16K)/lib/modules
@@ -1469,11 +1474,17 @@ $(BUILT_BOOT_OTA_PACKAGE_4K): $(OTA_FROM_RAW_IMG) $(INSTALLED_BOOTIMAGE_TARGET) 
 boototapackage_4k: $(BUILT_BOOT_OTA_PACKAGE_4K)
 .PHONY: boototapackage_4k
 
+ifeq ($(BOARD_16K_OTA_MOVE_VENDOR),true)
+$(eval $(call copy-one-file,$(BUILT_BOOT_OTA_PACKAGE_4K),$(TARGET_OUT_VENDOR)/boot_otas/boot_ota_4k.zip))
+$(eval $(call copy-one-file,$(BUILT_BOOT_OTA_PACKAGE_16K),$(TARGET_OUT_VENDOR)/boot_otas/boot_ota_16k.zip))
+ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_VENDOR)/boot_otas/boot_ota_4k.zip
+ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_VENDOR)/boot_otas/boot_ota_16k.zip
+else
 $(eval $(call copy-one-file,$(BUILT_BOOT_OTA_PACKAGE_4K),$(TARGET_OUT)/boot_otas/boot_ota_4k.zip))
 $(eval $(call copy-one-file,$(BUILT_BOOT_OTA_PACKAGE_16K),$(TARGET_OUT)/boot_otas/boot_ota_16k.zip))
-
 ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT)/boot_otas/boot_ota_4k.zip
 ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT)/boot_otas/boot_ota_16k.zip
+endif # BOARD_16K_OTA_MOVE_VENDOR == true
 
 
 endif
@@ -6206,6 +6217,8 @@ define dump-dynamic-partitions-info
     echo "virtual_ab_retrofit=true" >> $(1))
   $(if $(PRODUCT_VIRTUAL_AB_COW_VERSION), \
     echo "virtual_ab_cow_version=$(PRODUCT_VIRTUAL_AB_COW_VERSION)" >> $(1))
+  $(if $(PRODUCT_VIRTUAL_AB_COMPRESSION_FACTOR), \
+    echo "virtual_ab_compression_factor=$(PRODUCT_VIRTUAL_AB_COMPRESSION_FACTOR)" >> $(1))
 endef
 
 # Copy an image file to a directory and generate a block list map file from the image,
@@ -6907,6 +6920,7 @@ PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$(dir $(ZIP2ZIP)):$$PATH \
         --verbose \
         --path $(HOST_OUT) \
         $(if $(OEM_OTA_CONFIG), --oem_settings $(OEM_OTA_CONFIG)) \
+        $(if $(BOOT_VAR_OTA_CONFIG), --boot_variable_file $(BOOT_VAR_OTA_CONFIG)) \
         $(2) \
         $(patsubst %.zip,%,$(BUILT_TARGET_FILES_PACKAGE)) $(1)
 endef

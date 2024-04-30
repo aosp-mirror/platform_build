@@ -1100,7 +1100,49 @@ function adb() {
         echo "Command adb not found; try lunch (and building) first?"
         return 1
     fi
-    $ADB "${@}"
+    run_tool_with_logging "ADB" $ADB "${@}"
+}
+
+function run_tool_with_logging() {
+  # Run commands in a subshell for us to handle forced terminations with a trap
+  # handler.
+  (
+  local tool_tag="$1"
+  shift
+  local tool_binary="$1"
+  shift
+
+  # If logging is not enabled or the logger is not configured, run the original command and return.
+  if [[ "${ANDROID_ENABLE_TOOL_LOGGING}" != "true" ]] || [[ -z "${ANDROID_TOOL_LOGGER}" ]]; then
+     "${tool_binary}" "${@}"
+     return $?
+  fi
+
+  # Otherwise, run the original command and call the logger when done.
+  local start_time
+  start_time=$(date +%s.%N)
+  local logger=${ANDROID_TOOL_LOGGER}
+
+  # Install a trap to call the logger even when the process terminates abnormally.
+  # The logger is run in the background and its output suppressed to avoid
+  # interference with the user flow.
+  trap '
+  exit_code=$?;
+  # Remove the trap to prevent duplicate log.
+  trap - EXIT;
+  "${logger}" \
+    --tool_tag "${tool_tag}" \
+    --start_timestamp "${start_time}" \
+    --end_timestamp "$(date +%s.%N)" \
+    --tool_args \""${@}"\" \
+    --exit_code "${exit_code}" \
+    > /dev/null 2>&1 &
+  exit ${exit_code}
+  ' SIGINT SIGTERM SIGQUIT EXIT
+
+  # Run the original command.
+  "${tool_binary}" "${@}"
+  )
 }
 
 # simplified version of ps; output in the form
