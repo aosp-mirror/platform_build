@@ -29,6 +29,7 @@ python_test_host {
     },
     data: [
         ":envsetup_minimum.zip",
+        ":tool_event_logger",
     ],
     test_suites: [
         "general-tests",
