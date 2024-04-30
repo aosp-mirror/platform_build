@@ -17,78 +17,6 @@ using namespace android::base;
 
 namespace aconfig_storage {
 
-/// Storage location pb file
-static constexpr char kPersistStorageRecordsPb[] =
-    "/metadata/aconfig/persistent_storage_file_records.pb";
-
-/// Read aconfig storage records pb file
-static Result<storage_records_pb> read_storage_records_pb(std::string const& pb_file) {
-  auto records = storage_records_pb();
-  auto content = std::string();
-  if (!ReadFileToString(pb_file, &content)) {
-    return ErrnoError() << "ReadFileToString failed";
-  }
-
-  if (!records.ParseFromString(content)) {
-    return ErrnoError() << "Unable to parse persistent storage records protobuf";
-  }
-  return records;
-}
-
-/// Get storage file path
-static Result<std::string> find_storage_file(
-    std::string const& pb_file,
-    std::string const& container,
-    StorageFileType file_type) {
-  auto records_pb = read_storage_records_pb(pb_file);
-  if (!records_pb.ok()) {
-    return Error() << "Unable to read storage records from " << pb_file
-                   << " : " << records_pb.error();
-  }
-
-  for (auto& entry : records_pb->files()) {
-    if (entry.container() == container) {
-      switch(file_type) {
-        case StorageFileType::package_map:
-          return entry.package_map();
-        case StorageFileType::flag_map:
-          return entry.flag_map();
-        case StorageFileType::flag_val:
-          return entry.flag_val();
-        case StorageFileType::flag_info:
-          return entry.flag_info();
-        default:
-          return Error() << "Invalid file type " << file_type;
-      }
-    }
-  }
-
-  return Error() << "Unable to find storage files for container " << container;
-}
-
-
-namespace private_internal_api {
-
-/// Get mutable mapped file implementation.
-Result<MutableMappedStorageFile> get_mutable_mapped_file_impl(
-    std::string const& pb_file,
-    std::string const& container,
-    StorageFileType file_type) {
-  if (file_type != StorageFileType::flag_val &&
-      file_type != StorageFileType::flag_info) {
-    return Error() << "Cannot create mutable mapped file for this file type";
-  }
-
-  auto file_result = find_storage_file(pb_file, container, file_type);
-  if (!file_result.ok()) {
-    return Error() << file_result.error();
-  }
-
-  return map_mutable_storage_file(*file_result);
-}
-
-} // namespace private internal api
-
 /// Map a storage file
 Result<MutableMappedStorageFile> map_mutable_storage_file(std::string const& file) {
   struct stat file_stat;
@@ -118,14 +46,6 @@ Result<MutableMappedStorageFile> map_mutable_storage_file(std::string const& fil
   mapped_file.file_size = file_size;
 
   return mapped_file;
-}
-
-/// Get mutable mapped file
-Result<MutableMappedStorageFile> get_mutable_mapped_file(
-    std::string const& container,
-    StorageFileType file_type) {
-  return private_internal_api::get_mutable_mapped_file_impl(
-      kPersistStorageRecordsPb, container, file_type);
 }
 
 /// Set boolean flag value

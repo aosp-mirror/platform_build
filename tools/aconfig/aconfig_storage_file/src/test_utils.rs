@@ -92,8 +92,8 @@ pub fn create_test_flag_table() -> FlagTable {
         None,
         None,
         None,
-        Some(178),
         None,
+        Some(177),
         Some(204),
         None,
         Some(262),
@@ -108,8 +108,8 @@ pub fn create_test_flag_table() -> FlagTable {
     let nodes = vec![
         FlagTableNode::new_expected(0, "enabled_ro", 1, 1, None),
         FlagTableNode::new_expected(0, "enabled_rw", 0, 2, Some(151)),
-        FlagTableNode::new_expected(1, "disabled_ro", 1, 0, None),
-        FlagTableNode::new_expected(2, "enabled_ro", 1, 1, None),
+        FlagTableNode::new_expected(2, "enabled_rw", 0, 1, None),
+        FlagTableNode::new_expected(1, "disabled_rw", 0, 0, None),
         FlagTableNode::new_expected(1, "enabled_fixed_ro", 2, 1, Some(236)),
         FlagTableNode::new_expected(1, "enabled_ro", 1, 2, None),
         FlagTableNode::new_expected(2, "enabled_fixed_ro", 2, 0, None),
@@ -140,7 +140,7 @@ pub fn create_test_flag_info_list() -> FlagInfoList {
         num_flags: 8,
         boolean_flag_offset: 27,
     };
-    let is_flag_rw = [true, false, true, false, false, false, false, false];
+    let is_flag_rw = [true, false, true, true, false, false, false, true];
     let nodes = is_flag_rw.iter().map(|&rw| FlagInfoNode::create(rw)).collect();
     FlagInfoList { header, nodes }
 }

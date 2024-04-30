@@ -9,7 +9,7 @@ flag {
 }
 
 flag {
-    name: "disabled_ro"
+    name: "disabled_rw"
     namespace: "aconfig_test"
     description: "This flag is DISABLED + READ_ONLY"
     bug: "123"

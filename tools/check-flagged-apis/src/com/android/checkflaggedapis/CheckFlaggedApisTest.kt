@@ -16,6 +16,8 @@
 package com.android.checkflaggedapis
 
 import android.aconfig.Aconfig
+import android.aconfig.Aconfig.flag_state.DISABLED
+import android.aconfig.Aconfig.flag_state.ENABLED
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -28,9 +30,12 @@ private val API_SIGNATURE =
     """
       // Signature format: 2.0
       package android {
-        public final class Clazz {
-          ctor public Clazz();
+        @FlaggedApi("android.flag.foo") public final class Clazz {
+          ctor @FlaggedApi("android.flag.foo") public Clazz();
           field @FlaggedApi("android.flag.foo") public static final int FOO = 1; // 0x1
+          method @FlaggedApi("android.flag.foo") public int getErrorCode();
+        }
+        @FlaggedApi("android.flag.bar") public static class Clazz.Builder {
         }
       }
 """
@@ -43,13 +48,19 @@ private val API_VERSIONS =
         <class name="android/Clazz" since="1">
           <method name="&lt;init>()V"/>
           <field name="FOO"/>
+          <method name="getErrorCode()I"/>
+        </class>
+        <class name="android/Clazz${"$"}Builder" since="2">
         </class>
       </api>
 """
         .trim()
 
-private fun generateFlagsProto(fooState: Aconfig.flag_state): InputStream {
-  val parsed_flag =
+private fun generateFlagsProto(
+    fooState: Aconfig.flag_state,
+    barState: Aconfig.flag_state
+): InputStream {
+  val fooFlag =
       Aconfig.parsed_flag
           .newBuilder()
           .setPackage("android.flag")
@@ -57,9 +68,18 @@ private fun generateFlagsProto(fooState: Aconfig.flag_state): InputStream {
           .setState(fooState)
           .setPermission(Aconfig.flag_permission.READ_ONLY)
           .build()
-  val parsed_flags = Aconfig.parsed_flags.newBuilder().addParsedFlag(parsed_flag).build()
+  val barFlag =
+      Aconfig.parsed_flag
+          .newBuilder()
+          .setPackage("android.flag")
+          .setName("bar")
+          .setState(barState)
+          .setPermission(Aconfig.flag_permission.READ_ONLY)
+          .build()
+  val flags =
+      Aconfig.parsed_flags.newBuilder().addParsedFlag(fooFlag).addParsedFlag(barFlag).build()
   val binaryProto = ByteArrayOutputStream()
-  parsed_flags.writeTo(binaryProto)
+  flags.writeTo(binaryProto)
   return ByteArrayInputStream(binaryProto.toByteArray())
 }
 
@@ -67,21 +87,36 @@ private fun generateFlagsProto(fooState: Aconfig.flag_state): InputStream {
 class CheckFlaggedApisTest {
   @Test
   fun testParseApiSignature() {
-    val expected = setOf(Pair(Symbol("android.Clazz.FOO"), Flag("android.flag.foo")))
+    val expected =
+        setOf(
+            Pair(Symbol("android.Clazz"), Flag("android.flag.foo")),
+            Pair(Symbol("android.Clazz.Clazz()"), Flag("android.flag.foo")),
+            Pair(Symbol("android.Clazz.FOO"), Flag("android.flag.foo")),
+            Pair(Symbol("android.Clazz.getErrorCode()"), Flag("android.flag.foo")),
+            Pair(Symbol("android.Clazz.Builder"), Flag("android.flag.bar")),
+        )
     val actual = parseApiSignature("in-memory", API_SIGNATURE.byteInputStream())
     assertEquals(expected, actual)
   }
 
   @Test
   fun testParseFlagValues() {
-    val expected: Map<Flag, Boolean> = mapOf(Flag("android.flag.foo") to true)
-    val actual = parseFlagValues(generateFlagsProto(Aconfig.flag_state.ENABLED))
+    val expected: Map<Flag, Boolean> =
+        mapOf(Flag("android.flag.foo") to true, Flag("android.flag.bar") to true)
+    val actual = parseFlagValues(generateFlagsProto(ENABLED, ENABLED))
     assertEquals(expected, actual)
   }
 
   @Test
   fun testParseApiVersions() {
-    val expected: Set<Symbol> = setOf(Symbol("android.Clazz.FOO"))
+    val expected: Set<Symbol> =
+        setOf(
+            Symbol("android.Clazz"),
+            Symbol("android.Clazz.Clazz()"),
+            Symbol("android.Clazz.FOO"),
+            Symbol("android.Clazz.getErrorCode()"),
+            Symbol("android.Clazz.Builder"),
+        )
     val actual = parseApiVersions(API_VERSIONS.byteInputStream())
     assertEquals(expected, actual)
   }
@@ -92,7 +127,7 @@ class CheckFlaggedApisTest {
     val actual =
         findErrors(
             parseApiSignature("in-memory", API_SIGNATURE.byteInputStream()),
-            parseFlagValues(generateFlagsProto(Aconfig.flag_state.ENABLED)),
+            parseFlagValues(generateFlagsProto(ENABLED, ENABLED)),
             parseApiVersions(API_VERSIONS.byteInputStream()))
     assertEquals(expected, actual)
   }
@@ -101,11 +136,19 @@ class CheckFlaggedApisTest {
   fun testFindErrorsDisabledFlaggedApiIsPresent() {
     val expected =
         setOf<ApiError>(
-            DisabledFlaggedApiIsPresentError(Symbol("android.Clazz.FOO"), Flag("android.flag.foo")))
+            DisabledFlaggedApiIsPresentError(Symbol("android.Clazz"), Flag("android.flag.foo")),
+            DisabledFlaggedApiIsPresentError(
+                Symbol("android.Clazz.Clazz()"), Flag("android.flag.foo")),
+            DisabledFlaggedApiIsPresentError(Symbol("android.Clazz.FOO"), Flag("android.flag.foo")),
+            DisabledFlaggedApiIsPresentError(
+                Symbol("android.Clazz.getErrorCode()"), Flag("android.flag.foo")),
+            DisabledFlaggedApiIsPresentError(
+                Symbol("android.Clazz.Builder"), Flag("android.flag.bar")),
+        )
     val actual =
         findErrors(
             parseApiSignature("in-memory", API_SIGNATURE.byteInputStream()),
-            parseFlagValues(generateFlagsProto(Aconfig.flag_state.DISABLED)),
+            parseFlagValues(generateFlagsProto(DISABLED, DISABLED)),
             parseApiVersions(API_VERSIONS.byteInputStream()))
     assertEquals(expected, actual)
   }

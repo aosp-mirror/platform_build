@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# TODO: Currently only checks trunk_staging. Should check trunk_staging first,
+#       then use the product-specfic releases. Only applies to -c though.
+
+function Help() {
+cat <<@EOF@
+Usage: lunchable [options]
+
+Lists products that have no functioning lunch combo.
+
+options:
+-c    prints all failing lunch combos for all targets;
+-w    why? Prints the error message after each failed lunch combo. Only
+      works with -c
+
+@EOF@
+}
+
+complete=0
+why=0
+while getopts "cwh" option; do
+  case $option in
+    c)
+      complete=1;;
+    w)
+      why=1;;
+    h)
+      Help
+      exit;;
+  esac
+done
+
+# Getting all named products can fail if we haven't lunched anything
+source $(pwd)/build/envsetup.sh &> /dev/null
+all_named_products=( $(get_build_var all_named_products 2> /dev/null) )
+if [[ $? -ne 0 ]]; then
+  echo "get_build_var all_named_products failed. Lunch something first?" >&2
+  exit 1
+fi
+total_products=${#all_named_products[@]}
+current_product=0
+
+for product in "${all_named_products[@]}"; do
+  (( current_product += 1 ))
+  single_pass=0
+  printf " Checking ${current_product}/${total_products} \r" >&2
+  for release in trunk_staging; do
+    for variant in eng user userdebug; do
+      lunchcombo="${product}-${release}-${variant}"
+      lunch_error="$(lunch $lunchcombo 2>&1 > /dev/null)"
+      if [[ $? -ne 0 ]]; then
+        # Lunch failed
+        if [[ $complete -eq 1 ]]; then
+          echo -e "${product} : ${lunchcombo}"
+          if [[ $why -eq 1 ]]; then
+            echo -e "$(sed 's/^/    /g' <<<$lunch_error)"
+          fi
+        fi
+      elif [[ $complete -ne 1 ]]; then
+        single_pass=1
+        break # skip variant
+      fi
+    done
+    if [[ $single_pass -eq 1 ]]; then
+      break # skip release
+    fi
+  done
+  if [[ $complete -eq 0 ]] && [[ $single_pass -eq 0 ]]; then
+    echo "${product}"
+  fi
+done

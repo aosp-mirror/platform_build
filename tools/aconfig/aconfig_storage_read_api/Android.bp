@@ -102,5 +102,18 @@ cc_library {
         "//apex_available:anyapex",
     ],
     min_sdk_version: "29",
+    target: {
+        linux: {
+            version_script: "libaconfig_storage_read_api_cc.map",
+        },
+    },
     double_loadable: true,
+}
+
+cc_defaults {
+    name: "aconfig_lib_cc_static_link.defaults",
+    shared_libs: [
+        "libaconfig_storage_read_api_cc",
+        "liblog",
+    ],
 }
