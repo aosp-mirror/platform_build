@@ -1,0 +1,11 @@
+LIBACONFIG_STORAGE_READ_API_CC {
+  # Export everything in the aconfig_storage namespace. This includes both the
+  # public API and library internals.
+  global:
+    extern "C++" {
+        aconfig_storage::*;
+    };
+  # Hide everything else.
+  local:
+    *;
+};

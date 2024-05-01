@@ -50,88 +50,36 @@ class AconfigStorageTest : public ::testing::Test {
     return temp_file;
   }
 
-  Result<std::string> write_storage_location_pb_file(std::string const& flag_val,
-                                                     std::string const& flag_info) {
-    auto temp_file = std::tmpnam(nullptr);
-    auto proto = storage_files();
-    auto* info = proto.add_files();
-    info->set_version(0);
-    info->set_container("mockup");
-    info->set_package_map("some_package.map");
-    info->set_flag_map("some_flag.map");
-    info->set_flag_val(flag_val);
-    info->set_flag_info(flag_info);
-    info->set_timestamp(12345);
-
-    auto content = std::string();
-    proto.SerializeToString(&content);
-    if (!WriteStringToFile(content, temp_file)) {
-      return Error() << "failed to write storage records pb file";
-    }
-    return temp_file;
-  }
-
   void SetUp() override {
     auto const test_dir = android::base::GetExecutableDirectory();
     flag_val = *copy_to_rw_temp_file(test_dir + "/flag.val");
     flag_info = *copy_to_rw_temp_file(test_dir + "/flag.info");
-    storage_record_pb = *write_storage_location_pb_file(flag_val, flag_info);
   }
 
   void TearDown() override {
     std::remove(flag_val.c_str());
     std::remove(flag_info.c_str());
-    std::remove(storage_record_pb.c_str());
   }
 
   std::string flag_val;
   std::string flag_info;
-  std::string storage_record_pb;
 };
-
-/// Negative test to lock down the error when mapping none exist storage files
-TEST_F(AconfigStorageTest, test_none_exist_storage_file_mapping) {
-  auto mapped_file_result = private_api::get_mutable_mapped_file_impl(
-      storage_record_pb, "vendor", api::StorageFileType::flag_val);
-  ASSERT_FALSE(mapped_file_result.ok());
-  ASSERT_EQ(mapped_file_result.error().message(),
-            "Unable to find storage files for container vendor");
-}
 
 /// Negative test to lock down the error when mapping a non writeable storage file
 TEST_F(AconfigStorageTest, test_non_writable_storage_file_mapping) {
   ASSERT_TRUE(chmod(flag_val.c_str(), S_IRUSR | S_IRGRP | S_IROTH) != -1);
-  auto mapped_file_result = private_api::get_mutable_mapped_file_impl(
-      storage_record_pb, "mockup", api::StorageFileType::flag_val);
+  auto mapped_file_result = api::map_mutable_storage_file(flag_val);
   ASSERT_FALSE(mapped_file_result.ok());
   auto it = mapped_file_result.error().message().find("cannot map nonwriteable file");
   ASSERT_TRUE(it != std::string::npos) << mapped_file_result.error().message();
 }
 
-/// Negative test to lock down the error when mapping a file type that cannot be modified
-TEST_F(AconfigStorageTest, test_invalid_storage_file_type_mapping) {
-  auto mapped_file_result = private_api::get_mutable_mapped_file_impl(
-      storage_record_pb, "mockup", api::StorageFileType::package_map);
-  ASSERT_FALSE(mapped_file_result.ok());
-  auto it = mapped_file_result.error().message().find(
-      "Cannot create mutable mapped file for this file type");
-  ASSERT_TRUE(it != std::string::npos) << mapped_file_result.error().message();
-
-  mapped_file_result = private_api::get_mutable_mapped_file_impl(
-      storage_record_pb, "mockup", api::StorageFileType::flag_map);
-  ASSERT_FALSE(mapped_file_result.ok());
-  it = mapped_file_result.error().message().find(
-      "Cannot create mutable mapped file for this file type");
-  ASSERT_TRUE(it != std::string::npos) << mapped_file_result.error().message();
-}
-
 /// Test to lock down storage flag value update api
 TEST_F(AconfigStorageTest, test_boolean_flag_value_update) {
-  auto mapped_file_result = private_api::get_mutable_mapped_file_impl(
-      storage_record_pb, "mockup", api::StorageFileType::flag_val);
+  auto mapped_file_result = api::map_mutable_storage_file(flag_val);
   ASSERT_TRUE(mapped_file_result.ok());
-  auto mapped_file = *mapped_file_result;
 
+  auto mapped_file = *mapped_file_result;
   for (int offset = 0; offset < 8; ++offset) {
     auto update_result = api::set_boolean_flag_value(mapped_file, offset, true);
     ASSERT_TRUE(update_result.ok());
@@ -146,10 +94,10 @@ TEST_F(AconfigStorageTest, test_boolean_flag_value_update) {
 
 /// Negative test to lock down the error when querying flag value out of range
 TEST_F(AconfigStorageTest, test_invalid_boolean_flag_value_update) {
-  auto mapped_file_result = private_api::get_mutable_mapped_file_impl(
-      storage_record_pb, "mockup", api::StorageFileType::flag_val);
+  auto mapped_file_result = api::map_mutable_storage_file(flag_val);
   ASSERT_TRUE(mapped_file_result.ok());
   auto mapped_file = *mapped_file_result;
+
   auto update_result = api::set_boolean_flag_value(mapped_file, 8, true);
   ASSERT_FALSE(update_result.ok());
   ASSERT_EQ(update_result.error().message(),
@@ -158,15 +106,14 @@ TEST_F(AconfigStorageTest, test_invalid_boolean_flag_value_update) {
 
 /// Test to lock down storage flag has server override update api
 TEST_F(AconfigStorageTest, test_flag_has_server_override_update) {
-  auto mapped_file_result = private_api::get_mutable_mapped_file_impl(
-      storage_record_pb, "mockup", api::StorageFileType::flag_info);
+  auto mapped_file_result = api::map_mutable_storage_file(flag_info);
   ASSERT_TRUE(mapped_file_result.ok());
   auto mapped_file = *mapped_file_result;
 
   for (int offset = 0; offset < 8; ++offset) {
     auto update_result = api::set_flag_has_server_override(
         mapped_file, api::FlagValueType::Boolean, offset, true);
-    ASSERT_TRUE(update_result.ok());
+    ASSERT_TRUE(update_result.ok()) << update_result.error();
     auto ro_mapped_file = api::MappedStorageFile();
     ro_mapped_file.file_ptr = mapped_file.file_ptr;
     ro_mapped_file.file_size = mapped_file.file_size;
@@ -189,8 +136,7 @@ TEST_F(AconfigStorageTest, test_flag_has_server_override_update) {
 
 /// Test to lock down storage flag has local override update api
 TEST_F(AconfigStorageTest, test_flag_has_local_override_update) {
-  auto mapped_file_result = private_api::get_mutable_mapped_file_impl(
-      storage_record_pb, "mockup", api::StorageFileType::flag_info);
+  auto mapped_file_result = api::map_mutable_storage_file(flag_info);
   ASSERT_TRUE(mapped_file_result.ok());
   auto mapped_file = *mapped_file_result;
 

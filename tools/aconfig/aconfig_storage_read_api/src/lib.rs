@@ -468,8 +468,8 @@ files {{
         let baseline = vec![
             (0, "enabled_ro", StoredFlagType::ReadOnlyBoolean, 1u16),
             (0, "enabled_rw", StoredFlagType::ReadWriteBoolean, 2u16),
-            (1, "disabled_ro", StoredFlagType::ReadOnlyBoolean, 0u16),
-            (2, "enabled_ro", StoredFlagType::ReadOnlyBoolean, 1u16),
+            (2, "enabled_rw", StoredFlagType::ReadWriteBoolean, 1u16),
+            (1, "disabled_rw", StoredFlagType::ReadWriteBoolean, 0u16),
             (1, "enabled_fixed_ro", StoredFlagType::FixedReadOnlyBoolean, 1u16),
             (1, "enabled_ro", StoredFlagType::ReadOnlyBoolean, 2u16),
             (2, "enabled_fixed_ro", StoredFlagType::FixedReadOnlyBoolean, 0u16),

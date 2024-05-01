@@ -2,7 +2,7 @@ package: "com.android.aconfig.storage.test_4"
 container: "system"
 
 flag {
-    name: "enabled_ro"
+    name: "enabled_rw"
     namespace: "aconfig_test"
     description: "This flag is ENABLED + READ_ONLY"
     bug: "abc"
