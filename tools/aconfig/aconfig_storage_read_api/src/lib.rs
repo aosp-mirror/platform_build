@@ -504,7 +504,7 @@ files {{
         let pb_file_path = pb_file.path().display().to_string();
         let flag_info_file =
             unsafe { get_mapped_file(&pb_file_path, "mockup", StorageFileType::FlagInfo).unwrap() };
-        let is_rw: Vec<bool> = vec![true, false, true, false, false, false, false, false];
+        let is_rw: Vec<bool> = vec![true, false, true, true, false, false, false, true];
         for (offset, expected_value) in is_rw.into_iter().enumerate() {
             let attribute =
                 get_flag_attribute(&flag_info_file, FlagValueType::Boolean, offset as u32).unwrap();

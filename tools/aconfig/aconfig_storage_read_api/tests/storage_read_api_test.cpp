@@ -232,7 +232,7 @@ TEST_F(AconfigStorageTest, test_boolean_flag_info_query) {
   ASSERT_TRUE(mapped_file.ok());
 
   auto expected_value = std::vector<bool>{
-    true, false, true, false, false, false, false, false};
+    true, false, true, true, false, false, false, true};
   for (int index = 0; index < 8; ++index) {
     auto attribute = api::get_flag_attribute(*mapped_file, api::FlagValueType::Boolean, index);
     ASSERT_TRUE(attribute.ok());

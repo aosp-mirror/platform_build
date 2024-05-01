@@ -17,8 +17,8 @@
 //! `aconfig-storage` is a debugging tool to parse storage files
 
 use aconfig_storage_file::{
-    list_flags, read_file_to_bytes, AconfigStorageError, FlagInfoList, FlagTable, FlagValueList,
-    PackageTable, StorageFileType,
+    list_flags, list_flags_with_info, read_file_to_bytes, AconfigStorageError, FlagInfoList,
+    FlagTable, FlagValueList, PackageTable, StorageFileType,
 };
 
 use clap::{builder::ArgAction, Arg, Command};
@@ -45,7 +45,10 @@ fn cli() -> Command {
                         .action(ArgAction::Set),
                 )
                 .arg(Arg::new("flag-map").long("flag-map").required(true).action(ArgAction::Set))
-                .arg(Arg::new("flag-val").long("flag-val").required(true).action(ArgAction::Set)),
+                .arg(Arg::new("flag-val").long("flag-val").required(true).action(ArgAction::Set))
+                .arg(
+                    Arg::new("flag-info").long("flag-info").required(false).action(ArgAction::Set),
+                ),
         )
 }
 
@@ -87,9 +90,27 @@ fn main() -> Result<(), AconfigStorageError> {
             let package_map = sub_matches.get_one::<String>("package-map").unwrap();
             let flag_map = sub_matches.get_one::<String>("flag-map").unwrap();
             let flag_val = sub_matches.get_one::<String>("flag-val").unwrap();
-            let flags = list_flags(package_map, flag_map, flag_val)?;
-            for (package_name, flag_name, flag_type, flag_value) in flags.iter() {
-                println!("{} {} {:?} {}", package_name, flag_name, flag_type, flag_value);
+            let flag_info = sub_matches.get_one::<String>("flag-info");
+            match flag_info {
+                Some(info_file) => {
+                    let flags = list_flags_with_info(package_map, flag_map, flag_val, info_file)?;
+                    for flag in flags.iter() {
+                        println!(
+                            "{} {} {} {:?} IsReadWrite: {}, HasServerOverride: {}, HasLocalOverride: {}",
+                            flag.package_name, flag.flag_name, flag.flag_value, flag.value_type,
+                            flag.is_readwrite, flag.has_server_override, flag.has_local_override,
+                        );
+                    }
+                }
+                None => {
+                    let flags = list_flags(package_map, flag_map, flag_val)?;
+                    for flag in flags.iter() {
+                        println!(
+                            "{} {} {} {:?}",
+                            flag.package_name, flag.flag_name, flag.flag_value, flag.value_type,
+                        );
+                    }
+                }
             }
         }
         _ => unreachable!(),
