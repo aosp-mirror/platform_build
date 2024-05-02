@@ -178,7 +178,6 @@ The tool will exit with a non-zero exit code if any flagged APIs are found to be
 }
 
 internal fun parseApiSignature(path: String, input: InputStream): Set<Pair<Symbol, Flag>> {
-  // TODO(334870672): add support for metods
   val output = mutableSetOf<Pair<Symbol, Flag>>()
   val visitor =
       object : BaseItemVisitor() {
@@ -203,11 +202,7 @@ internal fun parseApiSignature(path: String, input: InputStream): Set<Pair<Symbo
               append(".")
               append(method.name())
               append("(")
-              // TODO(334870672): replace this early return with proper parsing of the command line
-              // arguments, followed by translation to Lname/of/class; + III format
-              if (!method.parameters().isEmpty()) {
-                return
-              }
+              method.parameters().joinTo(this, separator = "") { it.type().internalName() }
               append(")")
             }
             val symbol = Symbol.create(name)
