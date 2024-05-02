@@ -41,21 +41,29 @@ import org.w3c.dom.Node
  * a Java symbol slightly differently. To keep things consistent, all parsed APIs are converted to
  * Symbols.
  *
- * All parts of the fully qualified name of the Symbol are separated by a dot, e.g.:
+ * Symbols are encoded using the format similar to the one described in section 4.3.2 of the JVM
+ * spec [1], that is, "package.class.inner-class.method(int, int[], android.util.Clazz)" is
+ * represented as
  * <pre>
- *   package.class.inner-class.field
- * </pre>
+ *   package.class.inner-class.method(II[Landroid/util/Clazz;)
+ * <pre>
+ *
+ * Where possible, the format has been simplified (to make translation of the
+ * various input formats easier): for instance, only / is used as delimiter (#
+ * and $ are never used).
+ *
+ * 1. https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3.2
  */
 @JvmInline
 internal value class Symbol(val name: String) {
   companion object {
-    private val FORBIDDEN_CHARS = listOf('#', '$')
+    private val FORBIDDEN_CHARS = listOf('#', '$', '.')
 
     /** Create a new Symbol from a String that may include delimiters other than dot. */
     fun create(name: String): Symbol {
       var sanitizedName = name
       for (ch in FORBIDDEN_CHARS) {
-        sanitizedName = sanitizedName.replace(ch, '.')
+        sanitizedName = sanitizedName.replace(ch, '/')
       }
       return Symbol(sanitizedName)
     }
@@ -255,7 +263,9 @@ internal fun parseApiVersions(input: InputStream): Set<Symbol> {
           "Bad XML: <field> element without name attribute"
         }
     val className =
-        requireNotNull(field.getParentNode()?.getAttribute("name")) { "Bad XML: top level <field> element" }
+        requireNotNull(field.getParentNode()?.getAttribute("name")) {
+          "Bad XML: top level <field> element"
+        }
     output.add(Symbol.create("${className.replace("/", ".")}.$fieldName"))
   }
 
