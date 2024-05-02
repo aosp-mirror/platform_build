@@ -34,6 +34,9 @@ private val API_SIGNATURE =
           ctor @FlaggedApi("android.flag.foo") public Clazz();
           field @FlaggedApi("android.flag.foo") public static final int FOO = 1; // 0x1
           method @FlaggedApi("android.flag.foo") public int getErrorCode();
+          method @FlaggedApi("android.flag.foo") public boolean setData(int, int[][], @NonNull android.util.Utility<T, U>);
+          method @FlaggedApi("android.flag.foo") public boolean setVariableData(int, android.util.Atom...);
+          method @FlaggedApi("android.flag.foo") public boolean innerClassArg(android.Clazz.Builder);
         }
         @FlaggedApi("android.flag.bar") public static class Clazz.Builder {
         }
@@ -49,6 +52,9 @@ private val API_VERSIONS =
           <method name="&lt;init>()V"/>
           <field name="FOO"/>
           <method name="getErrorCode()I"/>
+          <method name="setData(I[[ILandroid/util/Utility;)Z"/>
+          <method name="setVariableData(I[Landroid/util/Atom;)Z"/>
+          <method name="innerClassArg(Landroid/Clazz${"$"}Builder;)"/>
         </class>
         <class name="android/Clazz${"$"}Builder" since="2">
         </class>
@@ -93,6 +99,15 @@ class CheckFlaggedApisTest {
             Pair(Symbol("android/Clazz/Clazz()"), Flag("android.flag.foo")),
             Pair(Symbol("android/Clazz/FOO"), Flag("android.flag.foo")),
             Pair(Symbol("android/Clazz/getErrorCode()"), Flag("android.flag.foo")),
+            Pair(
+                Symbol("android/Clazz/setData(I[[ILandroid/util/Utility;)"),
+                Flag("android.flag.foo")),
+            Pair(
+                Symbol("android/Clazz/setVariableData(I[Landroid/util/Atom;)"),
+                Flag("android.flag.foo")),
+            Pair(
+                Symbol("android/Clazz/innerClassArg(Landroid/Clazz/Builder;)"),
+                Flag("android.flag.foo")),
             Pair(Symbol("android/Clazz/Builder"), Flag("android.flag.bar")),
         )
     val actual = parseApiSignature("in-memory", API_SIGNATURE.byteInputStream())
@@ -115,6 +130,9 @@ class CheckFlaggedApisTest {
             Symbol("android/Clazz/Clazz()"),
             Symbol("android/Clazz/FOO"),
             Symbol("android/Clazz/getErrorCode()"),
+            Symbol("android/Clazz/setData(I[[ILandroid/util/Utility;)"),
+            Symbol("android/Clazz/setVariableData(I[Landroid/util/Atom;)"),
+            Symbol("android/Clazz/innerClassArg(Landroid/Clazz/Builder;)"),
             Symbol("android/Clazz/Builder"),
         )
     val actual = parseApiVersions(API_VERSIONS.byteInputStream())
@@ -142,6 +160,15 @@ class CheckFlaggedApisTest {
             DisabledFlaggedApiIsPresentError(Symbol("android/Clazz/FOO"), Flag("android.flag.foo")),
             DisabledFlaggedApiIsPresentError(
                 Symbol("android/Clazz/getErrorCode()"), Flag("android.flag.foo")),
+            DisabledFlaggedApiIsPresentError(
+                Symbol("android/Clazz/setData(I[[ILandroid/util/Utility;)"),
+                Flag("android.flag.foo")),
+            DisabledFlaggedApiIsPresentError(
+                Symbol("android/Clazz/setVariableData(I[Landroid/util/Atom;)"),
+                Flag("android.flag.foo")),
+            DisabledFlaggedApiIsPresentError(
+                Symbol("android/Clazz/innerClassArg(Landroid/Clazz/Builder;)"),
+                Flag("android.flag.foo")),
             DisabledFlaggedApiIsPresentError(
                 Symbol("android/Clazz/Builder"), Flag("android.flag.bar")),
         )
