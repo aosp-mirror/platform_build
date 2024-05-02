@@ -278,12 +278,21 @@ pub fn read_file_to_bytes(file_path: &str) -> Result<Vec<u8>, AconfigStorageErro
     Ok(buffer)
 }
 
+/// Flag value summary
+#[derive(Debug, PartialEq)]
+pub struct FlagValueSummary {
+    pub package_name: String,
+    pub flag_name: String,
+    pub flag_value: String,
+    pub value_type: StoredFlagType,
+}
+
 /// List flag values from storage files
 pub fn list_flags(
     package_map: &str,
     flag_map: &str,
     flag_val: &str,
-) -> Result<Vec<(String, String, StoredFlagType, bool)>, AconfigStorageError> {
+) -> Result<Vec<FlagValueSummary>, AconfigStorageError> {
     let package_table = PackageTable::from_bytes(&read_file_to_bytes(package_map)?)?;
     let flag_table = FlagTable::from_bytes(&read_file_to_bytes(flag_map)?)?;
     let flag_value_list = FlagValueList::from_bytes(&read_file_to_bytes(flag_val)?)?;
@@ -295,30 +304,155 @@ pub fn list_flags(
 
     let mut flags = Vec::new();
     for node in flag_table.nodes.iter() {
-        let (package_name, package_offset) = package_info[node.package_id as usize];
-        let flag_offset = package_offset + node.flag_index as u32;
-        let flag_value = flag_value_list.booleans[flag_offset as usize];
-        flags.push((
-            String::from(package_name),
-            node.flag_name.clone(),
-            node.flag_type,
-            flag_value,
-        ));
+        let (package_name, boolean_start_index) = package_info[node.package_id as usize];
+        let flag_index = boolean_start_index + node.flag_index as u32;
+        let flag_value = flag_value_list.booleans[flag_index as usize];
+        flags.push(FlagValueSummary {
+            package_name: String::from(package_name),
+            flag_name: node.flag_name.clone(),
+            flag_value: flag_value.to_string(),
+            value_type: node.flag_type,
+        });
     }
 
-    flags.sort_by(|v1, v2| match v1.0.cmp(&v2.0) {
-        Ordering::Equal => v1.1.cmp(&v2.1),
+    flags.sort_by(|v1, v2| match v1.package_name.cmp(&v2.package_name) {
+        Ordering::Equal => v1.flag_name.cmp(&v2.flag_name),
         other => other,
     });
     Ok(flags)
+}
+
+/// Flag value and info summary
+#[derive(Debug, PartialEq)]
+pub struct FlagValueAndInfoSummary {
+    pub package_name: String,
+    pub flag_name: String,
+    pub flag_value: String,
+    pub value_type: StoredFlagType,
+    pub is_readwrite: bool,
+    pub has_server_override: bool,
+    pub has_local_override: bool,
+}
+
+/// List flag values and info from storage files
+pub fn list_flags_with_info(
+    package_map: &str,
+    flag_map: &str,
+    flag_val: &str,
+    flag_info: &str,
+) -> Result<Vec<FlagValueAndInfoSummary>, AconfigStorageError> {
+    let package_table = PackageTable::from_bytes(&read_file_to_bytes(package_map)?)?;
+    let flag_table = FlagTable::from_bytes(&read_file_to_bytes(flag_map)?)?;
+    let flag_value_list = FlagValueList::from_bytes(&read_file_to_bytes(flag_val)?)?;
+    let flag_info = FlagInfoList::from_bytes(&read_file_to_bytes(flag_info)?)?;
+
+    let mut package_info = vec![("", 0); package_table.header.num_packages as usize];
+    for node in package_table.nodes.iter() {
+        package_info[node.package_id as usize] = (&node.package_name, node.boolean_start_index);
+    }
+
+    let mut flags = Vec::new();
+    for node in flag_table.nodes.iter() {
+        let (package_name, boolean_start_index) = package_info[node.package_id as usize];
+        let flag_index = boolean_start_index + node.flag_index as u32;
+        let flag_value = flag_value_list.booleans[flag_index as usize];
+        let flag_attribute = flag_info.nodes[flag_index as usize].attributes;
+        flags.push(FlagValueAndInfoSummary {
+            package_name: String::from(package_name),
+            flag_name: node.flag_name.clone(),
+            flag_value: flag_value.to_string(),
+            value_type: node.flag_type,
+            is_readwrite: flag_attribute & (FlagInfoBit::IsReadWrite as u8) != 0,
+            has_server_override: flag_attribute & (FlagInfoBit::HasServerOverride as u8) != 0,
+            has_local_override: flag_attribute & (FlagInfoBit::HasLocalOverride as u8) != 0,
+        });
+    }
+
+    flags.sort_by(|v1, v2| match v1.package_name.cmp(&v2.package_name) {
+        Ordering::Equal => v1.flag_name.cmp(&v2.flag_name),
+        other => other,
+    });
+    Ok(flags)
+}
+
+// *************************************** //
+// CC INTERLOP
+// *************************************** //
+
+// Exported rust data structure and methods, c++ code will be generated
+#[cxx::bridge]
+mod ffi {
+    /// flag value and info summary cxx return
+    pub struct FlagValueAndInfoSummaryCXX {
+        pub package_name: String,
+        pub flag_name: String,
+        pub flag_value: String,
+        pub value_type: String,
+        pub is_readwrite: bool,
+        pub has_server_override: bool,
+        pub has_local_override: bool,
+    }
+
+    /// list flag result cxx return
+    pub struct ListFlagValueAndInfoResultCXX {
+        pub query_success: bool,
+        pub error_message: String,
+        pub flags: Vec<FlagValueAndInfoSummaryCXX>,
+    }
+
+    // Rust export to c++
+    extern "Rust" {
+        pub fn list_flags_with_info_cxx(
+            package_map: &str,
+            flag_map: &str,
+            flag_val: &str,
+            flag_info: &str,
+        ) -> ListFlagValueAndInfoResultCXX;
+    }
+}
+
+/// implement flag value and info summary cxx return type
+impl ffi::FlagValueAndInfoSummaryCXX {
+    pub(crate) fn new(summary: FlagValueAndInfoSummary) -> Self {
+        Self {
+            package_name: summary.package_name,
+            flag_name: summary.flag_name,
+            flag_value: summary.flag_value,
+            value_type: format!("{:?}", summary.value_type),
+            is_readwrite: summary.is_readwrite,
+            has_server_override: summary.has_server_override,
+            has_local_override: summary.has_local_override,
+        }
+    }
+}
+
+/// implement list flag with info cxx interlop
+pub fn list_flags_with_info_cxx(
+    package_map: &str,
+    flag_map: &str,
+    flag_val: &str,
+    flag_info: &str,
+) -> ffi::ListFlagValueAndInfoResultCXX {
+    match list_flags_with_info(package_map, flag_map, flag_val, flag_info) {
+        Ok(summary) => ffi::ListFlagValueAndInfoResultCXX {
+            query_success: true,
+            error_message: String::new(),
+            flags: summary.into_iter().map(ffi::FlagValueAndInfoSummaryCXX::new).collect(),
+        },
+        Err(errmsg) => ffi::ListFlagValueAndInfoResultCXX {
+            query_success: false,
+            error_message: format!("{:?}", errmsg),
+            flags: Vec::new(),
+        },
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::test_utils::{
-        create_test_flag_table, create_test_flag_value_list, create_test_package_table,
-        write_bytes_to_temp_file,
+        create_test_flag_info_list, create_test_flag_table, create_test_flag_value_list,
+        create_test_package_table, write_bytes_to_temp_file,
     };
 
     #[test]
@@ -337,54 +471,154 @@ mod tests {
         let flags =
             list_flags(&package_table_path, &flag_table_path, &flag_value_list_path).unwrap();
         let expected = [
-            (
-                String::from("com.android.aconfig.storage.test_1"),
-                String::from("disabled_rw"),
-                StoredFlagType::ReadWriteBoolean,
-                false,
-            ),
-            (
-                String::from("com.android.aconfig.storage.test_1"),
-                String::from("enabled_ro"),
-                StoredFlagType::ReadOnlyBoolean,
-                true,
-            ),
-            (
-                String::from("com.android.aconfig.storage.test_1"),
-                String::from("enabled_rw"),
-                StoredFlagType::ReadWriteBoolean,
-                true,
-            ),
-            (
-                String::from("com.android.aconfig.storage.test_2"),
-                String::from("disabled_rw"),
-                StoredFlagType::ReadWriteBoolean,
-                false,
-            ),
-            (
-                String::from("com.android.aconfig.storage.test_2"),
-                String::from("enabled_fixed_ro"),
-                StoredFlagType::FixedReadOnlyBoolean,
-                true,
-            ),
-            (
-                String::from("com.android.aconfig.storage.test_2"),
-                String::from("enabled_ro"),
-                StoredFlagType::ReadOnlyBoolean,
-                true,
-            ),
-            (
-                String::from("com.android.aconfig.storage.test_4"),
-                String::from("enabled_fixed_ro"),
-                StoredFlagType::FixedReadOnlyBoolean,
-                true,
-            ),
-            (
-                String::from("com.android.aconfig.storage.test_4"),
-                String::from("enabled_rw"),
-                StoredFlagType::ReadWriteBoolean,
-                true,
-            ),
+            FlagValueSummary {
+                package_name: String::from("com.android.aconfig.storage.test_1"),
+                flag_name: String::from("disabled_rw"),
+                value_type: StoredFlagType::ReadWriteBoolean,
+                flag_value: String::from("false"),
+            },
+            FlagValueSummary {
+                package_name: String::from("com.android.aconfig.storage.test_1"),
+                flag_name: String::from("enabled_ro"),
+                value_type: StoredFlagType::ReadOnlyBoolean,
+                flag_value: String::from("true"),
+            },
+            FlagValueSummary {
+                package_name: String::from("com.android.aconfig.storage.test_1"),
+                flag_name: String::from("enabled_rw"),
+                value_type: StoredFlagType::ReadWriteBoolean,
+                flag_value: String::from("true"),
+            },
+            FlagValueSummary {
+                package_name: String::from("com.android.aconfig.storage.test_2"),
+                flag_name: String::from("disabled_rw"),
+                value_type: StoredFlagType::ReadWriteBoolean,
+                flag_value: String::from("false"),
+            },
+            FlagValueSummary {
+                package_name: String::from("com.android.aconfig.storage.test_2"),
+                flag_name: String::from("enabled_fixed_ro"),
+                value_type: StoredFlagType::FixedReadOnlyBoolean,
+                flag_value: String::from("true"),
+            },
+            FlagValueSummary {
+                package_name: String::from("com.android.aconfig.storage.test_2"),
+                flag_name: String::from("enabled_ro"),
+                value_type: StoredFlagType::ReadOnlyBoolean,
+                flag_value: String::from("true"),
+            },
+            FlagValueSummary {
+                package_name: String::from("com.android.aconfig.storage.test_4"),
+                flag_name: String::from("enabled_fixed_ro"),
+                value_type: StoredFlagType::FixedReadOnlyBoolean,
+                flag_value: String::from("true"),
+            },
+            FlagValueSummary {
+                package_name: String::from("com.android.aconfig.storage.test_4"),
+                flag_name: String::from("enabled_rw"),
+                value_type: StoredFlagType::ReadWriteBoolean,
+                flag_value: String::from("true"),
+            },
+        ];
+        assert_eq!(flags, expected);
+    }
+
+    #[test]
+    // this test point locks down the flag list with info api
+    fn test_list_flag_with_info() {
+        let package_table =
+            write_bytes_to_temp_file(&create_test_package_table().into_bytes()).unwrap();
+        let flag_table = write_bytes_to_temp_file(&create_test_flag_table().into_bytes()).unwrap();
+        let flag_value_list =
+            write_bytes_to_temp_file(&create_test_flag_value_list().into_bytes()).unwrap();
+        let flag_info_list =
+            write_bytes_to_temp_file(&create_test_flag_info_list().into_bytes()).unwrap();
+
+        let package_table_path = package_table.path().display().to_string();
+        let flag_table_path = flag_table.path().display().to_string();
+        let flag_value_list_path = flag_value_list.path().display().to_string();
+        let flag_info_list_path = flag_info_list.path().display().to_string();
+
+        let flags = list_flags_with_info(
+            &package_table_path,
+            &flag_table_path,
+            &flag_value_list_path,
+            &flag_info_list_path,
+        )
+        .unwrap();
+        let expected = [
+            FlagValueAndInfoSummary {
+                package_name: String::from("com.android.aconfig.storage.test_1"),
+                flag_name: String::from("disabled_rw"),
+                value_type: StoredFlagType::ReadWriteBoolean,
+                flag_value: String::from("false"),
+                is_readwrite: true,
+                has_server_override: false,
+                has_local_override: false,
+            },
+            FlagValueAndInfoSummary {
+                package_name: String::from("com.android.aconfig.storage.test_1"),
+                flag_name: String::from("enabled_ro"),
+                value_type: StoredFlagType::ReadOnlyBoolean,
+                flag_value: String::from("true"),
+                is_readwrite: false,
+                has_server_override: false,
+                has_local_override: false,
+            },
+            FlagValueAndInfoSummary {
+                package_name: String::from("com.android.aconfig.storage.test_1"),
+                flag_name: String::from("enabled_rw"),
+                value_type: StoredFlagType::ReadWriteBoolean,
+                flag_value: String::from("true"),
+                is_readwrite: true,
+                has_server_override: false,
+                has_local_override: false,
+            },
+            FlagValueAndInfoSummary {
+                package_name: String::from("com.android.aconfig.storage.test_2"),
+                flag_name: String::from("disabled_rw"),
+                value_type: StoredFlagType::ReadWriteBoolean,
+                flag_value: String::from("false"),
+                is_readwrite: true,
+                has_server_override: false,
+                has_local_override: false,
+            },
+            FlagValueAndInfoSummary {
+                package_name: String::from("com.android.aconfig.storage.test_2"),
+                flag_name: String::from("enabled_fixed_ro"),
+                value_type: StoredFlagType::FixedReadOnlyBoolean,
+                flag_value: String::from("true"),
+                is_readwrite: false,
+                has_server_override: false,
+                has_local_override: false,
+            },
+            FlagValueAndInfoSummary {
+                package_name: String::from("com.android.aconfig.storage.test_2"),
+                flag_name: String::from("enabled_ro"),
+                value_type: StoredFlagType::ReadOnlyBoolean,
+                flag_value: String::from("true"),
+                is_readwrite: false,
+                has_server_override: false,
+                has_local_override: false,
+            },
+            FlagValueAndInfoSummary {
+                package_name: String::from("com.android.aconfig.storage.test_4"),
+                flag_name: String::from("enabled_fixed_ro"),
+                value_type: StoredFlagType::FixedReadOnlyBoolean,
+                flag_value: String::from("true"),
+                is_readwrite: false,
+                has_server_override: false,
+                has_local_override: false,
+            },
+            FlagValueAndInfoSummary {
+                package_name: String::from("com.android.aconfig.storage.test_4"),
+                flag_name: String::from("enabled_rw"),
+                value_type: StoredFlagType::ReadWriteBoolean,
+                flag_value: String::from("true"),
+                is_readwrite: true,
+                has_server_override: false,
+                has_local_override: false,
+            },
         ];
         assert_eq!(flags, expected);
     }

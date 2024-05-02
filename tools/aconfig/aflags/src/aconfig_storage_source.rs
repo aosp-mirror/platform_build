@@ -27,13 +27,13 @@ impl FlagSource for AconfigStorageSource {
             let container =
                 file_info.container.ok_or(anyhow!("storage file is missing container"))?;
 
-            for (package, name, _flag_type, val) in
+            for listed_flag in
                 aconfig_storage_file::list_flags(&package_map, &flag_map, &flag_val)?
             {
                 result.push(Flag {
-                    name: name.to_string(),
-                    package: package.to_string(),
-                    value: FlagValue::try_from(val.to_string().as_str())?,
+                    name: listed_flag.flag_name,
+                    package: listed_flag.package_name,
+                    value: FlagValue::try_from(listed_flag.flag_value.as_str())?,
                     container: container.to_string(),
 
                     // TODO(b/324436145): delete namespace field once DeviceConfig isn't in CLI.
