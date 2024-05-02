@@ -10,7 +10,9 @@
 
 # Kotlin DebugMetadata has no value in release builds, these two rules, will
 # allow AppReduce to strip out DebutMetadata.
--checkdiscard interface kotlin.coroutines.jvm.internal.DebugMetadata
+# TODO(b/302383328): Restore the below checkdiscard after resolving transitive
+# inclusion of kotlin-stdlib from androidx.annotation library deps.
+# -checkdiscard interface kotlin.coroutines.jvm.internal.DebugMetadata
 -assumenosideeffects class kotlin.coroutines.jvm.internal.DebugMetadataKt {
   *** getDebugMetadataAnnotation(...);
 }
