@@ -276,7 +276,7 @@ internal fun parseApiVersions(input: InputStream): Set<Symbol> {
     if (methodSignatureParts.size != 3) {
       throw Exception("Bad XML: method signature '$methodSignature'")
     }
-    var (methodName, methodArgs, methodReturnValue) = methodSignatureParts
+    var (methodName, methodArgs, _) = methodSignatureParts
     val packageAndClassName =
         requireNotNull(method.getParentNode()?.getAttribute("name")) {
           "Bad XML: top level <method> element, or <class> element missing name attribute"
