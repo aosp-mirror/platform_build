@@ -89,11 +89,11 @@ class CheckFlaggedApisTest {
   fun testParseApiSignature() {
     val expected =
         setOf(
-            Pair(Symbol("android.Clazz"), Flag("android.flag.foo")),
-            Pair(Symbol("android.Clazz.Clazz()"), Flag("android.flag.foo")),
-            Pair(Symbol("android.Clazz.FOO"), Flag("android.flag.foo")),
-            Pair(Symbol("android.Clazz.getErrorCode()"), Flag("android.flag.foo")),
-            Pair(Symbol("android.Clazz.Builder"), Flag("android.flag.bar")),
+            Pair(Symbol("android/Clazz"), Flag("android.flag.foo")),
+            Pair(Symbol("android/Clazz/Clazz()"), Flag("android.flag.foo")),
+            Pair(Symbol("android/Clazz/FOO"), Flag("android.flag.foo")),
+            Pair(Symbol("android/Clazz/getErrorCode()"), Flag("android.flag.foo")),
+            Pair(Symbol("android/Clazz/Builder"), Flag("android.flag.bar")),
         )
     val actual = parseApiSignature("in-memory", API_SIGNATURE.byteInputStream())
     assertEquals(expected, actual)
@@ -111,11 +111,11 @@ class CheckFlaggedApisTest {
   fun testParseApiVersions() {
     val expected: Set<Symbol> =
         setOf(
-            Symbol("android.Clazz"),
-            Symbol("android.Clazz.Clazz()"),
-            Symbol("android.Clazz.FOO"),
-            Symbol("android.Clazz.getErrorCode()"),
-            Symbol("android.Clazz.Builder"),
+            Symbol("android/Clazz"),
+            Symbol("android/Clazz/Clazz()"),
+            Symbol("android/Clazz/FOO"),
+            Symbol("android/Clazz/getErrorCode()"),
+            Symbol("android/Clazz/Builder"),
         )
     val actual = parseApiVersions(API_VERSIONS.byteInputStream())
     assertEquals(expected, actual)
@@ -136,14 +136,14 @@ class CheckFlaggedApisTest {
   fun testFindErrorsDisabledFlaggedApiIsPresent() {
     val expected =
         setOf<ApiError>(
-            DisabledFlaggedApiIsPresentError(Symbol("android.Clazz"), Flag("android.flag.foo")),
+            DisabledFlaggedApiIsPresentError(Symbol("android/Clazz"), Flag("android.flag.foo")),
             DisabledFlaggedApiIsPresentError(
-                Symbol("android.Clazz.Clazz()"), Flag("android.flag.foo")),
-            DisabledFlaggedApiIsPresentError(Symbol("android.Clazz.FOO"), Flag("android.flag.foo")),
+                Symbol("android/Clazz/Clazz()"), Flag("android.flag.foo")),
+            DisabledFlaggedApiIsPresentError(Symbol("android/Clazz/FOO"), Flag("android.flag.foo")),
             DisabledFlaggedApiIsPresentError(
-                Symbol("android.Clazz.getErrorCode()"), Flag("android.flag.foo")),
+                Symbol("android/Clazz/getErrorCode()"), Flag("android.flag.foo")),
             DisabledFlaggedApiIsPresentError(
-                Symbol("android.Clazz.Builder"), Flag("android.flag.bar")),
+                Symbol("android/Clazz/Builder"), Flag("android.flag.bar")),
         )
     val actual =
         findErrors(
