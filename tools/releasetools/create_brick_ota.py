@@ -45,10 +45,10 @@ def CreateBrickOta(product_name: str, output_path: Path, extra_wipe_partitions: 
   partitions_to_wipe = PARTITIONS_TO_WIPE
   if extra_wipe_partitions is not None:
     partitions_to_wipe = PARTITIONS_TO_WIPE + extra_wipe_partitions.split(",")
-    ota_metadata = ["ota-type=BRICK", "post-timestamp=9999999999",
-                    "pre-device=" + product_name]
-    if serialno is not None:
-        ota_metadata.append("serialno=" + serialno)
+  ota_metadata = ["ota-type=BRICK", "post-timestamp=9999999999",
+                  "pre-device=" + product_name]
+  if serialno is not None:
+      ota_metadata.append("serialno=" + serialno)
   # recovery requiers product name to be a | separated list
   product_name = product_name.replace(",", "|")
   with zipfile.ZipFile(output_path, "w") as zfp:
