@@ -4351,6 +4351,13 @@ team {
 }
 
 team {
+  name: "trendy_team_pixel_pearl",
+
+  // go/trendy/manage/engineers/6326219602231296
+  trendy_team_id: "6326219602231296",
+}
+
+team {
   name: "trendy_team_ar_sensors_context_hub",
 
   // go/trendy/manage/engineers/4776371090259968
