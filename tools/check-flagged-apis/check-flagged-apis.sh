@@ -22,8 +22,8 @@ require_top
 
 PUBLIC_XML_VERSIONS=out/target/common/obj/PACKAGING/api_versions_public_generated-api-versions.xml
 SYSTEM_XML_VERSIONS=out/target/common/obj/PACKAGING/api_versions_system_generated-api-versions.xml
-SYSTEM_SERVER_XML_VERSONS=out/target/common/obj/PACKAGING/api_versions_system_server_generated-api-versions.xml
-MODULE_LIB_XML_VERSIONS=out/target/common/obj/PACKAGING/api_versions_module_lib_generated-api-versions.xml
+SYSTEM_SERVER_XML_VERSONS=out/target/common/obj/PACKAGING/api_versions_system_server_complete_generated-api-versions.xml
+MODULE_LIB_XML_VERSIONS=out/target/common/obj/PACKAGING/api_versions_module_lib_complete_generated-api-versions.xml
 
 function m() {
     $(gettop)/build/soong/soong_ui.bash --build-mode --all-modules --dir="$(pwd)" "$@"
