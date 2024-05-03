@@ -41,7 +41,9 @@
 # which has OWNERS control.  If it isn't let others define their own.
 # TODO: Remove wildcard for build/release one when all branch manifests
 # have updated.
+_must_protobuf :=
 config_map_files := $(wildcard build/release/release_config_map.mk) \
+    $(wildcard vendor/google_shared/build/release/release_config_map.mk) \
     $(if $(wildcard vendor/google/release/release_config_map.mk), \
         vendor/google/release/release_config_map.mk, \
         $(sort \
@@ -52,12 +54,84 @@ config_map_files := $(wildcard build/release/release_config_map.mk) \
         ) \
     )
 
+protobuf_map_files := $(wildcard build/release/release_config_map.textproto) \
+    $(wildcard vendor/google_shared/build/release/release_config_map.textproto) \
+    $(if $(wildcard vendor/google/release/release_config_map.textproto), \
+        vendor/google/release/release_config_map.textproto, \
+        $(sort \
+            $(wildcard device/*/release/release_config_map.textproto) \
+            $(wildcard device/*/*/release/release_config_map.textproto) \
+            $(wildcard vendor/*/release/release_config_map.textproto) \
+            $(wildcard vendor/*/*/release/release_config_map.textproto) \
+        ) \
+    )
+
 # PRODUCT_RELEASE_CONFIG_MAPS is set by Soong using an initial run of product
 # config to capture only the list of config maps needed by the build.
 # Keep them in the order provided, but remove duplicates.
+# Treat .mk and .textproto as equal for duplicate elimination, but force
+# protobuf if any PRODUCT_RELEASE_CONFIG_MAPS specify .textproto.
 $(foreach map,$(PRODUCT_RELEASE_CONFIG_MAPS), \
-    $(if $(filter $(map),$(config_map_files)),,$(eval config_map_files += $(map))) \
+    $(if $(filter $(basename $(map)),$(basename $(config_map_files))),, \
+        $(eval config_map_files += $(map))) \
+    $(if $(filter $(basename $(map)).textproto,$(map)),$(eval _must_protobuf := true)) \
 )
+
+
+# If we are missing the textproto version of any of $(config_map_files), we cannot use protobuf.
+_can_protobuf := true
+$(foreach map,$(config_map_files), \
+    $(if $(wildcard $(basename $(map)).textproto),,$(eval _can_protobuf :=)) \
+)
+# If we are missing the mk version of any of $(protobuf_map_files), we must use protobuf.
+$(foreach map,$(protobuf_map_files), \
+    $(if $(wildcard $(basename $(map)).mk),,$(eval _must_protobuf := true)) \
+)
+
+ifneq (,$(_must_protobuf))
+    ifeq (,$(_can_protobuf))
+	# We must use protobuf, but we cannot use protobuf.
+        $(error release config is a mixture of .scl and .textproto)
+    endif
+endif
+
+_use_protobuf :=
+ifneq (,$(_must_protobuf))
+    _use_protobuf := true
+else
+    ifneq ($(_can_protobuf),)
+        # Determine the default
+        $(foreach map,$(config_map_files), \
+            $(if $(wildcard $(dir $(map))/build_config/DEFAULT=proto),$(eval _use_protobuf := true)) \
+            $(if $(wildcard $(dir $(map))/build_config/DEFAULT=make),$(eval _use_protobuf := )) \
+        )
+        # Update for this specific release config only (no inheritance).
+        $(foreach map,$(config_map_files), \
+            $(if $(wildcard $(dir $(map))/build_config/$(TARGET_RELEASE)=proto),$(eval _use_protobuf := true)) \
+            $(if $(wildcard $(dir $(map))/build_config/$(TARGET_RELEASE)=make),$(eval _use_protobuf := )) \
+        )
+    endif
+endif
+
+ifneq (,$(_use_protobuf))
+    # The .textproto files are the canonical source of truth.
+    _args := $(foreach map,$(config_map_files), --map $(map) )
+    ifneq (,$(_must_protobuf))
+        # Disable the build flag in release-config.
+        _args += --guard=false
+    endif
+    $(KATI_shell_no_rerun $(OUT_DIR)/release-config $(_args) >$(OUT_DIR)/release-config.out && touch -t 200001010000 $(OUT_DIR)/release-config.out)
+    $(if $(filter-out 0,$(.SHELLSTATUS)),$(error release-config failed to run))
+    # This will also set _all_release_configs for us.
+    $(eval include $(OUT_DIR)/soong/release-config/release_config-$(TARGET_PRODUCT)-$(TARGET_RELEASE).mk)
+    $(KATI_extra_file_deps $(OUT_DIR)/release-config $(config_map_files))
+    ifeq (,$(_must_protobuf)$(RELEASE_BUILD_FLAGS_IN_PROTOBUF))
+        _use_protobuf :=
+    endif
+endif
+ifeq (,$(_use_protobuf))
+    # The .mk files are the canonical source of truth.
+
 
 # Declare an alias release-config
 #
@@ -117,14 +191,34 @@ define _declare-release-config
 endef
 
 # Include the config map files and populate _flag_declaration_files.
+# If the file is found more than once, only include it the first time.
 _flag_declaration_files :=
+_included_config_map_files :=
 $(foreach f, $(config_map_files), \
     $(eval FLAG_DECLARATION_FILES:= ) \
-    $(eval _included := $(f)) \
-    $(eval include $(f)) \
-    $(eval _flag_declaration_files += $(FLAG_DECLARATION_FILES)) \
+    $(if $(filter $(_included_config_map_files),$(f)),,\
+        $(eval _included := $(f)) \
+        $(eval include $(f)) \
+        $(eval _flag_declaration_files += $(FLAG_DECLARATION_FILES)) \
+        $(eval _included_config_map_files += $(f)) \
+    ) \
 )
 FLAG_DECLARATION_FILES :=
+
+# Verify that all inherited/overridden release configs are declared.
+$(foreach config,$(_all_release_configs),\
+  $(foreach r,$(all_release_configs.$(r).OVERRIDES),\
+    $(if $(strip $(_all_release_configs.$(r).FILES)$(_all_release_configs.$(r).OVERRIDES)),,\
+    $(error Release config $(config) [declared in: $(_all_release_configs.$(r).DECLARED_IN)] inherits from non-existent $(r).)\
+)))
+# Verify that alias configs do not have config files.
+$(foreach r,$(_all_release_configs),\
+  $(if $(_all_release_configs.$(r).ALIAS),$(if $(_all_release_configs.$(r).FILES),\
+    $(error Alias release config "$(r)" may not specify release config files $(_all_release_configs.$(r).FILES))\
+)))
+
+# Use makefiles
+endif
 
 ifeq ($(TARGET_RELEASE),)
     # We allow some internal paths to explicitly set TARGET_RELEASE to the
@@ -141,10 +235,15 @@ ifeq ($(TARGET_RELEASE),)
     TARGET_RELEASE = trunk_staging
 endif
 
-ifeq ($(filter $(_all_release_configs), $(TARGET_RELEASE)),)
-    $(error No release config found for TARGET_RELEASE: $(TARGET_RELEASE). Available releases are: $(_all_release_configs))
+# During pass 1 of product config, using a non-existent release config is not an error.
+# We can safely assume that we are doing pass 1 if DUMP_MANY_VARS=="PRODUCT_RELEASE_CONFIG_MAPS".
+ifneq (PRODUCT_RELEASE_CONFIG_MAPS,$(DUMP_MANY_VARS))
+    ifeq ($(filter $(_all_release_configs), $(TARGET_RELEASE)),)
+        $(error No release config found for TARGET_RELEASE: $(TARGET_RELEASE). Available releases are: $(_all_release_configs))
+    endif
 endif
 
+ifeq (,$(_use_protobuf))
 # Choose flag files
 # Don't sort this, use it in the order they gave us.
 # Do allow duplicate entries, retaining only the first usage.
@@ -170,9 +269,12 @@ $(call _apply-release-config-overrides,$(TARGET_RELEASE))
 define declare-release-config
 $(error declare-release-config can only be called from inside release_config_map.mk files)
 endef
-define apply-release-config-overrides
+define _apply-release-config-overrides
 $(error invalid use of apply-release-config-overrides)
 endef
+
+# use makefiles
+endif
 
 # TODO: Remove this check after enough people have sourced lunch that we don't
 # need to worry about it trying to do get_build_vars TARGET_RELEASE. Maybe after ~9/2023
@@ -185,21 +287,20 @@ TARGET_RELEASE:=
 endif
 .KATI_READONLY := TARGET_RELEASE
 
-# Verify that alias configs do not have config files.
-$(foreach r,$(_all_release_configs),\
-  $(if $(_all_release_configs.$(r).ALIAS),$(if $(_all_release_configs.$(r).FILES),\
-    $(error Alias release config "$(r)" may not specify release config files $(_all_release_configs.$(r).FILES))\
-)))
-
+ifeq (,$(_use_protobuf))
 $(foreach config, $(_all_release_configs), \
     $(eval _all_release_configs.$(config).DECLARED_IN:= ) \
     $(eval _all_release_configs.$(config).FILES:= ) \
 )
+applied_releases:=
+# use makefiles
+endif
 _all_release_configs:=
 config_map_files:=
-applied_releases:=
+protobuf_map_files:=
 
 
+ifeq (,$(_use_protobuf))
 # -----------------------------------------------------------------
 # Flag declarations and values
 # -----------------------------------------------------------------
@@ -236,3 +337,8 @@ filename_to_starlark:=
 # outside of the source tree.
 $(call run-starlark,$(OUT_DIR)/release_config_entrypoint.scl,$(OUT_DIR)/release_config_entrypoint.scl,--allow_external_entrypoint)
 
+# use makefiles
+endif
+_can_protobuf :=
+_must_protobuf :=
+_use_protobuf :=
