@@ -1196,6 +1196,17 @@ ifneq ($(filter hwaddress,$(my_sanitize)),)
 endif
 
 ###################################################################
+## When compiling a memtag_stack enabled target, use the .memtag_stack variant
+## of any static dependencies (where they exist).
+##################################################################
+ifneq ($(filter memtag_stack,$(my_sanitize)),)
+  my_whole_static_libraries := $(call use_soong_sanitized_static_libraries,\
+    $(my_whole_static_libraries),memtag_stack)
+  my_static_libraries := $(call use_soong_sanitized_static_libraries,\
+    $(my_static_libraries),memtag_stack)
+endif
+
+###################################################################
 ## When compiling against API imported module, use API import stub
 ## libraries.
 ##################################################################
