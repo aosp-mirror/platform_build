@@ -274,7 +274,7 @@ endif
 
 ifneq ($(MALLOC_IMPL),)
   $(warning *** Unsupported option MALLOC_IMPL defined by board config: $(board_config_mk).)
-  $(error Use `MALLOC_SVELTE := true` to configure jemalloc for low-memory)
+  $(error Use `MALLOC_LOW_MEMORY := true` to use low-memory allocator config)
 endif
 board_config_mk :=
 
