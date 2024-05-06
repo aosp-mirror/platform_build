@@ -279,12 +279,13 @@ internal fun parseApiVersions(input: InputStream): Set<Symbol> {
     var (methodName, methodArgs, _) = methodSignatureParts
     val packageAndClassName =
         requireNotNull(method.getParentNode()?.getAttribute("name")) {
-          "Bad XML: top level <method> element, or <class> element missing name attribute"
-        }
+              "Bad XML: top level <method> element, or <class> element missing name attribute"
+            }
+            .replace("$", "/")
     if (methodName == "<init>") {
       methodName = packageAndClassName.split("/").last()
     }
-    output.add(Symbol.create("${packageAndClassName.replace("/", ".")}.$methodName($methodArgs)"))
+    output.add(Symbol.create("$packageAndClassName/$methodName($methodArgs)"))
   }
 
   return output

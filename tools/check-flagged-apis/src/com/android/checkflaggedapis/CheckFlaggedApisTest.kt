@@ -140,6 +140,27 @@ class CheckFlaggedApisTest {
   }
 
   @Test
+  fun testParseApiVersionsNestedClasses() {
+    val apiVersions =
+        """
+          <?xml version="1.0" encoding="utf-8"?>
+          <api version="3">
+            <class name="android/Clazz${'$'}Foo${'$'}Bar" since="1">
+              <method name="&lt;init>()V"/>
+            </class>
+          </api>
+        """
+            .trim()
+    val expected: Set<Symbol> =
+        setOf(
+            Symbol("android/Clazz/Foo/Bar"),
+            Symbol("android/Clazz/Foo/Bar/Bar()"),
+        )
+    val actual = parseApiVersions(apiVersions.byteInputStream())
+    assertEquals(expected, actual)
+  }
+
+  @Test
   fun testFindErrorsNoErrors() {
     val expected = setOf<ApiError>()
     val actual =
