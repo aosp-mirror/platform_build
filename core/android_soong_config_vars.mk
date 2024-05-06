@@ -59,17 +59,6 @@ else
   MODULE_BUILD_FROM_SOURCE := $(BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE)
 endif
 
-ifneq (,$(ART_MODULE_BUILD_FROM_SOURCE))
-  # Keep an explicit setting.
-else ifneq (,$(findstring .android.art,$(TARGET_BUILD_APPS)))
-  # Build ART modules from source if they are listed in TARGET_BUILD_APPS.
-  ART_MODULE_BUILD_FROM_SOURCE := true
-else
-  # Do the same as other modules by default.
-  ART_MODULE_BUILD_FROM_SOURCE := $(MODULE_BUILD_FROM_SOURCE)
-endif
-
-$(call soong_config_set,art_module,source_build,$(ART_MODULE_BUILD_FROM_SOURCE))
 ifdef ART_DEBUG_OPT_FLAG
 $(call soong_config_set,art_module,art_debug_opt_flag,$(ART_DEBUG_OPT_FLAG))
 endif

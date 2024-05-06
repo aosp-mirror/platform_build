@@ -87,6 +87,9 @@ $(eval $(call declare-1p-copy-files,device/google/raviole,audio_policy_configura
 # Moved here from device/sample/Android.mk
 $(eval $(call declare-1p-copy-files,device/sample,))
 
+# Moved here from device/google/trout/Android.mk
+$(eval $(call declare-1p-copy-files,device/google/trout,))
+
 # Moved here from frameworks/av/media/Android.mk
 $(eval $(call declare-1p-copy-files,frameworks/av/media/libeffects,audio_effects.conf))
 $(eval $(call declare-1p-copy-files,frameworks/av/media/libeffects,audio_effects.xml))

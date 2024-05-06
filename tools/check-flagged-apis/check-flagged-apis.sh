@@ -20,18 +20,36 @@
 source $(cd $(dirname $BASH_SOURCE) &> /dev/null && pwd)/../../shell_utils.sh
 require_top
 
+PUBLIC_XML_VERSIONS=out/target/common/obj/PACKAGING/api_versions_public_generated-api-versions.xml
+SYSTEM_XML_VERSIONS=out/target/common/obj/PACKAGING/api_versions_system_generated-api-versions.xml
+SYSTEM_SERVER_XML_VERSONS=out/target/common/obj/PACKAGING/api_versions_system_server_complete_generated-api-versions.xml
+MODULE_LIB_XML_VERSIONS=out/target/common/obj/PACKAGING/api_versions_module_lib_complete_generated-api-versions.xml
+
 function m() {
     $(gettop)/build/soong/soong_ui.bash --build-mode --all-modules --dir="$(pwd)" "$@"
 }
 
 function build() {
-    m sdk dist && m \
+    m \
         check-flagged-apis \
         all_aconfig_declarations \
         frameworks-base-api-current.txt \
         frameworks-base-api-system-current.txt \
         frameworks-base-api-system-server-current.txt \
-        frameworks-base-api-module-lib-current.txt
+        frameworks-base-api-module-lib-current.txt \
+        $PUBLIC_XML_VERSIONS \
+        $SYSTEM_XML_VERSIONS \
+        $SYSTEM_SERVER_XML_VERSONS \
+        $MODULE_LIB_XML_VERSIONS
+}
+
+function aninja() {
+    local T="$(gettop)"
+    (\cd "${T}" && prebuilts/build-tools/linux-x86/bin/ninja -f out/combined-${TARGET_PRODUCT}.ninja "$@")
+}
+
+function path_to_api_signature_file {
+    aninja -t query device_"$1"_all_targets | grep -A1 -e input: | tail -n1
 }
 
 function run() {
@@ -39,33 +57,33 @@ function run() {
 
     echo "# current"
     check-flagged-apis \
-        --api-signature $(gettop)/out/target/product/mainline_x86/obj/ETC/frameworks-base-api-current.txt_intermediates/frameworks-base-api-current.txt \
+        --api-signature $(path_to_api_signature_file "frameworks-base-api-current.txt") \
         --flag-values $(gettop)/out/soong/.intermediates/all_aconfig_declarations.pb \
-        --api-versions $(gettop)/out/dist/data/api-versions.xml
+        --api-versions $PUBLIC_XML_VERSIONS
     (( errors += $? ))
 
     echo
     echo "# system-current"
     check-flagged-apis \
-        --api-signature $(gettop)/out/target/product/mainline_x86/obj/ETC/frameworks-base-api-system-current.txt_intermediates/frameworks-base-api-system-current.txt \
+        --api-signature $(path_to_api_signature_file "frameworks-base-api-system-current.txt") \
         --flag-values $(gettop)/out/soong/.intermediates/all_aconfig_declarations.pb \
-        --api-versions $(gettop)/out/dist/system-data/api-versions.xml
+        --api-versions $SYSTEM_XML_VERSIONS
     (( errors += $? ))
 
     echo
     echo "# system-server-current"
     check-flagged-apis \
-        --api-signature $(gettop)/out/target/product/mainline_x86/obj/ETC/frameworks-base-api-system-server-current.txt_intermediates/frameworks-base-api-system-server-current.txt \
+        --api-signature $(path_to_api_signature_file "frameworks-base-api-system-server-current.txt") \
         --flag-values $(gettop)/out/soong/.intermediates/all_aconfig_declarations.pb \
-        --api-versions $(gettop)/out/dist/system-server-data/api-versions.xml
+        --api-versions $SYSTEM_SERVER_XML_VERSONS
     (( errors += $? ))
 
     echo
     echo "# module-lib"
     check-flagged-apis \
-        --api-signature $(gettop)/out/target/product/mainline_x86/obj/ETC/frameworks-base-api-module-lib-current.txt_intermediates/frameworks-base-api-module-lib-current.txt \
+        --api-signature $(path_to_api_signature_file "frameworks-base-api-module-lib-current.txt") \
         --flag-values $(gettop)/out/soong/.intermediates/all_aconfig_declarations.pb \
-        --api-versions $(gettop)/out/dist/module-lib-data/api-versions.xml
+        --api-versions $MODULE_LIB_XML_VERSIONS
     (( errors += $? ))
 
     return $errors
