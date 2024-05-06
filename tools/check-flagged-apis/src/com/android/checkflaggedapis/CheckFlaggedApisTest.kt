@@ -172,6 +172,47 @@ class CheckFlaggedApisTest {
   }
 
   @Test
+  fun testFindErrorsVerifyImplements() {
+    val apiSignature =
+        """
+          // Signature format: 2.0
+          package android {
+            @FlaggedApi("android.flag.foo") public final class Clazz implements android.Interface {
+              method @FlaggedApi("android.flag.foo") public boolean foo();
+              method @FlaggedApi("android.flag.foo") public boolean bar();
+            }
+            public interface Interface {
+              method public boolean bar();
+            }
+          }
+        """
+            .trim()
+
+    val apiVersions =
+        """
+          <?xml version="1.0" encoding="utf-8"?>
+          <api version="3">
+            <class name="android/Clazz" since="1">
+              <implements name="android/Interface"/>
+              <method name="foo()Z"/>
+            </class>
+            <class name="android/Interface" since="1">
+              <method name="bar()Z"/>
+            </class>
+          </api>
+        """
+            .trim()
+
+    val expected = setOf<ApiError>()
+    val actual =
+        findErrors(
+            parseApiSignature("in-memory", apiSignature.byteInputStream()),
+            parseFlagValues(generateFlagsProto(ENABLED, ENABLED)),
+            parseApiVersions(apiVersions.byteInputStream()))
+    assertEquals(expected, actual)
+  }
+
+  @Test
   fun testFindErrorsDisabledFlaggedApiIsPresent() {
     val expected =
         setOf<ApiError>(

@@ -333,15 +333,45 @@ internal fun findErrors(
     flags: Map<Flag, Boolean>,
     symbolsInOutput: Set<Symbol>
 ): Set<ApiError> {
+  fun Set<Symbol>.containsSymbol(symbol: Symbol): Boolean {
+    // trivial case: the symbol is explicitly listed in api-versions.xml
+    if (contains(symbol)) {
+      return true
+    }
+
+    // non-trivial case: the symbol could be part of the surrounding class'
+    // super class or interfaces
+    val (className, memberName) =
+        when (symbol) {
+          is ClassSymbol -> return false
+          is MemberSymbol -> {
+            Pair(symbol.clazz, symbol.member)
+          }
+        }
+    val clazz = find { it is ClassSymbol && it.clazz == className } as? ClassSymbol?
+    if (clazz == null) {
+      return false
+    }
+
+    for (interfaceName in clazz.interfaces) {
+      // createMethod is the same as createField, except it allows parenthesis
+      val interfaceSymbol = Symbol.createMethod(interfaceName, memberName)
+      if (contains(interfaceSymbol)) {
+        return true
+      }
+    }
+
+    return false
+  }
   val errors = mutableSetOf<ApiError>()
   for ((symbol, flag) in flaggedSymbolsInSource) {
     try {
       if (flags.getValue(flag)) {
-        if (!symbolsInOutput.contains(symbol)) {
+        if (!symbolsInOutput.containsSymbol(symbol)) {
           errors.add(EnabledFlaggedApiNotPresentError(symbol, flag))
         }
       } else {
-        if (symbolsInOutput.contains(symbol)) {
+        if (symbolsInOutput.containsSymbol(symbol)) {
           errors.add(DisabledFlaggedApiIsPresentError(symbol, flag))
         }
       }
