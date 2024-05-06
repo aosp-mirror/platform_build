@@ -58,8 +58,8 @@ internal sealed class Symbol {
   companion object {
     private val FORBIDDEN_CHARS = listOf('#', '$', '.')
 
-    fun createClass(clazz: String): Symbol {
-      return ClassSymbol(toInternalFormat(clazz))
+    fun createClass(clazz: String, interfaces: Set<String>): Symbol {
+      return ClassSymbol(toInternalFormat(clazz), interfaces.map { toInternalFormat(it) }.toSet())
     }
 
     fun createField(clazz: String, field: String): Symbol {
@@ -83,7 +83,7 @@ internal sealed class Symbol {
   abstract fun toPrettyString(): String
 }
 
-internal data class ClassSymbol(val clazz: String) : Symbol() {
+internal data class ClassSymbol(val clazz: String, val interfaces: Set<String>) : Symbol() {
   override fun toPrettyString(): String = "$clazz"
 }
 
@@ -195,7 +195,10 @@ internal fun parseApiSignature(path: String, input: InputStream): Set<Pair<Symbo
       object : BaseItemVisitor() {
         override fun visitClass(cls: ClassItem) {
           getFlagOrNull(cls)?.let { flag ->
-            val symbol = Symbol.createClass(cls.baselineElementId())
+            val symbol =
+                Symbol.createClass(
+                    cls.baselineElementId(),
+                    cls.allInterfaces().map { it.baselineElementId() }.toSet())
             output.add(Pair(symbol, flag))
           }
         }
@@ -257,7 +260,19 @@ internal fun parseApiVersions(input: InputStream): Set<Symbol> {
         requireNotNull(cls.getAttribute("name")) {
           "Bad XML: <class> element without name attribute"
         }
-    output.add(Symbol.createClass(className))
+    val interfaces = mutableSetOf<String>()
+    val children = cls.getChildNodes()
+    for (j in 0.rangeUntil(children.getLength())) {
+      val child = children.item(j)
+      if (child.getNodeName() == "implements") {
+        val interfaceName =
+            requireNotNull(child.getAttribute("name")) {
+              "Bad XML: <implements> element without name attribute"
+            }
+        interfaces.add(interfaceName)
+      }
+    }
+    output.add(Symbol.createClass(className, interfaces))
   }
 
   val fields = document.getElementsByTagName("field")

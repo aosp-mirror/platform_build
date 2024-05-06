@@ -95,7 +95,7 @@ class CheckFlaggedApisTest {
   fun testParseApiSignature() {
     val expected =
         setOf(
-            Pair(Symbol.createClass("android/Clazz"), Flag("android.flag.foo")),
+            Pair(Symbol.createClass("android/Clazz", setOf()), Flag("android.flag.foo")),
             Pair(Symbol.createMethod("android/Clazz", "Clazz()"), Flag("android.flag.foo")),
             Pair(Symbol.createField("android/Clazz", "FOO"), Flag("android.flag.foo")),
             Pair(Symbol.createMethod("android/Clazz", "getErrorCode()"), Flag("android.flag.foo")),
@@ -108,7 +108,7 @@ class CheckFlaggedApisTest {
             Pair(
                 Symbol.createMethod("android/Clazz", "innerClassArg(Landroid/Clazz/Builder;)"),
                 Flag("android.flag.foo")),
-            Pair(Symbol.createClass("android/Clazz/Builder"), Flag("android.flag.bar")),
+            Pair(Symbol.createClass("android/Clazz/Builder", setOf()), Flag("android.flag.bar")),
         )
     val actual = parseApiSignature("in-memory", API_SIGNATURE.byteInputStream())
     assertEquals(expected, actual)
@@ -126,14 +126,14 @@ class CheckFlaggedApisTest {
   fun testParseApiVersions() {
     val expected: Set<Symbol> =
         setOf(
-            Symbol.createClass("android/Clazz"),
+            Symbol.createClass("android/Clazz", setOf()),
             Symbol.createMethod("android/Clazz", "Clazz()"),
             Symbol.createField("android/Clazz", "FOO"),
             Symbol.createMethod("android/Clazz", "getErrorCode()"),
             Symbol.createMethod("android/Clazz", "setData(I[[ILandroid/util/Utility;)"),
             Symbol.createMethod("android/Clazz", "setVariableData(I[Landroid/util/Atom;)"),
             Symbol.createMethod("android/Clazz", "innerClassArg(Landroid/Clazz/Builder;)"),
-            Symbol.createClass("android/Clazz/Builder"),
+            Symbol.createClass("android/Clazz/Builder", setOf()),
         )
     val actual = parseApiVersions(API_VERSIONS.byteInputStream())
     assertEquals(expected, actual)
@@ -153,7 +153,7 @@ class CheckFlaggedApisTest {
             .trim()
     val expected: Set<Symbol> =
         setOf(
-            Symbol.createClass("android/Clazz/Foo/Bar"),
+            Symbol.createClass("android/Clazz/Foo/Bar", setOf()),
             Symbol.createMethod("android/Clazz/Foo/Bar", "Bar()"),
         )
     val actual = parseApiVersions(apiVersions.byteInputStream())
@@ -176,7 +176,7 @@ class CheckFlaggedApisTest {
     val expected =
         setOf<ApiError>(
             DisabledFlaggedApiIsPresentError(
-                Symbol.createClass("android/Clazz"), Flag("android.flag.foo")),
+                Symbol.createClass("android/Clazz", setOf()), Flag("android.flag.foo")),
             DisabledFlaggedApiIsPresentError(
                 Symbol.createMethod("android/Clazz", "Clazz()"), Flag("android.flag.foo")),
             DisabledFlaggedApiIsPresentError(
@@ -193,7 +193,7 @@ class CheckFlaggedApisTest {
                 Symbol.createMethod("android/Clazz", "innerClassArg(Landroid/Clazz/Builder;)"),
                 Flag("android.flag.foo")),
             DisabledFlaggedApiIsPresentError(
-                Symbol.createClass("android/Clazz/Builder"), Flag("android.flag.bar")),
+                Symbol.createClass("android/Clazz/Builder", setOf()), Flag("android.flag.bar")),
         )
     val actual =
         findErrors(
