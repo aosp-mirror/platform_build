@@ -95,20 +95,20 @@ class CheckFlaggedApisTest {
   fun testParseApiSignature() {
     val expected =
         setOf(
-            Pair(Symbol("android/Clazz"), Flag("android.flag.foo")),
-            Pair(Symbol("android/Clazz/Clazz()"), Flag("android.flag.foo")),
-            Pair(Symbol("android/Clazz/FOO"), Flag("android.flag.foo")),
-            Pair(Symbol("android/Clazz/getErrorCode()"), Flag("android.flag.foo")),
+            Pair(Symbol.createClass("android/Clazz"), Flag("android.flag.foo")),
+            Pair(Symbol.createMethod("android/Clazz", "Clazz()"), Flag("android.flag.foo")),
+            Pair(Symbol.createField("android/Clazz", "FOO"), Flag("android.flag.foo")),
+            Pair(Symbol.createMethod("android/Clazz", "getErrorCode()"), Flag("android.flag.foo")),
             Pair(
-                Symbol("android/Clazz/setData(I[[ILandroid/util/Utility;)"),
+                Symbol.createMethod("android/Clazz", "setData(I[[ILandroid/util/Utility;)"),
                 Flag("android.flag.foo")),
             Pair(
-                Symbol("android/Clazz/setVariableData(I[Landroid/util/Atom;)"),
+                Symbol.createMethod("android/Clazz", "setVariableData(I[Landroid/util/Atom;)"),
                 Flag("android.flag.foo")),
             Pair(
-                Symbol("android/Clazz/innerClassArg(Landroid/Clazz/Builder;)"),
+                Symbol.createMethod("android/Clazz", "innerClassArg(Landroid/Clazz/Builder;)"),
                 Flag("android.flag.foo")),
-            Pair(Symbol("android/Clazz/Builder"), Flag("android.flag.bar")),
+            Pair(Symbol.createClass("android/Clazz/Builder"), Flag("android.flag.bar")),
         )
     val actual = parseApiSignature("in-memory", API_SIGNATURE.byteInputStream())
     assertEquals(expected, actual)
@@ -126,14 +126,14 @@ class CheckFlaggedApisTest {
   fun testParseApiVersions() {
     val expected: Set<Symbol> =
         setOf(
-            Symbol("android/Clazz"),
-            Symbol("android/Clazz/Clazz()"),
-            Symbol("android/Clazz/FOO"),
-            Symbol("android/Clazz/getErrorCode()"),
-            Symbol("android/Clazz/setData(I[[ILandroid/util/Utility;)"),
-            Symbol("android/Clazz/setVariableData(I[Landroid/util/Atom;)"),
-            Symbol("android/Clazz/innerClassArg(Landroid/Clazz/Builder;)"),
-            Symbol("android/Clazz/Builder"),
+            Symbol.createClass("android/Clazz"),
+            Symbol.createMethod("android/Clazz", "Clazz()"),
+            Symbol.createField("android/Clazz", "FOO"),
+            Symbol.createMethod("android/Clazz", "getErrorCode()"),
+            Symbol.createMethod("android/Clazz", "setData(I[[ILandroid/util/Utility;)"),
+            Symbol.createMethod("android/Clazz", "setVariableData(I[Landroid/util/Atom;)"),
+            Symbol.createMethod("android/Clazz", "innerClassArg(Landroid/Clazz/Builder;)"),
+            Symbol.createClass("android/Clazz/Builder"),
         )
     val actual = parseApiVersions(API_VERSIONS.byteInputStream())
     assertEquals(expected, actual)
@@ -153,8 +153,8 @@ class CheckFlaggedApisTest {
             .trim()
     val expected: Set<Symbol> =
         setOf(
-            Symbol("android/Clazz/Foo/Bar"),
-            Symbol("android/Clazz/Foo/Bar/Bar()"),
+            Symbol.createClass("android/Clazz/Foo/Bar"),
+            Symbol.createMethod("android/Clazz/Foo/Bar", "Bar()"),
         )
     val actual = parseApiVersions(apiVersions.byteInputStream())
     assertEquals(expected, actual)
@@ -175,23 +175,25 @@ class CheckFlaggedApisTest {
   fun testFindErrorsDisabledFlaggedApiIsPresent() {
     val expected =
         setOf<ApiError>(
-            DisabledFlaggedApiIsPresentError(Symbol("android/Clazz"), Flag("android.flag.foo")),
             DisabledFlaggedApiIsPresentError(
-                Symbol("android/Clazz/Clazz()"), Flag("android.flag.foo")),
-            DisabledFlaggedApiIsPresentError(Symbol("android/Clazz/FOO"), Flag("android.flag.foo")),
+                Symbol.createClass("android/Clazz"), Flag("android.flag.foo")),
             DisabledFlaggedApiIsPresentError(
-                Symbol("android/Clazz/getErrorCode()"), Flag("android.flag.foo")),
+                Symbol.createMethod("android/Clazz", "Clazz()"), Flag("android.flag.foo")),
             DisabledFlaggedApiIsPresentError(
-                Symbol("android/Clazz/setData(I[[ILandroid/util/Utility;)"),
+                Symbol.createField("android/Clazz", "FOO"), Flag("android.flag.foo")),
+            DisabledFlaggedApiIsPresentError(
+                Symbol.createMethod("android/Clazz", "getErrorCode()"), Flag("android.flag.foo")),
+            DisabledFlaggedApiIsPresentError(
+                Symbol.createMethod("android/Clazz", "setData(I[[ILandroid/util/Utility;)"),
                 Flag("android.flag.foo")),
             DisabledFlaggedApiIsPresentError(
-                Symbol("android/Clazz/setVariableData(I[Landroid/util/Atom;)"),
+                Symbol.createMethod("android/Clazz", "setVariableData(I[Landroid/util/Atom;)"),
                 Flag("android.flag.foo")),
             DisabledFlaggedApiIsPresentError(
-                Symbol("android/Clazz/innerClassArg(Landroid/Clazz/Builder;)"),
+                Symbol.createMethod("android/Clazz", "innerClassArg(Landroid/Clazz/Builder;)"),
                 Flag("android.flag.foo")),
             DisabledFlaggedApiIsPresentError(
-                Symbol("android/Clazz/Builder"), Flag("android.flag.bar")),
+                Symbol.createClass("android/Clazz/Builder"), Flag("android.flag.bar")),
         )
     val actual =
         findErrors(

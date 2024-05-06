@@ -54,29 +54,41 @@ import org.w3c.dom.Node
  *
  * 1. https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.3.2
  */
-@JvmInline
-internal value class Symbol(val name: String) {
+internal sealed class Symbol {
   companion object {
     private val FORBIDDEN_CHARS = listOf('#', '$', '.')
 
-    /** Create a new Symbol from a String that may include delimiters other than dot. */
-    fun create(name: String): Symbol {
-      var sanitizedName = name
+    fun createClass(clazz: String): Symbol {
+      return ClassSymbol(toInternalFormat(clazz))
+    }
+
+    fun createField(clazz: String, field: String): Symbol {
+      require(!field.contains("(") && !field.contains(")"))
+      return MemberSymbol(toInternalFormat(clazz), toInternalFormat(field))
+    }
+
+    fun createMethod(clazz: String, method: String): Symbol {
+      return MemberSymbol(toInternalFormat(clazz), toInternalFormat(method))
+    }
+
+    protected fun toInternalFormat(name: String): String {
+      var internalName = name
       for (ch in FORBIDDEN_CHARS) {
-        sanitizedName = sanitizedName.replace(ch, '/')
+        internalName = internalName.replace(ch, '/')
       }
-      return Symbol(sanitizedName)
+      return internalName
     }
   }
 
-  init {
-    require(!name.isEmpty()) { "empty string" }
-    for (ch in FORBIDDEN_CHARS) {
-      require(!name.contains(ch)) { "$name: contains $ch" }
-    }
-  }
+  abstract fun toPrettyString(): String
+}
 
-  override fun toString(): String = name.toString()
+internal data class ClassSymbol(val clazz: String) : Symbol() {
+  override fun toPrettyString(): String = "$clazz"
+}
+
+internal data class MemberSymbol(val clazz: String, val member: String) : Symbol() {
+  override fun toPrettyString(): String = "$clazz/$member"
 }
 
 /**
@@ -102,7 +114,7 @@ internal data class EnabledFlaggedApiNotPresentError(
     override val flag: Flag
 ) : ApiError() {
   override fun toString(): String {
-    return "error: enabled @FlaggedApi not present in built artifact: symbol=$symbol flag=$flag"
+    return "error: enabled @FlaggedApi not present in built artifact: symbol=${symbol.toPrettyString()} flag=$flag"
   }
 }
 
@@ -111,14 +123,14 @@ internal data class DisabledFlaggedApiIsPresentError(
     override val flag: Flag
 ) : ApiError() {
   override fun toString(): String {
-    return "error: disabled @FlaggedApi is present in built artifact: symbol=$symbol flag=$flag"
+    return "error: disabled @FlaggedApi is present in built artifact: symbol=${symbol.toPrettyString()} flag=$flag"
   }
 }
 
 internal data class UnknownFlagError(override val symbol: Symbol, override val flag: Flag) :
     ApiError() {
   override fun toString(): String {
-    return "error: unknown flag: symbol=$symbol flag=$flag"
+    return "error: unknown flag: symbol=${symbol.toPrettyString()} flag=$flag"
   }
 }
 
@@ -183,29 +195,28 @@ internal fun parseApiSignature(path: String, input: InputStream): Set<Pair<Symbo
       object : BaseItemVisitor() {
         override fun visitClass(cls: ClassItem) {
           getFlagOrNull(cls)?.let { flag ->
-            val symbol = Symbol.create(cls.baselineElementId())
+            val symbol = Symbol.createClass(cls.baselineElementId())
             output.add(Pair(symbol, flag))
           }
         }
 
         override fun visitField(field: FieldItem) {
           getFlagOrNull(field)?.let { flag ->
-            val symbol = Symbol.create(field.baselineElementId())
+            val symbol =
+                Symbol.createField(field.containingClass().baselineElementId(), field.name())
             output.add(Pair(symbol, flag))
           }
         }
 
         override fun visitMethod(method: MethodItem) {
           getFlagOrNull(method)?.let { flag ->
-            val name = buildString {
-              append(method.containingClass().qualifiedName())
-              append(".")
+            val methodName = buildString {
               append(method.name())
               append("(")
               method.parameters().joinTo(this, separator = "") { it.type().internalName() }
               append(")")
             }
-            val symbol = Symbol.create(name)
+            val symbol = Symbol.createMethod(method.containingClass().qualifiedName(), methodName)
             output.add(Pair(symbol, flag))
           }
         }
@@ -246,7 +257,7 @@ internal fun parseApiVersions(input: InputStream): Set<Symbol> {
         requireNotNull(cls.getAttribute("name")) {
           "Bad XML: <class> element without name attribute"
         }
-    output.add(Symbol.create(className.replace("/", ".")))
+    output.add(Symbol.createClass(className))
   }
 
   val fields = document.getElementsByTagName("field")
@@ -261,7 +272,7 @@ internal fun parseApiVersions(input: InputStream): Set<Symbol> {
         requireNotNull(field.getParentNode()?.getAttribute("name")) {
           "Bad XML: top level <field> element"
         }
-    output.add(Symbol.create("${className.replace("/", ".")}.$fieldName"))
+    output.add(Symbol.createField(className, fieldName))
   }
 
   val methods = document.getElementsByTagName("method")
@@ -285,7 +296,7 @@ internal fun parseApiVersions(input: InputStream): Set<Symbol> {
     if (methodName == "<init>") {
       methodName = packageAndClassName.split("/").last()
     }
-    output.add(Symbol.create("$packageAndClassName/$methodName($methodArgs)"))
+    output.add(Symbol.createMethod(packageAndClassName, "$methodName($methodArgs)"))
   }
 
   return output
