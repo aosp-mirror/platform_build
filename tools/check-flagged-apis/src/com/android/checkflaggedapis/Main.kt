@@ -378,6 +378,11 @@ internal fun findErrors(
       }
     }
 
+    if (clazz.superclass != null) {
+      val superclassSymbol = Symbol.createMethod(clazz.superclass, memberName)
+      return containsSymbol(superclassSymbol)
+    }
+
     return false
   }
   val errors = mutableSetOf<ApiError>()
