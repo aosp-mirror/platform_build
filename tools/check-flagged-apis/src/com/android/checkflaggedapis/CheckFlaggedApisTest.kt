@@ -221,6 +221,55 @@ class CheckFlaggedApisTest {
   }
 
   @Test
+  fun testFindErrorsVerifySuperclass() {
+    val apiSignature =
+        """
+          // Signature format: 2.0
+          package android {
+            @FlaggedApi("android.flag.foo") public final class C extends android.B {
+              method @FlaggedApi("android.flag.foo") public boolean c();
+              method @FlaggedApi("android.flag.foo") public boolean b();
+              method @FlaggedApi("android.flag.foo") public boolean a();
+            }
+            public final class B extends android.A {
+              method public boolean b();
+            }
+            public final class A {
+              method public boolean a();
+            }
+          }
+        """
+            .trim()
+
+    val apiVersions =
+        """
+          <?xml version="1.0" encoding="utf-8"?>
+          <api version="3">
+            <class name="android/C" since="1">
+              <extends name="android/B"/>
+              <method name="c()Z"/>
+            </class>
+            <class name="android/B" since="1">
+              <extends name="android/A"/>
+              <method name="b()Z"/>
+            </class>
+            <class name="android/A" since="1">
+              <method name="a()Z"/>
+            </class>
+          </api>
+        """
+            .trim()
+
+    val expected = setOf<ApiError>()
+    val actual =
+        findErrors(
+            parseApiSignature("in-memory", apiSignature.byteInputStream()),
+            parseFlagValues(generateFlagsProto(ENABLED, ENABLED)),
+            parseApiVersions(apiVersions.byteInputStream()))
+    assertEquals(expected, actual)
+  }
+
+  @Test
   fun testFindErrorsDisabledFlaggedApiIsPresent() {
     val expected =
         setOf<ApiError>(
