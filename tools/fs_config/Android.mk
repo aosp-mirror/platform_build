@@ -24,23 +24,8 @@ ifneq ($(wildcard $(TARGET_DEVICE_DIR)/android_filesystem_config.h),)
 $(error Using $(TARGET_DEVICE_DIR)/android_filesystem_config.h is deprecated, please use TARGET_FS_CONFIG_GEN instead)
 endif
 
-system_android_filesystem_config := system/core/libcutils/include/private/android_filesystem_config.h
-system_capability_header := bionic/libc/kernel/uapi/linux/capability.h
-
-# Use snapshots if exist
-vendor_android_filesystem_config := $(strip \
-  $(if $(filter-out current,$(BOARD_VNDK_VERSION)), \
-    $(SOONG_VENDOR_$(BOARD_VNDK_VERSION)_SNAPSHOT_DIR)/include/$(system_android_filesystem_config)))
-ifeq (,$(wildcard $(vendor_android_filesystem_config)))
-vendor_android_filesystem_config := $(system_android_filesystem_config)
-endif
-
-vendor_capability_header := $(strip \
-  $(if $(filter-out current,$(BOARD_VNDK_VERSION)), \
-    $(SOONG_VENDOR_$(BOARD_VNDK_VERSION)_SNAPSHOT_DIR)/include/$(system_capability_header)))
-ifeq (,$(wildcard $(vendor_capability_header)))
-vendor_capability_header := $(system_capability_header)
-endif
+android_filesystem_config := system/core/libcutils/include/private/android_filesystem_config.h
+capability_header := bionic/libc/kernel/uapi/linux/capability.h
 
 # List of supported vendor, oem, odm, vendor_dlkm, odm_dlkm, and system_dlkm Partitions
 fs_config_generate_extra_partition_list := $(strip \
@@ -85,58 +70,6 @@ LOCAL_REQUIRED_MODULES := \
 include $(BUILD_PHONY_PACKAGE)
 
 ##################################
-# Generate the system_ext/etc/fs_config_dirs binary file for the target if the
-# system_ext partition is generated. Add fs_config_dirs or fs_config_dirs_system_ext
-# to PRODUCT_PACKAGES in the device make file to enable.
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := fs_config_dirs_system_ext
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-LOCAL_LICENSE_CONDITIONS := notice
-LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_REQUIRED_MODULES := $(if $(BOARD_USES_SYSTEM_EXTIMAGE)$(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE),_fs_config_dirs_system_ext)
-include $(BUILD_PHONY_PACKAGE)
-
-##################################
-# Generate the system_ext/etc/fs_config_files binary file for the target if the
-# system_ext partition is generated. Add fs_config_files or fs_config_files_system_ext
-# to PRODUCT_PACKAGES in the device make file to enable.
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := fs_config_files_system_ext
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-LOCAL_LICENSE_CONDITIONS := notice
-LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_REQUIRED_MODULES := $(if $(BOARD_USES_SYSTEM_EXTIMAGE)$(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE),_fs_config_files_system_ext)
-include $(BUILD_PHONY_PACKAGE)
-
-##################################
-# Generate the product/etc/fs_config_dirs binary file for the target if the
-# product partition is generated. Add fs_config_dirs or fs_config_dirs_product
-# to PRODUCT_PACKAGES in the device make file to enable.
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := fs_config_dirs_product
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-LOCAL_LICENSE_CONDITIONS := notice
-LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_REQUIRED_MODULES := $(if $(BOARD_USES_PRODUCTIMAGE)$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),_fs_config_dirs_product)
-include $(BUILD_PHONY_PACKAGE)
-
-##################################
-# Generate the product/etc/fs_config_files binary file for the target if the
-# product partition is generated. Add fs_config_files or fs_config_files_product
-# to PRODUCT_PACKAGES in the device make file to enable.
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := fs_config_files_product
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-LOCAL_LICENSE_CONDITIONS := notice
-LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_REQUIRED_MODULES := $(if $(BOARD_USES_PRODUCTIMAGE)$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),_fs_config_files_product)
-include $(BUILD_PHONY_PACKAGE)
-
-##################################
 # Generate the <p>/etc/fs_config_dirs binary files for all enabled partitions
 # excluding /system, /system_ext and /product. Add fs_config_dirs_nonsystem to
 # PRODUCT_PACKAGES in the device make file to enable.
@@ -146,7 +79,7 @@ LOCAL_MODULE := fs_config_dirs_nonsystem
 LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
 LOCAL_LICENSE_CONDITIONS := notice
 LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),_fs_config_dirs_$(t))
+LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),fs_config_dirs_$(t))
 include $(BUILD_PHONY_PACKAGE)
 
 ##################################
@@ -159,121 +92,8 @@ LOCAL_MODULE := fs_config_files_nonsystem
 LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
 LOCAL_LICENSE_CONDITIONS := notice
 LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),_fs_config_files_$(t))
+LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),fs_config_files_$(t))
 include $(BUILD_PHONY_PACKAGE)
-
-##################################
-# Generate the system/etc/fs_config_dirs binary file for the target
-# Add fs_config_dirs or fs_config_dirs_system to PRODUCT_PACKAGES in
-# the device make file to enable
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := fs_config_dirs_system
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-LOCAL_LICENSE_CONDITIONS := notice
-LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_MODULE_CLASS := ETC
-LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
-include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
-$(LOCAL_BUILT_MODULE): PRIVATE_PARTITION_LIST := $(fs_config_generate_extra_partition_list)
-$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
-	@mkdir -p $(dir $@)
-	$< fsconfig \
-	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
-	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
-	   --partition system \
-	   --all-partitions "$(subst $(space),$(comma),$(PRIVATE_PARTITION_LIST))" \
-	   --dirs \
-	   --out_file $@ \
-	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
-
-##################################
-# Generate the system/etc/fs_config_files binary file for the target
-# Add fs_config_files or fs_config_files_system to PRODUCT_PACKAGES in
-# the device make file to enable
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := fs_config_files_system
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-LOCAL_LICENSE_CONDITIONS := notice
-LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_MODULE_CLASS := ETC
-LOCAL_INSTALLED_MODULE_STEM := fs_config_files
-include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
-$(LOCAL_BUILT_MODULE): PRIVATE_PARTITION_LIST := $(fs_config_generate_extra_partition_list)
-$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
-	@mkdir -p $(dir $@)
-	$< fsconfig \
-	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
-	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
-	   --partition system \
-	   --all-partitions "$(subst $(space),$(comma),$(PRIVATE_PARTITION_LIST))" \
-	   --files \
-	   --out_file $@ \
-	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
-
-ifneq ($(filter vendor,$(fs_config_generate_extra_partition_list)),)
-##################################
-# Generate the vendor/etc/fs_config_dirs binary file for the target
-# Add fs_config_dirs or fs_config_dirs_nonsystem to PRODUCT_PACKAGES
-# in the device make file to enable
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := _fs_config_dirs_vendor
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-LOCAL_LICENSE_CONDITIONS := notice
-LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_MODULE_CLASS := ETC
-LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
-LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR)/etc
-include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
-$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
-	@mkdir -p $(dir $@)
-	$< fsconfig \
-	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
-	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
-	   --partition vendor \
-	   --dirs \
-	   --out_file $@ \
-	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
-
-##################################
-# Generate the vendor/etc/fs_config_files binary file for the target
-# Add fs_config_files or fs_config_files_nonsystem to PRODUCT_PACKAGES
-# in the device make file to enable
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := _fs_config_files_vendor
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-LOCAL_LICENSE_CONDITIONS := notice
-LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_MODULE_CLASS := ETC
-LOCAL_INSTALLED_MODULE_STEM := fs_config_files
-LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR)/etc
-include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
-$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
-	@mkdir -p $(dir $@)
-	$< fsconfig \
-	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
-	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
-	   --partition vendor \
-	   --files \
-	   --out_file $@ \
-	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
-
-endif
 
 ifneq ($(filter oem,$(fs_config_generate_extra_partition_list)),)
 ##################################
@@ -282,7 +102,7 @@ ifneq ($(filter oem,$(fs_config_generate_extra_partition_list)),)
 # in the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := _fs_config_dirs_oem
+LOCAL_MODULE := fs_config_dirs_oem
 LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
 LOCAL_LICENSE_CONDITIONS := notice
 LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
@@ -290,10 +110,10 @@ LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_OEM)/etc
 include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(capability_header)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(android_filesystem_config) $(capability_header)
 	@mkdir -p $(dir $@)
 	$< fsconfig \
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
@@ -309,7 +129,7 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 # in the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := _fs_config_files_oem
+LOCAL_MODULE := fs_config_files_oem
 LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
 LOCAL_LICENSE_CONDITIONS := notice
 LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
@@ -317,72 +137,15 @@ LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_OEM)/etc
 include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(capability_header)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(android_filesystem_config) $(capability_header)
 	@mkdir -p $(dir $@)
 	$< fsconfig \
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
 	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
 	   --partition oem \
-	   --files \
-	   --out_file $@ \
-	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
-
-endif
-
-ifneq ($(filter odm,$(fs_config_generate_extra_partition_list)),)
-##################################
-# Generate the odm/etc/fs_config_dirs binary file for the target
-# Add fs_config_dirs or fs_config_dirs_nonsystem to PRODUCT_PACKAGES
-# in the device make file to enable
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := _fs_config_dirs_odm
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-LOCAL_LICENSE_CONDITIONS := notice
-LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_MODULE_CLASS := ETC
-LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
-LOCAL_MODULE_PATH := $(TARGET_OUT_ODM)/etc
-include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
-$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
-	@mkdir -p $(dir $@)
-	$< fsconfig \
-	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
-	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
-	   --partition odm \
-	   --dirs \
-	   --out_file $@ \
-	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
-
-##################################
-# Generate the odm/etc/fs_config_files binary file for the target
-# Add fs_config_files or fs_config_files_nonsystem to PRODUCT_PACKAGES
-# in the device make file to enable
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := _fs_config_files_odm
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-LOCAL_LICENSE_CONDITIONS := notice
-LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_MODULE_CLASS := ETC
-LOCAL_INSTALLED_MODULE_STEM := fs_config_files
-LOCAL_MODULE_PATH := $(TARGET_OUT_ODM)/etc
-include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
-$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
-	@mkdir -p $(dir $@)
-	$< fsconfig \
-	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
-	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
-	   --partition odm \
 	   --files \
 	   --out_file $@ \
 	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
@@ -396,7 +159,7 @@ ifneq ($(filter vendor_dlkm,$(fs_config_generate_extra_partition_list)),)
 # the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := _fs_config_dirs_vendor_dlkm
+LOCAL_MODULE := fs_config_dirs_vendor_dlkm
 LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
 LOCAL_LICENSE_CONDITIONS := notice
 LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
@@ -404,10 +167,10 @@ LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR_DLKM)/etc
 include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(capability_header)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(android_filesystem_config) $(capability_header)
 	@mkdir -p $(dir $@)
 	$< fsconfig \
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
@@ -423,7 +186,7 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 # the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := _fs_config_files_vendor_dlkm
+LOCAL_MODULE := fs_config_files_vendor_dlkm
 LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
 LOCAL_LICENSE_CONDITIONS := notice
 LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
@@ -431,10 +194,10 @@ LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR_DLKM)/etc
 include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(capability_header)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(android_filesystem_config) $(capability_header)
 	@mkdir -p $(dir $@)
 	$< fsconfig \
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
@@ -453,7 +216,7 @@ ifneq ($(filter odm_dlkm,$(fs_config_generate_extra_partition_list)),)
 # in the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := _fs_config_dirs_odm_dlkm
+LOCAL_MODULE := fs_config_dirs_odm_dlkm
 LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
 LOCAL_LICENSE_CONDITIONS := notice
 LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
@@ -461,10 +224,10 @@ LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_ODM_DLKM)/etc
 include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(capability_header)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(android_filesystem_config) $(capability_header)
 	@mkdir -p $(dir $@)
 	$< fsconfig \
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
@@ -480,7 +243,7 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 # in the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := _fs_config_files_odm_dlkm
+LOCAL_MODULE := fs_config_files_odm_dlkm
 LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
 LOCAL_LICENSE_CONDITIONS := notice
 LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
@@ -488,10 +251,10 @@ LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_ODM_DLKM)/etc
 include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(capability_header)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(android_filesystem_config) $(capability_header)
 	@mkdir -p $(dir $@)
 	$< fsconfig \
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
@@ -510,7 +273,7 @@ ifneq ($(filter system_dlkm,$(fs_config_generate_extra_partition_list)),)
 # in the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := _fs_config_dirs_system_dlkm
+LOCAL_MODULE := fs_config_dirs_system_dlkm
 LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
 LOCAL_LICENSE_CONDITIONS := notice
 LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
@@ -518,10 +281,10 @@ LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 LOCAL_MODULE_PATH := $(TARGET_OUT_SYSTEM_DLKM)/etc
 include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(capability_header)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(android_filesystem_config) $(capability_header)
 	@mkdir -p $(dir $@)
 	$< fsconfig \
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
@@ -537,7 +300,7 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 # in the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := _fs_config_files_system_dlkm
+LOCAL_MODULE := fs_config_files_system_dlkm
 LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
 LOCAL_LICENSE_CONDITIONS := notice
 LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
@@ -545,10 +308,10 @@ LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 LOCAL_MODULE_PATH := $(TARGET_OUT_SYSTEM_DLKM)/etc
 include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(vendor_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(vendor_capability_header)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(android_filesystem_config)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(capability_header)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(vendor_android_filesystem_config) $(vendor_capability_header)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(android_filesystem_config) $(capability_header)
 	@mkdir -p $(dir $@)
 	$< fsconfig \
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
@@ -560,118 +323,6 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 
 endif
 
-ifneq ($(BOARD_USES_PRODUCTIMAGE)$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),)
-##################################
-# Generate the product/etc/fs_config_dirs binary file for the target
-# Add fs_config_dirs or fs_config_dirs_product to PRODUCT_PACKAGES in
-# the device make file to enable
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := _fs_config_dirs_product
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-LOCAL_LICENSE_CONDITIONS := notice
-LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_MODULE_CLASS := ETC
-LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
-LOCAL_MODULE_PATH := $(TARGET_OUT_PRODUCT)/etc
-include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
-$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
-	@mkdir -p $(dir $@)
-	$< fsconfig \
-	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
-	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
-	   --partition product \
-	   --dirs \
-	   --out_file $@ \
-	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
-
-##################################
-# Generate the product/etc/fs_config_files binary file for the target
-# Add fs_config_files or fs_config_files_product to PRODUCT_PACKAGES in
-# the device make file to enable
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := _fs_config_files_product
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-LOCAL_LICENSE_CONDITIONS := notice
-LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_MODULE_CLASS := ETC
-LOCAL_INSTALLED_MODULE_STEM := fs_config_files
-LOCAL_MODULE_PATH := $(TARGET_OUT_PRODUCT)/etc
-include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
-$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
-	@mkdir -p $(dir $@)
-	$< fsconfig \
-	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
-	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
-	   --partition product \
-	   --files \
-	   --out_file $@ \
-	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
-endif
-
-ifneq ($(BOARD_USES_SYSTEM_EXTIMAGE)$(BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE),)
-##################################
-# Generate the system_ext/etc/fs_config_dirs binary file for the target
-# Add fs_config_dirs or fs_config_dirs_system_ext to PRODUCT_PACKAGES in
-# the device make file to enable
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := _fs_config_dirs_system_ext
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-LOCAL_LICENSE_CONDITIONS := notice
-LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_MODULE_CLASS := ETC
-LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
-LOCAL_MODULE_PATH := $(TARGET_OUT_SYSTEM_EXT)/etc
-include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
-$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
-	@mkdir -p $(dir $@)
-	$< fsconfig \
-	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
-	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
-	   --partition system_ext \
-	   --dirs \
-	   --out_file $@ \
-	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
-
-##################################
-# Generate the system_ext/etc/fs_config_files binary file for the target
-# Add fs_config_files or fs_config_files_system_ext to PRODUCT_PACKAGES in
-# the device make file to enable
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := _fs_config_files_system_ext
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-LOCAL_LICENSE_CONDITIONS := notice
-LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_MODULE_CLASS := ETC
-LOCAL_INSTALLED_MODULE_STEM := fs_config_files
-LOCAL_MODULE_PATH := $(TARGET_OUT_SYSTEM_EXT)/etc
-include $(BUILD_SYSTEM)/base_rules.mk
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
-$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_CAP_HDR := $(system_capability_header)
-$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(system_capability_header)
-	@mkdir -p $(dir $@)
-	$< fsconfig \
-	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
-	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
-	   --partition system_ext \
-	   --files \
-	   --out_file $@ \
-	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
-endif
-
-system_android_filesystem_config :=
-system_capability_header :=
+android_filesystem_config :=
+capability_header :=
 fs_config_generate_extra_partition_list :=
