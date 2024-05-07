@@ -92,10 +92,10 @@ cc_library {
     static_libs: [
         "libaconfig_storage_protos_cc",
         "libprotobuf-cpp-lite",
-        "libbase",
     ],
     shared_libs: [
         "liblog",
+        "libbase",
     ],
     apex_available: [
         "//apex_available:platform",
