@@ -16,6 +16,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include <cstdio>
 
 #include <sys/stat.h>
@@ -111,18 +112,19 @@ TEST_F(AconfigStorageTest, test_storage_version_query) {
 
 /// Negative test to lock down the error when mapping none exist storage files
 TEST_F(AconfigStorageTest, test_none_exist_storage_file_mapping) {
-  auto mapped_file = private_api::get_mapped_file_impl(
+  auto mapped_file_result = private_api::get_mapped_file_impl(
       storage_record_pb, "vendor", api::StorageFileType::package_map);
-  ASSERT_FALSE(mapped_file.ok());
-  ASSERT_EQ(mapped_file.error().message(),
+  ASSERT_FALSE(mapped_file_result.ok());
+  ASSERT_EQ(mapped_file_result.error().message(),
             "Unable to find storage files for container vendor");
 }
 
 /// Test to lock down storage package context query api
 TEST_F(AconfigStorageTest, test_package_context_query) {
-  auto mapped_file = private_api::get_mapped_file_impl(
+  auto mapped_file_result = private_api::get_mapped_file_impl(
       storage_record_pb, "mockup", api::StorageFileType::package_map);
-  ASSERT_TRUE(mapped_file.ok());
+  ASSERT_TRUE(mapped_file_result.ok());
+  auto mapped_file = std::unique_ptr<api::MappedStorageFile>(*mapped_file_result);
 
   auto context = api::get_package_read_context(
       *mapped_file, "com.android.aconfig.storage.test_1");
@@ -148,9 +150,10 @@ TEST_F(AconfigStorageTest, test_package_context_query) {
 
 /// Test to lock down when querying none exist package
 TEST_F(AconfigStorageTest, test_none_existent_package_context_query) {
-  auto mapped_file = private_api::get_mapped_file_impl(
+  auto mapped_file_result = private_api::get_mapped_file_impl(
       storage_record_pb, "mockup", api::StorageFileType::package_map);
-  ASSERT_TRUE(mapped_file.ok());
+  ASSERT_TRUE(mapped_file_result.ok());
+  auto mapped_file = std::unique_ptr<api::MappedStorageFile>(*mapped_file_result);
 
   auto context = api::get_package_read_context(
       *mapped_file, "com.android.aconfig.storage.test_3");
@@ -160,9 +163,10 @@ TEST_F(AconfigStorageTest, test_none_existent_package_context_query) {
 
 /// Test to lock down storage flag context query api
 TEST_F(AconfigStorageTest, test_flag_context_query) {
-  auto mapped_file = private_api::get_mapped_file_impl(
+  auto mapped_file_result = private_api::get_mapped_file_impl(
       storage_record_pb, "mockup", api::StorageFileType::flag_map);
-  ASSERT_TRUE(mapped_file.ok());
+  ASSERT_TRUE(mapped_file_result.ok());
+  auto mapped_file = std::unique_ptr<api::MappedStorageFile>(*mapped_file_result);
 
   auto baseline = std::vector<std::tuple<int, std::string, api::StoredFlagType, int>>{
     {0, "enabled_ro", api::StoredFlagType::ReadOnlyBoolean, 1},
@@ -185,9 +189,10 @@ TEST_F(AconfigStorageTest, test_flag_context_query) {
 
 /// Test to lock down when querying none exist flag
 TEST_F(AconfigStorageTest, test_none_existent_flag_context_query) {
-  auto mapped_file = private_api::get_mapped_file_impl(
+  auto mapped_file_result = private_api::get_mapped_file_impl(
       storage_record_pb, "mockup", api::StorageFileType::flag_map);
-  ASSERT_TRUE(mapped_file.ok());
+  ASSERT_TRUE(mapped_file_result.ok());
+  auto mapped_file = std::unique_ptr<api::MappedStorageFile>(*mapped_file_result);
 
   auto context = api::get_flag_read_context(*mapped_file, 0, "none_exist");
   ASSERT_TRUE(context.ok());
@@ -200,9 +205,10 @@ TEST_F(AconfigStorageTest, test_none_existent_flag_context_query) {
 
 /// Test to lock down storage flag value query api
 TEST_F(AconfigStorageTest, test_boolean_flag_value_query) {
-  auto mapped_file = private_api::get_mapped_file_impl(
+  auto mapped_file_result = private_api::get_mapped_file_impl(
       storage_record_pb, "mockup", api::StorageFileType::flag_val);
-  ASSERT_TRUE(mapped_file.ok());
+  ASSERT_TRUE(mapped_file_result.ok());
+  auto mapped_file = std::unique_ptr<api::MappedStorageFile>(*mapped_file_result);
 
   auto expected_value = std::vector<bool>{
     false, true, true, false, true, true, true, true};
@@ -215,9 +221,10 @@ TEST_F(AconfigStorageTest, test_boolean_flag_value_query) {
 
 /// Negative test to lock down the error when querying flag value out of range
 TEST_F(AconfigStorageTest, test_invalid_boolean_flag_value_query) {
-  auto mapped_file = private_api::get_mapped_file_impl(
+  auto mapped_file_result = private_api::get_mapped_file_impl(
       storage_record_pb, "mockup", api::StorageFileType::flag_val);
-  ASSERT_TRUE(mapped_file.ok());
+  ASSERT_TRUE(mapped_file_result.ok());
+  auto mapped_file = std::unique_ptr<api::MappedStorageFile>(*mapped_file_result);
 
   auto value = api::get_boolean_flag_value(*mapped_file, 8);
   ASSERT_FALSE(value.ok());
@@ -227,9 +234,10 @@ TEST_F(AconfigStorageTest, test_invalid_boolean_flag_value_query) {
 
 /// Test to lock down storage flag info query api
 TEST_F(AconfigStorageTest, test_boolean_flag_info_query) {
-  auto mapped_file = private_api::get_mapped_file_impl(
+  auto mapped_file_result = private_api::get_mapped_file_impl(
       storage_record_pb, "mockup", api::StorageFileType::flag_info);
-  ASSERT_TRUE(mapped_file.ok());
+  ASSERT_TRUE(mapped_file_result.ok());
+  auto mapped_file = std::unique_ptr<api::MappedStorageFile>(*mapped_file_result);
 
   auto expected_value = std::vector<bool>{
     true, false, true, true, false, false, false, true};
@@ -245,9 +253,10 @@ TEST_F(AconfigStorageTest, test_boolean_flag_info_query) {
 
 /// Negative test to lock down the error when querying flag info out of range
 TEST_F(AconfigStorageTest, test_invalid_boolean_flag_info_query) {
-  auto mapped_file = private_api::get_mapped_file_impl(
+  auto mapped_file_result = private_api::get_mapped_file_impl(
       storage_record_pb, "mockup", api::StorageFileType::flag_info);
-  ASSERT_TRUE(mapped_file.ok());
+  ASSERT_TRUE(mapped_file_result.ok());
+  auto mapped_file = std::unique_ptr<api::MappedStorageFile>(*mapped_file_result);
 
   auto attribute = api::get_flag_attribute(*mapped_file, api::FlagValueType::Boolean, 8);
   ASSERT_FALSE(attribute.ok());

@@ -129,11 +129,13 @@ bool {header}_{item.flag_name}() \{
     }
 
     auto package_read_context = aconfig_storage::get_package_read_context(
-        *package_map_file, "{package}");
+        **package_map_file, "{package}");
     if (!package_read_context.ok()) \{
         ALOGI("error: failed to get package read context: %s", package_map_file.error().message().c_str());
         return result;
     }
+
+    delete *package_map_file;
 
     auto flag_val_map = aconfig_storage::get_mapped_file(
         "{item.container}",
@@ -144,12 +146,14 @@ bool {header}_{item.flag_name}() \{
     }
 
     auto value = aconfig_storage::get_boolean_flag_value(
-        *flag_val_map,
-        package_read_context->package_id + {item.flag_offset});
+        **flag_val_map,
+        package_read_context->boolean_start_index + {item.flag_offset});
     if (!value.ok()) \{
         ALOGI("error: failed to get flag val: %s", package_map_file.error().message().c_str());
         return result;
     }
+
+    delete *flag_val_map;
 
     if (*value != result) \{
         ALOGI("error: new storage value '%d' does not match current value '%d'", *value, result);

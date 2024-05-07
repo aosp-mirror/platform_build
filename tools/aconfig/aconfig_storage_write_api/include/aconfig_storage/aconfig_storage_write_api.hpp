@@ -14,10 +14,11 @@ namespace aconfig_storage {
 struct MutableMappedStorageFile{
   void* file_ptr;
   size_t file_size;
+  ~MutableMappedStorageFile();
 };
 
 /// Map a storage file
-Result<MutableMappedStorageFile> map_mutable_storage_file(
+Result<MutableMappedStorageFile*> map_mutable_storage_file(
     std::string const& file);
 
 /// Set boolean flag value
