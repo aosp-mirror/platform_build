@@ -11,11 +11,7 @@ using namespace android::base;
 namespace aconfig_storage {
 
 /// Mapped flag value file
-struct MutableMappedStorageFile{
-  void* file_ptr;
-  size_t file_size;
-  ~MutableMappedStorageFile();
-};
+struct MutableMappedStorageFile : MappedStorageFile {};
 
 /// Map a storage file
 Result<MutableMappedStorageFile*> map_mutable_storage_file(

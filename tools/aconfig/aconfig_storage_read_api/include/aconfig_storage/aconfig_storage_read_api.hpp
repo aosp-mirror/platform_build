@@ -41,7 +41,7 @@ enum FlagInfoBit {
 struct MappedStorageFile {
   void* file_ptr;
   size_t file_size;
-  ~MappedStorageFile();
+  virtual ~MappedStorageFile();
 };
 
 /// Package read context query result
