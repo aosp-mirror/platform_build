@@ -20,6 +20,11 @@ namespace aconfig_storage {
 static constexpr char kAvailableStorageRecordsPb[] =
     "/metadata/aconfig/boot/available_storage_file_records.pb";
 
+/// destructor
+MappedStorageFile::~MappedStorageFile() {
+  munmap(file_ptr, file_size);
+}
+
 /// Read aconfig storage records pb file
 static Result<storage_records_pb> read_storage_records_pb(std::string const& pb_file) {
   auto records = storage_records_pb();
@@ -68,7 +73,7 @@ static Result<std::string> find_storage_file(
 namespace private_internal_api {
 
 /// Get mapped file implementation.
-Result<MappedStorageFile> get_mapped_file_impl(
+Result<MappedStorageFile*> get_mapped_file_impl(
     std::string const& pb_file,
     std::string const& container,
     StorageFileType file_type) {
@@ -82,7 +87,7 @@ Result<MappedStorageFile> get_mapped_file_impl(
 } // namespace private internal api
 
 /// Map a storage file
-Result<MappedStorageFile> map_storage_file(std::string const& file) {
+Result<MappedStorageFile*> map_storage_file(std::string const& file) {
   int fd = open(file.c_str(), O_CLOEXEC | O_NOFOLLOW | O_RDONLY);
   if (fd == -1) {
     return ErrnoError() << "failed to open " << file;
@@ -99,9 +104,9 @@ Result<MappedStorageFile> map_storage_file(std::string const& file) {
     return ErrnoError() << "mmap failed";
   }
 
-  auto mapped_file = MappedStorageFile();
-  mapped_file.file_ptr = map_result;
-  mapped_file.file_size = file_size;
+  auto mapped_file = new MappedStorageFile();
+  mapped_file->file_ptr = map_result;
+  mapped_file->file_size = file_size;
 
   return mapped_file;
 }
@@ -120,7 +125,7 @@ android::base::Result<FlagValueType> map_to_flag_value_type(
 }
 
 /// Get mapped storage file
-Result<MappedStorageFile> get_mapped_file(
+Result<MappedStorageFile*> get_mapped_file(
     std::string const& container,
     StorageFileType file_type) {
   return private_internal_api::get_mapped_file_impl(
