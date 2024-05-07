@@ -418,8 +418,9 @@ _product_single_value_vars += PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
 # /system/etc/security/fsverity/BuildManifest.apk
 _product_single_value_vars += PRODUCT_FSVERITY_GENERATE_METADATA
 
-# If true, sets the default for MODULE_BUILD_FROM_SOURCE. This overrides
-# BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE but not an explicitly set value.
+# If true, this builds the mainline modules from source. This overrides any
+# prebuilts selected via RELEASE_APEX_CONTRIBUTIONS_* build flags for the
+# current release config.
 _product_single_value_vars += PRODUCT_MODULE_BUILD_FROM_SOURCE
 
 # If true, installs a full version of com.android.virt APEX.
