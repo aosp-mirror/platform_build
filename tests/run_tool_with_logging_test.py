@@ -59,37 +59,10 @@ class RunToolWithLoggingTest(unittest.TestCase):
     self.working_dir.cleanup()
     super().tearDown()
 
-  def test_does_not_log_when_logging_disabled(self):
-    test_tool = TestScript.create(self.working_dir)
-    test_logger = TestScript.create(self.working_dir)
-
-    self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=false
-      ANDROID_TOOL_LOGGER="{test_logger.executable}"
-      run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
-    """)
-
-    test_tool.assert_called_once_with_args("arg1 arg2")
-    test_logger.assert_not_called()
-
-  def test_does_not_log_when_logger_var_unset(self):
-    test_tool = TestScript.create(self.working_dir)
-    test_logger = TestScript.create(self.working_dir)
-
-    self._run_script_and_wait(f"""
-      unset ANDROID_ENABLE_TOOL_LOGGING
-      ANDROID_TOOL_LOGGER="{test_logger.executable}"
-      run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
-    """)
-
-    test_tool.assert_called_once_with_args("arg1 arg2")
-    test_logger.assert_not_called()
-
   def test_does_not_log_when_logger_var_empty(self):
     test_tool = TestScript.create(self.working_dir)
 
     self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=true
       ANDROID_TOOL_LOGGER=""
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
     """)
@@ -100,7 +73,6 @@ class RunToolWithLoggingTest(unittest.TestCase):
     test_tool = TestScript.create(self.working_dir)
 
     self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=true
       unset ANDROID_TOOL_LOGGER
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
     """)
@@ -112,7 +84,6 @@ class RunToolWithLoggingTest(unittest.TestCase):
     test_logger = TestScript.create(self.working_dir)
 
     self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=true
       ANDROID_TOOL_LOGGER="{test_logger.executable}"
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
     """)
@@ -130,7 +101,6 @@ class RunToolWithLoggingTest(unittest.TestCase):
 
     run_tool_with_logging_stdout, run_tool_with_logging_stderr = (
         self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=true
       ANDROID_TOOL_LOGGER="{test_logger.executable}"
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
     """)
@@ -138,7 +108,6 @@ class RunToolWithLoggingTest(unittest.TestCase):
 
     run_tool_without_logging_stdout, run_tool_without_logging_stderr = (
         self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=true
       ANDROID_TOOL_LOGGER="{test_logger.executable}"
       {test_tool.executable} arg1 arg2
     """)
@@ -156,7 +125,6 @@ class RunToolWithLoggingTest(unittest.TestCase):
     test_logger = TestScript.create(self.working_dir, "echo 'logger called'")
 
     run_tool_with_logging_output, _ = self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=true
       ANDROID_TOOL_LOGGER="{test_logger.executable}"
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
     """)
@@ -170,7 +138,6 @@ class RunToolWithLoggingTest(unittest.TestCase):
     )
 
     _, err = self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=true
       ANDROID_TOOL_LOGGER="{test_logger.executable}"
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
     """)
@@ -182,7 +149,6 @@ class RunToolWithLoggingTest(unittest.TestCase):
     test_logger = TestScript.create(self.working_dir)
 
     process = self._run_script_in_build_env(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=true
       ANDROID_TOOL_LOGGER="{test_logger.executable}"
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
     """)
@@ -207,9 +173,8 @@ class RunToolWithLoggingTest(unittest.TestCase):
     test_logger = TestScript.create(self.working_dir)
 
     self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=false
+      ANDROID_TOOL_LOGGER=""
       ANDROID_TOOL_LOGGER="{test_logger.executable}"
-      ANDROID_ENABLE_TOOL_LOGGING=true
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
     """)
 
@@ -220,9 +185,8 @@ class RunToolWithLoggingTest(unittest.TestCase):
     test_logger = TestScript.create(self.working_dir)
 
     self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=true
       ANDROID_TOOL_LOGGER="{test_logger.executable}"
-      ANDROID_ENABLE_TOOL_LOGGING=false
+      ANDROID_TOOL_LOGGER=""
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
     """)
 
@@ -234,7 +198,6 @@ class RunToolWithLoggingTest(unittest.TestCase):
 
     self._run_script_and_wait(f"""
       TMPDIR="{self.working_dir.name}"
-      ANDROID_ENABLE_TOOL_LOGGING=true
       ANDROID_TOOL_LOGGER="{logger_path}"
       ANDROID_TOOL_LOGGER_EXTRA_ARGS="--dry_run"
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
