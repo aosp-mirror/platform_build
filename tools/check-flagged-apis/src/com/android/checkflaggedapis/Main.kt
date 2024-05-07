@@ -58,8 +58,11 @@ internal sealed class Symbol {
   companion object {
     private val FORBIDDEN_CHARS = listOf('#', '$', '.')
 
-    fun createClass(clazz: String, interfaces: Set<String>): Symbol {
-      return ClassSymbol(toInternalFormat(clazz), interfaces.map { toInternalFormat(it) }.toSet())
+    fun createClass(clazz: String, superclass: String?, interfaces: Set<String>): Symbol {
+      return ClassSymbol(
+          toInternalFormat(clazz),
+          superclass?.let { toInternalFormat(it) },
+          interfaces.map { toInternalFormat(it) }.toSet())
     }
 
     fun createField(clazz: String, field: String): Symbol {
@@ -83,7 +86,11 @@ internal sealed class Symbol {
   abstract fun toPrettyString(): String
 }
 
-internal data class ClassSymbol(val clazz: String, val interfaces: Set<String>) : Symbol() {
+internal data class ClassSymbol(
+    val clazz: String,
+    val superclass: String?,
+    val interfaces: Set<String>
+) : Symbol() {
   override fun toPrettyString(): String = "$clazz"
 }
 
@@ -198,6 +205,7 @@ internal fun parseApiSignature(path: String, input: InputStream): Set<Pair<Symbo
             val symbol =
                 Symbol.createClass(
                     cls.baselineElementId(),
+                    cls.superClass()?.baselineElementId(),
                     cls.allInterfaces()
                         .map { it.baselineElementId() }
                         .filter { it != cls.baselineElementId() }
@@ -263,19 +271,28 @@ internal fun parseApiVersions(input: InputStream): Set<Symbol> {
         requireNotNull(cls.getAttribute("name")) {
           "Bad XML: <class> element without name attribute"
         }
+    var superclass: String? = null
     val interfaces = mutableSetOf<String>()
     val children = cls.getChildNodes()
     for (j in 0.rangeUntil(children.getLength())) {
       val child = children.item(j)
-      if (child.getNodeName() == "implements") {
-        val interfaceName =
-            requireNotNull(child.getAttribute("name")) {
-              "Bad XML: <implements> element without name attribute"
-            }
-        interfaces.add(interfaceName)
+      when (child.getNodeName()) {
+        "extends" -> {
+          superclass =
+              requireNotNull(child.getAttribute("name")) {
+                "Bad XML: <extends> element without name attribute"
+              }
+        }
+        "implements" -> {
+          val interfaceName =
+              requireNotNull(child.getAttribute("name")) {
+                "Bad XML: <implements> element without name attribute"
+              }
+          interfaces.add(interfaceName)
+        }
       }
     }
-    output.add(Symbol.createClass(className, interfaces))
+    output.add(Symbol.createClass(className, superclass, interfaces))
   }
 
   val fields = document.getElementsByTagName("field")
