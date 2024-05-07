@@ -30,6 +30,23 @@ $(eval $(call declare-1p-copy-files,device/google_car/common,))
 $(eval $(call declare-1p-copy-files,device/google/atv,atv-component-overrides.xml))
 $(eval $(call declare-1p-copy-files,device/google/atv,tv_core_hardware.xml))
 
+# Moved here from device/google/barbet/Android.mk
+$(eval $(call declare-copy-files-license-metadata,device/google/barbet,default-permissions.xml,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/barbet,libnfc-nci.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/barbet,fstab.postinstall,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/barbet,ueventd.rc,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/barbet,wpa_supplicant.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/barbet,hals.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/barbet,media_profiles_V1_0.xml,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/barbet,media_codecs_performance.xml,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/barbet,device_state_configuration.xml,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/barbet,task_profiles.json,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/barbet,p2p_supplicant.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/barbet,wpa_supplicant.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/barbet,wpa_supplicant_overlay.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+
+$(eval $(call declare-1p-copy-files,device/google/barbet,audio_policy_configuration.xml))
+
 # Moved here from device/google/coral/Android.mk
 $(eval $(call declare-copy-files-license-metadata,device/google/coral,default-permissions.xml,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
 $(eval $(call declare-copy-files-license-metadata,device/google/coral,libnfc-nci.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
@@ -86,6 +103,9 @@ $(eval $(call declare-1p-copy-files,device/google/raviole,audio_policy_configura
 
 # Moved here from device/sample/Android.mk
 $(eval $(call declare-1p-copy-files,device/sample,))
+
+# Moved here from device/google/trout/Android.mk
+$(eval $(call declare-1p-copy-files,device/google/trout,))
 
 # Moved here from frameworks/av/media/Android.mk
 $(eval $(call declare-1p-copy-files,frameworks/av/media/libeffects,audio_effects.conf))
