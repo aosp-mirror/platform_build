@@ -17,11 +17,6 @@ using namespace android::base;
 
 namespace aconfig_storage {
 
-/// destructor
-MutableMappedStorageFile::~MutableMappedStorageFile() {
-  munmap(file_ptr, file_size);
-}
-
 /// Map a storage file
 Result<MutableMappedStorageFile*> map_mutable_storage_file(std::string const& file) {
   struct stat file_stat;
