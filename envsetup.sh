@@ -1112,8 +1112,8 @@ function run_tool_with_logging() {
   local tool_binary="$1"
   shift
 
-  # If logging is not enabled or the logger is not configured, run the original command and return.
-  if [[ "${ANDROID_ENABLE_TOOL_LOGGING}" != "true" ]] || [[ -z "${ANDROID_TOOL_LOGGER}" ]]; then
+  # If the logger is not configured, run the original command and return.
+  if [[ -z "${ANDROID_TOOL_LOGGER}" ]]; then
      "${tool_binary}" "${@}"
      return $?
   fi
