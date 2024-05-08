@@ -80,13 +80,10 @@ TEST_F(AconfigStorageTest, test_boolean_flag_value_update) {
   ASSERT_TRUE(mapped_file_result.ok());
   auto mapped_file = std::unique_ptr<api::MutableMappedStorageFile>(*mapped_file_result);
 
-  auto ro_mapped_file = api::MappedStorageFile();
-  ro_mapped_file.file_ptr = mapped_file->file_ptr;
-  ro_mapped_file.file_size = mapped_file->file_size;
   for (int offset = 0; offset < 8; ++offset) {
     auto update_result = api::set_boolean_flag_value(*mapped_file, offset, true);
     ASSERT_TRUE(update_result.ok());
-    auto value = api::get_boolean_flag_value(ro_mapped_file, offset);
+    auto value = api::get_boolean_flag_value(*mapped_file, offset);
     ASSERT_TRUE(value.ok());
     ASSERT_TRUE(*value);
   }
@@ -97,7 +94,6 @@ TEST_F(AconfigStorageTest, test_invalid_boolean_flag_value_update) {
   auto mapped_file_result = api::map_mutable_storage_file(flag_val);
   ASSERT_TRUE(mapped_file_result.ok());
   auto mapped_file = std::unique_ptr<api::MutableMappedStorageFile>(*mapped_file_result);
-
   auto update_result = api::set_boolean_flag_value(*mapped_file, 8, true);
   ASSERT_FALSE(update_result.ok());
   ASSERT_EQ(update_result.error().message(),
@@ -110,16 +106,12 @@ TEST_F(AconfigStorageTest, test_flag_has_server_override_update) {
   ASSERT_TRUE(mapped_file_result.ok());
   auto mapped_file = std::unique_ptr<api::MutableMappedStorageFile>(*mapped_file_result);
 
-  auto ro_mapped_file = api::MappedStorageFile();
-  ro_mapped_file.file_ptr = mapped_file->file_ptr;
-  ro_mapped_file.file_size = mapped_file->file_size;
-
   for (int offset = 0; offset < 8; ++offset) {
     auto update_result = api::set_flag_has_server_override(
         *mapped_file, api::FlagValueType::Boolean, offset, true);
     ASSERT_TRUE(update_result.ok()) << update_result.error();
     auto attribute = api::get_flag_attribute(
-        ro_mapped_file, api::FlagValueType::Boolean, offset);
+        *mapped_file, api::FlagValueType::Boolean, offset);
     ASSERT_TRUE(attribute.ok());
     ASSERT_TRUE(*attribute & api::FlagInfoBit::HasServerOverride);
 
@@ -127,7 +119,7 @@ TEST_F(AconfigStorageTest, test_flag_has_server_override_update) {
         *mapped_file, api::FlagValueType::Boolean, offset, false);
     ASSERT_TRUE(update_result.ok());
     attribute = api::get_flag_attribute(
-        ro_mapped_file, api::FlagValueType::Boolean, offset);
+        *mapped_file, api::FlagValueType::Boolean, offset);
     ASSERT_TRUE(attribute.ok());
     ASSERT_FALSE(*attribute & api::FlagInfoBit::HasServerOverride);
   }
@@ -139,16 +131,12 @@ TEST_F(AconfigStorageTest, test_flag_has_local_override_update) {
   ASSERT_TRUE(mapped_file_result.ok());
   auto mapped_file = std::unique_ptr<api::MutableMappedStorageFile>(*mapped_file_result);
 
-  auto ro_mapped_file = api::MappedStorageFile();
-  ro_mapped_file.file_ptr = mapped_file->file_ptr;
-  ro_mapped_file.file_size = mapped_file->file_size;
-
   for (int offset = 0; offset < 8; ++offset) {
     auto update_result = api::set_flag_has_local_override(
         *mapped_file, api::FlagValueType::Boolean, offset, true);
     ASSERT_TRUE(update_result.ok());
     auto attribute = api::get_flag_attribute(
-        ro_mapped_file, api::FlagValueType::Boolean, offset);
+        *mapped_file, api::FlagValueType::Boolean, offset);
     ASSERT_TRUE(attribute.ok());
     ASSERT_TRUE(*attribute & api::FlagInfoBit::HasLocalOverride);
 
@@ -156,7 +144,7 @@ TEST_F(AconfigStorageTest, test_flag_has_local_override_update) {
         *mapped_file, api::FlagValueType::Boolean, offset, false);
     ASSERT_TRUE(update_result.ok());
     attribute = api::get_flag_attribute(
-        ro_mapped_file, api::FlagValueType::Boolean, offset);
+        *mapped_file, api::FlagValueType::Boolean, offset);
     ASSERT_TRUE(attribute.ok());
     ASSERT_FALSE(*attribute & api::FlagInfoBit::HasLocalOverride);
   }
