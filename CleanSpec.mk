@@ -783,6 +783,10 @@ $(call add-clean-step, find $(OUT_DIR) -name "*.rsp.whole.a" -print0 | xargs -0 
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/)
 $(call add-clean-step, find $(OUT_DIR) -type f -name "*.jar" -print0 | xargs -0 rm -f)
 
+# Remove obsolete java compilation artifacts
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/)
+$(call add-clean-step, find $(OUT_DIR) -type f -name "*.jar" -print0 | xargs -0 rm -f)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
