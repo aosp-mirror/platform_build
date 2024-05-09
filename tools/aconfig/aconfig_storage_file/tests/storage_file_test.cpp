@@ -24,15 +24,25 @@
 using namespace android::base;
 using namespace aconfig_storage;
 
+void verify_value(const FlagValueSummary& flag,
+                  const std::string& package_name,
+                  const std::string& flag_name,
+                  const std::string& flag_val,
+                  const std::string& value_type) {
+  ASSERT_EQ(flag.package_name, package_name);
+  ASSERT_EQ(flag.flag_name, flag_name);
+  ASSERT_EQ(flag.flag_value, flag_val);
+  ASSERT_EQ(flag.value_type, value_type);
+}
 
-void verify_flag(const FlagValueAndInfoSummary& flag,
-                 const std::string& package_name,
-                 const std::string& flag_name,
-                 const std::string& flag_val,
-                 const std::string& value_type,
-                 bool is_readwrite,
-                 bool has_server_override,
-                 bool has_local_override) {
+void verify_value_info(const FlagValueAndInfoSummary& flag,
+                       const std::string& package_name,
+                       const std::string& flag_name,
+                       const std::string& flag_val,
+                       const std::string& value_type,
+                       bool is_readwrite,
+                       bool has_server_override,
+                       bool has_local_override) {
   ASSERT_EQ(flag.package_name, package_name);
   ASSERT_EQ(flag.flag_name, flag_name);
   ASSERT_EQ(flag.flag_value, flag_val);
@@ -40,6 +50,35 @@ void verify_flag(const FlagValueAndInfoSummary& flag,
   ASSERT_EQ(flag.is_readwrite, is_readwrite);
   ASSERT_EQ(flag.has_server_override, has_server_override);
   ASSERT_EQ(flag.has_local_override, has_local_override);
+}
+
+TEST(AconfigStorageFileTest, test_list_flag) {
+  auto const test_dir = GetExecutableDirectory();
+  auto const package_map = test_dir + "/package.map";
+  auto const flag_map = test_dir + "/flag.map";
+  auto const flag_val = test_dir + "/flag.val";
+  auto flag_list_result = aconfig_storage::list_flags(
+      package_map, flag_map, flag_val);
+  ASSERT_TRUE(flag_list_result.ok());
+
+  auto const& flag_list = *flag_list_result;
+  ASSERT_EQ(flag_list.size(), 8);
+  verify_value(flag_list[0], "com.android.aconfig.storage.test_1", "disabled_rw",
+               "false", "ReadWriteBoolean");
+  verify_value(flag_list[1], "com.android.aconfig.storage.test_1", "enabled_ro",
+               "true", "ReadOnlyBoolean");
+  verify_value(flag_list[2], "com.android.aconfig.storage.test_1", "enabled_rw",
+               "true", "ReadWriteBoolean");
+  verify_value(flag_list[3], "com.android.aconfig.storage.test_2", "disabled_rw",
+               "false", "ReadWriteBoolean");
+  verify_value(flag_list[4], "com.android.aconfig.storage.test_2", "enabled_fixed_ro",
+               "true", "FixedReadOnlyBoolean");
+  verify_value(flag_list[5], "com.android.aconfig.storage.test_2", "enabled_ro",
+               "true", "ReadOnlyBoolean");
+  verify_value(flag_list[6], "com.android.aconfig.storage.test_4", "enabled_fixed_ro",
+               "true", "FixedReadOnlyBoolean");
+  verify_value(flag_list[7], "com.android.aconfig.storage.test_4", "enabled_rw",
+               "true", "ReadWriteBoolean");
 }
 
 TEST(AconfigStorageFileTest, test_list_flag_with_info) {
@@ -54,20 +93,20 @@ TEST(AconfigStorageFileTest, test_list_flag_with_info) {
 
   auto const& flag_list = *flag_list_result;
   ASSERT_EQ(flag_list.size(), 8);
-  verify_flag(flag_list[0], "com.android.aconfig.storage.test_1", "disabled_rw",
-              "false", "ReadWriteBoolean", true, false, false);
-  verify_flag(flag_list[1], "com.android.aconfig.storage.test_1", "enabled_ro",
-              "true", "ReadOnlyBoolean", false, false, false);
-  verify_flag(flag_list[2], "com.android.aconfig.storage.test_1", "enabled_rw",
-              "true", "ReadWriteBoolean", true, false, false);
-  verify_flag(flag_list[3], "com.android.aconfig.storage.test_2", "disabled_rw",
-              "false", "ReadWriteBoolean", true, false, false);
-  verify_flag(flag_list[4], "com.android.aconfig.storage.test_2", "enabled_fixed_ro",
-              "true", "FixedReadOnlyBoolean", false, false, false);
-  verify_flag(flag_list[5], "com.android.aconfig.storage.test_2", "enabled_ro",
-              "true", "ReadOnlyBoolean", false, false, false);
-  verify_flag(flag_list[6], "com.android.aconfig.storage.test_4", "enabled_fixed_ro",
-              "true", "FixedReadOnlyBoolean", false, false, false);
-  verify_flag(flag_list[7], "com.android.aconfig.storage.test_4", "enabled_rw",
-              "true", "ReadWriteBoolean", true, false, false);
+  verify_value_info(flag_list[0], "com.android.aconfig.storage.test_1", "disabled_rw",
+                    "false", "ReadWriteBoolean", true, false, false);
+  verify_value_info(flag_list[1], "com.android.aconfig.storage.test_1", "enabled_ro",
+                    "true", "ReadOnlyBoolean", false, false, false);
+  verify_value_info(flag_list[2], "com.android.aconfig.storage.test_1", "enabled_rw",
+                    "true", "ReadWriteBoolean", true, false, false);
+  verify_value_info(flag_list[3], "com.android.aconfig.storage.test_2", "disabled_rw",
+                    "false", "ReadWriteBoolean", true, false, false);
+  verify_value_info(flag_list[4], "com.android.aconfig.storage.test_2", "enabled_fixed_ro",
+                    "true", "FixedReadOnlyBoolean", false, false, false);
+  verify_value_info(flag_list[5], "com.android.aconfig.storage.test_2", "enabled_ro",
+                    "true", "ReadOnlyBoolean", false, false, false);
+  verify_value_info(flag_list[6], "com.android.aconfig.storage.test_4", "enabled_fixed_ro",
+                    "true", "FixedReadOnlyBoolean", false, false, false);
+  verify_value_info(flag_list[7], "com.android.aconfig.storage.test_4", "enabled_rw",
+                    "true", "ReadWriteBoolean", true, false, false);
 }
