@@ -36,3 +36,16 @@ rust_library {
     host_supported: true,
     defaults: ["libaconfig_device_paths.defaults"],
 }
+
+genrule {
+    name: "libaconfig_java_device_paths_src",
+    srcs: ["src/DevicePathsTemplate.java"],
+    out: ["DevicePaths.java"],
+    tool_files: ["partition_aconfig_flags_paths.txt"],
+    cmd: "sed -e '/TEMPLATE/{r$(location partition_aconfig_flags_paths.txt)' -e 'd}' $(in) > $(out)"
+}
+
+java_library {
+    name: "aconfig_device_paths_java",
+    srcs: [":libaconfig_java_device_paths_src"],
+}

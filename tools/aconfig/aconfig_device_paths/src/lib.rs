@@ -23,7 +23,7 @@ use std::fs;
 
 /// Determine all paths that contain an aconfig protobuf file.
 pub fn parsed_flags_proto_paths() -> Result<Vec<PathBuf>> {
-    let mut result: Vec<PathBuf> = include!("../partition_aconfig_flags_paths.txt")
+    let mut result: Vec<PathBuf> = [include_str!("../partition_aconfig_flags_paths.txt")]
         .map(|s| PathBuf::from(s.to_string()))
         .to_vec();
     for dir in fs::read_dir("/apex")? {
