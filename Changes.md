@@ -1,4 +1,58 @@
-# Build System Changes for Android.mk Writers
+# Build System Changes for Android.mk/Android.bp Writers
+
+## Soong genrules are now sandboxed
+
+Previously, soong genrules could access any files in the source tree, without specifying them as
+inputs. This makes them incorrect in incremental builds, and incompatible with RBE and Bazel.
+
+Now, genrules are sandboxed so they can only access their listed srcs. Modules denylisted in
+genrule/allowlists.go are exempt from this. You can also set `BUILD_BROKEN_GENRULE_SANDBOXING`
+in board config to disable this behavior.
+
+## Partitions are no longer affected by previous builds
+
+Partition builds used to include everything in their staging directories, and building an
+individual module will install it to the staging directory. Thus, previously, `m mymodule` followed
+by `m` would cause `mymodule` to be presinstalled on the device, even if it wasn't listed in
+`PRODUCT_PACKAGES`.
+
+This behavior has been changed, and now the partition images only include what they'd have if you
+did a clean build. This behavior can be disabled by setting the
+`BUILD_BROKEN_INCORRECT_PARTITION_IMAGES` environment variable or board config variable.
+
+Manually adding make rules that build to the staging directories without going through the make
+module system will not be compatible with this change. This includes many usages of
+`LOCAL_POST_INSTALL_CMD`.
+
+## Perform validation of Soong plugins
+
+Each Soong plugin will require manual work to migrate to Bazel. In order to
+minimize the manual work outside of build/soong, we are restricting plugins to
+those that exist today and those in vendor or hardware directories.
+
+If you need to extend the build system via a plugin, please reach out to the
+build team via email android-building@googlegroups.com (external) for any
+questions, or see [go/soong](http://go/soong) (internal).
+
+To omit the validation, `BUILD_BROKEN_PLUGIN_VALIDATION` expects a
+space-separated list of plugins to omit from the validation. This must be set
+within a product configuration .mk file, board config .mk file, or buildspec.mk.
+
+## Python 2 to 3 migration
+
+The path set when running builds now makes the `python` executable point to python 3,
+whereas on previous versions it pointed to python 2. If you still have python 2 scripts,
+you can change the shebang line to use `python2` explicitly. This only applies for
+scripts run directly from makefiles, or from soong genrules. This behavior can be
+temporarily overridden by setting the `BUILD_BROKEN_PYTHON_IS_PYTHON2` environment
+variable to `true`. It's only an environment variable and not a product config variable
+because product config sometimes calls python code.
+
+In addition, `python_*` soong modules no longer allow python 2. This can be temporarily
+overridden by setting the `BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES` product configuration
+variable to `true`.
+
+Python 2 is slated for complete removal in V.
 
 ## Stop referencing sysprop_library directly from cc modules
 
@@ -477,6 +531,24 @@ $(call dist-for-goals,foo,bar/baz)
 
 will copy `bar/baz` into `$DIST_DIR/baz` when `m foo dist` is run.
 
+#### FILE_NAME_TAG  {#FILE_NAME_TAG}
+
+To embed the `BUILD_NUMBER` (or for local builds, `eng.${USER}`), include
+`FILE_NAME_TAG_PLACEHOLDER` in the destination:
+
+``` make
+# you can use dist-for-goals-with-filenametag function
+$(call dist-for-goals-with-filenametag,foo,bar.zip)
+# or use FILE_NAME_TAG_PLACEHOLDER manually
+$(call dist-for-goals,foo,bar.zip:baz-FILE_NAME_TAG_PLACEHOLDER.zip)
+```
+
+Which will produce `$DIST_DIR/baz-1234567.zip` on build servers which set
+`BUILD_NUMBER=1234567`, or `$DIST_DIR/baz-eng.builder.zip` for local builds.
+
+If you just want to append `BUILD_NUMBER` at the end of basename, use
+`dist-for-goals-with-filenametag` instead of `dist-for-goals`.
+
 #### Renames during copy
 
 Instead of specifying just a file, a destination name can be specified,
@@ -818,7 +890,7 @@ for this option to exist.
 
 ### Stop using clang property
 
-Clang has been deleted from Soong. To fix any build errors, remove the clang
+The clang property has been deleted from Soong. To fix any build errors, remove the clang
 property from affected Android.bp files using bpmodify.
 
 

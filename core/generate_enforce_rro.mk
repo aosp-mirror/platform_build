@@ -1,6 +1,6 @@
 include $(CLEAR_VARS)
 
-enforce_rro_module := $(enforce_rro_source_module)__auto_generated_rro_$(enforce_rro_partition)
+enforce_rro_module := $(enforce_rro_source_module)__$(PRODUCT_NAME)__auto_generated_rro_$(enforce_rro_partition)
 LOCAL_PACKAGE_NAME := $(enforce_rro_module)
 
 intermediates := $(call intermediates-dir-for,APPS,$(LOCAL_PACKAGE_NAME),,COMMON)
@@ -38,7 +38,7 @@ endif
 
 LOCAL_FULL_MANIFEST_FILE := $(rro_android_manifest_file)
 
-LOCAL_AAPT_FLAGS += --auto-add-overlay
+LOCAL_AAPT_FLAGS += --auto-add-overlay --keep-raw-values
 LOCAL_RESOURCE_DIR := $(enforce_rro_source_overlays)
 
 ifeq (product,$(enforce_rro_partition))

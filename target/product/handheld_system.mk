@@ -27,6 +27,7 @@ $(call inherit-product-if-exists, external/google-fonts/cutive-mono/fonts.mk)
 $(call inherit-product-if-exists, external/google-fonts/source-sans-pro/fonts.mk)
 $(call inherit-product-if-exists, external/noto-fonts/fonts.mk)
 $(call inherit-product-if-exists, external/roboto-fonts/fonts.mk)
+$(call inherit-product-if-exists, external/roboto-flex-fonts/fonts.mk)
 $(call inherit-product-if-exists, external/hyphenation-patterns/patterns.mk)
 $(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
 $(call inherit-product-if-exists, frameworks/webview/chromium/chromium.mk)
@@ -42,6 +43,8 @@ PRODUCT_PACKAGES += \
     CameraExtensionsProxy \
     CaptivePortalLogin \
     CertInstaller \
+    CredentialManager \
+    DeviceAsWebcam \
     DocumentsUI \
     DownloadProviderUi \
     EasterEgg \
@@ -54,8 +57,8 @@ PRODUCT_PACKAGES += \
     MmsService \
     MtpService \
     MusicFX \
-    NfcNci \
     PacProcessor \
+    preinstalled-packages-platform-handheld-system.xml \
     PrintRecommendationService \
     PrintSpooler \
     ProxyHandler \
@@ -71,6 +74,7 @@ PRODUCT_PACKAGES += \
     VpnDialogs \
     vr \
 
+PRODUCT_PACKAGES += $(RELEASE_PACKAGE_VIRTUAL_CAMERA)
 
 PRODUCT_SYSTEM_SERVER_APPS += \
     FusedLocation \
@@ -78,8 +82,10 @@ PRODUCT_SYSTEM_SERVER_APPS += \
     KeyChain \
     Telecom \
 
+PRODUCT_PACKAGES += framework-audio_effects.xml
+
 PRODUCT_COPY_FILES += \
-    frameworks/av/media/libeffects/data/audio_effects.conf:system/etc/audio_effects.conf
+    frameworks/native/data/etc/android.software.window_magnification.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/android.software.window_magnification.xml \
 
 PRODUCT_VENDOR_PROPERTIES += \
     ro.carrier?=unknown \

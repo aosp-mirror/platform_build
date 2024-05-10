@@ -38,14 +38,6 @@ ifndef LOCAL_UNINSTALLABLE_MODULE
   endif
 endif
 
-# Don't install modules of current VNDK when it is told so
-ifeq ($(TARGET_SKIP_CURRENT_VNDK),true)
-  ifeq ($(LOCAL_SOONG_VNDK_VERSION),$(PLATFORM_VNDK_VERSION))
-    LOCAL_UNINSTALLABLE_MODULE := true
-  endif
-endif
-
-
 # Use the Soong output as the checkbuild target instead of LOCAL_BUILT_MODULE
 # to avoid checkbuilds making an extra copy of every module.
 LOCAL_CHECKED_MODULE := $(LOCAL_PREBUILT_MODULE_FILE)
@@ -99,7 +91,7 @@ ifneq ($(filter STATIC_LIBRARIES SHARED_LIBRARIES RLIB_LIBRARIES DYLIB_LIBRARIES
   include $(BUILD_SYSTEM)/link_type.mk
 endif
 
-ifdef LOCAL_USE_VNDK
+ifeq ($(call module-in-vendor-or-product),true)
   ifneq ($(LOCAL_VNDK_DEPEND_ON_CORE_VARIANT),true)
     name_without_suffix := $(patsubst %.vendor,%,$(LOCAL_MODULE))
     ifneq ($(name_without_suffix),$(LOCAL_MODULE))
@@ -128,9 +120,14 @@ endif
 ifdef LOCAL_INSTALLED_MODULE
   ifdef LOCAL_SHARED_LIBRARIES
     my_shared_libraries := $(LOCAL_SHARED_LIBRARIES)
-    ifdef LOCAL_USE_VNDK
-      my_shared_libraries := $(foreach l,$(my_shared_libraries),\
-        $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+    ifeq ($(call module-in-vendor-or-product),true)
+      ifdef LOCAL_IN_PRODUCT
+        my_shared_libraries := $(foreach l,$(my_shared_libraries),\
+          $(if $(SPLIT_PRODUCT.SHARED_LIBRARIES.$(l)),$(l).product,$(l)))
+      else
+        my_shared_libraries := $(foreach l,$(my_shared_libraries),\
+          $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+      endif
     endif
     $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += \
       $(my_register_name):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(my_shared_libraries))
@@ -138,9 +135,14 @@ ifdef LOCAL_INSTALLED_MODULE
   ifdef LOCAL_DYLIB_LIBRARIES
     my_dylibs := $(LOCAL_DYLIB_LIBRARIES)
     # Treat these as shared library dependencies for installation purposes.
-    ifdef LOCAL_USE_VNDK
-      my_dylibs := $(foreach l,$(my_dylibs),\
-        $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+    ifeq ($(call module-in-vendor-or-product),true)
+      ifdef LOCAL_IN_PRODUCT
+        my_dylibs := $(foreach l,$(my_dylibs),\
+          $(if $(SPLIT_PRODUCT.SHARED_LIBRARIES.$(l)),$(l).product,$(l)))
+      else
+        my_dylibs := $(foreach l,$(my_dylibs),\
+          $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+      endif
     endif
     $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += \
       $(my_register_name):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(my_dylibs))
@@ -250,30 +252,6 @@ $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := \
 endif
 
 $(LOCAL_BUILT_MODULE): $(LOCAL_ADDITIONAL_DEPENDENCIES)
-
-# We don't care about installed rlib/static libraries, since the libraries have
-# already been linked into the module at that point. We do, however, care
-# about the NOTICE files for any rlib/static libraries that we use.
-# (see notice_files.mk)
-#
-# Filter out some NDK libraries that are not being exported.
-my_static_libraries := \
-    $(filter-out ndk_libc++_static ndk_libc++abi ndk_libandroid_support ndk_libunwind \
-      ndk_libc++_static.native_bridge ndk_libc++abi.native_bridge \
-      ndk_libandroid_support.native_bridge ndk_libunwind.native_bridge, \
-      $(LOCAL_STATIC_LIBRARIES))
-installed_static_library_notice_file_targets := \
-    $(foreach lib,$(my_static_libraries) $(LOCAL_WHOLE_STATIC_LIBRARIES), \
-      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-STATIC_LIBRARIES-$(lib))
-installed_static_library_notice_file_targets += \
-    $(foreach lib,$(LOCAL_RLIB_LIBRARIES), \
-      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-RLIB_LIBRARIES-$(lib))
-installed_static_library_notice_file_targets += \
-    $(foreach lib,$(LOCAL_PROC_MACRO_LIBRARIES), \
-      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-PROC_MACRO_LIBRARIES-$(lib))
-
-$(notice_target): | $(installed_static_library_notice_file_targets)
-$(LOCAL_INSTALLED_MODULE): | $(notice_target)
 
 # Reinstall shared library dependencies of fuzz targets to /data/fuzz/ (for
 # target) or /data/ (for host).

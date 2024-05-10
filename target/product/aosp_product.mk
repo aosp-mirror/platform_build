@@ -29,10 +29,11 @@ PRODUCT_PRODUCT_PROPERTIES += \
 
 # More AOSP packages
 PRODUCT_PACKAGES += \
+    initial-package-stopped-states-aosp.xml \
     messaging \
     PhotoTable \
     preinstalled-packages-platform-aosp-product.xml \
-    WallpaperPicker \
+    ThemePicker \
 
 # Telephony:
 #   Provide a APN configuration to GSI product

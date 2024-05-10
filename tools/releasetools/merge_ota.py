@@ -30,10 +30,12 @@ from update_payload import Payload
 
 from payload_signer import PayloadSigner
 from ota_utils import PayloadGenerator, METADATA_PROTO_NAME, FinalizeMetadata
+from ota_signing_utils import AddSigningArgumentParse
 
 logger = logging.getLogger(__name__)
 
 CARE_MAP_ENTRY = "care_map.pb"
+APEX_INFO_ENTRY = "apex_info.pb"
 
 
 def WriteDataBlob(payload: Payload, outfp: BinaryIO, read_size=1024*64):
@@ -124,7 +126,7 @@ def MergeManifests(payloads: List[Payload]) -> DeltaArchiveManifest:
     ExtendPartitionUpdates(output_manifest.partitions, manifest.partitions)
     try:
       MergeDynamicPartitionMetadata(
-        output_manifest.dynamic_partition_metadata, manifest.dynamic_partition_metadata)
+          output_manifest.dynamic_partition_metadata, manifest.dynamic_partition_metadata)
     except DuplicatePartitionError:
       logger.error(
           "OTA %s has duplicate partition with some of the previous OTAs", payload.name)
@@ -188,21 +190,34 @@ def CheckDuplicatePartitions(payloads: List[Payload]):
               f"OTA {partition_to_ota[part].name} and {payload.name} have duplicating partition {part}")
         partition_to_ota[part] = payload
 
+
+def ApexInfo(file_paths):
+  if len(file_paths) > 1:
+    logger.info("More than one target file specified, will ignore "
+                "apex_info.pb (if any)")
+    return None
+  with zipfile.ZipFile(file_paths[0], "r", allowZip64=True) as zfp:
+    if APEX_INFO_ENTRY in zfp.namelist():
+      apex_info_bytes = zfp.read(APEX_INFO_ENTRY)
+      return apex_info_bytes
+  return None
+
+
 def main(argv):
   parser = argparse.ArgumentParser(description='Merge multiple partial OTAs')
   parser.add_argument('packages', type=str, nargs='+',
                       help='Paths to OTA packages to merge')
-  parser.add_argument('--package_key', type=str,
-                      help='Paths to private key for signing payload')
-  parser.add_argument('--search_path', type=str,
-                      help='Search path for framework/signapk.jar')
   parser.add_argument('--output', type=str,
                       help='Paths to output merged ota', required=True)
   parser.add_argument('--metadata_ota', type=str,
                       help='Output zip will use build metadata from this OTA package, if unspecified, use the last OTA package in merge list')
-  parser.add_argument('--private_key_suffix', type=str,
-                      help='Suffix to be appended to package_key path', default=".pk8")
-  parser.add_argument('-v', action="store_true", help="Enable verbose logging", dest="verbose")
+  parser.add_argument('-v', action="store_true",
+                      help="Enable verbose logging", dest="verbose")
+  AddSigningArgumentParse(parser)
+
+  parser.epilog = ('This tool can also be used to resign a regular OTA. For a single regular OTA, '
+                   'apex_info.pb will be written to output. When merging multiple OTAs, '
+                   'apex_info.pb will not be written.')
   args = parser.parse_args(argv[1:])
   file_paths = args.packages
 
@@ -225,6 +240,11 @@ def main(argv):
 
   merged_manifest = MergeManifests(payloads)
 
+  # Get signing keys
+  key_passwords = common.GetKeyPasswords([args.package_key])
+
+  apex_info_bytes = ApexInfo(file_paths)
+
   with tempfile.NamedTemporaryFile() as unsigned_payload:
     WriteHeaderAndManifest(merged_manifest, unsigned_payload)
     ConcatBlobs(payloads, unsigned_payload)
@@ -236,25 +256,34 @@ def main(argv):
 
     if args.package_key:
       logger.info("Signing payload...")
-      signer = PayloadSigner(args.package_key, args.private_key_suffix)
+      # TODO: remove OPTIONS when no longer used as fallback in payload_signer
+      common.OPTIONS.payload_signer_args = None
+      common.OPTIONS.payload_signer_maximum_signature_size = None
+      signer = PayloadSigner(args.package_key, args.private_key_suffix,
+                             key_passwords[args.package_key],
+                             payload_signer=args.payload_signer,
+                             payload_signer_args=args.payload_signer_args,
+                             payload_signer_maximum_signature_size=args.payload_signer_maximum_signature_size)
       generator.payload_file = unsigned_payload.name
       generator.Sign(signer)
 
     logger.info("Payload size: %d", os.path.getsize(generator.payload_file))
 
     logger.info("Writing to %s", args.output)
+
     key_passwords = common.GetKeyPasswords([args.package_key])
     with tempfile.NamedTemporaryFile(prefix="signed_ota", suffix=".zip") as signed_ota:
       with zipfile.ZipFile(signed_ota, "w") as zfp:
         generator.WriteToZip(zfp)
         care_map_bytes = MergeCareMap(args.packages)
         if care_map_bytes:
-          zfp.writestr(CARE_MAP_ENTRY, care_map_bytes)
+          common.ZipWriteStr(zfp, CARE_MAP_ENTRY, care_map_bytes)
+        if apex_info_bytes:
+          logger.info("Writing %s", APEX_INFO_ENTRY)
+          common.ZipWriteStr(zfp, APEX_INFO_ENTRY, apex_info_bytes)
       AddOtaMetadata(signed_ota.name, metadata_ota,
                      args.output, args.package_key, key_passwords[args.package_key])
   return 0
-
-
 
 
 if __name__ == '__main__':

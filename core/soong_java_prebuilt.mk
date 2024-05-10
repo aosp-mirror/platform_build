@@ -62,31 +62,24 @@ ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
 endif
 
 ifdef LOCAL_SOONG_PROGUARD_DICT
-  my_proguard_dictionary_directory := $(local-proguard-dictionary-directory)
-  my_proguard_dictionary_mapping_directory := $(local-proguard-dictionary-mapping-directory)
-  $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_DICT),\
-    $(intermediates.COMMON)/proguard_dictionary))
   $(eval $(call copy-r8-dictionary-file-with-mapping,\
     $(LOCAL_SOONG_PROGUARD_DICT),\
-    $(my_proguard_dictionary_directory)/proguard_dictionary,\
-    $(my_proguard_dictionary_mapping_directory)/proguard_dictionary.textproto))
-  $(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),\
-    $(my_proguard_dictionary_directory)/classes.jar))
-  $(call add-dependency,$(common_javalib.jar),\
-    $(intermediates.COMMON)/proguard_dictionary)
-  $(call add-dependency,$(common_javalib.jar),\
-    $(my_proguard_dictionary_directory)/proguard_dictionary)
-  $(call add-dependency,$(common_javalib.jar),\
-    $(my_proguard_dictionary_mapping_directory)/proguard_dictionary.textproto)
-  $(call add-dependency,$(common_javalib.jar),\
-    $(my_proguard_dictionary_directory)/classes.jar)
+    $(intermediates.COMMON)/proguard_dictionary,\
+    $(intermediates.COMMON)/proguard_dictionary.textproto))
+
+  ALL_MODULES.$(my_register_name).PROGUARD_DICTIONARY_FILES := \
+    $(intermediates.COMMON)/proguard_dictionary \
+    $(LOCAL_SOONG_CLASSES_JAR)
+  ALL_MODULES.$(my_register_name).PROGUARD_DICTIONARY_SOONG_ZIP_ARGUMENTS := \
+    -e out/target/common/obj/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates/proguard_dictionary \
+    -f $(intermediates.COMMON)/proguard_dictionary \
+    -e out/target/common/obj/$(LOCAL_MODULE_CLASS)/$(LOCAL_MODULE)_intermediates/classes.jar \
+    -f $(LOCAL_SOONG_CLASSES_JAR)
+  ALL_MODULES.$(my_register_name).PROGUARD_DICTIONARY_MAPPING := $(intermediates.COMMON)/proguard_dictionary.textproto
 endif
 
 ifdef LOCAL_SOONG_PROGUARD_USAGE_ZIP
-  $(eval $(call copy-one-file,$(LOCAL_SOONG_PROGUARD_USAGE_ZIP),\
-    $(call local-packaging-dir,proguard_usage)/proguard_usage.zip))
-  $(call add-dependency,$(common_javalib.jar),\
-    $(call local-packaging-dir,proguard_usage)/proguard_usage.zip)
+  ALL_MODULES.$(my_register_name).PROGUARD_USAGE_ZIP := $(LOCAL_SOONG_PROGUARD_USAGE_ZIP)
 endif
 
 
@@ -99,16 +92,12 @@ ifdef LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 
   $(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_res_package))
 
-  my_proguard_flags := $(intermediates.COMMON)/export_proguard_flags
-  $(my_proguard_flags): $(LOCAL_SOONG_EXPORT_PROGUARD_FLAGS)
-	@echo "Export proguard flags: $@"
-	rm -f $@
-	touch $@
-	for f in $+; do \
-		echo -e "\n# including $$f" >>$@; \
-		cat $$f >>$@; \
-	done
+  my_transitive_res_packages := $(intermediates.COMMON)/transitive-res-packages
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_TRANSITIVE_RES_PACKAGES),$(my_transitive_res_packages)))
+  $(call add-dependency,$(my_res_package),$(my_transitive_res_packages))
 
+  my_proguard_flags := $(intermediates.COMMON)/export_proguard_flags
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_EXPORT_PROGUARD_FLAGS),$(my_proguard_flags)))
   $(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_proguard_flags))
 
   my_static_library_extra_packages := $(intermediates.COMMON)/extra_packages

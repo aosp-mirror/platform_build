@@ -1,0 +1,33 @@
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+rust_defaults {
+    name: "aflags.defaults",
+    edition: "2021",
+    clippy_lints: "android",
+    lints: "android",
+    srcs: ["src/main.rs"],
+    rustlibs: [
+        "libaconfig_device_paths",
+        "libaconfig_protos",
+        "libaconfig_storage_read_api",
+        "libaconfig_storage_file",
+        "libanyhow",
+        "libclap",
+        "libnix",
+        "libprotobuf",
+        "libregex",
+    ],
+}
+
+rust_binary {
+    name: "aflags",
+    defaults: ["aflags.defaults"],
+}
+
+rust_test_host {
+    name: "aflags.test",
+    defaults: ["aflags.defaults"],
+    test_suites: ["general-tests"],
+}

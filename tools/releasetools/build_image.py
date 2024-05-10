@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2011 The Android Open Source Project
 #
@@ -22,24 +22,35 @@ Usage:  build_image input_directory properties_file output_image \\
             target_output_directory
 """
 
-from __future__ import print_function
+import datetime
 
+import argparse
 import glob
 import logging
 import os
 import os.path
 import re
+import shlex
 import shutil
 import sys
+import uuid
+import tempfile
 
 import common
 import verity_utils
+
 
 logger = logging.getLogger(__name__)
 
 OPTIONS = common.OPTIONS
 BLOCK_SIZE = common.BLOCK_SIZE
 BYTES_IN_MB = 1024 * 1024
+
+# Use a fixed timestamp (01/01/2009 00:00:00 UTC) for files when packaging
+# images. (b/24377993, b/80600931)
+FIXED_FILE_TIMESTAMP = int((
+    datetime.datetime(2009, 1, 1, 0, 0, 0, 0, None) -
+    datetime.datetime.utcfromtimestamp(0)).total_seconds())
 
 
 class BuildImageError(Exception):
@@ -249,7 +260,7 @@ def CalculateSizeAndReserved(prop_dict, size):
   if fs_type.startswith("ext4") and partition_headroom > reserved_size:
     reserved_size = partition_headroom
 
-  return size + reserved_size
+  return int(size * 1.1) + reserved_size
 
 
 def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
@@ -283,7 +294,7 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
     build_command = [prop_dict["ext_mkuserimg"]]
     if "extfs_sparse_flag" in prop_dict and not disable_sparse:
       build_command.append(prop_dict["extfs_sparse_flag"])
-      run_e2fsck = RunE2fsck
+      run_fsck = RunE2fsck
     build_command.extend([in_dir, out_file, fs_type,
                           prop_dict["mount_point"]])
     build_command.append(prop_dict["image_size"])
@@ -341,6 +352,8 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       compress_hints = prop_dict["erofs_compress_hints"]
     if compress_hints:
       build_command.extend(["--compress-hints", compress_hints])
+
+    build_command.extend(["-b", prop_dict.get("erofs_blocksize", "4096")])
 
     build_command.extend(["--mount-point", prop_dict["mount_point"]])
     if target_out:
@@ -424,6 +437,8 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
         sldc_flags = sldc_flags_str.split()
         build_command.append(str(len(sldc_flags)))
         build_command.extend(sldc_flags)
+    f2fs_blocksize = prop_dict.get("f2fs_blocksize", "4096")
+    build_command.extend(["-b", f2fs_blocksize])
   else:
     raise BuildImageError(
         "Error: unknown filesystem type: {}".format(fs_type))
@@ -487,6 +502,20 @@ def RunErofsFsck(out_file):
     raise
 
 
+def SetUUIDIfNotExist(image_props):
+
+  # Use repeatable ext4 FS UUID and hash_seed UUID (based on partition name and
+  # build fingerprint). Also use the legacy build id, because the vbmeta digest
+  # isn't available at this point.
+  what = image_props["mount_point"]
+  fingerprint = image_props.get("fingerprint", "")
+  uuid_seed = what + "-" + fingerprint
+  logger.info("Using fingerprint %s for partition %s", fingerprint, what)
+  image_props["uuid"] = str(uuid.uuid5(uuid.NAMESPACE_URL, uuid_seed))
+  hash_seed = "hash_seed-" + uuid_seed
+  image_props["hash_seed"] = str(uuid.uuid5(uuid.NAMESPACE_URL, hash_seed))
+
+
 def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   """Builds an image for the files under in_dir and writes it to out_file.
 
@@ -504,6 +533,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     BuildImageError: On build image failures.
   """
   in_dir, fs_config = SetUpInDirAndFsConfig(in_dir, prop_dict)
+  SetUUIDIfNotExist(prop_dict)
 
   build_command = []
   fs_type = prop_dict.get("fs_type", "")
@@ -606,7 +636,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       size = verity_image_builder.CalculateDynamicPartitionSize(size)
     prop_dict["partition_size"] = str(size)
     logger.info(
-        "Allocating %d MB for %s.", size // BYTES_IN_MB, out_file)
+        "Allocating %d MB for %s", size // BYTES_IN_MB, out_file)
 
   prop_dict["image_size"] = prop_dict["partition_size"]
 
@@ -635,6 +665,19 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     verity_image_builder.Build(out_file)
 
 
+def TryParseFingerprint(glob_dict: dict):
+  for (key, val) in glob_dict.items():
+    if not key.endswith("_add_hashtree_footer_args") and not key.endswith("_add_hash_footer_args"):
+      continue
+    for arg in shlex.split(val):
+      m = re.match(r"^com\.android\.build\.\w+\.fingerprint:", arg)
+      if m is None:
+        continue
+      fingerprint = arg[len(m.group()):]
+      glob_dict["fingerprint"] = fingerprint
+      return
+
+
 def ImagePropFromGlobalDict(glob_dict, mount_point):
   """Build an image property dictionary from the global dictionary.
 
@@ -643,7 +686,11 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     mount_point: such as "system", "data" etc.
   """
   d = {}
+  TryParseFingerprint(glob_dict)
 
+  # Set fixed timestamp for building the OTA package.
+  if "use_fixed_timestamp" in glob_dict:
+    d["timestamp"] = FIXED_FILE_TIMESTAMP
   if "build.prop" in glob_dict:
     timestamp = glob_dict["build.prop"].GetProp("ro.build.date.utc")
     if timestamp:
@@ -668,6 +715,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "erofs_default_compressor",
       "erofs_default_compress_hints",
       "erofs_pcluster_size",
+      "erofs_blocksize",
       "erofs_share_dup_blocks",
       "erofs_sparse_flag",
       "erofs_use_legacy_compression",
@@ -675,11 +723,13 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "system_f2fs_compress",
       "system_f2fs_sldc_flags",
       "f2fs_sparse_flag",
+      "f2fs_blocksize",
       "skip_fsck",
       "ext_mkuserimg",
       "avb_enable",
       "avb_avbtool",
       "use_dynamic_partition_size",
+      "fingerprint",
   )
   for p in common_props:
     copy_prop(p, p)
@@ -718,10 +768,12 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       (True, "{}_erofs_compressor", "erofs_compressor"),
       (True, "{}_erofs_compress_hints", "erofs_compress_hints"),
       (True, "{}_erofs_pcluster_size", "erofs_pcluster_size"),
+      (True, "{}_erofs_blocksize", "erofs_blocksize"),
       (True, "{}_erofs_share_dup_blocks", "erofs_share_dup_blocks"),
       (True, "{}_extfs_inode_count", "extfs_inode_count"),
       (True, "{}_f2fs_compress", "f2fs_compress"),
       (True, "{}_f2fs_sldc_flags", "f2fs_sldc_flags"),
+      (True, "{}_f2fs_blocksize", "f2fs_block_size"),
       (True, "{}_reserved_size", "partition_reserved_size"),
       (True, "{}_squashfs_block_size", "squashfs_block_size"),
       (True, "{}_squashfs_compressor", "squashfs_compressor"),
@@ -769,7 +821,6 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   d["mount_point"] = mount_point
   if mount_point == "system":
     copy_prop("system_headroom", "partition_headroom")
-    copy_prop("system_root_image", "system_root_image")
     copy_prop("root_dir", "root_dir")
     copy_prop("root_fs_config", "root_fs_config")
   elif mount_point == "data":
@@ -870,34 +921,79 @@ def BuildVBMeta(in_dir, glob_dict, output_path):
           if item not in vbmeta_vendor.split()]
       vbmeta_partitions.append("vbmeta_vendor")
 
-
   partitions = {part: os.path.join(in_dir, part + ".img")
                 for part in vbmeta_partitions}
-  partitions = {part:path for (part, path) in partitions.items() if os.path.exists(path)}
+  partitions = {part: path for (part, path) in partitions.items() if os.path.exists(path)}
   common.BuildVBMeta(output_path, partitions, name, vbmeta_partitions)
 
 
-def main(argv):
-  args = common.ParseOptions(argv, __doc__)
+def BuildImageOrVBMeta(input_directory, target_out, glob_dict, image_properties, out_file):
+  try:
+    if "vbmeta" in os.path.basename(out_file):
+      OPTIONS.info_dict = glob_dict
+      BuildVBMeta(input_directory, glob_dict, out_file)
+    else:
+      BuildImage(input_directory, image_properties, out_file, target_out)
+  except:
+    logger.error("Failed to build %s from %s", out_file, input_directory)
+    raise
 
-  if len(args) != 4:
-    print(__doc__)
-    sys.exit(1)
+
+def CopyInputDirectory(src, dst, filter_file):
+  with open(filter_file, 'r') as f:
+    for line in f:
+      line = line.strip()
+      if not line:
+        return
+      if line != os.path.normpath(line):
+        sys.exit(f"{line}: not normalized")
+      if line.startswith("../") or line.startswith('/'):
+        sys.exit(f"{line}: escapes staging directory by starting with ../ or /")
+      full_src = os.path.join(src, line)
+      full_dst = os.path.join(dst, line)
+      if os.path.isdir(full_src):
+        os.makedirs(full_dst, exist_ok=True)
+      else:
+        os.makedirs(os.path.dirname(full_dst), exist_ok=True)
+        os.link(full_src, full_dst, follow_symlinks=False)
+
+
+def main(argv):
+  parser = argparse.ArgumentParser(
+    description="Builds output_image from the given input_directory and properties_file, and "
+    "writes the image to target_output_directory.")
+  parser.add_argument("--input-directory-filter-file",
+    help="the path to a file that contains a list of all files in the input_directory. If this "
+    "option is provided, all files under the input_directory that are not listed in this file will "
+    "be deleted before building the image. This is to work around the fact that building a module "
+    "will install in by default, so there could be files in the input_directory that are not "
+    "actually supposed to be part of the partition. The paths in this file must be relative to "
+    "input_directory.")
+  parser.add_argument("input_directory",
+    help="the staging directory to be converted to an image file")
+  parser.add_argument("properties_file",
+    help="a file containing the 'global dictionary' of properties that affect how the image is "
+    "built")
+  parser.add_argument("out_file",
+    help="the output file to write")
+  parser.add_argument("target_out",
+    help="the path to $(TARGET_OUT). Certain tools will use this to look through multiple staging "
+    "directories for fs config files.")
+  parser.add_argument("-v", action="store_true",
+                      help="Enable verbose logging", dest="verbose")
+  args = parser.parse_args()
+  if args.verbose:
+    OPTIONS.verbose = True
 
   common.InitLogging()
 
-  in_dir = args[0]
-  glob_dict_file = args[1]
-  out_file = args[2]
-  target_out = args[3]
-
-  glob_dict = LoadGlobalDict(glob_dict_file)
+  glob_dict = LoadGlobalDict(args.properties_file)
   if "mount_point" in glob_dict:
     # The caller knows the mount point and provides a dictionary needed by
     # BuildImage().
     image_properties = glob_dict
   else:
-    image_filename = os.path.basename(out_file)
+    image_filename = os.path.basename(args.out_file)
     mount_point = ""
     if image_filename == "system.img":
       mount_point = "system"
@@ -932,15 +1028,12 @@ def main(argv):
     if "vbmeta" != mount_point:
       image_properties = ImagePropFromGlobalDict(glob_dict, mount_point)
 
-  try:
-    if "vbmeta" in os.path.basename(out_file):
-      OPTIONS.info_dict = glob_dict
-      BuildVBMeta(in_dir, glob_dict, out_file)
-    else:
-      BuildImage(in_dir, image_properties, out_file, target_out)
-  except:
-    logger.error("Failed to build %s from %s", out_file, in_dir)
-    raise
+  if args.input_directory_filter_file and not os.environ.get("BUILD_BROKEN_INCORRECT_PARTITION_IMAGES"):
+    with tempfile.TemporaryDirectory(dir=os.path.dirname(args.input_directory)) as new_input_directory:
+      CopyInputDirectory(args.input_directory, new_input_directory, args.input_directory_filter_file)
+      BuildImageOrVBMeta(new_input_directory, args.target_out, glob_dict, image_properties, args.out_file)
+  else:
+    BuildImageOrVBMeta(args.input_directory, args.target_out, glob_dict, image_properties, args.out_file)
 
 
 if __name__ == '__main__':

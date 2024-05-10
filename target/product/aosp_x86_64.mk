@@ -56,15 +56,17 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_product.mk)
 #
 # All components inherited here go to vendor image
 #
-$(call inherit-product-if-exists, device/generic/goldfish/x86_64-vendor.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86_64/device.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/non_ab_device.mk)
+AB_OTA_UPDATER := true
+AB_OTA_PARTITIONS ?= system
 
 #
 # Special settings for GSI releasing
 #
 ifeq (aosp_x86_64,$(TARGET_PRODUCT))
+# Build modules from source if this has not been pre-configured
+MODULE_BUILD_FROM_SOURCE ?= true
+
 $(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_release.mk)
 endif
 
@@ -73,3 +75,5 @@ PRODUCT_NAME := aosp_x86_64
 PRODUCT_DEVICE := generic_x86_64
 PRODUCT_BRAND := Android
 PRODUCT_MODEL := AOSP on x86_64
+
+PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO := true

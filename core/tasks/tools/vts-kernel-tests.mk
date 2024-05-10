@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
--include external/linux-kselftest/android/kselftest_test_list.mk
 -include external/ltp/android/ltp_package_list.mk
 
 include $(BUILD_SYSTEM)/tasks/tools/vts_package_utils.mk
@@ -23,7 +22,3 @@ kernel_ltp_vts_out := $(HOST_OUT)/$(test_suite_name)/android-$(test_suite_name)/
 kernel_ltp_modules := \
     ltp \
     $(ltp_packages)
-
-kernel_kselftest_host_out := $(HOST_OUT_TESTCASES)/vts_kernel_kselftest_tests
-kernel_kselftest_vts_out := $(HOST_OUT)/$(test_suite_name)/android-$(test_suite_name)/testcases/vts_kernel_kselftest_tests
-kernel_kselftest_modules := $(kselftest_modules)

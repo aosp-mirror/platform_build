@@ -1,0 +1,48 @@
+flag_value {
+    package: "com.android.aconfig.test"
+    name: "disabled_ro"
+    state: DISABLED
+    permission: READ_ONLY
+}
+flag_value {
+    package: "com.android.aconfig.test"
+    name: "enabled_ro"
+    state: DISABLED
+    permission: READ_WRITE
+}
+flag_value {
+    package: "com.android.aconfig.test"
+    name: "enabled_rw"
+    state: ENABLED
+    permission: READ_WRITE
+}
+flag_value {
+    package: "com.android.aconfig.test"
+    name: "disabled_rw_in_other_namespace"
+    state: DISABLED
+    permission: READ_WRITE
+}
+flag_value {
+    package: "com.android.aconfig.test"
+    name: "enabled_fixed_ro"
+    state: ENABLED
+    permission: READ_ONLY
+}
+flag_value {
+    package: "com.android.aconfig.test"
+    name: "enabled_ro_exported"
+    state: ENABLED
+    permission: READ_ONLY
+}
+flag_value {
+    package: "com.android.aconfig.test"
+    name: "disabled_rw_exported"
+    state: DISABLED
+    permission: READ_WRITE
+}
+flag_value {
+    package: "com.android.aconfig.test"
+    name: "enabled_fixed_ro_exported"
+    state: ENABLED
+    permission: READ_ONLY
+}

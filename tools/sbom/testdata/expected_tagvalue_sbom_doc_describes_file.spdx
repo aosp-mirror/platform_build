@@ -1,0 +1,70 @@
+SPDXVersion: SPDX-2.3
+DataLicense: CC0-1.0
+SPDXID: SPDXRef-DOCUMENT
+DocumentName: test doc
+DocumentNamespace: http://www.google.com/sbom/spdx/android
+Creator: Organization: Google
+Created: 2023-03-31T22:17:58Z
+ExternalDocumentRef: DocumentRef-external_doc_ref external_doc_uri SHA1: 1234567890
+
+FileName: file4.a
+SPDXID: SPDXRef-file4
+FileChecksum: SHA1: 44444
+
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-file4
+
+PackageName: PRODUCT
+SPDXID: SPDXRef-PRODUCT
+PackageDownloadLocation: NONE
+FilesAnalyzed: true
+PackageVersion: build_finger_print
+PackageSupplier: Organization: Google
+PackageVerificationCode: 123456
+
+FileName: /bin/file1
+SPDXID: SPDXRef-file1
+FileChecksum: SHA1: 11111
+
+FileName: /bin/file2
+SPDXID: SPDXRef-file2
+FileChecksum: SHA1: 22222
+
+FileName: /bin/file3
+SPDXID: SPDXRef-file3
+FileChecksum: SHA1: 33333
+
+PackageName: PLATFORM
+SPDXID: SPDXRef-PLATFORM
+PackageDownloadLocation: NONE
+FilesAnalyzed: false
+PackageVersion: build_finger_print
+PackageSupplier: Organization: Google
+
+PackageName: Prebuilt package1
+SPDXID: SPDXRef-PREBUILT-package1
+PackageDownloadLocation: NONE
+FilesAnalyzed: false
+PackageVersion: build_finger_print
+PackageSupplier: Organization: Google
+
+PackageName: Source package1
+SPDXID: SPDXRef-SOURCE-package1
+PackageDownloadLocation: NONE
+FilesAnalyzed: false
+PackageVersion: build_finger_print
+PackageSupplier: Organization: Google
+ExternalRef: SECURITY cpe22Type cpe:/a:jsoncpp_project:jsoncpp:1.9.4
+
+PackageName: Upstream package1
+SPDXID: SPDXRef-UPSTREAM-package1
+PackageDownloadLocation: NOASSERTION
+FilesAnalyzed: false
+PackageVersion: 1.1
+PackageSupplier: Organization: upstream
+
+Relationship: SPDXRef-SOURCE-package1 VARIANT_OF SPDXRef-UPSTREAM-package1
+
+Relationship: SPDXRef-file1 GENERATED_FROM SPDXRef-PLATFORM
+Relationship: SPDXRef-file2 GENERATED_FROM SPDXRef-PREBUILT-package1
+Relationship: SPDXRef-file3 GENERATED_FROM SPDXRef-SOURCE-package1
+Relationship: SPDXRef-file1 STATIC_LINK SPDXRef-file4

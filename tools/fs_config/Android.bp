@@ -35,7 +35,6 @@ cc_binary_host {
     srcs: ["fs_config.c"],
     shared_libs: [
         "libcutils",
-        "libselinux",
     ],
     cflags: ["-Werror"],
 }
@@ -259,3 +258,173 @@ prebuilt_etc {
     system_ext_specific: true,
     src: ":group_gen_system_ext",
 }
+
+fs_config_cmd = "$(location fs_config_generator) fsconfig " +
+    "--aid-header $(location :android_filesystem_config_header) " +
+    "--capability-header $(location :linux_capability_header) " +
+    "--out_file $(out) "
+fs_config_cmd_dirs = fs_config_cmd + "--dirs "
+fs_config_cmd_files = fs_config_cmd + "--files "
+
+genrule_defaults {
+    name: "fs_config_defaults",
+    tools: ["fs_config_generator"],
+    srcs: [
+        ":android_filesystem_config_header",
+        ":linux_capability_header",
+        ":target_fs_config_gen",
+    ],
+    out: ["out"],
+}
+
+genrule {
+    name: "fs_config_dirs_system_gen",
+    defaults: ["fs_config_defaults"],
+    cmd: fs_config_cmd_dirs +
+        "--partition system " +
+        "--all-partitions vendor,oem,odm,vendor_dlkm,odm_dlkm,system_dlkm " +
+        "$(locations :target_fs_config_gen)",
+}
+
+prebuilt_etc {
+    name: "fs_config_dirs_system",
+    filename: "fs_config_dirs",
+    src: ":fs_config_dirs_system_gen",
+}
+
+genrule {
+    name: "fs_config_files_system_gen",
+    defaults: ["fs_config_defaults"],
+    cmd: fs_config_cmd_files +
+        "--partition system " +
+        "--all-partitions vendor,oem,odm,vendor_dlkm,odm_dlkm,system_dlkm " +
+        "$(locations :target_fs_config_gen)",
+}
+
+prebuilt_etc {
+    name: "fs_config_files_system",
+    filename: "fs_config_files",
+    src: ":fs_config_files_system_gen",
+}
+
+genrule {
+    name: "fs_config_dirs_system_ext_gen",
+    defaults: ["fs_config_defaults"],
+    cmd: fs_config_cmd_dirs +
+        "--partition system_ext " +
+        "$(locations :target_fs_config_gen)",
+}
+
+prebuilt_etc {
+    name: "fs_config_dirs_system_ext",
+    filename: "fs_config_dirs",
+    src: ":fs_config_dirs_system_ext_gen",
+    system_ext_specific: true,
+}
+
+genrule {
+    name: "fs_config_files_system_ext_gen",
+    defaults: ["fs_config_defaults"],
+    cmd: fs_config_cmd_files +
+        "--partition system_ext " +
+        "$(locations :target_fs_config_gen)",
+}
+
+prebuilt_etc {
+    name: "fs_config_files_system_ext",
+    filename: "fs_config_files",
+    src: ":fs_config_files_system_ext_gen",
+    system_ext_specific: true,
+}
+
+genrule {
+    name: "fs_config_dirs_product_gen",
+    defaults: ["fs_config_defaults"],
+    cmd: fs_config_cmd_dirs +
+        "--partition product " +
+        "$(locations :target_fs_config_gen)",
+}
+
+prebuilt_etc {
+    name: "fs_config_dirs_product",
+    filename: "fs_config_dirs",
+    src: ":fs_config_dirs_product_gen",
+    product_specific: true,
+}
+
+genrule {
+    name: "fs_config_files_product_gen",
+    defaults: ["fs_config_defaults"],
+    cmd: fs_config_cmd_files +
+        "--partition product " +
+        "$(locations :target_fs_config_gen)",
+}
+
+prebuilt_etc {
+    name: "fs_config_files_product",
+    filename: "fs_config_files",
+    src: ":fs_config_files_product_gen",
+    product_specific: true,
+}
+
+genrule {
+    name: "fs_config_dirs_vendor_gen",
+    defaults: ["fs_config_defaults"],
+    cmd: fs_config_cmd_dirs +
+        "--partition vendor " +
+        "$(locations :target_fs_config_gen)",
+}
+
+prebuilt_etc {
+    name: "fs_config_dirs_vendor",
+    filename: "fs_config_dirs",
+    src: ":fs_config_dirs_vendor_gen",
+    vendor: true,
+}
+
+genrule {
+    name: "fs_config_files_vendor_gen",
+    defaults: ["fs_config_defaults"],
+    cmd: fs_config_cmd_files +
+        "--partition vendor " +
+        "$(locations :target_fs_config_gen)",
+}
+
+prebuilt_etc {
+    name: "fs_config_files_vendor",
+    filename: "fs_config_files",
+    src: ":fs_config_files_vendor_gen",
+    vendor: true,
+}
+
+genrule {
+    name: "fs_config_dirs_odm_gen",
+    defaults: ["fs_config_defaults"],
+    cmd: fs_config_cmd_dirs +
+        "--partition odm " +
+        "$(locations :target_fs_config_gen)",
+}
+
+prebuilt_etc {
+    name: "fs_config_dirs_odm",
+    filename: "fs_config_dirs",
+    src: ":fs_config_dirs_odm_gen",
+    device_specific: true,
+}
+
+genrule {
+    name: "fs_config_files_odm_gen",
+    defaults: ["fs_config_defaults"],
+    cmd: fs_config_cmd_files +
+        "--partition odm " +
+        "$(locations :target_fs_config_gen)",
+}
+
+prebuilt_etc {
+    name: "fs_config_files_odm",
+    filename: "fs_config_files",
+    src: ":fs_config_files_odm_gen",
+    device_specific: true,
+}
+
+// TODO(jiyong): add fs_config for oem, system_dlkm, vendor_dlkm, odm_dlkm partitions

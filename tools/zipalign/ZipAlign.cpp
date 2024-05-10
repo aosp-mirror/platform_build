@@ -17,6 +17,7 @@
 #include "ZipFile.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -36,17 +37,14 @@ static bool isDirectory(ZipEntry* entry) {
 }
 
 static int getAlignment(bool pageAlignSharedLibs, int defaultAlignment,
-    ZipEntry* pEntry) {
-
-    static const int kPageAlignment = 4096;
-
+    ZipEntry* pEntry, int pageSize) {
     if (!pageAlignSharedLibs) {
         return defaultAlignment;
     }
 
     const char* ext = strrchr(pEntry->getFileName(), '.');
     if (ext && strcmp(ext, ".so") == 0) {
-        return kPageAlignment;
+        return pageSize;
     }
 
     return defaultAlignment;
@@ -56,7 +54,7 @@ static int getAlignment(bool pageAlignSharedLibs, int defaultAlignment,
  * Copy all entries from "pZin" to "pZout", aligning as needed.
  */
 static int copyAndAlign(ZipFile* pZin, ZipFile* pZout, int alignment, bool zopfli,
-    bool pageAlignSharedLibs)
+    bool pageAlignSharedLibs, int pageSize)
 {
     int numEntries = pZin->getNumEntries();
     ZipEntry* pEntry;
@@ -84,7 +82,8 @@ static int copyAndAlign(ZipFile* pZin, ZipFile* pZout, int alignment, bool zopfl
                 status = pZout->add(pZin, pEntry, padding, &pNewEntry);
             }
         } else {
-            const int alignTo = getAlignment(pageAlignSharedLibs, alignment, pEntry);
+            const int alignTo = getAlignment(pageAlignSharedLibs, alignment, pEntry,
+                                             pageSize);
 
             //printf("--- %s: orig at %ld(+%d) len=%ld, adding pad=%d\n",
             //    pEntry->getFileName(), (long) pEntry->getFileOffset(),
@@ -107,7 +106,7 @@ static int copyAndAlign(ZipFile* pZin, ZipFile* pZout, int alignment, bool zopfl
  * output file exists and "force" wasn't specified.
  */
 int process(const char* inFileName, const char* outFileName,
-    int alignment, bool force, bool zopfli, bool pageAlignSharedLibs)
+    int alignment, bool force, bool zopfli, bool pageAlignSharedLibs, int pageSize)
 {
     ZipFile zin, zout;
 
@@ -127,7 +126,7 @@ int process(const char* inFileName, const char* outFileName,
     }
 
     if (zin.open(inFileName, ZipFile::kOpenReadOnly) != OK) {
-        fprintf(stderr, "Unable to open '%s' as zip archive\n", inFileName);
+        fprintf(stderr, "Unable to open '%s' as zip archive: %s\n", inFileName, strerror(errno));
         return 1;
     }
     if (zout.open(outFileName,
@@ -138,7 +137,8 @@ int process(const char* inFileName, const char* outFileName,
         return 1;
     }
 
-    int result = copyAndAlign(&zin, &zout, alignment, zopfli, pageAlignSharedLibs);
+    int result = copyAndAlign(&zin, &zout, alignment, zopfli, pageAlignSharedLibs,
+                              pageSize);
     if (result != 0) {
         printf("zipalign: failed rewriting '%s' to '%s'\n",
             inFileName, outFileName);
@@ -150,7 +150,7 @@ int process(const char* inFileName, const char* outFileName,
  * Verify the alignment of a zip archive.
  */
 int verify(const char* fileName, int alignment, bool verbose,
-    bool pageAlignSharedLibs)
+    bool pageAlignSharedLibs, int pageSize)
 {
     ZipFile zipFile;
     bool foundBad = false;
@@ -181,7 +181,8 @@ int verify(const char* fileName, int alignment, bool verbose,
             continue;
        } else {
             off_t offset = pEntry->getFileOffset();
-            const int alignTo = getAlignment(pageAlignSharedLibs, alignment, pEntry);
+            const int alignTo = getAlignment(pageAlignSharedLibs, alignment, pEntry,
+                                             pageSize);
             if ((offset % alignTo) != 0) {
                 if (verbose) {
                     printf("%8jd %s (BAD - %jd)\n",

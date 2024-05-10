@@ -29,7 +29,7 @@ ifeq (true,$(is_native))
   ifeq (true,$(LOCAL_VENDOR_MODULE))
     autogen_test_install_base = /data/local/tests/vendor
   endif
-  ifeq (true,$(LOCAL_USE_VNDK))
+  ifeq (true,$(call module-in-vendor-or-product))
     autogen_test_install_base = /data/local/tests/vendor
   endif
 endif

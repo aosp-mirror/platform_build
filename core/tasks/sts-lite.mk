@@ -29,7 +29,8 @@ $(sts_sdk_zip): $(MERGE_ZIPS) $(ZIP2ZIP) $(compatibility_zip) $(sts_sdk_samples)
 	$(ZIP2ZIP) -i $(STS_LITE_ZIP) -o $(STS_LITE_ZIP)_filtered \
 		-x android-sts-lite/tools/sts-tradefed-tests.jar \
 		'android-sts-lite/tools/*:sts-test/libs/' \
-		'android-sts-lite/testcases/*:sts-test/utils/'
+		'android-sts-lite/testcases/*:sts-test/utils/' \
+		'android-sts-lite/jdk/**/*:sts-test/jdk/'
 	$(MERGE_ZIPS) $@ $(STS_LITE_ZIP)_filtered $(STS_SDK_SAMPLES)
 	rm -f $(STS_LITE_ZIP)_filtered
 

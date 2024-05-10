@@ -19,12 +19,13 @@
 addon_name := $(PRODUCT_SDK_ADDON_NAME)
 ifneq ($(addon_name),)
 
-addon_dir_leaf  := $(addon_name)-$(FILE_NAME_TAG)-$(INTERNAL_SDK_HOST_OS_NAME)
-addon_dir_img   := $(addon_dir_leaf)-img
-intermediates   := $(HOST_OUT_INTERMEDIATES)/SDK_ADDON/$(addon_name)_intermediates
-full_target     := $(HOST_OUT_SDK_ADDON)/$(addon_dir_leaf).zip
-full_target_img := $(HOST_OUT_SDK_ADDON)/$(addon_dir_img).zip
-staging         := $(intermediates)
+addon_dir_leaf        := $(addon_name)-$(INTERNAL_SDK_HOST_OS_NAME)
+addon_dir_img         := $(addon_dir_leaf)-img
+intermediates         := $(HOST_OUT_INTERMEDIATES)/SDK_ADDON/$(addon_name)_intermediates
+full_target           := $(HOST_OUT_SDK_ADDON)/$(addon_dir_leaf).zip
+full_target_dist_name := $(addon_name)-FILE_NAME_TAG_PLACEHOLDER-$(INTERNAL_SDK_HOST_OS_NAME)
+full_target_img       := $(HOST_OUT_SDK_ADDON)/$(addon_dir_img).zip
+staging               := $(intermediates)
 
 sdk_addon_deps :=
 files_to_copy :=
@@ -125,7 +126,7 @@ $(full_target_img): PRIVATE_STAGING_DIR := $(call append-path,$(staging),$(addon
 $(full_target_img): $(full_target) $(addon_img_source_prop) | $(SOONG_ZIP)
 	@echo Packaging SDK Addon System-Image: $@
 	$(hide) mkdir -p $(dir $@)
-	cp -R $(PRODUCT_OUT)/data $(PRIVATE_STAGING_DIR)/data
+	cp -R $(PRODUCT_OUT)/data $(PRIVATE_STAGING_DIR)
 	$(hide) $(SOONG_ZIP) -o $@ -C $(dir $(PRIVATE_STAGING_DIR)) -D $(PRIVATE_STAGING_DIR)
 
 
@@ -140,7 +141,7 @@ ADDON_SDK_IMG_ZIP    := $(full_target_img)
 else
 # When not building an sdk_repo, just dist the addon zip file
 # as-is.
-$(call dist-for-goals, sdk_addon, $(full_target))
+$(call dist-for-goals, sdk_addon, $(full_target):$(full_target_dist_name))
 endif
 
 else # addon_name

@@ -1,0 +1,80 @@
+/*
+ * Copyright (C) 2024 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+cc_defaults {
+    name: "ide_query_cc_analyzer_defaults",
+    compile_multilib: "64",
+    defaults: [
+        "llvm-build-host-tools-defaults",
+    ],
+    cflags: [
+        // LLVM Sources do have unused parameters :(
+        "-Wno-unused-parameter",
+    ],
+    target: {
+        host: {
+            cppflags: [
+                "-fno-rtti",
+            ],
+        },
+    },
+}
+
+cc_library_host_static {
+    name: "builtin_headers",
+    srcs: ["builtin_headers.cc"],
+    generated_headers: ["clang_builtin_headers_resources"],
+    defaults: ["ide_query_cc_analyzer_defaults"],
+}
+
+cc_library_host_static {
+    name: "include_scanner",
+    srcs: ["include_scanner.cc"],
+    shared_libs: ["libclang-cpp_host"],
+    static_libs: ["builtin_headers"],
+    defaults: ["ide_query_cc_analyzer_defaults"],
+}
+
+cc_library_host_static {
+    name: "analyzer",
+    srcs: ["analyzer.cc"],
+    shared_libs: ["libclang-cpp_host"],
+    static_libs: [
+        "include_scanner",
+        "ide_query_proto",
+    ],
+    defaults: ["ide_query_cc_analyzer_defaults"],
+}
+
+cc_binary_host {
+    name: "ide_query_cc_analyzer",
+    defaults: ["ide_query_cc_analyzer_defaults"],
+    srcs: ["main.cc"],
+    shared_libs: [
+        "libclang-cpp_host",
+        "libprotobuf-cpp-full",
+    ],
+    static_libs: [
+        "ide_query_proto",
+        "builtin_headers",
+        "include_scanner",
+        "analyzer",
+    ],
+}

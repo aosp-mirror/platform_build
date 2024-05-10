@@ -15,14 +15,13 @@
 #
 
 import copy
-import json
 import os
 import subprocess
 import tempfile
-import time
 import unittest
 import zipfile
 from hashlib import sha1
+from typing import BinaryIO
 
 import common
 import test_utils
@@ -36,14 +35,24 @@ MiB = 1024 * KiB
 GiB = 1024 * MiB
 
 
-def get_2gb_string():
+def get_2gb_file():
   size = int(2 * GiB + 1)
   block_size = 4 * KiB
   step_size = 4 * MiB
-  # Generate a long string with holes, e.g. 'xyz\x00abc\x00...'.
+  tmpfile = tempfile.NamedTemporaryFile()
+  tmpfile.truncate(size)
   for _ in range(0, size, step_size):
-    yield os.urandom(block_size)
-    yield b'\0' * (step_size - block_size)
+    tmpfile.write(os.urandom(block_size))
+    tmpfile.seek(step_size - block_size, os.SEEK_CUR)
+  return tmpfile
+
+
+def hash_file(filename):
+  sha1_hash = sha1()
+  with open(filename, "rb") as fp:
+    for data in iter(lambda: fp.read(4*MiB), b''):
+      sha1_hash.update(data)
+  return sha1_hash
 
 
 class BuildInfoTest(test_utils.ReleaseToolsTestCase):
@@ -429,6 +438,13 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     self.assertIsNone(zip_file.testzip())
 
   def _test_ZipWrite(self, contents, extra_zipwrite_args=None):
+    with tempfile.NamedTemporaryFile() as test_file:
+      test_file_name = test_file.name
+      for data in contents:
+        test_file.write(bytes(data))
+      return self._test_ZipWriteFile(test_file_name, extra_zipwrite_args)
+
+  def _test_ZipWriteFile(self, test_file_name, extra_zipwrite_args=None):
     extra_zipwrite_args = dict(extra_zipwrite_args or {})
 
     test_file = tempfile.NamedTemporaryFile(delete=False)
@@ -441,31 +457,27 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     arcname = extra_zipwrite_args.get("arcname", test_file_name)
     if arcname[0] == "/":
       arcname = arcname[1:]
+    sha1_hash = hash_file(test_file_name)
 
     zip_file.close()
     zip_file = zipfile.ZipFile(zip_file_name, "w", allowZip64=True)
 
     try:
-      sha1_hash = sha1()
-      for data in contents:
-        sha1_hash.update(bytes(data))
-        test_file.write(bytes(data))
-      test_file.close()
-
-      expected_stat = os.stat(test_file_name)
       expected_mode = extra_zipwrite_args.get("perms", 0o644)
       expected_compress_type = extra_zipwrite_args.get("compress_type",
                                                        zipfile.ZIP_STORED)
-      time.sleep(5)  # Make sure the atime/mtime will change measurably.
 
+      # Arbitrary timestamp, just to make sure common.ZipWrite() restores
+      # the timestamp after writing.
+      os.utime(test_file_name, (1234567, 1234567))
+      expected_stat = os.stat(test_file_name)
       common.ZipWrite(zip_file, test_file_name, **extra_zipwrite_args)
-      zip_file.close()
+      common.ZipClose(zip_file)
 
       self._verify(zip_file, zip_file_name, arcname, sha1_hash.hexdigest(),
                    test_file_name, expected_stat, expected_mode,
                    expected_compress_type)
     finally:
-      os.remove(test_file_name)
       os.remove(zip_file_name)
 
   def _test_ZipWriteStr(self, zinfo_or_arcname, contents, extra_args=None):
@@ -480,8 +492,6 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     try:
       expected_compress_type = extra_args.get("compress_type",
                                               zipfile.ZIP_STORED)
-      time.sleep(5)  # Make sure the atime/mtime will change measurably.
-
       if not isinstance(zinfo_or_arcname, zipfile.ZipInfo):
         arcname = zinfo_or_arcname
         expected_mode = extra_args.get("perms", 0o644)
@@ -494,7 +504,7 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
         expected_mode = extra_args.get("perms", zinfo_perms)
 
       common.ZipWriteStr(zip_file, zinfo_or_arcname, contents, **extra_args)
-      zip_file.close()
+      common.ZipClose(zip_file)
 
       self._verify(zip_file, zip_file_name, arcname, sha1(contents).hexdigest(),
                    expected_mode=expected_mode,
@@ -502,14 +512,13 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     finally:
       os.remove(zip_file_name)
 
-  def _test_ZipWriteStr_large_file(self, large, small, extra_args=None):
+  def _test_ZipWriteStr_large_file(self, large_file: BinaryIO, small, extra_args=None):
     extra_args = dict(extra_args or {})
 
     zip_file = tempfile.NamedTemporaryFile(delete=False)
     zip_file_name = zip_file.name
 
-    test_file = tempfile.NamedTemporaryFile(delete=False)
-    test_file_name = test_file.name
+    test_file_name = large_file.name
 
     arcname_large = test_file_name
     arcname_small = "bar"
@@ -522,21 +531,19 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     zip_file = zipfile.ZipFile(zip_file_name, "w", allowZip64=True)
 
     try:
-      sha1_hash = sha1()
-      for data in large:
-        sha1_hash.update(data)
-        test_file.write(data)
-      test_file.close()
+      sha1_hash = hash_file(test_file_name)
 
+      # Arbitrary timestamp, just to make sure common.ZipWrite() restores
+      # the timestamp after writing.
+      os.utime(test_file_name, (1234567, 1234567))
       expected_stat = os.stat(test_file_name)
       expected_mode = 0o644
       expected_compress_type = extra_args.get("compress_type",
                                               zipfile.ZIP_STORED)
-      time.sleep(5)  # Make sure the atime/mtime will change measurably.
 
       common.ZipWrite(zip_file, test_file_name, **extra_args)
       common.ZipWriteStr(zip_file, arcname_small, small, **extra_args)
-      zip_file.close()
+      common.ZipClose(zip_file)
 
       # Verify the contents written by ZipWrite().
       self._verify(zip_file, zip_file_name, arcname_large,
@@ -549,7 +556,12 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
                    expected_compress_type=expected_compress_type)
     finally:
       os.remove(zip_file_name)
-      os.remove(test_file_name)
+
+  def _test_reset_ZIP64_LIMIT(self, func, *args):
+    default_limit = (1 << 31) - 1
+    self.assertEqual(default_limit, zipfile.ZIP64_LIMIT)
+    func(*args)
+    self.assertEqual(default_limit, zipfile.ZIP64_LIMIT)
 
   def test_ZipWrite(self):
     file_contents = os.urandom(1024)
@@ -569,13 +581,13 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     })
 
   def test_ZipWrite_large_file(self):
-    file_contents = get_2gb_string()
-    self._test_ZipWrite(file_contents, {
-        "compress_type": zipfile.ZIP_DEFLATED,
-    })
+    with get_2gb_file() as tmpfile:
+      self._test_ZipWriteFile(tmpfile.name, {
+          "compress_type": zipfile.ZIP_DEFLATED,
+      })
 
   def test_ZipWrite_resets_ZIP64_LIMIT(self):
-    self._test_ZipWrite("")
+    self._test_reset_ZIP64_LIMIT(self._test_ZipWrite, "")
 
   def test_ZipWriteStr(self):
     random_string = os.urandom(1024)
@@ -619,16 +631,16 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     # zipfile.writestr() doesn't work when the str size is over 2GiB even with
     # the workaround. We will only test the case of writing a string into a
     # large archive.
-    long_string = get_2gb_string()
     short_string = os.urandom(1024)
-    self._test_ZipWriteStr_large_file(long_string, short_string, {
-        "compress_type": zipfile.ZIP_DEFLATED,
-    })
+    with get_2gb_file() as large_file:
+      self._test_ZipWriteStr_large_file(large_file, short_string, {
+          "compress_type": zipfile.ZIP_DEFLATED,
+      })
 
   def test_ZipWriteStr_resets_ZIP64_LIMIT(self):
-    self._test_ZipWriteStr('foo', b'')
+    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, 'foo', b'')
     zinfo = zipfile.ZipInfo(filename="foo")
-    self._test_ZipWriteStr(zinfo, b'')
+    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, zinfo, b'')
 
   def test_bug21309935(self):
     zip_file = tempfile.NamedTemporaryFile(delete=False)
@@ -650,7 +662,7 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
       zinfo = zipfile.ZipInfo(filename="qux")
       zinfo.external_attr = 0o700 << 16
       common.ZipWriteStr(zip_file, zinfo, random_string, perms=0o400)
-      zip_file.close()
+      common.ZipClose(zip_file)
 
       self._verify(zip_file, zip_file_name, "foo",
                    sha1(random_string).hexdigest(),
@@ -677,7 +689,7 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
       common.ZipWrite(output_zip, entry_file.name, arcname='Test1')
       common.ZipWrite(output_zip, entry_file.name, arcname='Test2')
       common.ZipWrite(output_zip, entry_file.name, arcname='Test3')
-      output_zip.close()
+      common.ZipClose(output_zip)
     zip_file.close()
 
     try:
@@ -725,8 +737,8 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
       common.ZipWrite(output_zip, entry_file.name, arcname='Foo3')
       common.ZipWrite(output_zip, entry_file.name, arcname='Bar4')
       common.ZipWrite(output_zip, entry_file.name, arcname='Dir5/Baz5')
-      output_zip.close()
-    output_zip.close()
+      common.ZipClose(output_zip)
+    common.ZipClose(output_zip)
     return zip_file
 
   @test_utils.SkipIfExternalToolsUnavailable()
@@ -1287,11 +1299,11 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
         'avb_system_key_path': pubkey,
         'avb_system_rollback_index_location': 2,
     }
-    args = common.GetAvbChainedPartitionArg('system', info_dict).split(':')
-    self.assertEqual(3, len(args))
-    self.assertEqual('system', args[0])
-    self.assertEqual('2', args[1])
-    self.assertTrue(os.path.exists(args[2]))
+    chained_partition_args = common.GetAvbChainedPartitionArg(
+        'system', info_dict)
+    self.assertEqual('system', chained_partition_args.partition)
+    self.assertEqual(2, chained_partition_args.rollback_index_location)
+    self.assertTrue(os.path.exists(chained_partition_args.pubkey_path))
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetAvbChainedPartitionArg_withPrivateKey(self):
@@ -1301,11 +1313,11 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
         'avb_product_key_path': key,
         'avb_product_rollback_index_location': 2,
     }
-    args = common.GetAvbChainedPartitionArg('product', info_dict).split(':')
-    self.assertEqual(3, len(args))
-    self.assertEqual('product', args[0])
-    self.assertEqual('2', args[1])
-    self.assertTrue(os.path.exists(args[2]))
+    chained_partition_args = common.GetAvbChainedPartitionArg(
+        'product', info_dict)
+    self.assertEqual('product', chained_partition_args.partition)
+    self.assertEqual(2, chained_partition_args.rollback_index_location)
+    self.assertTrue(os.path.exists(chained_partition_args.pubkey_path))
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetAvbChainedPartitionArg_withSpecifiedKey(self):
@@ -1315,12 +1327,11 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
         'avb_system_rollback_index_location': 2,
     }
     pubkey = os.path.join(self.testdata_dir, 'testkey.pubkey.pem')
-    args = common.GetAvbChainedPartitionArg(
-        'system', info_dict, pubkey).split(':')
-    self.assertEqual(3, len(args))
-    self.assertEqual('system', args[0])
-    self.assertEqual('2', args[1])
-    self.assertTrue(os.path.exists(args[2]))
+    chained_partition_args = common.GetAvbChainedPartitionArg(
+        'system', info_dict, pubkey)
+    self.assertEqual('system', chained_partition_args.partition)
+    self.assertEqual(2, chained_partition_args.rollback_index_location)
+    self.assertTrue(os.path.exists(chained_partition_args.pubkey_path))
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetAvbChainedPartitionArg_invalidKey(self):
@@ -1337,7 +1348,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
   INFO_DICT_DEFAULT = {
       'recovery_api_version': 3,
       'fstab_version': 2,
-      'system_root_image': 'true',
       'no_recovery': 'true',
       'recovery_as_boot': 'true',
   }
@@ -1366,14 +1376,8 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
       info_values = ''.join(
           ['{}={}\n'.format(k, v) for k, v in sorted(info_dict.items())])
       common.ZipWriteStr(target_files_zip, 'META/misc_info.txt', info_values)
-
-      FSTAB_TEMPLATE = "/dev/block/system {} ext4 ro,barrier=1 defaults"
-      if info_dict.get('system_root_image') == 'true':
-        fstab_values = FSTAB_TEMPLATE.format('/')
-      else:
-        fstab_values = FSTAB_TEMPLATE.format('/system')
-      common.ZipWriteStr(target_files_zip, fstab_path, fstab_values)
-
+      common.ZipWriteStr(target_files_zip, fstab_path,
+                         "/dev/block/system /system ext4 ro,barrier=1 defaults")
       common.ZipWriteStr(
           target_files_zip, 'META/file_contexts', 'file-contexts')
     return target_files
@@ -1386,7 +1390,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
       loaded_dict = common.LoadInfoDict(target_files_zip)
       self.assertEqual(3, loaded_dict['recovery_api_version'])
       self.assertEqual(2, loaded_dict['fstab_version'])
-      self.assertIn('/', loaded_dict['fstab'])
       self.assertIn('/system', loaded_dict['fstab'])
 
   def test_LoadInfoDict_legacyRecoveryFstabPath(self):
@@ -1397,7 +1400,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
       loaded_dict = common.LoadInfoDict(target_files_zip)
       self.assertEqual(3, loaded_dict['recovery_api_version'])
       self.assertEqual(2, loaded_dict['fstab_version'])
-      self.assertIn('/', loaded_dict['fstab'])
       self.assertIn('/system', loaded_dict['fstab'])
 
   @test_utils.SkipIfExternalToolsUnavailable()
@@ -1409,7 +1411,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     loaded_dict = common.LoadInfoDict(unzipped)
     self.assertEqual(3, loaded_dict['recovery_api_version'])
     self.assertEqual(2, loaded_dict['fstab_version'])
-    self.assertIn('/', loaded_dict['fstab'])
     self.assertIn('/system', loaded_dict['fstab'])
 
   @test_utils.SkipIfExternalToolsUnavailable()
@@ -1421,15 +1422,11 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     loaded_dict = common.LoadInfoDict(unzipped)
     self.assertEqual(3, loaded_dict['recovery_api_version'])
     self.assertEqual(2, loaded_dict['fstab_version'])
-    self.assertIn('/', loaded_dict['fstab'])
     self.assertIn('/system', loaded_dict['fstab'])
 
-  def test_LoadInfoDict_systemRootImageFalse(self):
-    # Devices not using system-as-root nor recovery-as-boot. Non-A/B devices
-    # launched prior to P will likely have this config.
+  def test_LoadInfoDict_recoveryAsBootFalse(self):
     info_dict = copy.copy(self.INFO_DICT_DEFAULT)
     del info_dict['no_recovery']
-    del info_dict['system_root_image']
     del info_dict['recovery_as_boot']
     target_files = self._test_LoadInfoDict_createTargetFiles(
         info_dict,
@@ -1439,22 +1436,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
       self.assertEqual(3, loaded_dict['recovery_api_version'])
       self.assertEqual(2, loaded_dict['fstab_version'])
       self.assertNotIn('/', loaded_dict['fstab'])
-      self.assertIn('/system', loaded_dict['fstab'])
-
-  def test_LoadInfoDict_recoveryAsBootFalse(self):
-    # Devices using system-as-root, but with standalone recovery image. Non-A/B
-    # devices launched since P will likely have this config.
-    info_dict = copy.copy(self.INFO_DICT_DEFAULT)
-    del info_dict['no_recovery']
-    del info_dict['recovery_as_boot']
-    target_files = self._test_LoadInfoDict_createTargetFiles(
-        info_dict,
-        'RECOVERY/RAMDISK/system/etc/recovery.fstab')
-    with zipfile.ZipFile(target_files, 'r', allowZip64=True) as target_files_zip:
-      loaded_dict = common.LoadInfoDict(target_files_zip)
-      self.assertEqual(3, loaded_dict['recovery_api_version'])
-      self.assertEqual(2, loaded_dict['fstab_version'])
-      self.assertIn('/', loaded_dict['fstab'])
       self.assertIn('/system', loaded_dict['fstab'])
 
   def test_LoadInfoDict_noRecoveryTrue(self):
@@ -1488,7 +1469,6 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     loaded_dict = common.LoadInfoDict(unzipped, True)
     self.assertEqual(3, loaded_dict['recovery_api_version'])
     self.assertEqual(2, loaded_dict['fstab_version'])
-    self.assertIn('/', loaded_dict['fstab'])
     self.assertIn('/system', loaded_dict['fstab'])
     self.assertEqual(
         os.path.join(unzipped, 'ROOT'), loaded_dict['root_dir'])
@@ -1535,6 +1515,7 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
         'super_group_a_group_size': '1000',
         'super_group_b_partition_list': 'product',
         'super_group_b_group_size': '2000',
+        'vabc_cow_version': '2',
     }
     self.assertEqual(merged_dict, expected_merged_dict)
 
@@ -1545,6 +1526,7 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
         'dynamic_partition_list': 'system',
         'super_group_a_partition_list': 'system',
         'super_group_a_group_size': '5000',
+        'vabc_cow_version': '3',
     }
     vendor_dict = {
         'use_dynamic_partitions': 'true',
@@ -1566,6 +1548,7 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
         'super_group_a_group_size': '1000',
         'super_group_b_partition_list': 'product',
         'super_group_b_group_size': '2000',
+        'vabc_cow_version': '2',
     }
     self.assertEqual(merged_dict, expected_merged_dict)
 
@@ -1573,7 +1556,8 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     info_dict = {}
     cmd = common.GetAvbPartitionArg('system', '/path/to/system.img', info_dict)
     self.assertEqual(
-        ['--include_descriptors_from_image', '/path/to/system.img'], cmd)
+        [common.AVB_ARG_NAME_INCLUDE_DESC_FROM_IMG, '/path/to/system.img'],
+        cmd)
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_AppendVBMetaArgsForPartition_vendorAsChainedPartition(self):
@@ -1586,12 +1570,11 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     }
     cmd = common.GetAvbPartitionArg('vendor', '/path/to/vendor.img', info_dict)
     self.assertEqual(2, len(cmd))
-    self.assertEqual('--chain_partition', cmd[0])
-    chained_partition_args = cmd[1].split(':')
-    self.assertEqual(3, len(chained_partition_args))
-    self.assertEqual('vendor', chained_partition_args[0])
-    self.assertEqual('5', chained_partition_args[1])
-    self.assertTrue(os.path.exists(chained_partition_args[2]))
+    self.assertEqual(common.AVB_ARG_NAME_CHAIN_PARTITION, cmd[0])
+    chained_partition_args = cmd[1]
+    self.assertEqual('vendor', chained_partition_args.partition)
+    self.assertEqual(5, chained_partition_args.rollback_index_location)
+    self.assertTrue(os.path.exists(chained_partition_args.pubkey_path))
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_AppendVBMetaArgsForPartition_recoveryAsChainedPartition_nonAb(self):
@@ -1619,45 +1602,11 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     cmd = common.GetAvbPartitionArg(
         'recovery', '/path/to/recovery.img', info_dict)
     self.assertEqual(2, len(cmd))
-    self.assertEqual('--chain_partition', cmd[0])
-    chained_partition_args = cmd[1].split(':')
-    self.assertEqual(3, len(chained_partition_args))
-    self.assertEqual('recovery', chained_partition_args[0])
-    self.assertEqual('3', chained_partition_args[1])
-    self.assertTrue(os.path.exists(chained_partition_args[2]))
-
-  def test_GenerateGkiCertificate_KeyPathNotFound(self):
-    pubkey = os.path.join(self.testdata_dir, 'no_testkey_gki.pem')
-    self.assertFalse(os.path.exists(pubkey))
-
-    common.OPTIONS.info_dict = {
-        'gki_signing_key_path': pubkey,
-        'gki_signing_algorithm': 'SHA256_RSA4096',
-        'gki_signing_signature_args': '--prop foo:bar',
-    }
-    test_file = tempfile.NamedTemporaryFile()
-    self.assertRaises(common.ExternalError, common._GenerateGkiCertificate,
-                      test_file.name, 'generic_kernel')
-
-  def test_GenerateGkiCertificate_SearchKeyPathNotFound(self):
-    pubkey = 'no_testkey_gki.pem'
-    self.assertFalse(os.path.exists(pubkey))
-
-    # Tests it should raise ExternalError if no key found under
-    # OPTIONS.search_path.
-    search_path_dir = common.MakeTempDir()
-    search_pubkey = os.path.join(search_path_dir, pubkey)
-    self.assertFalse(os.path.exists(search_pubkey))
-
-    common.OPTIONS.search_path = search_path_dir
-    common.OPTIONS.info_dict = {
-        'gki_signing_key_path': pubkey,
-        'gki_signing_algorithm': 'SHA256_RSA4096',
-        'gki_signing_signature_args': '--prop foo:bar',
-    }
-    test_file = tempfile.NamedTemporaryFile()
-    self.assertRaises(common.ExternalError, common._GenerateGkiCertificate,
-                      test_file.name, 'generic_kernel')
+    self.assertEqual(common.AVB_ARG_NAME_CHAIN_PARTITION, cmd[0])
+    chained_partition_args = cmd[1]
+    self.assertEqual('recovery', chained_partition_args.partition)
+    self.assertEqual(3, chained_partition_args.rollback_index_location)
+    self.assertTrue(os.path.exists(chained_partition_args.pubkey_path))
 
 
 class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):

@@ -111,24 +111,26 @@ include $(BUILD_SYSTEM)/support_libraries.mk
 
 # Determine whether auto-RRO is enabled for this package.
 enforce_rro_enabled :=
-ifneq (,$(filter *, $(PRODUCT_ENFORCE_RRO_TARGETS)))
-  # * means all system and system_ext APKs, so enable conditionally based on module path.
+ifeq (,$(filter tests,$(LOCAL_MODULE_TAGS)))
+  ifneq (,$(filter *, $(PRODUCT_ENFORCE_RRO_TARGETS)))
+    # * means all system and system_ext APKs, so enable conditionally based on module path.
 
-  # Note that base_rules.mk has not yet been included, so it's likely that only
-  # one of LOCAL_MODULE_PATH and the LOCAL_X_MODULE flags has been set.
-  ifeq (,$(LOCAL_MODULE_PATH))
-    non_rro_target_module := $(filter true,\
-        $(LOCAL_ODM_MODULE) \
-        $(LOCAL_OEM_MODULE) \
-        $(LOCAL_PRODUCT_MODULE) \
-        $(LOCAL_PROPRIETARY_MODULE) \
-        $(LOCAL_VENDOR_MODULE))
-    enforce_rro_enabled := $(if $(non_rro_target_module),,true)
-  else ifneq ($(filter $(TARGET_OUT)/%,$(LOCAL_MODULE_PATH)),)
+    # Note that base_rules.mk has not yet been included, so it's likely that only
+    # one of LOCAL_MODULE_PATH and the LOCAL_X_MODULE flags has been set.
+    ifeq (,$(LOCAL_MODULE_PATH))
+      non_rro_target_module := $(filter true,\
+          $(LOCAL_ODM_MODULE) \
+          $(LOCAL_OEM_MODULE) \
+          $(LOCAL_PRODUCT_MODULE) \
+          $(LOCAL_PROPRIETARY_MODULE) \
+          $(LOCAL_VENDOR_MODULE))
+      enforce_rro_enabled := $(if $(non_rro_target_module),,true)
+    else ifneq ($(filter $(TARGET_OUT)/%,$(LOCAL_MODULE_PATH)),)
+      enforce_rro_enabled := true
+    endif
+  else ifneq (,$(filter $(LOCAL_PACKAGE_NAME), $(PRODUCT_ENFORCE_RRO_TARGETS)))
     enforce_rro_enabled := true
   endif
-else ifneq (,$(filter $(LOCAL_PACKAGE_NAME), $(PRODUCT_ENFORCE_RRO_TARGETS)))
-  enforce_rro_enabled := true
 endif
 
 product_package_overlays := $(strip \
@@ -201,10 +203,10 @@ my_res_resources := $(if $(my_res_dir),$(strip \
 all_resources := $(strip $(my_res_resources) $(my_overlay_resources))
 
 # The linked resource package.
-my_res_package := $(intermediates)/package-res.apk
+my_res_package := $(intermediates.COMMON)/package-res.apk
 LOCAL_INTERMEDIATE_TARGETS += $(my_res_package)
 
-my_bundle_module := $(intermediates)/base.zip
+my_bundle_module := $(intermediates.COMMON)/base.zip
 LOCAL_INTERMEDIATE_TARGETS += $(my_bundle_module)
 
 # Always run aapt2, because we need to at least compile the AndroidManifest.xml.
@@ -529,7 +531,7 @@ $(LOCAL_BUILT_MODULE) : $(JAR_ARGS) $(SOONG_ZIP) $(MERGE_ZIPS) $(ZIP2ZIP)
 $(LOCAL_BUILT_MODULE): PRIVATE_RES_PACKAGE := $(my_res_package)
 $(LOCAL_BUILT_MODULE) : $(my_res_package) $(AAPT2)
 ifdef LOCAL_COMPRESSED_MODULE
-$(LOCAL_BUILT_MODULE) : $(MINIGZIP)
+$(LOCAL_BUILT_MODULE) : $(GZIP)
 endif
 ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
 $(LOCAL_BUILT_MODULE) : $(ZIP2ZIP)
@@ -570,7 +572,7 @@ ifdef LOCAL_COMPRESSED_MODULE
 	$(compress-package)
 endif  # LOCAL_COMPRESSED_MODULE
 
-my_package_res_pb := $(intermediates)/package-res.pb.apk
+my_package_res_pb := $(intermediates.COMMON)/package-res.pb.apk
 $(my_package_res_pb): $(my_res_package) $(AAPT2)
 	$(AAPT2) convert --output-format proto $< -o $@
 

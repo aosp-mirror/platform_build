@@ -30,14 +30,13 @@ test_suite_subdir := android-$(test_suite_name)
 out_dir := $(HOST_OUT)/$(test_suite_name)/$(test_suite_subdir)
 test_artifacts := $(COMPATIBILITY.$(test_suite_name).FILES)
 test_tools := $(HOST_OUT_JAVA_LIBRARIES)/tradefed.jar \
-  $(HOST_OUT_JAVA_LIBRARIES)/tradefed-no-fwk.jar \
-  $(HOST_OUT_JAVA_LIBRARIES)/tradefed-test-framework.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/loganalysis.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/compatibility-host-util.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/compatibility-tradefed.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/$(test_suite_tradefed).jar \
   $(HOST_OUT_JAVA_LIBRARIES)/$(test_suite_tradefed)-tests.jar \
   $(HOST_OUT_EXECUTABLES)/$(test_suite_tradefed) \
+  $(HOST_OUT_EXECUTABLES)/test-utils-script \
   $(test_suite_readme)
 
 $(foreach f,$(test_suite_readme),$(if $(strip $(ALL_TARGETS.$(f).META_LIC)),,$(eval ALL_TARGETS.$(f).META_LIC := $(module_license_metadata))))
@@ -46,10 +45,16 @@ test_tools += $(test_suite_tools)
 
 # The JDK to package into the test suite zip file.  Always package the linux JDK.
 test_suite_jdk_dir := $(ANDROID_JAVA_HOME)/../linux-x86
+ifndef test_suite_jdk_files
+  # This file gets included many times, so make sure we only run the $(shell) once.
+  # Otherwise it will slow down every build due to all copies of it being rerun when kati
+  # checks the stamp file.
+  test_suite_jdk_files :=$= $(shell find $(test_suite_jdk_dir) -type f | sort)
+endif
 test_suite_jdk := $(call intermediates-dir-for,PACKAGING,$(test_suite_name)_jdk,HOST)/jdk.zip
 $(test_suite_jdk): PRIVATE_JDK_DIR := $(test_suite_jdk_dir)
 $(test_suite_jdk): PRIVATE_SUBDIR := $(test_suite_subdir)
-$(test_suite_jdk): $(shell find $(test_suite_jdk_dir) -type f | sort)
+$(test_suite_jdk): $(test_suite_jdk_files)
 $(test_suite_jdk): $(SOONG_ZIP)
 	$(SOONG_ZIP) -o $@ -P $(PRIVATE_SUBDIR)/jdk -C $(PRIVATE_JDK_DIR) -D $(PRIVATE_JDK_DIR) -sha256
 
@@ -114,6 +119,9 @@ $(compatibility_zip): PRIVATE_RESOURCES := $(compatibility_zip_resources)
 $(compatibility_zip): PRIVATE_JDK := $(test_suite_jdk)
 $(compatibility_zip): PRIVATE_tests_list := $(out_dir)-tests_list
 $(compatibility_zip): PRIVATE_tests_list_zip := $(compatibility_tests_list_zip)
+ifeq ($(strip $(HAS_BUILD_NUMBER)),true)
+$(compatibility_zip): $(BUILD_NUMBER_FILE)
+endif
 $(compatibility_zip): $(compatibility_zip_deps) | $(ADB) $(ACP)
 # Make dir structure
 	mkdir -p $(PRIVATE_OUT_DIR)/tools $(PRIVATE_OUT_DIR)/testcases

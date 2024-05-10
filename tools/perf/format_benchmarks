@@ -1,0 +1,202 @@
+#!/usr/bin/env python3
+# Copyright (C) 2023 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import sys
+if __name__ == "__main__":
+    sys.dont_write_bytecode = True
+
+import argparse
+import dataclasses
+import datetime
+import json
+import os
+import pathlib
+import statistics
+import zoneinfo
+
+import pretty
+import utils
+
+# TODO:
+# - Flag if the last postroll build was more than 15 seconds or something. That's
+#   an indicator that something is amiss.
+# - Add a mode to print all of the values for multi-iteration runs
+# - Add a flag to reorder the tags
+# - Add a flag to reorder the headers in order to show grouping more clearly.
+
+
+def FindSummaries(args):
+    def find_summaries(directory):
+        return [str(p.resolve()) for p in pathlib.Path(directory).glob("**/summary.json")]
+    if not args:
+        # If they didn't give an argument, use the default dir
+        root = utils.get_root()
+        if not root:
+            return []
+        return find_summaries(root.joinpath("..", utils.DEFAULT_REPORT_DIR))
+    results = list()
+    for arg in args:
+        if os.path.isfile(arg):
+            # If it's a file add that
+            results.append(arg)
+        elif os.path.isdir(arg):
+            # If it's a directory, find all of the files there
+            results += find_summaries(arg)
+        else:
+            sys.stderr.write(f"Invalid summary argument: {arg}\n")
+            sys.exit(1)
+    return sorted(list(results))
+
+
+def LoadSummary(filename):
+    with open(filename) as f:
+        return json.load(f)
+
+# Columns:
+#   Date
+#   Branch
+#   Tag
+#   --
+#   Lunch
+# Rows:
+#   Benchmark
+
+def lunch_str(d):
+    "Convert a lunch dict to a string"
+    return f"{d['TARGET_PRODUCT']}-{d['TARGET_RELEASE']}-{d['TARGET_BUILD_VARIANT']}"
+
+def group_by(l, key):
+    "Return a list of tuples, grouped by key, sorted by key"
+    result = {}
+    for item in l:
+        result.setdefault(key(item), []).append(item)
+    return [(k, v) for k, v in result.items()]
+
+
+class Table:
+    def __init__(self, row_title, fixed_titles=[]):
+        self._data = {}
+        self._rows = []
+        self._cols = []
+        self._fixed_cols = {}
+        self._titles = [row_title] + fixed_titles
+
+    def Set(self, column_key, row_key, data):
+        self._data[(column_key, row_key)] = data
+        if not column_key in self._cols:
+            self._cols.append(column_key)
+        if not row_key in self._rows:
+            self._rows.append(row_key)
+
+    def SetFixedCol(self, row_key, columns):
+        self._fixed_cols[row_key] = columns
+
+    def Write(self, out):
+        table = []
+        # Expand the column items
+        for row in zip(*self._cols):
+            if row.count(row[0]) == len(row):
+                continue
+            table.append([""] * len(self._titles) + [col for col in row])
+        if table:
+            # Update the last row of the header with title and add separator
+            for i in range(len(self._titles)):
+                table[len(table)-1][i] = self._titles[i]
+            table.append(pretty.SEPARATOR)
+        # Populate the data
+        for row in self._rows:
+            table.append([str(row)]
+                         + self._fixed_cols[row]
+                         + [str(self._data.get((col, row), "")) for col in self._cols])
+        out.write(pretty.FormatTable(table, alignments="LL"))
+
+
+def format_duration_sec(ns):
+    "Format a duration in ns to second precision"
+    sec = round(ns / 1000000000)
+    h, sec = divmod(sec, 60*60)
+    m, sec = divmod(sec, 60)
+    result = ""
+    if h > 0:
+        result += f"{h:2d}h "
+    if h > 0 or m > 0:
+        result += f"{m:2d}m "
+    return result + f"{sec:2d}s"
+
+
+def main(argv):
+    parser = argparse.ArgumentParser(
+            prog="format_benchmarks",
+            allow_abbrev=False, # Don't let people write unsupportable scripts.
+            description="Print analysis tables for benchmarks")
+
+    parser.add_argument("--tags", nargs="*",
+                        help="The tags to print, in order.")
+
+    parser.add_argument("summaries", nargs="*",
+                        help="A summary.json file or a directory in which to look for summaries.")
+
+    args = parser.parse_args()
+
+    # Load the summaries
+    summaries = [(s, LoadSummary(s)) for s in FindSummaries(args.summaries)]
+
+    # Convert to MTV time
+    for filename, s in summaries:
+        dt = datetime.datetime.fromisoformat(s["start_time"])
+        dt = dt.astimezone(zoneinfo.ZoneInfo("America/Los_Angeles"))
+        s["datetime"] = dt
+        s["date"] = datetime.date(dt.year, dt.month, dt.day)
+
+    # Filter out tags we don't want
+    if args.tags:
+        summaries = [(f, s) for f, s in summaries if s.get("tag", "") in args.tags]
+
+    # If they supplied tags, sort in that order, otherwise sort by tag
+    if args.tags:
+        tagsort = lambda tag: args.tags.index(tag)
+    else:
+        tagsort = lambda tag: tag
+
+    # Sort the summaries
+    summaries.sort(key=lambda s: (s[1]["date"], s[1]["branch"], tagsort(s[1]["tag"])))
+
+    # group the benchmarks by column and iteration
+    def bm_key(b):
+        return (
+            lunch_str(b["lunch"]),
+        )
+    for filename, summary in summaries:
+        summary["columns"] = [(key, group_by(bms, lambda b: b["id"])) for key, bms
+                              in group_by(summary["benchmarks"], bm_key)]
+
+    # Build the table
+    table = Table("Benchmark", ["Rebuild"])
+    for filename, summary in summaries:
+        for key, column in summary["columns"]:
+            for id, cell in column:
+                duration_ns = statistics.median([b["duration_ns"] for b in cell])
+                table.SetFixedCol(cell[0]["title"], [" ".join(cell[0]["modules"])])
+                table.Set(tuple([summary["date"].strftime("%Y-%m-%d"),
+                                 summary["branch"],
+                                 summary["tag"]]
+                                + list(key)),
+                          cell[0]["title"], format_duration_sec(duration_ns))
+
+    table.Write(sys.stdout)
+
+if __name__ == "__main__":
+    main(sys.argv)
+
