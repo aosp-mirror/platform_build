@@ -289,6 +289,7 @@ PRODUCT_PACKAGES += \
     uncrypt \
     usbd \
     vdc \
+    vintf \
     voip-common \
     vold \
     watchdogd \
