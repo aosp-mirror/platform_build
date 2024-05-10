@@ -105,6 +105,9 @@ ifeq (true,$(filter true, $(CUSTOM_IMAGE_AVB_HASH_ENABLE) $(CUSTOM_IMAGE_AVB_HAS
 else ifneq (,$(filter true, $(CUSTOM_IMAGE_AVB_HASH_ENABLE) $(CUSTOM_IMAGE_AVB_HASHTREE_ENABLE)))
   $(error Cannot set both CUSTOM_IMAGE_AVB_HASH_ENABLE and CUSTOM_IMAGE_AVB_HASHTREE_ENABLE to true)
 endif
+ifeq ($(strip $(HAS_BUILD_NUMBER)),true)
+$(my_built_custom_image): $(BUILD_NUMBER_FILE)
+endif
 $(my_built_custom_image): $(INTERNAL_USERIMAGES_DEPS) $(my_built_modules) $(my_image_copy_files) $(my_custom_image_modules_dep) \
   $(CUSTOM_IMAGE_DICT_FILE)
 	@echo "Build image $@"

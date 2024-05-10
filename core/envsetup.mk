@@ -24,50 +24,49 @@ endef
 #$(warning $(call find_and_earlier,A B C,C))
 #$(warning $(call find_and_earlier,A B C,D))
 
-define version-list
-$(1)P1A $(1)P1B $(1)P2A $(1)P2B $(1)D1A $(1)D1B $(1)D2A $(1)D2B $(1)Q1A $(1)Q1B $(1)Q2A $(1)Q2B $(1)Q3A $(1)Q3B
+# Runs a starlark file, and sets all the variables in its top-level
+# variables_to_export_to_make variable as make variables.
+#
+# In order to avoid running starlark every time the stamp file is checked, we use
+# $(KATI_shell_no_rerun). Then, to make sure that we actually do rerun kati when
+# modifying the starlark files, we add the starlark files to the kati stamp file with
+# $(KATI_extra_file_deps).
+#
+# Arguments:
+#  $(1): A single starlark file to use as the entrypoint
+#  $(2): An optional list of starlark files to NOT include as kati dependencies.
+#  $(3): An optional list of extra flags to pass to rbcrun
+define run-starlark
+$(eval _starlark_results := $(OUT_DIR)/starlark_results/$(subst /,_,$(1)).mk)
+$(KATI_shell_no_rerun mkdir -p $(OUT_DIR)/starlark_results && $(OUT_DIR)/rbcrun --mode=make $(3) $(1) >$(_starlark_results) && touch -t 200001010000 $(_starlark_results))
+$(if $(filter-out 0,$(.SHELLSTATUS)),$(error Starlark failed to run))
+$(eval include $(_starlark_results))
+$(KATI_extra_file_deps $(filter-out $(2),$(LOADED_STARLARK_FILES)))
+$(eval LOADED_STARLARK_FILES :=)
+$(eval _starlark_results :=)
 endef
 
-PREV_VERSIONS := OPR1 OPD1 OPD2 OPM1 OPM2 PPR1 PPD1 PPD2 PPM1 PPM2 QPR1
-ALL_VERSIONS := Q R S T U V W X Y Z
-ALL_VERSIONS := $(PREV_VERSIONS) $(foreach v,$(ALL_VERSIONS),$(call version-list,$(v)))
-PREV_VERSIONS :=
+# ---------------------------------------------------------------
+# Release config
+include $(BUILD_SYSTEM)/release_config.mk
 
-# Filters ALL_VERSIONS down to the range [$1, $2], and errors if $1 > $2 or $3 is
-# not in [$1, $2]
-# $(1): min platform version
-# $(2): max platform version
-# $(3): default platform version
-define allowed-platform-versions
-$(strip \
-  $(if $(filter $(ALL_VERSIONS),$(1)),,
-    $(error Invalid MIN_PLATFORM_VERSION '$(1)'))
-  $(if $(filter $(ALL_VERSIONS),$(2)),,
-    $(error Invalid MAX_PLATFORM_VERSION '$(2)'))
-  $(if $(filter $(ALL_VERSIONS),$(3)),,
-    $(error Invalid DEFAULT_PLATFORM_VERSION '$(3)'))
+# Set default value of KEEP_VNDK.
+ifeq ($(RELEASE_DEPRECATE_VNDK),true)
+  KEEP_VNDK ?= false
+else
+  KEEP_VNDK ?= true
+endif
 
-  $(eval allowed_versions_ := $(call find_and_earlier,$(ALL_VERSIONS),$(2)))
+# ---------------------------------------------------------------
+# Set up version information
+include $(BUILD_SYSTEM)/version_util.mk
 
-  $(if $(filter $(allowed_versions_),$(1)),,
-    $(error MIN_PLATFORM_VERSION '$(1)' must be before MAX_PLATFORM_VERSION '$(2)'))
+# This used to be calculated, but is now fixed and not expected
+# to change over time anymore. New code attempting to use a
+# variable like IS_AT_LAST_* should instead use a
+# build system flag.
 
-  $(eval allowed_versions_ := $(1) \
-    $(filter-out $(call find_and_earlier,$(allowed_versions_),$(1)),$(allowed_versions_)))
-
-  $(if $(filter $(allowed_versions_),$(3)),,
-    $(error DEFAULT_PLATFORM_VERSION '$(3)' must be between MIN_PLATFORM_VERSION '$(1)' and MAX_PLATFORM_VERSION '$(2)'))
-
-  $(allowed_versions_))
-endef
-
-#$(warning $(call allowed-platform-versions,OPR1,PPR1,OPR1))
-#$(warning $(call allowed-platform-versions,OPM1,PPR1,OPR1))
-
-# Set up version information.
-include $(BUILD_SYSTEM)/version_defaults.mk
-
-ENABLED_VERSIONS := $(call find_and_earlier,$(ALL_VERSIONS),$(TARGET_PLATFORM_VERSION))
+ENABLED_VERSIONS := "OPR1 OPD1 OPD2 OPM1 OPM2 PPR1 PPD1 PPD2 PPM1 PPM2 QPR1 QP1A QP1B QP2A QP2B QD1A QD1B QD2A QD2B QQ1A QQ1B QQ2A QQ2B QQ3A QQ3B RP1A RP1B RP2A RP2B RD1A RD1B RD2A RD2B RQ1A RQ1B RQ2A RQ2B RQ3A RQ3B SP1A SP1B SP2A SP2B SD1A SD1B SD2A SD2B SQ1A SQ1B SQ2A SQ2B SQ3A SQ3B TP1A TP1B TP2A TP2B TD1A TD1B TD2A TD2B TQ1A TQ1B TQ2A TQ2B TQ3A TQ3B UP1A UP1B UP2A UP2B UD1A UD1B UD2A UD2B UQ1A UQ1B UQ2A UQ2B UQ3A UQ3B"
 
 $(foreach v,$(ENABLED_VERSIONS), \
   $(eval IS_AT_LEAST_$(v) := true))
@@ -339,6 +338,7 @@ $(eval _dump_variables_rbc_excluded := \
   RBC_PRODUCT_CONFIG \
   RBC_BOARD_CONFIG \
   SOONG_% \
+  TARGET_RELEASE \
   TOPDIR \
   TRACE_BEGIN_SOONG \
   USER)
@@ -377,6 +377,8 @@ include $(BUILD_SYSTEM)/board_config.mk
 ifneq ($(TARGET_BUILD_TYPE),debug)
 TARGET_BUILD_TYPE := release
 endif
+
+include $(BUILD_SYSTEM)/product_validation_checks.mk
 
 # ---------------------------------------------------------------
 # figure out the output directories
@@ -553,6 +555,8 @@ TARGET_OUT_ETC := $(TARGET_OUT)/etc
 TARGET_OUT_NOTICE_FILES := $(TARGET_OUT_INTERMEDIATES)/NOTICE_FILES
 TARGET_OUT_FAKE := $(PRODUCT_OUT)/fake_packages
 TARGET_OUT_TESTCASES := $(PRODUCT_OUT)/testcases
+TARGET_OUT_FLAGS := $(TARGET_OUT_INTERMEDIATES)/FLAGS
+
 .KATI_READONLY := \
   TARGET_OUT_EXECUTABLES \
   TARGET_OUT_OPTIONAL_EXECUTABLES \
@@ -566,7 +570,8 @@ TARGET_OUT_TESTCASES := $(PRODUCT_OUT)/testcases
   TARGET_OUT_ETC \
   TARGET_OUT_NOTICE_FILES \
   TARGET_OUT_FAKE \
-  TARGET_OUT_TESTCASES
+  TARGET_OUT_TESTCASES \
+  TARGET_OUT_FLAGS
 
 ifeq ($(SANITIZE_LITE),true)
 # When using SANITIZE_LITE, APKs must not be packaged with sanitized libraries, as they will not
@@ -695,6 +700,7 @@ TARGET_OUT_VENDOR_JAVA_LIBRARIES := $(TARGET_OUT_VENDOR)/framework
 TARGET_OUT_VENDOR_APPS := $(target_out_vendor_app_base)/app
 TARGET_OUT_VENDOR_APPS_PRIVILEGED := $(target_out_vendor_app_base)/priv-app
 TARGET_OUT_VENDOR_ETC := $(TARGET_OUT_VENDOR)/etc
+TARGET_OUT_VENDOR_FAKE := $(PRODUCT_OUT)/vendor_fake_packages
 .KATI_READONLY := \
   TARGET_OUT_VENDOR_EXECUTABLES \
   TARGET_OUT_VENDOR_OPTIONAL_EXECUTABLES \
@@ -703,7 +709,8 @@ TARGET_OUT_VENDOR_ETC := $(TARGET_OUT_VENDOR)/etc
   TARGET_OUT_VENDOR_JAVA_LIBRARIES \
   TARGET_OUT_VENDOR_APPS \
   TARGET_OUT_VENDOR_APPS_PRIVILEGED \
-  TARGET_OUT_VENDOR_ETC
+  TARGET_OUT_VENDOR_ETC \
+  TARGET_OUT_VENDOR_FAKE
 
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_VENDOR_EXECUTABLES := $(TARGET_OUT_VENDOR_EXECUTABLES)
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_VENDOR_SHARED_LIBRARIES := $(target_out_vendor_shared_libraries_base)/lib
@@ -770,6 +777,7 @@ TARGET_OUT_ODM_JAVA_LIBRARIES := $(TARGET_OUT_ODM)/framework
 TARGET_OUT_ODM_APPS := $(target_out_odm_app_base)/app
 TARGET_OUT_ODM_APPS_PRIVILEGED := $(target_out_odm_app_base)/priv-app
 TARGET_OUT_ODM_ETC := $(TARGET_OUT_ODM)/etc
+TARGET_OUT_ODM_FAKE := $(PRODUCT_OUT)/odm_fake_packages
 .KATI_READONLY := \
   TARGET_OUT_ODM \
   TARGET_OUT_ODM_EXECUTABLES \
@@ -779,7 +787,8 @@ TARGET_OUT_ODM_ETC := $(TARGET_OUT_ODM)/etc
   TARGET_OUT_ODM_JAVA_LIBRARIES \
   TARGET_OUT_ODM_APPS \
   TARGET_OUT_ODM_APPS_PRIVILEGED \
-  TARGET_OUT_ODM_ETC
+  TARGET_OUT_ODM_ETC \
+  TARGET_OUT_ODM_FAKE
 
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_EXECUTABLES := $(TARGET_OUT_ODM_EXECUTABLES)
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_SHARED_LIBRARIES := $(target_out_odm_shared_libraries_base)/lib
@@ -917,13 +926,15 @@ TARGET_OUT_PRODUCT_JAVA_LIBRARIES := $(TARGET_OUT_PRODUCT)/framework
 TARGET_OUT_PRODUCT_APPS := $(target_out_product_app_base)/app
 TARGET_OUT_PRODUCT_APPS_PRIVILEGED := $(target_out_product_app_base)/priv-app
 TARGET_OUT_PRODUCT_ETC := $(TARGET_OUT_PRODUCT)/etc
+TARGET_OUT_PRODUCT_FAKE := $(TARGET_OUT_PRODUCT)/product_fake_packages
 .KATI_READONLY := \
   TARGET_OUT_PRODUCT_EXECUTABLES \
   TARGET_OUT_PRODUCT_SHARED_LIBRARIES \
   TARGET_OUT_PRODUCT_JAVA_LIBRARIES \
   TARGET_OUT_PRODUCT_APPS \
   TARGET_OUT_PRODUCT_APPS_PRIVILEGED \
-  TARGET_OUT_PRODUCT_ETC
+  TARGET_OUT_PRODUCT_ETC \
+  TARGET_OUT_PRODUCT_FAKE
 
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_EXECUTABLES := $(TARGET_OUT_PRODUCT_EXECUTABLES)
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_SHARED_LIBRARIES := $(target_out_product_shared_libraries_base)/lib
@@ -960,13 +971,15 @@ TARGET_OUT_SYSTEM_EXT_APPS := $(target_out_system_ext_app_base)/app
 TARGET_OUT_SYSTEM_EXT_APPS_PRIVILEGED := $(target_out_system_ext_app_base)/priv-app
 TARGET_OUT_SYSTEM_EXT_ETC := $(TARGET_OUT_SYSTEM_EXT)/etc
 TARGET_OUT_SYSTEM_EXT_EXECUTABLES := $(TARGET_OUT_SYSTEM_EXT)/bin
+TARGET_OUT_SYSTEM_EXT_FAKE := $(PRODUCT_OUT)/system_ext_fake_packages
 .KATI_READONLY := \
   TARGET_OUT_SYSTEM_EXT_EXECUTABLES \
   TARGET_OUT_SYSTEM_EXT_SHARED_LIBRARIES \
   TARGET_OUT_SYSTEM_EXT_JAVA_LIBRARIES \
   TARGET_OUT_SYSTEM_EXT_APPS \
   TARGET_OUT_SYSTEM_EXT_APPS_PRIVILEGED \
-  TARGET_OUT_SYSTEM_EXT_ETC
+  TARGET_OUT_SYSTEM_EXT_ETC \
+  TARGET_OUT_SYSTEM_EXT_FAKE
 
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_EXT_EXECUTABLES := $(TARGET_OUT_SYSTEM_EXT_EXECUTABLES)
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_EXT_SHARED_LIBRARIES := $(target_out_system_ext_shared_libraries_base)/lib

@@ -1,0 +1,152 @@
+{
+    "spdxVersion": "SPDX-2.3",
+    "dataLicense": "CC0-1.0",
+    "SPDXID": "SPDXRef-DOCUMENT",
+    "name": "test doc",
+    "documentNamespace": "http://www.google.com/sbom/spdx/android",
+    "creationInfo": {
+        "creators": [
+            "Organization: Google"
+        ],
+        "created": "2023-03-31T22:17:58Z"
+    },
+    "externalDocumentRefs": [
+        {
+            "externalDocumentId": "DocumentRef-external_doc_ref",
+            "spdxDocument": "external_doc_uri",
+            "checksum": {
+                "algorithm": "SHA1",
+                "checksumValue": "1234567890"
+            }
+        }
+    ],
+    "documentDescribes": [
+        "SPDXRef-PRODUCT"
+    ],
+    "packages": [
+        {
+            "name": "PRODUCT",
+            "SPDXID": "SPDXRef-PRODUCT",
+            "downloadLocation": "NONE",
+            "filesAnalyzed": true,
+            "versionInfo": "build_finger_print",
+            "supplier": "Organization: Google",
+            "packageVerificationCode": {
+                "packageVerificationCodeValue": "123456"
+            },
+            "hasFiles": [
+                "SPDXRef-file1",
+                "SPDXRef-file2",
+                "SPDXRef-file3"
+            ]
+        },
+        {
+            "name": "PLATFORM",
+            "SPDXID": "SPDXRef-PLATFORM",
+            "downloadLocation": "NONE",
+            "filesAnalyzed": false,
+            "versionInfo": "build_finger_print",
+            "supplier": "Organization: Google"
+        },
+        {
+            "name": "Prebuilt package1",
+            "SPDXID": "SPDXRef-PREBUILT-package1",
+            "downloadLocation": "NONE",
+            "filesAnalyzed": false,
+            "versionInfo": "build_finger_print",
+            "supplier": "Organization: Google"
+        },
+        {
+            "name": "Source package1",
+            "SPDXID": "SPDXRef-SOURCE-package1",
+            "downloadLocation": "NONE",
+            "filesAnalyzed": false,
+            "versionInfo": "build_finger_print",
+            "supplier": "Organization: Google",
+            "externalRefs": [
+                {
+                    "referenceCategory": "SECURITY",
+                    "referenceType": "cpe22Type",
+                    "referenceLocator": "cpe:/a:jsoncpp_project:jsoncpp:1.9.4"
+                }
+            ]
+        },
+        {
+            "name": "Upstream package1",
+            "SPDXID": "SPDXRef-UPSTREAM-package1",
+            "downloadLocation": "NOASSERTION",
+            "filesAnalyzed": false,
+            "versionInfo": "1.1",
+            "supplier": "Organization: upstream"
+        }
+    ],
+    "files": [
+        {
+            "fileName": "/bin/file1",
+            "SPDXID": "SPDXRef-file1",
+            "checksums": [
+                {
+                    "algorithm": "SHA1",
+                    "checksumValue": "11111"
+                }
+            ]
+        },
+        {
+            "fileName": "/bin/file2",
+            "SPDXID": "SPDXRef-file2",
+            "checksums": [
+                {
+                    "algorithm": "SHA1",
+                    "checksumValue": "22222"
+                }
+            ]
+        },
+        {
+            "fileName": "/bin/file3",
+            "SPDXID": "SPDXRef-file3",
+            "checksums": [
+                {
+                    "algorithm": "SHA1",
+                    "checksumValue": "33333"
+                }
+            ]
+        },
+        {
+            "fileName": "file4.a",
+            "SPDXID": "SPDXRef-file4",
+            "checksums": [
+                {
+                    "algorithm": "SHA1",
+                    "checksumValue": "44444"
+                }
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "spdxElementId": "SPDXRef-file1",
+            "relatedSpdxElement": "SPDXRef-PLATFORM",
+            "relationshipType": "GENERATED_FROM"
+        },
+        {
+            "spdxElementId": "SPDXRef-file2",
+            "relatedSpdxElement": "SPDXRef-PREBUILT-package1",
+            "relationshipType": "GENERATED_FROM"
+        },
+        {
+            "spdxElementId": "SPDXRef-file3",
+            "relatedSpdxElement": "SPDXRef-SOURCE-package1",
+            "relationshipType": "GENERATED_FROM"
+        },
+        {
+            "spdxElementId": "SPDXRef-file1",
+            "relatedSpdxElement": "SPDXRef-file4",
+            "relationshipType": "STATIC_LINK"
+        },
+        {
+            "spdxElementId": "SPDXRef-SOURCE-package1",
+            "relatedSpdxElement": "SPDXRef-UPSTREAM-package1",
+            "relationshipType": "VARIANT_OF"
+        }
+    ]
+}

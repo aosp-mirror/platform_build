@@ -26,63 +26,25 @@ $(call add_soong_config_namespace,ANDROID)
 
 # Add variables to the namespace below:
 
-$(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_MEDIASERVER)
-$(call add_soong_config_var,ANDROID,TARGET_ENABLE_MEDIADRM_64)
-$(call add_soong_config_var,ANDROID,IS_TARGET_MIXED_SEPOLICY)
-ifeq ($(IS_TARGET_MIXED_SEPOLICY),true)
-$(call add_soong_config_var_value,ANDROID,MIXED_SEPOLICY_VERSION,$(BOARD_SEPOLICY_VERS))
-endif
 $(call add_soong_config_var,ANDROID,BOARD_USES_ODMIMAGE)
 $(call add_soong_config_var,ANDROID,BOARD_USES_RECOVERY_AS_BOOT)
+$(call add_soong_config_var,ANDROID,CHECK_DEV_TYPE_VIOLATIONS)
+$(call add_soong_config_var,ANDROID,PLATFORM_SEPOLICY_COMPAT_VERSIONS)
 $(call add_soong_config_var,ANDROID,PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT)
+$(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_DRMSERVER)
+$(call add_soong_config_var,ANDROID,TARGET_ENABLE_MEDIADRM_64)
+$(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_MEDIASERVER)
 
-# Default behavior for the tree wrt building modules or using prebuilts. This
-# can always be overridden by setting the environment variable
-# MODULE_BUILD_FROM_SOURCE.
-BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := true
+# PRODUCT_PRECOMPILED_SEPOLICY defaults to true. Explicitly check if it's "false" or not.
+$(call add_soong_config_var_value,ANDROID,PRODUCT_PRECOMPILED_SEPOLICY,$(if $(filter false,$(PRODUCT_PRECOMPILED_SEPOLICY)),false,true))
 
-ifneq (,$(MODULE_BUILD_FROM_SOURCE))
-  # Keep an explicit setting.
-else ifeq (,$(filter docs sdk win_sdk sdk_addon,$(MAKECMDGOALS))$(findstring com.google.android.conscrypt,$(PRODUCT_PACKAGES)))
-  # Prebuilt module SDKs require prebuilt modules to work, and currently
-  # prebuilt modules are only provided for com.google.android.xxx. If we can't
-  # find one of them in PRODUCT_PACKAGES then assume com.android.xxx are in use,
-  # and disable prebuilt SDKs. In particular this applies to AOSP builds.
-  #
-  # However, docs/sdk/win_sdk/sdk_addon builds might not include com.google.android.xxx
-  # packages, so for those we respect the default behavior.
-  MODULE_BUILD_FROM_SOURCE := true
-else ifneq (,$(PRODUCT_MODULE_BUILD_FROM_SOURCE))
-  # Let products override the branch default.
-  MODULE_BUILD_FROM_SOURCE := $(PRODUCT_MODULE_BUILD_FROM_SOURCE)
-else
-  MODULE_BUILD_FROM_SOURCE := $(BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE)
+ifdef ART_DEBUG_OPT_FLAG
+$(call soong_config_set,art_module,art_debug_opt_flag,$(ART_DEBUG_OPT_FLAG))
 endif
 
-ifneq (,$(ART_MODULE_BUILD_FROM_SOURCE))
-  # Keep an explicit setting.
-else ifneq (,$(findstring .android.art,$(TARGET_BUILD_APPS)))
-  # Build ART modules from source if they are listed in TARGET_BUILD_APPS.
-  ART_MODULE_BUILD_FROM_SOURCE := true
-else
-  # Do the same as other modules by default.
-  ART_MODULE_BUILD_FROM_SOURCE := $(MODULE_BUILD_FROM_SOURCE)
+ifdef TARGET_BOARD_AUTO
+  $(call add_soong_config_var_value, ANDROID, target_board_auto, $(TARGET_BOARD_AUTO))
 endif
-
-$(call soong_config_set,art_module,source_build,$(ART_MODULE_BUILD_FROM_SOURCE))
-
-# Ensure that those mainline modules who have individually toggleable prebuilts
-# are controlled by the MODULE_BUILD_FROM_SOURCE environment variable by
-# default.
-INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES := \
-  bluetooth \
-  permission \
-  uwb \
-  wifi \
-
-$(foreach m, $(INDIVIDUALLY_TOGGLEABLE_PREBUILT_MODULES),\
-  $(if $(call soong_config_get,$(m)_module,source_build),,\
-    $(call soong_config_set,$(m)_module,source_build,$(MODULE_BUILD_FROM_SOURCE))))
 
 # Apex build mode variables
 ifdef APEX_BUILD_FOR_PRE_S_DEVICES
@@ -93,9 +55,10 @@ $(call add_soong_config_var_value,ANDROID,library_linking_strategy,prefer_static
 endif
 endif
 
-ifeq (true,$(MODULE_BUILD_FROM_SOURCE))
+# TODO(b/308187800): some internal modules set `prefer` to true on the prebuilt apex module,
+# and set that to false when `ANDROID.module_build_from_source` is true.
+# Set this soong config variable to true for now, and cleanup `prefer` as part of b/308187800
 $(call add_soong_config_var_value,ANDROID,module_build_from_source,true)
-endif
 
 # Messaging app vars
 ifeq (eng,$(TARGET_BUILD_VARIANT))
@@ -106,9 +69,44 @@ endif
 SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
 
+# Enable Compose in SystemUI by default.
+SYSTEMUI_USE_COMPOSE ?= true
+$(call add_soong_config_var,ANDROID,SYSTEMUI_USE_COMPOSE)
+
 ifdef PRODUCT_AVF_ENABLED
 $(call add_soong_config_var_value,ANDROID,avf_enabled,$(PRODUCT_AVF_ENABLED))
 endif
+
+ifdef PRODUCT_AVF_MICRODROID_GUEST_GKI_VERSION
+$(call add_soong_config_var_value,ANDROID,avf_microdroid_guest_gki_version,$(PRODUCT_AVF_MICRODROID_GUEST_GKI_VERSION))
+endif
+
+ifdef PRODUCT_MEMCG_V2_FORCE_ENABLED
+$(call add_soong_config_var_value,ANDROID,memcg_v2_force_enabled,$(PRODUCT_MEMCG_V2_FORCE_ENABLED))
+endif
+
+ifdef PRODUCT_CGROUP_V2_SYS_APP_ISOLATION_ENABLED
+$(call add_soong_config_var_value,ANDROID,cgroup_v2_sys_app_isolation,$(PRODUCT_CGROUP_V2_SYS_APP_ISOLATION_ENABLED))
+endif
+
+$(call add_soong_config_var_value,ANDROID,release_avf_allow_preinstalled_apps,$(RELEASE_AVF_ALLOW_PREINSTALLED_APPS))
+$(call add_soong_config_var_value,ANDROID,release_avf_enable_device_assignment,$(RELEASE_AVF_ENABLE_DEVICE_ASSIGNMENT))
+$(call add_soong_config_var_value,ANDROID,release_avf_enable_dice_changes,$(RELEASE_AVF_ENABLE_DICE_CHANGES))
+$(call add_soong_config_var_value,ANDROID,release_avf_enable_llpvm_changes,$(RELEASE_AVF_ENABLE_LLPVM_CHANGES))
+$(call add_soong_config_var_value,ANDROID,release_avf_enable_multi_tenant_microdroid_vm,$(RELEASE_AVF_ENABLE_MULTI_TENANT_MICRODROID_VM))
+$(call add_soong_config_var_value,ANDROID,release_avf_enable_remote_attestation,$(RELEASE_AVF_ENABLE_REMOTE_ATTESTATION))
+$(call add_soong_config_var_value,ANDROID,release_avf_enable_vendor_modules,$(RELEASE_AVF_ENABLE_VENDOR_MODULES))
+$(call add_soong_config_var_value,ANDROID,release_avf_enable_virt_cpufreq,$(RELEASE_AVF_ENABLE_VIRT_CPUFREQ))
+$(call add_soong_config_var_value,ANDROID,release_avf_microdroid_kernel_version,$(RELEASE_AVF_MICRODROID_KERNEL_VERSION))
+$(call add_soong_config_var_value,ANDROID,release_avf_support_custom_vm_with_paravirtualized_devices,$(RELEASE_AVF_SUPPORT_CUSTOM_VM_WITH_PARAVIRTUALIZED_DEVICES))
+
+$(call add_soong_config_var_value,ANDROID,release_binder_death_recipient_weak_from_jni,$(RELEASE_BINDER_DEATH_RECIPIENT_WEAK_FROM_JNI))
+
+$(call add_soong_config_var_value,ANDROID,release_package_libandroid_runtime_punch_holes,$(RELEASE_PACKAGE_LIBANDROID_RUNTIME_PUNCH_HOLES))
+
+$(call add_soong_config_var_value,ANDROID,release_selinux_data_data_ignore,$(RELEASE_SELINUX_DATA_DATA_IGNORE))
+
+$(call add_soong_config_var_value,ANDROID,release_write_appcompat_override_system_properties,$(RELEASE_WRITE_APPCOMPAT_OVERRIDE_SYSTEM_PROPERTIES))
 
 # Enable system_server optimizations by default unless explicitly set or if
 # there may be dependent runtime jars.
@@ -125,7 +123,16 @@ else ifneq (platform:services,$(lastword $(PRODUCT_SYSTEM_SERVER_JARS)))
 else
   SYSTEM_OPTIMIZE_JAVA ?= true
 endif
+
+ifeq (true,$(FULL_SYSTEM_OPTIMIZE_JAVA))
+  SYSTEM_OPTIMIZE_JAVA := true
+endif
+
 $(call add_soong_config_var,ANDROID,SYSTEM_OPTIMIZE_JAVA)
+$(call add_soong_config_var,ANDROID,FULL_SYSTEM_OPTIMIZE_JAVA)
+
+# TODO(b/319697968): Remove this build flag support when metalava fully supports flagged api
+$(call soong_config_set,ANDROID,release_hidden_api_exportable_stubs,$(RELEASE_HIDDEN_API_EXPORTABLE_STUBS))
 
 # Check for SupplementalApi module.
 ifeq ($(wildcard packages/modules/SupplementalApi),)
@@ -134,3 +141,14 @@ else
 $(call add_soong_config_var_value,ANDROID,include_nonpublic_framework_api,true)
 endif
 
+# Add crashrecovery build flag to soong
+$(call soong_config_set,ANDROID,release_crashrecovery_module,$(RELEASE_CRASHRECOVERY_MODULE))
+ifeq (true,$(RELEASE_CRASHRECOVERY_FILE_MOVE))
+  $(call soong_config_set,ANDROID,crashrecovery_files_in_module,true)
+  $(call soong_config_set,ANDROID,crashrecovery_files_in_platform,false)
+else
+  $(call soong_config_set,ANDROID,crashrecovery_files_in_module,false)
+  $(call soong_config_set,ANDROID,crashrecovery_files_in_platform,true)
+endif
+# Weirdly required because platform_bootclasspath is using AUTO namespace
+$(call soong_config_set,AUTO,release_crashrecovery_module,$(RELEASE_CRASHRECOVERY_MODULE))

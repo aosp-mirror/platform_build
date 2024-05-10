@@ -1,0 +1,11 @@
+go 1.18
+
+use (
+	.
+	../../../../external/golang-protobuf
+	../../../soong/testing/test_spec_proto
+	../../../soong/testing/code_metadata_proto
+	../../../soong/testing/code_metadata_proto_internal
+)
+
+replace google.golang.org/protobuf v0.0.0 => ../../../../external/golang-protobuf

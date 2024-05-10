@@ -1,0 +1,811 @@
+#!/usr/bin/env python3
+# Copyright (C) 2023 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import sys
+if __name__ == "__main__":
+    sys.dont_write_bytecode = True
+
+import argparse
+import dataclasses
+import datetime
+import json
+import os
+import pathlib
+import random
+import re
+import shutil
+import subprocess
+import time
+import uuid
+from typing import Optional
+
+import pretty
+import utils
+
+
+class FatalError(Exception):
+    def __init__(self):
+        pass
+
+
+class OptionsError(Exception):
+    def __init__(self, message):
+        self.message = message
+
+
+@dataclasses.dataclass(frozen=True)
+class Lunch:
+    "Lunch combination"
+
+    target_product: str
+    "TARGET_PRODUCT"
+
+    target_release: str
+    "TARGET_RELEASE"
+
+    target_build_variant: str
+    "TARGET_BUILD_VARIANT"
+
+    def ToDict(self):
+        return {
+            "TARGET_PRODUCT": self.target_product,
+            "TARGET_RELEASE": self.target_release,
+            "TARGET_BUILD_VARIANT": self.target_build_variant,
+        }
+
+    def Combine(self):
+        return f"{self.target_product}-{self.target_release}-{self.target_build_variant}"
+
+
+@dataclasses.dataclass(frozen=True)
+class Change:
+    "A change that we make to the tree, and how to undo it"
+    label: str
+    "String to print in the log when the change is made"
+
+    change: callable
+    "Function to change the source tree"
+
+    undo: callable
+    "Function to revert the source tree to its previous condition in the most minimal way possible."
+
+_DUMPVARS_VARS=[
+    "COMMON_LUNCH_CHOICES",
+    "HOST_PREBUILT_TAG",
+    "print",
+    "PRODUCT_OUT",
+    "report_config",
+    "TARGET_ARCH",
+    "TARGET_BUILD_VARIANT",
+    "TARGET_DEVICE",
+    "TARGET_PRODUCT",
+]
+
+_DUMPVARS_ABS_VARS =[
+    "ANDROID_CLANG_PREBUILTS",
+    "ANDROID_JAVA_HOME",
+    "ANDROID_JAVA_TOOLCHAIN",
+    "ANDROID_PREBUILTS",
+    "HOST_OUT",
+    "HOST_OUT_EXECUTABLES",
+    "HOST_OUT_TESTCASES",
+    "OUT_DIR",
+    "print",
+    "PRODUCT_OUT",
+    "SOONG_HOST_OUT",
+    "SOONG_HOST_OUT_EXECUTABLES",
+    "TARGET_OUT_TESTCASES",
+]
+
+@dataclasses.dataclass(frozen=True)
+class Benchmark:
+    "Something we measure"
+
+    id: str
+    "Short ID for the benchmark, for the command line"
+
+    title: str
+    "Title for reports"
+
+    change: Change
+    "Source tree modification for the benchmark that will be measured"
+
+    dumpvars: Optional[bool] = False
+    "If specified, soong will run in dumpvars mode rather than build-mode."
+
+    modules: Optional[list[str]] = None
+    "Build modules to build on soong command line"
+
+    preroll: Optional[int] = 0
+    "Number of times to run the build command to stabilize"
+
+    postroll: Optional[int] = 3
+    "Number of times to run the build command after reverting the action to stabilize"
+
+    def build_description(self):
+      "Short description of the benchmark's Soong invocation."
+      if self.dumpvars:
+        return "dumpvars"
+      elif self.modules:
+        return " ".join(self.modules)
+      return ""
+
+
+    def soong_command(self, root):
+      "Command line args to soong_ui for this benchmark."
+      if self.dumpvars:
+          return [
+              "--dumpvars-mode",
+              f"--vars=\"{' '.join(_DUMPVARS_VARS)}\"",
+              f"--abs-vars=\"{' '.join(_DUMPVARS_ABS_VARS)}\"",
+              "--var-prefix=var_cache_",
+              "--abs-var-prefix=abs_var_cache_",
+          ]
+      elif self.modules:
+          return [
+              "--build-mode",
+              "--all-modules",
+              f"--dir={root}",
+              "--skip-metrics-upload",
+          ] + self.modules
+      else:
+          raise Exception("Benchmark must specify dumpvars or modules")
+
+
+@dataclasses.dataclass(frozen=True)
+class FileSnapshot:
+    "Snapshot of a file's contents."
+
+    filename: str
+    "The file that was snapshottened"
+
+    contents: str
+    "The contents of the file"
+
+    def write(self):
+        "Write the contents back to the file"
+        with open(self.filename, "w") as f:
+            f.write(self.contents)
+
+
+def Snapshot(filename):
+    """Return a FileSnapshot with the file's current contents."""
+    with open(filename) as f:
+        contents = f.read()
+    return FileSnapshot(filename, contents)
+
+
+def Clean():
+    """Remove the out directory."""
+    def remove_out():
+        out_dir = utils.get_out_dir()
+        #only remove actual contents, in case out is a symlink (as is the case for cog)
+        if os.path.exists(out_dir):
+          for filename in os.listdir(out_dir):
+              p = os.path.join(out_dir, filename)
+              if os.path.isfile(p) or os.path.islink(p):
+                  os.remove(p)
+              elif os.path.isdir(p):
+                  shutil.rmtree(p)
+    return Change(label="Remove out", change=remove_out, undo=lambda: None)
+
+
+def NoChange():
+    """No change to the source tree."""
+    return Change(label="No change", change=lambda: None, undo=lambda: None)
+
+
+def Create(filename):
+    "Create an action to create `filename`. The parent directory must exist."
+    def create():
+        with open(filename, "w") as f:
+            pass
+    def delete():
+        os.remove(filename)
+    return Change(
+                label=f"Create {filename}",
+                change=create,
+                undo=delete,
+            )
+
+
+def Modify(filename, contents, before=None):
+    """Create an action to modify `filename` by appending the result of `contents`
+    before the last instances of `before` in the file.
+
+    Raises an error if `before` doesn't appear in the file.
+    """
+    orig = Snapshot(filename)
+    if before:
+        index = orig.contents.rfind(before)
+        if index < 0:
+            report_error(f"{filename}: Unable to find string '{before}' for modify operation.")
+            raise FatalError()
+    else:
+        index = len(orig.contents)
+    modified = FileSnapshot(filename, orig.contents[:index] + contents() + orig.contents[index:])
+    if False:
+        print(f"Modify: {filename}")
+        x = orig.contents.replace("\n", "\n   ORIG")
+        print(f"   ORIG {x}")
+        x = modified.contents.replace("\n", "\n   MODIFIED")
+        print(f"   MODIFIED {x}")
+
+    return Change(
+            label="Modify " + filename,
+            change=lambda: modified.write(),
+            undo=lambda: orig.write()
+        )
+
+def ChangePublicApi():
+    change = AddJavaField("frameworks/base/core/java/android/provider/Settings.java",
+                 "@android.annotation.SuppressLint(\"UnflaggedApi\") public")
+    orig_current_text = Snapshot("frameworks/base/core/api/current.txt")
+
+    def undo():
+        change.undo()
+        orig_current_text.write()
+
+    return Change(
+        label=change.label,
+        change=change.change,
+        undo=lambda: undo()
+    )
+
+def AddJavaField(filename, prefix):
+    return Modify(filename,
+                  lambda: f"{prefix} static final int BENCHMARK = {random.randint(0, 1000000)};\n",
+                  before="}")
+
+
+def Comment(prefix, suffix=""):
+    return lambda: prefix + " " + str(uuid.uuid4()) + suffix
+
+
+class BenchmarkReport():
+    "Information about a run of the benchmark"
+
+    lunch: Lunch
+    "lunch combo"
+
+    benchmark: Benchmark
+    "The benchmark object."
+
+    iteration: int
+    "Which iteration of the benchmark"
+
+    log_dir: str
+    "Path the the log directory, relative to the root of the reports directory"
+
+    preroll_duration_ns: [int]
+    "Durations of the in nanoseconds."
+
+    duration_ns: int
+    "Duration of the measured portion of the benchmark in nanoseconds."
+
+    postroll_duration_ns: [int]
+    "Durations of the postrolls in nanoseconds."
+
+    complete: bool
+    "Whether the benchmark made it all the way through the postrolls."
+
+    def __init__(self, lunch, benchmark, iteration, log_dir):
+        self.lunch = lunch
+        self.benchmark = benchmark
+        self.iteration = iteration
+        self.log_dir = log_dir
+        self.preroll_duration_ns = []
+        self.duration_ns = -1
+        self.postroll_duration_ns = []
+        self.complete = False
+
+    def ToDict(self):
+        return {
+            "lunch": self.lunch.ToDict(),
+            "id": self.benchmark.id,
+            "title": self.benchmark.title,
+            "modules": self.benchmark.modules,
+            "dumpvars": self.benchmark.dumpvars,
+            "change": self.benchmark.change.label,
+            "iteration": self.iteration,
+            "log_dir": self.log_dir,
+            "preroll_duration_ns": self.preroll_duration_ns,
+            "duration_ns": self.duration_ns,
+            "postroll_duration_ns": self.postroll_duration_ns,
+            "complete": self.complete,
+        }
+
+class Runner():
+    """Runs the benchmarks."""
+
+    def __init__(self, options):
+        self._options = options
+        self._reports = []
+        self._complete = False
+
+    def Run(self):
+        """Run all of the user-selected benchmarks."""
+        # Clean out the log dir or create it if necessary
+        prepare_log_dir(self._options.LogDir())
+
+        try:
+            for lunch in self._options.Lunches():
+                print(lunch)
+                for benchmark in self._options.Benchmarks():
+                    for iteration in range(self._options.Iterations()):
+                        self._run_benchmark(lunch, benchmark, iteration)
+            self._complete = True
+        finally:
+            self._write_summary()
+
+
+    def _run_benchmark(self, lunch, benchmark, iteration):
+        """Run a single benchmark."""
+        benchmark_log_subdir = self._benchmark_log_dir(lunch, benchmark, iteration)
+        benchmark_log_dir = self._options.LogDir().joinpath(benchmark_log_subdir)
+
+        sys.stderr.write(f"STARTING BENCHMARK: {benchmark.id}\n")
+        sys.stderr.write(f"             lunch: {lunch.Combine()}\n")
+        sys.stderr.write(f"         iteration: {iteration}\n")
+        sys.stderr.write(f" benchmark_log_dir: {benchmark_log_dir}\n")
+
+        report = BenchmarkReport(lunch, benchmark, iteration, benchmark_log_subdir)
+        self._reports.append(report)
+
+        # Preroll builds
+        for i in range(benchmark.preroll):
+            ns = self._run_build(lunch, benchmark_log_dir.joinpath(f"pre_{i}"), benchmark)
+            report.preroll_duration_ns.append(ns)
+
+        sys.stderr.write(f"PERFORMING CHANGE: {benchmark.change.label}\n")
+        if not self._options.DryRun():
+            benchmark.change.change()
+        try:
+
+            # Measured build
+            ns = self._run_build(lunch, benchmark_log_dir.joinpath("measured"), benchmark)
+            report.duration_ns = ns
+
+            dist_one = self._options.DistOne()
+            if dist_one:
+                # If we're disting just one benchmark, save the logs and we can stop here.
+                self._dist(utils.get_dist_dir(), benchmark.dumpvars)
+            else:
+                self._dist(benchmark_log_dir, benchmark.dumpvars, store_metrics_only=True)
+                # Postroll builds
+                for i in range(benchmark.postroll):
+                    ns = self._run_build(lunch, benchmark_log_dir.joinpath(f"post_{i}"),
+                                         benchmark)
+                    report.postroll_duration_ns.append(ns)
+
+        finally:
+            # Always undo, even if we crashed or the build failed and we stopped.
+            sys.stderr.write(f"UNDOING CHANGE: {benchmark.change.label}\n")
+            if not self._options.DryRun():
+                benchmark.change.undo()
+
+        self._write_summary()
+        sys.stderr.write(f"FINISHED BENCHMARK: {benchmark.id}\n")
+
+    def _benchmark_log_dir(self, lunch, benchmark, iteration):
+        """Construct the log directory fir a benchmark run."""
+        path = f"{lunch.Combine()}/{benchmark.id}"
+        # Zero pad to the correct length for correct alpha sorting
+        path += ("/%0" + str(len(str(self._options.Iterations()))) + "d") % iteration
+        return path
+
+    def _run_build(self, lunch, build_log_dir, benchmark):
+        """Builds the modules.  Saves interesting log files to log_dir.  Raises FatalError
+        if the build fails.
+        """
+        sys.stderr.write(f"STARTING BUILD {benchmark.build_description()}\n")
+
+        before_ns = time.perf_counter_ns()
+        if not self._options.DryRun():
+            cmd = [
+                "build/soong/soong_ui.bash",
+            ] + benchmark.soong_command(self._options.root)
+            env = dict(os.environ)
+            env["TARGET_PRODUCT"] = lunch.target_product
+            env["TARGET_RELEASE"] = lunch.target_release
+            env["TARGET_BUILD_VARIANT"] = lunch.target_build_variant
+            returncode = subprocess.call(cmd, env=env)
+            if returncode != 0:
+                report_error(f"Build failed: {' '.join(cmd)}")
+                raise FatalError()
+
+        after_ns = time.perf_counter_ns()
+
+        # TODO: Copy some log files.
+
+        sys.stderr.write(f"FINISHED BUILD {benchmark.build_description()}\n")
+
+        return after_ns - before_ns
+
+    def _dist(self, dist_dir, dumpvars, store_metrics_only=False):
+        out_dir = utils.get_out_dir()
+        dest_dir = dist_dir.joinpath("logs")
+        os.makedirs(dest_dir, exist_ok=True)
+        basenames = [
+            "soong_build_metrics.pb",
+            "soong_metrics",
+        ]
+        if not store_metrics_only:
+            basenames.extend([
+                "build.trace.gz",
+                "soong.log",
+            ])
+        if dumpvars:
+            basenames = ['dumpvars-'+b for b in basenames]
+        for base in basenames:
+            src = out_dir.joinpath(base)
+            if src.exists():
+                sys.stderr.write(f"DIST: copied {src} to {dest_dir}\n")
+                shutil.copy(src, dest_dir)
+
+    def _write_summary(self):
+        # Write the results, even if the build failed or we crashed, including
+        # whether we finished all of the benchmarks.
+        data = {
+            "start_time": self._options.Timestamp().isoformat(),
+            "branch": self._options.Branch(),
+            "tag": self._options.Tag(),
+            "benchmarks": [report.ToDict() for report in self._reports],
+            "complete": self._complete,
+        }
+        with open(self._options.LogDir().joinpath("summary.json"), "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, sort_keys=True)
+
+
+def benchmark_table(benchmarks):
+    rows = [("ID", "DESCRIPTION", "REBUILD"),]
+    rows += [(benchmark.id, benchmark.title, benchmark.build_description()) for benchmark in
+             benchmarks]
+    return rows
+
+
+def prepare_log_dir(directory):
+    if os.path.exists(directory):
+        # If it exists and isn't a directory, fail.
+        if not os.path.isdir(directory):
+            report_error(f"Log directory already exists but isn't a directory: {directory}")
+            raise FatalError()
+        # Make sure the directory is empty. Do this rather than deleting it to handle
+        # symlinks cleanly.
+        for filename in os.listdir(directory):
+            entry = os.path.join(directory, filename)
+            if os.path.isdir(entry):
+                shutil.rmtree(entry)
+            else:
+                os.unlink(entry)
+    else:
+        # Create it
+        os.makedirs(directory)
+
+
+class Options():
+    def __init__(self):
+        self._had_error = False
+
+        # Wall time clock when we started
+        self._timestamp = datetime.datetime.now(datetime.timezone.utc)
+
+        # Move to the root of the tree right away. Everything must happen from there.
+        self.root = utils.get_root()
+        if not self.root:
+            report_error("Unable to find root of tree from cwd.")
+            raise FatalError()
+        os.chdir(self.root)
+
+        # Initialize the Benchmarks. Note that this pre-loads all of the files, etc.
+        # Doing all that here forces us to fail fast if one of them can't load a required
+        # file, at the cost of a small startup speed. Don't make this do something slow
+        # like scan the whole tree.
+        self._init_benchmarks()
+
+        # Argument parsing
+        epilog = f"""
+benchmarks:
+{pretty.FormatTable(benchmark_table(self._benchmarks), prefix="  ")}
+"""
+
+        parser = argparse.ArgumentParser(
+                prog="benchmarks",
+                allow_abbrev=False, # Don't let people write unsupportable scripts.
+                formatter_class=argparse.RawDescriptionHelpFormatter,
+                epilog=epilog,
+                description="Run build system performance benchmarks.")
+        self.parser = parser
+
+        parser.add_argument("--log-dir",
+                            help="Directory for logs. Default is $TOP/../benchmarks/.")
+        parser.add_argument("--dated-logs", action="store_true",
+                            help="Append timestamp to log dir.")
+        parser.add_argument("-n", action="store_true", dest="dry_run",
+                            help="Dry run. Don't run the build commands but do everything else.")
+        parser.add_argument("--tag",
+                            help="Variant of the run, for when there are multiple perf runs.")
+        parser.add_argument("--lunch", nargs="*",
+                            help="Lunch combos to test")
+        parser.add_argument("--iterations", type=int, default=1,
+                            help="Number of iterations of each test to run.")
+        parser.add_argument("--branch", type=str,
+                            help="Specify branch. Otherwise a guess will be made based on repo.")
+        parser.add_argument("--benchmark", nargs="*", default=[b.id for b in self._benchmarks],
+                            metavar="BENCHMARKS",
+                            help="Benchmarks to run.  Default suite will be run if omitted.")
+        parser.add_argument("--dist-one", action="store_true",
+                            help="Copy logs and metrics to the given dist dir. Requires that only"
+                                + " one benchmark be supplied. Postroll steps will be skipped.")
+
+        self._args = parser.parse_args()
+
+        self._branch = self._branch()
+        self._log_dir = self._log_dir()
+        self._lunches = self._lunches()
+
+        # Validate the benchmark ids
+        all_ids = [benchmark.id for benchmark in self._benchmarks]
+        bad_ids = [id for id in self._args.benchmark if id not in all_ids]
+        if bad_ids:
+            for id in bad_ids:
+                self._error(f"Invalid benchmark: {id}")
+
+        # --dist-one requires that only one benchmark be supplied
+        if self._args.dist_one and len(self.Benchmarks()) != 1:
+            self._error("--dist-one requires that exactly one --benchmark.")
+
+        if self._had_error:
+            raise FatalError()
+
+    def Timestamp(self):
+        return self._timestamp
+
+    def _branch(self):
+        """Return the branch, either from the command line or by guessing from repo."""
+        if self._args.branch:
+            return self._args.branch
+        try:
+            branch = subprocess.check_output(f"cd {self.root}/.repo/manifests"
+                        + " && git rev-parse --abbrev-ref --symbolic-full-name @{u}",
+                    shell=True, encoding="utf-8")
+            return branch.strip().split("/")[-1]
+        except subprocess.CalledProcessError as ex:
+            report_error("Can't get branch from .repo dir. Specify --branch argument")
+            report_error(str(ex))
+            raise FatalError()
+
+    def Branch(self):
+        return self._branch
+
+    def _log_dir(self):
+        "The log directory to use, based on the current options"
+        if self._args.log_dir:
+            d = pathlib.Path(self._args.log_dir).resolve().absolute()
+        else:
+            d = self.root.joinpath("..", utils.DEFAULT_REPORT_DIR)
+        if self._args.dated_logs:
+            d = d.joinpath(self._timestamp.strftime('%Y-%m-%d'))
+        d = d.joinpath(self._branch)
+        if self._args.tag:
+            d = d.joinpath(self._args.tag)
+        return d.resolve().absolute()
+
+    def LogDir(self):
+        return self._log_dir
+
+    def Benchmarks(self):
+        return [b for b in self._benchmarks if b.id in self._args.benchmark]
+
+    def Tag(self):
+        return self._args.tag
+
+    def DryRun(self):
+        return self._args.dry_run
+
+    def _lunches(self):
+        def parse_lunch(lunch):
+            parts = lunch.split("-")
+            if len(parts) != 3:
+                raise OptionsError(f"Invalid lunch combo: {lunch}")
+            return Lunch(parts[0], parts[1], parts[2])
+        # If they gave lunch targets on the command line use that
+        if self._args.lunch:
+            result = []
+            # Split into Lunch objects
+            for lunch in self._args.lunch:
+                try:
+                    result.append(parse_lunch(lunch))
+                except OptionsError as ex:
+                    self._error(ex.message)
+            return result
+        # Use whats in the environment
+        product = os.getenv("TARGET_PRODUCT")
+        release = os.getenv("TARGET_RELEASE")
+        variant = os.getenv("TARGET_BUILD_VARIANT")
+        if (not product) or (not release) or (not variant):
+            # If they didn't give us anything, fail rather than guessing. There's no good
+            # default for AOSP.
+            self._error("No lunch combo specified. Either pass --lunch argument or run lunch.")
+            return []
+        return [Lunch(product, release, variant),]
+
+    def Lunches(self):
+        return self._lunches
+
+    def Iterations(self):
+        return self._args.iterations
+
+    def DistOne(self):
+        return self._args.dist_one
+
+    def _init_benchmarks(self):
+        """Initialize the list of benchmarks."""
+        # Assumes that we've already chdired to the root of the tree.
+        self._benchmarks = [
+            Benchmark(
+                      id="full_lunch",
+                      title="Lunch from clean out",
+                      change=Clean(),
+                      dumpvars=True,
+                      preroll=0,
+                      postroll=0,
+            ),
+            Benchmark(
+                      id="noop_lunch",
+                      title="Lunch with no change",
+                      change=NoChange(),
+                      dumpvars=True,
+                      preroll=1,
+                      postroll=0,
+            ),
+            Benchmark(id="full",
+                      title="Full build",
+                      change=Clean(),
+                      modules=["droid"],
+                      preroll=0,
+                      postroll=3,
+                      ),
+            Benchmark(id="nochange",
+                      title="No change",
+                      change=NoChange(),
+                      modules=["droid"],
+                      preroll=2,
+                      postroll=3,
+                      ),
+            Benchmark(id="unreferenced",
+                      title="Create unreferenced file",
+                      change=Create("bionic/unreferenced.txt"),
+                      modules=["droid"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="modify_bp",
+                      title="Modify Android.bp",
+                      change=Modify("bionic/libc/Android.bp", Comment("//")),
+                      modules=["droid"],
+                      preroll=1,
+                      postroll=3,
+                      ),
+            Benchmark(id="modify_stdio",
+                      title="Modify stdio.cpp",
+                      change=Modify("bionic/libc/stdio/stdio.cpp", Comment("//")),
+                      modules=["libc"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="modify_adbd",
+                      title="Modify adbd",
+                      change=Modify("packages/modules/adb/daemon/main.cpp", Comment("//")),
+                      modules=["adbd"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="services_private_field",
+                      title="Add private field to ActivityManagerService.java",
+                      change=AddJavaField("frameworks/base/services/core/java/com/android/server/am/ActivityManagerService.java",
+                                          "private"),
+                      modules=["services"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="services_public_field",
+                      title="Add public field to ActivityManagerService.java",
+                      change=AddJavaField("frameworks/base/services/core/java/com/android/server/am/ActivityManagerService.java",
+                                          "/** @hide */ public"),
+                      modules=["services"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="services_api",
+                      title="Add API to ActivityManagerService.javaa",
+                      change=AddJavaField("frameworks/base/services/core/java/com/android/server/am/ActivityManagerService.java",
+                                          "@android.annotation.SuppressLint(\"UnflaggedApi\") public"),
+                      modules=["services"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="framework_private_field",
+                      title="Add private field to Settings.java",
+                      change=AddJavaField("frameworks/base/core/java/android/provider/Settings.java",
+                                          "private"),
+                      modules=["framework-minus-apex"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="framework_public_field",
+                      title="Add public field to Settings.java",
+                      change=AddJavaField("frameworks/base/core/java/android/provider/Settings.java",
+                                          "/** @hide */ public"),
+                      modules=["framework-minus-apex"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="framework_api",
+                      title="Add API to Settings.java",
+                      change=ChangePublicApi(),
+                      modules=["api-stubs-docs-non-updatable-update-current-api", "framework-minus-apex"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="modify_framework_resource",
+                      title="Modify framework resource",
+                      change=Modify("frameworks/base/core/res/res/values/config.xml",
+                                    lambda: str(uuid.uuid4()),
+                                    before="</string>"),
+                      modules=["framework-minus-apex"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="add_framework_resource",
+                      title="Add framework resource",
+                      change=Modify("frameworks/base/core/res/res/values/config.xml",
+                                    lambda: f"<string name=\"BENCHMARK\">{uuid.uuid4()}</string>",
+                                    before="</resources>"),
+                      modules=["framework-minus-apex"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+            Benchmark(id="add_systemui_field",
+                      title="Add SystemUI field",
+                      change=AddJavaField("frameworks/base/packages/SystemUI/src/com/android/systemui/wmshell/WMShell.java",
+                                    "public"),
+                      modules=["SystemUI"],
+                      preroll=1,
+                      postroll=2,
+                      ),
+        ]
+
+    def _error(self, message):
+        report_error(message)
+        self._had_error = True
+
+
+def report_error(message):
+    sys.stderr.write(f"error: {message}\n")
+
+
+def main(argv):
+    try:
+        options = Options()
+        runner = Runner(options)
+        runner.Run()
+    except FatalError:
+        sys.stderr.write(f"FAILED\n")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main(sys.argv)

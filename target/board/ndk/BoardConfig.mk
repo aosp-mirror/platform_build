@@ -14,8 +14,7 @@
 #
 
 TARGET_ARCH_SUITE := ndk
-TARGET_USES_64_BIT_BINDER := true
 
-MALLOC_SVELTE := true
+MALLOC_LOW_MEMORY := true
 
 USE_SAFESTACK := false

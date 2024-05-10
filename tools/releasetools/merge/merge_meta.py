@@ -29,6 +29,7 @@ import common
 import merge_utils
 import sparse_img
 import verity_utils
+from ota_utils import ParseUpdateEngineConfig
 
 from common import ExternalError
 
@@ -52,63 +53,47 @@ PARTITION_TAG_PATTERN = re.compile(r'partition="(.*?)"')
 MODULE_KEY_PATTERN = re.compile(r'name="(.+)\.(apex|apk)"')
 
 
-def ParseUpdateEngineConfig(path: str):
-  """Parse the update_engine config stored in file `path`
-  Args
-    path: Path to update_engine_config.txt file in target_files
+def MergeUpdateEngineConfig(framework_meta_dir, vendor_meta_dir,
+                            merged_meta_dir):
+  """Merges META/update_engine_config.txt.
 
-  Returns
-    A tuple of (major, minor) version number . E.g. (2, 8)
+  The output is the configuration for maximum compatibility.
   """
-  with open(path, "r") as fp:
-    # update_engine_config.txt is only supposed to contain two lines,
-    # PAYLOAD_MAJOR_VERSION and PAYLOAD_MINOR_VERSION. 1024 should be more than
-    # sufficient. If the length is more than that, something is wrong.
-    data = fp.read(1024)
-    major = re.search(r"PAYLOAD_MAJOR_VERSION=(\d+)", data)
-    if not major:
-      raise ValueError(
-          f"{path} is an invalid update_engine config, missing PAYLOAD_MAJOR_VERSION {data}")
-    minor = re.search(r"PAYLOAD_MINOR_VERSION=(\d+)", data)
-    if not minor:
-      raise ValueError(
-          f"{path} is an invalid update_engine config, missing PAYLOAD_MINOR_VERSION {data}")
-    return (int(major.group(1)), int(minor.group(1)))
+  _CONFIG_NAME = 'update_engine_config.txt'
+  framework_config_path = os.path.join(framework_meta_dir, _CONFIG_NAME)
+  vendor_config_path = os.path.join(vendor_meta_dir, _CONFIG_NAME)
+  merged_config_path = os.path.join(merged_meta_dir, _CONFIG_NAME)
 
-
-def MergeUpdateEngineConfig(input_metadir1, input_metadir2, merged_meta_dir):
-  UPDATE_ENGINE_CONFIG_NAME = "update_engine_config.txt"
-  config1_path = os.path.join(
-      input_metadir1, UPDATE_ENGINE_CONFIG_NAME)
-  config2_path = os.path.join(
-      input_metadir2, UPDATE_ENGINE_CONFIG_NAME)
-  config1 = ParseUpdateEngineConfig(config1_path)
-  config2 = ParseUpdateEngineConfig(config2_path)
-  # Copy older config to merged target files for maximum compatibility
-  # update_engine in system partition is from system side, but
-  # update_engine_sideload in recovery is from vendor side.
-  if config1 < config2:
-    shutil.copy(config1_path, os.path.join(
-        merged_meta_dir, UPDATE_ENGINE_CONFIG_NAME))
+  if os.path.exists(framework_config_path):
+    framework_config = ParseUpdateEngineConfig(framework_config_path)
+    vendor_config = ParseUpdateEngineConfig(vendor_config_path)
+    # Copy older config to merged target files for maximum compatibility
+    # update_engine in system partition is from system side, but
+    # update_engine_sideload in recovery is from vendor side.
+    if framework_config < vendor_config:
+      shutil.copy(framework_config_path, merged_config_path)
+    else:
+      shutil.copy(vendor_config_path, merged_config_path)
   else:
-    shutil.copy(config2_path, os.path.join(
-        merged_meta_dir, UPDATE_ENGINE_CONFIG_NAME))
+    if not OPTIONS.allow_partial_ab:
+      raise FileNotFoundError(framework_config_path)
+    shutil.copy(vendor_config_path, merged_config_path)
 
 
-def MergeMetaFiles(temp_dir, merged_dir):
+def MergeMetaFiles(temp_dir, merged_dir, framework_partitions):
   """Merges various files in META/*."""
 
   framework_meta_dir = os.path.join(temp_dir, 'framework_meta', 'META')
-  merge_utils.ExtractItems(
-      input_zip=OPTIONS.framework_target_files,
+  merge_utils.CollectTargetFiles(
+      input_zipfile_or_dir=OPTIONS.framework_target_files,
       output_dir=os.path.dirname(framework_meta_dir),
-      extract_item_list=('META/*',))
+      item_list=('META/*',))
 
   vendor_meta_dir = os.path.join(temp_dir, 'vendor_meta', 'META')
-  merge_utils.ExtractItems(
-      input_zip=OPTIONS.vendor_target_files,
+  merge_utils.CollectTargetFiles(
+      input_zipfile_or_dir=OPTIONS.vendor_target_files,
       output_dir=os.path.dirname(vendor_meta_dir),
-      extract_item_list=('META/*',))
+      item_list=('META/*',))
 
   merged_meta_dir = os.path.join(merged_dir, 'META')
 
@@ -135,7 +120,8 @@ def MergeMetaFiles(temp_dir, merged_dir):
     MergeAbPartitions(
         framework_meta_dir=framework_meta_dir,
         vendor_meta_dir=vendor_meta_dir,
-        merged_meta_dir=merged_meta_dir)
+        merged_meta_dir=merged_meta_dir,
+        framework_partitions=framework_partitions)
     UpdateCareMapImageSizeProps(images_dir=os.path.join(merged_dir, 'IMAGES'))
 
   for file_name in ('apkcerts.txt', 'apexkeys.txt'):
@@ -145,10 +131,9 @@ def MergeMetaFiles(temp_dir, merged_dir):
         merged_meta_dir=merged_meta_dir,
         file_name=file_name)
 
-  MergeUpdateEngineConfig(
-      framework_meta_dir,
-      vendor_meta_dir, merged_meta_dir,
-  )
+  if OPTIONS.merged_misc_info.get('ab_update') == 'true':
+    MergeUpdateEngineConfig(
+        framework_meta_dir, vendor_meta_dir, merged_meta_dir)
 
   # Write the now-finalized OPTIONS.merged_misc_info.
   merge_utils.WriteSortedData(
@@ -156,13 +141,30 @@ def MergeMetaFiles(temp_dir, merged_dir):
       path=os.path.join(merged_meta_dir, 'misc_info.txt'))
 
 
-def MergeAbPartitions(framework_meta_dir, vendor_meta_dir, merged_meta_dir):
+def MergeAbPartitions(framework_meta_dir, vendor_meta_dir, merged_meta_dir,
+                      framework_partitions):
   """Merges META/ab_partitions.txt.
 
   The output contains the union of the partition names.
   """
-  with open(os.path.join(framework_meta_dir, 'ab_partitions.txt')) as f:
-    framework_ab_partitions = f.read().splitlines()
+  framework_ab_partitions = []
+  framework_ab_config = os.path.join(framework_meta_dir, 'ab_partitions.txt')
+  if os.path.exists(framework_ab_config):
+    with open(framework_ab_config) as f:
+      # Filter out some partitions here to support the case that the
+      # ab_partitions.txt of framework-target-files has non-framework
+      # partitions. This case happens when we use a complete merged target
+      # files package as the framework-target-files.
+      framework_ab_partitions.extend([
+          partition
+          for partition in f.read().splitlines()
+          if partition in framework_partitions
+      ])
+  else:
+    if not OPTIONS.allow_partial_ab:
+      raise FileNotFoundError(framework_ab_config)
+    logger.info('Use partial AB because framework ab_partitions.txt does not '
+                'exist.')
 
   with open(os.path.join(vendor_meta_dir, 'ab_partitions.txt')) as f:
     vendor_ab_partitions = f.read().splitlines()

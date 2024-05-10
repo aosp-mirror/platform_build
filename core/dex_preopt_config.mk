@@ -12,9 +12,15 @@ else ifneq (true,$(filter true,$(PRODUCT_USES_DEFAULT_ART_CONFIG)))
   # would result in passing bad arguments to dex2oat and failing the build.
   ENABLE_PREOPT :=
   ENABLE_PREOPT_BOOT_IMAGES :=
-else ifeq (true,$(DISABLE_PREOPT))
-  # Disable dexpreopt for libraries/apps, but do compile boot images.
-  ENABLE_PREOPT :=
+else
+  ifeq (true,$(DISABLE_PREOPT))
+    # Disable dexpreopt for libraries/apps, but may compile boot images.
+    ENABLE_PREOPT :=
+  endif
+  ifeq (true,$(DISABLE_PREOPT_BOOT_IMAGES))
+    # Disable dexpreopt for boot images, but may compile libraries/apps.
+    ENABLE_PREOPT_BOOT_IMAGES :=
+  endif
 endif
 
 # The default value for LOCAL_DEX_PREOPT
@@ -52,24 +58,9 @@ DEX_PREOPT_WITH_UPDATABLE_BCP := true
 
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
-  ifeq (eng,$(TARGET_BUILD_VARIANT))
-    # For an eng build only pre-opt the boot image and system server. This gives reasonable performance
-    # and still allows a simple workflow: building in frameworks/base and syncing.
-    WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY ?= true
-  endif
   # Add mini-debug-info to the boot classpath unless explicitly asked not to.
   ifneq (false,$(WITH_DEXPREOPT_DEBUG_INFO))
     PRODUCT_DEX_PREOPT_BOOT_FLAGS += --generate-mini-debug-info
-  endif
-
-  # Non eng linux builds must have preopt enabled so that system server doesn't run as interpreter
-  # only. b/74209329
-  ifeq (,$(filter eng, $(TARGET_BUILD_VARIANT)))
-    ifneq (true,$(WITH_DEXPREOPT))
-      ifneq (true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY))
-        $(call pretty-error, DEXPREOPT must be enabled for user and userdebug builds)
-      endif
-    endif
   endif
 endif
 
@@ -94,7 +85,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_bool, DisablePreopt,                           $(call invert_bool,$(ENABLE_PREOPT)))
   $(call add_json_bool, DisablePreoptBootImages,                 $(call invert_bool,$(ENABLE_PREOPT_BOOT_IMAGES)))
   $(call add_json_list, DisablePreoptModules,                    $(DEXPREOPT_DISABLED_MODULES))
-  $(call add_json_bool, OnlyPreoptBootImageAndSystemServer,      $(filter true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY)))
+  $(call add_json_bool, OnlyPreoptArtBootImage            ,      $(filter true,$(WITH_DEXPREOPT_ART_BOOT_IMG_ONLY)))
   $(call add_json_bool, PreoptWithUpdatableBcp,                  $(filter true,$(DEX_PREOPT_WITH_UPDATABLE_BCP)))
   $(call add_json_bool, DontUncompressPrivAppsDex,               $(filter true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS)))
   $(call add_json_list, ModulesLoadedByPrivilegedModules,        $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES))
@@ -103,8 +94,9 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_bool, DisableGenerateProfile,                  $(filter false,$(WITH_DEX_PREOPT_GENERATE_PROFILE)))
   $(call add_json_str,  ProfileDir,                              $(PRODUCT_DEX_PREOPT_PROFILE_DIR))
   $(call add_json_list, BootJars,                                $(PRODUCT_BOOT_JARS))
-  $(call add_json_list, ApexBootJars,                            $(PRODUCT_APEX_BOOT_JARS))
+  $(call add_json_list, ApexBootJars,                            $(filter-out $(APEX_BOOT_JARS_EXCLUDED), $(PRODUCT_APEX_BOOT_JARS)))
   $(call add_json_list, ArtApexJars,                             $(filter $(PRODUCT_BOOT_JARS),$(ART_APEX_JARS)))
+  $(call add_json_list, TestOnlyArtBootImageJars,                $(PRODUCT_TEST_ONLY_ART_BOOT_IMAGE_JARS))
   $(call add_json_list, SystemServerJars,                        $(PRODUCT_SYSTEM_SERVER_JARS))
   $(call add_json_list, SystemServerApps,                        $(PRODUCT_SYSTEM_SERVER_APPS))
   $(call add_json_list, ApexSystemServerJars,                    $(PRODUCT_APEX_SYSTEM_SERVER_JARS))
@@ -130,7 +122,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_str,  Dex2oatXmx,                              $(DEX2OAT_XMX))
   $(call add_json_str,  Dex2oatXms,                              $(DEX2OAT_XMS))
   $(call add_json_str,  EmptyDirectory,                          $(OUT_DIR)/empty)
-  $(call add_json_bool, EnableUffdGc,                            $(filter true,$(ENABLE_UFFD_GC)))
+  $(call add_json_str,  EnableUffdGc,                            $(ENABLE_UFFD_GC))
 
 ifdef TARGET_ARCH
   $(call add_json_map,  CpuVariant)

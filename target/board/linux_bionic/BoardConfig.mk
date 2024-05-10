@@ -17,7 +17,11 @@
 # (device) target architectures are irrelevant. However, the build system isn't
 # prepared to handle no target architectures at all, so pick something
 # arbitrarily.
-TARGET_ARCH_SUITE := ndk
+TARGET_ARCH := arm
+TARGET_ARCH_VARIANT := armv7-a-neon
+TARGET_CPU_VARIANT := generic
+TARGET_CPU_ABI := armeabi-v7a
+TARGET_CPU_ABI2 := armeabi
 
 HOST_CROSS_OS := linux_bionic
 HOST_CROSS_ARCH := x86_64

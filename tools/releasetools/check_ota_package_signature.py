@@ -142,7 +142,7 @@ def VerifyAbOtaPayload(cert, package):
   """Verifies the payload and metadata signatures in an A/B OTA payload."""
   package_zip = zipfile.ZipFile(package, 'r', allowZip64=True)
   if 'payload.bin' not in package_zip.namelist():
-    package_zip.close()
+    common.ZipClose(package_zip)
     return
 
   print('Verifying A/B OTA payload signatures...')
@@ -160,7 +160,7 @@ def VerifyAbOtaPayload(cert, package):
          '--in_file=' + payload_file,
          '--public_key=' + pubkey]
   common.RunAndCheckOutput(cmd)
-  package_zip.close()
+  common.ZipClose(package_zip)
 
   # Verified successfully upon reaching here.
   print('\nPayload signatures VERIFIED\n\n')

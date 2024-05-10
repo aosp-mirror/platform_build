@@ -17,13 +17,12 @@
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
     abx \
+    aconfigd \
     adbd_system_api \
+    aflags \
     am \
-    android.hidl.allocator@1.0-service \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
-    android.hidl.memory@1.0-impl \
-    android.hidl.memory@1.0-impl.vendor \
     android.system.suspend-service \
     android.test.base \
     android.test.mock \
@@ -53,8 +52,11 @@ PRODUCT_PACKAGES += \
     com.android.adservices \
     com.android.appsearch \
     com.android.btservices \
+    com.android.configinfrastructure \
     com.android.conscrypt \
+    com.android.devicelock \
     com.android.extservices \
+    com.android.healthfitness \
     com.android.i18n \
     com.android.ipsec \
     com.android.location.provider \
@@ -70,7 +72,7 @@ PRODUCT_PACKAGES += \
     com.android.scheduling \
     com.android.sdkext \
     com.android.tethering \
-    com.android.tzdata \
+    $(RELEASE_PACKAGE_TZDATA_MODULE) \
     com.android.uwb \
     com.android.virt \
     com.android.wifi \
@@ -88,19 +90,20 @@ PRODUCT_PACKAGES += \
     dump.erofs \
     dumpstate \
     dumpsys \
-    DynamicSystemInstallationService \
     e2fsck \
     ExtShared \
     flags_health_check \
     framework-graphics \
+    framework-location \
     framework-minus-apex \
-    framework-res \
+    framework-minus-apex-install-dependencies \
     framework-sysconfig.xml \
     fsck.erofs \
     fsck_msdos \
     fsverity-release-cert-der \
     fs_config_files_system \
     fs_config_dirs_system \
+    gpu_counter_producer \
     group_system \
     gsid \
     gsi_tool \
@@ -109,7 +112,6 @@ PRODUCT_PACKAGES += \
     gatekeeperd \
     gpuservice \
     hid \
-    hwservicemanager \
     idmap2 \
     idmap2d \
     ime \
@@ -120,13 +122,14 @@ PRODUCT_PACKAGES += \
     incident-helper-cmd \
     init.environ.rc \
     init_system \
+    initial-package-stopped-states.xml \
     input \
     installd \
     IntentResolver \
     ip \
     iptables \
-    ip-up-vpn \
     javax.obex \
+    kcmdlinectrl \
     keystore2 \
     credstore \
     ld.mc \
@@ -201,6 +204,7 @@ PRODUCT_PACKAGES += \
     libui \
     libusbhost \
     libutils \
+    libvintf_jni \
     libvulkan \
     libwilhelm \
     linker \
@@ -222,26 +226,29 @@ PRODUCT_PACKAGES += \
     mke2fs \
     mkfs.erofs \
     monkey \
+    misctrl \
     mtectrl \
-    mtpd \
     ndc \
     netd \
-    NetworkStackNext \
+    NetworkStack \
     odsign \
     org.apache.http.legacy \
     otacerts \
     PackageInstaller \
     passwd_system \
     perfetto \
+    perfetto-extras \
     ping \
     ping6 \
+    pintool \
     platform.xml \
     pm \
-    pppd \
+    preinstalled-packages-asl-files.xml \
     preinstalled-packages-platform.xml \
+    preinstalled-packages-strict-signature.xml \
+    printflags \
     privapp-permissions-platform.xml \
     prng_seeder \
-    racoon \
     recovery-persist \
     resize2fs \
     rss_hwm_reset \
@@ -259,13 +266,13 @@ PRODUCT_PACKAGES += \
     services \
     settings \
     SettingsProvider \
+    sfdo \
     sgdisk \
     Shell \
     shell_and_utilities_system \
     sm \
     snapshotctl \
     snapuserd \
-    SoundPicker \
     storaged \
     surfaceflinger \
     svc \
@@ -282,25 +289,69 @@ PRODUCT_PACKAGES += \
     uncrypt \
     usbd \
     vdc \
-    viewcompiler \
     voip-common \
     vold \
-    WallpaperBackup \
     watchdogd \
     wificond \
     wifi.rc \
     wm \
+
+# When we release crashrecovery module
+ifeq ($(RELEASE_CRASHRECOVERY_MODULE),true)
+  PRODUCT_PACKAGES += \
+        com.android.crashrecovery \
+
+endif
+
+# These packages are not used on Android TV
+ifneq ($(PRODUCT_IS_ATV),true)
+  PRODUCT_PACKAGES += \
+      $(RELEASE_PACKAGE_SOUND_PICKER) \
+
+endif
+
+# Product does not support Dynamic System Update
+ifneq ($(PRODUCT_NO_DYNAMIC_SYSTEM_UPDATE),true)
+    PRODUCT_PACKAGES += \
+        DynamicSystemInstallationService \
+
+endif
+
+# Check if the build supports NFC apex or not
+ifeq ($(RELEASE_PACKAGE_NFC_STACK),NfcNci)
+    PRODUCT_PACKAGES += \
+        framework-nfc \
+        NfcNci
+else
+    PRODUCT_PACKAGES += \
+        com.android.nfcservices
+endif
+
+ifeq ($(RELEASE_USE_WEBVIEW_BOOTSTRAP_MODULE),true)
+    PRODUCT_PACKAGES += \
+        com.android.webview.bootstrap
+endif
 
 # VINTF data for system image
 PRODUCT_PACKAGES += \
     system_manifest.xml \
     system_compatibility_matrix.xml \
 
-# HWASAN runtime for SANITIZE_TARGET=hwaddress builds
-ifneq (,$(filter hwaddress,$(SANITIZE_TARGET)))
-  PRODUCT_PACKAGES += \
-   libclang_rt.hwasan.bootstrap
-endif
+# Base modules when shipping api level is less than or equal to 34
+PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34 += \
+    android.hidl.memory@1.0-impl \
+
+# hwservicemanager is now installed on system_ext, but apexes might be using
+# old libraries that are expecting it to be installed on system. This allows
+# those apexes to continue working. The symlink can be removed once we are sure
+# there are no devices using hwservicemanager (when Android V launching devices
+# are no longer supported for dessert upgrades).
+PRODUCT_PACKAGES += \
+    hwservicemanager_compat_symlink_module \
+
+PRODUCT_PACKAGES_ARM64 := libclang_rt.hwasan \
+ libclang_rt.hwasan.bootstrap \
+ libc_hwasan \
 
 # Jacoco agent JARS to be built and installed, if any.
 ifeq ($(EMMA_INSTRUMENT),true)
@@ -319,6 +370,16 @@ ifeq ($(EMMA_INSTRUMENT),true)
   endif # EMMA_INSTRUMENT_STATIC
 endif # EMMA_INSTRUMENT
 
+ifeq (,$(DISABLE_WALLPAPER_BACKUP))
+  PRODUCT_PACKAGES += \
+    WallpaperBackup
+endif
+
+PRODUCT_PACKAGES += \
+    libEGL_angle \
+    libGLESv1_CM_angle \
+    libGLESv2_angle
+
 # For testing purposes
 ifeq ($(FORCE_AUDIO_SILENT), true)
     PRODUCT_SYSTEM_PROPERTIES += ro.audio.silent=1
@@ -328,6 +389,7 @@ endif
 PRODUCT_HOST_PACKAGES += \
     BugReport \
     adb \
+    adevice \
     art-tools \
     atest \
     bcc \
@@ -343,7 +405,6 @@ PRODUCT_HOST_PACKAGES += \
     incident_report \
     ld.mc \
     lpdump \
-    minigzip \
     mke2fs \
     mkfs.erofs \
     resize2fs \
@@ -354,20 +415,17 @@ PRODUCT_HOST_PACKAGES += \
     unwind_info \
     unwind_reg_info \
     unwind_symbols \
-    viewcompiler \
     tzdata_host \
     tzdata_host_tzdata_apex \
     tzlookup.xml_host_tzdata_apex \
     tz_version_host \
     tz_version_host_tzdata_apex \
 
+PRODUCT_PACKAGES += init.usb.rc init.usb.configfs.rc
 
-PRODUCT_COPY_FILES += \
-    system/core/rootdir/init.usb.rc:system/etc/init/hw/init.usb.rc \
-    system/core/rootdir/init.usb.configfs.rc:system/etc/init/hw/init.usb.configfs.rc \
-    system/core/rootdir/etc/hosts:system/etc/hosts
+PRODUCT_PACKAGES += etc_hosts
 
-PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:system/etc/init/hw/init.zygote32.rc
+PRODUCT_PACKAGES += init.zygote32.rc
 PRODUCT_VENDOR_PROPERTIES += ro.zygote?=zygote32
 
 PRODUCT_SYSTEM_PROPERTIES += debug.atrace.tags.enableflags=0
@@ -376,16 +434,21 @@ PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
+    adevice_fingerprint \
     arping \
     dmuserd \
+    evemu-record \
     idlcli \
     init-debug.rc \
     iotop \
     iperf3 \
     iw \
+    layertracegenerator \
     libclang_rt.ubsan_standalone \
     logpersist.start \
     logtagd.rc \
+    ot-cli-ftd \
+    ot-ctl \
     procrank \
     profcollectd \
     profcollectctl \
@@ -408,7 +471,11 @@ PRODUCT_PACKAGES_DEBUG := \
 # The set of packages whose code can be loaded by the system server.
 PRODUCT_SYSTEM_SERVER_APPS += \
     SettingsProvider \
+
+ifeq (,$(DISABLE_WALLPAPER_BACKUP))
+  PRODUCT_SYSTEM_SERVER_APPS += \
     WallpaperBackup
+endif
 
 PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE := \
     libdumpcoverage
@@ -416,9 +483,18 @@ PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE := \
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/preloaded-classes:system/etc/preloaded-classes)
 
-# Note: it is acceptable to not have a dirty-image-objects file. In that case, the special bin
-#       for known dirty objects in the image will be empty.
-PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
-    frameworks/base/config/dirty-image-objects:system/etc/dirty-image-objects)
+# Enable dirty image object binning to reduce dirty pages in the image.
+PRODUCT_PACKAGES += dirty-image-objects
+
+# Enable go/perfetto-persistent-tracing for eng builds
+ifneq (,$(filter eng, $(TARGET_BUILD_VARIANT)))
+    PRODUCT_PRODUCT_PROPERTIES += persist.debug.perfetto.persistent_sysui_tracing_for_bugreport=1
+endif
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
+
+# Ensure all trunk-stable flags are available.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/build_variables.mk)
+
+# Use "image" APEXes always.
+$(call inherit-product,$(SRC_TARGET_DIR)/product/updatable_apex.mk)

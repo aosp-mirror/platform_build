@@ -37,16 +37,18 @@ ifneq (,$(wildcard cts/))
   cts_platform_release_path := cts/tests/tests/os/assets/platform_releases.txt
   cts_platform_release_string := $(shell cat $(cts_platform_release_path))
 
-  ifeq (,$(findstring $(PLATFORM_VERSION),$(cts_platform_version_string)))
-    define error_msg
-      ============================================================
-      Could not find version "$(PLATFORM_VERSION)" in CTS platform version file:
-      $(cts_platform_version_path)
-      Most likely PLATFORM_VERSION in build/core/version_defaults.mk
-      has changed and a new version must be added to this CTS file.
-      ============================================================
-    endef
-    $(error $(error_msg))
+  ifneq (REL,$(PLATFORM_VERSION_CODENAME))
+    ifeq (,$(findstring $(PLATFORM_VERSION),$(cts_platform_version_string)))
+      define error_msg
+        ============================================================
+        Could not find version "$(PLATFORM_VERSION)" in CTS platform version file:
+        $(cts_platform_version_path)
+        Most likely PLATFORM_VERSION in build/core/version_defaults.mk
+        has changed and a new version must be added to this CTS file.
+        ============================================================
+      endef
+      $(error $(error_msg))
+    endif
   endif
   ifeq (,$(findstring $(PLATFORM_VERSION_LAST_STABLE),$(cts_platform_release_string)))
     define error_msg
@@ -142,30 +144,30 @@ $(cts-system-api-xml-coverage-report) : $(android_cts_zip) $(cts_system_api_cove
 	$(call generate-coverage-report-cts,"CTS System API Coverage Report - XML",\
 			$(PRIVATE_TEST_CASES),xml)
 
-$(cts-verifier-coverage-report): PRIVATE_TEST_CASES := $(cts_verifier_apk)
+$(cts-verifier-coverage-report): PRIVATE_TEST_CASES := $(foreach c, $(cts_verifier_apk) $(verifier-dir), $(c))
 $(cts-verifier-coverage-report): PRIVATE_CTS_API_COVERAGE_EXE := $(cts_api_coverage_exe)
 $(cts-verifier-coverage-report): PRIVATE_DEXDEPS_EXE := $(dexdeps_exe)
 $(cts-verifier-coverage-report): PRIVATE_API_XML_DESC := $(api_xml_description)
 $(cts-verifier-coverage-report): PRIVATE_NAPI_XML_DESC := $(napi_xml_description)
-$(cts-verifier-coverage-report) : $(cts_verifier_apk) $(cts_api_coverage_dependencies) | $(ACP)
+$(cts-verifier-coverage-report) : $(cts_verifier_apk) $(verifier-zip) $(cts_api_coverage_dependencies) | $(ACP)
 	$(call generate-coverage-report-cts,"CTS Verifier API Coverage Report",\
 			$(PRIVATE_TEST_CASES),html)
 
-$(cts-combined-coverage-report): PRIVATE_TEST_CASES := $(foreach c, $(cts_verifier_apk) $(COMPATIBILITY_TESTCASES_OUT_cts), $(c))
+$(cts-combined-coverage-report): PRIVATE_TEST_CASES := $(foreach c, $(cts_verifier_apk) $(COMPATIBILITY_TESTCASES_OUT_cts) $(verifier-dir), $(c))
 $(cts-combined-coverage-report): PRIVATE_CTS_API_COVERAGE_EXE := $(cts_api_coverage_exe)
 $(cts-combined-coverage-report): PRIVATE_DEXDEPS_EXE := $(dexdeps_exe)
 $(cts-combined-coverage-report): PRIVATE_API_XML_DESC := $(api_xml_description)
 $(cts-combined-coverage-report): PRIVATE_NAPI_XML_DESC := $(napi_xml_description)
-$(cts-combined-coverage-report) : $(android_cts_zip) $(cts_verifier_apk) $(cts_api_coverage_dependencies) | $(ACP)
+$(cts-combined-coverage-report) : $(android_cts_zip) $(cts_verifier_apk) $(verifier-zip) $(cts_api_coverage_dependencies) | $(ACP)
 	$(call generate-coverage-report-cts,"CTS Combined API Coverage Report",\
 			$(PRIVATE_TEST_CASES),html)
 
-$(cts-combined-xml-coverage-report): PRIVATE_TEST_CASES := $(foreach c, $(cts_verifier_apk) $(COMPATIBILITY_TESTCASES_OUT_cts), $(c))
+$(cts-combined-xml-coverage-report): PRIVATE_TEST_CASES := $(foreach c, $(cts_verifier_apk) $(COMPATIBILITY_TESTCASES_OUT_cts) $(verifier-dir), $(c))
 $(cts-combined-xml-coverage-report): PRIVATE_CTS_API_COVERAGE_EXE := $(cts_api_coverage_exe)
 $(cts-combined-xml-coverage-report): PRIVATE_DEXDEPS_EXE := $(dexdeps_exe)
 $(cts-combined-xml-coverage-report): PRIVATE_API_XML_DESC := $(api_xml_description)
 $(cts-combined-xml-coverage-report): PRIVATE_NAPI_XML_DESC := $(napi_xml_description)
-$(cts-combined-xml-coverage-report) : $(android_cts_zip) $(cts_verifier_apk) $(cts_api_coverage_dependencies) | $(ACP)
+$(cts-combined-xml-coverage-report) : $(android_cts_zip) $(cts_verifier_apk) $(verifier-zip) $(cts_api_coverage_dependencies) | $(ACP)
 	$(call generate-coverage-report-cts,"CTS Combined API Coverage Report - XML",\
 			$(PRIVATE_TEST_CASES),xml)
 
@@ -234,3 +236,8 @@ dexdeps_exe :=
 cts_api_coverage_exe :=
 cts_verifier_apk :=
 android_cts_zip :=
+cts-dir :=
+verifier-dir-name :=
+verifier-dir :=
+verifier-zip-name :=
+verifier-zip :=

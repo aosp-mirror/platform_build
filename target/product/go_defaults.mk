@@ -17,6 +17,8 @@
 # Inherit common Android Go defaults.
 $(call inherit-product, build/make/target/product/go_defaults_common.mk)
 
+PRODUCT_RELEASE_CONFIG_MAPS += $(wildcard vendor/google/release/go_devices/release_config_map.mk)
+
 # Add the system properties.
 TARGET_SYSTEM_PROP += \
     build/make/target/board/go_defaults.prop

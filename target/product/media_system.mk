@@ -59,10 +59,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/compiled-classes-phone:system/etc/compiled-classes)
 
-# Enable dirty image object binning to reduce dirty pages in the image.
-PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
-    frameworks/base/dirty-image-objects-phone:system/etc/dirty-image-objects)
-
 # On userdebug builds, collect more tombstones by default.
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 PRODUCT_VENDOR_PROPERTIES += \
@@ -76,3 +72,7 @@ PRODUCT_VENDOR_PROPERTIES += \
 # Enable CFI for security-sensitive components
 $(call inherit-product, $(SRC_TARGET_DIR)/product/cfi-common.mk)
 $(call inherit-product-if-exists, vendor/google/products/cfi-vendor.mk)
+
+# Enable MTE for security-sensitive components
+$(call inherit-product, $(SRC_TARGET_DIR)/product/memtag-common.mk)
+$(call inherit-product-if-exists, vendor/google/products/memtag-vendor.mk)

@@ -42,6 +42,10 @@ Usage:  add_img_to_target_files [flag] target_files
   --is_signing
       Skip building & adding the images for "userdata" and "cache" if we
       are signing the target files.
+
+  --avb-resolve-rollback-index-location-conflict
+      If provided, resolve the conflict AVB rollback index location when
+      necessary.
 """
 
 from __future__ import print_function
@@ -65,9 +69,10 @@ import verity_utils
 import ota_metadata_pb2
 import rangelib
 import sparse_img
-
+from concurrent.futures import ThreadPoolExecutor
 from apex_utils import GetApexInfoFromTargetFiles
 from common import ZipDelete, PARTITIONS_WITH_CARE_MAP, ExternalError, RunAndCheckOutput, IsSparseImage, MakeTempFile, ZipWrite
+from build_image import FIXED_FILE_TIMESTAMP
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -80,12 +85,7 @@ OPTIONS.add_missing = False
 OPTIONS.rebuild_recovery = False
 OPTIONS.replace_updated_files_list = []
 OPTIONS.is_signing = False
-
-# Use a fixed timestamp (01/01/2009 00:00:00 UTC) for files when packaging
-# images. (b/24377993, b/80600931)
-FIXED_FILE_TIMESTAMP = int((
-    datetime.datetime(2009, 1, 1, 0, 0, 0, 0, None) -
-    datetime.datetime.utcfromtimestamp(0)).total_seconds())
+OPTIONS.avb_resolve_rollback_index_location_conflict = False
 
 
 def ParseAvbFooter(img_path) -> avbtool.AvbFooter:
@@ -522,12 +522,14 @@ def AddPvmfw(output_zip):
   return img.name
 
 
-def AddCustomImages(output_zip, partition_name):
-  """Adds and signs custom images in IMAGES/.
+def AddCustomImages(output_zip, partition_name, image_list):
+  """Adds and signs avb custom images as needed in IMAGES/.
 
   Args:
     output_zip: The output zip file (needs to be already open), or None to
         write images to OPTIONS.input_tmp/.
+    partition_name: The custom image partition name.
+    image_list: The image list of the custom image partition.
 
   Uses the image under IMAGES/ if it already exists. Otherwise looks for the
   image under PREBUILT_IMAGES/, signs it as needed, and returns the image name.
@@ -536,19 +538,20 @@ def AddCustomImages(output_zip, partition_name):
     AssertionError: If image can't be found.
   """
 
+  builder = None
   key_path = OPTIONS.info_dict.get("avb_{}_key_path".format(partition_name))
-  algorithm = OPTIONS.info_dict.get("avb_{}_algorithm".format(partition_name))
-  extra_args = OPTIONS.info_dict.get(
-      "avb_{}_add_hashtree_footer_args".format(partition_name))
-  partition_size = OPTIONS.info_dict.get(
-      "avb_{}_partition_size".format(partition_name))
+  if key_path is not None:
+    algorithm = OPTIONS.info_dict.get("avb_{}_algorithm".format(partition_name))
+    extra_args = OPTIONS.info_dict.get(
+        "avb_{}_add_hashtree_footer_args".format(partition_name))
+    partition_size = OPTIONS.info_dict.get(
+        "avb_{}_partition_size".format(partition_name))
 
-  builder = verity_utils.CreateCustomImageBuilder(
-      OPTIONS.info_dict, partition_name, partition_size,
-      key_path, algorithm, extra_args)
+    builder = verity_utils.CreateCustomImageBuilder(
+        OPTIONS.info_dict, partition_name, partition_size,
+        key_path, algorithm, extra_args)
 
-  for img_name in OPTIONS.info_dict.get(
-          "avb_{}_image_list".format(partition_name)).split():
+  for img_name in image_list:
     custom_image = OutputFile(
         output_zip, OPTIONS.input_tmp, "IMAGES", img_name)
     if os.path.exists(custom_image.name):
@@ -593,15 +596,6 @@ def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
     image_props["fs_config"] = fs_config
   if block_list:
     image_props["block_list"] = block_list.name
-
-  # Use repeatable ext4 FS UUID and hash_seed UUID (based on partition name and
-  # build fingerprint). Also use the legacy build id, because the vbmeta digest
-  # isn't available at this point.
-  build_info = common.BuildInfo(info_dict, use_legacy_id=True)
-  uuid_seed = what + "-" + build_info.GetPartitionFingerprint(what)
-  image_props["uuid"] = str(uuid.uuid5(uuid.NAMESPACE_URL, uuid_seed))
-  hash_seed = "hash_seed-" + uuid_seed
-  image_props["hash_seed"] = str(uuid.uuid5(uuid.NAMESPACE_URL, hash_seed))
 
   build_image.BuildImage(
       os.path.join(input_dir, what.upper()), image_props, output_file.name)
@@ -693,37 +687,10 @@ def AddVBMeta(output_zip, partitions, name, needed_partitions):
     logger.info("%s.img already exists; not rebuilding...", name)
     return img.name
 
-  common.BuildVBMeta(img.name, partitions, name, needed_partitions)
+  common.BuildVBMeta(img.name, partitions, name, needed_partitions,
+                     OPTIONS.avb_resolve_rollback_index_location_conflict)
   img.Write()
   return img.name
-
-
-def AddPartitionTable(output_zip):
-  """Create a partition table image and store it in output_zip."""
-
-  img = OutputFile(
-      output_zip, OPTIONS.input_tmp, "IMAGES", "partition-table.img")
-  bpt = OutputFile(
-      output_zip, OPTIONS.input_tmp, "META", "partition-table.bpt")
-
-  # use BPTTOOL from environ, or "bpttool" if empty or not set.
-  bpttool = os.getenv("BPTTOOL") or "bpttool"
-  cmd = [bpttool, "make_table", "--output_json", bpt.name,
-         "--output_gpt", img.name]
-  input_files_str = OPTIONS.info_dict["board_bpt_input_files"]
-  input_files = input_files_str.split()
-  for i in input_files:
-    cmd.extend(["--input", i])
-  disk_size = OPTIONS.info_dict.get("board_bpt_disk_size")
-  if disk_size:
-    cmd.extend(["--disk_size", disk_size])
-  args = OPTIONS.info_dict.get("board_bpt_make_table_args")
-  if args:
-    cmd.extend(shlex.split(args))
-  common.RunAndCheckOutput(cmd)
-
-  img.Write()
-  bpt.Write()
 
 
 def AddCache(output_zip):
@@ -818,6 +785,9 @@ def AddSuperEmpty(output_zip):
   """Create a super_empty.img and store it in output_zip."""
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "super_empty.img")
+  if os.path.exists(img.name):
+    logger.info("super_empty.img already exists; no need to rebuild...")
+    return
   build_super_image.BuildSuperImage(OPTIONS.info_dict, img.name)
   img.Write()
 
@@ -842,13 +812,14 @@ def ReplaceUpdatedFiles(zip_filename, files_list):
   SYSTEM/ after rebuilding recovery.
   """
   common.ZipDelete(zip_filename, files_list)
-  with zipfile.ZipFile(zip_filename, "a",
+  output_zip = zipfile.ZipFile(zip_filename, "a",
                                compression=zipfile.ZIP_DEFLATED,
-                               allowZip64=True) as output_zip:
-    for item in files_list:
-      file_path = os.path.join(OPTIONS.input_tmp, item)
-      assert os.path.exists(file_path)
-      common.ZipWrite(output_zip, file_path, arcname=item)
+                               allowZip64=True)
+  for item in files_list:
+    file_path = os.path.join(OPTIONS.input_tmp, item)
+    assert os.path.exists(file_path)
+    common.ZipWrite(output_zip, file_path, arcname=item)
+  common.ZipClose(output_zip)
 
 
 def HasPartition(partition_name):
@@ -864,8 +835,7 @@ def HasPartition(partition_name):
 
 
 def AddApexInfo(output_zip):
-  apex_infos = GetApexInfoFromTargetFiles(OPTIONS.input_tmp, 'system',
-                                          compressed_only=False)
+  apex_infos = GetApexInfoFromTargetFiles(OPTIONS.input_tmp)
   apex_metadata_proto = ota_metadata_pb2.ApexMetadata()
   apex_metadata_proto.apex_info.extend(apex_infos)
   apex_info_bytes = apex_metadata_proto.SerializeToString()
@@ -1079,8 +1049,15 @@ def AddImagesToTargetFiles(filename):
       ("system_dlkm", has_system_dlkm, AddSystemDlkm, []),
       ("system_other", has_system_other, AddSystemOther, []),
   )
-  for call in add_partition_calls:
-    add_partition(*call)
+  # If output_zip exists, each add_partition_calls writes bytes to the same output_zip,
+  # which is not thread-safe. So, run them in serial if output_zip exists.
+  if output_zip:
+    for call in add_partition_calls:
+      add_partition(*call)
+  else:
+    with ThreadPoolExecutor(max_workers=len(add_partition_calls)) as executor:
+      for future in [executor.submit(add_partition, *call) for call in add_partition_calls]:
+        future.result()
 
   AddApexInfo(output_zip)
 
@@ -1090,10 +1067,6 @@ def AddImagesToTargetFiles(filename):
     banner("cache")
     AddCache(output_zip)
 
-  if OPTIONS.info_dict.get("board_bpt_enable") == "true":
-    banner("partition-table")
-    AddPartitionTable(output_zip)
-
   add_partition("dtbo",
                 OPTIONS.info_dict.get("has_dtbo") == "true", AddDtbo, [])
   add_partition("pvmfw",
@@ -1101,18 +1074,29 @@ def AddImagesToTargetFiles(filename):
 
   # Custom images.
   custom_partitions = OPTIONS.info_dict.get(
-      "avb_custom_images_partition_list", "").strip().split()
+      "custom_images_partition_list", "").strip().split()
   for partition_name in custom_partitions:
     partition_name = partition_name.strip()
     banner("custom images for " + partition_name)
-    partitions[partition_name] = AddCustomImages(output_zip, partition_name)
+    image_list = OPTIONS.info_dict.get(
+          "{}_image_list".format(partition_name)).split()
+    partitions[partition_name] = AddCustomImages(output_zip, partition_name, image_list)
+
+  avb_custom_partitions = OPTIONS.info_dict.get(
+      "avb_custom_images_partition_list", "").strip().split()
+  for partition_name in avb_custom_partitions:
+    partition_name = partition_name.strip()
+    banner("avb custom images for " + partition_name)
+    image_list = OPTIONS.info_dict.get(
+          "avb_{}_image_list".format(partition_name)).split()
+    partitions[partition_name] = AddCustomImages(output_zip, partition_name, image_list)
 
   if OPTIONS.info_dict.get("avb_enable") == "true":
     # vbmeta_partitions includes the partitions that should be included into
     # top-level vbmeta.img, which are the ones that are not included in any
     # chained VBMeta image plus the chained VBMeta images themselves.
-    # Currently custom_partitions are all chained to VBMeta image.
-    vbmeta_partitions = common.AVB_PARTITIONS[:] + tuple(custom_partitions)
+    # Currently avb_custom_partitions are all chained to VBMeta image.
+    vbmeta_partitions = common.AVB_PARTITIONS[:] + tuple(avb_custom_partitions)
 
     vbmeta_system = OPTIONS.info_dict.get("avb_vbmeta_system", "").strip()
     if vbmeta_system:
@@ -1133,21 +1117,24 @@ def AddImagesToTargetFiles(filename):
           item for item in vbmeta_partitions
           if item not in vbmeta_vendor.split()]
       vbmeta_partitions.append("vbmeta_vendor")
-    custom_avb_partitions = OPTIONS.info_dict.get("avb_custom_vbmeta_images_partition_list", "").strip().split()
+    custom_avb_partitions = OPTIONS.info_dict.get(
+        "avb_custom_vbmeta_images_partition_list", "").strip().split()
     if custom_avb_partitions:
       for avb_part in custom_avb_partitions:
         partition_name = "vbmeta_" + avb_part
-        included_partitions = OPTIONS.info_dict.get("avb_vbmeta_{}".format(avb_part), "").strip().split()
-        assert included_partitions, "Custom vbmeta partition {0} missing avb_vbmeta_{0} prop".format(avb_part)
+        included_partitions = OPTIONS.info_dict.get(
+            "avb_vbmeta_{}".format(avb_part), "").strip().split()
+        assert included_partitions, "Custom vbmeta partition {0} missing avb_vbmeta_{0} prop".format(
+            avb_part)
         banner(partition_name)
-        logger.info("VBMeta partition {} needs {}".format(partition_name, included_partitions))
+        logger.info("VBMeta partition {} needs {}".format(
+            partition_name, included_partitions))
         partitions[partition_name] = AddVBMeta(
             output_zip, partitions, partition_name, included_partitions)
         vbmeta_partitions = [
             item for item in vbmeta_partitions
             if item not in included_partitions]
         vbmeta_partitions.append(partition_name)
-
 
     if OPTIONS.info_dict.get("avb_building_vbmeta_image") == "true":
       banner("vbmeta")
@@ -1191,7 +1178,7 @@ def AddImagesToTargetFiles(filename):
   AddVbmetaDigest(output_zip)
 
   if output_zip:
-    output_zip.close()
+    common.ZipClose(output_zip)
     if OPTIONS.replace_updated_files_list:
       ReplaceUpdatedFiles(output_zip.filename,
                           OPTIONS.replace_updated_files_list)
@@ -1242,6 +1229,8 @@ def main(argv):
                        " please switch to AVB")
     elif o == "--is_signing":
       OPTIONS.is_signing = True
+    elif o == "--avb_resolve_rollback_index_location_conflict":
+      OPTIONS.avb_resolve_rollback_index_location_conflict = True
     else:
       return False
     return True
@@ -1251,7 +1240,8 @@ def main(argv):
       extra_long_opts=["add_missing", "rebuild_recovery",
                        "replace_verity_public_key=",
                        "replace_verity_private_key=",
-                       "is_signing"],
+                       "is_signing",
+                       "avb_resolve_rollback_index_location_conflict"],
       extra_option_handler=option_handler)
 
   if len(args) != 1:

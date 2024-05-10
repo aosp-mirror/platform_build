@@ -16,9 +16,57 @@
 
 import common
 import logging
-from common import OPTIONS
+import shlex
+import argparse
+import tempfile
+import zipfile
+import shutil
+from common import OPTIONS, OptionHandler
+from ota_signing_utils import AddSigningArgumentParse
 
 logger = logging.getLogger(__name__)
+
+OPTIONS.payload_signer = None
+OPTIONS.payload_signer_args = []
+OPTIONS.payload_signer_maximum_signature_size = None
+OPTIONS.package_key = None
+
+PAYLOAD_BIN = 'payload.bin'
+PAYLOAD_PROPERTIES_TXT = 'payload_properties.txt'
+
+class SignerOptions(OptionHandler):
+
+  @staticmethod
+  def ParseOptions(o, a):
+    if o in ("-k", "--package_key"):
+      OPTIONS.package_key = a
+    elif o == "--payload_signer":
+      OPTIONS.payload_signer = a
+    elif o == "--payload_signer_args":
+      OPTIONS.payload_signer_args = shlex.split(a)
+    elif o == "--payload_signer_maximum_signature_size":
+      OPTIONS.payload_signer_maximum_signature_size = a
+    elif o == "--payload_signer_key_size":
+      # TODO(xunchang) remove this option after cleaning up the callers.
+      logger.warning("The option '--payload_signer_key_size' is deprecated."
+                      " Use '--payload_signer_maximum_signature_size' instead.")
+      OPTIONS.payload_signer_maximum_signature_size = a
+    else:
+      return False
+    return True
+
+  def __init__(self):
+    super().__init__(
+      ["payload_signer=",
+       "package_key=",
+       "payload_signer_args=",
+       "payload_signer_maximum_signature_size=",
+       "payload_signer_key_size="],
+       SignerOptions.ParseOptions
+    )
+
+
+signer_options = SignerOptions()
 
 
 class PayloadSigner(object):
@@ -36,11 +84,16 @@ class PayloadSigner(object):
   (OPTIONS.package_key) and calls openssl for the signing works.
   """
 
-  def __init__(self, package_key=None, private_key_suffix=None, pw=None, payload_signer=None):
+  def __init__(self, package_key=None, private_key_suffix=None, pw=None, payload_signer=None,
+               payload_signer_args=None, payload_signer_maximum_signature_size=None):
     if package_key is None:
       package_key = OPTIONS.package_key
     if private_key_suffix is None:
       private_key_suffix = OPTIONS.private_key_suffix
+    if payload_signer_args is None:
+      payload_signer_args = OPTIONS.payload_signer_args
+    if payload_signer_maximum_signature_size is None:
+      payload_signer_maximum_signature_size = OPTIONS.payload_signer_maximum_signature_size
 
     if payload_signer is None:
       # Prepare the payload signing key.
@@ -59,10 +112,10 @@ class PayloadSigner(object):
           signing_key)
     else:
       self.signer = payload_signer
-      self.signer_args = OPTIONS.payload_signer_args
-      if OPTIONS.payload_signer_maximum_signature_size:
+      self.signer_args = payload_signer_args
+      if payload_signer_maximum_signature_size:
         self.maximum_signature_size = int(
-            OPTIONS.payload_signer_maximum_signature_size)
+            payload_signer_maximum_signature_size)
       else:
         # The legacy config uses RSA2048 keys.
         logger.warning("The maximum signature size for payload signer is not"
@@ -90,11 +143,11 @@ class PayloadSigner(object):
     # 1. Generate hashes of the payload and metadata files.
     payload_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
     metadata_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
-    cmd = ["brillo_update_payload", "hash",
-           "--unsigned_payload", unsigned_payload,
-           "--signature_size", str(self.maximum_signature_size),
-           "--metadata_hash_file", metadata_sig_file,
-           "--payload_hash_file", payload_sig_file]
+    cmd = ["delta_generator",
+           "--in_file=" + unsigned_payload,
+           "--signature_size=" + str(self.maximum_signature_size),
+           "--out_metadata_hash_file=" + metadata_sig_file,
+           "--out_hash_file=" + payload_sig_file]
     self._Run(cmd)
 
     # 2. Sign the hashes.
@@ -104,15 +157,14 @@ class PayloadSigner(object):
     # 3. Insert the signatures back into the payload file.
     signed_payload_file = common.MakeTempFile(prefix="signed-payload-",
                                               suffix=".bin")
-    cmd = ["brillo_update_payload", "sign",
-           "--unsigned_payload", unsigned_payload,
-           "--payload", signed_payload_file,
-           "--signature_size", str(self.maximum_signature_size),
-           "--metadata_signature_file", signed_metadata_sig_file,
-           "--payload_signature_file", signed_payload_sig_file]
+    cmd = ["delta_generator",
+           "--in_file=" + unsigned_payload,
+           "--out_file=" + signed_payload_file,
+           "--signature_size=" + str(self.maximum_signature_size),
+           "--metadata_signature_file=" + signed_metadata_sig_file,
+           "--payload_signature_file=" + signed_payload_sig_file]
     self._Run(cmd)
     return signed_payload_file
-
 
   def SignHashFile(self, in_file):
     """Signs the given input file. Returns the output filename."""
@@ -120,3 +172,52 @@ class PayloadSigner(object):
     cmd = [self.signer] + self.signer_args + ['-in', in_file, '-out', out_file]
     common.RunAndCheckOutput(cmd)
     return out_file
+
+def GeneratePayloadProperties(payload_file):
+    properties_file = common.MakeTempFile(prefix="payload-properties-",
+                                          suffix=".txt")
+    cmd = ["delta_generator",
+           "--in_file=" + payload_file,
+           "--properties_file=" + properties_file]
+    common.RunAndCheckOutput(cmd)
+    return properties_file
+
+def SignOtaPackage(input_path, output_path):
+  payload_signer = PayloadSigner(
+      OPTIONS.package_key, OPTIONS.private_key_suffix,
+      None, OPTIONS.payload_signer, OPTIONS.payload_signer_args)
+  common.ZipExclude(input_path, output_path, [PAYLOAD_BIN, PAYLOAD_PROPERTIES_TXT])
+  with tempfile.NamedTemporaryFile() as unsigned_payload, zipfile.ZipFile(input_path, "r", allowZip64=True) as zfp:
+    with zfp.open("payload.bin") as payload_fp:
+      shutil.copyfileobj(payload_fp, unsigned_payload)
+    signed_payload = payload_signer.SignPayload(unsigned_payload.name)
+    properties_file = GeneratePayloadProperties(signed_payload)
+    with zipfile.ZipFile(output_path, "a", compression=zipfile.ZIP_STORED, allowZip64=True) as output_zfp:
+      common.ZipWrite(output_zfp, signed_payload, PAYLOAD_BIN)
+      common.ZipWrite(output_zfp, properties_file, PAYLOAD_PROPERTIES_TXT)
+
+
+def main(argv):
+  parser = argparse.ArgumentParser(
+      prog=argv[0], description="Given a series of .img files, produces a full OTA package that installs thoese images")
+  parser.add_argument("input_ota", type=str,
+                      help="Input OTA for signing")
+  parser.add_argument('output_ota', type=str,
+                      help='Output OTA for the signed package')
+  parser.add_argument("-v", action="store_true",
+                      help="Enable verbose logging", dest="verbose")
+  AddSigningArgumentParse(parser)
+  args = parser.parse_args(argv[1:])
+  input_ota = args.input_ota
+  output_ota = args.output_ota
+  if args.verbose:
+    OPTIONS.verbose = True
+  common.InitLogging()
+  if args.package_key:
+    OPTIONS.package_key = args.package_key
+  logger.info("Re-signing OTA package {}".format(input_ota))
+  SignOtaPackage(input_ota, output_ota)
+
+if __name__ == "__main__":
+  import sys
+  main(sys.argv)

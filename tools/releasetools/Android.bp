@@ -99,9 +99,8 @@ python_defaults {
         "releasetools_common",
     ],
     required: [
+        "apexd_host",
         "checkvintf",
-        "deapexer",
-        "dump_apex_info",
     ],
 }
 
@@ -166,10 +165,9 @@ python_defaults {
         "ota_utils_lib",
     ],
     required: [
+        "apexd_host",
         "brillo_update_payload",
         "checkvintf",
-        "generate_gki_certificate",
-        "minigzip",
         "lz4",
         "toybox",
         "unpack_bootimg",
@@ -236,6 +234,9 @@ python_library_host {
         "rangelib.py",
         "sparse_img.py",
     ],
+    data: [
+        ":zip2zip",
+    ],
     // Only the tools that are referenced directly are listed as required modules. For example,
     // `avbtool` is not here, as the script always uses the one from info_dict['avb_avbtool'].
     required: [
@@ -243,9 +244,6 @@ python_library_host {
         "boot_signer",
         "brotli",
         "bsdiff",
-        "generate_gki_certificate",
-        "imgdiff",
-        "minigzip",
         "lz4",
         "mkbootfs",
         "signapk",
@@ -309,9 +307,6 @@ python_defaults {
         "brotli",
         "bsdiff",
         "deapexer",
-        "generate_gki_certificate",
-        "imgdiff",
-        "minigzip",
         "lz4",
         "mkbootfs",
         "signapk",
@@ -333,6 +328,10 @@ python_library_host {
     srcs: [
         "ota_utils.py",
         "payload_signer.py",
+        "ota_signing_utils.py",
+    ],
+    libs: [
+        "releasetools_common",
     ],
 }
 
@@ -351,6 +350,21 @@ python_binary_host {
         "update_payload",
         "care_map_proto_py",
         "releasetools_common",
+        "ota_utils_lib",
+    ],
+}
+
+python_binary_host {
+    name: "create_brick_ota",
+    version: {
+        py3: {
+            embedded_launcher: true,
+        },
+    },
+    srcs: [
+        "create_brick_ota.py",
+    ],
+    libs: [
         "ota_utils_lib",
     ],
 }
@@ -479,6 +493,25 @@ python_binary_host {
 }
 
 python_binary_host {
+    name: "ota_from_raw_img",
+    srcs: [
+        "ota_from_raw_img.py",
+    ],
+    main: "ota_from_raw_img.py",
+    defaults: [
+        "releasetools_binary_defaults",
+    ],
+    required: [
+        "delta_generator",
+    ],
+    libs: [
+        "ota_metadata_proto",
+        "releasetools_common",
+        "ota_utils_lib",
+    ],
+}
+
+python_binary_host {
     name: "ota_package_parser",
     defaults: ["releasetools_binary_defaults"],
     srcs: [
@@ -513,6 +546,8 @@ python_binary_host {
     defaults: ["releasetools_binary_defaults"],
     srcs: [
         "sign_target_files_apks.py",
+        "payload_signer.py",
+        "ota_signing_utils.py",
     ],
     libs: [
         "releasetools_add_img_to_target_files",
@@ -597,7 +632,7 @@ python_defaults {
     data: [
         "testdata/**/*",
         ":com.android.apex.compressed.v1",
-        ":com.android.apex.compressed.v1_original",
+        ":com.android.apex.vendor.foo.with_vintf"
     ],
     target: {
         darwin: {
@@ -606,6 +641,7 @@ python_defaults {
         },
     },
     required: [
+        "apexd_host",
         "deapexer",
     ],
 }

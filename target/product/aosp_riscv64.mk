@@ -30,8 +30,7 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
 # GSI for system/product & support 64-bit apps only
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
-#$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
-TARGET_FLATTEN_APEX := false
+$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
 
 #
 # All components inherited here go to system_ext image
@@ -47,37 +46,26 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_product.mk)
 #
 # All components inherited here go to vendor image
 #
-$(call inherit-product-if-exists, device/generic/goldfish/riscv64-vendor.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_riscv64/device.mk)
 
 #
 # Special settings for GSI releasing
 #
 ifeq (aosp_riscv64,$(TARGET_PRODUCT))
+# Build modules from source if this has not been pre-configured
+MODULE_BUILD_FROM_SOURCE ?= true
+
 $(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_release.mk)
 endif
 
-# TODO: this list should come via mainline_system.mk, but for now list
-# just the modules that work for riscv64.
-PRODUCT_PACKAGES := \
-  init.environ.rc \
-  init_first_stage \
-  init_system \
-  linker \
-  shell_and_utilities \
-  com.android.art \
-  com.android.conscrypt \
-  com.android.i18n \
-  com.android.runtime \
-  com.android.tzdata \
-  com.android.os.statsd \
-
-$(call inherit-product, $(SRC_TARGET_DIR)/product/default_art_config.mk)
-PRODUCT_USES_DEFAULT_ART_CONFIG := false
-
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     root/init.zygote64.rc
+
+# TODO(b/206676167): This property can be removed when renderscript is removed.
+# Prevents framework from attempting to load renderscript libraries, which are
+# not supported on this architecture.
+PRODUCT_SYSTEM_PROPERTIES += \
+    config.disable_renderscript=1 \
 
 # This build configuration supports 64-bit apps only
 PRODUCT_NAME := aosp_riscv64

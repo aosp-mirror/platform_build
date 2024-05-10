@@ -18,5 +18,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/module_common.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 
 PRODUCT_NAME := module_x86_64
-PRODUCT_BRAND := Android
 PRODUCT_DEVICE := module_x86_64
+
+PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO := true
+PRODUCT_MAX_PAGE_SIZE_SUPPORTED :=  16384

@@ -190,8 +190,8 @@ def CheckApexDuplicatePackages(target_files_dir, partition_map):
   apex_packages = set()
   for partition in partition_map.keys():
     try:
-      apex_info = apex_utils.GetApexInfoFromTargetFiles(
-          target_files_dir, partition, compressed_only=False)
+      apex_info = apex_utils.GetApexInfoForPartition(
+          target_files_dir, partition)
     except RuntimeError as err:
       errors.append(str(err))
       apex_info = []

@@ -74,7 +74,7 @@ endif
 ###########################################################
 
 define find-copy-subdir-files
-$(sort $(shell find $(2) -name "$(1)" -type f | $(SED_EXTENDED) "s:($(2)/?(.*)):\\1\\:$(3)/\\2:" | sed "s://:/:g"))
+$(shell find $(2) -name "$(1)" -type f | $(SED_EXTENDED) "s:($(2)/?(.*)):\\1\\:$(3)/\\2:" | sed "s://:/:g" | sort)
 endef
 
 #
@@ -144,7 +144,6 @@ endif
 #
 include $(BUILD_SYSTEM)/node_fns.mk
 include $(BUILD_SYSTEM)/product.mk
-include $(BUILD_SYSTEM)/device.mk
 
 # Read all product definitions.
 #
@@ -224,7 +223,7 @@ _product_config_saved_KATI_ALLOW_RULES := $(.KATI_ALLOW_RULES)
 endif
 
 ifeq (,$(current_product_makefile))
-  $(error Can not locate config makefile for product "$(TARGET_PRODUCT)")
+  $(error Cannot locate config makefile for product "$(TARGET_PRODUCT)")
 endif
 
 ifneq (,$(filter $(TARGET_PRODUCT),$(products_using_starlark_config)))
@@ -237,14 +236,22 @@ else
   $(shell mkdir -p $(OUT_DIR)/rbc)
   $(call dump-variables-rbc, $(OUT_DIR)/rbc/make_vars_pre_product_config.mk)
 
-  $(shell build/soong/scripts/update_out \
-    $(OUT_DIR)/rbc/rbc_product_config_results.mk \
-    build/soong/scripts/rbc-run \
-    $(current_product_makefile) \
-    $(OUT_DIR)/rbc/make_vars_pre_product_config.mk)
+  $(shell $(OUT_DIR)/mk2rbc \
+    --mode=write -r --outdir $(OUT_DIR)/rbc \
+    --launcher=$(OUT_DIR)/rbc/launcher.rbc \
+    --input_variables=$(OUT_DIR)/rbc/make_vars_pre_product_config.mk \
+    --makefile_list=$(OUT_DIR)/.module_paths/configuration.list \
+    $(current_product_makefile))
   ifneq ($(.SHELLSTATUS),0)
     $(error product configuration converter failed: $(.SHELLSTATUS))
   endif
+
+  $(shell build/soong/scripts/update_out $(OUT_DIR)/rbc/rbc_product_config_results.mk \
+    $(OUT_DIR)/rbcrun --mode=rbc $(OUT_DIR)/rbc/launcher.rbc)
+  ifneq ($(.SHELLSTATUS),0)
+    $(error product configuration runner failed: $(.SHELLSTATUS))
+  endif
+
   include $(OUT_DIR)/rbc/rbc_product_config_results.mk
 endif
 
@@ -275,11 +282,50 @@ current_product_makefile :=
 
 #############################################################################
 # Check product include tag allowlist
-BLUEPRINT_INCLUDE_TAGS_ALLOWLIST := com.android.mainline_go com.android.mainline
+BLUEPRINT_INCLUDE_TAGS_ALLOWLIST := \
+  com.android.mainline_go \
+  com.android.mainline \
+  mainline_module_prebuilt_nightly \
+  mainline_module_prebuilt_monthly_release
 .KATI_READONLY := BLUEPRINT_INCLUDE_TAGS_ALLOWLIST
 $(foreach include_tag,$(PRODUCT_INCLUDE_TAGS), \
 	$(if $(filter $(include_tag),$(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST)),,\
 	$(call pretty-error, $(include_tag) is not in BLUEPRINT_INCLUDE_TAGS_ALLOWLIST: $(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST))))
+# Create default PRODUCT_INCLUDE_TAGS
+ifeq (, $(PRODUCT_INCLUDE_TAGS))
+# Soong analysis is global: even though a module might not be relevant to a specific product (e.g. build_tools for aosp_arm),
+# we still analyse it.
+# This means that in setups where we two have two prebuilts of module_sdk, we need a "default" to use in analysis
+# This should be a no-op in aosp and internal since no Android.bp file contains blueprint_package_includes
+# Use the big android one and main-based prebuilts by default
+PRODUCT_INCLUDE_TAGS += com.android.mainline mainline_module_prebuilt_nightly
+endif
+
+# AOSP and Google products currently share the same `apex_contributions` in next.
+# This causes issues when building <aosp_product>-next-userdebug in main.
+# Create a temporary allowlist to ignore the google apexes listed in `contents` of apex_contributions of `next`
+# *for aosp products*.
+# TODO(b/308187268): Remove this denylist mechanism
+# Use PRODUCT_PACKAGES to determine if this is an aosp product. aosp products do not use google signed apexes.
+ignore_apex_contributions :=
+ifeq (,$(findstring com.google.android.conscrypt,$(PRODUCT_PACKAGES))$(findstring com.google.android.go.conscrypt,$(PRODUCT_PACKAGES)))
+  ignore_apex_contributions := true
+endif
+ifeq (true,$(PRODUCT_MODULE_BUILD_FROM_SOURCE))
+  ignore_apex_contributions := true
+endif
+ifneq ($(EMMA_INSTRUMENT)$(EMMA_INSTRUMENT_STATIC)$(EMMA_INSTRUMENT_FRAMEWORK)$(CLANG_COVERAGE)$(NATIVE_COVERAGE_PATHS),)
+# Coverage builds for TARGET_RELEASE=foo should always build from source,
+# even if TARGET_RELEASE=foo uses prebuilt mainline modules.
+# This is necessary because the checked-in prebuilts were generated with
+# instrumentation turned off.
+  ignore_apex_contributions := true
+endif
+
+ifeq (true, $(ignore_apex_contributions))
+PRODUCT_BUILD_IGNORE_APEX_CONTRIBUTION_CONTENTS := true
+endif
+
 #############################################################################
 
 # Quick check and assign default values
@@ -399,6 +445,8 @@ PRODUCT_OTA_PUBLIC_KEYS := $(sort $(PRODUCT_OTA_PUBLIC_KEYS))
 PRODUCT_EXTRA_OTA_KEYS := $(sort $(PRODUCT_EXTRA_OTA_KEYS))
 PRODUCT_EXTRA_RECOVERY_KEYS := $(sort $(PRODUCT_EXTRA_RECOVERY_KEYS))
 
+PRODUCT_VALIDATION_CHECKS := $(sort $(PRODUCT_VALIDATION_CHECKS))
+
 # Resolve and setup per-module dex-preopt configs.
 DEXPREOPT_DISABLED_MODULES :=
 # If a module has multiple setups, the first takes precedence.
@@ -477,15 +525,6 @@ ifeq ($(PRODUCT_SET_DEBUGFS_RESTRICTIONS),)
   endif
 endif
 
-ifdef PRODUCT_SHIPPING_API_LEVEL
-  ifneq (,$(call math_gt_or_eq,29,$(PRODUCT_SHIPPING_API_LEVEL)))
-    PRODUCT_PACKAGES += $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29)
-  endif
-  ifneq (,$(call math_gt_or_eq,33,$(PRODUCT_SHIPPING_API_LEVEL)))
-    PRODUCT_PACKAGES += $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_33)
-  endif
-endif
-
 # If build command defines OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS,
 # override PRODUCT_EXTRA_VNDK_VERSIONS with it.
 ifdef OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS
@@ -518,7 +557,8 @@ ifdef OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
     PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE := $(OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE)
   endif
 else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
-  # No shipping level defined
+  # No shipping level defined. Enforce the product interface by default.
+  PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE := true
 else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),29),true)
   # Enforce product interface if PRODUCT_SHIPPING_API_LEVEL is greater than 29.
   PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE := true
@@ -526,33 +566,58 @@ endif
 
 $(KATI_obsolete_var OVERRIDE_PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE,Use PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE instead)
 
-# If build command defines PRODUCT_USE_PRODUCT_VNDK_OVERRIDE as `false`,
-# PRODUCT_PRODUCT_VNDK_VERSION will not be defined automatically.
-# PRODUCT_USE_PRODUCT_VNDK_OVERRIDE can be used for testing only.
-PRODUCT_USE_PRODUCT_VNDK := false
-ifneq ($(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE),)
-  PRODUCT_USE_PRODUCT_VNDK := $(PRODUCT_USE_PRODUCT_VNDK_OVERRIDE)
-else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
-  # No shipping level defined
-else ifeq ($(call math_gt,$(PRODUCT_SHIPPING_API_LEVEL),29),true)
-  # Enforce product interface for VNDK if PRODUCT_SHIPPING_API_LEVEL is greater
-  # than 29.
-  PRODUCT_USE_PRODUCT_VNDK := true
+# From Android V, Define PRODUCT_PRODUCT_VNDK_VERSION as current by default.
+# This is required to make all devices have product variants.
+ifndef PRODUCT_PRODUCT_VNDK_VERSION
+  PRODUCT_PRODUCT_VNDK_VERSION := current
 endif
-
-ifeq ($(PRODUCT_USE_PRODUCT_VNDK),true)
-  ifndef PRODUCT_PRODUCT_VNDK_VERSION
-    PRODUCT_PRODUCT_VNDK_VERSION := current
-  endif
-endif
-
-$(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
-$(KATI_obsolete_var PRODUCT_USE_PRODUCT_VNDK_OVERRIDE,Use PRODUCT_PRODUCT_VNDK_VERSION instead)
 
 ifdef PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS
     $(error PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS is deprecated, consider using RRO for \
       $(PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS))
 endif
+
+# This table maps sdk version 35 to vendor api level 202404 and assumes yearly
+# release for the same month.
+define sdk-to-vendor-api-level
+  $(if $(call math_lt_or_eq,$(1),34),$(1),20$(call int_subtract,$(1),11)04)
+endef
+
+ifdef PRODUCT_SHIPPING_VENDOR_API_LEVEL
+# Follow the version that is set manually.
+  VSR_VENDOR_API_LEVEL := $(PRODUCT_SHIPPING_VENDOR_API_LEVEL)
+else
+  # VSR API level is the vendor api level of the product shipping API level.
+  VSR_VENDOR_API_LEVEL := $(call sdk-to-vendor-api-level,$(PLATFORM_SDK_VERSION))
+  ifdef PRODUCT_SHIPPING_API_LEVEL
+    VSR_VENDOR_API_LEVEL := $(call sdk-to-vendor-api-level,$(PRODUCT_SHIPPING_API_LEVEL))
+  endif
+  ifdef BOARD_SHIPPING_API_LEVEL
+    # Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
+    # In this case, the VSR API level is the minimum of the PRODUCT_SHIPPING_API_LEVEL
+    # and RELEASE_BOARD_API_LEVEL
+    VSR_VENDOR_API_LEVEL := $(call math_min,$(VSR_VENDOR_API_LEVEL),$(RELEASE_BOARD_API_LEVEL))
+  endif
+endif
+.KATI_READONLY := VSR_VENDOR_API_LEVEL
+
+# Boolean variable determining if vendor seapp contexts is enforced
+CHECK_VENDOR_SEAPP_VIOLATIONS := false
+ifneq ($(call math_gt,$(VSR_VENDOR_API_LEVEL),34),)
+  CHECK_VENDOR_SEAPP_VIOLATIONS := true
+else ifneq ($(PRODUCT_CHECK_VENDOR_SEAPP_VIOLATIONS),)
+  CHECK_VENDOR_SEAPP_VIOLATIONS := $(PRODUCT_CHECK_VENDOR_SEAPP_VIOLATIONS)
+endif
+.KATI_READONLY := CHECK_VENDOR_SEAPP_VIOLATIONS
+
+# Boolean variable determining if selinux labels of /dev are enforced
+CHECK_DEV_TYPE_VIOLATIONS := false
+ifneq ($(call math_gt,$(VSR_VENDOR_API_LEVEL),202404),)
+  CHECK_DEV_TYPE_VIOLATIONS := true
+else ifneq ($(PRODUCT_CHECK_DEV_TYPE_VIOLATIONS),)
+  CHECK_DEV_TYPE_VIOLATIONS := $(PRODUCT_CHECK_DEV_TYPE_VIOLATIONS)
+endif
+.KATI_READONLY := CHECK_DEV_TYPE_VIOLATIONS
 
 define product-overrides-config
 $$(foreach rule,$$(PRODUCT_$(1)_OVERRIDES),\
@@ -572,6 +637,15 @@ ifneq ($$(filter-out true false,$$(PRODUCT_BUILD_$(1)_IMAGE)),)
     $$(error Invalid PRODUCT_BUILD_$(1)_IMAGE: $$(PRODUCT_BUILD_$(1)_IMAGE) -- true false and empty are supported)
 endif
 endef
+
+ifndef PRODUCT_VIRTUAL_AB_COW_VERSION
+  PRODUCT_VIRTUAL_AB_COW_VERSION := 2
+  ifdef PRODUCT_SHIPPING_API_LEVEL
+    ifeq (true,$(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),34))
+      PRODUCT_VIRTUAL_AB_COW_VERSION := 3
+    endif
+  endif
+endif
 
 # Copy and check the value of each PRODUCT_BUILD_*_IMAGE variable
 $(foreach image, \

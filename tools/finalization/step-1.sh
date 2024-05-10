@@ -9,7 +9,7 @@ function commit_step_1_changes() {
         if [[ $(git status --short) ]]; then
             repo start "$FINAL_PLATFORM_CODENAME-SDK-Finalization" ;
             git add -A . ;
-            git commit -m "$FINAL_PLATFORM_CODENAME is now $FINAL_PLATFORM_SDK_VERSION" \
+            git commit -m "$FINAL_PLATFORM_CODENAME is now $FINAL_PLATFORM_SDK_VERSION and extension version $FINAL_MAINLINE_EXTENSION" \
                        -m "Ignore-AOSP-First: $FINAL_PLATFORM_CODENAME Finalization
 Bug: $FINAL_BUG_ID
 Test: build";

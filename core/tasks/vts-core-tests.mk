@@ -20,13 +20,10 @@ include $(BUILD_SYSTEM)/tasks/tools/vts-kernel-tests.mk
 
 ltp_copy_pairs := \
   $(call target-native-copy-pairs,$(kernel_ltp_modules),$(kernel_ltp_vts_out))
-kselftest_copy_pairs := \
-  $(call target-native-copy-pairs,$(kernel_kselftest_modules),$(kernel_kselftest_vts_out))
 
 copy_ltp_tests := $(call copy-many-files,$(ltp_copy_pairs))
-copy_kselftest_tests := $(call copy-many-files,$(kselftest_copy_pairs))
 
-test_suite_extra_deps := $(copy_ltp_tests) $(copy_kselftest_tests)
+test_suite_extra_deps := $(copy_ltp_tests)
 
 include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
 

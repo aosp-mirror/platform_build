@@ -14,19 +14,24 @@
 # limitations under the License.
 #
 
+$(call inherit-product, $(SRC_TARGET_DIR)/product/build_variables.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/default_art_config.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_default.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/cfi-common.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/memtag-common.mk)
 
 # Enables treble, which enabled certain -D compilation flags. In particular, libhidlbase
 # uses -DENFORCE_VINTF_MANIFEST. See b/185759877
 PRODUCT_SHIPPING_API_LEVEL := 29
 
-# Builds using a module product should build modules from source, even if
-# BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE says otherwise.
+# If true, this builds the mainline modules from source. This overrides any
+# prebuilts selected via RELEASE_APEX_CONTRIBUTIONS_* build flags for the
+# current release config.
 PRODUCT_MODULE_BUILD_FROM_SOURCE := true
 
 # Build sdk from source if the branch is not using slim manifests.
 ifneq (,$(strip $(wildcard frameworks/base/Android.bp)))
   UNBUNDLED_BUILD_SDKS_FROM_SOURCE := true
 endif
+
+PRODUCT_BRAND := Android

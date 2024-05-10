@@ -1,0 +1,105 @@
+{
+  "presubmit": [
+    {
+      // aconfig unit tests
+      "name": "aconfig.test"
+    },
+    {
+      // aconfig Java integration tests (host)
+      "name": "AconfigJavaHostTest"
+    },
+    {
+      // aconfig Java integration tests
+      "name": "aconfig.test.java"
+    },
+    {
+      // aconfig C++ integration tests (production mode auto-generated code)
+      "name": "aconfig.test.cpp"
+    },
+    {
+      // aconfig C++ integration tests (test mode auto-generated code)
+      "name": "aconfig.test.cpp.test_mode"
+    },
+    // TODO(b/327420679): Enable export mode for native flag library
+    // {
+    //   // aconfig C++ integration tests (exported mode auto-generated code)
+    //   "name": "aconfig.test.cpp.exported_mode"
+    // },
+    {
+      // aconfig Rust integration tests (production mode auto-generated code)
+      "name": "aconfig.prod_mode.test.rust"
+    },
+    {
+      // aconfig Rust integration tests (test mode auto-generated code)
+      "name": "aconfig.test_mode.test.rust"
+    },
+    // TODO(b/327420679): Enable export mode for native flag library
+    // {
+    //   // aconfig Rust integration tests (exported mode auto-generated code)
+    //   "name": "aconfig.exported_mode.test.rust"
+    // },
+    {
+      // aflags CLI unit tests
+      "name": "aflags.test"
+    },
+    {
+      // printflags unit tests
+      "name": "printflags.test"
+    },
+    {
+      // aconfig_protos unit tests
+      "name": "aconfig_protos.test"
+    },
+    {
+      // aconfig_storage_file unit tests
+      "name": "aconfig_storage_file.test"
+    },
+    {
+      // Ensure changes on aconfig auto generated library is compatible with
+      // test testing filtering logic. Breakage on this test means all tests
+      // that using the flag annotations to do filtering will get affected.
+      "name": "FlagAnnotationTests",
+      "options": [
+        {
+          "include-filter": "android.cts.flags.tests.FlagAnnotationTest"
+        }
+      ]
+    },
+    {
+      // Ensure changes on aconfig auto generated library is compatible with
+      // test testing filtering logic. Breakage on this test means all tests
+      // that using the flag macros to do filtering will get affected.
+      "name": "FlagMacrosTests"
+    },
+    {
+      // aconfig_storage_write_api unit tests
+      "name": "aconfig_storage_write_api.test"
+    },
+    {
+      // aconfig_storage_read_api unit tests
+      "name": "aconfig_storage_read_api.test"
+    },
+    {
+      // aconfig_storage write api rust integration tests
+      "name": "aconfig_storage_write_api.test.rust"
+    },
+    {
+      // aconfig_storage write api cpp integration tests
+      "name": "aconfig_storage_write_api.test.cpp"
+    },
+    {
+      // aconfig_storage read api rust integration tests
+      "name": "aconfig_storage_read_api.test.rust"
+    },
+    {
+      // aconfig_storage read api cpp integration tests
+      "name": "aconfig_storage_read_api.test.cpp"
+    }
+  ],
+  "postsubmit": [
+    {
+      // aconfig_storage file cpp integration tests
+      "name": "aconfig_storage_file.test.cpp"
+    }
+  ]
+}

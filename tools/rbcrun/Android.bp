@@ -19,7 +19,7 @@ package {
 
 blueprint_go_binary {
     name: "rbcrun",
-    srcs: ["cmd/rbcrun.go"],
+    srcs: ["rbcrun/rbcrun.go"],
     deps: ["rbcrun-module"],
 }
 
@@ -34,6 +34,7 @@ bootstrap_go_package {
     pkgPath: "rbcrun",
     deps: [
         "go-starlark-starlark",
+        "go-starlark-starlarkjson",
         "go-starlark-starlarkstruct",
         "go-starlark-starlarktest",
     ],

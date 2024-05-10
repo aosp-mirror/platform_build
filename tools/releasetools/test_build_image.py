@@ -99,11 +99,10 @@ class BuildImageTest(test_utils.ReleaseToolsTestCase):
     }
     self.assertRaises(BuildImageError, CheckHeadroom, ext4fs_output, prop_dict)
 
-  def test_SetUpInDirAndFsConfig_SystemRootImageTrue_NonSystem(self):
+  def test_SetUpInDirAndFsConfig_NonSystem(self):
     prop_dict = {
         'fs_config': 'fs-config',
         'mount_point': 'vendor',
-        'system_root_image': 'true',
     }
     in_dir, fs_config = SetUpInDirAndFsConfig('/path/to/in_dir', prop_dict)
     self.assertEqual('/path/to/in_dir', in_dir)

@@ -29,6 +29,8 @@ TARGET_2ND_CPU_VARIANT := generic
 
 # Include 64-bit mediaserver to support 64-bit only devices
 TARGET_DYNAMIC_64_32_MEDIASERVER := true
+# Include 64-bit drmserver to support 64-bit only devices
+TARGET_DYNAMIC_64_32_DRMSERVER := true
 
 # TODO(b/111434759, b/111287060) SoC specific hacks
 BOARD_ROOT_EXTRA_SYMLINKS += /vendor/lib/dsp:/dsp
