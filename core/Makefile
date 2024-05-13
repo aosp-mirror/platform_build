@@ -3406,12 +3406,12 @@ endif
 
 FULL_SYSTEMIMAGE_DEPS += $(INTERNAL_ROOT_FILES) $(INSTALLED_FILES_FILE_ROOT)
 
-# Returns a list of all the zip files from EXTRA_INSTALL_ZIPS whose install destination is
-# under $(1)
+# Returns a list of EXTRA_INSTALL_ZIPS trios whose primary file is contained within $(1)
+# The trios will contain the primary installed file : the directory to unzip the zip to : the zip
 define relevant-extra-install-zips
 $(strip $(foreach p,$(EXTRA_INSTALL_ZIPS), \
-  $(if $(filter $(1)/%,$(call word-colon,1,$(p))/), \
-    $(call word-colon,2,$(p)))))
+  $(if $(filter $(call word-colon,1,$(p)),$(1)), \
+    $(p))))
 endef
 
 # Writes a text file that contains all of the files that will be inside a partition.
@@ -3423,12 +3423,13 @@ endef
 #   $(2): The partition's staging directory
 #   $(3): Files to include in the partition
 define write-partition-file-list
-$(1): $$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(call relevant-extra-install-zips,$(2))
+$(1): PRIVATE_RELEVANT_EXTRA_INSTALL_ZIPS := $(call relevant-extra-install-zips,$(filter $(2)/%,$(3)))
+$(1): $$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $$(foreach p,$$(PRIVATE_RELEVANT_EXTRA_INSTALL_ZIPS),$$(call word-colon,3,$$(p)))
 	@echo Writing $$@
 	rm -f $$@
 	echo -n > $$@
 	$$(foreach f,$(subst $(2)/,,$(filter $(2)/%,$(3))),echo "$$(f)" >> $$@$$(newline))
-	$$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(2) $$(EXTRA_INSTALL_ZIPS) >> $$@
+	$$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(2) $$(PRIVATE_RELEVANT_EXTRA_INSTALL_ZIPS) >> $$@
 endef
 
 # -----------------------------------------------------------------
