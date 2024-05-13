@@ -270,6 +270,42 @@ class CheckFlaggedApisTest {
   }
 
   @Test
+  fun testNestedFlagsOuterFlagWins() {
+    val apiSignature =
+        """
+          // Signature format: 2.0
+          package android {
+            @FlaggedApi("android.flag.foo") public final class A {
+              method @FlaggedApi("android.flag.bar") public boolean method();
+            }
+            @FlaggedApi("android.flag.bar") public final class B {
+              method @FlaggedApi("android.flag.foo") public boolean method();
+            }
+          }
+        """
+            .trim()
+
+    val apiVersions =
+        """
+          <?xml version="1.0" encoding="utf-8"?>
+          <api version="3">
+            <class name="android/B" since="1">
+            <extends name="java/lang/Object"/>
+            </class>
+          </api>
+        """
+            .trim()
+
+    val expected = setOf<ApiError>()
+    val actual =
+        findErrors(
+            parseApiSignature("in-memory", apiSignature.byteInputStream()),
+            parseFlagValues(generateFlagsProto(DISABLED, ENABLED)),
+            parseApiVersions(apiVersions.byteInputStream()))
+    assertEquals(expected, actual)
+  }
+
+  @Test
   fun testFindErrorsDisabledFlaggedApiIsPresent() {
     val expected =
         setOf<ApiError>(
