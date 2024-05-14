@@ -196,6 +196,19 @@ function get_build_var()
     (\cd $T; build/soong/soong_ui.bash --dumpvar-mode $1)
 }
 
+# This logic matches envsetup.mk
+function get_host_prebuilt_prefix
+{
+  local un=$(uname)
+  if [[ $un == "Linux" ]] ; then
+    echo linux-x86
+  elif [[ $un == "Darwin" ]] ; then
+    echo darwin-x86
+  else
+    echo "Error: Invalid host operating system: $un" 1>&2
+  fi
+}
+
 # check to see if the supplied product is one we can build
 function check_product()
 {
