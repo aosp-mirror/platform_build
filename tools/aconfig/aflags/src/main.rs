@@ -33,12 +33,12 @@ enum FlagPermission {
     ReadWrite,
 }
 
-impl ToString for FlagPermission {
-    fn to_string(&self) -> String {
-        match &self {
-            Self::ReadOnly => "read-only".into(),
-            Self::ReadWrite => "read-write".into(),
-        }
+impl std::fmt::Display for FlagPermission {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", match &self {
+            Self::ReadOnly => "read-only",
+            Self::ReadWrite => "read-write",
+        })
     }
 }
 
@@ -48,12 +48,12 @@ enum ValuePickedFrom {
     Server,
 }
 
-impl ToString for ValuePickedFrom {
-    fn to_string(&self) -> String {
-        match &self {
-            Self::Default => "default".into(),
-            Self::Server => "server".into(),
-        }
+impl std::fmt::Display for ValuePickedFrom {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", match &self {
+            Self::Default => "default",
+            Self::Server => "server",
+        })
     }
 }
 
@@ -75,12 +75,12 @@ impl TryFrom<&str> for FlagValue {
     }
 }
 
-impl ToString for FlagValue {
-    fn to_string(&self) -> String {
-        match &self {
-            Self::Enabled => "enabled".into(),
-            Self::Disabled => "disabled".into(),
-        }
+impl std::fmt::Display for FlagValue {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", match &self {
+            Self::Enabled => "enabled",
+            Self::Disabled => "disabled",
+        })
     }
 }
 
@@ -103,7 +103,7 @@ impl Flag {
 
     fn display_staged_value(&self) -> String {
         match self.staged_value {
-            Some(v) => format!("(->{})", v.to_string()),
+            Some(v) => format!("(->{})", v),
             None => "-".to_string(),
         }
     }
