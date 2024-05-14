@@ -19,8 +19,6 @@ ifeq (,$(filter default true false,$(config_enable_uffd_gc)))
 endif
 
 ENABLE_UFFD_GC := $(config_enable_uffd_gc)
-# If the value is "default", it will be mangled by post_process_props.py.
-ADDITIONAL_PRODUCT_PROPERTIES += ro.dalvik.vm.enable_uffd_gc=$(config_enable_uffd_gc)
 
 # Create APEX_BOOT_JARS_EXCLUDED which is a list of jars to be removed from
 # ApexBoorJars when built from mainline prebuilts.

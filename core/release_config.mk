@@ -120,7 +120,8 @@ ifneq (,$(_use_protobuf))
         # Disable the build flag in release-config.
         _args += --guard=false
     endif
-    $(KATI_shell_no_rerun $(OUT_DIR)/release-config $(_args) >$(OUT_DIR)/release-config.out && touch -t 200001010000 $(OUT_DIR)/release-config.out)
+    _flags_file:=$(OUT_DIR)/soong/release-config/release_config-$(TARGET_PRODUCT)-$(TARGET_RELEASE).mk
+    $(KATI_shell_no_rerun $(OUT_DIR)/release-config $(_args) >$(OUT_DIR)/release-config.out 2>&1 && touch -t 200001010000 $(OUT_DIR)/release-config.out $(_flags_file))
     $(if $(filter-out 0,$(.SHELLSTATUS)),$(error release-config failed to run))
     # This will also set _all_release_configs for us.
     $(eval include $(OUT_DIR)/soong/release-config/release_config-$(TARGET_PRODUCT)-$(TARGET_RELEASE).mk)
