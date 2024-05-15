@@ -447,7 +447,8 @@ _product_list_vars += PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS
 #   device may have to re-compile everything on the first boot if the kernel doesn't support
 #   userfaultfd
 # - "false": disallows the build system and the runtime to use userfaultfd GC even if the device
-#   supports it
+#   supports it. This option is temporary - the plan is to remove it by Aug 2025, at which time
+#   Mainline updates of the ART module will ignore it as well.
 _product_single_value_vars += PRODUCT_ENABLE_UFFD_GC
 
 # Specifies COW version to be used by update_engine and libsnapshot. If this value is not
