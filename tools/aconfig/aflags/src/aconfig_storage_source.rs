@@ -27,8 +27,7 @@ impl FlagSource for AconfigStorageSource {
             let container =
                 file_info.container.ok_or(anyhow!("storage file is missing container"))?;
 
-            for listed_flag in
-                aconfig_storage_file::list_flags(&package_map, &flag_map, &flag_val)?
+            for listed_flag in aconfig_storage_file::list_flags(&package_map, &flag_map, &flag_val)?
             {
                 result.push(Flag {
                     name: listed_flag.flag_name,

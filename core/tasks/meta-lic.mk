@@ -140,3 +140,6 @@ $(eval $(call declare-1p-copy-files,frameworks/base,.idc))
 $(eval $(call declare-1p-copy-files,frameworks/base,dirty-image-objects))
 $(eval $(call declare-1p-copy-files,frameworks/base/config,))
 $(eval $(call declare-1p-copy-files,frameworks/native/data,))
+
+# Moved here from hardware/google/camera/Android.mk
+$(eval $(call declare-1p-copy-files,hardware/google/camera,))
