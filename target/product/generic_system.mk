@@ -47,9 +47,6 @@ PRODUCT_PACKAGES += \
     update_engine \
     update_verifier \
 
-AB_OTA_UPDATER := true
-AB_OTA_PARTITIONS ?= system
-
 # Wrapped net utils for /vendor access.
 PRODUCT_PACKAGES += netutils-wrapper-1.0
 
