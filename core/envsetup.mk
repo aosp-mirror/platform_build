@@ -255,6 +255,7 @@ endif
 HOST_PREBUILT_ARCH := x86
 # This is the standard way to name a directory containing prebuilt host
 # objects. E.g., prebuilt/$(HOST_PREBUILT_TAG)/cc
+# This must match the logic in get_host_prebuilt_prefix in envsetup.sh
 HOST_PREBUILT_TAG := $(BUILD_OS)-$(HOST_PREBUILT_ARCH)
 
 # TARGET_COPY_OUT_* are all relative to the staging directory, ie PRODUCT_OUT.
