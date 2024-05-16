@@ -196,39 +196,18 @@ function get_build_var()
     (\cd $T; build/soong/soong_ui.bash --dumpvar-mode $1)
 }
 
-# check to see if the supplied product is one we can build
-function check_product()
+# This logic matches envsetup.mk
+function get_host_prebuilt_prefix
 {
-    local T=$(gettop)
-    if [ ! "$T" ]; then
-        echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
-        return
-    fi
-        TARGET_PRODUCT=$1 \
-        TARGET_RELEASE= \
-        TARGET_BUILD_VARIANT= \
-        TARGET_BUILD_TYPE= \
-        TARGET_BUILD_APPS= \
-        get_build_var TARGET_DEVICE > /dev/null
-    # hide successful answers, but allow the errors to show
+  local un=$(uname)
+  if [[ $un == "Linux" ]] ; then
+    echo linux-x86
+  elif [[ $un == "Darwin" ]] ; then
+    echo darwin-x86
+  else
+    echo "Error: Invalid host operating system: $un" 1>&2
+  fi
 }
-
-VARIANT_CHOICES=(user userdebug eng)
-
-# check to see if the supplied variant is valid
-function check_variant()
-{
-    local v
-    for v in ${VARIANT_CHOICES[@]}
-    do
-        if [ "$v" = "$1" ]
-        then
-            return 0
-        fi
-    done
-    return 1
-}
-
 
 # Add directories to PATH that are dependent on the lunch target.
 # For directories that are not lunch-specific, add them in set_global_paths
@@ -467,9 +446,6 @@ function addcompletions()
         fi
     done
 
-    if should_add_completion bit ; then
-        complete -C "bit --tab" bit
-    fi
     if [ -z "$ZSH_VERSION" ]; then
         # Doesn't work in zsh.
         complete -o nospace -F _croot croot
@@ -484,236 +460,6 @@ function addcompletions()
     complete -F _complete_android_module_names installmod
     complete -F _complete_android_module_names bmod
     complete -F _complete_android_module_names m
-}
-
-function multitree_lunch_help()
-{
-    echo "usage: lunch PRODUCT-RELEASE-VARIANT" 1>&2
-    echo "    Set up android build environment based on a product short name and variant" 1>&2
-    echo 1>&2
-    echo "lunch COMBO_FILE VARIANT" 1>&2
-    echo "    Set up android build environment based on a specific lunch combo file" 1>&2
-    echo "    and variant." 1>&2
-    echo 1>&2
-    echo "lunch --print [CONFIG]" 1>&2
-    echo "    Print the contents of a configuration.  If CONFIG is supplied, that config" 1>&2
-    echo "    will be flattened and printed.  If CONFIG is not supplied, the currently" 1>&2
-    echo "    selected config will be printed.  Returns 0 on success or nonzero on error." 1>&2
-    echo 1>&2
-    echo "lunch --list" 1>&2
-    echo "    List all possible combo files available in the current tree" 1>&2
-    echo 1>&2
-    echo "lunch --help" 1>&2
-    echo "lunch -h" 1>&2
-    echo "    Prints this message." 1>&2
-}
-
-function multitree_lunch()
-{
-    local code
-    local results
-    # Lunch must be run in the topdir, but this way we get a clear error
-    # message, instead of FileNotFound.
-    local T=$(multitree_gettop)
-    if [ -z "$T" ]; then
-      _multitree_lunch_error
-      return 1
-    fi
-    if $(echo "$1" | grep -q '^-') ; then
-        # Calls starting with a -- argument are passed directly and the function
-        # returns with the lunch.py exit code.
-        "${T}/orchestrator/build/orchestrator/core/lunch.py" "$@"
-        code=$?
-        if [[ $code -eq 2 ]] ; then
-          echo 1>&2
-          multitree_lunch_help
-          return $code
-        elif [[ $code -ne 0 ]] ; then
-          return $code
-        fi
-    else
-        # All other calls go through the --lunch variant of lunch.py
-        results=($(${T}/orchestrator/build/orchestrator/core/lunch.py --lunch "$@"))
-        code=$?
-        if [[ $code -eq 2 ]] ; then
-          echo 1>&2
-          multitree_lunch_help
-          return $code
-        elif [[ $code -ne 0 ]] ; then
-          return $code
-        fi
-
-        export TARGET_BUILD_COMBO=${results[0]}
-        export TARGET_BUILD_VARIANT=${results[1]}
-    fi
-}
-
-function choosetype()
-{
-    echo "Build type choices are:"
-    echo "     1. release"
-    echo "     2. debug"
-    echo
-
-    local DEFAULT_NUM DEFAULT_VALUE
-    DEFAULT_NUM=1
-    DEFAULT_VALUE=release
-
-    export TARGET_BUILD_TYPE=
-    local ANSWER
-    while [ -z $TARGET_BUILD_TYPE ]
-    do
-        echo -n "Which would you like? ["$DEFAULT_NUM"] "
-        if [ -z "$1" ] ; then
-            read ANSWER
-        else
-            echo $1
-            ANSWER=$1
-        fi
-        case $ANSWER in
-        "")
-            export TARGET_BUILD_TYPE=$DEFAULT_VALUE
-            ;;
-        1)
-            export TARGET_BUILD_TYPE=release
-            ;;
-        release)
-            export TARGET_BUILD_TYPE=release
-            ;;
-        2)
-            export TARGET_BUILD_TYPE=debug
-            ;;
-        debug)
-            export TARGET_BUILD_TYPE=debug
-            ;;
-        *)
-            echo
-            echo "I didn't understand your response.  Please try again."
-            echo
-            ;;
-        esac
-        if [ -n "$1" ] ; then
-            break
-        fi
-    done
-
-    build_build_var_cache
-    set_stuff_for_environment
-    destroy_build_var_cache
-}
-
-#
-# This function isn't really right:  It chooses a TARGET_PRODUCT
-# based on the list of boards.  Usually, that gets you something
-# that kinda works with a generic product, but really, you should
-# pick a product by name.
-#
-function chooseproduct()
-{
-    local default_value
-    if [ "x$TARGET_PRODUCT" != x ] ; then
-        default_value=$TARGET_PRODUCT
-    else
-        default_value=aosp_arm
-    fi
-
-    export TARGET_BUILD_APPS=
-    export TARGET_PRODUCT=
-    local ANSWER
-    while [ -z "$TARGET_PRODUCT" ]
-    do
-        echo -n "Which product would you like? [$default_value] "
-        if [ -z "$1" ] ; then
-            read ANSWER
-        else
-            echo $1
-            ANSWER=$1
-        fi
-
-        if [ -z "$ANSWER" ] ; then
-            export TARGET_PRODUCT=$default_value
-        else
-            if check_product $ANSWER
-            then
-                export TARGET_PRODUCT=$ANSWER
-            else
-                echo "** Not a valid product: $ANSWER"
-            fi
-        fi
-        if [ -n "$1" ] ; then
-            break
-        fi
-    done
-
-    build_build_var_cache
-    set_stuff_for_environment
-    destroy_build_var_cache
-}
-
-function choosevariant()
-{
-    echo "Variant choices are:"
-    local index=1
-    local v
-    for v in ${VARIANT_CHOICES[@]}
-    do
-        # The product name is the name of the directory containing
-        # the makefile we found, above.
-        echo "     $index. $v"
-        index=$(($index+1))
-    done
-
-    local default_value=eng
-    local ANSWER
-
-    export TARGET_BUILD_VARIANT=
-    while [ -z "$TARGET_BUILD_VARIANT" ]
-    do
-        echo -n "Which would you like? [$default_value] "
-        if [ -z "$1" ] ; then
-            read ANSWER
-        else
-            echo $1
-            ANSWER=$1
-        fi
-
-        if [ -z "$ANSWER" ] ; then
-            export TARGET_BUILD_VARIANT=$default_value
-        elif (echo -n $ANSWER | grep -q -e "^[0-9][0-9]*$") ; then
-            if [ "$ANSWER" -le "${#VARIANT_CHOICES[@]}" ] ; then
-                export TARGET_BUILD_VARIANT=${VARIANT_CHOICES[@]:$(($ANSWER-1)):1}
-            fi
-        else
-            if check_variant $ANSWER
-            then
-                export TARGET_BUILD_VARIANT=$ANSWER
-            else
-                echo "** Not a valid variant: $ANSWER"
-            fi
-        fi
-        if [ -n "$1" ] ; then
-            break
-        fi
-    done
-}
-
-function choosecombo()
-{
-    choosetype $1
-
-    echo
-    echo
-    chooseproduct $2
-
-    echo
-    echo
-    choosevariant $3
-
-    echo
-    build_build_var_cache
-    set_stuff_for_environment
-    printconfig
-    destroy_build_var_cache
 }
 
 function add_lunch_combo()
@@ -1011,34 +757,6 @@ function banchan()
     set_stuff_for_environment
     printconfig
     destroy_build_var_cache
-}
-
-# TODO: Merge into gettop as part of launching multitree
-function multitree_gettop
-{
-    local TOPFILE=orchestrator/build/make/core/envsetup.mk
-    if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
-        # The following circumlocution ensures we remove symlinks from TOP.
-        (cd "$TOP"; PWD= /bin/pwd)
-    else
-        if [ -f $TOPFILE ] ; then
-            # The following circumlocution (repeated below as well) ensures
-            # that we record the true directory name and not one that is
-            # faked up with symlink names.
-            PWD= /bin/pwd
-        else
-            local HERE=$PWD
-            local T=
-            while [ \( ! \( -f $TOPFILE \) \) -a \( "$PWD" != "/" \) ]; do
-                \cd ..
-                T=`PWD= /bin/pwd -P`
-            done
-            \cd "$HERE"
-            if [ -f "$T/$TOPFILE" ]; then
-                echo "$T"
-            fi
-        fi
-    fi
 }
 
 function croot()
@@ -1575,17 +1293,6 @@ function smoketest()
       adb shell am instrument -w com.android.smoketest.tests/android.test.InstrumentationTestRunner
 }
 
-# simple shortcut to the runtest command
-function runtest()
-{
-    local T=$(gettop)
-    if [ ! "$T" ]; then
-        echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
-        return
-    fi
-    ("$T"/development/testrunner/runtest.py $@)
-}
-
 function godir () {
     if [[ -z "$1" ]]; then
         echo "Usage: godir <regex>"
@@ -1982,22 +1689,6 @@ function make()
     _wrap_build $(get_make_command "$@") "$@"
 }
 
-function _multitree_lunch_error()
-{
-      >&2 echo "Couldn't locate the top of the tree. Please run \'source build/envsetup.sh\' and multitree_lunch from the root of your workspace."
-}
-
-function multitree_build()
-{
-    local T=$(multitree_gettop)
-    if [ -n "$T" ]; then
-      "$T/orchestrator/build/orchestrator/core/orchestrator.py" "$@"
-    else
-      _multitree_lunch_error
-      return 1
-    fi
-}
-
 function provision()
 {
     if [ ! "$ANDROID_PRODUCT_OUT" ]; then
@@ -2119,25 +1810,17 @@ function showcommands() {
     fi
 }
 
-function avbtool() {
-    if [[ ! -f "$ANDROID_SOONG_HOST_OUT"/bin/avbtool ]]; then
-        m avbtool
-    fi
-    "$ANDROID_SOONG_HOST_OUT"/bin/avbtool $@
-}
+# These functions used to be here but are now standalone scripts.
+# Unset these for the time being so the real script is picked up.
+# TODO: Remove this some time after a suitable delay (maybe 2025?)
+unset aninja
+unset overrideflags
 
-function overrideflags() {
-    local T="$(gettop)"
-    (\cd "${T}" && build/make/tools/overrideflags.sh "$@")
-}
-
-function aninja() {
-    local T="$(gettop)"
-    (\cd "${T}" && prebuilts/build-tools/linux-x86/bin/ninja -f out/combined-${TARGET_PRODUCT}.ninja "$@")
-}
 
 validate_current_shell
 set_global_paths
 source_vendorsetup
 addcompletions
+
+
 

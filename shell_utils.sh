@@ -40,15 +40,24 @@ function gettop
     fi
 }
 
-# Sets TOP, or if the root of the tree can't be found, prints a message and
-# exits.  Since this function exits, it should not be called from functions
-# defined in envsetup.sh.
+# Asserts that the root of the tree can be found.
 if [ -z "${IMPORTING_ENVSETUP:-}" ] ; then
 function require_top
 {
     TOP=$(gettop)
     if [[ ! $TOP ]] ; then
         echo "Can not locate root of source tree. $(basename $0) must be run from within the Android source tree." >&2
+        exit 1
+    fi
+}
+fi
+
+# Asserts that the lunch variables have been set
+if [ -z "${IMPORTING_ENVSETUP:-}" ] ; then
+function require_lunch
+{
+    if [[ ! $TARGET_PRODUCT || ! $TARGET_RELEASE || ! $TARGET_BUILD_VARIANT  ]] ; then
+        echo "Please run lunch and try again." >&2
         exit 1
     fi
 }

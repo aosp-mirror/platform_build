@@ -1,0 +1,1 @@
+rule com.google.protobuf.** android.internal.framework.protobuf.@1
