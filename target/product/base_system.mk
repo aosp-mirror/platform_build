@@ -293,6 +293,7 @@ PRODUCT_PACKAGES += \
     uprobestats \
     usbd \
     vdc \
+    vintf \
     voip-common \
     vold \
     watchdogd \
