@@ -52,6 +52,8 @@ $(MODULE_INFO_JSON): $(SOONG_MODULE_INFO)
 	$(PRIVATE_MERGE_JSON_OBJECTS) -o $@ $(PRIVATE_SOONG_MODULE_INFO) $@.tmp
 	rm $@.tmp
 
+.PHONY: module-info
+module-info: $(MODULE_INFO_JSON)
 
 droidcore-unbundled: $(MODULE_INFO_JSON)
 
