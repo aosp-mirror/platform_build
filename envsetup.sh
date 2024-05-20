@@ -1195,22 +1195,6 @@ function godir () {
     \cd $T/$pathname
 }
 
-function refreshmod() {
-    if [ ! "$ANDROID_PRODUCT_OUT" ]; then
-        echo "No ANDROID_PRODUCT_OUT. Try running 'lunch' first." >&2
-        return 1
-    fi
-
-    echo "Refreshing modules (building module-info.json). Log at $ANDROID_PRODUCT_OUT/module-info.json.build.log." >&2
-
-    # for the output of the next command
-    mkdir -p $ANDROID_PRODUCT_OUT || return 1
-
-    # Note, can't use absolute path because of the way make works.
-    m $(get_build_var PRODUCT_OUT)/module-info.json \
-        > $ANDROID_PRODUCT_OUT/module-info.json.build.log 2>&1
-}
-
 # Verifies that module-info.txt exists, returning nonzero if it doesn't.
 function verifymodinfo() {
     if [ ! "$ANDROID_PRODUCT_OUT" ]; then
@@ -1578,6 +1562,7 @@ unset sgrep
 unset tomlgrep
 unset treegrep
 unset syswrite
+unset refreshmod
 
 
 validate_current_shell
