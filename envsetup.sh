@@ -847,11 +847,11 @@ function run_tool_with_logging() {
   # Remove the trap to prevent duplicate log.
   trap - EXIT;
   "${logger}" \
-    --tool_tag "${tool_tag}" \
-    --start_timestamp "${start_time}" \
-    --end_timestamp "$(date +%s.%N)" \
-    --tool_args "$*" \
-    --exit_code "${exit_code}" \
+    --tool_tag="${tool_tag}" \
+    --start_timestamp="${start_time}" \
+    --end_timestamp="$(date +%s.%N)" \
+    --tool_args="$*" \
+    --exit_code="${exit_code}" \
     ${ANDROID_TOOL_LOGGER_EXTRA_ARGS} \
     > /dev/null 2>&1 &
   exit ${exit_code}
