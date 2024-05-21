@@ -188,7 +188,10 @@ def main(argv):
         for key, column in summary["columns"]:
             for id, cell in column:
                 duration_ns = statistics.median([b["duration_ns"] for b in cell])
-                table.SetFixedCol(cell[0]["title"], [" ".join(cell[0]["modules"])])
+                modules = cell[0]["modules"]
+                if not modules:
+                    modules = ["---"]
+                table.SetFixedCol(cell[0]["title"], [" ".join(modules)])
                 table.Set(tuple([summary["date"].strftime("%Y-%m-%d"),
                                  summary["branch"],
                                  summary["tag"]]
