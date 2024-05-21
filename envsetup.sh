@@ -93,7 +93,6 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - godir:      Go to the directory containing a file.
 - allmod:     List all modules.
 - gomod:      Go to the directory containing a module.
-- bmod:       Get the Bazel label of a Soong module if it is converted with bp2build.
 - pathmod:    Get the directory containing a module.
 - outmod:     Gets the location of a module's installed outputs with a certain extension.
 - dirmods:    Gets the modules defined in a given directory.
@@ -458,7 +457,6 @@ function addcompletions()
     complete -F _complete_android_module_names gomod
     complete -F _complete_android_module_names outmod
     complete -F _complete_android_module_names installmod
-    complete -F _complete_android_module_names bmod
     complete -F _complete_android_module_names m
 }
 
@@ -849,11 +847,11 @@ function run_tool_with_logging() {
   # Remove the trap to prevent duplicate log.
   trap - EXIT;
   "${logger}" \
-    --tool_tag "${tool_tag}" \
-    --start_timestamp "${start_time}" \
-    --end_timestamp "$(date +%s.%N)" \
-    --tool_args "$*" \
-    --exit_code "${exit_code}" \
+    --tool_tag="${tool_tag}" \
+    --start_timestamp="${start_time}" \
+    --end_timestamp="$(date +%s.%N)" \
+    --tool_args="$*" \
+    --exit_code="${exit_code}" \
     ${ANDROID_TOOL_LOGGER_EXTRA_ARGS} \
     > /dev/null 2>&1 &
   exit ${exit_code}
@@ -886,18 +884,6 @@ function qpid() {
             | tr -d '\r' \
             | sed -e 1d -e 's/^[^ ]* *\([0-9]*\).* \([^ ]*\)$/\1 \2/'
     fi
-}
-
-# syswrite - disable verity, reboot if needed, and remount image
-#
-# Easy way to make system.img/etc writable
-function syswrite() {
-  adb wait-for-device && adb root && adb wait-for-device || return 1
-  if [[ $(adb disable-verity | grep -i "reboot") ]]; then
-      echo "rebooting"
-      adb reboot && adb wait-for-device && adb root && adb wait-for-device || return 1
-  fi
-  adb remount || return 1
 }
 
 # coredump_setup - enable core dumps globally for any process
@@ -1002,145 +988,10 @@ function is64bit()
     fi
 }
 
-case `uname -s` in
-    Darwin)
-        function sgrep()
-        {
-            find -E . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.(c|h|cc|cpp|hpp|S|java|kt|xml|sh|mk|aidl|vts|proto|rs|go)' \
-                -exec grep --color -n "$@" {} +
-        }
-
-        ;;
-    *)
-        function sgrep()
-        {
-            find . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.\(c\|h\|cc\|cpp\|hpp\|S\|java\|kt\|xml\|sh\|mk\|aidl\|vts\|proto\|rs\|go\)' \
-                -exec grep --color -n "$@" {} +
-        }
-        ;;
-esac
-
 function gettargetarch
 {
     get_build_var TARGET_ARCH
 }
-
-function ggrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.gradle" \
-        -exec grep --color -n "$@" {} +
-}
-
-function gogrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.go" \
-        -exec grep --color -n "$@" {} +
-}
-
-function jgrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.java" \
-        -exec grep --color -n "$@" {} +
-}
-
-function rsgrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.rs" \
-        -exec grep --color -n "$@" {} +
-}
-
-function jsongrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.json" \
-        -exec grep --color -n "$@" {} +
-}
-
-function tomlgrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.toml" \
-        -exec grep --color -n "$@" {} +
-}
-
-function ktgrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.kt" \
-        -exec grep --color -n "$@" {} +
-}
-
-function cgrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f \( -name '*.c' -o -name '*.cc' -o -name '*.cpp' -o -name '*.h' -o -name '*.hpp' \) \
-        -exec grep --color -n "$@" {} +
-}
-
-function resgrep()
-{
-    local dir
-    for dir in `find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -name res -type d`; do
-        find $dir -type f -name '*\.xml' -exec grep --color -n "$@" {} +
-    done
-}
-
-function mangrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -type f -name 'AndroidManifest.xml' \
-        -exec grep --color -n "$@" {} +
-}
-
-function owngrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -type f -name 'OWNERS' \
-        -exec grep --color -n "$@" {} +
-}
-
-function sepgrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -name sepolicy -type d \
-        -exec grep --color -n -r --exclude-dir=\.git "$@" {} +
-}
-
-function rcgrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.rc*" \
-        -exec grep --color -n "$@" {} +
-}
-
-function pygrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.py" \
-        -exec grep --color -n "$@" {} +
-}
-
-case `uname -s` in
-    Darwin)
-        function mgrep()
-        {
-            find -E . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o \( -iregex '.*/(Makefile|Makefile\..*|.*\.make|.*\.mak|.*\.mk|.*\.bp)' -o -regex '(.*/)?(build|soong)/.*[^/]*\.go' \) -type f \
-                -exec grep --color -n "$@" {} +
-        }
-
-        function treegrep()
-        {
-            find -E . -name .repo -prune -o -name .git -prune -o -type f -iregex '.*\.(c|h|cpp|hpp|S|java|kt|xml)' \
-                -exec grep --color -n -i "$@" {} +
-        }
-
-        ;;
-    *)
-        function mgrep()
-        {
-            find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o \( -regextype posix-egrep -iregex '(.*\/Makefile|.*\/Makefile\..*|.*\.make|.*\.mak|.*\.mk|.*\.bp)' -o -regextype posix-extended -regex '(.*/)?(build|soong)/.*[^/]*\.go' \) -type f \
-                -exec grep --color -n "$@" {} +
-        }
-
-        function treegrep()
-        {
-            find . -name .repo -prune -o -name .git -prune -o -regextype posix-egrep -iregex '.*\.(c|h|cpp|hpp|S|java|kt|xml)' -type f \
-                -exec grep --color -n -i "$@" {} +
-        }
-
-        ;;
-esac
 
 function getprebuilt
 {
@@ -1344,23 +1195,6 @@ function godir () {
     \cd $T/$pathname
 }
 
-# Update module-info.json in out.
-function refreshmod() {
-    if [ ! "$ANDROID_PRODUCT_OUT" ]; then
-        echo "No ANDROID_PRODUCT_OUT. Try running 'lunch' first." >&2
-        return 1
-    fi
-
-    echo "Refreshing modules (building module-info.json). Log at $ANDROID_PRODUCT_OUT/module-info.json.build.log." >&2
-
-    # for the output of the next command
-    mkdir -p $ANDROID_PRODUCT_OUT || return 1
-
-    # Note, can't use absolute path because of the way make works.
-    m $(get_build_var PRODUCT_OUT)/module-info.json \
-        > $ANDROID_PRODUCT_OUT/module-info.json.build.log 2>&1
-}
-
 # Verifies that module-info.txt exists, returning nonzero if it doesn't.
 function verifymodinfo() {
     if [ ! "$ANDROID_PRODUCT_OUT" ]; then
@@ -1383,48 +1217,6 @@ function verifymodinfo() {
 function allmod() {
     cat $ANDROID_PRODUCT_OUT/all_modules.txt 2>/dev/null
 }
-
-# Return the Bazel label of a Soong module if it is converted with bp2build.
-function bmod()
-(
-    if [ $# -eq 0 ]; then
-        echo "usage: bmod <module 1> <module 2> ... <module n>" >&2
-        return 1
-    fi
-
-    # We could run bp2build here, but it might trigger bp2build invalidation
-    # when used with `b` (e.g. --run_soong_tests) and/or add unnecessary waiting
-    # time overhead.
-    #
-    # For a snappy result, use the latest generated version in soong_injection,
-    # and ask users to run m bp2build if it doesn't exist.
-    converted_json="$(get_abs_build_var OUT_DIR)/soong/soong_injection/metrics/converted_modules_path_map.json"
-
-    if [ ! -f ${converted_json} ]; then
-      echo "bp2build files not found. Have you ran 'm bp2build'?" >&2
-      return 1
-    fi
-
-    modules=()
-    for m in "$@"; do
-        modules+=("\"$m\",")
-    done
-    local res=$(python3 -c "import json
-modules = [${modules[*]}]
-converted_json='$converted_json'
-bp2build_converted_map = json.load(open(converted_json))
-for module in modules:
-    if module not in bp2build_converted_map:
-        print(module + ' is not converted to Bazel.')
-    else:
-        print(bp2build_converted_map[module] + ':' + module)")
-
-    echo "${res}"
-    unconverted_count=$(echo "${res}" | grep -c "not converted to Bazel")
-    if [[ ${unconverted_count} -ne 0 ]]; then
-        return 1
-    fi
-)
 
 # Get the path of a specific module in the android tree, as cached in module-info.json.
 # If any build change is made, and it should be reflected in the output, you should run
@@ -1598,50 +1390,6 @@ function get_make_command()
     fi
 }
 
-function _wrap_build()
-{
-    if [[ "${ANDROID_QUIET_BUILD:-}" == true ]]; then
-      "$@"
-      return $?
-    fi
-    local start_time=$(date +"%s")
-    "$@"
-    local ret=$?
-    local end_time=$(date +"%s")
-    local tdiff=$(($end_time-$start_time))
-    local hours=$(($tdiff / 3600 ))
-    local mins=$((($tdiff % 3600) / 60))
-    local secs=$(($tdiff % 60))
-    local ncolors=$(tput colors 2>/dev/null)
-    if [ -n "$ncolors" ] && [ $ncolors -ge 8 ]; then
-        color_failed=$'\E'"[0;31m"
-        color_success=$'\E'"[0;32m"
-        color_warning=$'\E'"[0;33m"
-        color_reset=$'\E'"[00m"
-    else
-        color_failed=""
-        color_success=""
-        color_reset=""
-    fi
-
-    echo
-    if [ $ret -eq 0 ] ; then
-        echo -n "${color_success}#### build completed successfully "
-    else
-        echo -n "${color_failed}#### failed to build some targets "
-    fi
-    if [ $hours -gt 0 ] ; then
-        printf "(%02g:%02g:%02g (hh:mm:ss))" $hours $mins $secs
-    elif [ $mins -gt 0 ] ; then
-        printf "(%02g:%02g (mm:ss))" $mins $secs
-    elif [ $secs -gt 0 ] ; then
-        printf "(%s seconds)" $secs
-    fi
-    echo " ####${color_reset}"
-    echo
-    return $ret
-}
-
 function _trigger_build()
 (
     local -r bc="$1"; shift
@@ -1657,31 +1405,6 @@ function _trigger_build()
       echo "${ANDROID_BUILD_BANNER}"
     fi
     return $ret
-)
-
-function m()
-(
-    _trigger_build "all-modules" "$@"
-)
-
-function mm()
-(
-    _trigger_build "modules-in-a-dir-no-deps" "$@"
-)
-
-function mmm()
-(
-    _trigger_build "modules-in-dirs-no-deps" "$@"
-)
-
-function mma()
-(
-    _trigger_build "modules-in-a-dir" "$@"
-)
-
-function mmma()
-(
-    _trigger_build "modules-in-dirs" "$@"
 )
 
 function make()
@@ -1810,11 +1533,36 @@ function showcommands() {
     fi
 }
 
-# These functions used to be here but are now standalone scripts.
-# Unset these for the time being so the real script is picked up.
+# These functions used to be here but are now standalone scripts
+# in build/soong/bin.  Unset these for the time being so the real
+# script is picked up.
 # TODO: Remove this some time after a suitable delay (maybe 2025?)
 unset aninja
 unset overrideflags
+unset m
+unset mm
+unset mmm
+unset mma
+unset mmma
+unset cgrep
+unset ggrep
+unset gogrep
+unset jgrep
+unset jsongrep
+unset ktgrep
+unset mangrep
+unset mgrep
+unset owngrep
+unset pygrep
+unset rcgrep
+unset resgrep
+unset rsgrep
+unset sepgrep
+unset sgrep
+unset tomlgrep
+unset treegrep
+unset syswrite
+unset refreshmod
 
 
 validate_current_shell

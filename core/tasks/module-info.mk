@@ -32,6 +32,7 @@ $(MODULE_INFO_JSON): $(SOONG_MODULE_INFO)
 			$(call write-optional-json-list, "auto_test_config", $(sort $(ALL_MODULES.$(m).auto_test_config))) \
 			$(call write-optional-json-list, "test_config", $(strip $(ALL_MODULES.$(m).TEST_CONFIG) $(ALL_MODULES.$(m).EXTRA_TEST_CONFIGS))) \
 			$(call write-optional-json-list, "dependencies", $(sort $(ALL_MODULES.$(m).ALL_DEPS))) \
+			$(call write-optional-json-list, "required", $(sort $(ALL_MODULES.$(m).REQUIRED_FROM_TARGET))) \
 			$(call write-optional-json-list, "shared_libs", $(sort $(ALL_MODULES.$(m).SHARED_LIBS))) \
 			$(call write-optional-json-list, "static_libs", $(sort $(ALL_MODULES.$(m).STATIC_LIBS))) \
 			$(call write-optional-json-list, "system_shared_libs", $(sort $(ALL_MODULES.$(m).SYSTEM_SHARED_LIBS))) \
@@ -52,6 +53,8 @@ $(MODULE_INFO_JSON): $(SOONG_MODULE_INFO)
 	$(PRIVATE_MERGE_JSON_OBJECTS) -o $@ $(PRIVATE_SOONG_MODULE_INFO) $@.tmp
 	rm $@.tmp
 
+.PHONY: module-info
+module-info: $(MODULE_INFO_JSON)
 
 droidcore-unbundled: $(MODULE_INFO_JSON)
 
