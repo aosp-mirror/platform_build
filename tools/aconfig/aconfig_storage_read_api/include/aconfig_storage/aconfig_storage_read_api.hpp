@@ -41,6 +41,7 @@ enum FlagInfoBit {
 struct MappedStorageFile {
   void* file_ptr;
   size_t file_size;
+  virtual ~MappedStorageFile();
 };
 
 /// Package read context query result
@@ -60,7 +61,7 @@ struct FlagReadContext {
 /// DO NOT USE APIS IN THE FOLLOWING NAMESPACE DIRECTLY
 namespace private_internal_api {
 
-android::base::Result<MappedStorageFile> get_mapped_file_impl(
+android::base::Result<MappedStorageFile*> get_mapped_file_impl(
     std::string const& pb_file,
     std::string const& container,
     StorageFileType file_type);
@@ -68,7 +69,7 @@ android::base::Result<MappedStorageFile> get_mapped_file_impl(
 } // namespace private_internal_api
 
 /// Map a storage file
-android::base::Result<MappedStorageFile> map_storage_file(
+android::base::Result<MappedStorageFile*> map_storage_file(
     std::string const& file);
 
 
@@ -82,7 +83,7 @@ android::base::Result<FlagValueType> map_to_flag_value_type(
 /// \input container: stoarge container name
 /// \input file_type: storage file type enum
 /// \returns a MappedStorageFileQuery
-android::base::Result<MappedStorageFile> get_mapped_file(
+android::base::Result<MappedStorageFile*> get_mapped_file(
     std::string const& container,
     StorageFileType file_type);
 

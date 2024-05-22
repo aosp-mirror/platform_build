@@ -174,7 +174,6 @@ PRODUCT_PACKAGES += \
     libjpeg \
     liblog \
     libm.bootstrap \
-    libmdnssd \
     libmedia \
     libmedia_jni \
     libmediandk \
@@ -293,6 +292,7 @@ PRODUCT_PACKAGES += \
     uprobestats \
     usbd \
     vdc \
+    vintf \
     voip-common \
     vold \
     watchdogd \

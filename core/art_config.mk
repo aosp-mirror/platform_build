@@ -19,22 +19,19 @@ ifeq (,$(filter default true false,$(config_enable_uffd_gc)))
 endif
 
 ENABLE_UFFD_GC := $(config_enable_uffd_gc)
-# If the value is "default", it will be mangled by post_process_props.py.
-ADDITIONAL_PRODUCT_PROPERTIES += ro.dalvik.vm.enable_uffd_gc=$(config_enable_uffd_gc)
 
 # Create APEX_BOOT_JARS_EXCLUDED which is a list of jars to be removed from
 # ApexBoorJars when built from mainline prebuilts.
-# soong variables indicate whether the prebuilt is enabled:
-# - $(m)_module/source_build for art and TOGGLEABLE_PREBUILT_MODULES
-# - ANDROID/module_build_from_source for other mainline modules
 # Note that RELEASE_APEX_BOOT_JARS_PREBUILT_EXCLUDED_LIST is the list of module names
 # and library names of jars that need to be removed. We have to keep separated list per
 # release config due to possibility of different prebuilt content.
-APEX_BOOT_JARS_EXCLUDED :=
-$(foreach pair, $(RELEASE_APEX_BOOT_JARS_PREBUILT_EXCLUDED_LIST),\
-  $(eval m := $(subst com.android.,,$(call word-colon,1,$(pair)))) \
-  $(if $(call soong_config_get,$(m)_module,source_build), \
-    $(if $(filter true,$(call soong_config_get,$(m)_module,source_build)),, \
-      $(eval APEX_BOOT_JARS_EXCLUDED += $(pair))), \
-    $(if $(filter true,$(call soong_config_get,ANDROID,module_build_from_source)),, \
-      $(eval APEX_BOOT_JARS_EXCLUDED += $(pair)))))
+#
+# If a device has opted to not use google prebuilts (determined using
+# PRODUCT_BUILD_IGNORE_APEX_CONTRIBUTION_CONTENTS), then no jars need to be removed.
+# Example of products where PRODUCT_BUILD_IGNORE_APEX_CONTRIBUTION_CONTENTS is true are
+# 1. aosp devices (they do not use google apexes)
+# 2. hwasan devices (apex prebuilts are not compatible with these devices)
+# 3. coverage builds
+ifneq (true, $(PRODUCT_BUILD_IGNORE_APEX_CONTRIBUTION_CONTENTS))
+  APEX_BOOT_JARS_EXCLUDED += $(RELEASE_APEX_BOOT_JARS_PREBUILT_EXCLUDED_LIST)
+endif

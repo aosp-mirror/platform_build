@@ -16,8 +16,6 @@ function finalize_vintf_resources() {
     export TARGET_RELEASE=fina_0
     export TARGET_PRODUCT=aosp_arm64
 
-    # TODO(b/314010764): finalize LL_NDK
-
     # system/sepolicy
     "$top/system/sepolicy/tools/finalize-vintf-resources.sh" "$top" "$FINAL_BOARD_API_LEVEL"
 
@@ -25,7 +23,11 @@ function finalize_vintf_resources() {
 
     # pre-finalization build target (trunk)
     local aidl_m="$top/build/soong/soong_ui.bash --make-mode"
-    AIDL_TRANSITIVE_FREEZE=true $aidl_m aidl-freeze-api
+    AIDL_TRANSITIVE_FREEZE=true $aidl_m aidl-freeze-api create_reference_dumps
+
+    # Generate LLNDK ABI dumps
+    # This command depends on ANDROID_BUILD_TOP
+    "$ANDROID_HOST_OUT/bin/create_reference_dumps" -release "$TARGET_RELEASE" --build-variant "$TARGET_BUILD_VARIANT" --lib-variant LLNDK
 }
 
 function create_new_compat_matrix_and_kernel_configs() {
