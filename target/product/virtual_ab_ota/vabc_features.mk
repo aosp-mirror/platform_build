@@ -40,6 +40,7 @@ PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.batch_writes=true
 # ro.virtual_ab.compression.xor.enabled and ro.virtual_ab.io_uring.enabled
 # is also recommended
 #
+# PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.read_ahead_size=16
 # PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.o_direct.enabled=true
 # PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.merge_thread_priority=19
 # PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.worker_thread_priority=0
