@@ -89,10 +89,6 @@ cc_library {
     host_supported: true,
     vendor_available: true,
     product_available: true,
-    static_libs: [
-        "libaconfig_storage_protos_cc",
-        "libprotobuf-cpp-lite",
-    ],
     shared_libs: [
         "liblog",
         "libbase",
