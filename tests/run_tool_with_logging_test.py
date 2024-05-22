@@ -90,8 +90,8 @@ class RunToolWithLoggingTest(unittest.TestCase):
 
     test_tool.assert_called_once_with_args("arg1 arg2")
     expected_logger_args = (
-        "--tool_tag FAKE_TOOL --start_timestamp \d+\.\d+ --end_timestamp"
-        " \d+\.\d+ --tool_args arg1 arg2 --exit_code 0"
+        "--tool_tag=FAKE_TOOL --start_timestamp=\d+\.\d+ --end_timestamp="
+        "\d+\.\d+ --tool_args=arg1 arg2 --exit_code=0"
     )
     test_logger.assert_called_once_with_args(expected_logger_args)
 
@@ -163,8 +163,8 @@ class RunToolWithLoggingTest(unittest.TestCase):
     self.assertEqual(returncode, INTERRUPTED_RETURN_CODE)
 
     expected_logger_args = (
-        "--tool_tag FAKE_TOOL --start_timestamp \d+\.\d+ --end_timestamp"
-        " \d+\.\d+ --tool_args arg1 arg2 --exit_code 130"
+        "--tool_tag=FAKE_TOOL --start_timestamp=\d+\.\d+ --end_timestamp="
+        "\d+\.\d+ --tool_args=arg1 arg2 --exit_code=130"
     )
     test_logger.assert_called_once_with_args(expected_logger_args)
 
@@ -201,6 +201,19 @@ class RunToolWithLoggingTest(unittest.TestCase):
       ANDROID_TOOL_LOGGER="{logger_path}"
       ANDROID_TOOL_LOGGER_EXTRA_ARGS="--dry_run"
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
+    """)
+
+    self._assert_logger_dry_run()
+
+  def test_tool_args_do_not_fail_logger(self):
+    test_tool = TestScript.create(self.working_dir)
+    logger_path = self._import_logger()
+
+    self._run_script_and_wait(f"""
+      TMPDIR="{self.working_dir.name}"
+      ANDROID_TOOL_LOGGER="{logger_path}"
+      ANDROID_TOOL_LOGGER_EXTRA_ARGS="--dry_run"
+      run_tool_with_logging "FAKE_TOOL" {test_tool.executable} --tool-arg1
     """)
 
     self._assert_logger_dry_run()

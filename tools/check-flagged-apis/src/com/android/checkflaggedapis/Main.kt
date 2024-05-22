@@ -205,7 +205,11 @@ internal fun parseApiSignature(path: String, input: InputStream): Set<Pair<Symbo
             val symbol =
                 Symbol.createClass(
                     cls.baselineElementId(),
-                    cls.superClass()?.baselineElementId(),
+                    if (cls.isInterface()) {
+                      "java/lang/Object"
+                    } else {
+                      cls.superClass()?.baselineElementId()
+                    },
                     cls.allInterfaces()
                         .map { it.baselineElementId() }
                         .filter { it != cls.baselineElementId() }
