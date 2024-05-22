@@ -1,7 +1,6 @@
 
 #include <android-base/file.h>
 #include <android-base/logging.h>
-#include <protos/aconfig_storage_metadata.pb.h>
 
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -11,8 +10,6 @@
 #include "aconfig_storage/lib.rs.h"
 #include "aconfig_storage/aconfig_storage_write_api.hpp"
 
-using storage_records_pb = android::aconfig_storage_metadata::storage_files;
-using storage_record_pb = android::aconfig_storage_metadata::storage_file_info;
 using namespace android::base;
 
 namespace aconfig_storage {
