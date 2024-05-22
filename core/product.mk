@@ -303,9 +303,6 @@ _product_list_vars += PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION
 # This flag implies PRODUCT_USE_DYNAMIC_PARTITIONS.
 _product_single_value_vars += PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
 
-# List of tags that will be used to gate blueprint modules from the build graph
-_product_list_vars += PRODUCT_INCLUDE_TAGS
-
 # List of directories that will be used to gate blueprint modules from the build graph
 _product_list_vars += PRODUCT_SOURCE_ROOT_DIRS
 
