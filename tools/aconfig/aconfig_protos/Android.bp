@@ -17,7 +17,22 @@ java_library {
     apex_available: [
         "com.android.configinfrastructure",
         "//apex_available:platform",
-    ]
+    ],
+}
+
+java_library {
+    name: "libaconfig_java_proto_nano",
+    srcs: ["protos/aconfig.proto"],
+    static_libs: ["libprotobuf-java-nano"],
+    proto: {
+        type: "nano",
+    },
+    sdk_version: "current",
+    min_sdk_version: "UpsideDownCake",
+    apex_available: [
+        "//apex_available:platform",
+    ],
+    jarjar_rules: "jarjar-nano-rules.txt",
 }
 
 java_library_host {
@@ -58,7 +73,7 @@ rust_defaults {
     ],
     proc_macros: [
         "libpaste",
-    ]
+    ],
 }
 
 rust_library {

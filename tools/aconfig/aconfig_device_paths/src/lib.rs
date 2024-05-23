@@ -21,11 +21,19 @@ use std::path::PathBuf;
 
 use std::fs;
 
+fn read_partition_paths() -> Vec<PathBuf> {
+    include_str!("../partition_aconfig_flags_paths.txt")
+        .split(',')
+        .map(|s| s.trim().trim_matches('"'))
+        .filter(|s| !s.is_empty())
+        .map(|s| PathBuf::from(s.to_string()))
+        .collect()
+}
+
 /// Determine all paths that contain an aconfig protobuf file.
 pub fn parsed_flags_proto_paths() -> Result<Vec<PathBuf>> {
-    let mut result: Vec<PathBuf> = include!("../partition_aconfig_flags_paths.txt")
-        .map(|s| PathBuf::from(s.to_string()))
-        .to_vec();
+    let mut result: Vec<PathBuf> = read_partition_paths();
+
     for dir in fs::read_dir("/apex")? {
         let dir = dir?;
 
@@ -44,4 +52,24 @@ pub fn parsed_flags_proto_paths() -> Result<Vec<PathBuf>> {
     }
 
     Ok(result)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_read_partition_paths() {
+        assert_eq!(read_partition_paths().len(), 4);
+
+        assert_eq!(
+            read_partition_paths(),
+            vec![
+                PathBuf::from("/system/etc/aconfig_flags.pb"),
+                PathBuf::from("/system_ext/etc/aconfig_flags.pb"),
+                PathBuf::from("/product/etc/aconfig_flags.pb"),
+                PathBuf::from("/vendor/etc/aconfig_flags.pb")
+            ]
+        );
+    }
 }

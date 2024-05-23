@@ -40,15 +40,24 @@ function gettop
     fi
 }
 
-# Sets TOP, or if the root of the tree can't be found, prints a message and
-# exits.  Since this function exits, it should not be called from functions
-# defined in envsetup.sh.
+# Asserts that the root of the tree can be found.
 if [ -z "${IMPORTING_ENVSETUP:-}" ] ; then
 function require_top
 {
     TOP=$(gettop)
     if [[ ! $TOP ]] ; then
-        echo "Can not locate root of source tree. $(basename $0) must be run from within the Android source tree." >&2
+        echo "Can not locate root of source tree. $(basename $0) must be run from within the Android source tree or TOP must be set." >&2
+        exit 1
+    fi
+}
+fi
+
+# Asserts that the lunch variables have been set
+if [ -z "${IMPORTING_ENVSETUP:-}" ] ; then
+function require_lunch
+{
+    if [[ ! $TARGET_PRODUCT || ! $TARGET_RELEASE || ! $TARGET_BUILD_VARIANT  ]] ; then
+        echo "Please run lunch and try again." >&2
         exit 1
     fi
 }
@@ -70,5 +79,51 @@ function getoutdir
     fi
     echo "${out_dir}"
 }
+
+# Pretty print the build status and duration
+function _wrap_build()
+{
+    if [[ "${ANDROID_QUIET_BUILD:-}" == true ]]; then
+      "$@"
+      return $?
+    fi
+    local start_time=$(date +"%s")
+    "$@"
+    local ret=$?
+    local end_time=$(date +"%s")
+    local tdiff=$(($end_time-$start_time))
+    local hours=$(($tdiff / 3600 ))
+    local mins=$((($tdiff % 3600) / 60))
+    local secs=$(($tdiff % 60))
+    local ncolors=$(tput colors 2>/dev/null)
+    if [ -n "$ncolors" ] && [ $ncolors -ge 8 ]; then
+        color_failed=$'\E'"[0;31m"
+        color_success=$'\E'"[0;32m"
+        color_warning=$'\E'"[0;33m"
+        color_reset=$'\E'"[00m"
+    else
+        color_failed=""
+        color_success=""
+        color_reset=""
+    fi
+
+    echo
+    if [ $ret -eq 0 ] ; then
+        echo -n "${color_success}#### build completed successfully "
+    else
+        echo -n "${color_failed}#### failed to build some targets "
+    fi
+    if [ $hours -gt 0 ] ; then
+        printf "(%02g:%02g:%02g (hh:mm:ss))" $hours $mins $secs
+    elif [ $mins -gt 0 ] ; then
+        printf "(%02g:%02g (mm:ss))" $mins $secs
+    elif [ $secs -gt 0 ] ; then
+        printf "(%s seconds)" $secs
+    fi
+    echo " ####${color_reset}"
+    echo
+    return $ret
+}
+
 
 

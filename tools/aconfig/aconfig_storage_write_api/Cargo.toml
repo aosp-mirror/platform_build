@@ -13,7 +13,6 @@ cxx = "1.0"
 memmap2 = "0.8.0"
 tempfile = "3.9.0"
 thiserror = "1.0.56"
-protobuf = "3.2.0"
 aconfig_storage_file = { path = "../aconfig_storage_file" }
 aconfig_storage_read_api = { path = "../aconfig_storage_read_api" }
 

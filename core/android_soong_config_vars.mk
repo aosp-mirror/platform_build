@@ -38,38 +38,6 @@ $(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_MEDIASERVER)
 # PRODUCT_PRECOMPILED_SEPOLICY defaults to true. Explicitly check if it's "false" or not.
 $(call add_soong_config_var_value,ANDROID,PRODUCT_PRECOMPILED_SEPOLICY,$(if $(filter false,$(PRODUCT_PRECOMPILED_SEPOLICY)),false,true))
 
-# Default behavior for the tree wrt building modules or using prebuilts. This
-# can always be overridden by setting the environment variable
-# MODULE_BUILD_FROM_SOURCE.
-BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := $(RELEASE_DEFAULT_MODULE_BUILD_FROM_SOURCE)
-# TODO(b/301454934): The value from build flag is set to empty when use `False`
-# The condition below can be removed after the issue get sorted.
-ifeq (,$(BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE))
-  BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE := false
-endif
-
-ifneq (,$(MODULE_BUILD_FROM_SOURCE))
-  # Keep an explicit setting.
-else ifeq (,$(filter docs sdk win_sdk sdk_addon,$(MAKECMDGOALS)))
-  MODULE_BUILD_FROM_SOURCE := true
-else ifneq (,$(PRODUCT_MODULE_BUILD_FROM_SOURCE))
-  # Let products override the branch default.
-  MODULE_BUILD_FROM_SOURCE := $(PRODUCT_MODULE_BUILD_FROM_SOURCE)
-else
-  MODULE_BUILD_FROM_SOURCE := $(BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE)
-endif
-
-ifneq (,$(ART_MODULE_BUILD_FROM_SOURCE))
-  # Keep an explicit setting.
-else ifneq (,$(findstring .android.art,$(TARGET_BUILD_APPS)))
-  # Build ART modules from source if they are listed in TARGET_BUILD_APPS.
-  ART_MODULE_BUILD_FROM_SOURCE := true
-else
-  # Do the same as other modules by default.
-  ART_MODULE_BUILD_FROM_SOURCE := $(MODULE_BUILD_FROM_SOURCE)
-endif
-
-$(call soong_config_set,art_module,source_build,$(ART_MODULE_BUILD_FROM_SOURCE))
 ifdef ART_DEBUG_OPT_FLAG
 $(call soong_config_set,art_module,art_debug_opt_flag,$(ART_DEBUG_OPT_FLAG))
 endif
@@ -87,9 +55,10 @@ $(call add_soong_config_var_value,ANDROID,library_linking_strategy,prefer_static
 endif
 endif
 
-ifeq (true,$(MODULE_BUILD_FROM_SOURCE))
+# TODO(b/308187800): some internal modules set `prefer` to true on the prebuilt apex module,
+# and set that to false when `ANDROID.module_build_from_source` is true.
+# Set this soong config variable to true for now, and cleanup `prefer` as part of b/308187800
 $(call add_soong_config_var_value,ANDROID,module_build_from_source,true)
-endif
 
 # Messaging app vars
 ifeq (eng,$(TARGET_BUILD_VARIANT))
@@ -125,6 +94,7 @@ $(call add_soong_config_var_value,ANDROID,release_avf_enable_device_assignment,$
 $(call add_soong_config_var_value,ANDROID,release_avf_enable_dice_changes,$(RELEASE_AVF_ENABLE_DICE_CHANGES))
 $(call add_soong_config_var_value,ANDROID,release_avf_enable_llpvm_changes,$(RELEASE_AVF_ENABLE_LLPVM_CHANGES))
 $(call add_soong_config_var_value,ANDROID,release_avf_enable_multi_tenant_microdroid_vm,$(RELEASE_AVF_ENABLE_MULTI_TENANT_MICRODROID_VM))
+$(call add_soong_config_var_value,ANDROID,release_avf_enable_network,$(RELEASE_AVF_ENABLE_NETWORK))
 $(call add_soong_config_var_value,ANDROID,release_avf_enable_remote_attestation,$(RELEASE_AVF_ENABLE_REMOTE_ATTESTATION))
 $(call add_soong_config_var_value,ANDROID,release_avf_enable_vendor_modules,$(RELEASE_AVF_ENABLE_VENDOR_MODULES))
 $(call add_soong_config_var_value,ANDROID,release_avf_enable_virt_cpufreq,$(RELEASE_AVF_ENABLE_VIRT_CPUFREQ))

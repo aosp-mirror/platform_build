@@ -25,6 +25,7 @@ import os
 import pathlib
 import statistics
 import zoneinfo
+import csv
 
 import pretty
 import utils
@@ -103,7 +104,7 @@ class Table:
     def SetFixedCol(self, row_key, columns):
         self._fixed_cols[row_key] = columns
 
-    def Write(self, out):
+    def Write(self, out, fmt):
         table = []
         # Expand the column items
         for row in zip(*self._cols):
@@ -114,26 +115,33 @@ class Table:
             # Update the last row of the header with title and add separator
             for i in range(len(self._titles)):
                 table[len(table)-1][i] = self._titles[i]
-            table.append(pretty.SEPARATOR)
+            if fmt == "table":
+                table.append(pretty.SEPARATOR)
         # Populate the data
         for row in self._rows:
             table.append([str(row)]
                          + self._fixed_cols[row]
                          + [str(self._data.get((col, row), "")) for col in self._cols])
-        out.write(pretty.FormatTable(table, alignments="LL"))
+        if fmt == "csv":
+            csv.writer(sys.stdout, quoting=csv.QUOTE_MINIMAL).writerows(table)
+        else:
+            out.write(pretty.FormatTable(table, alignments="LL"))
 
 
-def format_duration_sec(ns):
+def format_duration_sec(ns, fmt_sec):
     "Format a duration in ns to second precision"
     sec = round(ns / 1000000000)
-    h, sec = divmod(sec, 60*60)
-    m, sec = divmod(sec, 60)
-    result = ""
-    if h > 0:
-        result += f"{h:2d}h "
-    if h > 0 or m > 0:
-        result += f"{m:2d}m "
-    return result + f"{sec:2d}s"
+    if fmt_sec:
+        return f"{sec}"
+    else:
+        h, sec = divmod(sec, 60*60)
+        m, sec = divmod(sec, 60)
+        result = ""
+        if h > 0:
+            result += f"{h:2d}h "
+        if h > 0 or m > 0:
+            result += f"{m:2d}m "
+        return result + f"{sec:2d}s"
 
 
 def main(argv):
@@ -141,6 +149,12 @@ def main(argv):
             prog="format_benchmarks",
             allow_abbrev=False, # Don't let people write unsupportable scripts.
             description="Print analysis tables for benchmarks")
+
+    parser.add_argument("--csv", action="store_true",
+                        help="Print in CSV instead of table.")
+
+    parser.add_argument("--sec", action="store_true",
+                        help="Print in seconds instead of minutes and seconds")
 
     parser.add_argument("--tags", nargs="*",
                         help="The tags to print, in order.")
@@ -188,14 +202,17 @@ def main(argv):
         for key, column in summary["columns"]:
             for id, cell in column:
                 duration_ns = statistics.median([b["duration_ns"] for b in cell])
-                table.SetFixedCol(cell[0]["title"], [" ".join(cell[0]["modules"])])
+                modules = cell[0]["modules"]
+                if not modules:
+                    modules = ["---"]
+                table.SetFixedCol(cell[0]["title"], [" ".join(modules)])
                 table.Set(tuple([summary["date"].strftime("%Y-%m-%d"),
                                  summary["branch"],
                                  summary["tag"]]
                                 + list(key)),
-                          cell[0]["title"], format_duration_sec(duration_ns))
+                          cell[0]["title"], format_duration_sec(duration_ns, args.sec))
 
-    table.Write(sys.stdout)
+    table.Write(sys.stdout, "csv" if args.csv else "table")
 
 if __name__ == "__main__":
     main(sys.argv)

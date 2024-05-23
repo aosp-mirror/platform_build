@@ -382,6 +382,14 @@ pub fn list_flags_with_info(
 // Exported rust data structure and methods, c++ code will be generated
 #[cxx::bridge]
 mod ffi {
+    /// flag value summary cxx return
+    pub struct FlagValueSummaryCXX {
+        pub package_name: String,
+        pub flag_name: String,
+        pub flag_value: String,
+        pub value_type: String,
+    }
+
     /// flag value and info summary cxx return
     pub struct FlagValueAndInfoSummaryCXX {
         pub package_name: String,
@@ -394,6 +402,13 @@ mod ffi {
     }
 
     /// list flag result cxx return
+    pub struct ListFlagValueResultCXX {
+        pub query_success: bool,
+        pub error_message: String,
+        pub flags: Vec<FlagValueSummaryCXX>,
+    }
+
+    /// list flag with info result cxx return
     pub struct ListFlagValueAndInfoResultCXX {
         pub query_success: bool,
         pub error_message: String,
@@ -402,12 +417,30 @@ mod ffi {
 
     // Rust export to c++
     extern "Rust" {
+        pub fn list_flags_cxx(
+            package_map: &str,
+            flag_map: &str,
+            flag_val: &str,
+        ) -> ListFlagValueResultCXX;
+
         pub fn list_flags_with_info_cxx(
             package_map: &str,
             flag_map: &str,
             flag_val: &str,
             flag_info: &str,
         ) -> ListFlagValueAndInfoResultCXX;
+    }
+}
+
+/// implement flag value summary cxx return type
+impl ffi::FlagValueSummaryCXX {
+    pub(crate) fn new(summary: FlagValueSummary) -> Self {
+        Self {
+            package_name: summary.package_name,
+            flag_name: summary.flag_name,
+            flag_value: summary.flag_value,
+            value_type: format!("{:?}", summary.value_type),
+        }
     }
 }
 
@@ -423,6 +456,26 @@ impl ffi::FlagValueAndInfoSummaryCXX {
             has_server_override: summary.has_server_override,
             has_local_override: summary.has_local_override,
         }
+    }
+}
+
+/// implement list flag cxx interlop
+pub fn list_flags_cxx(
+    package_map: &str,
+    flag_map: &str,
+    flag_val: &str,
+) -> ffi::ListFlagValueResultCXX {
+    match list_flags(package_map, flag_map, flag_val) {
+        Ok(summary) => ffi::ListFlagValueResultCXX {
+            query_success: true,
+            error_message: String::new(),
+            flags: summary.into_iter().map(ffi::FlagValueSummaryCXX::new).collect(),
+        },
+        Err(errmsg) => ffi::ListFlagValueResultCXX {
+            query_success: false,
+            error_message: format!("{:?}", errmsg),
+            flags: Vec::new(),
+        },
     }
 }
 

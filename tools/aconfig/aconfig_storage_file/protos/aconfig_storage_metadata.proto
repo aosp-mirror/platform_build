@@ -27,8 +27,7 @@ message storage_file_info {
   optional string flag_map = 4;
   optional string flag_val = 5;
   optional string flag_info = 6;
-  optional string local_overrides = 7;
-  optional int64 timestamp = 8;
+  optional int64 timestamp = 7;
 }
 
 message storage_files {
