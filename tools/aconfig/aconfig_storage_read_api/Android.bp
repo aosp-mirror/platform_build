@@ -90,10 +90,6 @@ cc_library {
     host_supported: true,
     vendor_available: true,
     product_available: true,
-    shared_libs: [
-        "liblog",
-        "libbase",
-    ],
     apex_available: [
         "//apex_available:platform",
         "//apex_available:anyapex",
@@ -105,6 +101,7 @@ cc_library {
         },
     },
     double_loadable: true,
+    afdo: true,
 }
 
 cc_defaults {
