@@ -22,11 +22,9 @@
 #include <sys/stat.h>
 #include "aconfig_storage/aconfig_storage_read_api.hpp"
 #include <gtest/gtest.h>
-#include <protos/aconfig_storage_metadata.pb.h>
 #include <android-base/file.h>
 #include <android-base/result.h>
 
-using android::aconfig_storage_metadata::storage_files;
 using namespace android::base;
 
 namespace api = aconfig_storage;
@@ -34,49 +32,33 @@ namespace private_api = aconfig_storage::private_internal_api;
 
 class AconfigStorageTest : public ::testing::Test {
  protected:
-  Result<std::string> copy_to_temp_file(std::string const& source_file) {
-    auto temp_file = std::string(std::tmpnam(nullptr));
+  Result<void> copy_file(std::string const& src_file,
+                         std::string const& dst_file) {
     auto content = std::string();
-    if (!ReadFileToString(source_file, &content)) {
-      return Error() << "failed to read file: " << source_file;
+    if (!ReadFileToString(src_file, &content)) {
+      return Error() << "failed to read file: " << src_file;
     }
-    if (!WriteStringToFile(content, temp_file)) {
-      return Error() << "failed to copy file: " << source_file;
+    if (!WriteStringToFile(content, dst_file)) {
+      return Error() << "failed to copy file: " << dst_file;
     }
-    return temp_file;
-  }
-
-  Result<std::string> write_storage_location_pb_file(std::string const& package_map,
-                                                     std::string const& flag_map,
-                                                     std::string const& flag_val,
-                                                     std::string const& flag_info) {
-    auto temp_file = std::tmpnam(nullptr);
-    auto proto = storage_files();
-    auto* info = proto.add_files();
-    info->set_version(0);
-    info->set_container("mockup");
-    info->set_package_map(package_map);
-    info->set_flag_map(flag_map);
-    info->set_flag_val(flag_val);
-    info->set_flag_info(flag_info);
-    info->set_timestamp(12345);
-
-    auto content = std::string();
-    proto.SerializeToString(&content);
-    if (!WriteStringToFile(content, temp_file)) {
-      return Error() << "failed to write storage records pb file";
-    }
-    return temp_file;
+    return {};
   }
 
   void SetUp() override {
     auto const test_dir = android::base::GetExecutableDirectory();
-    package_map = *copy_to_temp_file(test_dir + "/package.map");
-    flag_map = *copy_to_temp_file(test_dir + "/flag.map");
-    flag_val = *copy_to_temp_file(test_dir + "/flag.val");
-    flag_info = *copy_to_temp_file(test_dir + "/flag.info");
-    storage_record_pb = *write_storage_location_pb_file(
-        package_map, flag_map, flag_val, flag_info);
+    storage_dir = std::string(root_dir.path);
+    auto maps_dir = storage_dir + "/maps";
+    auto boot_dir = storage_dir + "/boot";
+    mkdir(maps_dir.c_str(), 0775);
+    mkdir(boot_dir.c_str(), 0775);
+    package_map = std::string(maps_dir) + "/mockup.package.map";
+    flag_map = std::string(maps_dir) + "/mockup.flag.map";
+    flag_val = std::string(boot_dir) + "/mockup.val";
+    flag_info = std::string(boot_dir) + "/mockup.info";
+    copy_file(test_dir + "/package.map", package_map);
+    copy_file(test_dir + "/flag.map", flag_map);
+    copy_file(test_dir + "/flag.val", flag_val);
+    copy_file(test_dir + "/flag.info", flag_info);
   }
 
   void TearDown() override {
@@ -84,14 +66,14 @@ class AconfigStorageTest : public ::testing::Test {
     std::remove(flag_map.c_str());
     std::remove(flag_val.c_str());
     std::remove(flag_info.c_str());
-    std::remove(storage_record_pb.c_str());
   }
 
+  TemporaryDir root_dir;
+  std::string storage_dir;
   std::string package_map;
   std::string flag_map;
   std::string flag_val;
   std::string flag_info;
-  std::string storage_record_pb;
 };
 
 /// Test to lock down storage file version query api
@@ -113,16 +95,17 @@ TEST_F(AconfigStorageTest, test_storage_version_query) {
 /// Negative test to lock down the error when mapping none exist storage files
 TEST_F(AconfigStorageTest, test_none_exist_storage_file_mapping) {
   auto mapped_file_result = private_api::get_mapped_file_impl(
-      storage_record_pb, "vendor", api::StorageFileType::package_map);
+      storage_dir, "vendor", api::StorageFileType::package_map);
   ASSERT_FALSE(mapped_file_result.ok());
   ASSERT_EQ(mapped_file_result.error().message(),
-            "Unable to find storage files for container vendor");
+            std::string("failed to open ") + storage_dir
+            + "/maps/vendor.package.map: No such file or directory");
 }
 
 /// Test to lock down storage package context query api
 TEST_F(AconfigStorageTest, test_package_context_query) {
   auto mapped_file_result = private_api::get_mapped_file_impl(
-      storage_record_pb, "mockup", api::StorageFileType::package_map);
+      storage_dir, "mockup", api::StorageFileType::package_map);
   ASSERT_TRUE(mapped_file_result.ok());
   auto mapped_file = std::unique_ptr<api::MappedStorageFile>(*mapped_file_result);
 
@@ -151,7 +134,7 @@ TEST_F(AconfigStorageTest, test_package_context_query) {
 /// Test to lock down when querying none exist package
 TEST_F(AconfigStorageTest, test_none_existent_package_context_query) {
   auto mapped_file_result = private_api::get_mapped_file_impl(
-      storage_record_pb, "mockup", api::StorageFileType::package_map);
+      storage_dir, "mockup", api::StorageFileType::package_map);
   ASSERT_TRUE(mapped_file_result.ok());
   auto mapped_file = std::unique_ptr<api::MappedStorageFile>(*mapped_file_result);
 
@@ -164,7 +147,7 @@ TEST_F(AconfigStorageTest, test_none_existent_package_context_query) {
 /// Test to lock down storage flag context query api
 TEST_F(AconfigStorageTest, test_flag_context_query) {
   auto mapped_file_result = private_api::get_mapped_file_impl(
-      storage_record_pb, "mockup", api::StorageFileType::flag_map);
+      storage_dir, "mockup", api::StorageFileType::flag_map);
   ASSERT_TRUE(mapped_file_result.ok());
   auto mapped_file = std::unique_ptr<api::MappedStorageFile>(*mapped_file_result);
 
@@ -190,7 +173,7 @@ TEST_F(AconfigStorageTest, test_flag_context_query) {
 /// Test to lock down when querying none exist flag
 TEST_F(AconfigStorageTest, test_none_existent_flag_context_query) {
   auto mapped_file_result = private_api::get_mapped_file_impl(
-      storage_record_pb, "mockup", api::StorageFileType::flag_map);
+      storage_dir, "mockup", api::StorageFileType::flag_map);
   ASSERT_TRUE(mapped_file_result.ok());
   auto mapped_file = std::unique_ptr<api::MappedStorageFile>(*mapped_file_result);
 
@@ -206,7 +189,7 @@ TEST_F(AconfigStorageTest, test_none_existent_flag_context_query) {
 /// Test to lock down storage flag value query api
 TEST_F(AconfigStorageTest, test_boolean_flag_value_query) {
   auto mapped_file_result = private_api::get_mapped_file_impl(
-      storage_record_pb, "mockup", api::StorageFileType::flag_val);
+      storage_dir, "mockup", api::StorageFileType::flag_val);
   ASSERT_TRUE(mapped_file_result.ok());
   auto mapped_file = std::unique_ptr<api::MappedStorageFile>(*mapped_file_result);
 
@@ -222,7 +205,7 @@ TEST_F(AconfigStorageTest, test_boolean_flag_value_query) {
 /// Negative test to lock down the error when querying flag value out of range
 TEST_F(AconfigStorageTest, test_invalid_boolean_flag_value_query) {
   auto mapped_file_result = private_api::get_mapped_file_impl(
-      storage_record_pb, "mockup", api::StorageFileType::flag_val);
+      storage_dir, "mockup", api::StorageFileType::flag_val);
   ASSERT_TRUE(mapped_file_result.ok());
   auto mapped_file = std::unique_ptr<api::MappedStorageFile>(*mapped_file_result);
 
@@ -235,7 +218,7 @@ TEST_F(AconfigStorageTest, test_invalid_boolean_flag_value_query) {
 /// Test to lock down storage flag info query api
 TEST_F(AconfigStorageTest, test_boolean_flag_info_query) {
   auto mapped_file_result = private_api::get_mapped_file_impl(
-      storage_record_pb, "mockup", api::StorageFileType::flag_info);
+      storage_dir, "mockup", api::StorageFileType::flag_info);
   ASSERT_TRUE(mapped_file_result.ok());
   auto mapped_file = std::unique_ptr<api::MappedStorageFile>(*mapped_file_result);
 
@@ -254,7 +237,7 @@ TEST_F(AconfigStorageTest, test_boolean_flag_info_query) {
 /// Negative test to lock down the error when querying flag info out of range
 TEST_F(AconfigStorageTest, test_invalid_boolean_flag_info_query) {
   auto mapped_file_result = private_api::get_mapped_file_impl(
-      storage_record_pb, "mockup", api::StorageFileType::flag_info);
+      storage_dir, "mockup", api::StorageFileType::flag_info);
   ASSERT_TRUE(mapped_file_result.ok());
   auto mapped_file = std::unique_ptr<api::MappedStorageFile>(*mapped_file_result);
 

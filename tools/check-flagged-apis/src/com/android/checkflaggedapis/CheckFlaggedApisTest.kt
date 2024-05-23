@@ -121,6 +121,26 @@ class CheckFlaggedApisTest {
   }
 
   @Test
+  fun testParseApiSignatureInterfacesInheritFromJavaLangObject() {
+    val apiSignature =
+        """
+          // Signature format: 2.0
+          package android {
+            @FlaggedApi("android.flag.foo") public interface Interface {
+            }
+          }
+        """
+            .trim()
+    val expected =
+        setOf(
+            Pair(
+                Symbol.createClass("android/Interface", "java/lang/Object", setOf()),
+                Flag("android.flag.foo")))
+    val actual = parseApiSignature("in-memory", apiSignature.byteInputStream())
+    assertEquals(expected, actual)
+  }
+
+  @Test
   fun testParseFlagValues() {
     val expected: Map<Flag, Boolean> =
         mapOf(Flag("android.flag.foo") to true, Flag("android.flag.bar") to true)
