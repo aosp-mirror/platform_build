@@ -1412,35 +1412,6 @@ function make()
     _wrap_build $(get_make_command "$@") "$@"
 }
 
-function provision()
-{
-    if [ ! "$ANDROID_PRODUCT_OUT" ]; then
-        echo "Couldn't locate output files.  Try running 'lunch' first." >&2
-        return 1
-    fi
-    if [ ! -e "$ANDROID_PRODUCT_OUT/provision-device" ]; then
-        echo "There is no provisioning script for the device." >&2
-        return 1
-    fi
-
-    # Check if user really wants to do this.
-    if [ "$1" = "--no-confirmation" ]; then
-        shift 1
-    else
-        echo "This action will reflash your device."
-        echo ""
-        echo "ALL DATA ON THE DEVICE WILL BE IRREVOCABLY ERASED."
-        echo ""
-        echo -n "Are you sure you want to do this (yes/no)? "
-        read
-        if [[ "${REPLY}" != "yes" ]] ; then
-            echo "Not taking any action. Exiting." >&2
-            return 1
-        fi
-    fi
-    "$ANDROID_PRODUCT_OUT/provision-device" "$@"
-}
-
 # Zsh needs bashcompinit called to support bash-style completion.
 function enable_zsh_completion() {
     # Don't override user's options if bash-style completion is already enabled.
