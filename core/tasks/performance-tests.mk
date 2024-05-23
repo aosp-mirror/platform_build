@@ -15,40 +15,42 @@
 
 .PHONY: performance-tests
 
-performance-tests-zip := $(PRODUCT_OUT)/performance-tests.zip
+performance_tests_zip := $(PRODUCT_OUT)/performance-tests.zip
 # Create an artifact to include a list of test config files in performance-tests.
-performance-tests-list-zip := $(PRODUCT_OUT)/performance-tests_list.zip
+performance_tests_list_zip := $(PRODUCT_OUT)/performance-tests_list.zip
 # Create an artifact to include all test config files in performance-tests.
-performance-tests-configs-zip := $(PRODUCT_OUT)/performance-tests_configs.zip
+performance_tests_configs_zip := $(PRODUCT_OUT)/performance-tests_configs.zip
 
-$(performance-tests-zip) : .KATI_IMPLICIT_OUTPUTS := $(performance-tests-list-zip) $(performance-tests-configs-zip)
-$(performance-tests-zip) : PRIVATE_performance_tests_list := $(PRODUCT_OUT)/performance-tests_list
-$(performance-tests-zip) : $(COMPATIBILITY.performance-tests.FILES) $(SOONG_ZIP)
+$(performance_tests_zip) : .KATI_IMPLICIT_OUTPUTS := $(performance_tests_list_zip) $(performance_tests_configs_zip)
+$(performance_tests_zip) : PRIVATE_performance_tests_list_zip := $(performance_tests_list_zip)
+$(performance_tests_zip) : PRIVATE_performance_tests_configs_zip := $(performance_tests_configs_zip)
+$(performance_tests_zip) : PRIVATE_performance_tests_list := $(PRODUCT_OUT)/performance-tests_list
+$(performance_tests_zip) : $(COMPATIBILITY.performance-tests.FILES) $(SOONG_ZIP)
 	echo $(sort $(COMPATIBILITY.performance-tests.FILES)) | tr " " "\n" > $@.list
 	grep $(HOST_OUT_TESTCASES) $@.list > $@-host.list || true
 	grep -e .*\\.config$$ $@-host.list > $@-host-test-configs.list || true
 	grep $(TARGET_OUT_TESTCASES) $@.list > $@-target.list || true
 	grep -e .*\\.config$$ $@-target.list > $@-target-test-configs.list || true
 	$(hide) $(SOONG_ZIP) -d -o $@ -P host -C $(HOST_OUT) -l $@-host.list -P target -C $(PRODUCT_OUT) -l $@-target.list -sha256
-	$(hide) $(SOONG_ZIP) -d -o $(performance-tests-configs-zip) \
+	$(hide) $(SOONG_ZIP) -d -o $(PRIVATE_performance_tests_configs_zip) \
 	  -P host -C $(HOST_OUT) -l $@-host-test-configs.list \
 	  -P target -C $(PRODUCT_OUT) -l $@-target-test-configs.list
 	rm -f $(PRIVATE_performance_tests_list)
 	$(hide) grep -e .*\\.config$$ $@-host.list | sed s%$(HOST_OUT)%host%g > $(PRIVATE_performance_tests_list)
 	$(hide) grep -e .*\\.config$$ $@-target.list | sed s%$(PRODUCT_OUT)%target%g >> $(PRIVATE_performance_tests_list)
-	$(hide) $(SOONG_ZIP) -d -o $(performance-tests-list-zip) -C $(dir $@) -f $(PRIVATE_performance_tests_list)
+	$(hide) $(SOONG_ZIP) -d -o $(PRIVATE_performance_tests_list_zip) -C $(dir $@) -f $(PRIVATE_performance_tests_list)
 	rm -f $@.list $@-host.list $@-target.list $@-host-test-configs.list $@-target-test-configs.list \
 	  $(PRIVATE_performance_tests_list)
 
-performance-tests: $(performance-tests-zip)
-$(call dist-for-goals, performance-tests, $(performance-tests-zip) $(performance-tests-list-zip) $(performance-tests-configs-zip))
+performance-tests: $(performance_tests_zip)
+$(call dist-for-goals, performance-tests, $(performance_tests_zip) $(performance_tests_list_zip) $(performance_tests_configs_zip))
 
-$(call declare-1p-container,$(performance-tests-zip),)
-$(call declare-container-license-deps,$(performance-tests-zip),$(COMPATIBILITY.performance-tests.FILES),$(PRODUCT_OUT)/:/)
+$(call declare-1p-container,$(performance_tests_zip),)
+$(call declare-container-license-deps,$(performance_tests_zip),$(COMPATIBILITY.performance-tests.FILES),$(PRODUCT_OUT)/:/)
 
 tests: performance-tests
 
 # Reset temp vars
-performance-tests-zip :=
-performance-tests-list-zip :=
-performance-tests-configs-zip :=
+performance_tests_zip :=
+performance_tests_list_zip :=
+performance_tests_configs_zip :=
