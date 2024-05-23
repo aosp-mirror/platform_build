@@ -22,11 +22,9 @@
 #include "aconfig_storage/aconfig_storage_read_api.hpp"
 #include "aconfig_storage/aconfig_storage_write_api.hpp"
 #include <gtest/gtest.h>
-#include <protos/aconfig_storage_metadata.pb.h>
 #include <android-base/file.h>
 #include <android-base/result.h>
 
-using android::aconfig_storage_metadata::storage_files;
 using namespace android::base;
 
 namespace api = aconfig_storage;
