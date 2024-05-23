@@ -13,20 +13,22 @@
 # limitations under the License.
 
 import dataclasses
+import glob
 from importlib import resources
 import logging
 import os
 from pathlib import Path
 import re
+import shutil
 import signal
 import stat
 import subprocess
+import sys
 import tempfile
 import textwrap
 import time
 import unittest
 import zipfile
-import sys
 
 EXII_RETURN_CODE = 0
 INTERRUPTED_RETURN_CODE = 130
@@ -40,7 +42,7 @@ class RunToolWithLoggingTest(unittest.TestCase):
     # Configure to print logging to stdout.
     logging.basicConfig(filename=None, level=logging.DEBUG)
     console = logging.StreamHandler(sys.stdout)
-    logging.getLogger('').addHandler(console)
+    logging.getLogger("").addHandler(console)
 
   def setUp(self):
     super().setUp()
@@ -49,7 +51,7 @@ class RunToolWithLoggingTest(unittest.TestCase):
     os.chdir(self.working_dir.name)
     # Extract envsetup.zip which contains the envsetup.sh and other dependent
     # scripts required to set up the build environments.
-    with resources.files("testdata").joinpath("envsetup.zip").open('rb') as p:
+    with resources.files("testdata").joinpath("envsetup.zip").open("rb") as p:
       with zipfile.ZipFile(p, "r") as zip_f:
         zip_f.extractall()
 
@@ -57,37 +59,10 @@ class RunToolWithLoggingTest(unittest.TestCase):
     self.working_dir.cleanup()
     super().tearDown()
 
-  def test_does_not_log_when_logging_disabled(self):
-    test_tool = TestScript.create(self.working_dir)
-    test_logger = TestScript.create(self.working_dir)
-
-    self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=false
-      ANDROID_TOOL_LOGGER="{test_logger.executable}"
-      run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
-    """)
-
-    test_tool.assert_called_once_with_args("arg1 arg2")
-    test_logger.assert_not_called()
-
-  def test_does_not_log_when_logger_var_unset(self):
-    test_tool = TestScript.create(self.working_dir)
-    test_logger = TestScript.create(self.working_dir)
-
-    self._run_script_and_wait(f"""
-      unset ANDROID_ENABLE_TOOL_LOGGING
-      ANDROID_TOOL_LOGGER="{test_logger.executable}"
-      run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
-    """)
-
-    test_tool.assert_called_once_with_args("arg1 arg2")
-    test_logger.assert_not_called()
-
   def test_does_not_log_when_logger_var_empty(self):
     test_tool = TestScript.create(self.working_dir)
 
     self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=true
       ANDROID_TOOL_LOGGER=""
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
     """)
@@ -98,7 +73,6 @@ class RunToolWithLoggingTest(unittest.TestCase):
     test_tool = TestScript.create(self.working_dir)
 
     self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=true
       unset ANDROID_TOOL_LOGGER
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
     """)
@@ -110,15 +84,14 @@ class RunToolWithLoggingTest(unittest.TestCase):
     test_logger = TestScript.create(self.working_dir)
 
     self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=true
       ANDROID_TOOL_LOGGER="{test_logger.executable}"
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
     """)
 
     test_tool.assert_called_once_with_args("arg1 arg2")
     expected_logger_args = (
-        "--tool_tag FAKE_TOOL --start_timestamp \d+\.\d+ --end_timestamp"
-        ' \d+\.\d+ --tool_args "arg1 arg2" --exit_code 0'
+        "--tool_tag=FAKE_TOOL --start_timestamp=\d+\.\d+ --end_timestamp="
+        "\d+\.\d+ --tool_args=arg1 arg2 --exit_code=0"
     )
     test_logger.assert_called_once_with_args(expected_logger_args)
 
@@ -128,7 +101,6 @@ class RunToolWithLoggingTest(unittest.TestCase):
 
     run_tool_with_logging_stdout, run_tool_with_logging_stderr = (
         self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=true
       ANDROID_TOOL_LOGGER="{test_logger.executable}"
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
     """)
@@ -136,7 +108,6 @@ class RunToolWithLoggingTest(unittest.TestCase):
 
     run_tool_without_logging_stdout, run_tool_without_logging_stderr = (
         self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=true
       ANDROID_TOOL_LOGGER="{test_logger.executable}"
       {test_tool.executable} arg1 arg2
     """)
@@ -154,7 +125,6 @@ class RunToolWithLoggingTest(unittest.TestCase):
     test_logger = TestScript.create(self.working_dir, "echo 'logger called'")
 
     run_tool_with_logging_output, _ = self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=true
       ANDROID_TOOL_LOGGER="{test_logger.executable}"
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
     """)
@@ -168,7 +138,6 @@ class RunToolWithLoggingTest(unittest.TestCase):
     )
 
     _, err = self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=true
       ANDROID_TOOL_LOGGER="{test_logger.executable}"
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
     """)
@@ -180,7 +149,6 @@ class RunToolWithLoggingTest(unittest.TestCase):
     test_logger = TestScript.create(self.working_dir)
 
     process = self._run_script_in_build_env(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=true
       ANDROID_TOOL_LOGGER="{test_logger.executable}"
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
     """)
@@ -195,8 +163,8 @@ class RunToolWithLoggingTest(unittest.TestCase):
     self.assertEqual(returncode, INTERRUPTED_RETURN_CODE)
 
     expected_logger_args = (
-        "--tool_tag FAKE_TOOL --start_timestamp \d+\.\d+ --end_timestamp"
-        ' \d+\.\d+ --tool_args "arg1 arg2" --exit_code 130'
+        "--tool_tag=FAKE_TOOL --start_timestamp=\d+\.\d+ --end_timestamp="
+        "\d+\.\d+ --tool_args=arg1 arg2 --exit_code=130"
     )
     test_logger.assert_called_once_with_args(expected_logger_args)
 
@@ -205,9 +173,8 @@ class RunToolWithLoggingTest(unittest.TestCase):
     test_logger = TestScript.create(self.working_dir)
 
     self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=false
+      ANDROID_TOOL_LOGGER=""
       ANDROID_TOOL_LOGGER="{test_logger.executable}"
-      ANDROID_ENABLE_TOOL_LOGGING=true
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
     """)
 
@@ -218,13 +185,55 @@ class RunToolWithLoggingTest(unittest.TestCase):
     test_logger = TestScript.create(self.working_dir)
 
     self._run_script_and_wait(f"""
-      ANDROID_ENABLE_TOOL_LOGGING=true
       ANDROID_TOOL_LOGGER="{test_logger.executable}"
-      ANDROID_ENABLE_TOOL_LOGGING=false
+      ANDROID_TOOL_LOGGER=""
       run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
     """)
 
     test_logger.assert_not_called()
+
+  def test_integration_tool_event_logger_dry_run(self):
+    test_tool = TestScript.create(self.working_dir)
+    logger_path = self._import_logger()
+
+    self._run_script_and_wait(f"""
+      TMPDIR="{self.working_dir.name}"
+      ANDROID_TOOL_LOGGER="{logger_path}"
+      ANDROID_TOOL_LOGGER_EXTRA_ARGS="--dry_run"
+      run_tool_with_logging "FAKE_TOOL" {test_tool.executable} arg1 arg2
+    """)
+
+    self._assert_logger_dry_run()
+
+  def test_tool_args_do_not_fail_logger(self):
+    test_tool = TestScript.create(self.working_dir)
+    logger_path = self._import_logger()
+
+    self._run_script_and_wait(f"""
+      TMPDIR="{self.working_dir.name}"
+      ANDROID_TOOL_LOGGER="{logger_path}"
+      ANDROID_TOOL_LOGGER_EXTRA_ARGS="--dry_run"
+      run_tool_with_logging "FAKE_TOOL" {test_tool.executable} --tool-arg1
+    """)
+
+    self._assert_logger_dry_run()
+
+  def _import_logger(self) -> Path:
+    logger = "tool_event_logger"
+    logger_path = Path(self.working_dir.name).joinpath(logger)
+    with resources.as_file(resources.files("testdata").joinpath(logger)) as p:
+      shutil.copy(p, logger_path)
+    Path.chmod(logger_path, 0o755)
+    return logger_path
+
+  def _assert_logger_dry_run(self):
+    log_files = glob.glob(self.working_dir.name + "/tool_event_logger_*/*.log")
+    self.assertEqual(len(log_files), 1)
+
+    with open(log_files[0], "r") as f:
+      lines = f.readlines()
+      self.assertEqual(len(lines), 1)
+      self.assertIn("dry run", lines[0])
 
   def _create_build_env_script(self) -> str:
     return f"""
@@ -248,7 +257,7 @@ class RunToolWithLoggingTest(unittest.TestCase):
         stderr=subprocess.PIPE,
         text=True,
         start_new_session=True,
-        executable='/bin/bash'
+        executable="/bin/bash",
         )
 
   def _wait_for_process(
@@ -301,7 +310,7 @@ class TestScript:
       """)
       f.write(executable_contents.encode("utf-8"))
 
-    os.chmod(f.name, os.stat(f.name).st_mode | stat.S_IEXEC)
+    Path.chmod(f.name, os.stat(f.name).st_mode | stat.S_IEXEC)
 
     return TestScript(executable, output_file)
 

@@ -11,13 +11,10 @@ using namespace android::base;
 namespace aconfig_storage {
 
 /// Mapped flag value file
-struct MutableMappedStorageFile{
-  void* file_ptr;
-  size_t file_size;
-};
+struct MutableMappedStorageFile : MappedStorageFile {};
 
 /// Map a storage file
-Result<MutableMappedStorageFile> map_mutable_storage_file(
+Result<MutableMappedStorageFile*> map_mutable_storage_file(
     std::string const& file);
 
 /// Set boolean flag value

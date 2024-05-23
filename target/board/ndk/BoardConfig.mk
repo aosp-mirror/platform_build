@@ -15,6 +15,4 @@
 
 TARGET_ARCH_SUITE := ndk
 
-MALLOC_SVELTE := true
-
-USE_SAFESTACK := false
+MALLOC_LOW_MEMORY := true

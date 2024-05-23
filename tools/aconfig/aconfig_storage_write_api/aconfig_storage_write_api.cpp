@@ -1,7 +1,6 @@
 
 #include <android-base/file.h>
 #include <android-base/logging.h>
-#include <protos/aconfig_storage_metadata.pb.h>
 
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -11,14 +10,12 @@
 #include "aconfig_storage/lib.rs.h"
 #include "aconfig_storage/aconfig_storage_write_api.hpp"
 
-using storage_records_pb = android::aconfig_storage_metadata::storage_files;
-using storage_record_pb = android::aconfig_storage_metadata::storage_file_info;
 using namespace android::base;
 
 namespace aconfig_storage {
 
 /// Map a storage file
-Result<MutableMappedStorageFile> map_mutable_storage_file(std::string const& file) {
+Result<MutableMappedStorageFile*> map_mutable_storage_file(std::string const& file) {
   struct stat file_stat;
   if (stat(file.c_str(), &file_stat) < 0) {
     return ErrnoError() << "stat failed";
@@ -41,9 +38,9 @@ Result<MutableMappedStorageFile> map_mutable_storage_file(std::string const& fil
     return ErrnoError() << "mmap failed";
   }
 
-  auto mapped_file = MutableMappedStorageFile();
-  mapped_file.file_ptr = map_result;
-  mapped_file.file_size = file_size;
+  auto mapped_file = new MutableMappedStorageFile();
+  mapped_file->file_ptr = map_result;
+  mapped_file->file_size = file_size;
 
   return mapped_file;
 }

@@ -9,8 +9,6 @@ rust_defaults {
     srcs: ["src/lib.rs"],
     rustlibs: [
         "libanyhow",
-        "libonce_cell",
-        "libtempfile",
         "libmemmap2",
         "libcxx",
         "libthiserror",
@@ -34,6 +32,9 @@ rust_test_host {
     name: "aconfig_storage_read_api.test",
     test_suites: ["general-tests"],
     defaults: ["aconfig_storage_read_api.defaults"],
+    rustlibs: [
+        "librand",
+    ],
     data: [
         "tests/package.map",
         "tests/flag.map",
@@ -89,13 +90,9 @@ cc_library {
     host_supported: true,
     vendor_available: true,
     product_available: true,
-    static_libs: [
-        "libaconfig_storage_protos_cc",
-        "libprotobuf-cpp-lite",
-        "libbase",
-    ],
     shared_libs: [
         "liblog",
+        "libbase",
     ],
     apex_available: [
         "//apex_available:platform",

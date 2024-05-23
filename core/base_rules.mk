@@ -393,8 +393,8 @@ endif
 
 logtags_sources := $(filter %.logtags,$(LOCAL_SRC_FILES)) $(LOCAL_LOGTAGS_FILES)
 
-ifneq ($(strip $(logtags_sources)),)
-event_log_tags := $(foreach f,$(addprefix $(LOCAL_PATH)/,$(logtags_sources)),$(call clean-path,$(f)))
+ifneq ($(strip $(logtags_sources) $(LOCAL_SOONG_LOGTAGS_FILES)),)
+event_log_tags := $(foreach f,$(LOCAL_SOONG_LOGTAGS_FILES) $(addprefix $(LOCAL_PATH)/,$(logtags_sources)),$(call clean-path,$(f)))
 else
 event_log_tags :=
 endif
@@ -714,6 +714,14 @@ else ifneq (,$(LOCAL_TEST_CONFIG))
   test_config := $(LOCAL_PATH)/$(LOCAL_TEST_CONFIG)
 else
   test_config := $(wildcard $(LOCAL_PATH)/AndroidTest.xml)
+endif
+
+ifeq ($(EXCLUDE_MCTS),true)
+  ifneq (,$(test_config))
+    ifneq (,$(filter mcts-%,$(LOCAL_COMPATIBILITY_SUITE)))
+      LOCAL_COMPATIBILITY_SUITE := $(filter-out cts,$(LOCAL_COMPATIBILITY_SUITE))
+    endif
+  endif
 endif
 
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
