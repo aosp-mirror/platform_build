@@ -1193,19 +1193,6 @@ function _complete_android_module_names() {
     COMPREPLY=( $(allmod | grep -E "^$word") )
 }
 
-# Print colored exit condition
-function pez {
-    "$@"
-    local retval=$?
-    if [ $retval -ne 0 ]
-    then
-        echo $'\E'"[0;31mFAILURE\e[00m"
-    else
-        echo $'\E'"[0;32mSUCCESS\e[00m"
-    fi
-    return $retval
-}
-
 function get_make_command()
 {
     # If we're in the top of an Android tree, use soong_ui.bash instead of make
@@ -1345,6 +1332,7 @@ unset outmod
 unset overrideflags
 unset owngrep
 unset pathmod
+unset pez
 unset pygrep
 unset qpid
 unset rcgrep
