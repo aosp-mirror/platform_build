@@ -124,14 +124,14 @@ bool {header}_{item.flag_name}() \{
         "{item.container}",
         aconfig_storage::StorageFileType::package_map);
     if (!package_map_file.ok()) \{
-        ALOGI("error: failed to get package map file: %s", package_map_file.error().message().c_str());
+        ALOGI("error: failed to get package map file: %s", package_map_file.error().c_str());
         return result;
     }
 
     auto package_read_context = aconfig_storage::get_package_read_context(
         **package_map_file, "{package}");
     if (!package_read_context.ok()) \{
-        ALOGI("error: failed to get package read context: %s", package_map_file.error().message().c_str());
+        ALOGI("error: failed to get package read context: %s", package_map_file.error().c_str());
         return result;
     }
 
@@ -141,7 +141,7 @@ bool {header}_{item.flag_name}() \{
         "{item.container}",
         aconfig_storage::StorageFileType::flag_val);
     if (!flag_val_map.ok()) \{
-        ALOGI("error: failed to get flag val map: %s", package_map_file.error().message().c_str());
+        ALOGI("error: failed to get flag val map: %s", package_map_file.error().c_str());
         return result;
     }
 
@@ -149,7 +149,7 @@ bool {header}_{item.flag_name}() \{
         **flag_val_map,
         package_read_context->boolean_start_index + {item.flag_offset});
     if (!value.ok()) \{
-        ALOGI("error: failed to get flag val: %s", package_map_file.error().message().c_str());
+        ALOGI("error: failed to get flag val: %s", package_map_file.error().c_str());
         return result;
     }
 
