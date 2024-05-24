@@ -50,10 +50,13 @@ PRODUCT_PACKAGES += \
     init.gsi.rc \
     init.vndk-nodef.rc \
 
+
 # Overlay the GSI specific SystemUI setting
-PRODUCT_PACKAGES += gsi_overlay_systemui
-PRODUCT_COPY_FILES += \
-    device/generic/common/overlays/overlay-config.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/overlay/config/config.xml
+ifneq ($(PRODUCT_IS_AUTOMOTIVE),true)
+    PRODUCT_PACKAGES += gsi_overlay_systemui
+    PRODUCT_COPY_FILES += \
+        device/generic/common/overlays/overlay-config.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/overlay/config/config.xml
+endif
 
 # b/308878144 no more VNDK on 24Q1 and beyond
 KEEP_VNDK ?= false
