@@ -82,6 +82,7 @@ PRODUCT_PACKAGES += \
     CtsShimPrivPrebuilt \
     debuggerd\
     device_config \
+    DeviceDiagnostics \
     dmctl \
     dnsmasq \
     dmesgd \
@@ -90,7 +91,9 @@ PRODUCT_PACKAGES += \
     dump.erofs \
     dumpstate \
     dumpsys \
+    E2eeContactKeysProvider \
     e2fsck \
+    enhanced-confirmation.xml \
     ExtShared \
     flags_health_check \
     framework-graphics \
@@ -286,6 +289,7 @@ PRODUCT_PACKAGES += \
     uiautomator \
     uinput \
     uncrypt \
+    uprobestats \
     usbd \
     vdc \
     vintf \
@@ -325,6 +329,12 @@ ifeq ($(RELEASE_PACKAGE_NFC_STACK),NfcNci)
 else
     PRODUCT_PACKAGES += \
         com.android.nfcservices
+endif
+
+# Check if the build supports Profiling module
+ifeq ($(RELEASE_PACKAGE_PROFILING_MODULE),true)
+    PRODUCT_PACKAGES += \
+       com.android.profiling
 endif
 
 ifeq ($(RELEASE_USE_WEBVIEW_BOOTSTRAP_MODULE),true)
@@ -498,3 +508,5 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/build_variables.mk)
 
 # Use "image" APEXes always.
 $(call inherit-product,$(SRC_TARGET_DIR)/product/updatable_apex.mk)
+
+$(call soong_config_set, bionic, large_system_property_node, $(RELEASE_LARGE_SYSTEM_PROPERTY_NODE))
