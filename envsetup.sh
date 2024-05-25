@@ -862,30 +862,6 @@ function run_tool_with_logging() {
   )
 }
 
-# simplified version of ps; output in the form
-# <pid> <procname>
-function qpid() {
-    local prepend=''
-    local append=''
-    if [ "$1" = "--exact" ]; then
-        prepend=' '
-        append='$'
-        shift
-    elif [ "$1" = "--help" -o "$1" = "-h" ]; then
-        echo "usage: qpid [[--exact] <process name|pid>"
-        return 255
-    fi
-
-    local EXE="$1"
-    if [ "$EXE" ] ; then
-        qpid | \grep "$prepend$EXE$append"
-    else
-        adb shell ps \
-            | tr -d '\r' \
-            | sed -e 1d -e 's/^[^ ]* *\([0-9]*\).* \([^ ]*\)$/\1 \2/'
-    fi
-}
-
 # coredump_setup - enable core dumps globally for any process
 #                  that has the core-file-size limit set correctly
 #
@@ -1195,87 +1171,10 @@ function godir () {
     \cd $T/$pathname
 }
 
-# Verifies that module-info.txt exists, returning nonzero if it doesn't.
-function verifymodinfo() {
-    if [ ! "$ANDROID_PRODUCT_OUT" ]; then
-        if [ "$QUIET_VERIFYMODINFO" != "true" ] ; then
-            echo "No ANDROID_PRODUCT_OUT. Try running 'lunch' first." >&2
-        fi
-        return 1
-    fi
-
-    if [ ! -f "$ANDROID_PRODUCT_OUT/module-info.json" ]; then
-        if [ "$QUIET_VERIFYMODINFO" != "true" ] ; then
-            echo "Could not find module-info.json. Please run 'refreshmod' first." >&2
-        fi
-        return 1
-    fi
-}
-
-# List all modules for the current device, as cached in all_modules.txt. If any build change is
-# made and it should be reflected in the output, you should run `m nothing` first.
-function allmod() {
-    cat $ANDROID_PRODUCT_OUT/all_modules.txt 2>/dev/null
-}
-
-# Get the path of a specific module in the android tree, as cached in module-info.json.
-# If any build change is made, and it should be reflected in the output, you should run
-# 'refreshmod' first.  Note: This is the inverse of dirmods.
-function pathmod() {
-    if [[ $# -ne 1 ]]; then
-        echo "usage: pathmod <module>" >&2
-        return 1
-    fi
-
-    verifymodinfo || return 1
-
-    local relpath=$(python3 -c "import json, os
-module = '$1'
-module_info = json.load(open('$ANDROID_PRODUCT_OUT/module-info.json'))
-if module not in module_info:
-    exit(1)
-print(module_info[module]['path'][0])" 2>/dev/null)
-
-    if [ -z "$relpath" ]; then
-        echo "Could not find module '$1' (try 'refreshmod' if there have been build changes?)." >&2
-        return 1
-    else
-        echo "$ANDROID_BUILD_TOP/$relpath"
-    fi
-}
-
-# Get the path of a specific module in the android tree, as cached in module-info.json.
-# If any build change is made, and it should be reflected in the output, you should run
-# 'refreshmod' first.  Note: This is the inverse of pathmod.
-function dirmods() {
-    if [[ $# -ne 1 ]]; then
-        echo "usage: dirmods <path>" >&2
-        return 1
-    fi
-
-    verifymodinfo || return 1
-
-    python3 -c "import json, os
-dir = '$1'
-while dir.endswith('/'):
-    dir = dir[:-1]
-prefix = dir + '/'
-module_info = json.load(open('$ANDROID_PRODUCT_OUT/module-info.json'))
-results = set()
-for m in module_info.values():
-    for path in m.get(u'path', []):
-        if path == dir or path.startswith(prefix):
-            name = m.get(u'module_name')
-            if name:
-                results.add(name)
-for name in sorted(results):
-    print(name)
-"
-}
-
-
 # Go to a specific module in the android tree, as cached in module-info.json. If any build change
 # is made, and it should be reflected in the output, you should run 'refreshmod' first.
+# Note: This function is in envsetup because changing the directory needs to happen in the current
+# shell. All other functions that use module-info.json should be in build/soong/bin.
 function gomod() {
     if [[ $# -ne 1 ]]; then
         echo "usage: gomod <module>" >&2
@@ -1287,72 +1186,6 @@ function gomod() {
         return 1
     fi
     cd $path
-}
-
-# Gets the list of a module's installed outputs, as cached in module-info.json.
-# If any build change is made, and it should be reflected in the output, you should run 'refreshmod' first.
-function outmod() {
-    if [[ $# -ne 1 ]]; then
-        echo "usage: outmod <module>" >&2
-        return 1
-    fi
-
-    verifymodinfo || return 1
-
-    local relpath
-    relpath=$(python3 -c "import json, os
-module = '$1'
-module_info = json.load(open('$ANDROID_PRODUCT_OUT/module-info.json'))
-if module not in module_info:
-    exit(1)
-for output in module_info[module]['installed']:
-    print(os.path.join('$ANDROID_BUILD_TOP', output))" 2>/dev/null)
-
-    if [ $? -ne 0 ]; then
-        echo "Could not find module '$1' (try 'refreshmod' if there have been build changes?)" >&2
-        return 1
-    elif [ ! -z "$relpath" ]; then
-        echo "$relpath"
-    fi
-}
-
-# adb install a module's apk, as cached in module-info.json. If any build change
-# is made, and it should be reflected in the output, you should run 'refreshmod' first.
-# Usage: installmod [adb install arguments] <module>
-# For example: installmod -r Dialer -> adb install -r /path/to/Dialer.apk
-function installmod() {
-    if [[ $# -eq 0 ]]; then
-        echo "usage: installmod [adb install arguments] <module>" >&2
-        echo "" >&2
-        echo "Only flags to be passed after the \"install\" in adb install are supported," >&2
-        echo "with the exception of -s. If -s is passed it will be placed before the \"install\"." >&2
-        echo "-s must be the first flag passed if it exists." >&2
-        return 1
-    fi
-
-    local _path
-    _path=$(outmod ${@:$#:1})
-    if [ $? -ne 0 ]; then
-        return 1
-    fi
-
-    _path=$(echo "$_path" | grep -E \\.apk$ | head -n 1)
-    if [ -z "$_path" ]; then
-        echo "Module '$1' does not produce a file ending with .apk (try 'refreshmod' if there have been build changes?)" >&2
-        return 1
-    fi
-    local serial_device=""
-    if [[ "$1" == "-s" ]]; then
-        if [[ $# -le 2 ]]; then
-            echo "-s requires an argument" >&2
-            return 1
-        fi
-        serial_device="-s $2"
-        shift 2
-    fi
-    local length=$(( $# - 1 ))
-    echo adb $serial_device install ${@:1:$length} $_path
-    adb $serial_device install ${@:1:$length} $_path
 }
 
 function _complete_android_module_names() {
@@ -1389,23 +1222,6 @@ function get_make_command()
         echo command make
     fi
 }
-
-function _trigger_build()
-(
-    local -r bc="$1"; shift
-    local T=$(gettop)
-    if [ -n "$T" ]; then
-      _wrap_build "$T/build/soong/soong_ui.bash" --build-mode --${bc} --dir="$(pwd)" "$@"
-    else
-      >&2 echo "Couldn't locate the top of the tree. Try setting TOP."
-      return 1
-    fi
-    local ret=$?
-    if [[ ret -eq 0 &&  -z "${ANDROID_QUIET_BUILD:-}" && -n "${ANDROID_BUILD_BANNER}" ]]; then
-      echo "${ANDROID_BUILD_BANNER}"
-    fi
-    return $ret
-)
 
 function make()
 {
@@ -1508,32 +1324,38 @@ function showcommands() {
 # in build/soong/bin.  Unset these for the time being so the real
 # script is picked up.
 # TODO: Remove this some time after a suitable delay (maybe 2025?)
+unset allmod
 unset aninja
-unset overrideflags
-unset m
-unset mm
-unset mmm
-unset mma
-unset mmma
 unset cgrep
+unset dirmods
 unset ggrep
 unset gogrep
+unset installmod
 unset jgrep
 unset jsongrep
 unset ktgrep
+unset m
 unset mangrep
 unset mgrep
+unset mm
+unset mma
+unset mmm
+unset mmma
+unset outmod
+unset overrideflags
 unset owngrep
+unset pathmod
 unset pygrep
+unset qpid
 unset rcgrep
+unset refreshmod
 unset resgrep
 unset rsgrep
 unset sepgrep
 unset sgrep
+unset syswrite
 unset tomlgrep
 unset treegrep
-unset syswrite
-unset refreshmod
 
 
 validate_current_shell
