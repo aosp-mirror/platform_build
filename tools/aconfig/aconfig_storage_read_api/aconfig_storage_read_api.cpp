@@ -1,6 +1,5 @@
 #include <android-base/file.h>
 #include <android-base/logging.h>
-#include <protos/aconfig_storage_metadata.pb.h>
 
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -10,74 +9,45 @@
 #include "aconfig_storage/lib.rs.h"
 #include "aconfig_storage/aconfig_storage_read_api.hpp"
 
-using storage_records_pb = android::aconfig_storage_metadata::storage_files;
-using storage_record_pb = android::aconfig_storage_metadata::storage_file_info;
 using namespace android::base;
 
 namespace aconfig_storage {
 
 /// Storage location pb file
-static constexpr char kAvailableStorageRecordsPb[] =
-    "/metadata/aconfig/boot/available_storage_file_records.pb";
+static constexpr char kStorageDir[] = "/metadata/aconfig";
 
 /// destructor
 MappedStorageFile::~MappedStorageFile() {
   munmap(file_ptr, file_size);
 }
 
-/// Read aconfig storage records pb file
-static Result<storage_records_pb> read_storage_records_pb(std::string const& pb_file) {
-  auto records = storage_records_pb();
-  auto content = std::string();
-  if (!ReadFileToString(pb_file, &content)) {
-    return ErrnoError() << "ReadFileToString failed";
-  }
-
-  if (!records.ParseFromString(content)) {
-    return ErrnoError() << "Unable to parse persistent storage records protobuf";
-  }
-  return records;
-}
-
 /// Get storage file path
 static Result<std::string> find_storage_file(
-    std::string const& pb_file,
+    std::string const& storage_dir,
     std::string const& container,
     StorageFileType file_type) {
-  auto records_pb = read_storage_records_pb(pb_file);
-  if (!records_pb.ok()) {
-    return Error() << "Unable to read storage records from " << pb_file
-                   << " : " << records_pb.error();
+  switch(file_type) {
+    case StorageFileType::package_map:
+      return storage_dir + "/maps/" + container + ".package.map";
+    case StorageFileType::flag_map:
+      return storage_dir + "/maps/" + container + ".flag.map";
+    case StorageFileType::flag_val:
+      return storage_dir + "/boot/" + container + ".val";
+    case StorageFileType::flag_info:
+      return storage_dir + "/boot/" + container + ".info";
+    default:
+      return Error() << "Invalid file type " << file_type;
   }
-
-  for (auto& entry : records_pb->files()) {
-    if (entry.container() == container) {
-      switch(file_type) {
-        case StorageFileType::package_map:
-          return entry.package_map();
-        case StorageFileType::flag_map:
-          return entry.flag_map();
-        case StorageFileType::flag_val:
-          return entry.flag_val();
-        case StorageFileType::flag_info:
-          return entry.flag_info();
-        default:
-          return Error() << "Invalid file type " << file_type;
-      }
-    }
-  }
-
-  return Error() << "Unable to find storage files for container " << container;;
 }
 
 namespace private_internal_api {
 
 /// Get mapped file implementation.
 Result<MappedStorageFile*> get_mapped_file_impl(
-    std::string const& pb_file,
+    std::string const& storage_dir,
     std::string const& container,
     StorageFileType file_type) {
-  auto file_result = find_storage_file(pb_file, container, file_type);
+  auto file_result = find_storage_file(storage_dir, container, file_type);
   if (!file_result.ok()) {
     return Error() << file_result.error();
   }
@@ -129,7 +99,7 @@ Result<MappedStorageFile*> get_mapped_file(
     std::string const& container,
     StorageFileType file_type) {
   return private_internal_api::get_mapped_file_impl(
-      kAvailableStorageRecordsPb, container, file_type);
+      kStorageDir, container, file_type);
 }
 
 /// Get storage file version number

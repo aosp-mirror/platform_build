@@ -205,7 +205,11 @@ internal fun parseApiSignature(path: String, input: InputStream): Set<Pair<Symbo
             val symbol =
                 Symbol.createClass(
                     cls.baselineElementId(),
-                    cls.superClass()?.baselineElementId(),
+                    if (cls.isInterface()) {
+                      "java/lang/Object"
+                    } else {
+                      cls.superClass()?.baselineElementId()
+                    },
                     cls.allInterfaces()
                         .map { it.baselineElementId() }
                         .filter { it != cls.baselineElementId() }
@@ -385,10 +389,48 @@ internal fun findErrors(
 
     return false
   }
+
+  /**
+   * Returns whether the given flag is enabled for the given symbol.
+   *
+   * A flagged member inside a flagged class is ignored (and the flag value considered disabled) if
+   * the class' flag is disabled.
+   *
+   * @param symbol the symbol to check
+   * @param flag the flag to check
+   * @return whether the flag is enabled for the given symbol
+   */
+  fun isFlagEnabledForSymbol(symbol: Symbol, flag: Flag): Boolean {
+    when (symbol) {
+      is ClassSymbol -> return flags.getValue(flag)
+      is MemberSymbol -> {
+        val memberFlagValue = flags.getValue(flag)
+        if (!memberFlagValue) {
+          return false
+        }
+        // Special case: if the MemberSymbol's flag is enabled, but the outer
+        // ClassSymbol's flag (if the class is flagged) is disabled, consider
+        // the MemberSymbol's flag as disabled:
+        //
+        //   @FlaggedApi(this-flag-is-disabled) Clazz {
+        //       @FlaggedApi(this-flag-is-enabled) method(); // The Clazz' flag "wins"
+        //   }
+        //
+        // Note: the current implementation does not handle nested classes.
+        val classFlagValue =
+            flaggedSymbolsInSource
+                .find { it.first.toPrettyString() == symbol.clazz }
+                ?.let { flags.getValue(it.second) }
+                ?: true
+        return classFlagValue
+      }
+    }
+  }
+
   val errors = mutableSetOf<ApiError>()
   for ((symbol, flag) in flaggedSymbolsInSource) {
     try {
-      if (flags.getValue(flag)) {
+      if (isFlagEnabledForSymbol(symbol, flag)) {
         if (!symbolsInOutput.containsSymbol(symbol)) {
           errors.add(EnabledFlaggedApiNotPresentError(symbol, flag))
         }
