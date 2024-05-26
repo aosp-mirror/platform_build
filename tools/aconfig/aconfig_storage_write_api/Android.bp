@@ -77,7 +77,6 @@ cc_library_static {
     export_include_dirs: ["include"],
     static_libs: [
         "libaconfig_storage_read_api_cc",
-        "libaconfig_storage_protos_cc",
         "libprotobuf-cpp-lite",
         "libbase",
     ],
