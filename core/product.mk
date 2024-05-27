@@ -426,6 +426,9 @@ _product_single_value_vars += PRODUCT_MODULE_BUILD_FROM_SOURCE
 # If true, installs a full version of com.android.virt APEX.
 _product_single_value_vars += PRODUCT_AVF_ENABLED
 
+# If false, disable the AVF remote attestaton feature.
+_product_single_value_vars += PRODUCT_AVF_REMOTE_ATTESTATION_DISABLED
+
 # If true, kernel with modules will be used for Microdroid VMs.
 _product_single_value_vars += PRODUCT_AVF_KERNEL_MODULES_ENABLED
 
