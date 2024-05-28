@@ -4919,7 +4919,7 @@ define extract-avb-chain-public-keys
   $(if $(BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST),\
     $(hide) $(foreach partition,$(BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST), \
         $(AVBTOOL) extract_public_key --key $(BOARD_AVB_$(call to-upper,$(partition))_KEY_PATH) \
-            --output $(1)/$(partition).avbpubkey;)) \
+            --output $(1)/$(partition).avbpubkey;))
   $(if $(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS),\
     $(hide) $(foreach partition,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS), \
         $(AVBTOOL) extract_public_key --key $(BOARD_AVB_VBMETA_$(call to-upper,$(partition))_KEY_PATH) \
