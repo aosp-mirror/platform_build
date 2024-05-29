@@ -847,44 +847,6 @@ function runhat()
     hat -JXmx512m $localFile
 }
 
-function getbugreports()
-{
-    local reports=(`adb shell ls /sdcard/bugreports | tr -d '\r'`)
-
-    if [ ! "$reports" ]; then
-        echo "Could not locate any bugreports."
-        return
-    fi
-
-    local report
-    for report in ${reports[@]}
-    do
-        echo "/sdcard/bugreports/${report}"
-        adb pull /sdcard/bugreports/${report} ${report}
-        gunzip ${report}
-    done
-}
-
-function smoketest()
-{
-    if [ ! "$ANDROID_PRODUCT_OUT" ]; then
-        echo "Couldn't locate output files.  Try running 'lunch' first." >&2
-        return
-    fi
-    local T=$(gettop)
-    if [ ! "$T" ]; then
-        echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
-        return
-    fi
-
-    (\cd "$T" && mmm tests/SmokeTest) &&
-      adb uninstall com.android.smoketest > /dev/null &&
-      adb uninstall com.android.smoketest.tests > /dev/null &&
-      adb install $ANDROID_PRODUCT_OUT/data/app/SmokeTestApp.apk &&
-      adb install $ANDROID_PRODUCT_OUT/data/app/SmokeTest.apk &&
-      adb shell am instrument -w com.android.smoketest.tests/android.test.InstrumentationTestRunner
-}
-
 function godir () {
     if [[ -z "$1" ]]; then
         echo "Usage: godir <regex>"
