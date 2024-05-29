@@ -48,73 +48,6 @@ if [ ! "$T" ]; then
 fi
 IMPORTING_ENVSETUP=true source $T/build/make/shell_utils.sh
 
-
-# Help
-function hmm() {
-cat <<EOF
-
-Run "m help" for help with the build system itself.
-
-Invoke ". build/envsetup.sh" from your shell to add the following functions to your environment:
-- lunch:      lunch <product_name>-<release_type>-<build_variant>
-              Selects <product_name> as the product to build, and <build_variant> as the variant to
-              build, and stores those selections in the environment to be read by subsequent
-              invocations of 'm' etc.
-- tapas:      tapas [<App1> <App2> ...] [arm|x86|arm64|x86_64] [eng|userdebug|user]
-              Sets up the build environment for building unbundled apps (APKs).
-- banchan:    banchan <module1> [<module2> ...] \\
-                      [arm|x86|arm64|riscv64|x86_64|arm64_only|x86_64only] [eng|userdebug|user]
-              Sets up the build environment for building unbundled modules (APEXes).
-- croot:      Changes directory to the top of the tree, or a subdirectory thereof.
-- m:          Makes from the top of the tree.
-- mm:         Builds and installs all of the modules in the current directory, and their
-              dependencies.
-- mmm:        Builds and installs all of the modules in the supplied directories, and their
-              dependencies.
-              To limit the modules being built use the syntax: mmm dir/:target1,target2.
-- mma:        Same as 'mm'
-- mmma:       Same as 'mmm'
-- provision:  Flash device with all required partitions. Options will be passed on to fastboot.
-- cgrep:      Greps on all local C/C++ files.
-- ggrep:      Greps on all local Gradle files.
-- gogrep:     Greps on all local Go files.
-- jgrep:      Greps on all local Java files.
-- jsongrep:   Greps on all local Json files.
-- ktgrep:     Greps on all local Kotlin files.
-- resgrep:    Greps on all local res/*.xml files.
-- mangrep:    Greps on all local AndroidManifest.xml files.
-- mgrep:      Greps on all local Makefiles and *.bp files.
-- owngrep:    Greps on all local OWNERS files.
-- rsgrep:     Greps on all local Rust files.
-- sepgrep:    Greps on all local sepolicy files.
-- sgrep:      Greps on all local source files.
-- tomlgrep:   Greps on all local Toml files.
-- pygrep:     Greps on all local Python files.
-- godir:      Go to the directory containing a file.
-- allmod:     List all modules.
-- gomod:      Go to the directory containing a module.
-- pathmod:    Get the directory containing a module.
-- outmod:     Gets the location of a module's installed outputs with a certain extension.
-- dirmods:    Gets the modules defined in a given directory.
-- installmod: Adb installs a module's built APK.
-- refreshmod: Refresh list of modules for allmod/gomod/pathmod/outmod/installmod.
-- syswrite:   Remount partitions (e.g. system.img) as writable, rebooting if necessary.
-
-Environment options:
-- SANITIZE_HOST: Set to 'address' to use ASAN for all host modules.
-- ANDROID_QUIET_BUILD: set to 'true' to display only the essential messages.
-
-Look at the source to view more functions. The complete list is:
-EOF
-    local T=$(gettop)
-    local A=""
-    local i
-    for i in `cat $T/build/envsetup.sh | sed -n "/^[[:blank:]]*function /s/function \([a-z_]*\).*/\1/p" | sort | uniq`; do
-      A="$A $i"
-    done
-    echo $A
-}
-
 # Get all the build variables needed by this script in a single call to the build system.
 function build_build_var_cache()
 {
@@ -862,118 +795,6 @@ function run_tool_with_logging() {
   )
 }
 
-# coredump_setup - enable core dumps globally for any process
-#                  that has the core-file-size limit set correctly
-#
-# NOTE: You must call also coredump_enable for a specific process
-#       if its core-file-size limit is not set already.
-# NOTE: Core dumps are written to ramdisk; they will not survive a reboot!
-
-function coredump_setup()
-{
-    echo "Getting root...";
-    adb root;
-    adb wait-for-device;
-
-    echo "Remounting root partition read-write...";
-    adb shell mount -w -o remount -t rootfs rootfs;
-    sleep 1;
-    adb wait-for-device;
-    adb shell mkdir -p /cores;
-    adb shell mount -t tmpfs tmpfs /cores;
-    adb shell chmod 0777 /cores;
-
-    echo "Granting SELinux permission to dump in /cores...";
-    adb shell restorecon -R /cores;
-
-    echo "Set core pattern.";
-    adb shell 'echo /cores/core.%p > /proc/sys/kernel/core_pattern';
-
-    echo "Done."
-}
-
-# coredump_enable - enable core dumps for the specified process
-# $1 = PID of process (e.g., $(pid mediaserver))
-#
-# NOTE: coredump_setup must have been called as well for a core
-#       dump to actually be generated.
-
-function coredump_enable()
-{
-    local PID=$1;
-    if [ -z "$PID" ]; then
-        printf "Expecting a PID!\n";
-        return;
-    fi;
-    echo "Setting core limit for $PID to infinite...";
-    adb shell /system/bin/ulimit -P $PID -c unlimited
-}
-
-# core - send SIGV and pull the core for process
-# $1 = PID of process (e.g., $(pid mediaserver))
-#
-# NOTE: coredump_setup must be called once per boot for core dumps to be
-#       enabled globally.
-
-function core()
-{
-    local PID=$1;
-
-    if [ -z "$PID" ]; then
-        printf "Expecting a PID!\n";
-        return;
-    fi;
-
-    local CORENAME=core.$PID;
-    local COREPATH=/cores/$CORENAME;
-    local SIG=SEGV;
-
-    coredump_enable $1;
-
-    local done=0;
-    while [ $(adb shell "[ -d /proc/$PID ] && echo -n yes") ]; do
-        printf "\tSending SIG%s to %d...\n" $SIG $PID;
-        adb shell kill -$SIG $PID;
-        sleep 1;
-    done;
-
-    adb shell "while [ ! -f $COREPATH ] ; do echo waiting for $COREPATH to be generated; sleep 1; done"
-    echo "Done: core is under $COREPATH on device.";
-}
-
-# systemstack - dump the current stack trace of all threads in the system process
-# to the usual ANR traces file
-function systemstack()
-{
-    stacks system_server
-}
-
-# Read the ELF header from /proc/$PID/exe to determine if the process is
-# 64-bit.
-function is64bit()
-{
-    local PID="$1"
-    if [ "$PID" ] ; then
-        if [[ "$(adb shell cat /proc/$PID/exe | xxd -l 1 -s 4 -p)" -eq "02" ]] ; then
-            echo "64"
-        else
-            echo ""
-        fi
-    else
-        echo ""
-    fi
-}
-
-function gettargetarch
-{
-    get_build_var TARGET_ARCH
-}
-
-function getprebuilt
-{
-    get_abs_build_var ANDROID_PREBUILTS
-}
-
 # communicate with a running device or emulator, set up necessary state,
 # and run the hat command.
 function runhat()
@@ -1042,62 +863,6 @@ function getbugreports()
         adb pull /sdcard/bugreports/${report} ${report}
         gunzip ${report}
     done
-}
-
-function getsdcardpath()
-{
-    adb ${adbOptions} shell echo -n \$\{EXTERNAL_STORAGE\}
-}
-
-function getscreenshotpath()
-{
-    echo "$(getsdcardpath)/Pictures/Screenshots"
-}
-
-function getlastscreenshot()
-{
-    local screenshot_path=$(getscreenshotpath)
-    local screenshot=`adb ${adbOptions} ls ${screenshot_path} | grep Screenshot_[0-9-]*.*\.png | sort -rk 3 | cut -d " " -f 4 | head -n 1`
-    if [ "$screenshot" = "" ]; then
-        echo "No screenshots found."
-        return
-    fi
-    echo "${screenshot}"
-    adb ${adbOptions} pull ${screenshot_path}/${screenshot}
-}
-
-function startviewserver()
-{
-    local port=4939
-    if [ $# -gt 0 ]; then
-            port=$1
-    fi
-    adb shell service call window 1 i32 $port
-}
-
-function stopviewserver()
-{
-    adb shell service call window 2
-}
-
-function isviewserverstarted()
-{
-    adb shell service call window 3
-}
-
-function key_home()
-{
-    adb shell input keyevent 3
-}
-
-function key_back()
-{
-    adb shell input keyevent 4
-}
-
-function key_menu()
-{
-    adb shell input keyevent 82
 }
 
 function smoketest()
@@ -1314,12 +1079,26 @@ function showcommands() {
 unset allmod
 unset aninja
 unset cgrep
+unset core
+unset coredump_enable
+unset coredump_setup
 unset dirmods
+unset getlastscreenshot
+unset getprebuilt
+unset getscreenshotpath
+unset getsdcardpath
+unset gettargetarch
 unset ggrep
 unset gogrep
+unset hmm
 unset installmod
+unset is64bit
+unset isviewserverstarted
 unset jgrep
 unset jsongrep
+unset key_back
+unset key_home
+unset key_menu
 unset ktgrep
 unset m
 unset mangrep
@@ -1341,6 +1120,9 @@ unset resgrep
 unset rsgrep
 unset sepgrep
 unset sgrep
+unset startviewserver
+unset stopviewserver
+unset systemstack
 unset syswrite
 unset tomlgrep
 unset treegrep
@@ -1350,6 +1132,5 @@ validate_current_shell
 set_global_paths
 source_vendorsetup
 addcompletions
-
 
 
