@@ -49,9 +49,6 @@ endif
 
 # If this is a google source tree, restrict it to only the one file
 # which has OWNERS control.  If it isn't let others define their own.
-# TODO: Remove wildcard for build/release one when all branch manifests
-# have updated.
-_must_protobuf :=
 config_map_files := $(wildcard build/release/release_config_map.mk) \
     $(wildcard vendor/google_shared/build/release/release_config_map.mk) \
     $(if $(wildcard vendor/google/release/release_config_map.mk), \
@@ -64,7 +61,7 @@ config_map_files := $(wildcard build/release/release_config_map.mk) \
         ) \
     )
 
-protobuf_map_files := $(wildcard build/release/release_config_map.textproto) \
+protobuf_map_files := build/release/release_config_map.textproto \
     $(wildcard vendor/google_shared/build/release/release_config_map.textproto) \
     $(if $(wildcard vendor/google/release/release_config_map.textproto), \
         vendor/google/release/release_config_map.textproto, \
@@ -75,6 +72,9 @@ protobuf_map_files := $(wildcard build/release/release_config_map.textproto) \
             $(wildcard vendor/*/*/release/release_config_map.textproto) \
         ) \
     )
+
+# Remove support for the legacy approach.
+_must_protobuf := true
 
 # PRODUCT_RELEASE_CONFIG_MAPS is set by Soong using an initial run of product
 # config to capture only the list of config maps needed by the build.
