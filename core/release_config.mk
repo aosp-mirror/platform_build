@@ -155,8 +155,11 @@ ifneq (,$(_use_protobuf))
             $(_flags_dir)/$(_base_all_release).pb:build_flags/all_release_configs.pb \
             $(_flags_dir)/$(_base_all_release).textproto:build_flags/all_release_configs.textproto \
             $(_flags_dir)/$(_base_all_release).json:build_flags/all_release_configs.json \
+            $(_flags_dir)/inheritance_graph-$(TARGET_PRODUCT).dot:build_flags/inheritance_graph-$(TARGET_PRODUCT).dot \
         )
 # These are always created, add an empty rule for them to keep ninja happy.
+$(_flags_dir)/inheritance_graph-$(TARGET_PRODUCT).dot:
+	: created by $(OUT_DIR)/release-config
 $(_flags_dir)/$(_base_all_release).pb $(_flags_dir)/$(_base_all_release).textproto $(_flags_dir)/$(_base_all_release).json:
 	: created by $(OUT_DIR)/release-config
         _base_all_release :=
