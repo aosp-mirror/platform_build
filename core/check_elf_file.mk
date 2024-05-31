@@ -10,6 +10,8 @@
 # - LOCAL_BUILT_MODULE
 # - LOCAL_IS_HOST_MODULE
 # - LOCAL_MODULE_CLASS
+# - TARGET_MAX_PAGE_SIZE_SUPPORTED
+# - TARGET_NO_BIONIC_PAGE_SIZE_MACRO
 # - intermediates
 # - my_installed_module_stem
 # - my_prebuilt_src_file
@@ -26,6 +28,15 @@ $(check_elf_files_stamp): PRIVATE_SYSTEM_SHARED_LIBRARIES := $(my_system_shared_
 # In addition to $(my_check_elf_file_shared_lib_files), some file paths are
 # added by `resolve-shared-libs-for-elf-file-check` from `core/main.mk`.
 $(check_elf_files_stamp): PRIVATE_SHARED_LIBRARY_FILES := $(my_check_elf_file_shared_lib_files)
+# For different page sizes to work, we must support a larger max page size
+# as well as properly reflect page size at runtime. Limit this check, since many
+# devices set the max page size (for future proof) than actually use the
+# larger page size.
+ifeq ($(strip $(TARGET_NO_BIONIC_PAGE_SIZE_MACRO)),true)
+$(check_elf_files_stamp): PRIVATE_MAX_PAGE_SIZE_OPT := --max-page-size=$(TARGET_MAX_PAGE_SIZE_SUPPORTED)
+else
+$(check_elf_files_stamp): PRIVATE_MAX_PAGE_SIZE_OPT :=
+endif
 $(check_elf_files_stamp): $(my_prebuilt_src_file) $(my_check_elf_file_shared_lib_files) $(CHECK_ELF_FILE) $(LLVM_READOBJ)
 	@echo Check prebuilt ELF binary: $<
 	$(hide) mkdir -p $(dir $@)
@@ -33,6 +44,7 @@ $(check_elf_files_stamp): $(my_prebuilt_src_file) $(my_check_elf_file_shared_lib
 	$(hide) $(CHECK_ELF_FILE) \
 	    --skip-bad-elf-magic \
 	    --skip-unknown-elf-machine \
+	    $(PRIVATE_MAX_PAGE_SIZE_OPT) \
 	    $(if $(PRIVATE_SONAME),--soname $(PRIVATE_SONAME)) \
 	    $(foreach l,$(PRIVATE_SHARED_LIBRARY_FILES),--shared-lib $(l)) \
 	    $(foreach l,$(PRIVATE_SYSTEM_SHARED_LIBRARIES),--system-shared-lib $(l)) \
