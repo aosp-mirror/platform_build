@@ -1123,6 +1123,7 @@ ifndef LOCAL_SOONG_MODULE_INFO_JSON
     $(LOCAL_JNI_SHARED_LIBRARIES)
 
 endif
+ALL_MODULES.$(my_register_name).TEST_MODULE_CONFIG_BASE := $(LOCAL_TEST_MODULE_CONFIG_BASE)
 
 ##########################################################################
 ## When compiling against API imported module, use API import stub
