@@ -16,20 +16,11 @@ package android.aconfig.storage;
  */
 
 public class PackageReadContext {
-    public boolean mQuerySuccess;
-    public String mErrorMessage;
-    public boolean mPackageExists;
     public int mPackageId;
     public int mBooleanStartIndex;
 
-    public PackageReadContext(boolean querySuccess,
-                              String errorMessage,
-                              boolean packageExists,
-                              int packageId,
+    public PackageReadContext(int packageId,
                               int booleanStartIndex) {
-        mQuerySuccess = querySuccess;
-        mErrorMessage = errorMessage;
-        mPackageExists = packageExists;
         mPackageId = packageId;
         mBooleanStartIndex = booleanStartIndex;
     }
