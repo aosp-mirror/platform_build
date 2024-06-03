@@ -14,9 +14,8 @@
 # limitations under the License.
 #
 
-# The base version of window_extensions.mk to be included on all devices.
-# Devices that don't support multi-window can choose to drop this.
-# TODO(b/326009200): Remove from build that doesn't support multi-window.
+# The base version of window_extensions.mk to be included on all non-wearable
+# devices. Devices that don't support multi-window can choose to drop this.
 #
 # Note: by default the Activity Embedding feature is guarded by app's
 # targetSDK on Android 15 to avoid app compat impact.

@@ -115,3 +115,11 @@ python_binary_host {
         },
     },
 }
+
+python_binary_host {
+    name: "merge-event-log-tags",
+    srcs: [
+        "event_log_tags.py",
+        "merge-event-log-tags.py",
+    ],
+}

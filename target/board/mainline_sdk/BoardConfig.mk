@@ -13,6 +13,9 @@
 # limitations under the License.
 #
 
+# Ensure all trunk-stable flags are available.
+include build/make/target/product/build_variables.mk
+
 TARGET_ARCH_SUITE := mainline_sdk
 
 HOST_CROSS_OS := linux_bionic

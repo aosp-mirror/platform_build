@@ -1,8 +1,7 @@
-
 rust_test {
     name: "aconfig_storage_write_api.test.rust",
     srcs: [
-        "storage_write_api_test.rs"
+        "storage_write_api_test.rs",
     ],
     rustlibs: [
         "libanyhow",
@@ -14,6 +13,7 @@ rust_test {
     ],
     data: [
         "flag.val",
+        "flag.info",
     ],
     test_suites: ["general-tests"],
 }
@@ -25,8 +25,6 @@ cc_test {
     ],
     static_libs: [
         "libgmock",
-        "libaconfig_storage_protos_cc",
-        "libprotobuf-cpp-lite",
         "libaconfig_storage_read_api_cc",
         "libaconfig_storage_write_api_cc",
         "libbase",
@@ -34,9 +32,11 @@ cc_test {
     ],
     data: [
         "flag.val",
+        "flag.info",
     ],
     test_suites: [
         "device-tests",
         "general-tests",
     ],
+    ldflags: ["-Wl,--allow-multiple-definition"],
 }

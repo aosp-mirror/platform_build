@@ -174,7 +174,6 @@ PRODUCT_PACKAGES += \
     libjpeg \
     liblog \
     libm.bootstrap \
-    libmdnssd \
     libmedia \
     libmedia_jni \
     libmediandk \
@@ -240,6 +239,7 @@ PRODUCT_PACKAGES += \
     package-shareduid-allowlist.xml \
     passwd_system \
     perfetto \
+    perfetto-extras \
     ping \
     ping6 \
     pintool \
@@ -292,6 +292,7 @@ PRODUCT_PACKAGES += \
     uprobestats \
     usbd \
     vdc \
+    vintf \
     voip-common \
     vold \
     watchdogd \
@@ -333,7 +334,8 @@ endif
 # Check if the build supports Profiling module
 ifeq ($(RELEASE_PACKAGE_PROFILING_MODULE),true)
     PRODUCT_PACKAGES += \
-       com.android.profiling
+       com.android.profiling \
+       trace_redactor
 endif
 
 ifeq ($(RELEASE_USE_WEBVIEW_BOOTSTRAP_MODULE),true)
@@ -432,8 +434,7 @@ PRODUCT_HOST_PACKAGES += \
 
 PRODUCT_PACKAGES += init.usb.rc init.usb.configfs.rc
 
-PRODUCT_COPY_FILES += \
-    system/core/rootdir/etc/hosts:system/etc/hosts
+PRODUCT_PACKAGES += etc_hosts
 
 PRODUCT_PACKAGES += init.zygote32.rc
 PRODUCT_VENDOR_PROPERTIES += ro.zygote?=zygote32
@@ -493,17 +494,21 @@ PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE := \
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/preloaded-classes:system/etc/preloaded-classes)
 
-# Note: it is acceptable to not have a dirty-image-objects file. In that case, the special bin
-#       for known dirty objects in the image will be empty.
-PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
-    frameworks/base/config/dirty-image-objects:system/etc/dirty-image-objects)
+# Enable dirty image object binning to reduce dirty pages in the image.
+PRODUCT_PACKAGES += dirty-image-objects
+
+# Enable go/perfetto-persistent-tracing for eng builds
+ifneq (,$(filter eng, $(TARGET_BUILD_VARIANT)))
+    PRODUCT_PRODUCT_PROPERTIES += persist.debug.perfetto.persistent_sysui_tracing_for_bugreport=1
+endif
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
 
-# Use the configured release of sqlite
-$(call soong_config_set, libsqlite3, release_package_libsqlite3, $(RELEASE_PACKAGE_LIBSQLITE3))
+# Ensure all trunk-stable flags are available.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/build_variables.mk)
 
 # Use "image" APEXes always.
 $(call inherit-product,$(SRC_TARGET_DIR)/product/updatable_apex.mk)
 
 $(call soong_config_set, bionic, large_system_property_node, $(RELEASE_LARGE_SYSTEM_PROPERTY_NODE))
+$(call soong_config_set, SettingsLib, legacy_avatar_picker_app_enabled, $(if $(RELEASE_AVATAR_PICKER_APP),,true))

@@ -34,10 +34,28 @@ PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.userspace.snapshots.enabled=true
 PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.io_uring.enabled=true
 PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.compression.xor.enabled=true
 PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.batch_writes=true
+# Low memory device configurations. If memory usage and cpu utilization is
+# a bottleneck during OTA, the below configurations can be added to a
+# device's .mk file improve performance for low mem devices. Disabling
+# ro.virtual_ab.compression.xor.enabled and ro.virtual_ab.io_uring.enabled
+# is also recommended
+#
+# PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.o_direct.enabled=true
+# PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.merge_thread_priority=19
+# PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.worker_thread_priority=0
+# PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.num_worker_threads=3
+# PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.num_merge_threads=1
+# PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.num_verify_threads=1
+# PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.cow_op_merge_size=16
+# PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.verify_threshold_size=1073741824
+# PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.verify_block_size=1048576
 
 # Enabling this property, will improve OTA install time
 # but will use an additional CPU core
 # PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.compression.threads=true
+ifndef PRODUCT_VIRTUAL_AB_COMPRESSION_FACTOR
+    PRODUCT_VIRTUAL_AB_COMPRESSION_FACTOR := 65536
+endif
 
 PRODUCT_VIRTUAL_AB_COMPRESSION := true
 PRODUCT_VIRTUAL_AB_COMPRESSION_METHOD ?= none

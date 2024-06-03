@@ -34,14 +34,8 @@ function finalize_sdk_rel() {
     git -C "$top/cts" mv hostsidetests/theme/assets/${FINAL_PLATFORM_CODENAME} hostsidetests/theme/assets/${FINAL_PLATFORM_SDK_VERSION}
 
     # prebuilts/abi-dumps/platform
-    mkdir -p "$top/prebuilts/abi-dumps/platform/$FINAL_PLATFORM_SDK_VERSION"
-    cp -r "$top/prebuilts/abi-dumps/platform/current/64/" "$top/prebuilts/abi-dumps/platform/$FINAL_PLATFORM_SDK_VERSION/"
-
-    # TODO(b/309880485)
-    # uncomment and update
-    # prebuilts/abi-dumps/ndk
-    #mkdir -p "$top/prebuilts/abi-dumps/ndk/$FINAL_PLATFORM_SDK_VERSION"
-    #cp -r "$top/prebuilts/abi-dumps/ndk/current/64/" "$top/prebuilts/abi-dumps/ndk/$FINAL_PLATFORM_SDK_VERSION/"
+    "$top/build/soong/soong_ui.bash" --make-mode TARGET_RELEASE=next TARGET_PRODUCT=aosp_arm64 TARGET_BUILD_VARIANT=userdebug create_reference_dumps
+    ANDROID_BUILD_TOP="$top" "$top/out/host/linux-x86/bin/create_reference_dumps" -release next --build-variant userdebug --lib-variant APEX
 }
 
 finalize_sdk_rel

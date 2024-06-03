@@ -1,0 +1,51 @@
+// Copyright (C) 2024 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package {
+    default_team: "trendy_team_updatable_sdk_apis",
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+java_defaults {
+    name: "check-flagged-apis-defaults",
+    srcs: [
+        "src/com/android/checkflaggedapis/Main.kt",
+    ],
+    static_libs: [
+        "libaconfig_java_proto_lite",
+        "metalava-signature-reader",
+        "metalava-tools-common-m2-deps",
+    ],
+}
+
+java_binary_host {
+    name: "check-flagged-apis",
+    defaults: [
+        "check-flagged-apis-defaults",
+    ],
+    main_class: "com.android.checkflaggedapis.Main",
+}
+
+java_test_host {
+    name: "check-flagged-apis-test",
+    defaults: [
+        "check-flagged-apis-defaults",
+    ],
+    srcs: [
+        "src/com/android/checkflaggedapis/CheckFlaggedApisTest.kt",
+    ],
+    static_libs: [
+        "junit",
+    ],
+}

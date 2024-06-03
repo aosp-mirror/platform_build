@@ -22,18 +22,27 @@ use clap::Parser;
 mod device_config_source;
 use device_config_source::DeviceConfigSource;
 
+mod aconfig_storage_source;
+use aconfig_storage_source::AconfigStorageSource;
+
+mod load_protos;
+
 #[derive(Clone, PartialEq, Debug)]
 enum FlagPermission {
     ReadOnly,
     ReadWrite,
 }
 
-impl ToString for FlagPermission {
-    fn to_string(&self) -> String {
-        match &self {
-            Self::ReadOnly => "read-only".into(),
-            Self::ReadWrite => "read-write".into(),
-        }
+impl std::fmt::Display for FlagPermission {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match &self {
+                Self::ReadOnly => "read-only",
+                Self::ReadWrite => "read-write",
+            }
+        )
     }
 }
 
@@ -43,12 +52,16 @@ enum ValuePickedFrom {
     Server,
 }
 
-impl ToString for ValuePickedFrom {
-    fn to_string(&self) -> String {
-        match &self {
-            Self::Default => "default".into(),
-            Self::Server => "server".into(),
-        }
+impl std::fmt::Display for ValuePickedFrom {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match &self {
+                Self::Default => "default",
+                Self::Server => "server",
+            }
+        )
     }
 }
 
@@ -70,12 +83,16 @@ impl TryFrom<&str> for FlagValue {
     }
 }
 
-impl ToString for FlagValue {
-    fn to_string(&self) -> String {
-        match &self {
-            Self::Enabled => "enabled".into(),
-            Self::Disabled => "disabled".into(),
-        }
+impl std::fmt::Display for FlagValue {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match &self {
+                Self::Enabled => "enabled",
+                Self::Disabled => "disabled",
+            }
+        )
     }
 }
 
@@ -98,7 +115,7 @@ impl Flag {
 
     fn display_staged_value(&self) -> String {
         match self.staged_value {
-            Some(v) => format!("(->{})", v.to_string()),
+            Some(v) => format!("(->{})", v),
             None => "-".to_string(),
         }
     }
@@ -107,6 +124,11 @@ impl Flag {
 trait FlagSource {
     fn list_flags() -> Result<Vec<Flag>>;
     fn override_flag(namespace: &str, qualified_name: &str, value: &str) -> Result<()>;
+}
+
+enum FlagSourceType {
+    DeviceConfig,
+    AconfigStorage,
 }
 
 const ABOUT_TEXT: &str = "Tool for reading and writing flags.
@@ -139,7 +161,15 @@ struct Cli {
 #[derive(Parser, Debug)]
 enum Command {
     /// List all aconfig flags on this device.
-    List,
+    List {
+        /// Read from the new flag storage.
+        #[clap(long)]
+        use_new_storage: bool,
+
+        /// Optionally filter by container name.
+        #[clap(short = 'c', long = "container")]
+        container: Option<String>,
+    },
 
     /// Enable an aconfig flag on this device, on the next boot.
     Enable {
@@ -160,6 +190,23 @@ struct PaddingInfo {
     longest_staged_val_col: usize,
     longest_value_picked_from_col: usize,
     longest_permission_col: usize,
+}
+
+struct Filter {
+    container: Option<String>,
+}
+
+impl Filter {
+    fn apply(&self, flags: &[Flag]) -> Vec<Flag> {
+        flags
+            .iter()
+            .filter(|flag| match &self.container {
+                Some(c) => flag.container == *c,
+                None => true,
+            })
+            .cloned()
+            .collect()
+    }
 }
 
 fn format_flag_row(flag: &Flag, info: &PaddingInfo) -> String {
@@ -201,8 +248,12 @@ fn set_flag(qualified_name: &str, value: &str) -> Result<()> {
     Ok(())
 }
 
-fn list() -> Result<String> {
-    let flags = DeviceConfigSource::list_flags()?;
+fn list(source_type: FlagSourceType, container: Option<String>) -> Result<String> {
+    let flags_unfiltered = match source_type {
+        FlagSourceType::DeviceConfig => DeviceConfigSource::list_flags()?,
+        FlagSourceType::AconfigStorage => AconfigStorageSource::list_flags()?,
+    };
+    let flags = (Filter { container }).apply(&flags_unfiltered);
     let padding_info = PaddingInfo {
         longest_flag_col: flags.iter().map(|f| f.qualified_name().len()).max().unwrap_or(0),
         longest_val_col: flags.iter().map(|f| f.value.to_string().len()).max().unwrap_or(0),
@@ -234,7 +285,12 @@ fn list() -> Result<String> {
 fn main() {
     let cli = Cli::parse();
     let output = match cli.command {
-        Command::List => list().map(Some),
+        Command::List { use_new_storage: true, container } => {
+            list(FlagSourceType::AconfigStorage, container).map(Some)
+        }
+        Command::List { use_new_storage: false, container } => {
+            list(FlagSourceType::DeviceConfig, container).map(Some)
+        }
         Command::Enable { qualified_name } => set_flag(&qualified_name, "true").map(|_| None),
         Command::Disable { qualified_name } => set_flag(&qualified_name, "false").map(|_| None),
     };
@@ -242,5 +298,86 @@ fn main() {
         Ok(Some(text)) => println!("{text}"),
         Ok(None) => (),
         Err(message) => println!("Error: {message}"),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_filter_container() {
+        let flags = vec![
+            Flag {
+                namespace: "namespace".to_string(),
+                name: "test1".to_string(),
+                package: "package".to_string(),
+                value: FlagValue::Disabled,
+                staged_value: None,
+                permission: FlagPermission::ReadWrite,
+                value_picked_from: ValuePickedFrom::Default,
+                container: "system".to_string(),
+            },
+            Flag {
+                namespace: "namespace".to_string(),
+                name: "test2".to_string(),
+                package: "package".to_string(),
+                value: FlagValue::Disabled,
+                staged_value: None,
+                permission: FlagPermission::ReadWrite,
+                value_picked_from: ValuePickedFrom::Default,
+                container: "not_system".to_string(),
+            },
+            Flag {
+                namespace: "namespace".to_string(),
+                name: "test3".to_string(),
+                package: "package".to_string(),
+                value: FlagValue::Disabled,
+                staged_value: None,
+                permission: FlagPermission::ReadWrite,
+                value_picked_from: ValuePickedFrom::Default,
+                container: "system".to_string(),
+            },
+        ];
+
+        assert_eq!((Filter { container: Some("system".to_string()) }).apply(&flags).len(), 2);
+    }
+
+    #[test]
+    fn test_filter_no_container() {
+        let flags = vec![
+            Flag {
+                namespace: "namespace".to_string(),
+                name: "test1".to_string(),
+                package: "package".to_string(),
+                value: FlagValue::Disabled,
+                staged_value: None,
+                permission: FlagPermission::ReadWrite,
+                value_picked_from: ValuePickedFrom::Default,
+                container: "system".to_string(),
+            },
+            Flag {
+                namespace: "namespace".to_string(),
+                name: "test2".to_string(),
+                package: "package".to_string(),
+                value: FlagValue::Disabled,
+                staged_value: None,
+                permission: FlagPermission::ReadWrite,
+                value_picked_from: ValuePickedFrom::Default,
+                container: "not_system".to_string(),
+            },
+            Flag {
+                namespace: "namespace".to_string(),
+                name: "test3".to_string(),
+                package: "package".to_string(),
+                value: FlagValue::Disabled,
+                staged_value: None,
+                permission: FlagPermission::ReadWrite,
+                value_picked_from: ValuePickedFrom::Default,
+                container: "system".to_string(),
+            },
+        ];
+
+        assert_eq!((Filter { container: None }).apply(&flags).len(), 3);
     }
 }

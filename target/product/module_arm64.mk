@@ -19,3 +19,6 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 
 PRODUCT_NAME := module_arm64
 PRODUCT_DEVICE := module_arm64
+
+PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO := true
+PRODUCT_MAX_PAGE_SIZE_SUPPORTED := 16384

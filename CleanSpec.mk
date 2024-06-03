@@ -779,6 +779,14 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/bazel/output/execroot/__main__/bazel-ou
 # Clear out rustc compiler intermediates after reverting rust compiler/linker split.
 $(call add-clean-step, find $(OUT_DIR) -name "*.rsp.whole.a" -print0 | xargs -0 /bin/bash -c 'rm -f $$$${@}; rm -f $$$${@/.rsp.whole.a/.rsp.a}; rm -f $$$${@/.rsp.whole.a/.rsp}')
 
+# Remove obsolete java compilation artifacts
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/)
+$(call add-clean-step, find $(OUT_DIR) -type f -name "*.jar" -print0 | xargs -0 rm -f)
+
+# Remove obsolete java compilation artifacts
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/)
+$(call add-clean-step, find $(OUT_DIR) -type f -name "*.jar" -print0 | xargs -0 rm -f)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

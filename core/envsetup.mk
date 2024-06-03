@@ -57,18 +57,6 @@ else
   KEEP_VNDK ?= true
 endif
 
-ifeq ($(KEEP_VNDK),true)
-  # Starting in Android U, non-VNDK devices not supported
-  # WARNING: DO NOT CHANGE: if you are downstream of AOSP, and you change this, without
-  # letting upstream know it's important to you, we may do cleanup which breaks this
-  # significantly. Please let us know if you are changing this.
-  ifndef BOARD_VNDK_VERSION
-  # READ WARNING - DO NOT CHANGE
-  BOARD_VNDK_VERSION := current
-  # READ WARNING - DO NOT CHANGE
-  endif
-endif
-
 # ---------------------------------------------------------------
 # Set up version information
 include $(BUILD_SYSTEM)/version_util.mk
@@ -267,6 +255,7 @@ endif
 HOST_PREBUILT_ARCH := x86
 # This is the standard way to name a directory containing prebuilt host
 # objects. E.g., prebuilt/$(HOST_PREBUILT_TAG)/cc
+# This must match the logic in get_host_prebuilt_prefix in envsetup.sh
 HOST_PREBUILT_TAG := $(BUILD_OS)-$(HOST_PREBUILT_ARCH)
 
 # TARGET_COPY_OUT_* are all relative to the staging directory, ie PRODUCT_OUT.
@@ -789,6 +778,7 @@ TARGET_OUT_ODM_JAVA_LIBRARIES := $(TARGET_OUT_ODM)/framework
 TARGET_OUT_ODM_APPS := $(target_out_odm_app_base)/app
 TARGET_OUT_ODM_APPS_PRIVILEGED := $(target_out_odm_app_base)/priv-app
 TARGET_OUT_ODM_ETC := $(TARGET_OUT_ODM)/etc
+TARGET_OUT_ODM_FAKE := $(PRODUCT_OUT)/odm_fake_packages
 .KATI_READONLY := \
   TARGET_OUT_ODM \
   TARGET_OUT_ODM_EXECUTABLES \
@@ -798,7 +788,8 @@ TARGET_OUT_ODM_ETC := $(TARGET_OUT_ODM)/etc
   TARGET_OUT_ODM_JAVA_LIBRARIES \
   TARGET_OUT_ODM_APPS \
   TARGET_OUT_ODM_APPS_PRIVILEGED \
-  TARGET_OUT_ODM_ETC
+  TARGET_OUT_ODM_ETC \
+  TARGET_OUT_ODM_FAKE
 
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_EXECUTABLES := $(TARGET_OUT_ODM_EXECUTABLES)
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_SHARED_LIBRARIES := $(target_out_odm_shared_libraries_base)/lib
@@ -936,13 +927,15 @@ TARGET_OUT_PRODUCT_JAVA_LIBRARIES := $(TARGET_OUT_PRODUCT)/framework
 TARGET_OUT_PRODUCT_APPS := $(target_out_product_app_base)/app
 TARGET_OUT_PRODUCT_APPS_PRIVILEGED := $(target_out_product_app_base)/priv-app
 TARGET_OUT_PRODUCT_ETC := $(TARGET_OUT_PRODUCT)/etc
+TARGET_OUT_PRODUCT_FAKE := $(TARGET_OUT_PRODUCT)/product_fake_packages
 .KATI_READONLY := \
   TARGET_OUT_PRODUCT_EXECUTABLES \
   TARGET_OUT_PRODUCT_SHARED_LIBRARIES \
   TARGET_OUT_PRODUCT_JAVA_LIBRARIES \
   TARGET_OUT_PRODUCT_APPS \
   TARGET_OUT_PRODUCT_APPS_PRIVILEGED \
-  TARGET_OUT_PRODUCT_ETC
+  TARGET_OUT_PRODUCT_ETC \
+  TARGET_OUT_PRODUCT_FAKE
 
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_EXECUTABLES := $(TARGET_OUT_PRODUCT_EXECUTABLES)
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_SHARED_LIBRARIES := $(target_out_product_shared_libraries_base)/lib
@@ -979,13 +972,15 @@ TARGET_OUT_SYSTEM_EXT_APPS := $(target_out_system_ext_app_base)/app
 TARGET_OUT_SYSTEM_EXT_APPS_PRIVILEGED := $(target_out_system_ext_app_base)/priv-app
 TARGET_OUT_SYSTEM_EXT_ETC := $(TARGET_OUT_SYSTEM_EXT)/etc
 TARGET_OUT_SYSTEM_EXT_EXECUTABLES := $(TARGET_OUT_SYSTEM_EXT)/bin
+TARGET_OUT_SYSTEM_EXT_FAKE := $(PRODUCT_OUT)/system_ext_fake_packages
 .KATI_READONLY := \
   TARGET_OUT_SYSTEM_EXT_EXECUTABLES \
   TARGET_OUT_SYSTEM_EXT_SHARED_LIBRARIES \
   TARGET_OUT_SYSTEM_EXT_JAVA_LIBRARIES \
   TARGET_OUT_SYSTEM_EXT_APPS \
   TARGET_OUT_SYSTEM_EXT_APPS_PRIVILEGED \
-  TARGET_OUT_SYSTEM_EXT_ETC
+  TARGET_OUT_SYSTEM_EXT_ETC \
+  TARGET_OUT_SYSTEM_EXT_FAKE
 
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_EXT_EXECUTABLES := $(TARGET_OUT_SYSTEM_EXT_EXECUTABLES)
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_EXT_SHARED_LIBRARIES := $(target_out_system_ext_shared_libraries_base)/lib

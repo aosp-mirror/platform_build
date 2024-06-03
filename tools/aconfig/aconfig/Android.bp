@@ -161,6 +161,9 @@ cc_test {
     shared_libs: [
         "server_configurable_flags",
     ],
+    defaults: [
+        "aconfig_lib_cc_static_link.defaults",
+    ],
     test_suites: ["general-tests"],
 }
 
@@ -175,6 +178,9 @@ cc_test {
     ],
     shared_libs: [
         "server_configurable_flags",
+    ],
+    defaults: [
+        "aconfig_lib_cc_static_link.defaults",
     ],
     test_suites: ["general-tests"],
 }
@@ -199,6 +205,9 @@ cc_test {
     shared_libs: [
         "server_configurable_flags",
     ],
+    defaults: [
+        "aconfig_lib_cc_static_link.defaults",
+    ],
     test_suites: ["general-tests"],
 }
 */
@@ -214,6 +223,9 @@ cc_test {
     ],
     shared_libs: [
         "server_configurable_flags",
+    ],
+    defaults: [
+        "aconfig_lib_cc_static_link.defaults",
     ],
     test_suites: ["general-tests"],
 }

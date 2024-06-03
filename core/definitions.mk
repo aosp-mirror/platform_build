@@ -3589,11 +3589,13 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(if $(filter $(suite),$(ALL_COMPATIBILITY_SUITES)),,\
     $(eval ALL_COMPATIBILITY_SUITES += $(suite)) \
     $(eval COMPATIBILITY.$(suite).FILES :=) \
-    $(eval COMPATIBILITY.$(suite).MODULES :=)) \
+    $(eval COMPATIBILITY.$(suite).MODULES :=) \
+    $(eval COMPATIBILITY.$(suite).API_MAP_FILES :=)) \
   $(eval COMPATIBILITY.$(suite).FILES += \
     $$(foreach f,$$(my_compat_dist_$(suite)),$$(call word-colon,2,$$(f))) \
     $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(call word-colon,2,$$(f))) \
     $$(my_compat_dist_test_data_$(suite))) \
+  $(eval COMPATIBILITY.$(suite).API_MAP_FILES += $$(my_compat_api_map_$(suite))) \
   $(eval ALL_COMPATIBILITY_DIST_FILES += $$(my_compat_dist_$(suite))) \
   $(eval COMPATIBILITY.$(suite).MODULES += $$(my_register_name))) \
 $(eval $(my_all_targets) : \

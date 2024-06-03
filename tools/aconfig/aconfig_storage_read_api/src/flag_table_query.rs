@@ -18,18 +18,23 @@
 
 use crate::{AconfigStorageError, FILE_VERSION};
 use aconfig_storage_file::{
-    flag_table::FlagTableHeader, flag_table::FlagTableNode, read_u32_from_bytes,
+    flag_table::FlagTableHeader, flag_table::FlagTableNode, read_u32_from_bytes, StoredFlagType,
 };
 use anyhow::anyhow;
 
-pub type FlagOffset = u16;
+/// Flag table query return
+#[derive(PartialEq, Debug)]
+pub struct FlagReadContext {
+    pub flag_type: StoredFlagType,
+    pub flag_index: u16,
+}
 
-/// Query flag within package offset
-pub fn find_flag_offset(
+/// Query flag read context: flag type and within package flag index
+pub fn find_flag_read_context(
     buf: &[u8],
     package_id: u32,
     flag: &str,
-) -> Result<Option<FlagOffset>, AconfigStorageError> {
+) -> Result<Option<FlagReadContext>, AconfigStorageError> {
     let interpreted_header = FlagTableHeader::from_bytes(buf)?;
     if interpreted_header.version > crate::FILE_VERSION {
         return Err(AconfigStorageError::HigherStorageFileVersion(anyhow!(
@@ -53,7 +58,10 @@ pub fn find_flag_offset(
     loop {
         let interpreted_node = FlagTableNode::from_bytes(&buf[flag_node_offset..])?;
         if interpreted_node.package_id == package_id && interpreted_node.flag_name == flag {
-            return Ok(Some(interpreted_node.flag_id));
+            return Ok(Some(FlagReadContext {
+                flag_type: interpreted_node.flag_type,
+                flag_index: interpreted_node.flag_index,
+            }));
         }
         match interpreted_node.next_offset {
             Some(offset) => flag_node_offset = offset as usize,
@@ -65,96 +73,38 @@ pub fn find_flag_offset(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::{FlagTable, StorageFileType};
-
-    // create test baseline, syntactic sugar
-    fn new_expected_node(
-        package_id: u32,
-        flag_name: &str,
-        flag_type: u16,
-        flag_id: u16,
-        next_offset: Option<u32>,
-    ) -> FlagTableNode {
-        FlagTableNode {
-            package_id,
-            flag_name: flag_name.to_string(),
-            flag_type,
-            flag_id,
-            next_offset,
-        }
-    }
-
-    pub fn create_test_flag_table() -> FlagTable {
-        let header = FlagTableHeader {
-            version: crate::FILE_VERSION,
-            container: String::from("system"),
-            file_type: StorageFileType::FlagMap as u8,
-            file_size: 321,
-            num_flags: 8,
-            bucket_offset: 31,
-            node_offset: 99,
-        };
-        let buckets: Vec<Option<u32>> = vec![
-            Some(99),
-            Some(125),
-            None,
-            None,
-            None,
-            Some(178),
-            None,
-            Some(204),
-            None,
-            Some(262),
-            None,
-            None,
-            None,
-            None,
-            None,
-            Some(294),
-            None,
-        ];
-        let nodes = vec![
-            new_expected_node(0, "enabled_ro", 1, 1, None),
-            new_expected_node(0, "enabled_rw", 1, 2, Some(151)),
-            new_expected_node(1, "disabled_ro", 1, 0, None),
-            new_expected_node(2, "enabled_ro", 1, 1, None),
-            new_expected_node(1, "enabled_fixed_ro", 1, 1, Some(236)),
-            new_expected_node(1, "enabled_ro", 1, 2, None),
-            new_expected_node(2, "enabled_fixed_ro", 1, 0, None),
-            new_expected_node(0, "disabled_rw", 1, 0, None),
-        ];
-        FlagTable { header, buckets, nodes }
-    }
+    use aconfig_storage_file::test_utils::create_test_flag_table;
 
     #[test]
     // this test point locks down table query
     fn test_flag_query() {
-        let flag_table = create_test_flag_table().as_bytes();
+        let flag_table = create_test_flag_table().into_bytes();
         let baseline = vec![
-            (0, "enabled_ro", 1u16),
-            (0, "enabled_rw", 2u16),
-            (1, "disabled_ro", 0u16),
-            (2, "enabled_ro", 1u16),
-            (1, "enabled_fixed_ro", 1u16),
-            (1, "enabled_ro", 2u16),
-            (2, "enabled_fixed_ro", 0u16),
-            (0, "disabled_rw", 0u16),
+            (0, "enabled_ro", StoredFlagType::ReadOnlyBoolean, 1u16),
+            (0, "enabled_rw", StoredFlagType::ReadWriteBoolean, 2u16),
+            (2, "enabled_rw", StoredFlagType::ReadWriteBoolean, 1u16),
+            (1, "disabled_rw", StoredFlagType::ReadWriteBoolean, 0u16),
+            (1, "enabled_fixed_ro", StoredFlagType::FixedReadOnlyBoolean, 1u16),
+            (1, "enabled_ro", StoredFlagType::ReadOnlyBoolean, 2u16),
+            (2, "enabled_fixed_ro", StoredFlagType::FixedReadOnlyBoolean, 0u16),
+            (0, "disabled_rw", StoredFlagType::ReadWriteBoolean, 0u16),
         ];
-        for (package_id, flag_name, expected_offset) in baseline.into_iter() {
-            let flag_offset =
-                find_flag_offset(&flag_table[..], package_id, flag_name).unwrap().unwrap();
-            assert_eq!(flag_offset, expected_offset);
+        for (package_id, flag_name, flag_type, flag_index) in baseline.into_iter() {
+            let flag_context =
+                find_flag_read_context(&flag_table[..], package_id, flag_name).unwrap().unwrap();
+            assert_eq!(flag_context.flag_type, flag_type);
+            assert_eq!(flag_context.flag_index, flag_index);
         }
     }
 
     #[test]
     // this test point locks down table query of a non exist flag
     fn test_not_existed_flag_query() {
-        let flag_table = create_test_flag_table().as_bytes();
-        let flag_offset = find_flag_offset(&flag_table[..], 1, "disabled_fixed_ro").unwrap();
-        assert_eq!(flag_offset, None);
-        let flag_offset = find_flag_offset(&flag_table[..], 2, "disabled_rw").unwrap();
-        assert_eq!(flag_offset, None);
+        let flag_table = create_test_flag_table().into_bytes();
+        let flag_context = find_flag_read_context(&flag_table[..], 1, "disabled_fixed_ro").unwrap();
+        assert_eq!(flag_context, None);
+        let flag_context = find_flag_read_context(&flag_table[..], 2, "disabled_rw").unwrap();
+        assert_eq!(flag_context, None);
     }
 
     #[test]
@@ -162,8 +112,8 @@ mod tests {
     fn test_higher_version_storage_file() {
         let mut table = create_test_flag_table();
         table.header.version = crate::FILE_VERSION + 1;
-        let flag_table = table.as_bytes();
-        let error = find_flag_offset(&flag_table[..], 0, "enabled_ro").unwrap_err();
+        let flag_table = table.into_bytes();
+        let error = find_flag_read_context(&flag_table[..], 0, "enabled_ro").unwrap_err();
         assert_eq!(
             format!("{:?}", error),
             format!(

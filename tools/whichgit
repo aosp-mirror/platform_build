@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import itertools
 import os
 import subprocess
 import sys
@@ -10,15 +11,34 @@ def get_build_var(var):
                         check=True, capture_output=True, text=True).stdout.strip()
 
 
+def get_all_modules():
+  product_out = subprocess.run(["build/soong/soong_ui.bash", "--dumpvar-mode", "--abs", "PRODUCT_OUT"],
+                                check=True, capture_output=True, text=True).stdout.strip()
+  result = subprocess.run(["cat", product_out + "/all_modules.txt"], check=True, capture_output=True, text=True)
+  return result.stdout.strip().split("\n")
+
+
+def batched(iterable, n):
+  # introduced in itertools 3.12, could delete once that's universally available
+  if n < 1:
+    raise ValueError('n must be at least one')
+  it = iter(iterable)
+  while batch := tuple(itertools.islice(it, n)):
+    yield batch
+
+
 def get_sources(modules):
-  result = subprocess.run(["./prebuilts/build-tools/linux-x86/bin/ninja", "-f",
-                           "out/combined-" + os.environ["TARGET_PRODUCT"] + ".ninja",
-                           "-t", "inputs", "-d", ] + modules,
-                          stderr=subprocess.STDOUT, stdout=subprocess.PIPE, check=False, text=True)
-  if result.returncode != 0:
-    sys.stderr.write(result.stdout)
-    sys.exit(1)
-  return set([f for f in result.stdout.split("\n") if not f.startswith("out/")])
+  sources = set()
+  for module_group in batched(modules, 40_000):
+    result = subprocess.run(["./prebuilts/build-tools/linux-x86/bin/ninja", "-f",
+                            "out/combined-" + os.environ["TARGET_PRODUCT"] + ".ninja",
+                            "-t", "inputs", "-d", ] + list(module_group),
+                            stderr=subprocess.STDOUT, stdout=subprocess.PIPE, check=False, text=True)
+    if result.returncode != 0:
+      sys.stderr.write(result.stdout)
+      sys.exit(1)
+    sources.update(set([f for f in result.stdout.split("\n") if not f.startswith("out/")]))
+  return sources
 
 
 def m_nothing():
@@ -50,57 +70,76 @@ def get_referenced_projects(git_dirs, files):
         referenced_dirs.add(d)
         prev_dir = d
         break
-  return [d[0:-1] for d in referenced_dirs]
+  return referenced_dirs
 
 
 def main(argv):
   # Argument parsing
   ap = argparse.ArgumentParser(description="List the required git projects for the given modules")
   ap.add_argument("--products", nargs="*",
-                  help="The TARGET_PRODUCT to check. If not provided just uses whatever has"
-                        + " already been built")
+                  help="One or more TARGET_PRODUCT to check, or \"*\" for all. If not provided"
+                        + "just uses whatever has already been built")
   ap.add_argument("--variants", nargs="*",
                   help="The TARGET_BUILD_VARIANTS to check. If not provided just uses whatever has"
                         + " already been built, or eng if --products is supplied")
   ap.add_argument("--modules", nargs="*",
-                  help="The build modules to check, or droid it not supplied")
+                  help="The build modules to check, or \"*\" for all, or droid if not supplied")
   ap.add_argument("--why", nargs="*",
                   help="Also print the input files used in these projects, or \"*\" for all")
+  ap.add_argument("--unused", help="List the unused git projects for the given modules rather than"
+                        + "the used ones. Ignores --why", action="store_true")
   args = ap.parse_args(argv[1:])
 
   modules = args.modules if args.modules else ["droid"]
 
+  match args.products:
+    case ["*"]:
+      products = get_build_var("all_named_products").split(" ")
+    case _:
+      products = args.products
+
   # Get the list of sources for all of the requested build combos
-  if not args.products and not args.variants:
+  if not products and not args.variants:
+    m_nothing()
+    if args.modules == ["*"]:
+      modules = get_all_modules()
     sources = get_sources(modules)
   else:
-    if not args.products:
+    if not products:
       sys.stderr.write("Error: --products must be supplied if --variants is supplied")
       sys.exit(1)
     sources = set()
     build_num = 1
-    for product in args.products:
+    for product in products:
       os.environ["TARGET_PRODUCT"] = product
       variants = args.variants if args.variants else ["user", "userdebug", "eng"]
       for variant in variants:
-        sys.stderr.write(f"Analyzing build {build_num} of {len(args.products)*len(variants)}\r")
+        sys.stderr.write(f"Analyzing build {build_num} of {len(products)*len(variants)}\r")
         os.environ["TARGET_BUILD_VARIANT"] = variant
         m_nothing()
+        if args.modules == ["*"]:
+          modules = get_all_modules()
         sources.update(get_sources(modules))
         build_num += 1
     sys.stderr.write("\n\n")
 
   sources = sorted(sources)
 
-  # Print the list of git directories that has one or more of the sources in it
-  for project in sorted(get_referenced_projects(get_git_dirs(), sources)):
-    print(project)
-    if args.why:
-      if "*" in args.why or project in args.why:
-        prefix = project + "/"
-        for f in sources:
-          if f.startswith(prefix):
-            print("  " + f)
+  if args.unused:
+    # Print the list of git directories that don't contain sources
+    used_git_dirs = set(get_git_dirs())
+    for project in sorted(used_git_dirs.difference(set(get_referenced_projects(used_git_dirs, sources)))):
+      print(project[0:-1])
+  else:
+    # Print the list of git directories that has one or more of the sources in it
+    for project in sorted(get_referenced_projects(get_git_dirs(), sources)):
+      print(project[0:-1])
+      if args.why:
+        if "*" in args.why or project[0:-1] in args.why:
+          prefix = project
+          for f in sources:
+            if f.startswith(prefix):
+              print("  " + f)
 
 
 if __name__ == "__main__":

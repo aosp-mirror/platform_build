@@ -120,10 +120,10 @@ function finalize_sdk_resources() {
     local build_tools_source="$top/development/sdk/build_tools_source.prop_template"
     sed -i -e 's/Pkg\.Revision.*/Pkg\.Revision=${PLATFORM_SDK_VERSION}.0.0/g' $build_tools_source
 
-    # build/bazel
-    local codename_version="\"${FINAL_PLATFORM_CODENAME}\": ${FINAL_PLATFORM_SDK_VERSION}"
-    if ! grep -q "$codename_version" "$top/build/bazel/rules/common/api_constants.bzl" ; then
-        sed -i -e "/:.*$((${FINAL_PLATFORM_SDK_VERSION}-1)),/a \\    $codename_version," "$top/build/bazel/rules/common/api_constants.bzl"
+    # build/soong
+    local codename_version="\"${FINAL_PLATFORM_CODENAME}\":     ${FINAL_PLATFORM_SDK_VERSION}"
+    if ! grep -q "$codename_version" "$top/build/soong/android/api_levels.go" ; then
+        sed -i -e "/:.*$((${FINAL_PLATFORM_SDK_VERSION}-1)),/a \\\t\t$codename_version," "$top/build/soong/android/api_levels.go"
     fi
 
     # cts

@@ -28,6 +28,3 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34 += \
     hwservicemanager \
     android.hidl.allocator@1.0-service \
-
-# Window Extensions
-$(call inherit-product, $(SRC_TARGET_DIR)/product/window_extensions_base.mk)

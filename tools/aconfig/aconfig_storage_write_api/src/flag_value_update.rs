@@ -22,7 +22,7 @@ use anyhow::anyhow;
 /// Set flag value
 pub fn update_boolean_flag_value(
     buf: &mut [u8],
-    flag_offset: u32,
+    flag_index: u32,
     flag_value: bool,
 ) -> Result<(), AconfigStorageError> {
     let interpreted_header = FlagValueHeader::from_bytes(buf)?;
@@ -34,10 +34,8 @@ pub fn update_boolean_flag_value(
         )));
     }
 
-    let head = (interpreted_header.boolean_value_offset + flag_offset) as usize;
-
-    // TODO: right now, there is only boolean flags, with more flag value types added
-    // later, the end of boolean flag value section should be updated (b/322826265).
+    // get byte offset to the flag
+    let head = (interpreted_header.boolean_value_offset + flag_index) as usize;
     if head >= interpreted_header.file_size as usize {
         return Err(AconfigStorageError::InvalidStorageFileOffset(anyhow!(
             "Flag value offset goes beyond the end of the file."
@@ -51,27 +49,14 @@ pub fn update_boolean_flag_value(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::{FlagValueList, StorageFileType};
-
-    pub fn create_test_flag_value_list() -> FlagValueList {
-        let header = FlagValueHeader {
-            version: FILE_VERSION,
-            container: String::from("system"),
-            file_type: StorageFileType::FlagVal as u8,
-            file_size: 35,
-            num_flags: 8,
-            boolean_value_offset: 27,
-        };
-        let booleans: Vec<bool> = vec![false; 8];
-        FlagValueList { header, booleans }
-    }
+    use aconfig_storage_file::test_utils::create_test_flag_value_list;
 
     #[test]
     // this test point locks down flag value update
     fn test_boolean_flag_value_update() {
         let flag_value_list = create_test_flag_value_list();
         let value_offset = flag_value_list.header.boolean_value_offset;
-        let mut content = flag_value_list.as_bytes();
+        let mut content = flag_value_list.into_bytes();
         let true_byte = u8::from(true).to_le_bytes()[0];
         let false_byte = u8::from(false).to_le_bytes()[0];
 
@@ -87,7 +72,7 @@ mod tests {
     #[test]
     // this test point locks down update beyond the end of boolean section
     fn test_boolean_out_of_range() {
-        let mut flag_value_list = create_test_flag_value_list().as_bytes();
+        let mut flag_value_list = create_test_flag_value_list().into_bytes();
         let error = update_boolean_flag_value(&mut flag_value_list[..], 8, true).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
@@ -100,7 +85,7 @@ mod tests {
     fn test_higher_version_storage_file() {
         let mut value_list = create_test_flag_value_list();
         value_list.header.version = FILE_VERSION + 1;
-        let mut flag_value = value_list.as_bytes();
+        let mut flag_value = value_list.into_bytes();
         let error = update_boolean_flag_value(&mut flag_value[..], 4, true).unwrap_err();
         assert_eq!(
             format!("{:?}", error),

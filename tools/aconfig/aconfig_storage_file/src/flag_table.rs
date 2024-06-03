@@ -21,7 +21,7 @@ use crate::{
     get_bucket_index, read_str_from_bytes, read_u16_from_bytes, read_u32_from_bytes,
     read_u8_from_bytes,
 };
-use crate::{AconfigStorageError, StorageFileType};
+use crate::{AconfigStorageError, StorageFileType, StoredFlagType};
 use anyhow::anyhow;
 use std::fmt;
 
@@ -59,7 +59,7 @@ impl fmt::Debug for FlagTableHeader {
 
 impl FlagTableHeader {
     /// Serialize to bytes
-    pub fn as_bytes(&self) -> Vec<u8> {
+    pub fn into_bytes(&self) -> Vec<u8> {
         let mut result = Vec::new();
         result.extend_from_slice(&self.version.to_le_bytes());
         let container_bytes = self.container.as_bytes();
@@ -99,8 +99,9 @@ impl FlagTableHeader {
 pub struct FlagTableNode {
     pub package_id: u32,
     pub flag_name: String,
-    pub flag_type: u16,
-    pub flag_id: u16,
+    pub flag_type: StoredFlagType,
+    // within package flag index of this flag type
+    pub flag_index: u16,
     pub next_offset: Option<u32>,
 }
 
@@ -109,8 +110,8 @@ impl fmt::Debug for FlagTableNode {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         writeln!(
             f,
-            "Package Id: {}, Flag: {}, Type: {}, Offset: {}, Next: {:?}",
-            self.package_id, self.flag_name, self.flag_type, self.flag_id, self.next_offset
+            "Package Id: {}, Flag: {}, Type: {:?}, Index: {}, Next: {:?}",
+            self.package_id, self.flag_name, self.flag_type, self.flag_index, self.next_offset
         )?;
         Ok(())
     }
@@ -118,14 +119,14 @@ impl fmt::Debug for FlagTableNode {
 
 impl FlagTableNode {
     /// Serialize to bytes
-    pub fn as_bytes(&self) -> Vec<u8> {
+    pub fn into_bytes(&self) -> Vec<u8> {
         let mut result = Vec::new();
         result.extend_from_slice(&self.package_id.to_le_bytes());
         let name_bytes = self.flag_name.as_bytes();
         result.extend_from_slice(&(name_bytes.len() as u32).to_le_bytes());
         result.extend_from_slice(name_bytes);
-        result.extend_from_slice(&self.flag_type.to_le_bytes());
-        result.extend_from_slice(&self.flag_id.to_le_bytes());
+        result.extend_from_slice(&(self.flag_type as u16).to_le_bytes());
+        result.extend_from_slice(&self.flag_index.to_le_bytes());
         result.extend_from_slice(&self.next_offset.unwrap_or(0).to_le_bytes());
         result
     }
@@ -136,8 +137,8 @@ impl FlagTableNode {
         let node = Self {
             package_id: read_u32_from_bytes(bytes, &mut head)?,
             flag_name: read_str_from_bytes(bytes, &mut head)?,
-            flag_type: read_u16_from_bytes(bytes, &mut head)?,
-            flag_id: read_u16_from_bytes(bytes, &mut head)?,
+            flag_type: StoredFlagType::try_from(read_u16_from_bytes(bytes, &mut head)?)?,
+            flag_index: read_u16_from_bytes(bytes, &mut head)?,
             next_offset: match read_u32_from_bytes(bytes, &mut head)? {
                 0 => None,
                 val => Some(val),
@@ -178,11 +179,11 @@ impl fmt::Debug for FlagTable {
 /// Flag table struct
 impl FlagTable {
     /// Serialize to bytes
-    pub fn as_bytes(&self) -> Vec<u8> {
+    pub fn into_bytes(&self) -> Vec<u8> {
         [
-            self.header.as_bytes(),
+            self.header.into_bytes(),
             self.buckets.iter().map(|v| v.unwrap_or(0).to_le_bytes()).collect::<Vec<_>>().concat(),
-            self.nodes.iter().map(|v| v.as_bytes()).collect::<Vec<_>>().concat(),
+            self.nodes.iter().map(|v| v.into_bytes()).collect::<Vec<_>>().concat(),
         ]
         .concat()
     }
@@ -192,7 +193,7 @@ impl FlagTable {
         let header = FlagTableHeader::from_bytes(bytes)?;
         let num_flags = header.num_flags;
         let num_buckets = crate::get_table_size(num_flags)?;
-        let mut head = header.as_bytes().len();
+        let mut head = header.into_bytes().len();
         let buckets = (0..num_buckets)
             .map(|_| match read_u32_from_bytes(bytes, &mut head).unwrap() {
                 0 => None,
@@ -202,7 +203,7 @@ impl FlagTable {
         let nodes = (0..num_flags)
             .map(|_| {
                 let node = FlagTableNode::from_bytes(&bytes[head..])?;
-                head += node.as_bytes().len();
+                head += node.into_bytes().len();
                 Ok(node)
             })
             .collect::<Result<Vec<_>, AconfigStorageError>>()
@@ -226,17 +227,17 @@ mod tests {
         let flag_table = create_test_flag_table();
 
         let header: &FlagTableHeader = &flag_table.header;
-        let reinterpreted_header = FlagTableHeader::from_bytes(&header.as_bytes());
+        let reinterpreted_header = FlagTableHeader::from_bytes(&header.into_bytes());
         assert!(reinterpreted_header.is_ok());
         assert_eq!(header, &reinterpreted_header.unwrap());
 
         let nodes: &Vec<FlagTableNode> = &flag_table.nodes;
         for node in nodes.iter() {
-            let reinterpreted_node = FlagTableNode::from_bytes(&node.as_bytes()).unwrap();
+            let reinterpreted_node = FlagTableNode::from_bytes(&node.into_bytes()).unwrap();
             assert_eq!(node, &reinterpreted_node);
         }
 
-        let flag_table_bytes = flag_table.as_bytes();
+        let flag_table_bytes = flag_table.into_bytes();
         let reinterpreted_table = FlagTable::from_bytes(&flag_table_bytes);
         assert!(reinterpreted_table.is_ok());
         assert_eq!(&flag_table, &reinterpreted_table.unwrap());
@@ -248,10 +249,10 @@ mod tests {
     // bytes
     fn test_version_number() {
         let flag_table = create_test_flag_table();
-        let bytes = &flag_table.as_bytes();
+        let bytes = &flag_table.into_bytes();
         let mut head = 0;
         let version = read_u32_from_bytes(bytes, &mut head).unwrap();
-        assert_eq!(version, 1234)
+        assert_eq!(version, 1);
     }
 
     #[test]
@@ -259,7 +260,7 @@ mod tests {
     fn test_file_type_check() {
         let mut flag_table = create_test_flag_table();
         flag_table.header.file_type = 123u8;
-        let error = FlagTable::from_bytes(&flag_table.as_bytes()).unwrap_err();
+        let error = FlagTable::from_bytes(&flag_table.into_bytes()).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
             format!("BytesParseFail(binary file is not a flag map)")

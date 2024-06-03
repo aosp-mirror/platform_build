@@ -44,19 +44,19 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
-# Disable the build-time debugfs restrictions on GSI builds
-PRODUCT_SET_DEBUGFS_RESTRICTIONS := false
-
 # GSI specific tasks on boot
 PRODUCT_PACKAGES += \
     gsi_skip_mount.cfg \
     init.gsi.rc \
     init.vndk-nodef.rc \
 
+
 # Overlay the GSI specific SystemUI setting
-PRODUCT_PACKAGES += gsi_overlay_systemui
-PRODUCT_COPY_FILES += \
-    device/generic/common/overlays/overlay-config.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/overlay/config/config.xml
+ifneq ($(PRODUCT_IS_AUTOMOTIVE),true)
+    PRODUCT_PACKAGES += gsi_overlay_systemui
+    PRODUCT_COPY_FILES += \
+        device/generic/common/overlays/overlay-config.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/overlay/config/config.xml
+endif
 
 # b/308878144 no more VNDK on 24Q1 and beyond
 KEEP_VNDK ?= false

@@ -33,8 +33,7 @@ _product_single_value_vars += PRODUCT_MODEL_FOR_ATTESTATION
 # 4096, 16384 and 65536.
 _product_single_value_vars += PRODUCT_MAX_PAGE_SIZE_SUPPORTED
 
-# Indicates that AOSP can use a kernel configured with 4k/16k/64k page sizes.
-# The possible values are true or false.
+# Boolean variable determining if AOSP relies on bionic's PAGE_SIZE macro.
 _product_single_value_vars += PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO
 
 # The resource configuration options to use for this product.
@@ -326,6 +325,13 @@ _product_single_value_vars += \
 # set this variable to prevent OTA failures.
 _product_list_vars += PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 
+# If set to true, this product forces HIDL to be enabled by declaring android.hidl.manager
+# and android.hidl.token in the framework manifest. The product will also need to add the
+# 'hwservicemanager' service to PRODUCT_PACKAGES if its SHIPPING_API_LEVEL is greater than 34.
+# This should only be used during bringup for devices that are targeting FCM 202404 and still
+# have partner-owned HIDL interfaces that are being converted to AIDL.
+_product_single_value_vars += PRODUCT_HIDL_ENABLED
+
 # If set to true, this product builds a generic OTA package, which installs generic system images
 # onto matching devices. The product may only build a subset of system images (e.g. only
 # system.img), so devices need to install the package in a system-only OTA manner.
@@ -412,15 +418,25 @@ _product_single_value_vars += PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
 # /system/etc/security/fsverity/BuildManifest.apk
 _product_single_value_vars += PRODUCT_FSVERITY_GENERATE_METADATA
 
-# If true, sets the default for MODULE_BUILD_FROM_SOURCE. This overrides
-# BRANCH_DEFAULT_MODULE_BUILD_FROM_SOURCE but not an explicitly set value.
+# If true, this builds the mainline modules from source. This overrides any
+# prebuilts selected via RELEASE_APEX_CONTRIBUTIONS_* build flags for the
+# current release config.
 _product_single_value_vars += PRODUCT_MODULE_BUILD_FROM_SOURCE
 
 # If true, installs a full version of com.android.virt APEX.
 _product_single_value_vars += PRODUCT_AVF_ENABLED
 
+# If false, disable the AVF remote attestaton feature.
+_product_single_value_vars += PRODUCT_AVF_REMOTE_ATTESTATION_DISABLED
+
 # If true, kernel with modules will be used for Microdroid VMs.
 _product_single_value_vars += PRODUCT_AVF_KERNEL_MODULES_ENABLED
+
+# If true, the memory controller will be force-enabled in the cgroup v2 hierarchy
+_product_single_value_vars += PRODUCT_MEMCG_V2_FORCE_ENABLED
+
+# If true, the cgroup v2 hierarchy will be split into apps/system subtrees
+_product_single_value_vars += PRODUCT_CGROUP_V2_SYS_APP_ISOLATION_ENABLED
 
 # List of .json files to be merged/compiled into vendor/etc/linker.config.pb
 _product_list_vars += PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS
@@ -434,12 +450,16 @@ _product_list_vars += PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS
 #   device may have to re-compile everything on the first boot if the kernel doesn't support
 #   userfaultfd
 # - "false": disallows the build system and the runtime to use userfaultfd GC even if the device
-#   supports it
+#   supports it. This option is temporary - the plan is to remove it by Aug 2025, at which time
+#   Mainline updates of the ART module will ignore it as well.
 _product_single_value_vars += PRODUCT_ENABLE_UFFD_GC
 
 # Specifies COW version to be used by update_engine and libsnapshot. If this value is not
 # specified we default to COW version 2 in update_engine for backwards compatibility
 _product_single_value_vars += PRODUCT_VIRTUAL_AB_COW_VERSION
+
+# Specifies maximum bytes to be compressed at once during ota. Options: 4096, 8192, 16384, 32768, 65536, 131072, 262144.
+_product_single_value_vars += PRODUCT_VIRTUAL_AB_COMPRESSION_FACTOR
 
 # If set, determines whether the build system checks vendor seapp contexts violations.
 _product_single_value_vars += PRODUCT_CHECK_VENDOR_SEAPP_VIOLATIONS
@@ -457,11 +477,18 @@ _product_list_vars += PRODUCT_VALIDATION_CHECKS
 
 _product_single_value_vars += PRODUCT_BUILD_FROM_SOURCE_STUB
 
-_product_list_vars += PRODUCT_BUILD_IGNORE_APEX_CONTRIBUTION_CONTENTS
+_product_single_value_vars += PRODUCT_BUILD_IGNORE_APEX_CONTRIBUTION_CONTENTS
 
 _product_single_value_vars += PRODUCT_HIDDEN_API_EXPORTABLE_STUBS
 
 _product_single_value_vars += PRODUCT_EXPORT_RUNTIME_APIS
+
+# If set, determines which version of the GKI is used as guest kernel for Microdroid VMs.
+# TODO(b/325991735): link to documentation once it is done.
+_product_single_value_vars += PRODUCT_AVF_MICRODROID_GUEST_GKI_VERSION
+
+# Enables 16KB developer option for device if set.
+_product_single_value_vars += PRODUCT_16K_DEVELOPER_OPTION
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
