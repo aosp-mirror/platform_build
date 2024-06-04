@@ -202,6 +202,12 @@ ifneq (,$(filter $(LOCAL_MODULE_TAGS),tests))
 endif
 ifneq (,$(LOCAL_COMPATIBILITY_SUITE))
   LOCAL_ENFORCE_USES_LIBRARIES := false
+
+  # Enable the check for WTS
+  ifneq ($(filter wts,$(LOCAL_COMPATIBILITY_SUITE)),)
+    LOCAL_ENFORCE_USES_LIBRARIES := true
+  endif
+
 endif
 
 # Disable the check if the app contains no java code.
