@@ -385,6 +385,7 @@ function addcompletions()
         complete -F _bazel__complete -o nospace b
     fi
     complete -F _lunch lunch
+    complete -F _lunch_completion lunch2
 
     complete -F _complete_android_module_names pathmod
     complete -F _complete_android_module_names gomod
@@ -496,9 +497,18 @@ function lunch()
         return 1
     fi
 
+    _lunch_meat $product $release $variant
+}
+
+function _lunch_meat()
+{
+    local product=$1
+    local release=$2
+    local variant=$3
+
     TARGET_PRODUCT=$product \
-    TARGET_BUILD_VARIANT=$variant \
     TARGET_RELEASE=$release \
+    TARGET_BUILD_VARIANT=$variant \
     build_build_var_cache
     if [ $? -ne 0 ]
     then
@@ -519,14 +529,11 @@ function lunch()
     set_stuff_for_environment
     [[ -n "${ANDROID_QUIET_BUILD:-}" ]] || printconfig
 
-    if [ "${TARGET_BUILD_VARIANT}" = "userdebug" ] && [[  -z "${ANDROID_QUIET_BUILD}" ]]; then
-      echo
-      echo "Want FASTER LOCAL BUILDS? Use -eng instead of -userdebug (however for" \
-        "performance benchmarking continue to use userdebug)"
-    fi
-    if [ $used_lunch_menu -eq 1 ]; then
-      echo
-      echo "Hint: next time you can simply run 'lunch $selection'"
+    if [[ -z "${ANDROID_QUIET_BUILD}" ]]; then
+        local spam_for_lunch=$(gettop)/build/make/tools/envsetup/spam_for_lunch
+        if [[ -x $spam_for_lunch ]]; then
+            $spam_for_lunch
+        fi
     fi
 
     destroy_build_var_cache
@@ -552,6 +559,112 @@ function _lunch()
     COMPREPLY=( $(compgen -W "${COMMON_LUNCH_CHOICES_CACHE}" -- ${cur}) )
     return 0
 }
+
+function _lunch_usage()
+{
+    (
+        echo "The lunch command selects the configuration to use for subsequent"
+        echo "Android builds."
+        echo
+        echo "Usage: lunch TARGET_PRODUCT [TARGET_RELEASE [TARGET_BUILD_VARIANT]]"
+        echo
+        echo "  Choose the product, release and variant to use. If not"
+        echo "  supplied, TARGET_RELEASE will be 'trunk_staging' and"
+        echo "  TARGET_BUILD_VARIANT will be 'eng'"
+        echo
+        echo
+        echo "Usage: lunch TARGET_PRODUCT-TARGET_RELEASE-TARGET_BUILD_VARIANT"
+        echo
+        echo "  Chose the product, release and variant to use. This"
+        echo "  legacy format is maintained for compatibility."
+        echo
+        echo
+        echo "Note that the previous interactive menu and list of hard-coded"
+        echo "list of curated targets has been removed. If you would like the"
+        echo "list of products, release configs for a particular product, or"
+        echo "variants, run list_products, list_release_configs, list_variants"
+        echo "respectively."
+        echo
+    ) 1>&2
+}
+
+function lunch2()
+{
+    if [[ $# -eq 1 && $1 = "--help" ]]; then
+        _lunch_usage
+        return 0
+    fi
+    if [[ $# -eq 0 ]]; then
+        echo "No target specified. See lunch --help" 1>&2
+        return 1
+    fi
+    if [[ $# -gt 3 ]]; then
+        echo "Too many parameters given. See lunch --help" 1>&2
+        return 1
+    fi
+
+    local product release variant
+
+    # Handle the legacy format
+    local legacy=$(echo $1 | grep "-")
+    if [[ $# -eq 1 && -n $legacy ]]; then
+        IFS="-" read -r product release variant <<< "$1"
+        if [[ -z "$product" ]] || [[ -z "$release" ]] || [[ -z "$variant" ]]; then
+            echo "Invalid lunch combo: $1" 1>&2
+            echo "Valid combos must be of the form <product>-<release>-<variant> when using" 1>&2
+            echo "the legacy format.  Run 'lunch --help' for usage." 1>&2
+            return 1
+        fi
+    fi
+
+    # Handle the new format.
+    if [[ -z $legacy ]]; then
+        product=$1
+        release=$2
+        if [[ -z $release ]]; then
+            release=trunk_staging
+        fi
+        variant=$3
+        if [[ -z $variant ]]; then
+            variant=eng
+        fi
+    fi
+
+    # Validate the selection and set all the environment stuff
+    _lunch_meat $product $release $variant
+}
+
+unset ANDROID_LUNCH_COMPLETION_PRODUCT_CACHE
+unset ANDROID_LUNCH_COMPLETION_CHOSEN_PRODUCT
+unset ANDROID_LUNCH_COMPLETION_RELEASE_CACHE
+# Tab completion for lunch.
+function _lunch_completion()
+{
+    # Available products
+    if [[ $COMP_CWORD -eq 1 ]] ; then
+        if [[ -z $ANDROID_LUNCH_COMPLETION_PRODUCT_CACHE ]]; then
+            ANDROID_LUNCH_COMPLETION_PRODUCT_CACHE=$(list_products)
+        fi
+        COMPREPLY=( $(compgen -W "${ANDROID_LUNCH_COMPLETION_PRODUCT_CACHE}" -- "${COMP_WORDS[COMP_CWORD]}") )
+    fi
+
+    # Available release configs
+    if [[ $COMP_CWORD -eq 2 ]] ; then
+        if [[ -z $ANDROID_LUNCH_COMPLETION_RELEASE_CACHE || $ANDROID_LUNCH_COMPLETION_CHOSEN_PRODUCT != ${COMP_WORDS[1]} ]] ; then
+            ANDROID_LUNCH_COMPLETION_RELEASE_CACHE=$(list_releases ${COMP_WORDS[1]})
+            ANDROID_LUNCH_COMPLETION_CHOSEN_PRODUCT=${COMP_WORDS[1]}
+        fi
+        COMPREPLY=( $(compgen -W "${ANDROID_LUNCH_COMPLETION_RELEASE_CACHE}" -- "${COMP_WORDS[COMP_CWORD]}") )
+    fi
+
+    # Available variants
+    if [[ $COMP_CWORD -eq 3 ]] ; then
+        COMPREPLY=(user userdebug eng)
+    fi
+
+    return 0
+}
+
 
 # Configures the build to build unbundled apps.
 # Run tapas with one or more app names (from LOCAL_PACKAGE_NAME)
