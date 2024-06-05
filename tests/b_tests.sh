@@ -23,6 +23,10 @@ lunch aosp_arm64
 
 test_target=//build/bazel/scripts/difftool:difftool
 
+if b build //build/bazel:nonexistent_module &>/dev/null ; then
+    echo "b did not fail when building a nonexistent module" >&2
+    exit 1
+fi
 b build "$test_target"
 b build -- "$test_target"
 b build "$test_target" --run-soong-tests

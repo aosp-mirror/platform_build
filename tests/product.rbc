@@ -54,6 +54,7 @@ def init(g, handle):
   rblf.soong_config_append(g, "NS1", "v2", "def")
   rblf.soong_config_set(g, "NS2", "v3", "abc")
   rblf.soong_config_set(g, "NS2", "v3", "xyz")
+  rblf.soong_config_set(g, "NS2", "v4", "xyz   ")
 
   rblf.mkdist_for_goals(g, "goal", "dir1/file1:out1 dir1/file2:out2")
   rblf.mkdist_for_goals(g, "goal", "dir2/file2:")

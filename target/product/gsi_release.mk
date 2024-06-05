@@ -28,8 +28,8 @@
 
 BUILDING_GSI := true
 
-# Exclude all files under system/product and system/system_ext
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
+    system/etc/init/config \
     system/product/% \
     system/system_ext/%
 
@@ -44,38 +44,27 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
-# Disable the build-time debugfs restrictions on GSI builds
-PRODUCT_SET_DEBUGFS_RESTRICTIONS := false
-
-# GSI targets should install "unflattened" APEXes in /system
-TARGET_FLATTEN_APEX := false
-
-# GSI targets should install "flattened" APEXes in /system_ext as well
-PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES := true
-
-# The flattened version of com.android.apex.cts.shim.v1 should be explicitly installed
-# because the shim apex is prebuilt one and PRODUCT_INSTALL_EXTRA_FLATTENED_APEXES is not
-# supported for prebuilt_apex modules yet.
-PRODUCT_PACKAGES += com.android.apex.cts.shim.v1_with_prebuilts.flattened
-
 # GSI specific tasks on boot
 PRODUCT_PACKAGES += \
     gsi_skip_mount.cfg \
     init.gsi.rc \
     init.vndk-nodef.rc \
 
+
 # Overlay the GSI specific SystemUI setting
-PRODUCT_PACKAGES += gsi_overlay_systemui
-PRODUCT_COPY_FILES += \
-    device/generic/common/overlays/overlay-config.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/overlay/config/config.xml
+ifneq ($(PRODUCT_IS_AUTOMOTIVE),true)
+    PRODUCT_PACKAGES += gsi_overlay_systemui
+    PRODUCT_COPY_FILES += \
+        device/generic/common/overlays/overlay-config.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/overlay/config/config.xml
+endif
 
 # Support additional VNDK snapshots
 PRODUCT_EXTRA_VNDK_VERSIONS := \
-    29 \
     30 \
     31 \
     32 \
     33 \
+    34 \
 
 # Do not build non-GSI partition images.
 PRODUCT_BUILD_CACHE_IMAGE := false
@@ -93,4 +82,13 @@ PRODUCT_PRODUCT_PROPERTIES += \
     ro.crypto.metadata_init_delete_all_keys.enabled=false \
 
 # Window Extensions
+ifneq ($(PRODUCT_IS_ATV),true)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/window_extensions.mk)
+endif
+
+# A GSI is to be mixed with different boot images. That means we can't determine
+# the kernel version when building a GSI.
+# Assume the device supports UFFD. If it doesn't, the ART runtime will fall back
+# to CC, and odrefresh will regenerate core dexopt artifacts on the first boot,
+# so this is okay.
+PRODUCT_ENABLE_UFFD_GC := true

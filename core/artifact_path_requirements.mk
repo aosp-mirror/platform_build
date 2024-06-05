@@ -4,6 +4,7 @@
 # Fakes don't get installed, and NDK stubs aren't installed to device.
 static_allowed_patterns := $(TARGET_OUT_FAKE)/% $(SOONG_OUT_DIR)/ndk/%
 # RROs become REQUIRED by the source module, but are always placed on the vendor partition.
+static_allowed_patterns += %__auto_generated_characteristics_rro.apk
 static_allowed_patterns += %__auto_generated_rro_product.apk
 static_allowed_patterns += %__auto_generated_rro_vendor.apk
 # Auto-included targets are not considered

@@ -1,0 +1,9 @@
+go 1.21
+
+use (
+	.
+)
+
+replace (
+	google.golang.org/protobuf v0.0.0 => ../../../../external/golang-protobuf
+)

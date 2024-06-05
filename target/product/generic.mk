@@ -14,9 +14,6 @@
 # limitations under the License.
 #
 
-PRODUCT_SOONG_NAMESPACES += device/generic/goldfish # for libwifi-hal-emu
-PRODUCT_SOONG_NAMESPACES += device/generic/goldfish-opengl # for goldfish deps.
-
 # This is a generic phone product that isn't specialized for a specific device.
 # It includes the base Android platform.
 

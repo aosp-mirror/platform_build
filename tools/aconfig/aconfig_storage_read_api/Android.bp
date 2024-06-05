@@ -1,0 +1,138 @@
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+rust_defaults {
+    name: "aconfig_storage_read_api.defaults",
+    edition: "2021",
+    lints: "none",
+    srcs: ["src/lib.rs"],
+    rustlibs: [
+        "libanyhow",
+        "libmemmap2",
+        "libcxx",
+        "libthiserror",
+        "libaconfig_storage_file",
+    ],
+}
+
+rust_library {
+    name: "libaconfig_storage_read_api",
+    crate_name: "aconfig_storage_read_api",
+    host_supported: true,
+    defaults: ["aconfig_storage_read_api.defaults"],
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
+    min_sdk_version: "29",
+}
+
+rust_test_host {
+    name: "aconfig_storage_read_api.test",
+    test_suites: ["general-tests"],
+    defaults: ["aconfig_storage_read_api.defaults"],
+    rustlibs: [
+        "librand",
+    ],
+    data: [
+        "tests/package.map",
+        "tests/flag.map",
+        "tests/flag.val",
+        "tests/flag.info",
+    ],
+}
+
+// cxx source codegen from rust api
+genrule {
+    name: "libcxx_aconfig_storage_read_api_bridge_code",
+    tools: ["cxxbridge"],
+    cmd: "$(location cxxbridge) $(in) > $(out)",
+    srcs: ["src/lib.rs"],
+    out: ["aconfig_storage/lib.rs.cc"],
+}
+
+// cxx header codegen from rust api
+genrule {
+    name: "libcxx_aconfig_storage_read_api_bridge_header",
+    tools: ["cxxbridge"],
+    cmd: "$(location cxxbridge) $(in) --header > $(out)",
+    srcs: ["src/lib.rs"],
+    out: ["aconfig_storage/lib.rs.h"],
+}
+
+// a static cc lib based on generated code
+rust_ffi_static {
+    name: "libaconfig_storage_read_api_cxx_bridge",
+    crate_name: "aconfig_storage_read_api_cxx_bridge",
+    host_supported: true,
+    vendor_available: true,
+    product_available: true,
+    defaults: ["aconfig_storage_read_api.defaults"],
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
+    min_sdk_version: "29",
+}
+
+// flag read api cc interface
+cc_library {
+    name: "libaconfig_storage_read_api_cc",
+    srcs: ["aconfig_storage_read_api.cpp"],
+    generated_headers: [
+        "cxx-bridge-header",
+        "libcxx_aconfig_storage_read_api_bridge_header",
+    ],
+    generated_sources: ["libcxx_aconfig_storage_read_api_bridge_code"],
+    whole_static_libs: ["libaconfig_storage_read_api_cxx_bridge"],
+    export_include_dirs: ["include"],
+    host_supported: true,
+    vendor_available: true,
+    product_available: true,
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
+    min_sdk_version: "29",
+    target: {
+        linux: {
+            version_script: "libaconfig_storage_read_api_cc.map",
+        },
+    },
+    double_loadable: true,
+    afdo: true,
+}
+
+cc_defaults {
+    name: "aconfig_lib_cc_static_link.defaults",
+    shared_libs: [
+        "libaconfig_storage_read_api_cc",
+        "liblog",
+    ],
+}
+
+rust_ffi_shared {
+    name: "libaconfig_storage_read_api_rust_jni",
+    crate_name: "aconfig_storage_read_api_rust_jni",
+    srcs: ["srcs/lib.rs"],
+    rustlibs: [
+        "libaconfig_storage_read_api",
+        "libanyhow",
+        "libjni",
+    ],
+    prefer_rlib: true,
+}
+
+java_library {
+    name: "libaconfig_storage_read_api_java",
+    srcs: [
+        "srcs/**/*.java",
+    ],
+    required: ["libaconfig_storage_read_api_rust_jni"],
+    min_sdk_version: "UpsideDownCake",
+    apex_available: [
+        "//apex_available:anyapex",
+        "//apex_available:platform",
+    ],
+}

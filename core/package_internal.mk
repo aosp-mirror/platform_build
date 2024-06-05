@@ -203,10 +203,10 @@ my_res_resources := $(if $(my_res_dir),$(strip \
 all_resources := $(strip $(my_res_resources) $(my_overlay_resources))
 
 # The linked resource package.
-my_res_package := $(intermediates)/package-res.apk
+my_res_package := $(intermediates.COMMON)/package-res.apk
 LOCAL_INTERMEDIATE_TARGETS += $(my_res_package)
 
-my_bundle_module := $(intermediates)/base.zip
+my_bundle_module := $(intermediates.COMMON)/base.zip
 LOCAL_INTERMEDIATE_TARGETS += $(my_bundle_module)
 
 # Always run aapt2, because we need to at least compile the AndroidManifest.xml.
@@ -531,7 +531,7 @@ $(LOCAL_BUILT_MODULE) : $(JAR_ARGS) $(SOONG_ZIP) $(MERGE_ZIPS) $(ZIP2ZIP)
 $(LOCAL_BUILT_MODULE): PRIVATE_RES_PACKAGE := $(my_res_package)
 $(LOCAL_BUILT_MODULE) : $(my_res_package) $(AAPT2)
 ifdef LOCAL_COMPRESSED_MODULE
-$(LOCAL_BUILT_MODULE) : $(MINIGZIP)
+$(LOCAL_BUILT_MODULE) : $(GZIP)
 endif
 ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
 $(LOCAL_BUILT_MODULE) : $(ZIP2ZIP)
@@ -572,7 +572,7 @@ ifdef LOCAL_COMPRESSED_MODULE
 	$(compress-package)
 endif  # LOCAL_COMPRESSED_MODULE
 
-my_package_res_pb := $(intermediates)/package-res.pb.apk
+my_package_res_pb := $(intermediates.COMMON)/package-res.pb.apk
 $(my_package_res_pb): $(my_res_package) $(AAPT2)
 	$(AAPT2) convert --output-format proto $< -o $@
 

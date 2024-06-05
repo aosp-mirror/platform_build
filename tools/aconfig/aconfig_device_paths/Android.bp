@@ -1,0 +1,51 @@
+// Copyright (C) 2024 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+rust_defaults {
+    name: "libaconfig_device_paths.defaults",
+    edition: "2021",
+    clippy_lints: "android",
+    lints: "android",
+    srcs: ["src/lib.rs"],
+    rustlibs: [
+        "libaconfig_protos",
+        "libanyhow",
+        "libprotobuf",
+        "libregex",
+    ],
+}
+
+rust_library {
+    name: "libaconfig_device_paths",
+    crate_name: "aconfig_device_paths",
+    host_supported: true,
+    defaults: ["libaconfig_device_paths.defaults"],
+}
+
+genrule {
+    name: "libaconfig_java_device_paths_src",
+    srcs: ["src/DevicePathsTemplate.java"],
+    out: ["DevicePaths.java"],
+    tool_files: ["partition_aconfig_flags_paths.txt"],
+    cmd: "sed -e '/TEMPLATE/{r$(location partition_aconfig_flags_paths.txt)' -e 'd}' $(in) > $(out)"
+}
+
+java_library {
+    name: "aconfig_device_paths_java",
+    srcs: [":libaconfig_java_device_paths_src"],
+}

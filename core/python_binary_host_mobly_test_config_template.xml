@@ -13,13 +13,9 @@
 <configuration description="Config for {MODULE} mobly test">
     {EXTRA_CONFIGS}
 
-    <device name="device1"></device>
-    <device name="device2"></device>
+    <device name="AndroidRealDevice"></device>
+    <device name="AndroidRealDevice"></device>
 
-    <test class="com.android.tradefed.testtype.mobly.MoblyBinaryHostTest">
-      <!-- The mobly-par-file-name should match the module name -->
-      <option name="mobly-par-file-name" value="{MODULE}" />
-      <!-- Timeout limit in milliseconds for all test cases of the python binary -->
-      <option name="mobly-test-timeout" value="300000" />
-    </test>
+    <option name="mobly_pkg" key="file" value="{MODULE}" />
+    <test class="MoblyAospPackageTest" />
 </configuration>

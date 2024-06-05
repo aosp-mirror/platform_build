@@ -25,6 +25,7 @@ __MATH_POS_NUMBERS :=  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 2
                       61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 \
                       81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100
 __MATH_NUMBERS := 0 $(__MATH_POS_NUMBERS)
+__MATH_ONE_NUMBERS := 0 1 2 3 4 5 6 7 8 9
 
 math-error = $(call pretty-error,$(1))
 math-expect :=
@@ -36,6 +37,10 @@ math-expect-error :=
 #  make -f ${ANDROID_BUILD_TOP}/build/make/common/math.mk RUN_MATH_TESTS=true
 #  $(get_build_var CKATI) -f ${ANDROID_BUILD_TOP}//build/make/common/math.mk RUN_MATH_TESTS=true
 ifdef RUN_MATH_TESTS
+  ifndef empty
+    empty :=
+    space := $(empty) $(empty)
+  endif
   MATH_TEST_FAILURE :=
   MATH_TEST_ERROR :=
   math-error = $(if $(MATH_TEST_ERROR),,$(eval MATH_TEST_ERROR:=$(1)))
@@ -61,11 +66,27 @@ ifdef RUN_MATH_TESTS
 endif
 
 # Returns true if $(1) is a non-negative integer <= 100, otherwise returns nothing.
-define math_is_number
+define math_is_number_in_100
 $(strip \
   $(if $(1),,$(call math-error,Argument missing)) \
   $(if $(word 2,$(1)),$(call math-error,Multiple words in a single argument: $(1))) \
   $(if $(filter $(1),$(__MATH_NUMBERS)),true))
+endef
+
+# Same with math_is_number_in_100, but no limit.
+define _math_ext_is_number
+$(strip \
+  $(if $(1),,$(call math-error,Argument missing)) \
+  $(if $(word 2,$(1)),$(call math-error,Multiple words in a single argument: $(1))) \
+  $(eval should_empty:=$(1)) \
+  $(foreach num,$(__MATH_ONE_NUMBERS),\
+    $(eval should_empty:=$(subst $(num),$(empty),$(should_empty)))) \
+  $(if $(should_empty),,true))
+endef
+
+# Returns true if $(1) is a non-negative integer.
+define math_is_number
+$(strip $(if $(call math_is_number_in_100,$(1)),true,$(call _math_ext_is_number,$(1))))
 endef
 
 define math_is_zero
@@ -76,6 +97,7 @@ endef
 
 $(call math-expect-true,(call math_is_number,0))
 $(call math-expect-true,(call math_is_number,2))
+$(call math-expect-true,(call math_is_number,202412))
 $(call math-expect-false,(call math_is_number,foo))
 $(call math-expect-false,(call math_is_number,-1))
 $(call math-expect-error,(call math_is_number,1 2),Multiple words in a single argument: 1 2)
@@ -88,7 +110,7 @@ $(call math-expect-error,(call math_is_zero,1 2),Multiple words in a single argu
 $(call math-expect-error,(call math_is_zero,no 2),Multiple words in a single argument: no 2)
 
 define _math_check_valid
-$(if $(call math_is_number,$(1)),,$(call math-error,Only non-negative integers <= 100 are supported (not $(1))))
+$(if $(call math_is_number_in_100,$(1)),,$(call math-error,Only non-negative integers <= 100 are supported (not $(1))))
 endef
 
 $(call math-expect,(call _math_check_valid,0))
@@ -113,18 +135,81 @@ $(call math-expect,(call int_range_list,1,2),1 2)
 $(call math-expect,(call int_range_list,2,1),)
 $(call math-expect-error,(call int_range_list,1,101),Only non-negative integers <= 100 are supported (not 101))
 
+# Split an integer into a list of digits
+define _math_number_to_list
+$(strip \
+  $(if $(call _math_ext_is_number,$(1)),,\
+    $(call math-error,Only non-negative integers are supported (not $(1)))) \
+  $(eval num_list:=$(1)) \
+  $(foreach num,$(__MATH_ONE_NUMBERS),\
+    $(eval num_list:=$(subst $(num),$(space)$(num),$(num_list)))) \
+  $(if $(filter $(words $(num_list)),$(__MATH_ONE_NUMBERS)),,\
+    $(call math-error,Only non-negative integers with less than 9 digits are supported (not $(1)))) \
+  $(if $(filter 0,$(word 1,$(num_list))),\
+    $(call math-error,Only non-negative integers without leading zeros are supported (not $(1)))) \
+  $(num_list))
+endef
+
+$(call math-expect,(call _math_number_to_list,123),1 2 3)
+$(call math-expect-error,(call _math_number_to_list,123 456),Multiple words in a single argument: 123 456)
+$(call math-expect-error,(call _math_number_to_list,-123),Only non-negative integers are supported (not -123))
+$(call math-expect-error,(call _math_number_to_list,002),Only non-negative integers without leading zeros are supported (not 002))
+$(call math-expect-error,(call _math_number_to_list,1234567890),Only non-negative integers with less than 9 digits are supported (not 1234567890))
+
+# Compare 1-digit integer $(1) and $(2).
+# Returns 1 if $(1) > $(2), -1 if $(1) < $(2), nothing if equals.
+define _math_1digit_comp
+$(strip \
+  $(if $(filter $(1),$(2)),,\
+    $(if $(filter $(1),$(firstword $(filter $(1) $(2),$(__MATH_ONE_NUMBERS)))),-1,1)))
+endef
+
+$(call math-expect,(call _math_1digit_comp,1,1))
+$(call math-expect,(call _math_1digit_comp,0,9),-1)
+$(call math-expect,(call _math_1digit_comp,3,1),1)
+
+# Compare the same $(3)-digit-length integers $(1) and $(2) that are split into a list of digits.
+# Returns 1 if $(1) > $(2), -1 if $(1) < $(2), nothing if equals.
+define _math_list_comp
+$(strip \
+  $(eval ans:=) \
+  $(foreach num,$(call int_range_list,1,$(3)),\
+    $(if $(ans),,$(eval ans:=$(call _math_1digit_comp,$(word $(num),$(1)),$(word $(num),$(2)))))) \
+  $(ans))
+endef
+
+# Compare any two non-negative integers $(1) and $(2).
+# Returns 1 if $(1) > $(2), -1 if $(1) < $(2), nothing if equals.
+define _math_ext_comp
+$(strip \
+  $(eval num_list1:=$(call _math_number_to_list,$(1))) \
+  $(eval len1:=$(words $(num_list1))) \
+  $(eval num_list2:=$(call _math_number_to_list,$(2))) \
+  $(eval len2:=$(words $(num_list2))) \
+  $(eval comp:=$(call _math_1digit_comp,$(len1),$(len2))) \
+  $(if $(comp),$(comp),$(call _math_list_comp,$(num_list1),$(num_list2),$(len1))))
+endef
+
+$(call math-expect,(call _math_ext_comp,5,10),-1)
+$(call math-expect,(call _math_ext_comp,12345,12345))
+$(call math-expect,(call _math_ext_comp,500,5),1)
+$(call math-expect,(call _math_ext_comp,202404,202504),-1)
 
 # Returns the greater of $1 or $2.
-# If $1 or $2 is not a positive integer <= 100, then an error is generated.
+# If $1 or $2 is not a positive integer, then an error is generated.
 define math_max
-$(strip $(call _math_check_valid,$(1)) $(call _math_check_valid,$(2)) \
-  $(lastword $(filter $(1) $(2),$(__MATH_NUMBERS))))
+$(strip \
+  $(if $(filter truetrue,$(call math_is_number_in_100,$(1))$(call math_is_number_in_100,$(2))),\
+    $(lastword $(filter $(1) $(2),$(__MATH_NUMBERS))),\
+    $(if $(filter 1,$(call _math_ext_comp,$(1),$(2))),$(1),$(2))))
 endef
 
 # Returns the lesser of $1 or $2.
 define math_min
-$(strip $(call _math_check_valid,$(1)) $(call _math_check_valid,$(2)) \
-  $(firstword $(filter $(1) $(2),$(__MATH_NUMBERS))))
+$(strip \
+  $(if $(filter truetrue,$(call math_is_number_in_100,$(1))$(call math_is_number_in_100,$(2))),\
+    $(firstword $(filter $(1) $(2),$(__MATH_NUMBERS))),\
+    $(if $(filter -1,$(call _math_ext_comp,$(1),$(2))),$(1),$(2))))
 endef
 
 $(call math-expect-error,(call math_max),Argument missing)
@@ -142,12 +227,25 @@ $(call math-expect,(call math_min,1,1),1)
 $(call math-expect,(call math_min,7,32),7)
 $(call math-expect,(call math_min,32,7),7)
 
+$(call math-expect,(call math_max,32759,7),32759)
+$(call math-expect,(call math_max,7,32759),32759)
+$(call math-expect,(call math_max,202404,202505),202505)
+$(call math-expect,(call math_max,202404,202404),202404)
+$(call math-expect,(call math_min,8908527,32),32)
+$(call math-expect,(call math_min,32,8908527),32)
+$(call math-expect,(call math_min,202404,202505),202404)
+$(call math-expect,(call math_min,202404,202404),202404)
+
 define math_gt_or_eq
 $(if $(filter $(1),$(call math_max,$(1),$(2))),true)
 endef
 
 define math_gt
 $(if $(call math_gt_or_eq,$(2),$(1)),,true)
+endef
+
+define math_lt_or_eq
+$(if $(call math_gt_or_eq,$(2),$(1)),true)
 endef
 
 define math_lt
@@ -160,9 +258,16 @@ $(call math-expect-false,(call math_gt_or_eq, 1, 2))
 $(call math-expect-true,(call math_gt, 4, 3))
 $(call math-expect-false,(call math_gt, 5, 5))
 $(call math-expect-false,(call math_gt, 6, 7))
+$(call math-expect-true,(call math_lt_or_eq, 11, 11))
+$(call math-expect-false,(call math_lt_or_eq, 25, 15))
+$(call math-expect-true,(call math_lt_or_eq, 9, 16))
 $(call math-expect-false,(call math_lt, 1, 0))
 $(call math-expect-false,(call math_lt, 8, 8))
 $(call math-expect-true,(call math_lt, 10, 11))
+
+$(call math-expect-true,(call math_gt_or_eq, 2573904, 2573900))
+$(call math-expect-true,(call math_gt_or_eq, 12345, 12345))
+$(call math-expect-false,(call math_gt_or_eq, 56, 2780))
 
 # $1 is the variable name to increment
 define inc_and_print
@@ -192,6 +297,7 @@ $(call math-expect,(call numbers_less_than,2,0 2 1 3),0 1)
 $(call math-expect,(call numbers_less_than,3,0 2 1 3),0 2 1)
 $(call math-expect,(call numbers_less_than,4,0 2 1 3),0 2 1 3)
 $(call math-expect,(call numbers_less_than,3,0 2 1 3 2),0 2 1 2)
+$(call math-expect,(call numbers_less_than,100,0 1000 50 101 100),0 50)
 
 # Returns the words in $2 that are numbers and are greater or equal to $1
 define numbers_greater_or_equal_to

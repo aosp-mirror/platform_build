@@ -1,5 +1,0 @@
-#
-# system.prop for generic sdk
-#
-
-rild.libpath=/vendor/lib64/libreference-ril.so
