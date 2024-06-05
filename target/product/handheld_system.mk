@@ -69,12 +69,18 @@ PRODUCT_PACKAGES += \
     SharedStorageBackup \
     SimAppDialog \
     Telecom \
-    TelephonyProvider \
     TeleService \
     Traceur \
     UserDictionaryProvider \
     VpnDialogs \
     vr \
+
+# Choose the correct products based on HSUM status
+ifeq ($(PRODUCT_USE_HSUM),true)
+  PRODUCT_PACKAGES += TelephonyProviderHsum
+else
+  PRODUCT_PACKAGES += TelephonyProvider
+endif
 
 PRODUCT_PACKAGES += $(RELEASE_PACKAGE_VIRTUAL_CAMERA)
 # Set virtual_camera_service_enabled soong config variable based on the
