@@ -1255,13 +1255,11 @@ DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages)
 
 include $(BUILD_SYSTEM)/dumpvar.mk
 
-ifneq ($(KEEP_VNDK),true)
 ifdef BOARD_VNDK_VERSION
 BOARD_VNDK_VERSION=
 endif
 ifdef PLATFORM_VNDK_VERSION
 PLATFORM_VNDK_VERSION=
-endif
 endif
 
 ifeq (true,$(FULL_SYSTEM_OPTIMIZE_JAVA))
