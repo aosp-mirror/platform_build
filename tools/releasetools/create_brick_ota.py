@@ -45,13 +45,17 @@ def CreateBrickOta(product_name: str, output_path: Path, extra_wipe_partitions: 
   partitions_to_wipe = PARTITIONS_TO_WIPE
   if extra_wipe_partitions is not None:
     partitions_to_wipe = PARTITIONS_TO_WIPE + extra_wipe_partitions.split(",")
+  ota_metadata = ["ota-type=BRICK", "post-timestamp=9999999999",
+                  "pre-device=" + product_name]
+  if serialno is not None:
+      ota_metadata.append("serialno=" + serialno)
   # recovery requiers product name to be a | separated list
   product_name = product_name.replace(",", "|")
   with zipfile.ZipFile(output_path, "w") as zfp:
     zfp.writestr("recovery.wipe", "\n".join(partitions_to_wipe))
     zfp.writestr("payload.bin", "")
     zfp.writestr("META-INF/com/android/metadata", "\n".join(
-        ["ota-type=BRICK", "post-timestamp=9999999999", "pre-device=" + product_name, "serialno=" + serialno]))
+        ota_metadata))
 
 
 def main(argv):
@@ -59,9 +63,9 @@ def main(argv):
   parser.add_argument('otafile', metavar='PAYLOAD', type=str,
                       help='The output OTA package file.')
   parser.add_argument('--product', type=str,
-                      help='The product name of the device, for example, bramble, redfin. This can be a comma separated list.', required=True)
+                      help='The product name of the device, for example, bramble, redfin.', required=True)
   parser.add_argument('--serialno', type=str,
-                      help='The serial number of devices that are allowed to install this OTA package. This can be a comma separated list.')
+                      help='The serial number of devices that are allowed to install this OTA package. This can be a | separated list.')
   parser.add_argument('--extra_wipe_partitions', type=str,
                       help='Additional partitions on device which should be wiped.')
   parser.add_argument('-v', action="store_true",

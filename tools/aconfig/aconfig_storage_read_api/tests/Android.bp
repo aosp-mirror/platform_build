@@ -1,0 +1,45 @@
+filegroup {
+    name: "read_api_test_storage_files",
+    srcs: ["package.map",
+        "flag.map",
+        "flag.val",
+        "flag.info"
+    ],
+}
+
+rust_test {
+    name: "aconfig_storage_read_api.test.rust",
+    srcs: [
+        "storage_read_api_test.rs",
+    ],
+    rustlibs: [
+        "libanyhow",
+        "libaconfig_storage_file",
+        "libaconfig_storage_read_api",
+        "librand",
+    ],
+    data: [
+        ":read_api_test_storage_files",
+    ],
+    test_suites: ["general-tests"],
+}
+
+cc_test {
+    name: "aconfig_storage_read_api.test.cpp",
+    srcs: [
+        "storage_read_api_test.cpp",
+    ],
+    static_libs: [
+        "libgmock",
+        "libaconfig_storage_read_api_cc",
+        "libbase",
+        "liblog",
+    ],
+    data: [
+        ":read_api_test_storage_files",
+    ],
+    test_suites: [
+        "device-tests",
+        "general-tests",
+    ],
+}

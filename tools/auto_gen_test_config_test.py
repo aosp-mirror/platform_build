@@ -30,6 +30,24 @@ MANIFEST_INVALID = """<?xml version="1.0" encoding="utf-8"?>
 </manifest>
 """
 
+XMLTREE_JUNIT_TEST = """N: android=http://schemas.android.com/apk/res/android (line=2)
+  E: manifest (line=2)
+    A: package="com.android.my.tests.x" (Raw: "com.android.my.tests.x")
+      E: instrumentation (line=9)
+        A: http://schemas.android.com/apk/res/android:label(0x01010001)="TestModule" (Raw: "TestModule")
+        A: http://schemas.android.com/apk/res/android:name(0x01010003)="androidx.test.runner.AndroidJUnitRunner" (Raw: "androidx.test.runner.AndroidJUnitRunner")
+        A: http://schemas.android.com/apk/res/android:targetPackage(0x01010021)="com.android.my.tests" (Raw: "com.android.my.tests")
+"""
+
+XMLTREE_INSTRUMENTATION_TEST = """N: android=http://schemas.android.com/apk/res/android (line=2)
+  E: manifest (line=2)
+    A: package="com.android.my.tests.x" (Raw: "com.android.my.tests.x")
+      E: instrumentation (line=9)
+        A: http://schemas.android.com/apk/res/android:label(0x01010001)="TestModule" (Raw: "TestModule")
+        A: http://schemas.android.com/apk/res/android:name(0x01010003)="android.test.InstrumentationTestRunner" (Raw: "android.test.InstrumentationTestRunner")
+        A: http://schemas.android.com/apk/res/android:targetPackage(0x01010021)="com.android.my.tests" (Raw: "com.android.my.tests")
+"""
+
 MANIFEST_JUNIT_TEST = """<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.android.my.tests.x">
@@ -45,12 +63,12 @@ MANIFEST_INSTRUMENTATION_TEST = """<?xml version="1.0" encoding="utf-8"?>
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
         android:targetPackage="com.android.my.tests"
-        android:label="My Tests" />
+        android:label="TestModule" />
 </manifest>
 """
 
 EXPECTED_JUNIT_TEST_CONFIG = """<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2017 The Android Open Source Project
+<!-- Copyright (C) 2023 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -66,7 +84,11 @@ EXPECTED_JUNIT_TEST_CONFIG = """<?xml version="1.0" encoding="utf-8"?>
 -->
 <!-- This test config file is auto-generated. -->
 <configuration description="Runs TestModule.">
+    <option name="test-suite-tag" value="apct" />
+    <option name="test-suite-tag" value="apct-instrumentation" />
+
     <target_preparer class="com.android.tradefed.targetprep.suite.SuiteApkInstaller">
+        <option name="cleanup-apks" value="true" />
         <option name="test-file-name" value="TestModule.apk" />
     </target_preparer>
 
@@ -78,7 +100,7 @@ EXPECTED_JUNIT_TEST_CONFIG = """<?xml version="1.0" encoding="utf-8"?>
 """
 
 EXPECTED_INSTRUMENTATION_TEST_CONFIG = """<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2017 The Android Open Source Project
+<!-- Copyright (C) 2023 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -93,8 +115,12 @@ EXPECTED_INSTRUMENTATION_TEST_CONFIG = """<?xml version="1.0" encoding="utf-8"?>
      limitations under the License.
 -->
 <!-- This test config file is auto-generated. -->
-<configuration description="Runs My Tests.">
+<configuration description="Runs TestModule.">
+    <option name="test-suite-tag" value="apct" />
+    <option name="test-suite-tag" value="apct-instrumentation" />
+
     <target_preparer class="com.android.tradefed.targetprep.suite.SuiteApkInstaller">
+        <option name="cleanup-apks" value="true" />
         <option name="test-file-name" value="TestModule.apk" />
     </target_preparer>
 
@@ -105,11 +131,58 @@ EXPECTED_INSTRUMENTATION_TEST_CONFIG = """<?xml version="1.0" encoding="utf-8"?>
 </configuration>
 """
 
-TOOLS_DIR = os.path.dirname(os.path.dirname(__file__))
-EMPTY_TEST_CONFIG = os.path.join(
-    TOOLS_DIR, '..', 'core', 'empty_test_config.xml')
-INSTRUMENTATION_TEST_CONFIG_TEMPLATE = os.path.join(
-    TOOLS_DIR, '..', 'core', 'instrumentation_test_config_template.xml')
+EMPTY_TEST_CONFIG_CONTENT = """<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2017 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<!-- No AndroidTest.xml was provided and the manifest does not include
+     instrumentation, hence this apk is not instrumentable.
+-->
+<configuration description="Empty Configuration" />
+"""
+
+INSTRUMENTATION_TEST_CONFIG_TEMPLATE_CONTENT = """<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2023 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<!-- This test config file is auto-generated. -->
+<configuration description="Runs {LABEL}.">
+    <option name="test-suite-tag" value="apct" />
+    <option name="test-suite-tag" value="apct-instrumentation" />
+{EXTRA_CONFIGS}
+    <target_preparer class="com.android.tradefed.targetprep.suite.SuiteApkInstaller">
+        <option name="cleanup-apks" value="true" />
+        <option name="test-file-name" value="{MODULE}.apk" />
+    </target_preparer>
+
+    <test class="com.android.tradefed.testtype.{TEST_TYPE}" >
+        <option name="package" value="{PACKAGE}" />
+        <option name="runner" value="{RUNNER}" />
+    </test>
+</configuration>
+"""
 
 
 class AutoGenTestConfigUnittests(unittest.TestCase):
@@ -120,6 +193,16 @@ class AutoGenTestConfigUnittests(unittest.TestCase):
     self.test_dir = tempfile.mkdtemp()
     self.config_file = os.path.join(self.test_dir, TEST_MODULE + '.config')
     self.manifest_file = os.path.join(self.test_dir, 'AndroidManifest.xml')
+    self.xmltree_file = os.path.join(self.test_dir, TEST_MODULE + '.xmltree')
+    self.empty_test_config_file = os.path.join(self.test_dir, 'empty.config')
+    self.instrumentation_test_config_template_file = os.path.join(
+        self.test_dir, 'instrumentation.config')
+
+    with open(self.empty_test_config_file, 'w') as f:
+      f.write(EMPTY_TEST_CONFIG_CONTENT)
+
+    with open(self.instrumentation_test_config_template_file, 'w') as f:
+      f.write(INSTRUMENTATION_TEST_CONFIG_TEMPLATE_CONTENT)
 
   def tearDown(self):
     """Cleanup the test directory."""
@@ -133,11 +216,11 @@ class AutoGenTestConfigUnittests(unittest.TestCase):
 
     argv = [self.config_file,
             self.manifest_file,
-            EMPTY_TEST_CONFIG,
-            INSTRUMENTATION_TEST_CONFIG_TEMPLATE]
+            self.empty_test_config_file,
+            self.instrumentation_test_config_template_file]
     auto_gen_test_config.main(argv)
     with open(self.config_file) as config_file:
-      with open(EMPTY_TEST_CONFIG) as empty_config:
+      with open(self.empty_test_config_file) as empty_config:
         self.assertEqual(config_file.read(), empty_config.read())
 
   def testCreateJUnitTestConfig(self):
@@ -148,8 +231,8 @@ class AutoGenTestConfigUnittests(unittest.TestCase):
 
     argv = [self.config_file,
             self.manifest_file,
-            EMPTY_TEST_CONFIG,
-            INSTRUMENTATION_TEST_CONFIG_TEMPLATE]
+            self.empty_test_config_file,
+            self.instrumentation_test_config_template_file]
     auto_gen_test_config.main(argv)
     with open(self.config_file) as config_file:
       self.assertEqual(config_file.read(), EXPECTED_JUNIT_TEST_CONFIG)
@@ -162,8 +245,37 @@ class AutoGenTestConfigUnittests(unittest.TestCase):
 
     argv = [self.config_file,
             self.manifest_file,
-            EMPTY_TEST_CONFIG,
-            INSTRUMENTATION_TEST_CONFIG_TEMPLATE]
+            self.empty_test_config_file,
+            self.instrumentation_test_config_template_file]
+    auto_gen_test_config.main(argv)
+    with open(self.config_file) as config_file:
+      self.assertEqual(
+          config_file.read(), EXPECTED_INSTRUMENTATION_TEST_CONFIG)
+
+  def testCreateJUnitTestConfigWithXMLTree(self):
+    """Test creating test config for AndroidJUnitTest.
+    """
+    with open(self.xmltree_file, 'w') as f:
+      f.write(XMLTREE_JUNIT_TEST)
+
+    argv = [self.config_file,
+            self.xmltree_file,
+            self.empty_test_config_file,
+            self.instrumentation_test_config_template_file]
+    auto_gen_test_config.main(argv)
+    with open(self.config_file) as config_file:
+      self.assertEqual(config_file.read(), EXPECTED_JUNIT_TEST_CONFIG)
+
+  def testCreateInstrumentationTestConfigWithXMLTree(self):
+    """Test creating test config for InstrumentationTest.
+    """
+    with open(self.xmltree_file, 'w') as f:
+      f.write(XMLTREE_INSTRUMENTATION_TEST)
+
+    argv = [self.config_file,
+            self.xmltree_file,
+            self.empty_test_config_file,
+            self.instrumentation_test_config_template_file]
     auto_gen_test_config.main(argv)
     with open(self.config_file) as config_file:
       self.assertEqual(

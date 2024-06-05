@@ -1,0 +1,32 @@
+package: "com.android.aconfig.test"
+container: "system"
+
+flag {
+    name: "enabled_ro"
+    namespace: "aconfig_test"
+    description: "This flag is ENABLED + READ_ONLY"
+    bug: "abc"
+}
+
+flag {
+    name: "disabled_ro"
+    namespace: "aconfig_test"
+    description: "This flag is DISABLED + READ_ONLY"
+    bug: "123"
+}
+
+flag {
+    name: "enabled_fixed_ro"
+    namespace: "aconfig_test"
+    description: "This flag is fixed READ_ONLY + ENABLED"
+    bug: ""
+    is_fixed_read_only: true
+}
+
+flag {
+    name: "disabled_fixed_ro"
+    namespace: "aconfig_test"
+    description: "This flag is fixed READ_ONLY + DISABLED"
+    bug: ""
+    is_fixed_read_only: true
+}

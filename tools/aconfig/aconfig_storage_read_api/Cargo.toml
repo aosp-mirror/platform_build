@@ -1,0 +1,20 @@
+[package]
+name = "aconfig_storage_read_api"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = ["cargo"]
+cargo = []
+
+[dependencies]
+rand = "0.8.5"
+anyhow = "1.0.69"
+memmap2 = "0.8.0"
+cxx = "1.0"
+thiserror = "1.0.56"
+aconfig_storage_file = { path = "../aconfig_storage_file" }
+
+[build-dependencies]
+protobuf-codegen = "3.2.0"
+cxx-build = "1.0"

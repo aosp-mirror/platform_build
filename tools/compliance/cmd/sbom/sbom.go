@@ -35,7 +35,7 @@ import (
 	"github.com/google/blueprint/deptools"
 
 	"github.com/spdx/tools-golang/builder/builder2v2"
-	"github.com/spdx/tools-golang/json"
+	spdx_json "github.com/spdx/tools-golang/json"
 	"github.com/spdx/tools-golang/spdx/common"
 	spdx "github.com/spdx/tools-golang/spdx/v2_2"
 	"github.com/spdx/tools-golang/spdxlib"
@@ -55,6 +55,7 @@ type context struct {
 	product      string
 	stripPrefix  []string
 	creationTime creationTimeGetter
+	buildid      string
 }
 
 func (ctx context) strip(installPath string) string {
@@ -124,6 +125,7 @@ Options:
 	depsFile := flags.String("d", "", "Where to write the deps file")
 	product := flags.String("product", "", "The name of the product for which the notice is generated.")
 	stripPrefix := newMultiString(flags, "strip_prefix", "Prefix to remove from paths. i.e. path to root (multiple allowed)")
+	buildid := flags.String("build_id", "", "Uniquely identifies the build. (default timestamp)")
 
 	flags.Parse(expandedArgs)
 
@@ -162,7 +164,7 @@ Options:
 		ofile = obuf
 	}
 
-	ctx := &context{ofile, os.Stderr, compliance.FS, *product, *stripPrefix, actualTime}
+	ctx := &context{ofile, os.Stderr, compliance.FS, *product, *stripPrefix, actualTime, *buildid}
 
 	spdxDoc, deps, err := sbomGenerator(ctx, flags.Args()...)
 
@@ -272,7 +274,7 @@ func getProjectMetadata(_ *context, pmix *projectmetadata.Index,
 	tn *compliance.TargetNode) (*projectmetadata.ProjectMetadata, error) {
 	pms, err := pmix.MetadataForProjects(tn.Projects()...)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to read projects for %q: %w\n", tn, err)
+		return nil, fmt.Errorf("Unable to read projects for %q: %w\n", tn.Name(), err)
 	}
 	if len(pms) == 0 {
 		return nil, nil
@@ -317,14 +319,21 @@ func inputFiles(lg *compliance.LicenseGraph, pmix *projectmetadata.Index, licens
 }
 
 // generateSPDXNamespace generates a unique SPDX Document Namespace using a SHA1 checksum
-// and the CreationInfo.Created field as the date.
-func generateSPDXNamespace(created string) string {
-	// Compute a SHA1 checksum of the CreationInfo.Created field.
-	hash := sha1.Sum([]byte(created))
-	checksum := hex.EncodeToString(hash[:])
+func generateSPDXNamespace(buildid string, created string, files ...string) string {
 
-	// Combine the checksum and timestamp to generate the SPDX Namespace.
-	namespace := fmt.Sprintf("SPDXRef-DOCUMENT-%s-%s", created, checksum)
+	seed := strings.Join(files, "")
+
+	if buildid == "" {
+		seed += created
+	} else {
+		seed += buildid
+	}
+
+	// Compute a SHA1 checksum of the seed.
+	hash := sha1.Sum([]byte(seed))
+	uuid := hex.EncodeToString(hash[:])
+
+	namespace := fmt.Sprintf("SPDXRef-DOCUMENT-%s", uuid)
 
 	return namespace
 }
@@ -523,7 +532,7 @@ func sbomGenerator(ctx *context, files ...string) (*spdx.Document, []string, err
 		DataLicense:       "CC0-1.0",
 		SPDXIdentifier:    "DOCUMENT",
 		DocumentName:      docName,
-		DocumentNamespace: generateSPDXNamespace(ci.Created),
+		DocumentNamespace: generateSPDXNamespace(ctx.buildid, ci.Created, files...),
 		CreationInfo:      ci,
 		Packages:          pkgs,
 		Relationships:     relationships,

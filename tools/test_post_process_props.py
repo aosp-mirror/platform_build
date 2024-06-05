@@ -255,29 +255,17 @@ class PropListTestcase(unittest.TestCase):
     stderr_redirect = io.StringIO()
     with contextlib.redirect_stderr(stderr_redirect):
       props = PropList("hello")
-      props.put("ro.board.first_api_level","25")
+      props.put("ro.board.first_api_level","202504")
       props.put("ro.build.version.codename", "REL")
 
-      # ro.board.first_api_level must be less than or equal to the sdk version
-      self.assertFalse(validate_grf_props(props, 20))
-      self.assertTrue(validate_grf_props(props, 26))
-      self.assertTrue(validate_grf_props(props, 35))
-
       # manually set ro.board.api_level to an invalid value
-      props.put("ro.board.api_level","20")
-      self.assertFalse(validate_grf_props(props, 26))
+      props.put("ro.board.api_level","202404")
+      self.assertFalse(validate_grf_props(props))
 
       props.get_all_props()[-1].make_as_comment()
       # manually set ro.board.api_level to a valid value
-      props.put("ro.board.api_level","26")
-      self.assertTrue(validate_grf_props(props, 26))
-      # ro.board.api_level must be less than or equal to the sdk version
-      self.assertFalse(validate_grf_props(props, 25))
-
-      # allow setting future api_level before release
-      props.get_all_props()[-2].make_as_comment()
-      props.put("ro.build.version.codename", "NonRel")
-      self.assertTrue(validate_grf_props(props, 24))
+      props.put("ro.board.api_level","202504")
+      self.assertTrue(validate_grf_props(props))
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

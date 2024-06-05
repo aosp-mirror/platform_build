@@ -1,0 +1,89 @@
+package: "com.android.aconfig.test"
+container: "system"
+
+# This flag's final value is calculated from:
+# - test.aconfig: DISABLED + READ_WRITE (default)
+# - first.values: DISABLED + READ_WRITE
+# - second.values: ENABLED + READ_ONLY
+flag {
+    name: "enabled_ro"
+    namespace: "aconfig_test"
+    description: "This flag is ENABLED + READ_ONLY"
+    bug: "abc"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+# This flag's final value is calculated from:
+# - test.aconfig: DISABLED + READ_WRITE (default)
+# - first.values: ENABLED + READ_WRITE
+flag {
+    name: "enabled_rw"
+    namespace: "aconfig_test"
+    description: "This flag is ENABLED + READ_WRITE"
+    # for bug fields, the empty string is a discouraged but valid value
+    bug: ""
+}
+
+# This flag's final value is calculated from:
+# - test.aconfig: DISABLED + READ_WRITE (default)
+# - first.values: DISABLED + READ_ONLY
+flag {
+    name: "disabled_ro"
+    namespace: "aconfig_test"
+    description: "This flag is DISABLED + READ_ONLY"
+    bug: "123"
+}
+
+# This flag's final value is calculated from:
+# - test.aconfig: DISABLED + READ_WRITE (default)
+flag {
+    name: "disabled_rw"
+    namespace: "aconfig_test"
+    description: "This flag is DISABLED + READ_WRITE"
+    bug: "456"
+}
+
+# This flag's final value calculated from:
+# - test.aconfig: DISABLED + READ_ONLY
+# - first.values: ENABLED + READ_ONLY
+flag {
+    name: "enabled_fixed_ro"
+    namespace: "aconfig_test"
+    description: "This flag is fixed READ_ONLY + ENABLED"
+    bug: ""
+    is_fixed_read_only: true
+}
+
+flag {
+    name: "disabled_rw_in_other_namespace"
+    namespace: "other_namespace"
+    description: "This flag is DISABLED + READ_WRITE, and is defined in another namespace"
+    bug: "999"
+}
+
+flag {
+    name: "enabled_ro_exported"
+    namespace: "aconfig_test"
+    description: "This flag is ENABLED + READ_ONLY and exported"
+    bug: "111"
+    is_exported: true
+}
+
+flag {
+    name: "disabled_rw_exported"
+    namespace: "aconfig_test"
+    description: "This flag is DISABLED + READ_WRITE and exported"
+    bug: "111"
+    is_exported: true
+}
+
+flag {
+    name: "enabled_fixed_ro_exported"
+    namespace: "aconfig_test"
+    description: "This flag is fixed ENABLED + READ_ONLY and exported"
+    bug: "111"
+    is_fixed_read_only: true
+    is_exported: true
+}

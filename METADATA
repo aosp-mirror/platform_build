@@ -1,8 +1,0 @@
-third_party {
-  license_note: "would be NOTICE save for GPL in:\n"
-  "   core/LINUX_KERNEL_COPYING\n"
-  "   tools/droiddoc/templates-pdk/assets/jquery-1.6.2.min.js\n"
-  "   tools/droiddoc/templates-pdk/assets/jquery-history.js\n"
-  "   tools/droiddoc/templates-pdk/assets/jquery-resizable.min.js"
-  license_type: RESTRICTED
-}

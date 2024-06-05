@@ -51,6 +51,9 @@ ifdef TARGET_BUILD_APPS
         my_target_sdk_version := $(my_target_sdk_version).$$(cat $(API_FINGERPRINT))
         my_min_sdk_version := $(my_min_sdk_version).$$(cat $(API_FINGERPRINT))
         $(fixed_android_manifest): $(API_FINGERPRINT)
+      else ifdef UNBUNDLED_BUILD_TARGET_SDK_WITH_DESSERT_SHA
+        my_target_sdk_version := $(UNBUNDLED_BUILD_TARGET_SDK_WITH_DESSERT_SHA)
+        my_min_sdk_version := $(UNBUNDLED_BUILD_TARGET_SDK_WITH_DESSERT_SHA)
       endif
     endif
   endif
