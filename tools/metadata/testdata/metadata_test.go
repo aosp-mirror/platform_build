@@ -87,3 +87,33 @@ func TestEmptyInputFile(t *testing.T) {
 		t.Errorf("Generated file contents do not match the expected output")
 	}
 }
+
+func TestCodeMetadata(t *testing.T) {
+	cmd := exec.Command(
+		"metadata", "-rule", "code_metadata", "-inputFile", "./inputCodeMetadata.txt", "-outputFile",
+		"./generatedCodeMetadataOutputFile.txt",
+	)
+	stderr, err := cmd.CombinedOutput()
+	if err != nil {
+		t.Fatalf("Error running metadata command: %s. Error: %v", stderr, err)
+	}
+
+	// Read the contents of the expected output file
+	expectedOutput, err := ioutil.ReadFile("./expectedCodeMetadataOutput.txt")
+	if err != nil {
+		t.Fatalf("Error reading expected output file: %s", err)
+	}
+
+	// Read the contents of the generated output file
+	generatedOutput, err := ioutil.ReadFile("./generatedCodeMetadataOutputFile.txt")
+	if err != nil {
+		t.Fatalf("Error reading generated output file: %s", err)
+	}
+
+	fmt.Println()
+
+	// Compare the contents
+	if string(expectedOutput) != string(generatedOutput) {
+		t.Errorf("Generated file contents do not match the expected output")
+	}
+}

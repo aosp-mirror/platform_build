@@ -1,0 +1,4337 @@
+//
+// Copyright (C) 2020 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+team {
+    name: "trendy_team_qmc_pss",
+
+    // go/trendy/manage/engineers/6342544841375744
+    trendy_team_id: "6342544841375744",
+}
+
+team {
+    name: "trendy_team_cpu_team",
+
+    // go/trendy/manage/engineers/5119059747307520
+    trendy_team_id: "5119059747307520",
+}
+
+team {
+    name: "trendy_team_pwg_mobile",
+
+    // go/trendy/manage/engineers/4869274588315648
+    trendy_team_id: "4869274588315648",
+}
+
+team {
+    name: "trendy_team_pce_weu",
+
+    // go/trendy/manage/engineers/5205725968891904
+    trendy_team_id: "5205725968891904",
+}
+
+team {
+    name: "trendy_team_peeps_t_pgm_android_engprod",
+
+    // go/trendy/manage/engineers/6288284960358400
+    trendy_team_id: "6288284960358400",
+}
+
+team {
+    name: "trendy_team_appsearch",
+
+    // go/trendy/manage/engineers/5075661716815872
+    trendy_team_id: "5075661716815872",
+}
+
+team {
+    name: "trendy_team_shayba_team",
+
+    // go/trendy/manage/engineers/6213135020228608
+    trendy_team_id: "6213135020228608",
+}
+
+team {
+    name: "trendy_team_wear_wear_cloud_platform",
+
+    // go/trendy/manage/engineers/5917762526281728
+    trendy_team_id: "5917762526281728",
+}
+
+team {
+    name: "trendy_team_pixel_system_software",
+
+    // go/trendy/manage/engineers/4856005120622592
+    trendy_team_id: "4856005120622592",
+}
+
+team {
+    name: "trendy_team_platform_enabler_framework_make_pixel_",
+
+    // go/trendy/manage/engineers/5893944097243136
+    trendy_team_id: "5893944097243136",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_power_sw",
+
+    // go/trendy/manage/engineers/6703184655286272
+    trendy_team_id: "6703184655286272",
+}
+
+team {
+    name: "trendy_team_marvinpaul_team",
+
+    // go/trendy/manage/engineers/4800689692901376
+    trendy_team_id: "4800689692901376",
+}
+
+team {
+    name: "trendy_team_interactive_tv",
+
+    // go/trendy/manage/engineers/6150577853661184
+    trendy_team_id: "6150577853661184",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_sensor_framework",
+
+    // go/trendy/manage/engineers/5005310567284736
+    trendy_team_id: "5005310567284736",
+}
+
+team {
+    name: "trendy_team_wsd_arch",
+
+    // go/trendy/manage/engineers/6173769806512128
+    trendy_team_id: "6173769806512128",
+}
+
+team {
+    name: "trendy_team_lanechr_team",
+
+    // go/trendy/manage/engineers/5674594204811264
+    trendy_team_id: "5674594204811264",
+}
+
+team {
+    name: "trendy_team_test_eng_android_for_work",
+
+    // go/trendy/manage/engineers/5909887015845888
+    trendy_team_id: "5909887015845888",
+}
+
+team {
+    name: "trendy_team_camera_app",
+
+    // go/trendy/manage/engineers/5216644934533120
+    trendy_team_id: "5216644934533120",
+}
+
+team {
+    name: "trendy_team_vamaraju_team",
+
+    // go/trendy/manage/engineers/5150510960771072
+    trendy_team_id: "5150510960771072",
+}
+
+team {
+    name: "trendy_team_android_media_audio_framework",
+
+    // go/trendy/manage/engineers/5823575353065472
+    trendy_team_id: "5823575353065472",
+}
+
+team {
+    name: "trendy_team_superglue",
+
+    // go/trendy/manage/engineers/5211667882999808
+    trendy_team_id: "5211667882999808",
+}
+
+team {
+    name: "trendy_team_display_framework",
+
+    // go/trendy/manage/engineers/6035600925163520
+    trendy_team_id: "6035600925163520",
+}
+
+team {
+    name: "trendy_team_ananthak_team",
+
+    // go/trendy/manage/engineers/6706043301298176
+    trendy_team_id: "6706043301298176",
+}
+
+team {
+    name: "trendy_team_qmc_pqm",
+
+    // go/trendy/manage/engineers/4715267632267264
+    trendy_team_id: "4715267632267264",
+}
+
+team {
+    name: "trendy_team_search_allapps",
+
+    // go/trendy/manage/engineers/4926160670195712
+    trendy_team_id: "4926160670195712",
+}
+
+team {
+    name: "trendy_team_communal",
+
+    // go/trendy/manage/engineers/6380669942530048
+    trendy_team_id: "6380669942530048",
+}
+
+team {
+    name: "trendy_team_nova",
+
+    // go/trendy/manage/engineers/5418955074043904
+    trendy_team_id: "5418955074043904",
+}
+
+team {
+    name: "trendy_team_deprecated_framework_o_o",
+
+    // go/trendy/manage/engineers/5999497213509632
+    trendy_team_id: "5999497213509632",
+}
+
+team {
+    name: "trendy_team_android_go",
+
+    // go/trendy/manage/engineers/6543205713444864
+    trendy_team_id: "6543205713444864",
+}
+
+team {
+    name: "trendy_team_wear_wear_frameworks",
+
+    // go/trendy/manage/engineers/5138392408817664
+    trendy_team_id: "5138392408817664",
+}
+
+team {
+    name: "trendy_team_ssd_sensor",
+
+    // go/trendy/manage/engineers/5084703539200000
+    trendy_team_id: "5084703539200000",
+}
+
+team {
+    name: "trendy_team_dontek_team",
+
+    // go/trendy/manage/engineers/5746076285042688
+    trendy_team_id: "5746076285042688",
+}
+
+team {
+    name: "trendy_team_carrier_field_test",
+
+    // go/trendy/manage/engineers/6409766640975872
+    trendy_team_id: "6409766640975872",
+}
+
+team {
+    name: "trendy_team_pmw_standards",
+
+    // go/trendy/manage/engineers/6428806822526976
+    trendy_team_id: "6428806822526976",
+}
+
+team {
+    name: "trendy_team_build_infra",
+
+    // go/trendy/manage/engineers/4516184164433920
+    trendy_team_id: "4516184164433920",
+}
+
+team {
+    name: "trendy_team_qmc_gft",
+
+    // go/trendy/manage/engineers/5454139446132736
+    trendy_team_id: "5454139446132736",
+}
+
+team {
+    name: "trendy_team_android_storage",
+
+    // go/trendy/manage/engineers/6301594936049664
+    trendy_team_id: "6301594936049664",
+}
+
+team {
+    name: "trendy_team_pixel_mobile_wireless",
+
+    // go/trendy/manage/engineers/4821918175887360
+    trendy_team_id: "4821918175887360",
+}
+
+team {
+    name: "trendy_team_camera_from_google",
+
+    // go/trendy/manage/engineers/4799694104854528
+    trendy_team_id: "4799694104854528",
+}
+
+team {
+    name: "trendy_team_pixel_connectivity_settings",
+
+    // go/trendy/manage/engineers/5622496450871296
+    trendy_team_id: "5622496450871296",
+}
+
+team {
+    name: "trendy_team_androidbugtool_abt_",
+
+    // go/trendy/manage/engineers/6531817781493760
+    trendy_team_id: "6531817781493760",
+}
+
+team {
+    name: "trendy_team_wear_wear_security",
+
+    // go/trendy/manage/engineers/6325699325362176
+    trendy_team_id: "6325699325362176",
+}
+
+team {
+    name: "trendy_team_pascallouis_team",
+
+    // go/trendy/manage/engineers/5111238276317184
+    trendy_team_id: "5111238276317184",
+}
+
+team {
+    name: "trendy_team_android_camera_ecosystem_enabling",
+
+    // go/trendy/manage/engineers/4529290269327360
+    trendy_team_id: "4529290269327360",
+}
+
+team {
+    name: "trendy_team_calendar",
+
+    // go/trendy/manage/engineers/6719127573889024
+    trendy_team_id: "6719127573889024",
+}
+
+team {
+    name: "trendy_team_cgc",
+
+    // go/trendy/manage/engineers/4590315499061248
+    trendy_team_id: "4590315499061248",
+}
+
+team {
+    name: "trendy_team_diagnostic_tool",
+
+    // go/trendy/manage/engineers/4689924564746240
+    trendy_team_id: "4689924564746240",
+}
+
+team {
+    name: "trendy_team_pixel_camera_system_software",
+
+    // go/trendy/manage/engineers/6386525306486784
+    trendy_team_id: "6386525306486784",
+}
+
+team {
+    name: "trendy_team_credential_manager",
+
+    // go/trendy/manage/engineers/5276403428655104
+    trendy_team_id: "5276403428655104",
+}
+
+team {
+    name: "trendy_team_wear_wti_wear_tools_and_infra_",
+
+    // go/trendy/manage/engineers/6225571306438656
+    trendy_team_id: "6225571306438656",
+}
+
+team {
+    name: "trendy_team_pixel_biometrics_face",
+
+    // go/trendy/manage/engineers/5028705926742016
+    trendy_team_id: "5028705926742016",
+}
+
+team {
+    name: "trendy_team_location_time",
+
+    // go/trendy/manage/engineers/4883807600017408
+    trendy_team_id: "4883807600017408",
+}
+
+team {
+    name: "trendy_team_android_hardware_backed_security",
+
+    // go/trendy/manage/engineers/6398595556343808
+    trendy_team_id: "6398595556343808",
+}
+
+team {
+    name: "trendy_team_play_newsstand",
+
+    // go/trendy/manage/engineers/5171015201980416
+    trendy_team_id: "5171015201980416",
+}
+
+team {
+    name: "trendy_team_deprecated_framework_jaggies",
+
+    // go/trendy/manage/engineers/5753206608887808
+    trendy_team_id: "5753206608887808",
+}
+
+team {
+    name: "trendy_team_make_pixel_tpgm",
+
+    // go/trendy/manage/engineers/6061069864665088
+    trendy_team_id: "6061069864665088",
+}
+
+team {
+    name: "trendy_team_make_transformer",
+
+    // go/trendy/manage/engineers/6224539427438592
+    trendy_team_id: "6224539427438592",
+}
+
+team {
+    name: "trendy_team_wittrock_team",
+
+    // go/trendy/manage/engineers/5707412083474432
+    trendy_team_id: "5707412083474432",
+}
+
+team {
+    name: "trendy_team_wear_wear_android_companion_sdk",
+
+    // go/trendy/manage/engineers/4864923637022720
+    trendy_team_id: "4864923637022720",
+}
+
+team {
+    name: "trendy_team_assistant_sysui_integration",
+
+    // go/trendy/manage/engineers/4884282575060992
+    trendy_team_id: "4884282575060992",
+}
+
+team {
+    name: "trendy_team_things",
+
+    // go/trendy/manage/engineers/5206199574069248
+    trendy_team_id: "5206199574069248",
+}
+
+team {
+    name: "trendy_team_wsd_w13",
+
+    // go/trendy/manage/engineers/5612469120532480
+    trendy_team_id: "5612469120532480",
+}
+
+team {
+    name: "trendy_team_iqbalasif_team",
+
+    // go/trendy/manage/engineers/4912049813094400
+    trendy_team_id: "4912049813094400",
+}
+
+team {
+    name: "trendy_team_biometric_security",
+
+    // go/trendy/manage/engineers/5797911960649728
+    trendy_team_id: "5797911960649728",
+}
+
+team {
+    name: "trendy_team_silberst_team",
+
+    // go/trendy/manage/engineers/5710892584042496
+    trendy_team_id: "5710892584042496",
+}
+
+team {
+    name: "trendy_team_pmw_telephony",
+
+    // go/trendy/manage/engineers/6029121444151296
+    trendy_team_id: "6029121444151296",
+}
+
+team {
+    name: "trendy_team_zzz",
+
+    // go/trendy/manage/engineers/6351340934397952
+    trendy_team_id: "6351340934397952",
+}
+
+team {
+    name: "trendy_team_lite_team",
+
+    // go/trendy/manage/engineers/5647925813346304
+    trendy_team_id: "5647925813346304",
+}
+
+team {
+    name: "trendy_team_gms_core",
+
+    // go/trendy/manage/engineers/5735614422843392
+    trendy_team_id: "5735614422843392",
+}
+
+team {
+    name: "trendy_team_dialer_make_pixel_",
+
+    // go/trendy/manage/engineers/5126396509978624
+    trendy_team_id: "5126396509978624",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_color",
+
+    // go/trendy/manage/engineers/5489236125581312
+    trendy_team_id: "5489236125581312",
+}
+
+team {
+    name: "trendy_team_wear_wear_notifications_alerts_attention_management",
+
+    // go/trendy/manage/engineers/6267643681996800
+    trendy_team_id: "6267643681996800",
+}
+
+team {
+    name: "trendy_team_fwk_nfc",
+
+    // go/trendy/manage/engineers/5962312512864256
+    trendy_team_id: "5962312512864256",
+}
+
+team {
+    name: "trendy_team_wear_personalization_developer_surfaces",
+
+    // go/trendy/manage/engineers/4819890988810240
+    trendy_team_id: "4819890988810240",
+}
+
+team {
+    name: "trendy_team_srajkumar_team",
+
+    // go/trendy/manage/engineers/5170053894012928
+    trendy_team_id: "5170053894012928",
+}
+
+team {
+    name: "trendy_team_in_market_tpm",
+
+    // go/trendy/manage/engineers/5352549888196608
+    trendy_team_id: "5352549888196608",
+}
+
+team {
+    name: "trendy_team_leannogasawara_team",
+
+    // go/trendy/manage/engineers/4905467198472192
+    trendy_team_id: "4905467198472192",
+}
+
+team {
+    name: "trendy_team_zurikemp_team",
+
+    // go/trendy/manage/engineers/4559796603879424
+    trendy_team_id: "4559796603879424",
+}
+
+team {
+    name: "trendy_team_android_telemetry_infra",
+
+    // go/trendy/manage/engineers/5295809771732992
+    trendy_team_id: "5295809771732992",
+}
+
+team {
+    name: "trendy_team_system_ui_sensors",
+
+    // go/trendy/manage/engineers/5647653492621312
+    trendy_team_id: "5647653492621312",
+}
+
+team {
+    name: "trendy_team_windowing_animations_transitions",
+
+    // go/trendy/manage/engineers/4803040337362944
+    trendy_team_id: "4803040337362944",
+}
+
+team {
+    name: "trendy_team_deprecated_framework_jjaggi",
+
+    // go/trendy/manage/engineers/6471742270898176
+    trendy_team_id: "6471742270898176",
+}
+
+team {
+    name: "trendy_team_accessibility_hearing_aids",
+
+    // go/trendy/manage/engineers/4661226340253696
+    trendy_team_id: "4661226340253696",
+}
+
+team {
+    name: "trendy_team_performance",
+
+    // go/trendy/manage/engineers/5842000521625600
+    trendy_team_id: "5842000521625600",
+}
+
+team {
+    name: "trendy_team_cloud_android",
+
+    // go/trendy/manage/engineers/5980255760023552
+    trendy_team_id: "5980255760023552",
+}
+
+team {
+    name: "trendy_team_visual_design",
+
+    // go/trendy/manage/engineers/4504161399734272
+    trendy_team_id: "4504161399734272",
+}
+
+team {
+    name: "trendy_team_wilkinsonclay_team",
+
+    // go/trendy/manage/engineers/5680997128634368
+    trendy_team_id: "5680997128634368",
+}
+
+team {
+    name: "trendy_team_tccyp_nadiae",
+
+    // go/trendy/manage/engineers/6556518831652864
+    trendy_team_id: "6556518831652864",
+}
+
+team {
+    name: "trendy_team_accessibility_settings",
+
+    // go/trendy/manage/engineers/5641806510587904
+    trendy_team_id: "5641806510587904",
+}
+
+team {
+    name: "trendy_team_hansmuller_team",
+
+    // go/trendy/manage/engineers/5069192257765376
+    trendy_team_id: "5069192257765376",
+}
+
+team {
+    name: "trendy_team_retail_demo_mode",
+
+    // go/trendy/manage/engineers/6520787531235328
+    trendy_team_id: "6520787531235328",
+}
+
+team {
+    name: "trendy_team_lse_dreams",
+
+    // go/trendy/manage/engineers/6317558842097664
+    trendy_team_id: "6317558842097664",
+}
+
+team {
+    name: "trendy_team_android_usb",
+
+    // go/trendy/manage/engineers/5090707854426112
+    trendy_team_id: "5090707854426112",
+}
+
+team {
+    name: "trendy_team_curtisgalloway_team",
+
+    // go/trendy/manage/engineers/5706857730703360
+    trendy_team_id: "5706857730703360",
+}
+
+team {
+    name: "trendy_team_camera_algorithms",
+
+    // go/trendy/manage/engineers/6544854980886528
+    trendy_team_id: "6544854980886528",
+}
+
+team {
+    name: "trendy_team_cast_3p",
+
+    // go/trendy/manage/engineers/6585564972875776
+    trendy_team_id: "6585564972875776",
+}
+
+team {
+    name: "trendy_team_test_eng_android_wear",
+
+    // go/trendy/manage/engineers/4979150422933504
+    trendy_team_id: "4979150422933504",
+}
+
+team {
+    name: "trendy_team_mesch_team",
+
+    // go/trendy/manage/engineers/5205465899368448
+    trendy_team_id: "5205465899368448",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_audio_arch",
+
+    // go/trendy/manage/engineers/5560501377073152
+    trendy_team_id: "5560501377073152",
+}
+
+team {
+    name: "trendy_team_defunct_use_controls_quick_settings",
+
+    // go/trendy/manage/engineers/4667861043412992
+    trendy_team_id: "4667861043412992",
+}
+
+team {
+    name: "trendy_team_wear_wear_developer_devx",
+
+    // go/trendy/manage/engineers/4894890764697600
+    trendy_team_id: "4894890764697600",
+}
+
+team {
+    name: "trendy_team_android_rust",
+
+    // go/trendy/manage/engineers/4844600586305536
+    trendy_team_id: "4844600586305536",
+}
+
+team {
+    name: "trendy_team_deprecated_systemui_gfx",
+
+    // go/trendy/manage/engineers/6673470538285056
+    trendy_team_id: "6673470538285056",
+}
+
+team {
+    name: "trendy_team_wear_wear_connectivity",
+
+    // go/trendy/manage/engineers/6245149466263552
+    trendy_team_id: "6245149466263552",
+}
+
+team {
+    name: "trendy_team_android_core_experiments",
+
+    // go/trendy/manage/engineers/5709654965780480
+    trendy_team_id: "5709654965780480",
+}
+
+team {
+    name: "trendy_team_native_tools_libraries",
+
+    // go/trendy/manage/engineers/5920332376309760
+    trendy_team_id: "5920332376309760",
+}
+
+team {
+    name: "trendy_team_app_compat",
+
+    // go/trendy/manage/engineers/4907132411314176
+    trendy_team_id: "4907132411314176",
+}
+
+team {
+    name: "trendy_team_zra_team",
+
+    // go/trendy/manage/engineers/6227615267586048
+    trendy_team_id: "6227615267586048",
+}
+
+team {
+    name: "trendy_team_pixel_watch_system_software",
+
+    // go/trendy/manage/engineers/5295994500972544
+    trendy_team_id: "5295994500972544",
+}
+
+team {
+    name: "trendy_team_surfaces_engprod",
+
+    // go/trendy/manage/engineers/6154478176600064
+    trendy_team_id: "6154478176600064",
+}
+
+team {
+    name: "trendy_team_android_permissions",
+
+    // go/trendy/manage/engineers/5533977340313600
+    trendy_team_id: "5533977340313600",
+}
+
+team {
+    name: "trendy_team_platform_program_mgrs",
+
+    // go/trendy/manage/engineers/4766394922958848
+    trendy_team_id: "4766394922958848",
+}
+
+team {
+    name: "trendy_team_deprecated_system_health",
+
+    // go/trendy/manage/engineers/4864801213644800
+    trendy_team_id: "4864801213644800",
+}
+
+team {
+    name: "trendy_team_messages",
+
+    // go/trendy/manage/engineers/5137480097333248
+    trendy_team_id: "5137480097333248",
+}
+
+team {
+    name: "trendy_team_palmer_team",
+
+    // go/trendy/manage/engineers/5643570052235264
+    trendy_team_id: "5643570052235264",
+}
+
+team {
+    name: "trendy_team_android_video_image_codecs",
+
+    // go/trendy/manage/engineers/5733246110433280
+    trendy_team_id: "5733246110433280",
+}
+
+team {
+    name: "trendy_team_play_music",
+
+    // go/trendy/manage/engineers/6015440132112384
+    trendy_team_id: "6015440132112384",
+}
+
+team {
+    name: "trendy_team_system_clockwork_internal_",
+
+    // go/trendy/manage/engineers/6509670608797696
+    trendy_team_id: "6509670608797696",
+}
+
+team {
+    name: "trendy_team_multitasking_windowing",
+
+    // go/trendy/manage/engineers/5149185436975104
+    trendy_team_id: "5149185436975104",
+}
+
+team {
+    name: "trendy_team_vr",
+
+    // go/trendy/manage/engineers/4854355853180928
+    trendy_team_id: "4854355853180928",
+}
+
+team {
+    name: "trendy_team_maruel_team",
+
+    // go/trendy/manage/engineers/6302551810146304
+    trendy_team_id: "6302551810146304",
+}
+
+team {
+    name: "trendy_team_tv_os",
+
+    // go/trendy/manage/engineers/4662491074134016
+    trendy_team_id: "4662491074134016",
+}
+
+team {
+    name: "trendy_team_auto_engprod",
+
+    // go/trendy/manage/engineers/6199949475479552
+    trendy_team_id: "6199949475479552",
+}
+
+team {
+    name: "trendy_team_sarahcobb_team",
+
+    // go/trendy/manage/engineers/5755692179947520
+    trendy_team_id: "5755692179947520",
+}
+
+team {
+    name: "trendy_team_accessibility_services",
+
+    // go/trendy/manage/engineers/6367283853000704
+    trendy_team_id: "6367283853000704",
+}
+
+team {
+    name: "trendy_team_documentsui",
+
+    // go/trendy/manage/engineers/5805983167021056
+    trendy_team_id: "5805983167021056",
+}
+
+team {
+    name: "trendy_team_carrier_cert_follow_up",
+
+    // go/trendy/manage/engineers/6751912099741696
+    trendy_team_id: "6751912099741696",
+}
+
+team {
+    name: "trendy_team_mobile_device_partners",
+
+    // go/trendy/manage/engineers/5833057717092352
+    trendy_team_id: "5833057717092352",
+}
+
+team {
+    name: "trendy_team_activity_recognition",
+
+    // go/trendy/manage/engineers/6304701268000768
+    trendy_team_id: "6304701268000768",
+}
+
+team {
+    name: "trendy_team_jasoncampbell_team",
+
+    // go/trendy/manage/engineers/4834972524511232
+    trendy_team_id: "4834972524511232",
+}
+
+team {
+    name: "trendy_team_wear_wallet_on_wear",
+
+    // go/trendy/manage/engineers/5724960437731328
+    trendy_team_id: "5724960437731328",
+}
+
+team {
+    name: "trendy_team_glanceables",
+
+    // go/trendy/manage/engineers/4658222004600832
+    trendy_team_id: "4658222004600832",
+}
+
+team {
+    name: "trendy_team_android_safe_browsing",
+
+    // go/trendy/manage/engineers/6685713244782592
+    trendy_team_id: "6685713244782592",
+}
+
+team {
+    name: "trendy_team_android_input",
+
+    // go/trendy/manage/engineers/5141994775805952
+    trendy_team_id: "5141994775805952",
+}
+
+team {
+    name: "trendy_team_android_rust_toolchain",
+
+    // go/trendy/manage/engineers/6530590989975552
+    trendy_team_id: "6530590989975552",
+}
+
+team {
+    name: "trendy_team_exo",
+
+    // go/trendy/manage/engineers/5631545248088064
+    trendy_team_id: "5631545248088064",
+}
+
+team {
+    name: "trendy_team_camerax",
+
+    // go/trendy/manage/engineers/5272590669479936
+    trendy_team_id: "5272590669479936",
+}
+
+team {
+    name: "trendy_team_accessibility_sound_amplifier",
+
+    // go/trendy/manage/engineers/5674840312020992
+    trendy_team_id: "5674840312020992",
+}
+
+team {
+    name: "trendy_team_android_printing",
+
+    // go/trendy/manage/engineers/6257528146067456
+    trendy_team_id: "6257528146067456",
+}
+
+team {
+    name: "trendy_team_dtiselice_team",
+
+    // go/trendy/manage/engineers/5177934253031424
+    trendy_team_id: "5177934253031424",
+}
+
+team {
+    name: "trendy_team_personal_safety",
+
+    // go/trendy/manage/engineers/6222285147111424
+    trendy_team_id: "6222285147111424",
+}
+
+team {
+    name: "trendy_team_notifications",
+
+    // go/trendy/manage/engineers/5993521355587584
+    trendy_team_id: "5993521355587584",
+}
+
+team {
+    name: "trendy_team_java_core_libraries",
+
+    // go/trendy/manage/engineers/4768044190400512
+    trendy_team_id: "4768044190400512",
+}
+
+team {
+    name: "trendy_team_updatable_sdk_apis",
+
+    // go/trendy/manage/engineers/4840215139483648
+    trendy_team_id: "4840215139483648",
+}
+
+team {
+    name: "trendy_team_wear_low_power_mcu_experiences",
+
+    // go/trendy/manage/engineers/6172878013628416
+    trendy_team_id: "6172878013628416",
+}
+
+team {
+    name: "trendy_team_biometrics_framework",
+
+    // go/trendy/manage/engineers/6205415425998848
+    trendy_team_id: "6205415425998848",
+}
+
+team {
+    name: "trendy_team_pesto",
+
+    // go/trendy/manage/engineers/5551098528825344
+    trendy_team_id: "5551098528825344",
+}
+
+team {
+    name: "trendy_team_wear_engineering_foundations",
+
+    // go/trendy/manage/engineers/5366936275681280
+    trendy_team_id: "5366936275681280",
+}
+
+team {
+    name: "trendy_team_wear_wcs_developer",
+
+    // go/trendy/manage/engineers/5114199579459584
+    trendy_team_id: "5114199579459584",
+}
+
+team {
+    name: "trendy_team_aaos_framework",
+
+    // go/trendy/manage/engineers/6547794223333376
+    trendy_team_id: "6547794223333376",
+}
+
+team {
+    name: "trendy_team_wear_3xp",
+
+    // go/trendy/manage/engineers/5692317612539904
+    trendy_team_id: "5692317612539904",
+}
+
+team {
+    name: "trendy_team_clockwork",
+
+    // go/trendy/manage/engineers/4908781678755840
+    trendy_team_id: "4908781678755840",
+}
+
+team {
+    name: "trendy_team_pixel_connectivity_wifi_drivers_firmware",
+
+    // go/trendy/manage/engineers/4583326236934144
+    trendy_team_id: "4583326236934144",
+}
+
+team {
+    name: "trendy_team_games",
+
+    // go/trendy/manage/engineers/6736719759933440
+    trendy_team_id: "6736719759933440",
+}
+
+team {
+    name: "trendy_team_systems_n4_",
+
+    // go/trendy/manage/engineers/6474486236708864
+    trendy_team_id: "6474486236708864",
+}
+
+team {
+    name: "trendy_team_android_kvm",
+
+    // go/trendy/manage/engineers/6529318184714240
+    trendy_team_id: "6529318184714240",
+}
+
+team {
+    name: "trendy_team_wsd_w22",
+
+    // go/trendy/manage/engineers/6580039352975360
+    trendy_team_id: "6580039352975360",
+}
+
+team {
+    name: "trendy_team_android_sudo",
+
+    // go/trendy/manage/engineers/5329344876380160
+    trendy_team_id: "5329344876380160",
+}
+
+team {
+    name: "trendy_team_wear_wear_system_health_and_power",
+
+    // go/trendy/manage/engineers/5219147457658880
+    trendy_team_id: "5219147457658880",
+}
+
+team {
+    name: "trendy_team_android_build_release_tools",
+
+    // go/trendy/manage/engineers/6260558107803648
+    trendy_team_id: "6260558107803648",
+}
+
+team {
+    name: "trendy_team_fused_presence_provider",
+
+    // go/trendy/manage/engineers/6536344753307648
+    trendy_team_id: "6536344753307648",
+}
+
+team {
+    name: "trendy_team_agsa",
+
+    // go/trendy/manage/engineers/6157826887909376
+    trendy_team_id: "6157826887909376",
+}
+
+team {
+    name: "trendy_team_wear_wear_developer_tiles",
+
+    // go/trendy/manage/engineers/6633777396613120
+    trendy_team_id: "6633777396613120",
+}
+
+team {
+    name: "trendy_team_essential_applications",
+
+    // go/trendy/manage/engineers/4926373864800256
+    trendy_team_id: "4926373864800256",
+}
+
+team {
+    name: "trendy_team_pixel_mobile_data",
+
+    // go/trendy/manage/engineers/4996742608977920
+    trendy_team_id: "4996742608977920",
+}
+
+team {
+    name: "trendy_team_wsd_w52",
+
+    // go/trendy/manage/engineers/6280972190220288
+    trendy_team_id: "6280972190220288",
+}
+
+team {
+    name: "trendy_team_pixel_mobile_connectivity",
+
+    // go/trendy/manage/engineers/6754311945977856
+    trendy_team_id: "6754311945977856",
+}
+
+team {
+    name: "trendy_team_essentialapps_clock_calculator",
+
+    // go/trendy/manage/engineers/5270363728674816
+    trendy_team_id: "5270363728674816",
+}
+
+team {
+    name: "trendy_team_ssd_system_health",
+
+    // go/trendy/manage/engineers/6456894050664448
+    trendy_team_id: "6456894050664448",
+}
+
+team {
+    name: "trendy_team_pixel_continuity",
+
+    // go/trendy/manage/engineers/4786635551309824
+    trendy_team_id: "4786635551309824",
+}
+
+team {
+    name: "trendy_team_wear_software_nti",
+
+    // go/trendy/manage/engineers/5164973558759424
+    trendy_team_id: "5164973558759424",
+}
+
+team {
+    name: "trendy_team_machine_learning",
+
+    // go/trendy/manage/engineers/5276568318246912
+    trendy_team_id: "5276568318246912",
+}
+
+team {
+    name: "trendy_team_pixel_ml",
+
+    // go/trendy/manage/engineers/5339883108990976
+    trendy_team_id: "5339883108990976",
+}
+
+team {
+    name: "trendy_team_ex_enterprise",
+
+    // go/trendy/manage/engineers/6738369027375104
+    trendy_team_id: "6738369027375104",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_aoc",
+
+    // go/trendy/manage/engineers/4712464983425024
+    trendy_team_id: "4712464983425024",
+}
+
+team {
+    name: "trendy_team_android_platform_communications",
+
+    // go/trendy/manage/engineers/6577505415102464
+    trendy_team_id: "6577505415102464",
+}
+
+team {
+    name: "trendy_team_sunshine",
+
+    // go/trendy/manage/engineers/6105050329776128
+    trendy_team_id: "6105050329776128",
+}
+
+team {
+    name: "trendy_team_qmc_iqt_tao",
+
+    // go/trendy/manage/engineers/5065462085713920
+    trendy_team_id: "5065462085713920",
+}
+
+team {
+    name: "trendy_team_mckillop_team",
+
+    // go/trendy/manage/engineers/5926589599744000
+    trendy_team_id: "5926589599744000",
+}
+
+team {
+    name: "trendy_team_pixel_process_experience",
+
+    // go/trendy/manage/engineers/5745436633235456
+    trendy_team_id: "5745436633235456",
+}
+
+team {
+    name: "trendy_team_wsd_l1",
+
+    // go/trendy/manage/engineers/5119887911288832
+    trendy_team_id: "5119887911288832",
+}
+
+team {
+    name: "trendy_team_foldables",
+
+    // go/trendy/manage/engineers/5149421392920576
+    trendy_team_id: "5149421392920576",
+}
+
+team {
+    name: "trendy_team_arc_next",
+
+    // go/trendy/manage/engineers/6238917659361280
+    trendy_team_id: "6238917659361280",
+}
+
+team {
+    name: "trendy_team_android_rubidium",
+
+    // go/trendy/manage/engineers/5098012529295360
+    trendy_team_id: "5098012529295360",
+}
+
+team {
+    name: "trendy_team_wear_wear_power_emulator",
+
+    // go/trendy/manage/engineers/5160338936725504
+    trendy_team_id: "5160338936725504",
+}
+
+team {
+    name: "trendy_team_deprecated_framework_svetoslavganov",
+
+    // go/trendy/manage/engineers/6404117492531200
+    trendy_team_id: "6404117492531200",
+}
+
+team {
+    name: "trendy_team_gregsimon_team",
+
+    // go/trendy/manage/engineers/5702018510520320
+    trendy_team_id: "5702018510520320",
+}
+
+team {
+    name: "trendy_team_wear_opus",
+
+    // go/trendy/manage/engineers/5098351636676608
+    trendy_team_id: "5098351636676608",
+}
+
+team {
+    name: "trendy_team_text_to_speech",
+
+    // go/trendy/manage/engineers/6368933120442368
+    trendy_team_id: "6368933120442368",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_audio",
+
+    // go/trendy/manage/engineers/6492078422753280
+    trendy_team_id: "6492078422753280",
+}
+
+team {
+    name: "trendy_team_transformer",
+
+    // go/trendy/manage/engineers/5964312841420800
+    trendy_team_id: "5964312841420800",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_video",
+
+    // go/trendy/manage/engineers/6442361728696320
+    trendy_team_id: "6442361728696320",
+}
+
+team {
+    name: "trendy_team_lse_app_compat",
+
+    // go/trendy/manage/engineers/5180827749154816
+    trendy_team_id: "5180827749154816",
+}
+
+team {
+    name: "trendy_team_android_media_leads",
+
+    // go/trendy/manage/engineers/5487674550779904
+    trendy_team_id: "5487674550779904",
+}
+
+team {
+    name: "trendy_team_kousha_team",
+
+    // go/trendy/manage/engineers/5157338676887552
+    trendy_team_id: "5157338676887552",
+}
+
+team {
+    name: "trendy_team_security",
+
+    // go/trendy/manage/engineers/5241383946158080
+    trendy_team_id: "5241383946158080",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_battery_life_system_power_",
+
+    // go/trendy/manage/engineers/4512957492756480
+    trendy_team_id: "4512957492756480",
+}
+
+team {
+    name: "trendy_team_eggs",
+
+    // go/trendy/manage/engineers/4568929198309376
+    trendy_team_id: "4568929198309376",
+}
+
+team {
+    name: "trendy_team_jeremymanson_team",
+
+    // go/trendy/manage/engineers/5095869749297152
+    trendy_team_id: "5095869749297152",
+}
+
+team {
+    name: "trendy_team_exchange_active_sync_in_gmail",
+
+    // go/trendy/manage/engineers/5382121434513408
+    trendy_team_id: "5382121434513408",
+}
+
+team {
+    name: "trendy_team_ios_backup_restore_make_pixel_",
+
+    // go/trendy/manage/engineers/5752160863420416
+    trendy_team_id: "5752160863420416",
+}
+
+team {
+    name: "trendy_team_deprecated_location",
+
+    // go/trendy/manage/engineers/6228195632087040
+    trendy_team_id: "6228195632087040",
+}
+
+team {
+    name: "trendy_team_input_framework",
+
+    // go/trendy/manage/engineers/4999436357238784
+    trendy_team_id: "4999436357238784",
+}
+
+team {
+    name: "trendy_team_wear_developer_foundation",
+
+    // go/trendy/manage/engineers/5239127108648960
+    trendy_team_id: "5239127108648960",
+}
+
+team {
+    name: "trendy_team_tpm_tvc",
+
+    // go/trendy/manage/engineers/5390683333230592
+    trendy_team_id: "5390683333230592",
+}
+
+team {
+    name: "trendy_team_wear_wear_ux",
+
+    // go/trendy/manage/engineers/5782097411080192
+    trendy_team_id: "5782097411080192",
+}
+
+team {
+    name: "trendy_team_lse_desktop_os_experience",
+
+    // go/trendy/manage/engineers/5125234900434944
+    trendy_team_id: "5125234900434944",
+}
+
+team {
+    name: "trendy_team_android_for_india_device_experiences",
+
+    // go/trendy/manage/engineers/5395413652111360
+    trendy_team_id: "5395413652111360",
+}
+
+team {
+    name: "trendy_team_pixel_zombie",
+
+    // go/trendy/manage/engineers/5074646910533632
+    trendy_team_id: "5074646910533632",
+}
+
+team {
+    name: "trendy_team_android_onboarding",
+
+    // go/trendy/manage/engineers/5152271974367232
+    trendy_team_id: "5152271974367232",
+}
+
+team {
+    name: "trendy_team_pixel_audio",
+
+    // go/trendy/manage/engineers/5436547260088320
+    trendy_team_id: "5436547260088320",
+}
+
+team {
+    name: "trendy_team_pixel_connectivity_bt",
+
+    // go/trendy/manage/engineers/6328035423453184
+    trendy_team_id: "6328035423453184",
+}
+
+team {
+    name: "trendy_team_wsd_w12",
+
+    // go/trendy/manage/engineers/6333748748353536
+    trendy_team_id: "6333748748353536",
+}
+
+team {
+    name: "trendy_team_qmc_mvt",
+
+    // go/trendy/manage/engineers/4572880876470272
+    trendy_team_id: "4572880876470272",
+}
+
+team {
+    name: "trendy_team_switch_access_voice_access",
+
+    // go/trendy/manage/engineers/4794432469467136
+    trendy_team_id: "4794432469467136",
+}
+
+team {
+    name: "trendy_team_mainline_modularization",
+
+    // go/trendy/manage/engineers/5845084143386624
+    trendy_team_id: "5845084143386624",
+}
+
+team {
+    name: "trendy_team_fwk_telecom",
+
+    // go/trendy/manage/engineers/5330994143821824
+    trendy_team_id: "5330994143821824",
+}
+
+team {
+    name: "trendy_team_deprecated_framework_akulian",
+
+    // go/trendy/manage/engineers/5323210872750080
+    trendy_team_id: "5323210872750080",
+}
+
+team {
+    name: "trendy_team_wear_wear_identity",
+
+    // go/trendy/manage/engineers/6017732386390016
+    trendy_team_id: "6017732386390016",
+}
+
+team {
+    name: "trendy_team_android_pdf",
+
+    // go/trendy/manage/engineers/5175136433045504
+    trendy_team_id: "5175136433045504",
+}
+
+team {
+    name: "trendy_team_developer_relations",
+
+    // go/trendy/manage/engineers/5709226143776768
+    trendy_team_id: "5709226143776768",
+}
+
+team {
+    name: "trendy_team_system_intelligence",
+
+    // go/trendy/manage/engineers/5849675995709440
+    trendy_team_id: "5849675995709440",
+}
+
+team {
+    name: "trendy_team_mainline_updates",
+
+    // go/trendy/manage/engineers/4845810809995264
+    trendy_team_id: "4845810809995264",
+}
+
+team {
+    name: "trendy_team_n_a_1",
+
+    // go/trendy/manage/engineers/5946720655376384
+    trendy_team_id: "5946720655376384",
+}
+
+team {
+    name: "trendy_team_google_drive_docs_sheets_and_slides",
+
+    // go/trendy/manage/engineers/6613574457622528
+    trendy_team_id: "6613574457622528",
+}
+
+team {
+    name: "trendy_team_deprecated_awareness_health_experiences",
+
+    // go/trendy/manage/engineers/6627866395967488
+    trendy_team_id: "6627866395967488",
+}
+
+team {
+    name: "trendy_team_context_infrastructure",
+
+    // go/trendy/manage/engineers/4701268040646656
+    trendy_team_id: "4701268040646656",
+}
+
+team {
+    name: "trendy_team_android_media_solutions",
+
+    // go/trendy/manage/engineers/4750452004356096
+    trendy_team_id: "4750452004356096",
+}
+
+team {
+    name: "trendy_team_wear_device_and_infrastructure",
+
+    // go/trendy/manage/engineers/6358069369798656
+    trendy_team_id: "6358069369798656",
+}
+
+team {
+    name: "trendy_team_pixel_biometrics",
+
+    // go/trendy/manage/engineers/5780875748737024
+    trendy_team_id: "5780875748737024",
+}
+
+team {
+    name: "trendy_team_app_knowledge_platform",
+
+    // go/trendy/manage/engineers/6272266390634496
+    trendy_team_id: "6272266390634496",
+}
+
+team {
+    name: "trendy_team_wsd",
+
+    // go/trendy/manage/engineers/4680083260178432
+    trendy_team_id: "4680083260178432",
+}
+
+team {
+    name: "trendy_team_seg",
+
+    // go/trendy/manage/engineers/5067111353155584
+    trendy_team_id: "5067111353155584",
+}
+
+team {
+    name: "trendy_team_devinlawson_team",
+
+    // go/trendy/manage/engineers/4805900971442176
+    trendy_team_id: "4805900971442176",
+}
+
+team {
+    name: "trendy_team_camera_hardware",
+
+    // go/trendy/manage/engineers/6087458143731712
+    trendy_team_id: "6087458143731712",
+}
+
+team {
+    name: "trendy_team_camera_image_quality",
+
+    // go/trendy/manage/engineers/5401362887999488
+    trendy_team_id: "5401362887999488",
+}
+
+team {
+    name: "trendy_team_wear_wear_assistant",
+
+    // go/trendy/manage/engineers/5848075306172416
+    trendy_team_id: "5848075306172416",
+}
+
+team {
+    name: "trendy_team_android_power_and_comms_infra",
+
+    // go/trendy/manage/engineers/5325547653332992
+    trendy_team_id: "5325547653332992",
+}
+
+team {
+    name: "trendy_team_pmw_pmo",
+
+    // go/trendy/manage/engineers/4656299270504448
+    trendy_team_id: "4656299270504448",
+}
+
+team {
+    name: "trendy_team_filament",
+
+    // go/trendy/manage/engineers/6031425915486208
+    trendy_team_id: "6031425915486208",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_bspcore",
+
+    // go/trendy/manage/engineers/6508021341356032
+    trendy_team_id: "6508021341356032",
+}
+
+team {
+    name: "trendy_team_powermanager_framework",
+
+    // go/trendy/manage/engineers/5116162121564160
+    trendy_team_id: "5116162121564160",
+}
+
+team {
+    name: "trendy_team_wear_romanesco",
+
+    // go/trendy/manage/engineers/5112520062697472
+    trendy_team_id: "5112520062697472",
+}
+
+team {
+    name: "trendy_team_deprecated_theming",
+
+    // go/trendy/manage/engineers/5179308179881984
+    trendy_team_id: "5179308179881984",
+}
+
+team {
+    name: "trendy_team_recorder",
+
+    // go/trendy/manage/engineers/5085035337383936
+    trendy_team_id: "5085035337383936",
+}
+
+team {
+    name: "trendy_team_framework_accessibility",
+
+    // go/trendy/manage/engineers/5474751170019328
+    trendy_team_id: "5474751170019328",
+}
+
+team {
+    name: "trendy_team_windowing_infra_",
+
+    // go/trendy/manage/engineers/4578440609431552
+    trendy_team_id: "4578440609431552",
+}
+
+team {
+    name: "trendy_team_pmw_mcs",
+
+    // go/trendy/manage/engineers/5864733550608384
+    trendy_team_id: "5864733550608384",
+}
+
+team {
+    name: "trendy_team_wear_wear_sysui_ctrl_carousel_tiles_recents_launcher_",
+
+    // go/trendy/manage/engineers/4820131976740864
+    trendy_team_id: "4820131976740864",
+}
+
+team {
+    name: "trendy_team_wear_wear_accessibility_compliance",
+
+    // go/trendy/manage/engineers/5381719553114112
+    trendy_team_id: "5381719553114112",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_performance_thermal",
+
+    // go/trendy/manage/engineers/5146276190355456
+    trendy_team_id: "5146276190355456",
+}
+
+team {
+    name: "trendy_team_neelsa_team",
+
+    // go/trendy/manage/engineers/5736750978334720
+    trendy_team_id: "5736750978334720",
+}
+
+team {
+    name: "trendy_team_pixel_camera_engineering_experience",
+
+    // go/trendy/manage/engineers/5190256655466496
+    trendy_team_id: "5190256655466496",
+}
+
+team {
+    name: "trendy_team_embedded_web_on_android",
+
+    // go/trendy/manage/engineers/630061306576896
+    trendy_team_id: "630061306576896",
+}
+
+team {
+    name: "trendy_team_gantry",
+
+    // go/trendy/manage/engineers/5677019153858560
+    trendy_team_id: "5677019153858560",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_battery",
+
+    // go/trendy/manage/engineers/6052273771642880
+    trendy_team_id: "6052273771642880",
+}
+
+team {
+    name: "trendy_team_enigma",
+
+    // go/trendy/manage/engineers/5396338361597952
+    trendy_team_id: "5396338361597952",
+}
+
+team {
+    name: "trendy_team_pixel_gps_power",
+
+    // go/trendy/manage/engineers/5075907446177792
+    trendy_team_id: "5075907446177792",
+}
+
+team {
+    name: "trendy_team_tool_frank",
+
+    // go/trendy/manage/engineers/6200209976360960
+    trendy_team_id: "6200209976360960",
+}
+
+team {
+    name: "trendy_team_rginda_team",
+
+    // go/trendy/manage/engineers/6031367105314816
+    trendy_team_id: "6031367105314816",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_soc_power",
+
+    // go/trendy/manage/engineers/5400771358785536
+    trendy_team_id: "5400771358785536",
+}
+
+team {
+    name: "trendy_team_android_crumpet",
+
+    // go/trendy/manage/engineers/5199704478351360
+    trendy_team_id: "5199704478351360",
+}
+
+team {
+    name: "trendy_team_wallpapers",
+
+    // go/trendy/manage/engineers/5125411306373120
+    trendy_team_id: "5125411306373120",
+}
+
+team {
+    name: "trendy_team_deprecated_volta",
+
+    // go/trendy/manage/engineers/6316156562309120
+    trendy_team_id: "6316156562309120",
+}
+
+team {
+    name: "trendy_team_camera_machine_intelligence",
+
+    // go/trendy/manage/engineers/6578390085533696
+    trendy_team_id: "6578390085533696",
+}
+
+team {
+    name: "trendy_team_sheepo_team",
+
+    // go/trendy/manage/engineers/5068061372743680
+    trendy_team_id: "5068061372743680",
+}
+
+team {
+    name: "trendy_team_android_profile_experiences",
+
+    // go/trendy/manage/engineers/5914919462404096
+    trendy_team_id: "5914919462404096",
+}
+
+team {
+    name: "trendy_team_review_platform",
+
+    // go/trendy/manage/engineers/5952905574514688
+    trendy_team_id: "5952905574514688",
+}
+
+team {
+    name: "trendy_team_abarth_team",
+
+    // go/trendy/manage/engineers/4857528786780160
+    trendy_team_id: "4857528786780160",
+}
+
+team {
+    name: "trendy_team_treble",
+
+    // go/trendy/manage/engineers/5452490178691072
+    trendy_team_id: "5452490178691072",
+}
+
+team {
+    name: "trendy_team_jsasinowski_team",
+
+    // go/trendy/manage/engineers/6239259762786304
+    trendy_team_id: "6239259762786304",
+}
+
+team {
+    name: "trendy_team_vaas_team",
+
+    // go/trendy/manage/engineers/5106754296905728
+    trendy_team_id: "5106754296905728",
+}
+
+team {
+    name: "trendy_team_internationalization",
+
+    // go/trendy/manage/engineers/5911536283287552
+    trendy_team_id: "5911536283287552",
+}
+
+team {
+    name: "trendy_team_android_safer_apps",
+
+    // go/trendy/manage/engineers/5943179005034496
+    trendy_team_id: "5943179005034496",
+}
+
+team {
+    name: "trendy_team_connectivity_telemetry",
+
+    // go/trendy/manage/engineers/5084491349393408
+    trendy_team_id: "5084491349393408",
+}
+
+team {
+    name: "trendy_team_eseidel_team",
+
+    // go/trendy/manage/engineers/5453997738721280
+    trendy_team_id: "5453997738721280",
+}
+
+team {
+    name: "trendy_team_test_eng_infrastructure",
+
+    // go/trendy/manage/engineers/5981905027465216
+    trendy_team_id: "5981905027465216",
+}
+
+team {
+    name: "trendy_team_wear_wear_wcs_notification",
+
+    // go/trendy/manage/engineers/4805871527690240
+    trendy_team_id: "4805871527690240",
+}
+
+team {
+    name: "trendy_team_konkers_team",
+
+    // go/trendy/manage/engineers/5751147701895168
+    trendy_team_id: "5751147701895168",
+}
+
+team {
+    name: "trendy_team_mkearney_team",
+
+    // go/trendy/manage/engineers/5082590844452864
+    trendy_team_id: "5082590844452864",
+}
+
+team {
+    name: "trendy_team_android_kernel",
+
+    // go/trendy/manage/engineers/5014334795022336
+    trendy_team_id: "5014334795022336",
+}
+
+team {
+    name: "trendy_team_chrome",
+
+    // go/trendy/manage/engineers/6439301864620032
+    trendy_team_id: "6439301864620032",
+}
+
+team {
+    name: "trendy_team_wear_wear_dialer_messages",
+
+    // go/trendy/manage/engineers/4906732878725120
+    trendy_team_id: "4906732878725120",
+}
+
+team {
+    name: "trendy_team_android_tv_engprod",
+
+    // go/trendy/manage/engineers/5538081157185536
+    trendy_team_id: "5538081157185536",
+}
+
+team {
+    name: "trendy_team_nicoh_team",
+
+    // go/trendy/manage/engineers/5662292009189376
+    trendy_team_id: "5662292009189376",
+}
+
+team {
+    name: "trendy_team_wear_apps_ecosystem",
+
+    // go/trendy/manage/engineers/4908413871882240
+    trendy_team_id: "4908413871882240",
+}
+
+team {
+    name: "trendy_team_cellular_security",
+
+    // go/trendy/manage/engineers/6529004011683840
+    trendy_team_id: "6529004011683840",
+}
+
+team {
+    name: "trendy_team_dhaloni_team",
+
+    // go/trendy/manage/engineers/6213556497448960
+    trendy_team_id: "6213556497448960",
+}
+
+team {
+    name: "trendy_team_applications_google_wide_",
+
+    // go/trendy/manage/engineers/6120993248378880
+    trendy_team_id: "6120993248378880",
+}
+
+team {
+    name: "trendy_team_defunct_system_ui_intelligence_dfeng",
+
+    // go/trendy/manage/engineers/5577284748443648
+    trendy_team_id: "5577284748443648",
+}
+
+team {
+    name: "trendy_team_oslo",
+
+    // go/trendy/manage/engineers/5779594887954432
+    trendy_team_id: "5779594887954432",
+}
+
+team {
+    name: "trendy_team_bluetooth",
+
+    // go/trendy/manage/engineers/6226546364645376
+    trendy_team_id: "6226546364645376",
+}
+
+team {
+    name: "trendy_team_localization",
+
+    // go/trendy/manage/engineers/5751557341446144
+    trendy_team_id: "5751557341446144",
+}
+
+team {
+    name: "trendy_team_ssd_security",
+
+    // go/trendy/manage/engineers/4608065248559104
+    trendy_team_id: "4608065248559104",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_usb",
+
+    // go/trendy/manage/engineers/5100646457802752
+    trendy_team_id: "5100646457802752",
+}
+
+team {
+    name: "trendy_team_hiroshi_team",
+
+    // go/trendy/manage/engineers/5756564662288384
+    trendy_team_id: "5756564662288384",
+}
+
+team {
+    name: "trendy_team_contacts",
+
+    // go/trendy/manage/engineers/4732859818311680
+    trendy_team_id: "4732859818311680",
+}
+
+team {
+    name: "trendy_team_wsd_w2",
+
+    // go/trendy/manage/engineers/5945071387934720
+    trendy_team_id: "5945071387934720",
+}
+
+team {
+    name: "trendy_team_wsd_w51",
+
+    // go/trendy/manage/engineers/5698780783312896
+    trendy_team_id: "5698780783312896",
+}
+
+team {
+    name: "trendy_team_erahm_team",
+
+    // go/trendy/manage/engineers/5666347807309824
+    trendy_team_id: "5666347807309824",
+}
+
+team {
+    name: "trendy_team_wsd_w53",
+
+    // go/trendy/manage/engineers/5841167539109888
+    trendy_team_id: "5841167539109888",
+}
+
+team {
+    name: "trendy_team_framework_overground",
+
+    // go/trendy/manage/engineers/5135830829891584
+    trendy_team_id: "5135830829891584",
+}
+
+team {
+    name: "trendy_team_android_performance_console",
+
+    // go/trendy/manage/engineers/5761662355963904
+    trendy_team_id: "5761662355963904",
+}
+
+team {
+    name: "trendy_team_partner_modem",
+
+    // go/trendy/manage/engineers/6502710329376768
+    trendy_team_id: "6502710329376768",
+}
+
+team {
+    name: "trendy_team_scd_tool",
+
+    // go/trendy/manage/engineers/5225441027555328
+    trendy_team_id: "5225441027555328",
+}
+
+team {
+    name: "trendy_team_gtw_sw",
+
+    // go/trendy/manage/engineers/6069865957687296
+    trendy_team_id: "6069865957687296",
+}
+
+team {
+    name: "trendy_team_wearables",
+
+    // go/trendy/manage/engineers/6122642515820544
+    trendy_team_id: "6122642515820544",
+}
+
+team {
+    name: "trendy_team_android_text",
+
+    // go/trendy/manage/engineers/5194085585289216
+    trendy_team_id: "5194085585289216",
+}
+
+team {
+    name: "trendy_team_android_health",
+
+    // go/trendy/manage/engineers/5177772706004992
+    trendy_team_id: "5177772706004992",
+}
+
+team {
+    name: "trendy_team_wsd_w23",
+
+    // go/trendy/manage/engineers/6191361992556544
+    trendy_team_id: "6191361992556544",
+}
+
+team {
+    name: "trendy_team_pixel_connectivity_networking",
+
+    // go/trendy/manage/engineers/6685592469241856
+    trendy_team_id: "6685592469241856",
+}
+
+team {
+    name: "trendy_team_ppi_team",
+
+    // go/trendy/manage/engineers/5171933646848000
+    trendy_team_id: "5171933646848000",
+}
+
+team {
+    name: "trendy_team_ssd_mm_peripheral",
+
+    // go/trendy/manage/engineers/6624019818086400
+    trendy_team_id: "6624019818086400",
+}
+
+team {
+    name: "trendy_team_n_a",
+
+    // go/trendy/manage/engineers/4891189492711424
+    trendy_team_id: "4891189492711424",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_hid_driver",
+
+    // go/trendy/manage/engineers/4534130425102336
+    trendy_team_id: "4534130425102336",
+}
+
+team {
+    name: "trendy_team_wear_wearable_motion_algorithms",
+
+    // go/trendy/manage/engineers/5397550198587392
+    trendy_team_id: "5397550198587392",
+}
+
+team {
+    name: "trendy_team_wear_wear_sysui_notifications",
+
+    // go/trendy/manage/engineers/5256257183055872
+    trendy_team_id: "5256257183055872",
+}
+
+team {
+    name: "trendy_team_android_camera_engprod",
+
+    // go/trendy/manage/engineers/5594382843281408
+    trendy_team_id: "5594382843281408",
+}
+
+team {
+    name: "trendy_team_lockscreen_aod",
+
+    // go/trendy/manage/engineers/5503979641012224
+    trendy_team_id: "5503979641012224",
+}
+
+team {
+    name: "trendy_team_windowing_sdk",
+
+    // go/trendy/manage/engineers/5683037008723968
+    trendy_team_id: "5683037008723968",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_inmarket_power",
+
+    // go/trendy/manage/engineers/6675891331170304
+    trendy_team_id: "6675891331170304",
+}
+
+team {
+    name: "trendy_team_betterbug",
+
+    // go/trendy/manage/engineers/4910400652607488
+    trendy_team_id: "4910400652607488",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_security",
+
+    // go/trendy/manage/engineers/5030277713625088
+    trendy_team_id: "5030277713625088",
+}
+
+team {
+    name: "trendy_team_pixel_energizer",
+
+    // go/trendy/manage/engineers/4970605270302720
+    trendy_team_id: "4970605270302720",
+}
+
+team {
+    name: "trendy_team_fwk_core_networking",
+
+    // go/trendy/manage/engineers/5559692562399232
+    trendy_team_id: "5559692562399232",
+}
+
+team {
+    name: "trendy_team_chromium_webview",
+
+    // go/trendy/manage/engineers/5630061306576896
+    trendy_team_id: "5630061306576896",
+}
+
+team {
+    name: "trendy_team_framework_cdm",
+
+    // go/trendy/manage/engineers/4793721887031296
+    trendy_team_id: "4793721887031296",
+}
+
+team {
+    name: "trendy_team_system_walleye_",
+
+    // go/trendy/manage/engineers/5665245678665728
+    trendy_team_id: "5665245678665728",
+}
+
+team {
+    name: "trendy_team_system_marlin_sailfish_",
+
+    // go/trendy/manage/engineers/4713618364825600
+    trendy_team_id: "4713618364825600",
+}
+
+team {
+    name: "trendy_team_qmc",
+
+    // go/trendy/manage/engineers/5207848841510912
+    trendy_team_id: "5207848841510912",
+}
+
+team {
+    name: "trendy_team_android_wallet_integration",
+
+    // go/trendy/manage/engineers/5785777995153408
+    trendy_team_id: "5785777995153408",
+}
+
+team {
+    name: "trendy_team_noreent_team",
+
+    // go/trendy/manage/engineers/5766299843198976
+    trendy_team_id: "5766299843198976",
+}
+
+team {
+    name: "trendy_team_ink",
+
+    // go/trendy/manage/engineers/6620225162608640
+    trendy_team_id: "6620225162608640",
+}
+
+team {
+    name: "trendy_team_make_pixel",
+
+    // go/trendy/manage/engineers/6140234701864960
+    trendy_team_id: "6140234701864960",
+}
+
+team {
+    name: "trendy_team_chillers_team",
+
+    // go/trendy/manage/engineers/5631647887294464
+    trendy_team_id: "5631647887294464",
+}
+
+team {
+    name: "trendy_team_system_experience",
+
+    // go/trendy/manage/engineers/5083633521950720
+    trendy_team_id: "5083633521950720",
+}
+
+team {
+    name: "trendy_team_deprecated_framework_roosa",
+
+    // go/trendy/manage/engineers/6708067074998272
+    trendy_team_id: "6708067074998272",
+}
+
+team {
+    name: "trendy_team_build",
+
+    // go/trendy/manage/engineers/5542100376354816
+    trendy_team_id: "5542100376354816",
+}
+
+team {
+    name: "trendy_team_play_store",
+
+    // go/trendy/manage/engineers/4803228562489344
+    trendy_team_id: "4803228562489344",
+}
+
+team {
+    name: "trendy_team_clocks",
+
+    // go/trendy/manage/engineers/6327058391007232
+    trendy_team_id: "6327058391007232",
+}
+
+team {
+    name: "trendy_team_asafi_team",
+
+    // go/trendy/manage/engineers/6217735399964672
+    trendy_team_id: "6217735399964672",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_storage",
+
+    // go/trendy/manage/engineers/4644898888089600
+    trendy_team_id: "4644898888089600",
+}
+
+team {
+    name: "trendy_team_play_movies",
+
+    // go/trendy/manage/engineers/4838412934578176
+    trendy_team_id: "4838412934578176",
+}
+
+team {
+    name: "trendy_team_system_hammerhead_camera_",
+
+    // go/trendy/manage/engineers/6597631539019776
+    trendy_team_id: "6597631539019776",
+}
+
+team {
+    name: "trendy_team_wear_wear_sysui_applications",
+
+    // go/trendy/manage/engineers/4929833494544384
+    trendy_team_id: "4929833494544384",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_tpm",
+
+    // go/trendy/manage/engineers/4612922981122048
+    trendy_team_id: "4612922981122048",
+}
+
+team {
+    name: "trendy_team_qmc_script_automation",
+
+    // go/trendy/manage/engineers/5047869899669504
+    trendy_team_id: "5047869899669504",
+}
+
+team {
+    name: "trendy_team_pixel_sw_tpm",
+
+    // go/trendy/manage/engineers/5506916004265984
+    trendy_team_id: "5506916004265984",
+}
+
+team {
+    name: "trendy_team_device_and_factory_tpm",
+
+    // go/trendy/manage/engineers/4574530143911936
+    trendy_team_id: "4574530143911936",
+}
+
+team {
+    name: "trendy_team_pmw_mss",
+
+    // go/trendy/manage/engineers/4525262032896000
+    trendy_team_id: "4525262032896000",
+}
+
+team {
+    name: "trendy_team_wear_wear_esim_and_carriers",
+
+    // go/trendy/manage/engineers/5045168113614848
+    trendy_team_id: "5045168113614848",
+}
+
+team {
+    name: "trendy_team_android_pixel_context_hub",
+
+    // go/trendy/manage/engineers/5375970200944640
+    trendy_team_id: "5375970200944640",
+}
+
+team {
+    name: "trendy_team_pixel_setting_exp",
+
+    // go/trendy/manage/engineers/5758010936295424
+    trendy_team_id: "5758010936295424",
+}
+
+team {
+    name: "trendy_team_defunct_system_ui_intelligence_praveenj",
+
+    // go/trendy/manage/engineers/6648758829711360
+    trendy_team_id: "6648758829711360",
+}
+
+team {
+    name: "trendy_team_system_bullhead_",
+
+    // go/trendy/manage/engineers/4592122329956352
+    trendy_team_id: "4592122329956352",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_fingerprint",
+
+    // go/trendy/manage/engineers/5380181285568512
+    trendy_team_id: "5380181285568512",
+}
+
+team {
+    name: "trendy_team_android_sdlc",
+
+    // go/trendy/manage/engineers/6492896504152064
+    trendy_team_id: "6492896504152064",
+}
+
+team {
+    name: "trendy_team_android_core_graphics_stack",
+
+    // go/trendy/manage/engineers/5260625399644160
+    trendy_team_id: "5260625399644160",
+}
+
+team {
+    name: "trendy_team_accessibility_switch_access",
+
+    // go/trendy/manage/engineers/6026869039857664
+    trendy_team_id: "6026869039857664",
+}
+
+team {
+    name: "trendy_team_sqa_make_pixel_",
+
+    // go/trendy/manage/engineers/5610819853090816
+    trendy_team_id: "5610819853090816",
+}
+
+team {
+    name: "trendy_team_controls",
+
+    // go/trendy/manage/engineers/5005994102259712
+    trendy_team_id: "5005994102259712",
+}
+
+team {
+    name: "trendy_team_renderscript_nnapi",
+
+    // go/trendy/manage/engineers/6527262794842112
+    trendy_team_id: "6527262794842112",
+}
+
+team {
+    name: "trendy_team_test_infrastructure",
+
+    // go/trendy/manage/engineers/5130189115654144
+    trendy_team_id: "5130189115654144",
+}
+
+team {
+    name: "trendy_team_ssd_peripheral",
+
+    // go/trendy/manage/engineers/6314507294867456
+    trendy_team_id: "6314507294867456",
+}
+
+team {
+    name: "trendy_team_device_connectivity_experiences_make_pixel_",
+
+    // go/trendy/manage/engineers/5348586329866240
+    trendy_team_id: "5348586329866240",
+}
+
+team {
+    name: "trendy_team_nandunair_team",
+
+    // go/trendy/manage/engineers/4874500384129024
+    trendy_team_id: "4874500384129024",
+}
+
+team {
+    name: "trendy_team_godofredoc_team",
+
+    // go/trendy/manage/engineers/4892528710156288
+    trendy_team_id: "4892528710156288",
+}
+
+team {
+    name: "trendy_team_gtw_misc",
+
+    // go/trendy/manage/engineers/6437652597178368
+    trendy_team_id: "6437652597178368",
+}
+
+team {
+    name: "trendy_team_perception_virtualization",
+
+    // go/trendy/manage/engineers/5133931925897216
+    trendy_team_id: "5133931925897216",
+}
+
+team {
+    name: "trendy_team_safety_els_earthquake",
+
+    // go/trendy/manage/engineers/6508498165071872
+    trendy_team_id: "6508498165071872",
+}
+
+team {
+    name: "trendy_team_xr_framework",
+
+    // go/trendy/manage/engineers/4798040542445568
+    trendy_team_id: "4798040542445568",
+}
+
+team {
+    name: "trendy_team_system_ui_please_use_a_more_specific_subteam_if_possible_",
+
+    // go/trendy/manage/engineers/6402468225089536
+    trendy_team_id: "6402468225089536",
+}
+
+team {
+    name: "trendy_team_android_media_reliability",
+
+    // go/trendy/manage/engineers/5489323818221568
+    trendy_team_id: "5489323818221568",
+}
+
+team {
+    name: "trendy_team_wear_wear_services",
+
+    // go/trendy/manage/engineers/5140566757179392
+    trendy_team_id: "5140566757179392",
+}
+
+team {
+    name: "trendy_team_qmc_pda",
+
+    // go/trendy/manage/engineers/5155072283377664
+    trendy_team_id: "5155072283377664",
+}
+
+team {
+    name: "trendy_team_vsl",
+
+    // go/trendy/manage/engineers/6562447166930944
+    trendy_team_id: "6562447166930944",
+}
+
+team {
+    name: "trendy_team_android_release_metrics",
+
+    // go/trendy/manage/engineers/6018925759201280
+    trendy_team_id: "6018925759201280",
+}
+
+team {
+    name: "trendy_team_testing",
+
+    // go/trendy/manage/engineers/5892294829801472
+    trendy_team_id: "5892294829801472",
+}
+
+team {
+    name: "trendy_team_deprecated_wallet_integration",
+
+    // go/trendy/manage/engineers/5286726042288128
+    trendy_team_id: "5286726042288128",
+}
+
+team {
+    name: "trendy_team_leonardchan_team",
+
+    // go/trendy/manage/engineers/6260994579005440
+    trendy_team_id: "6260994579005440",
+}
+
+team {
+    name: "trendy_team_system_performance",
+
+    // go/trendy/manage/engineers/5188607388024832
+    trendy_team_id: "5188607388024832",
+}
+
+team {
+    name: "trendy_team_system_power",
+
+    // go/trendy/manage/engineers/4820820748533760
+    trendy_team_id: "4820820748533760",
+}
+
+team {
+    name: "trendy_team_deprecated_gdm_location_ads_marketplaces",
+
+    // go/trendy/manage/engineers/5261636812570624
+    trendy_team_id: "5261636812570624",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_digital_key",
+
+    // go/trendy/manage/engineers/6444896766033920
+    trendy_team_id: "6444896766033920",
+}
+
+team {
+    name: "trendy_team_aosp",
+
+    // go/trendy/manage/engineers/4860855378018304
+    trendy_team_id: "4860855378018304",
+}
+
+team {
+    name: "trendy_team_launcher",
+
+    // go/trendy/manage/engineers/5102295725244416
+    trendy_team_id: "5102295725244416",
+}
+
+team {
+    name: "trendy_team_ime",
+
+    // go/trendy/manage/engineers/6085808876290048
+    trendy_team_id: "6085808876290048",
+}
+
+team {
+    name: "trendy_team_jyotiraju_team",
+
+    // go/trendy/manage/engineers/5720977167253504
+    trendy_team_id: "5720977167253504",
+}
+
+team {
+    name: "trendy_team_camera",
+
+    // go/trendy/manage/engineers/5718022236798976
+    trendy_team_id: "5718022236798976",
+}
+
+team {
+    name: "trendy_team_wear_wear_backup_restore",
+
+    // go/trendy/manage/engineers/4875982171176960
+    trendy_team_id: "4875982171176960",
+}
+
+team {
+    name: "trendy_team_wear_wear_developer_watch_faces_complications",
+
+    // go/trendy/manage/engineers/5638213037096960
+    trendy_team_id: "5638213037096960",
+}
+
+team {
+    name: "trendy_team_mainline_reach",
+
+    // go/trendy/manage/engineers/5701386012098560
+    trendy_team_id: "5701386012098560",
+}
+
+team {
+    name: "trendy_team_ssd_bsp",
+
+    // go/trendy/manage/engineers/5876351911198720
+    trendy_team_id: "5876351911198720",
+}
+
+team {
+    name: "trendy_team_ux_design",
+
+    // go/trendy/manage/engineers/4678433992736768
+    trendy_team_id: "4678433992736768",
+}
+
+team {
+    name: "trendy_team_accessibility_fw_make_pixel",
+
+    // go/trendy/manage/engineers/5522858922868736
+    trendy_team_id: "5522858922868736",
+}
+
+team {
+    name: "trendy_team_wear_wear_media",
+
+    // go/trendy/manage/engineers/5365411545513984
+    trendy_team_id: "5365411545513984",
+}
+
+team {
+    name: "trendy_team_system_angler_",
+
+    // go/trendy/manage/engineers/5593227667046400
+    trendy_team_id: "5593227667046400",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_tools",
+
+    // go/trendy/manage/engineers/6460475572912128
+    trendy_team_id: "6460475572912128",
+}
+
+team {
+    name: "trendy_team_platform_build",
+
+    // go/trendy/manage/engineers/5774403578920960
+    trendy_team_id: "5774403578920960",
+}
+
+team {
+    name: "trendy_team_pchitoor_team",
+
+    // go/trendy/manage/engineers/5962577315266560
+    trendy_team_id: "5962577315266560",
+}
+
+team {
+    name: "trendy_team_multi_device_platform",
+
+    // go/trendy/manage/engineers/5850153090711552
+    trendy_team_id: "5850153090711552",
+}
+
+team {
+    name: "trendy_team_safetynet",
+
+    // go/trendy/manage/engineers/4748802736914432
+    trendy_team_id: "4748802736914432",
+}
+
+team {
+    name: "trendy_team_android_resources",
+
+    // go/trendy/manage/engineers/4678767020703744
+    trendy_team_id: "4678767020703744",
+}
+
+team {
+    name: "trendy_team_joshconner_team",
+
+    // go/trendy/manage/engineers/6226828248383488
+    trendy_team_id: "6226828248383488",
+}
+
+team {
+    name: "trendy_team_qmc_ait",
+
+    // go/trendy/manage/engineers/6175419073953792
+    trendy_team_id: "6175419073953792",
+}
+
+team {
+    name: "trendy_team_pixel_global",
+
+    // go/trendy/manage/engineers/4609714516000768
+    trendy_team_id: "4609714516000768",
+}
+
+team {
+    name: "trendy_team_qa_automation",
+
+    // go/trendy/manage/engineers/6159878303678464
+    trendy_team_id: "6159878303678464",
+}
+
+team {
+    name: "trendy_team_android_gpu",
+
+    // go/trendy/manage/engineers/6105848565104640
+    trendy_team_id: "6105848565104640",
+}
+
+team {
+    name: "trendy_team_qmc_ate",
+
+    // go/trendy/manage/engineers/4819171481092096
+    trendy_team_id: "4819171481092096",
+}
+
+team {
+    name: "trendy_team_hangouts",
+
+    // go/trendy/manage/engineers/6263380004175872
+    trendy_team_id: "6263380004175872",
+}
+
+team {
+    name: "trendy_team_cross_device_control",
+
+    // go/trendy/manage/engineers/5888607197757440
+    trendy_team_id: "5888607197757440",
+}
+
+team {
+    name: "trendy_team_interactions_frameworks",
+
+    // go/trendy/manage/engineers/4795124029489152
+    trendy_team_id: "4795124029489152",
+}
+
+team {
+    name: "trendy_team_deprecated_framework_santoscordon",
+
+    // go/trendy/manage/engineers/6049242537951232
+    trendy_team_id: "6049242537951232",
+}
+
+team {
+    name: "trendy_team_authentication",
+
+    // go/trendy/manage/engineers/5901909380988928
+    trendy_team_id: "5901909380988928",
+}
+
+team {
+    name: "trendy_team_stylus",
+
+    // go/trendy/manage/engineers/5685003218747392
+    trendy_team_id: "5685003218747392",
+}
+
+team {
+    name: "trendy_team_linus_team",
+
+    // go/trendy/manage/engineers/6210035100844032
+    trendy_team_id: "6210035100844032",
+}
+
+team {
+    name: "trendy_team_virtualization",
+
+    // go/trendy/manage/engineers/5117131519787008
+    trendy_team_id: "5117131519787008",
+}
+
+team {
+    name: "trendy_team_billstevenson_team",
+
+    // go/trendy/manage/engineers/5631064744820736
+    trendy_team_id: "5631064744820736",
+}
+
+team {
+    name: "trendy_team_android_smartos",
+
+    // go/trendy/manage/engineers/5637973325414400
+    trendy_team_id: "5637973325414400",
+}
+
+team {
+    name: "trendy_team_art_performance",
+
+    // go/trendy/manage/engineers/6210603446042624
+    trendy_team_id: "6210603446042624",
+}
+
+team {
+    name: "trendy_team_ssd",
+
+    // go/trendy/manage/engineers/5858759725154304
+    trendy_team_id: "5858759725154304",
+}
+
+team {
+    name: "trendy_team_abc_engops",
+
+    // go/trendy/manage/engineers/5273578928504832
+    trendy_team_id: "5273578928504832",
+}
+
+team {
+    name: "trendy_team_wear_weather_android_app",
+
+    // go/trendy/manage/engineers/6496415568003072
+    trendy_team_id: "6496415568003072",
+}
+
+team {
+    name: "trendy_team_rubidium_sdk_runtime",
+
+    // go/trendy/manage/engineers/6286508355911680
+    trendy_team_id: "6286508355911680",
+}
+
+team {
+    name: "trendy_team_borthakur_team",
+
+    // go/trendy/manage/engineers/4962243059023872
+    trendy_team_id: "4962243059023872",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_graphics",
+
+    // go/trendy/manage/engineers/5791644907110400
+    trendy_team_id: "5791644907110400",
+}
+
+team {
+    name: "trendy_team_make_creative_android_key_experience",
+
+    // go/trendy/manage/engineers/5716738515173376
+    trendy_team_id: "5716738515173376",
+}
+
+team {
+    name: "trendy_team_pmw_l1rf",
+
+    // go/trendy/manage/engineers/5302906915684352
+    trendy_team_id: "5302906915684352",
+}
+
+team {
+    name: "trendy_team_test_eng_comms_power",
+
+    // go/trendy/manage/engineers/6632815911108608
+    trendy_team_id: "6632815911108608",
+}
+
+team {
+    name: "trendy_team_wear_wear_architecture_group",
+
+    // go/trendy/manage/engineers/5609928060207104
+    trendy_team_id: "5609928060207104",
+}
+
+team {
+    name: "trendy_team_wear_wear_esim_carriers",
+
+    // go/trendy/manage/engineers/5928361498935296
+    trendy_team_id: "5928361498935296",
+}
+
+team {
+    name: "trendy_team_pixel_connectivity_gps",
+
+    // go/trendy/manage/engineers/4920660539899904
+    trendy_team_id: "4920660539899904",
+}
+
+team {
+    name: "trendy_team_adversarial_code_ai_arc_ai_",
+
+    // go/trendy/manage/engineers/4850213657673728
+    trendy_team_id: "4850213657673728",
+}
+
+team {
+    name: "trendy_team_android_binary_transparency",
+
+    // go/trendy/manage/engineers/6585365243002880
+    trendy_team_id: "6585365243002880",
+}
+
+team {
+    name: "trendy_team_test_eng_automotive_tv",
+
+    // go/trendy/manage/engineers/6156177620467712
+    trendy_team_id: "6156177620467712",
+}
+
+team {
+    name: "trendy_team_tgosselaar_team",
+
+    // go/trendy/manage/engineers/4897638077071360
+    trendy_team_id: "4897638077071360",
+}
+
+team {
+    name: "trendy_team_pixel_connectivity_wifi",
+
+    // go/trendy/manage/engineers/4776219313340416
+    trendy_team_id: "4776219313340416",
+}
+
+team {
+    name: "trendy_team_setup_wizard",
+
+    // go/trendy/manage/engineers/5417305806602240
+    trendy_team_id: "5417305806602240",
+}
+
+team {
+    name: "trendy_team_security_validation_engineering_sve_",
+
+    // go/trendy/manage/engineers/5850943050907648
+    trendy_team_id: "5850943050907648",
+}
+
+team {
+    name: "trendy_team_wsd_function",
+
+    // go/trendy/manage/engineers/6650408097153024
+    trendy_team_id: "6650408097153024",
+}
+
+team {
+    name: "trendy_team_platform_product_mgrs",
+
+    // go/trendy/manage/engineers/6483282329731072
+    trendy_team_id: "6483282329731072",
+}
+
+team {
+    name: "trendy_team_partner_telephony",
+
+    // go/trendy/manage/engineers/5767882120265728
+    trendy_team_id: "5767882120265728",
+}
+
+team {
+    name: "trendy_team_crjohns_team",
+
+    // go/trendy/manage/engineers/4804101473992704
+    trendy_team_id: "4804101473992704",
+}
+
+team {
+    name: "trendy_team_wsd_ims",
+
+    // go/trendy/manage/engineers/6050624504201216
+    trendy_team_id: "6050624504201216",
+}
+
+team {
+    name: "trendy_team_wear_wear_weather",
+
+    // go/trendy/manage/engineers/5464164419928064
+    trendy_team_id: "5464164419928064",
+}
+
+team {
+    name: "trendy_team_guptaritu_team",
+
+    // go/trendy/manage/engineers/5142679624777728
+    trendy_team_id: "5142679624777728",
+}
+
+team {
+    name: "trendy_team_wear_wear_developer_tools",
+
+    // go/trendy/manage/engineers/6228915878002688
+    trendy_team_id: "6228915878002688",
+}
+
+team {
+    name: "trendy_team_play_books",
+
+    // go/trendy/manage/engineers/5769149527490560
+    trendy_team_id: "5769149527490560",
+}
+
+team {
+    name: "trendy_team_melissadaniels_team",
+
+    // go/trendy/manage/engineers/5715112926281728
+    trendy_team_id: "5715112926281728",
+}
+
+team {
+    name: "trendy_team_wear_shared_context_state",
+
+    // go/trendy/manage/engineers/5329107344588800
+    trendy_team_id: "5329107344588800",
+}
+
+team {
+    name: "trendy_team_motion",
+
+    // go/trendy/manage/engineers/6331351269277696
+    trendy_team_id: "6331351269277696",
+}
+
+team {
+    name: "trendy_team_gpp_on_device",
+
+    // go/trendy/manage/engineers/5181961504980992
+    trendy_team_id: "5181961504980992",
+}
+
+team {
+    name: "trendy_team_android_settings_app",
+
+    // go/trendy/manage/engineers/6204400884154368
+    trendy_team_id: "6204400884154368",
+}
+
+team {
+    name: "trendy_team_l1_inmarket",
+
+    // go/trendy/manage/engineers/5172846450737152
+    trendy_team_id: "5172846450737152",
+}
+
+team {
+    name: "trendy_team_wear_wearflow",
+
+    // go/trendy/manage/engineers/5947250429558784
+    trendy_team_id: "5947250429558784",
+}
+
+team {
+    name: "trendy_team_enterprise",
+
+    // go/trendy/manage/engineers/5366178515910656
+    trendy_team_id: "5366178515910656",
+}
+
+team {
+    name: "trendy_team_deprecated_framework_michaelwr",
+
+    // go/trendy/manage/engineers/4574277124915200
+    trendy_team_id: "4574277124915200",
+}
+
+team {
+    name: "trendy_team_color",
+
+    // go/trendy/manage/engineers/6305208086724608
+    trendy_team_id: "6305208086724608",
+}
+
+team {
+    name: "trendy_team_osbornc_team",
+
+    // go/trendy/manage/engineers/6319504650043392
+    trendy_team_id: "6319504650043392",
+}
+
+team {
+    name: "trendy_team_dialer",
+
+    // go/trendy/manage/engineers/6595982271578112
+    trendy_team_id: "6595982271578112",
+}
+
+team {
+    name: "trendy_team_framework_bpm",
+
+    // go/trendy/manage/engineers/5498119911243776
+    trendy_team_id: "5498119911243776",
+}
+
+team {
+    name: "trendy_team_wsd_core_team",
+
+    // go/trendy/manage/engineers/6683943201800192
+    trendy_team_id: "6683943201800192",
+}
+
+team {
+    name: "trendy_team_pixel_connectivity_ril",
+
+    // go/trendy/manage/engineers/4995093341536256
+    trendy_team_id: "4995093341536256",
+}
+
+team {
+    name: "trendy_team_perfetto",
+
+    // go/trendy/manage/engineers/4783987109003264
+    trendy_team_id: "4783987109003264",
+}
+
+team {
+    name: "trendy_team_partner_devrel",
+
+    // go/trendy/manage/engineers/4537696504381440
+    trendy_team_id: "4537696504381440",
+}
+
+team {
+    name: "trendy_team_fwk_thread_network",
+
+    // go/trendy/manage/engineers/5094685775134720
+    trendy_team_id: "5094685775134720",
+}
+
+team {
+    name: "trendy_team_thatguy_team",
+
+    // go/trendy/manage/engineers/5688369775542272
+    trendy_team_id: "5688369775542272",
+}
+
+team {
+    name: "trendy_team_finder",
+
+    // go/trendy/manage/engineers/6492831025364992
+    trendy_team_id: "6492831025364992",
+}
+
+team {
+    name: "trendy_team_boot_time",
+
+    // go/trendy/manage/engineers/6017089399554048
+    trendy_team_id: "6017089399554048",
+}
+
+team {
+    name: "trendy_team_wear_wcs_beto",
+
+    // go/trendy/manage/engineers/4910945436336128
+    trendy_team_id: "4910945436336128",
+}
+
+team {
+    name: "trendy_team_responsible_apis",
+
+    // go/trendy/manage/engineers/5651962854178816
+    trendy_team_id: "5651962854178816",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_corebsp",
+
+    // go/trendy/manage/engineers/4626673699553280
+    trendy_team_id: "4626673699553280",
+}
+
+team {
+    name: "trendy_team_education",
+
+    // go/trendy/manage/engineers/4889540225269760
+    trendy_team_id: "4889540225269760",
+}
+
+team {
+    name: "trendy_team_alarm_clock",
+
+    // go/trendy/manage/engineers/6193011259998208
+    trendy_team_id: "6193011259998208",
+}
+
+team {
+    name: "trendy_team_pmw_tvc",
+
+    // go/trendy/manage/engineers/4526288764960768
+    trendy_team_id: "4526288764960768",
+}
+
+team {
+    name: "trendy_team_deprecated_pixel_wifi",
+
+    // go/trendy/manage/engineers/5741405413900288
+    trendy_team_id: "5741405413900288",
+}
+
+team {
+    name: "trendy_team_abdulla_team",
+
+    // go/trendy/manage/engineers/6223585145421824
+    trendy_team_id: "6223585145421824",
+}
+
+team {
+    name: "trendy_team_hardware",
+
+    // go/trendy/manage/engineers/5357382422888448
+    trendy_team_id: "5357382422888448",
+}
+
+team {
+    name: "trendy_team_status_bar",
+
+    // go/trendy/manage/engineers/6329516043173888
+    trendy_team_id: "6329516043173888",
+}
+
+team {
+    name: "trendy_team_wear_wear_sysui_big_picture",
+
+    // go/trendy/manage/engineers/5081356719521792
+    trendy_team_id: "5081356719521792",
+}
+
+team {
+    name: "trendy_team_wear_material_design_for_wearos",
+
+    // go/trendy/manage/engineers/4792942333952000
+    trendy_team_id: "4792942333952000",
+}
+
+team {
+    name: "trendy_team_platform_security",
+
+    // go/trendy/manage/engineers/5243033213599744
+    trendy_team_id: "5243033213599744",
+}
+
+team {
+    name: "trendy_team_llvm_and_toolchains",
+
+    // go/trendy/manage/engineers/5990701120487424
+    trendy_team_id: "5990701120487424",
+}
+
+team {
+    name: "trendy_team_jmccandless_team",
+
+    // go/trendy/manage/engineers/5227794226380800
+    trendy_team_id: "5227794226380800",
+}
+
+team {
+    name: "trendy_team_safety_center",
+
+    // go/trendy/manage/engineers/5930273843609600
+    trendy_team_id: "5930273843609600",
+}
+
+team {
+    name: "trendy_team_wear_wear_systems_engineering_and_devices",
+
+    // go/trendy/manage/engineers/5407847298793472
+    trendy_team_id: "5407847298793472",
+}
+
+team {
+    name: "trendy_team_framework_android_multiuser",
+
+    // go/trendy/manage/engineers/5981525732392960
+    trendy_team_id: "5981525732392960",
+}
+
+team {
+    name: "trendy_team_deprecated_test2",
+
+    // go/trendy/manage/engineers/4590958690074624
+    trendy_team_id: "4590958690074624",
+}
+
+team {
+    name: "trendy_team_qmc_iqt_tpe",
+
+    // go/trendy/manage/engineers/6668000283197440
+    trendy_team_id: "6668000283197440",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_factory",
+
+    // go/trendy/manage/engineers/6267032573739008
+    trendy_team_id: "6267032573739008",
+}
+
+team {
+    name: "trendy_team_automotive",
+
+    // go/trendy/manage/engineers/5770798794932224
+    trendy_team_id: "5770798794932224",
+}
+
+team {
+    name: "trendy_team_camera_htc_lg_qualcomm",
+
+    // go/trendy/manage/engineers/6332099480911872
+    trendy_team_id: "6332099480911872",
+}
+
+team {
+    name: "trendy_team_rkp_keystore",
+
+    // go/trendy/manage/engineers/5634304374505472
+    trendy_team_id: "5634304374505472",
+}
+
+team {
+    name: "trendy_team_wear_wear_watch_faces",
+
+    // go/trendy/manage/engineers/5885708195495936
+    trendy_team_id: "5885708195495936",
+}
+
+team {
+    name: "trendy_team_arc_app_compat",
+
+    // go/trendy/manage/engineers/4811894441279488
+    trendy_team_id: "4811894441279488",
+}
+
+team {
+    name: "trendy_team_psohn_team",
+
+    // go/trendy/manage/engineers/4852673947009024
+    trendy_team_id: "4852673947009024",
+}
+
+team {
+    name: "trendy_team_hollande_team",
+
+    // go/trendy/manage/engineers/5356533186723840
+    trendy_team_id: "5356533186723840",
+}
+
+team {
+    name: "trendy_team_wear_wear_partner_programs_and_engineering_team",
+
+    // go/trendy/manage/engineers/4934997571960832
+    trendy_team_id: "4934997571960832",
+}
+
+team {
+    name: "trendy_team_pixel_connectivity_nfc",
+
+    // go/trendy/manage/engineers/5631272051965952
+    trendy_team_id: "5631272051965952",
+}
+
+team {
+    name: "trendy_team_wear_wear_ios_connectivity",
+
+    // go/trendy/manage/engineers/4702455644192768
+    trendy_team_id: "4702455644192768",
+}
+
+team {
+    name: "trendy_team_arc_",
+
+    // go/trendy/manage/engineers/4556937957867520
+    trendy_team_id: "4556937957867520",
+}
+
+team {
+    name: "trendy_team_android_one",
+
+    // go/trendy/manage/engineers/6272176097198080
+    trendy_team_id: "6272176097198080",
+}
+
+team {
+    name: "trendy_team_ccherubino_team",
+
+    // go/trendy/manage/engineers/4846471192150016
+    trendy_team_id: "4846471192150016",
+}
+
+team {
+    name: "trendy_team_deprecated_bluetooth_and_nfc",
+
+    // go/trendy/manage/engineers/5259280851435520
+    trendy_team_id: "5259280851435520",
+}
+
+team {
+    name: "trendy_team_test_eng_afw_auth_location_camera_media",
+
+    // go/trendy/manage/engineers/6298564376264704
+    trendy_team_id: "6298564376264704",
+}
+
+team {
+    name: "trendy_team_frousseau_team",
+
+    // go/trendy/manage/engineers/5718296436572160
+    trendy_team_id: "5718296436572160",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_touch_haptic",
+
+    // go/trendy/manage/engineers/6469264330096640
+    trendy_team_id: "6469264330096640",
+}
+
+team {
+    name: "trendy_team_partner_eng",
+
+    // go/trendy/manage/engineers/5172664469422080
+    trendy_team_id: "5172664469422080",
+}
+
+team {
+    name: "trendy_team_dogfooders",
+
+    // go/trendy/manage/engineers/4643249620647936
+    trendy_team_id: "4643249620647936",
+}
+
+team {
+    name: "trendy_team_system_external_",
+
+    // go/trendy/manage/engineers/5558043294957568
+    trendy_team_id: "5558043294957568",
+}
+
+team {
+    name: "trendy_team_foundations",
+
+    // go/trendy/manage/engineers/6216250952679424
+    trendy_team_id: "6216250952679424",
+}
+
+team {
+    name: "trendy_team_camera_framework",
+
+    // go/trendy/manage/engineers/6455244783222784
+    trendy_team_id: "6455244783222784",
+}
+
+team {
+    name: "trendy_team_bugjuggler",
+
+    // go/trendy/manage/engineers/6472836969267200
+    trendy_team_id: "6472836969267200",
+}
+
+team {
+    name: "trendy_team_cligh_team",
+
+    // go/trendy/manage/engineers/6273778455314432
+    trendy_team_id: "6273778455314432",
+}
+
+team {
+    name: "trendy_team_android_testing_experiences",
+
+    // go/trendy/manage/engineers/5653137056366592
+    trendy_team_id: "5653137056366592",
+}
+
+team {
+    name: "trendy_team_dx",
+
+    // go/trendy/manage/engineers/5677977168281600
+    trendy_team_id: "5677977168281600",
+}
+
+team {
+    name: "trendy_team_framework_backstage_power",
+
+    // go/trendy/manage/engineers/6314066964283392
+    trendy_team_id: "6314066964283392",
+}
+
+team {
+    name: "trendy_team_rlb_team",
+
+    // go/trendy/manage/engineers/5206858878058496
+    trendy_team_id: "5206858878058496",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_pts",
+
+    // go/trendy/manage/engineers/5553725663510528
+    trendy_team_id: "5553725663510528",
+}
+
+team {
+    name: "trendy_team_keir_team",
+
+    // go/trendy/manage/engineers/5731700089978880
+    trendy_team_id: "5731700089978880",
+}
+
+team {
+    name: "trendy_team_system_taimen_",
+
+    // go/trendy/manage/engineers/6421709678575616
+    trendy_team_id: "6421709678575616",
+}
+
+team {
+    name: "trendy_team_security_response",
+
+    // go/trendy/manage/engineers/5031926981066752
+    trendy_team_id: "5031926981066752",
+}
+
+team {
+    name: "trendy_team_preload_safety",
+
+    // go/trendy/manage/engineers/4584609580744704
+    trendy_team_id: "4584609580744704",
+}
+
+team {
+    name: "trendy_team_pixel_customizations_make_",
+
+    // go/trendy/manage/engineers/5155643836366848
+    trendy_team_id: "5155643836366848",
+}
+
+team {
+    name: "trendy_team_tooltopia",
+
+    // go/trendy/manage/engineers/5456472883101696
+    trendy_team_id: "5456472883101696",
+}
+
+team {
+    name: "trendy_team_accessibility_live_transcribe",
+
+    // go/trendy/manage/engineers/6299695642345472
+    trendy_team_id: "6299695642345472",
+}
+
+team {
+    name: "trendy_team_trusty",
+
+    // go/trendy/manage/engineers/5109319549616128
+    trendy_team_id: "5109319549616128",
+}
+
+team {
+    name: "trendy_team_amathes_team",
+
+    // go/trendy/manage/engineers/5157715862257664
+    trendy_team_id: "5157715862257664",
+}
+
+team {
+    name: "trendy_team_wear_wear_developer_android_devrel_",
+
+    // go/trendy/manage/engineers/5861820594028544
+    trendy_team_id: "5861820594028544",
+}
+
+team {
+    name: "trendy_team_overview",
+
+    // go/trendy/manage/engineers/5071790575550464
+    trendy_team_id: "5071790575550464",
+}
+
+team {
+    name: "trendy_team_android_sensors",
+
+    // go/trendy/manage/engineers/4776371090259968
+    trendy_team_id: "4776371090259968",
+}
+
+team {
+    name: "trendy_team_ui_toolkit",
+
+    // go/trendy/manage/engineers/5638857399599104
+    trendy_team_id: "5638857399599104",
+}
+
+team {
+    name: "trendy_team_gesture_nav",
+
+    // go/trendy/manage/engineers/6304405391310848
+    trendy_team_id: "6304405391310848",
+}
+
+team {
+    name: "trendy_team_qmc_wifi_storage",
+
+    // go/trendy/manage/engineers/4924724597358592
+    trendy_team_id: "4924724597358592",
+}
+
+team {
+    name: "trendy_team_wsd_w11",
+
+    // go/trendy/manage/engineers/5929128469331968
+    trendy_team_id: "5929128469331968",
+}
+
+team {
+    name: "trendy_team_fsamuel_team",
+
+    // go/trendy/manage/engineers/5753514497310720
+    trendy_team_id: "5753514497310720",
+}
+
+team {
+    name: "trendy_team_pixel_haptic",
+
+    // go/trendy/manage/engineers/5919013003493376
+    trendy_team_id: "5919013003493376",
+}
+
+team {
+    name: "trendy_team_pixel_retention",
+
+    // go/trendy/manage/engineers/5647985290805248
+    trendy_team_id: "5647985290805248",
+}
+
+team {
+    name: "trendy_team_pixel_onboarding",
+
+    // go/trendy/manage/engineers/5531340811960320
+    trendy_team_id: "5531340811960320",
+}
+
+team {
+    name: "trendy_team_wsd_standard",
+
+    // go/trendy/manage/engineers/6296915108823040
+    trendy_team_id: "6296915108823040",
+}
+
+team {
+    name: "trendy_team_art_mainline",
+
+    // go/trendy/manage/engineers/5733965155401728
+    trendy_team_id: "5733965155401728",
+}
+
+team {
+    name: "trendy_team_shade",
+
+    // go/trendy/manage/engineers/5646715170226176
+    trendy_team_id: "5646715170226176",
+}
+
+team {
+    name: "trendy_team_gchips_compute_sw",
+
+    // go/trendy/manage/engineers/6245787818131456
+    trendy_team_id: "6245787818131456",
+}
+
+team {
+    name: "trendy_team_haptics_framework",
+
+    // go/trendy/manage/engineers/5895438509441024
+    trendy_team_id: "5895438509441024",
+}
+
+team {
+    name: "trendy_team_accessibility_braille",
+
+    // go/trendy/manage/engineers/4992530205933568
+    trendy_team_id: "4992530205933568",
+}
+
+team {
+    name: "trendy_team_qmc_utd",
+
+    // go/trendy/manage/engineers/5524508190310400
+    trendy_team_id: "5524508190310400",
+}
+
+team {
+    name: "trendy_team_android_on",
+
+    // go/trendy/manage/engineers/4539345771823104
+    trendy_team_id: "4539345771823104",
+}
+
+team {
+    name: "trendy_team_fit",
+
+    // go/trendy/manage/engineers/5628412039135232
+    trendy_team_id: "5628412039135232",
+}
+
+team {
+    name: "trendy_team_fwk_uwb",
+
+    // go/trendy/manage/engineers/5983733408235520
+    trendy_team_id: "5983733408235520",
+}
+
+team {
+    name: "trendy_team_aidroid",
+
+    // go/trendy/manage/engineers/4697675446222848
+    trendy_team_id: "4697675446222848",
+}
+
+team {
+    name: "trendy_team_deprecated_test1",
+
+    // go/trendy/manage/engineers/6212752467460096
+    trendy_team_id: "6212752467460096",
+}
+
+team {
+    name: "trendy_team_wear_wear_releases_telemetry_and_analytics",
+
+    // go/trendy/manage/engineers/5892057298010112
+    trendy_team_id: "5892057298010112",
+}
+
+team {
+    name: "trendy_team_context_hub",
+
+    // go/trendy/manage/engineers/5080704467501056
+    trendy_team_id: "5080704467501056",
+}
+
+team {
+    name: "trendy_team_carrier_follow_up",
+
+    // go/trendy/manage/engineers/6615223725064192
+    trendy_team_id: "6615223725064192",
+}
+
+team {
+    name: "trendy_team_accessibility_live_caption",
+
+    // go/trendy/manage/engineers/4764529665409024
+    trendy_team_id: "4764529665409024",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_display",
+
+    // go/trendy/manage/engineers/6261730736734208
+    trendy_team_id: "6261730736734208",
+}
+
+team {
+    name: "trendy_team_foundation_security_rust_pkvm_",
+
+    // go/trendy/manage/engineers/5071354421084160
+    trendy_team_id: "5071354421084160",
+}
+
+team {
+    name: "trendy_team_pixel_repair_mode",
+
+    // go/trendy/manage/engineers/6083775867813888
+    trendy_team_id: "6083775867813888",
+}
+
+team {
+    name: "trendy_team_capture_and_share",
+
+    // go/trendy/manage/engineers/5644523746787328
+    trendy_team_id: "5644523746787328",
+}
+
+team {
+    name: "trendy_team_keep",
+
+    // go/trendy/manage/engineers/5839518271668224
+    trendy_team_id: "5839518271668224",
+}
+
+team {
+    name: "trendy_team_aaos_security",
+
+    // go/trendy/manage/engineers/6264394363076608
+    trendy_team_id: "6264394363076608",
+}
+
+team {
+    name: "trendy_team_zero_jank",
+
+    // go/trendy/manage/engineers/4764874133897216
+    trendy_team_id: "4764874133897216",
+}
+
+team {
+    name: "trendy_team_android_unified_core_infrastructure",
+
+    // go/trendy/manage/engineers/5842172961914880
+    trendy_team_id: "5842172961914880",
+}
+
+team {
+    name: "trendy_team_android_media_codec_framework",
+
+    // go/trendy/manage/engineers/4943966050844672
+    trendy_team_id: "4943966050844672",
+}
+
+team {
+    name: "trendy_team_system_gn_",
+
+    // go/trendy/manage/engineers/4785636376444928
+    trendy_team_id: "4785636376444928",
+}
+
+team {
+    name: "trendy_team_deprecated_android_auth_client",
+
+    // go/trendy/manage/engineers/5471731632177152
+    trendy_team_id: "5471731632177152",
+}
+
+team {
+    name: "trendy_team_wear_wear_ios_companion_sdk",
+
+    // go/trendy/manage/engineers/5737044865089536
+    trendy_team_id: "5737044865089536",
+}
+
+team {
+    name: "trendy_team_nearby",
+
+    // go/trendy/manage/engineers/4959908969447424
+    trendy_team_id: "4959908969447424",
+}
+
+team {
+    name: "trendy_team_camerax_make_pixel_",
+
+    // go/trendy/manage/engineers/4521753585778688
+    trendy_team_id: "4521753585778688",
+}
+
+team {
+    name: "trendy_team_wear_wear_health_services",
+
+    // go/trendy/manage/engineers/6526182686097408
+    trendy_team_id: "6526182686097408",
+}
+
+team {
+    name: "trendy_team_media_volume",
+
+    // go/trendy/manage/engineers/6360142070841344
+    trendy_team_id: "6360142070841344",
+}
+
+team {
+    name: "trendy_team_large_screen_experiences_sysui",
+
+    // go/trendy/manage/engineers/5855214130069504
+    trendy_team_id: "5855214130069504",
+}
+
+team {
+    name: "trendy_team_mainline_engprod",
+
+    // go/trendy/manage/engineers/5474634789847040
+    trendy_team_id: "5474634789847040",
+}
+
+team {
+    name: "trendy_team_wear_wear_power_foundations",
+
+    // go/trendy/manage/engineers/6292909196214272
+    trendy_team_id: "6292909196214272",
+}
+
+team {
+    name: "trendy_team_windowing_tools",
+
+    // go/trendy/manage/engineers/6382778382188544
+    trendy_team_id: "6382778382188544",
+}
+
+team {
+    name: "trendy_team_android_framework_appcompat",
+
+    // go/trendy/manage/engineers/5383770701955072
+    trendy_team_id: "5383770701955072",
+}
+
+team {
+    name: "trendy_team_fitbit",
+
+    // go/trendy/manage/engineers/6497885327360000
+    trendy_team_id: "6497885327360000",
+}
+
+team {
+    name: "trendy_team_overdrive",
+
+    // go/trendy/manage/engineers/4961558236889088
+    trendy_team_id: "4961558236889088",
+}
+
+team {
+    name: "trendy_team_framework_android_packages",
+
+    // go/trendy/manage/engineers/5989762407104512
+    trendy_team_id: "5989762407104512",
+}
+
+team {
+    name: "trendy_team_tkilbourn_team",
+
+    // go/trendy/manage/engineers/4856646707871744
+    trendy_team_id: "4856646707871744",
+}
+
+team {
+    name: "trendy_team_large_screen_experiences_platform",
+
+    // go/trendy/manage/engineers/4826462937317376
+    trendy_team_id: "4826462937317376",
+}
+
+team {
+    name: "trendy_team_pixel_system_service",
+
+    // go/trendy/manage/engineers/5802643790135296
+    trendy_team_id: "5802643790135296",
+}
+
+team {
+    name: "trendy_team_android_developer_tools",
+
+    // go/trendy/manage/engineers/6201807353020416
+    trendy_team_id: "6201807353020416",
+}
+
+team {
+    name: "trendy_team_autofill",
+
+    // go/trendy/manage/engineers/4676203460329472
+    trendy_team_id: "4676203460329472",
+}
+
+team {
+    name: "trendy_team_wsd_w5",
+
+    // go/trendy/manage/engineers/4627306702045184
+    trendy_team_id: "4627306702045184",
+}
+
+team {
+    name: "trendy_team_wear_wear_xfood_xwear_and_logistics",
+
+    // go/trendy/manage/engineers/6599089311350784
+    trendy_team_id: "6599089311350784",
+}
+
+team {
+    name: "trendy_team_android_media_drm",
+
+    // go/trendy/manage/engineers/5311752690335744
+    trendy_team_id: "5311752690335744",
+}
+
+team {
+    name: "trendy_team_nsylvain_team",
+
+    // go/trendy/manage/engineers/5129062893912064
+    trendy_team_id: "5129062893912064",
+}
+
+team {
+    name: "trendy_team_fwk_wifi_hal",
+
+    // go/trendy/manage/engineers/5470082364735488
+    trendy_team_id: "5470082364735488",
+}
+
+team {
+    name: "trendy_team_tombergan_team",
+
+    // go/trendy/manage/engineers/5764031194497024
+    trendy_team_id: "5764031194497024",
+}
+
+team {
+    name: "trendy_team_wear_wear_platform_program_partner_eng_",
+
+    // go/trendy/manage/engineers/5472261070815232
+    trendy_team_id: "5472261070815232",
+}
+
+team {
+    name: "trendy_team_masd_pixel_key_experiences",
+
+    // go/trendy/manage/engineers/4873597306667008
+    trendy_team_id: "4873597306667008",
+}
+
+team {
+    name: "trendy_team_external",
+
+    // go/trendy/manage/engineers/6033032318156800
+    trendy_team_id: "6033032318156800",
+}
+
+team {
+    name: "trendy_team_fwk_telephony",
+
+    // go/trendy/manage/engineers/5663596411224064
+    trendy_team_id: "5663596411224064",
+}
+
+team {
+    name: "trendy_team_customization_picker",
+
+    // go/trendy/manage/engineers/6311142173081600
+    trendy_team_id: "6311142173081600",
+}
+
+team {
+    name: "trendy_team_android_test_surfaces",
+
+    // go/trendy/manage/engineers/4879149651099648
+    trendy_team_id: "4879149651099648",
+}
+
+team {
+    name: "trendy_team_instant_apps",
+
+    // go/trendy/manage/engineers/6720776841330688
+    trendy_team_id: "6720776841330688",
+}
+
+team {
+    name: "trendy_team_accessibility_aas",
+
+    // go/trendy/manage/engineers/6043198228299776
+    trendy_team_id: "6043198228299776",
+}
+
+team {
+    name: "trendy_team_android_engprod_lon",
+
+    // go/trendy/manage/engineers/5432243163791360
+    trendy_team_id: "5432243163791360",
+}
+
+team {
+    name: "trendy_team_pmw_mce",
+
+    // go/trendy/manage/engineers/6424723868909568
+    trendy_team_id: "6424723868909568",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_kernel",
+
+    // go/trendy/manage/engineers/5436802711846912
+    trendy_team_id: "5436802711846912",
+}
+
+team {
+    name: "trendy_team_nga",
+
+    // go/trendy/manage/engineers/5594876934488064
+    trendy_team_id: "5594876934488064",
+}
+
+team {
+    name: "trendy_team_web_on_android_performance",
+
+    // go/trendy/manage/engineers/5864851748847616
+    trendy_team_id: "5864851748847616",
+}
+
+team {
+    name: "trendy_team_reveman_team",
+
+    // go/trendy/manage/engineers/5113274057261056
+    trendy_team_id: "5113274057261056",
+}
+
+team {
+    name: "trendy_team_test_eng_ota_framework_sysui_suw_abvt_cts",
+
+    // go/trendy/manage/engineers/4653694981111808
+    trendy_team_id: "4653694981111808",
+}
+
+team {
+    name: "trendy_team_backup_restore",
+
+    // go/trendy/manage/engineers/5049519167111168
+    trendy_team_id: "5049519167111168",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_bringup_and_factory",
+
+    // go/trendy/manage/engineers/5999752665268224
+    trendy_team_id: "5999752665268224",
+}
+
+team {
+    name: "trendy_team_wear_wear_calling_messaging",
+
+    // go/trendy/manage/engineers/5401274807648256
+    trendy_team_id: "5401274807648256",
+}
+
+team {
+    name: "trendy_team_android_imaging",
+
+    // go/trendy/manage/engineers/5838538113384448
+    trendy_team_id: "5838538113384448",
+}
+
+team {
+    name: "trendy_team_pixel_system_sw_sensor",
+
+    // go/trendy/manage/engineers/4904417557643264
+    trendy_team_id: "4904417557643264",
+}
+
+team {
+    name: "trendy_team_dogfood_triage",
+
+    // go/trendy/manage/engineers/5130823981236224
+    trendy_team_id: "5130823981236224",
+}
+
+team {
+    name: "trendy_team_input_method_framework",
+
+    // go/trendy/manage/engineers/6394201770459136
+    trendy_team_id: "6394201770459136",
+}
+
+team {
+    name: "trendy_team_wear_wear_platform_dev_lead_device_program_",
+
+    // go/trendy/manage/engineers/4642393194135552
+    trendy_team_id: "4642393194135552",
+}
+
+team {
+    name: "trendy_team_wear_bona_companion",
+
+    // go/trendy/manage/engineers/4721932784009216
+    trendy_team_id: "4721932784009216",
+}
+
+team {
+    name: "trendy_team_wear_wear_compose",
+
+    // go/trendy/manage/engineers/4958404271308800
+    trendy_team_id: "4958404271308800",
+}
+
+team {
+    name: "trendy_team_system_fugu_",
+
+    // go/trendy/manage/engineers/5682837864710144
+    trendy_team_id: "5682837864710144",
+}
+
+team {
+    name: "trendy_team_tvolkert_team",
+
+    // go/trendy/manage/engineers/5093014696525824
+    trendy_team_id: "5093014696525824",
+}
