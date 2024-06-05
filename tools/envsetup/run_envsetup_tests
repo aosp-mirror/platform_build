@@ -1,0 +1,229 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2024 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import os
+import pathlib
+import subprocess
+import sys
+
+SOURCE_ENVSETUP="source build/make/envsetup.sh && "
+
+def update_display():
+    sys.stderr.write("passed\n")
+
+def go_to_root():
+    while True:
+        if os.path.exists("build/make/envsetup.sh"):
+            return
+        if os.getcwd() == "/":
+            sys.stderr.write("Can't find root of the source tree\n");
+            print("\nFAILED")
+            sys.exit(1)
+        os.chdir("..")
+
+def is_test(name, thing):
+    if not callable(thing):
+        return False
+    if name == "test":
+        return False
+    return name.startswith("test")
+
+
+def test(shell, command, expected_return, expected_stdout, expected_stderr, expected_env):
+    command += "; _rc=$?"
+    for env in expected_env.keys():
+        command += f"; echo ENV: {env}=\\\"${env}\\\""
+    command += "; exit $_rc"
+
+    cmd = [shell, "-c", command]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+
+    status = True
+
+    if result.returncode != expected_return:
+        print()
+        print(f"Expected return code: {expected_return}")
+        print(f"Actual return code:   {result.returncode}")
+        status = False
+
+    printed_stdout = False
+    if expected_stdout and expected_stdout not in result.stdout:
+        print()
+        print(f"Expected stdout to contain:\n{expected_stdout}")
+        print(f"\nActual stdout:\n{result.stdout}")
+        printed_stdout = True
+        status = False
+
+    if expected_stderr and expected_stderr not in result.stderr:
+        print()
+        print(f"Expected stderr to contain:\n{expected_stderr}")
+        print(f"\nActual stderr:\n{result.stderr}")
+        status = False
+
+    env_failure = False
+    for k, v in expected_env.items():
+        if f"{k}=\"{v}\"" not in result.stdout:
+            print()
+            print(f"Expected environment variable {k} to be: {v} --- {k}=\"{v}\"")
+            env_failure = True
+            status = False
+
+    if env_failure and not printed_stdout:
+        print()
+        print("See stdout:")
+        print(result.stdout)
+
+    if not status:
+        print()
+        print("Command to reproduce:")
+        print(command)
+        print()
+
+    return status
+
+NO_LUNCH = {
+    "TARGET_PRODUCT": "",
+    "TARGET_RELEASE": "",
+    "TARGET_BUILD_VARIANT": "",
+}
+
+def test_invalid_lunch_target(shell):
+    return test(shell, SOURCE_ENVSETUP + "lunch invalid-trunk_staging-eng",
+         expected_return=1, expected_stdout=None,
+         expected_stderr="Cannot locate config makefile for product",
+         expected_env=NO_LUNCH)
+
+
+def test_aosp_arm(shell):
+    return test(shell, SOURCE_ENVSETUP + "lunch aosp_arm-trunk_staging-eng",
+         expected_return=0, expected_stdout=None, expected_stderr=None,
+         expected_env={
+            "TARGET_PRODUCT": "aosp_arm",
+            "TARGET_RELEASE": "trunk_staging",
+            "TARGET_BUILD_VARIANT": "eng",
+        })
+
+
+def test_lunch2_empty(shell):
+    return test(shell, SOURCE_ENVSETUP + "lunch2",
+         expected_return=1, expected_stdout=None,
+         expected_stderr="No target specified. See lunch --help",
+         expected_env=NO_LUNCH)
+
+def test_lunch2_four_params(shell):
+    return test(shell, SOURCE_ENVSETUP + "lunch2 a b c d",
+         expected_return=1, expected_stdout=None,
+         expected_stderr="Too many parameters given. See lunch --help",
+         expected_env=NO_LUNCH)
+
+def test_lunch2_aosp_arm(shell):
+    return test(shell, SOURCE_ENVSETUP + "lunch2 aosp_arm",
+         expected_return=0, expected_stdout="=========", expected_stderr=None,
+         expected_env={
+            "TARGET_PRODUCT": "aosp_arm",
+            "TARGET_RELEASE": "trunk_staging",
+            "TARGET_BUILD_VARIANT": "eng",
+        })
+
+def test_lunch2_aosp_arm_trunk_staging(shell):
+    # Somewhat unfortunate because trunk_staging is the only config in
+    # aosp so we can't really test that this isn't just getting the default
+    return test(shell, SOURCE_ENVSETUP + "lunch2 aosp_arm trunk_staging",
+         expected_return=0, expected_stdout="=========", expected_stderr=None,
+         expected_env={
+            "TARGET_PRODUCT": "aosp_arm",
+            "TARGET_RELEASE": "trunk_staging",
+            "TARGET_BUILD_VARIANT": "eng",
+        })
+
+def test_lunch2_aosp_arm_trunk_staging_userdebug(shell):
+    return test(shell, SOURCE_ENVSETUP + "lunch2 aosp_arm trunk_staging userdebug",
+         expected_return=0, expected_stdout="=========", expected_stderr=None,
+         expected_env={
+            "TARGET_PRODUCT": "aosp_arm",
+            "TARGET_RELEASE": "trunk_staging",
+            "TARGET_BUILD_VARIANT": "userdebug",
+        })
+
+def test_list_products(shell):
+    return test(shell, "build/soong/bin/list_products",
+         expected_return=0, expected_stdout="aosp_arm", expected_stderr=None,
+         expected_env=NO_LUNCH)
+
+def test_list_releases_param(shell):
+    return test(shell, "build/soong/bin/list_releases aosp_arm",
+         expected_return=0, expected_stdout="trunk_staging", expected_stderr=None,
+         expected_env=NO_LUNCH)
+
+def test_list_releases_env(shell):
+    return test(shell, "TARGET_PRODUCT=aosp_arm build/soong/bin/list_releases",
+         expected_return=0, expected_stdout="trunk_staging", expected_stderr=None,
+         expected_env=NO_LUNCH)
+
+def test_list_releases_no_product(shell):
+    return test(shell, "build/soong/bin/list_releases",
+         expected_return=1, expected_stdout=None, expected_stderr=None,
+         expected_env=NO_LUNCH)
+
+def test_list_variants(shell):
+    return test(shell, "build/soong/bin/list_variants",
+         expected_return=0, expected_stdout="userdebug", expected_stderr=None,
+         expected_env=NO_LUNCH)
+
+
+def test_get_build_var_in_path(shell):
+    return test(shell, SOURCE_ENVSETUP + "which get_build_var ",
+         expected_return=0, expected_stdout="soong/bin", expected_stderr=None,
+         expected_env=NO_LUNCH)
+
+
+
+TESTS=sorted([(name, thing) for name, thing in locals().items() if is_test(name, thing)])
+
+def main():
+    if any([x.endswith("/soong/bin") for x in os.getenv("PATH").split(":")]):
+        sys.stderr.write("run_envsetup_tests must be run in a shell that has not sourced"
+                + " envsetup.sh\n\nFAILED\n")
+        return 1
+
+    go_to_root()
+
+    tests = TESTS
+    if len(sys.argv) > 1:
+        tests = [(name, func) for name, func in tests if name in sys.argv]
+
+    shells = ["/usr/bin/bash", "/usr/bin/zsh"]
+    total_count = len(tests) * len(shells)
+    index = 1
+    failed_tests = 0
+
+    for name, func in tests:
+        for shell in shells:
+            sys.stdout.write(f"\33[2K\r{index} of {total_count}: {name} in {shell}")
+            passed = func(shell)
+            if not passed:
+                failed_tests += 1
+            index += 1
+
+    if failed_tests > 0:
+        print(f"\n\nFAILED: {failed_tests} of {total_count}")
+        return 1
+    else:
+        print("\n\nSUCCESS")
+        return 0
+
+if __name__ == "__main__":
+    sys.exit(main())

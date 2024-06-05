@@ -6,8 +6,8 @@ use aconfig_storage_read_api::package_table_query::find_package_read_context;
 use aconfig_storage_read_api::{FlagReadContext, PackageReadContext};
 
 use anyhow::Result;
-use jni::objects::{JByteBuffer, JClass, JString, JValue};
-use jni::sys::{jint, jobject};
+use jni::objects::{JByteBuffer, JClass, JString};
+use jni::sys::{jboolean, jint};
 use jni::JNIEnv;
 
 /// Call rust find package read context
@@ -28,55 +28,42 @@ fn get_package_read_context_java(
     Ok(find_package_read_context(buffer, &package_name)?)
 }
 
-/// Create java package read context return
-fn create_java_package_read_context(
-    env: &mut JNIEnv,
-    success_query: bool,
-    error_message: String,
-    pkg_found: bool,
-    pkg_id: u32,
-    start_index: u32,
-) -> jobject {
-    let query_success = JValue::Bool(success_query as u8);
-    let errmsg = env.new_string(error_message).expect("failed to create JString");
-    let package_exists = JValue::Bool(pkg_found as u8);
-    let package_id = JValue::Int(pkg_id as i32);
-    let boolean_start_index = JValue::Int(start_index as i32);
-    let context = env.new_object(
-        "android/aconfig/storage/PackageReadContext",
-        "(ZLjava/lang/String;ZII)V",
-        &[query_success, (&errmsg).into(), package_exists, package_id, boolean_start_index],
-    );
-    context.expect("failed to call PackageReadContext constructor").into_raw()
-}
-
 /// Get package read context JNI
 #[no_mangle]
 #[allow(unused)]
-pub extern "system" fn Java_android_aconfig_storage_AconfigStorageReadAPI_getPackageReadContext<
+pub extern "system" fn Java_android_aconfig_storage_AconfigStorageReadAPI_getPackageReadContextImpl<
     'local,
 >(
     mut env: JNIEnv<'local>,
     class: JClass<'local>,
     file: JByteBuffer<'local>,
     package: JString<'local>,
-) -> jobject {
+) -> JByteBuffer<'local> {
+    let mut package_id = -1;
+    let mut boolean_start_index = -1;
+
     match get_package_read_context_java(&mut env, file, package) {
-        Ok(context_opt) => match context_opt {
-            Some(context) => create_java_package_read_context(
-                &mut env,
-                true,
-                String::from(""),
-                true,
-                context.package_id,
-                context.boolean_start_index,
-            ),
-            None => create_java_package_read_context(&mut env, true, String::from(""), false, 0, 0),
-        },
+        Ok(context_opt) => {
+            if let Some(context) = context_opt {
+                package_id = context.package_id as i32;
+                boolean_start_index = context.boolean_start_index as i32;
+            }
+        }
         Err(errmsg) => {
-            create_java_package_read_context(&mut env, false, format!("{:?}", errmsg), false, 0, 0)
+            env.throw(("java/io/IOException", errmsg.to_string())).expect("failed to throw");
         }
     }
+
+    let mut bytes = Vec::new();
+    bytes.extend_from_slice(&package_id.to_le_bytes());
+    bytes.extend_from_slice(&boolean_start_index.to_le_bytes());
+    let (addr, len) = {
+        let buf = bytes.leak();
+        (buf.as_mut_ptr(), buf.len())
+    };
+    // SAFETY:
+    // The safety here is ensured as the content is ensured to be valid
+    unsafe { env.new_direct_byte_buffer(addr, len).expect("failed to create byte buffer") }
 }
 
 /// Call rust find flag read context
@@ -98,32 +85,10 @@ fn get_flag_read_context_java(
     Ok(find_flag_read_context(buffer, package_id as u32, &flag_name)?)
 }
 
-/// Create java flag read context return
-fn create_java_flag_read_context(
-    env: &mut JNIEnv,
-    success_query: bool,
-    error_message: String,
-    flg_found: bool,
-    flg_type: u32,
-    flg_index: u32,
-) -> jobject {
-    let query_success = JValue::Bool(success_query as u8);
-    let errmsg = env.new_string(error_message).expect("failed to create JString");
-    let flag_exists = JValue::Bool(flg_found as u8);
-    let flag_type = JValue::Int(flg_type as i32);
-    let flag_index = JValue::Int(flg_index as i32);
-    let context = env.new_object(
-        "android/aconfig/storage/FlagReadContext",
-        "(ZLjava/lang/String;ZII)V",
-        &[query_success, (&errmsg).into(), flag_exists, flag_type, flag_index],
-    );
-    context.expect("failed to call FlagReadContext constructor").into_raw()
-}
-
 /// Get flag read context JNI
 #[no_mangle]
 #[allow(unused)]
-pub extern "system" fn Java_android_aconfig_storage_AconfigStorageReadAPI_getFlagReadContext<
+pub extern "system" fn Java_android_aconfig_storage_AconfigStorageReadAPI_getFlagReadContextImpl<
     'local,
 >(
     mut env: JNIEnv<'local>,
@@ -131,41 +96,32 @@ pub extern "system" fn Java_android_aconfig_storage_AconfigStorageReadAPI_getFla
     file: JByteBuffer<'local>,
     package_id: jint,
     flag: JString<'local>,
-) -> jobject {
+) -> JByteBuffer<'local> {
+    let mut flag_type = -1;
+    let mut flag_index = -1;
+
     match get_flag_read_context_java(&mut env, file, package_id, flag) {
-        Ok(context_opt) => match context_opt {
-            Some(context) => create_java_flag_read_context(
-                &mut env,
-                true,
-                String::from(""),
-                true,
-                context.flag_type as u32,
-                context.flag_index as u32,
-            ),
-            None => create_java_flag_read_context(&mut env, true, String::from(""), false, 9999, 0),
-        },
+        Ok(context_opt) => {
+            if let Some(context) = context_opt {
+                flag_type = context.flag_type as i32;
+                flag_index = context.flag_index as i32;
+            }
+        }
         Err(errmsg) => {
-            create_java_flag_read_context(&mut env, false, format!("{:?}", errmsg), false, 9999, 0)
+            env.throw(("java/io/IOException", errmsg.to_string())).expect("failed to throw");
         }
     }
-}
 
-/// Create java boolean flag value return
-fn create_java_boolean_flag_value(
-    env: &mut JNIEnv,
-    success_query: bool,
-    error_message: String,
-    value: bool,
-) -> jobject {
-    let query_success = JValue::Bool(success_query as u8);
-    let errmsg = env.new_string(error_message).expect("failed to create JString");
-    let flag_value = JValue::Bool(value as u8);
-    let context = env.new_object(
-        "android/aconfig/storage/BooleanFlagValue",
-        "(ZLjava/lang/String;Z)V",
-        &[query_success, (&errmsg).into(), flag_value],
-    );
-    context.expect("failed to call BooleanFlagValue constructor").into_raw()
+    let mut bytes = Vec::new();
+    bytes.extend_from_slice(&flag_type.to_le_bytes());
+    bytes.extend_from_slice(&flag_index.to_le_bytes());
+    let (addr, len) = {
+        let buf = bytes.leak();
+        (buf.as_mut_ptr(), buf.len())
+    };
+    // SAFETY:
+    // The safety here is ensured as the content is ensured to be valid
+    unsafe { env.new_direct_byte_buffer(addr, len).expect("failed to create byte buffer") }
 }
 
 /// Call rust find boolean flag value
@@ -193,11 +149,12 @@ pub extern "system" fn Java_android_aconfig_storage_AconfigStorageReadAPI_getBoo
     class: JClass<'local>,
     file: JByteBuffer<'local>,
     flag_index: jint,
-) -> jobject {
+) -> jboolean {
     match get_boolean_flag_value_java(&mut env, file, flag_index) {
-        Ok(value) => create_java_boolean_flag_value(&mut env, true, String::from(""), value),
+        Ok(value) => value as u8,
         Err(errmsg) => {
-            create_java_boolean_flag_value(&mut env, false, format!("{:?}", errmsg), false)
+            env.throw(("java/io/IOException", errmsg.to_string())).expect("failed to throw");
+            0u8
         }
     }
 }
