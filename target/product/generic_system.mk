@@ -146,3 +146,6 @@ _my_paths := \
   $(TARGET_COPY_OUT_SYSTEM)/ \
 
 $(call require-artifacts-in-path, $(_my_paths), $(_my_allowed_list))
+
+# Product config map to toggle between sources and prebuilts of required mainline modules
+PRODUCT_RELEASE_CONFIG_MAPS += $(wildcard vendor/google_shared/build/release/gms_mainline/required/release_config_map.textproto)
