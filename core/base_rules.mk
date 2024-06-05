@@ -768,6 +768,10 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
       $(LOCAL_BUILT_MODULE):$(dir)/$(my_installed_module_stem)))) \
   $(eval my_compat_dist_config_$(suite) := ))
 
+ifneq (,$(LOCAL_SOONG_CLASSES_JAR))
+    $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+      $(eval my_compat_api_map_$(suite) += $(LOCAL_SOONG_CLASSES_JAR)))
+endif
 
 # Auto-generate build config.
 ifeq (,$(test_config))
@@ -821,6 +825,12 @@ else
       $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
         $(s):$(dir)/$(n)))))
 
+  $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+     $(eval my_compat_api_map_$(suite) += $(foreach f, $(LOCAL_COMPATIBILITY_SUPPORT_FILES), \
+       $(eval p := $(subst :,$(space),$(f))) \
+       $(eval s := $(word 1,$(p))) \
+       $(if $(filter %.apk,$(s)) $(filter %.jar,$(s)),$(s),))))
+
   ifneq (,$(test_config))
     $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
       $(eval my_compat_dist_config_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
@@ -863,7 +873,9 @@ $(foreach pair, $(my_test_data_file_pairs), \
       $(call filter-copy-pair,$(src_path),$(call append-path,$(dir),$(file)),$(my_installed_test_data)))) \
     $(eval my_compat_dist_test_data_$(suite) += \
       $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
-        $(filter $(my_installed_test_data),$(call append-path,$(dir),$(file)))))))
+        $(filter $(my_installed_test_data),$(call append-path,$(dir),$(file))))) \
+    $(eval my_compat_api_map_$(suite) += \
+      $(if $(filter %.apk,$(src_path)) $(filter %.jar,$(src_path)),$(src_path),))))
 endif
 else
 ifneq ($(my_test_data_file_pairs),)
@@ -873,7 +885,9 @@ $(foreach pair, $(my_test_data_file_pairs), \
   $(eval file := $(word 2,$(parts))) \
   $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
     $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
-      $(src_path):$(call append-path,$(dir),$(file))))))
+      $(src_path):$(call append-path,$(dir),$(file)))) \
+    $(eval my_compat_api_map_$(suite) += \
+      $(if $(filter %.apk,$(src_path)) $(filter %.jar,$(src_path)),$(src_path),))))
 endif
 endif
 
@@ -885,7 +899,8 @@ is_native :=
 $(call create-suite-dependencies)
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval my_compat_dist_config_$(suite) := ) \
-  $(eval my_compat_dist_test_data_$(suite) := ))
+  $(eval my_compat_dist_test_data_$(suite) := ) \
+  $(eval my_compat_api_map_$(suite) := ))
 
 endif  # LOCAL_UNINSTALLABLE_MODULE
 
@@ -1108,6 +1123,7 @@ ifndef LOCAL_SOONG_MODULE_INFO_JSON
     $(LOCAL_JNI_SHARED_LIBRARIES)
 
 endif
+ALL_MODULES.$(my_register_name).TEST_MODULE_CONFIG_BASE := $(LOCAL_TEST_MODULE_CONFIG_BASE)
 
 ##########################################################################
 ## When compiling against API imported module, use API import stub
