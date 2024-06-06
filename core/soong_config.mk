@@ -282,7 +282,7 @@ $(call add_json_list, BoardKernelModuleInterfaceVersions, $(BOARD_KERNEL_MODULE_
 $(call add_json_bool, BoardMoveRecoveryResourcesToVendorBoot, $(filter true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT)))
 $(call add_json_str,  PrebuiltHiddenApiDir, $(BOARD_PREBUILT_HIDDENAPI_DIR))
 
-$(call add_json_str,  ShippingApiLevel, $(PRODUCT_SHIPPING_API_LEVEL))
+$(call add_json_str,  Shipping_api_level, $(PRODUCT_SHIPPING_API_LEVEL))
 
 $(call add_json_list, BuildBrokenPluginValidation,         $(BUILD_BROKEN_PLUGIN_VALIDATION))
 $(call add_json_bool, BuildBrokenClangProperty,            $(filter true,$(BUILD_BROKEN_CLANG_PROPERTY)))
@@ -326,8 +326,6 @@ $(call add_json_list, ReleaseAconfigValueSets,    $(RELEASE_ACONFIG_VALUE_SETS))
 $(call add_json_str, ReleaseAconfigFlagDefaultPermission,    $(RELEASE_ACONFIG_FLAG_DEFAULT_PERMISSION))
 
 $(call add_json_bool, ReleaseDefaultModuleBuildFromSource,   $(RELEASE_DEFAULT_MODULE_BUILD_FROM_SOURCE))
-
-$(call add_json_bool, KeepVndk, $(filter true,$(KEEP_VNDK)))
 
 $(call add_json_bool, CheckVendorSeappViolations, $(filter true,$(CHECK_VENDOR_SEAPP_VIOLATIONS)))
 
