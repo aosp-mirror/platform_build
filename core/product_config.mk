@@ -280,27 +280,6 @@ endif
 
 current_product_makefile :=
 
-#############################################################################
-# Check product include tag allowlist
-BLUEPRINT_INCLUDE_TAGS_ALLOWLIST := \
-  com.android.mainline_go \
-  com.android.mainline \
-  mainline_module_prebuilt_nightly \
-  mainline_module_prebuilt_monthly_release
-.KATI_READONLY := BLUEPRINT_INCLUDE_TAGS_ALLOWLIST
-$(foreach include_tag,$(PRODUCT_INCLUDE_TAGS), \
-	$(if $(filter $(include_tag),$(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST)),,\
-	$(call pretty-error, $(include_tag) is not in BLUEPRINT_INCLUDE_TAGS_ALLOWLIST: $(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST))))
-# Create default PRODUCT_INCLUDE_TAGS
-ifeq (, $(PRODUCT_INCLUDE_TAGS))
-# Soong analysis is global: even though a module might not be relevant to a specific product (e.g. build_tools for aosp_arm),
-# we still analyse it.
-# This means that in setups where we two have two prebuilts of module_sdk, we need a "default" to use in analysis
-# This should be a no-op in aosp and internal since no Android.bp file contains blueprint_package_includes
-# Use the big android one and main-based prebuilts by default
-PRODUCT_INCLUDE_TAGS += com.android.mainline mainline_module_prebuilt_nightly
-endif
-
 # AOSP and Google products currently share the same `apex_contributions` in next.
 # This causes issues when building <aosp_product>-next-userdebug in main.
 # Create a temporary allowlist to ignore the google apexes listed in `contents` of apex_contributions of `next`
