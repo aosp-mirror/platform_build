@@ -488,6 +488,11 @@ _product_single_value_vars += PRODUCT_AVF_MICRODROID_GUEST_GKI_VERSION
 # Enables 16KB developer option for device if set.
 _product_single_value_vars += PRODUCT_16K_DEVELOPER_OPTION
 
+# If set, adb root will be disabled (really ro.debuggable=0) in userdebug
+# builds. It's already off disabled in user builds. Eng builds are unaffected
+# by this flag.
+_product_single_value_vars += PRODUCT_NOT_DEBUGGABLE_IN_USERDEBUG
+
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
 
