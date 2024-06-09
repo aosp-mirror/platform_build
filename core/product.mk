@@ -32,6 +32,7 @@ _product_single_value_vars += PRODUCT_MODEL_FOR_ATTESTATION
 # PRODUCT_MAX_PAGE_SIZE_SUPPORTED=65536, the possible values for PAGE_SIZE could be
 # 4096, 16384 and 65536.
 _product_single_value_vars += PRODUCT_MAX_PAGE_SIZE_SUPPORTED
+_product_single_value_vars += PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE
 
 # Boolean variable determining if AOSP relies on bionic's PAGE_SIZE macro.
 _product_single_value_vars += PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO

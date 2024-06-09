@@ -114,8 +114,10 @@ $(call add_soong_config_var_value,ANDROID,release_binder_death_recipient_weak_fr
 $(call add_soong_config_var_value,ANDROID,release_package_libandroid_runtime_punch_holes,$(RELEASE_PACKAGE_LIBANDROID_RUNTIME_PUNCH_HOLES))
 
 $(call add_soong_config_var_value,ANDROID,release_selinux_data_data_ignore,$(RELEASE_SELINUX_DATA_DATA_IGNORE))
-
-$(call add_soong_config_var_value,ANDROID,release_write_appcompat_override_system_properties,$(RELEASE_WRITE_APPCOMPAT_OVERRIDE_SYSTEM_PROPERTIES))
+ifneq (,$(filter eng userdebug,$(TARGET_BUILD_VARIANT)))
+    # write appcompat system properties on userdebug and eng builds
+    $(call add_soong_config_var_value,ANDROID,release_write_appcompat_override_system_properties,true)
+endif
 
 # Enable system_server optimizations by default unless explicitly set or if
 # there may be dependent runtime jars.
