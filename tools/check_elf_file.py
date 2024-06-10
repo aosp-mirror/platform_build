@@ -67,7 +67,7 @@ ELFHeader = collections.namedtuple(
 
 ELF = collections.namedtuple(
   'ELF',
-  ('dt_soname', 'dt_needed', 'imported', 'exported', 'header'))
+  ('alignments', 'dt_soname', 'dt_needed', 'imported', 'exported', 'header'))
 
 
 def _get_os_name():
@@ -195,7 +195,8 @@ class ELFParser(object):
   @classmethod
   def _read_llvm_readobj(cls, elf_file_path, header, llvm_readobj):
     """Run llvm-readobj and parse the output."""
-    cmd = [llvm_readobj, '--dynamic-table', '--dyn-symbols', elf_file_path]
+    cmd = [llvm_readobj, '--program-headers', '--dynamic-table',
+           '--dyn-symbols', elf_file_path]
     out = subprocess.check_output(cmd, text=True)
     lines = out.splitlines()
     return cls._parse_llvm_readobj(elf_file_path, header, lines)
@@ -205,9 +206,56 @@ class ELFParser(object):
   def _parse_llvm_readobj(cls, elf_file_path, header, lines):
     """Parse the output of llvm-readobj."""
     lines_it = iter(lines)
+    alignments = cls._parse_program_headers(lines_it)
     dt_soname, dt_needed = cls._parse_dynamic_table(elf_file_path, lines_it)
     imported, exported = cls._parse_dynamic_symbols(lines_it)
-    return ELF(dt_soname, dt_needed, imported, exported, header)
+    return ELF(alignments, dt_soname, dt_needed, imported, exported, header)
+
+
+  _PROGRAM_HEADERS_START_PATTERN = 'ProgramHeaders ['
+  _PROGRAM_HEADERS_END_PATTERN = ']'
+  _PROGRAM_HEADER_START_PATTERN = 'ProgramHeader {'
+  _PROGRAM_HEADER_TYPE_PATTERN = re.compile('^\\s+Type:\\s+(.*)$')
+  _PROGRAM_HEADER_ALIGN_PATTERN = re.compile('^\\s+Alignment:\\s+(.*)$')
+  _PROGRAM_HEADER_END_PATTERN = '}'
+
+
+  @classmethod
+  def _parse_program_headers(cls, lines_it):
+    """Parse the dynamic table section."""
+    alignments = []
+
+    if not cls._find_prefix(cls._PROGRAM_HEADERS_START_PATTERN, lines_it):
+      raise ELFError()
+
+    for line in lines_it:
+      # Parse each program header
+      if line.strip() == cls._PROGRAM_HEADER_START_PATTERN:
+        p_align = None
+        p_type = None
+        for line in lines_it:
+          if line.strip() == cls._PROGRAM_HEADER_END_PATTERN:
+            if not p_align:
+              raise ELFError("Could not parse alignment from program header!")
+            if not p_type:
+              raise ELFError("Could not parse type from program header!")
+
+            if p_type.startswith("PT_LOAD "):
+              alignments.append(int(p_align))
+            break
+
+          match = cls._PROGRAM_HEADER_TYPE_PATTERN.match(line)
+          if match:
+            p_type = match.group(1)
+
+          match = cls._PROGRAM_HEADER_ALIGN_PATTERN.match(line)
+          if match:
+            p_align = match.group(1)
+
+      if line == cls._PROGRAM_HEADERS_END_PATTERN:
+        break
+
+    return alignments
 
 
   _DYNAMIC_SECTION_START_PATTERN = 'DynamicSection ['
@@ -434,6 +482,24 @@ class Checker(object):
 
       sys.exit(2)
 
+  def check_max_page_size(self, max_page_size):
+    for alignment in self._file_under_test.alignments:
+      if alignment % max_page_size != 0:
+        self._error(f'Load segment has alignment {alignment} but '
+                    f'{max_page_size} required.')
+        self._note()
+        self._note('Fix suggestions:')
+        self._note(f'  use linker flag "-Wl,-z,max-page-size={max_page_size}" '
+                   f'when compiling this lib')
+        self._note()
+        self._note('If the fix above doesn\'t work, bypass this check with:')
+        self._note('  Android.bp: ignore_max_page_size: true,')
+        self._note('  Android.mk: LOCAL_IGNORE_MAX_PAGE_SIZE := true')
+        self._note('  Device mk: PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE := false')
+
+        # TODO: instead of exiting immediately, we may want to collect the
+        # errors from all checks and emit them at once
+        sys.exit(2)
 
   @staticmethod
   def _find_symbol(lib, name, version):
@@ -514,6 +580,8 @@ def _parse_args():
                       help='Ignore the input file with unknown machine ID')
   parser.add_argument('--allow-undefined-symbols', action='store_true',
                       help='Ignore unresolved undefined symbols')
+  parser.add_argument('--max-page-size', action='store', type=int,
+                      help='Required page size alignment support')
 
   # Other options
   parser.add_argument('--llvm-readobj',
@@ -541,6 +609,9 @@ def main():
     checker.check_dt_soname(args.soname)
 
   checker.check_dt_needed(args.system_shared_lib)
+
+  if args.max_page_size:
+    checker.check_max_page_size(args.max_page_size)
 
   if not args.allow_undefined_symbols:
     checker.check_symbols()

@@ -32,6 +32,7 @@ _product_single_value_vars += PRODUCT_MODEL_FOR_ATTESTATION
 # PRODUCT_MAX_PAGE_SIZE_SUPPORTED=65536, the possible values for PAGE_SIZE could be
 # 4096, 16384 and 65536.
 _product_single_value_vars += PRODUCT_MAX_PAGE_SIZE_SUPPORTED
+_product_single_value_vars += PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE
 
 # Boolean variable determining if AOSP relies on bionic's PAGE_SIZE macro.
 _product_single_value_vars += PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO
@@ -303,9 +304,6 @@ _product_list_vars += PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION
 # This flag implies PRODUCT_USE_DYNAMIC_PARTITIONS.
 _product_single_value_vars += PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
 
-# List of tags that will be used to gate blueprint modules from the build graph
-_product_list_vars += PRODUCT_INCLUDE_TAGS
-
 # List of directories that will be used to gate blueprint modules from the build graph
 _product_list_vars += PRODUCT_SOURCE_ROOT_DIRS
 
@@ -426,6 +424,9 @@ _product_single_value_vars += PRODUCT_MODULE_BUILD_FROM_SOURCE
 # If true, installs a full version of com.android.virt APEX.
 _product_single_value_vars += PRODUCT_AVF_ENABLED
 
+# If false, disable the AVF remote attestaton feature.
+_product_single_value_vars += PRODUCT_AVF_REMOTE_ATTESTATION_DISABLED
+
 # If true, kernel with modules will be used for Microdroid VMs.
 _product_single_value_vars += PRODUCT_AVF_KERNEL_MODULES_ENABLED
 
@@ -486,6 +487,11 @@ _product_single_value_vars += PRODUCT_AVF_MICRODROID_GUEST_GKI_VERSION
 
 # Enables 16KB developer option for device if set.
 _product_single_value_vars += PRODUCT_16K_DEVELOPER_OPTION
+
+# If set, adb root will be disabled (really ro.debuggable=0) in userdebug
+# builds. It's already off disabled in user builds. Eng builds are unaffected
+# by this flag.
+_product_single_value_vars += PRODUCT_NOT_DEBUGGABLE_IN_USERDEBUG
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)

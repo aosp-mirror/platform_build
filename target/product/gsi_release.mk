@@ -58,9 +58,6 @@ ifneq ($(PRODUCT_IS_AUTOMOTIVE),true)
         device/generic/common/overlays/overlay-config.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/overlay/config/config.xml
 endif
 
-# b/308878144 no more VNDK on 24Q1 and beyond
-KEEP_VNDK ?= false
-
 # Support additional VNDK snapshots
 PRODUCT_EXTRA_VNDK_VERSIONS := \
     30 \
