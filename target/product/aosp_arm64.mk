@@ -44,7 +44,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system_ext.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system_ext.mk)
 
 # pKVM
-$(call inherit-product, packages/modules/Virtualization/apex/product_packages.mk)
+$(call inherit-product-if-exists, packages/modules/Virtualization/apex/product_packages.mk)
 
 #
 # All components inherited here go to product image
