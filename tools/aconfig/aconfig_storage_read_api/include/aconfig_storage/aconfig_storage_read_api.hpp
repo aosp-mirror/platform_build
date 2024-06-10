@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 #include <string>
-#include <android-base/result.h>
+#include <cassert>
 
 namespace aconfig_storage {
 
@@ -58,46 +58,86 @@ struct FlagReadContext {
   uint16_t flag_index;
 };
 
+
+template <class T>
+class Result {
+  public:
+
+  Result()
+      : data()
+      , errmsg()
+      , has_data(false)
+  {}
+
+  Result(T const& value)
+      : data(value)
+      , errmsg()
+      , has_data(true)
+  {}
+
+  bool ok() {
+    return has_data;
+  }
+
+  T& operator*() {
+    assert(has_data);
+    return data;
+  }
+
+  T* operator->() {
+    assert(has_data);
+    return &data;
+  }
+
+  std::string const& error() {
+    assert(!has_data);
+    return errmsg;
+  }
+
+  T data;
+  std::string errmsg;
+  bool has_data;
+};
+
 /// DO NOT USE APIS IN THE FOLLOWING NAMESPACE DIRECTLY
 namespace private_internal_api {
 
-android::base::Result<MappedStorageFile*> get_mapped_file_impl(
+Result<MappedStorageFile*> get_mapped_file_impl(
     std::string const& pb_file,
     std::string const& container,
     StorageFileType file_type);
-
 } // namespace private_internal_api
 
 /// Map a storage file
-android::base::Result<MappedStorageFile*> map_storage_file(
+Result<MappedStorageFile*> map_storage_file(
     std::string const& file);
 
 
 /// Map from StoredFlagType to FlagValueType
 /// \input stored_type: stored flag type in the storage file
 /// \returns the flag value type enum
-android::base::Result<FlagValueType> map_to_flag_value_type(
+Result<FlagValueType> map_to_flag_value_type(
     StoredFlagType stored_type);
 
 /// Get mapped storage file
 /// \input container: stoarge container name
 /// \input file_type: storage file type enum
 /// \returns a MappedStorageFileQuery
-android::base::Result<MappedStorageFile*> get_mapped_file(
+Result<MappedStorageFile*> get_mapped_file(
     std::string const& container,
     StorageFileType file_type);
 
 /// Get storage file version number
 /// \input file_path: the path to the storage file
 /// \returns the storage file version
-android::base::Result<uint32_t> get_storage_file_version(
+Result<uint32_t> get_storage_file_version(
     std::string const& file_path);
 
 /// Get package read context
 /// \input file: mapped storage file
 /// \input package: the flag package name
 /// \returns a package read context
-android::base::Result<PackageReadContext> get_package_read_context(
+Result<PackageReadContext> get_package_read_context(
     MappedStorageFile const& file,
     std::string const& package);
 
@@ -106,7 +146,7 @@ android::base::Result<PackageReadContext> get_package_read_context(
 /// \input package_id: the flag package id obtained from package offset query
 /// \input flag_name: flag name
 /// \returns the flag read context
-android::base::Result<FlagReadContext> get_flag_read_context(
+Result<FlagReadContext> get_flag_read_context(
     MappedStorageFile const& file,
     uint32_t package_id,
     std::string const& flag_name);
@@ -115,7 +155,7 @@ android::base::Result<FlagReadContext> get_flag_read_context(
 /// \input file: mapped storage file
 /// \input index: the boolean flag index in the file
 /// \returns the boolean flag value
-android::base::Result<bool> get_boolean_flag_value(
+Result<bool> get_boolean_flag_value(
     MappedStorageFile const& file,
     uint32_t index);
 
@@ -124,7 +164,7 @@ android::base::Result<bool> get_boolean_flag_value(
 /// \input value_type: flag value type
 /// \input index: the boolean flag index in the file
 /// \returns the boolean flag attribute
-android::base::Result<uint8_t> get_flag_attribute(
+Result<uint8_t> get_flag_attribute(
     MappedStorageFile const& file,
     FlagValueType value_type,
     uint32_t index);

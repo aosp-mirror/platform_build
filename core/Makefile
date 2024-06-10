@@ -4369,7 +4369,7 @@ INSTALLED_PVMFWIMAGE_TARGET := $(PRODUCT_OUT)/pvmfw.img
 INSTALLED_PVMFW_EMBEDDED_AVBKEY_TARGET := $(PRODUCT_OUT)/pvmfw_embedded.avbpubkey
 INSTALLED_PVMFW_BINARY_TARGET := $(call module-target-built-files,pvmfw_bin)
 INTERNAL_PVMFWIMAGE_FILES := $(call module-target-built-files,pvmfw_img)
-INTERNAL_PVMFW_EMBEDDED_AVBKEY := $(call module-target-built-files,pvmfw_embedded_key)
+INTERNAL_PVMFW_EMBEDDED_AVBKEY := $(call module-target-built-files,pvmfw_embedded_key_pub_bin)
 INTERNAL_PVMFW_SYMBOL := $(TARGET_OUT_EXECUTABLES_UNSTRIPPED)/pvmfw
 
 $(call declare-1p-container,$(INSTALLED_PVMFWIMAGE_TARGET),)
@@ -4919,7 +4919,7 @@ define extract-avb-chain-public-keys
   $(if $(BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST),\
     $(hide) $(foreach partition,$(BOARD_AVB_CUSTOMIMAGES_PARTITION_LIST), \
         $(AVBTOOL) extract_public_key --key $(BOARD_AVB_$(call to-upper,$(partition))_KEY_PATH) \
-            --output $(1)/$(partition).avbpubkey;)) \
+            --output $(1)/$(partition).avbpubkey;))
   $(if $(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS),\
     $(hide) $(foreach partition,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS), \
         $(AVBTOOL) extract_public_key --key $(BOARD_AVB_VBMETA_$(call to-upper,$(partition))_KEY_PATH) \
@@ -7055,18 +7055,19 @@ $(DEXPREOPT_CONFIG_ZIP): $(DEX_PREOPT_CONFIG_FOR_MAKE) \
 
 endif
 
-$(DEXPREOPT_CONFIG_ZIP): $(SOONG_ZIP)
-	$(hide) mkdir -p $(dir $@) $(PRODUCT_OUT)/dexpreopt_config
-
+$(DEXPREOPT_CONFIG_ZIP): PRIVATE_DEXPREOPT_CONFIG_ZIP_PARAMS :=
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
 ifneq (,$(DEX_PREOPT_CONFIG_FOR_MAKE))
-	$(hide) cp $(DEX_PREOPT_CONFIG_FOR_MAKE) $(PRODUCT_OUT)/dexpreopt_config
+$(DEXPREOPT_CONFIG_ZIP): PRIVATE_DEXPREOPT_CONFIG_ZIP_PARAMS += -e $(notdir $(DEX_PREOPT_CONFIG_FOR_MAKE)) -f $(DEX_PREOPT_CONFIG_FOR_MAKE)
 endif
 ifneq (,$(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE))
-	$(hide) cp $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE) $(PRODUCT_OUT)/dexpreopt_config
+$(DEXPREOPT_CONFIG_ZIP): PRIVATE_DEXPREOPT_CONFIG_ZIP_PARAMS += -e $(notdir $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE)) -f $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE)
 endif
 endif #!TARGET_BUILD_UNBUNDLED
-	$(hide) $(SOONG_ZIP) -d -o $@ -C $(PRODUCT_OUT)/dexpreopt_config -D $(PRODUCT_OUT)/dexpreopt_config
+
+$(DEXPREOPT_CONFIG_ZIP): $(SOONG_ZIP)
+	$(hide) mkdir -p $(dir $@) $(PRODUCT_OUT)/dexpreopt_config
+	$(hide) $(SOONG_ZIP) -d -o $@ -C $(PRODUCT_OUT)/dexpreopt_config -D $(PRODUCT_OUT)/dexpreopt_config $(PRIVATE_DEXPREOPT_CONFIG_ZIP_PARAMS)
 
 .PHONY: dexpreopt_config_zip
 dexpreopt_config_zip: $(DEXPREOPT_CONFIG_ZIP)
@@ -7605,6 +7606,7 @@ sdk_name := $(sdk_name)_$(INTERNAL_SDK_HOST_OS_NAME)
 sdk_dep_file := $(sdk_dir)/sdk_deps.mk
 
 ATREE_FILES :=
+include development/build/tools/sdk-preprocess-files.mk
 -include $(sdk_dep_file)
 
 # if we don't have a real list, then use "everything"

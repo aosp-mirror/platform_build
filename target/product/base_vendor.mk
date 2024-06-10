@@ -18,6 +18,7 @@
 PRODUCT_PACKAGES += \
     adbd.recovery \
     android.hardware.health@2.0-impl-default.recovery \
+    build_flag_vendor \
     cgroups.recovery.json \
     charger.recovery \
     init_second_stage.recovery \
