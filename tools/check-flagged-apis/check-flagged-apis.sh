@@ -56,7 +56,7 @@ function run() {
     local errors=0
 
     echo "# current"
-    check-flagged-apis \
+    check-flagged-apis check \
         --api-signature $(path_to_api_signature_file "frameworks-base-api-current.txt") \
         --flag-values $(gettop)/out/soong/.intermediates/all_aconfig_declarations.pb \
         --api-versions $PUBLIC_XML_VERSIONS
@@ -64,7 +64,7 @@ function run() {
 
     echo
     echo "# system-current"
-    check-flagged-apis \
+    check-flagged-apis check \
         --api-signature $(path_to_api_signature_file "frameworks-base-api-system-current.txt") \
         --flag-values $(gettop)/out/soong/.intermediates/all_aconfig_declarations.pb \
         --api-versions $SYSTEM_XML_VERSIONS
@@ -72,7 +72,7 @@ function run() {
 
     echo
     echo "# system-server-current"
-    check-flagged-apis \
+    check-flagged-apis check \
         --api-signature $(path_to_api_signature_file "frameworks-base-api-system-server-current.txt") \
         --flag-values $(gettop)/out/soong/.intermediates/all_aconfig_declarations.pb \
         --api-versions $SYSTEM_SERVER_XML_VERSONS
@@ -80,7 +80,7 @@ function run() {
 
     echo
     echo "# module-lib"
-    check-flagged-apis \
+    check-flagged-apis check \
         --api-signature $(path_to_api_signature_file "frameworks-base-api-module-lib-current.txt") \
         --flag-values $(gettop)/out/soong/.intermediates/all_aconfig_declarations.pb \
         --api-versions $MODULE_LIB_XML_VERSIONS

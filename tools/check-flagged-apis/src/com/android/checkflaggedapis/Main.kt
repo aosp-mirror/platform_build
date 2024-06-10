@@ -26,6 +26,7 @@ import com.android.tools.metalava.model.MethodItem
 import com.android.tools.metalava.model.text.ApiFile
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.ProgramResult
+import com.github.ajalt.clikt.core.subcommands
 import com.github.ajalt.clikt.parameters.options.help
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
@@ -139,6 +140,10 @@ internal data class UnknownFlagError(override val symbol: Symbol, override val f
   override fun toString(): String {
     return "error: unknown flag: symbol=${symbol.toPrettyString()} flag=$flag"
   }
+}
+
+class MainCommand : CliktCommand() {
+  override fun run() {}
 }
 
 class CheckCommand :
@@ -446,4 +451,4 @@ internal fun findErrors(
   return errors
 }
 
-fun main(args: Array<String>) = CheckCommand().main(args)
+fun main(args: Array<String>) = MainCommand().subcommands(CheckCommand()).main(args)
