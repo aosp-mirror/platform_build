@@ -142,6 +142,29 @@ internal data class UnknownFlagError(override val symbol: Symbol, override val f
   }
 }
 
+val ARG_API_SIGNATURE = "--api-signature"
+val ARG_API_SIGNATURE_HELP =
+    """
+Path to API signature file.
+Usually named *current.txt.
+Tip: `m frameworks-base-api-current.txt` will generate a file that includes all platform and mainline APIs.
+"""
+
+val ARG_FLAG_VALUES = "--flag-values"
+val ARG_FLAG_VALUES_HELP =
+    """
+Path to aconfig parsed_flags binary proto file.
+Tip: `m all_aconfig_declarations` will generate a file that includes all information about all flags.
+"""
+
+val ARG_API_VERSIONS = "--api-versions"
+val ARG_API_VERSIONS_HELP =
+    """
+Path to API versions XML file.
+Usually named xml-versions.xml.
+Tip: `m sdk dist` will generate a file that includes all platform and mainline APIs.
+"""
+
 class MainCommand : CliktCommand() {
   override fun run() {}
 }
@@ -157,32 +180,18 @@ This tool reads the API signature file and checks that all flagged APIs are used
 The tool will exit with a non-zero exit code if any flagged APIs are found to be used in the incorrect way.
 """) {
   private val apiSignaturePath by
-      option("--api-signature")
-          .help(
-              """
-              Path to API signature file.
-              Usually named *current.txt.
-              Tip: `m frameworks-base-api-current.txt` will generate a file that includes all platform and mainline APIs.
-              """)
+      option(ARG_API_SIGNATURE)
+          .help(ARG_API_SIGNATURE_HELP)
           .path(mustExist = true, canBeDir = false, mustBeReadable = true)
           .required()
   private val flagValuesPath by
-      option("--flag-values")
-          .help(
-              """
-            Path to aconfig parsed_flags binary proto file.
-            Tip: `m all_aconfig_declarations` will generate a file that includes all information about all flags.
-            """)
+      option(ARG_FLAG_VALUES)
+          .help(ARG_FLAG_VALUES_HELP)
           .path(mustExist = true, canBeDir = false, mustBeReadable = true)
           .required()
   private val apiVersionsPath by
-      option("--api-versions")
-          .help(
-              """
-            Path to API versions XML file.
-            Usually named xml-versions.xml.
-            Tip: `m sdk dist` will generate a file that includes all platform and mainline APIs.
-            """)
+      option(ARG_API_VERSIONS)
+          .help(ARG_API_VERSIONS_HELP)
           .path(mustExist = true, canBeDir = false, mustBeReadable = true)
           .required()
 
