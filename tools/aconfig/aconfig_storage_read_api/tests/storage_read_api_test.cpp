@@ -97,7 +97,7 @@ TEST_F(AconfigStorageTest, test_none_exist_storage_file_mapping) {
   auto mapped_file_result = private_api::get_mapped_file_impl(
       storage_dir, "vendor", api::StorageFileType::package_map);
   ASSERT_FALSE(mapped_file_result.ok());
-  ASSERT_EQ(mapped_file_result.error().message(),
+  ASSERT_EQ(mapped_file_result.error(),
             std::string("failed to open ") + storage_dir
             + "/maps/vendor.package.map: No such file or directory");
 }
@@ -211,7 +211,7 @@ TEST_F(AconfigStorageTest, test_invalid_boolean_flag_value_query) {
 
   auto value = api::get_boolean_flag_value(*mapped_file, 8);
   ASSERT_FALSE(value.ok());
-  ASSERT_EQ(value.error().message(),
+  ASSERT_EQ(value.error(),
             std::string("InvalidStorageFileOffset(Flag value offset goes beyond the end of the file.)"));
 }
 
@@ -243,6 +243,6 @@ TEST_F(AconfigStorageTest, test_invalid_boolean_flag_info_query) {
 
   auto attribute = api::get_flag_attribute(*mapped_file, api::FlagValueType::Boolean, 8);
   ASSERT_FALSE(attribute.ok());
-  ASSERT_EQ(attribute.error().message(),
+  ASSERT_EQ(attribute.error(),
             std::string("InvalidStorageFileOffset(Flag info offset goes beyond the end of the file.)"));
 }

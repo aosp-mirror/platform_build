@@ -45,6 +45,7 @@ PRODUCT_PACKAGES += \
     bu \
     bugreport \
     bugreportz \
+    build_flag_system \
     cgroups.json \
     charger \
     cmd \
