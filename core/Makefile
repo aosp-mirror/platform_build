@@ -7055,18 +7055,19 @@ $(DEXPREOPT_CONFIG_ZIP): $(DEX_PREOPT_CONFIG_FOR_MAKE) \
 
 endif
 
-$(DEXPREOPT_CONFIG_ZIP): $(SOONG_ZIP)
-	$(hide) mkdir -p $(dir $@) $(PRODUCT_OUT)/dexpreopt_config
-
+$(DEXPREOPT_CONFIG_ZIP): PRIVATE_DEXPREOPT_CONFIG_ZIP_PARAMS :=
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
 ifneq (,$(DEX_PREOPT_CONFIG_FOR_MAKE))
-	$(hide) cp $(DEX_PREOPT_CONFIG_FOR_MAKE) $(PRODUCT_OUT)/dexpreopt_config
+$(DEXPREOPT_CONFIG_ZIP): PRIVATE_DEXPREOPT_CONFIG_ZIP_PARAMS += -e $(notdir $(DEX_PREOPT_CONFIG_FOR_MAKE)) -f $(DEX_PREOPT_CONFIG_FOR_MAKE)
 endif
 ifneq (,$(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE))
-	$(hide) cp $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE) $(PRODUCT_OUT)/dexpreopt_config
+$(DEXPREOPT_CONFIG_ZIP): PRIVATE_DEXPREOPT_CONFIG_ZIP_PARAMS += -e $(notdir $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE)) -f $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE)
 endif
 endif #!TARGET_BUILD_UNBUNDLED
-	$(hide) $(SOONG_ZIP) -d -o $@ -C $(PRODUCT_OUT)/dexpreopt_config -D $(PRODUCT_OUT)/dexpreopt_config
+
+$(DEXPREOPT_CONFIG_ZIP): $(SOONG_ZIP)
+	$(hide) mkdir -p $(dir $@) $(PRODUCT_OUT)/dexpreopt_config
+	$(hide) $(SOONG_ZIP) -d -o $@ -C $(PRODUCT_OUT)/dexpreopt_config -D $(PRODUCT_OUT)/dexpreopt_config $(PRIVATE_DEXPREOPT_CONFIG_ZIP_PARAMS)
 
 .PHONY: dexpreopt_config_zip
 dexpreopt_config_zip: $(DEXPREOPT_CONFIG_ZIP)
@@ -7605,6 +7606,7 @@ sdk_name := $(sdk_name)_$(INTERNAL_SDK_HOST_OS_NAME)
 sdk_dep_file := $(sdk_dir)/sdk_deps.mk
 
 ATREE_FILES :=
+include development/build/tools/sdk-preprocess-files.mk
 -include $(sdk_dep_file)
 
 # if we don't have a real list, then use "everything"
