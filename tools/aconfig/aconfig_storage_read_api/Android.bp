@@ -111,3 +111,28 @@ cc_defaults {
         "liblog",
     ],
 }
+
+rust_ffi_shared {
+    name: "libaconfig_storage_read_api_rust_jni",
+    crate_name: "aconfig_storage_read_api_rust_jni",
+    srcs: ["srcs/lib.rs"],
+    rustlibs: [
+        "libaconfig_storage_read_api",
+        "libanyhow",
+        "libjni",
+    ],
+    prefer_rlib: true,
+}
+
+java_library {
+    name: "libaconfig_storage_read_api_java",
+    srcs: [
+        "srcs/**/*.java",
+    ],
+    required: ["libaconfig_storage_read_api_rust_jni"],
+    min_sdk_version: "UpsideDownCake",
+    apex_available: [
+        "//apex_available:anyapex",
+        "//apex_available:platform",
+    ],
+}
