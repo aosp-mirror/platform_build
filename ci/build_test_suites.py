@@ -15,11 +15,19 @@
 """Build script for the CI `test_suites` target."""
 
 import argparse
+from dataclasses import dataclass
+import json
 import logging
 import os
 import pathlib
 import subprocess
 import sys
+from typing import Callable
+import optimized_targets
+
+
+REQUIRED_ENV_VARS = frozenset(['TARGET_PRODUCT', 'TARGET_RELEASE', 'TOP'])
+SOONG_UI_EXE_REL_PATH = 'build/soong/soong_ui.bash'
 
 
 class Error(Exception):
@@ -35,16 +43,54 @@ class BuildFailureError(Error):
     self.return_code = return_code
 
 
-REQUIRED_ENV_VARS = frozenset(['TARGET_PRODUCT', 'TARGET_RELEASE', 'TOP'])
-SOONG_UI_EXE_REL_PATH = 'build/soong/soong_ui.bash'
+class BuildPlanner:
+  """Class in charge of determining how to optimize build targets.
+
+  Given the build context and targets to build it will determine a final list of
+  targets to build along with getting a set of packaging functions to package up
+  any output zip files needed by the build.
+  """
+
+  def __init__(
+      self,
+      build_context: dict[str, any],
+      args: argparse.Namespace,
+      target_optimizations: dict[str, optimized_targets.OptimizedBuildTarget],
+  ):
+    self.build_context = build_context
+    self.args = args
+    self.target_optimizations = target_optimizations
+
+  def create_build_plan(self):
+
+    if 'optimized_build' not in self.build_context['enabled_build_features']:
+      return BuildPlan(set(self.args.extra_targets), set())
+
+    build_targets = set()
+    packaging_functions = set()
+    for target in self.args.extra_targets:
+      target_optimizer_getter = self.target_optimizations.get(target, None)
+      if not target_optimizer_getter:
+        build_targets.add(target)
+        continue
+
+      target_optimizer = target_optimizer_getter(
+          target, self.build_context, self.args
+      )
+      build_targets.update(target_optimizer.get_build_targets())
+      packaging_functions.add(target_optimizer.package_outputs)
+
+    return BuildPlan(build_targets, packaging_functions)
 
 
-def get_top() -> pathlib.Path:
-  return pathlib.Path(os.environ['TOP'])
+@dataclass(frozen=True)
+class BuildPlan:
+  build_targets: set[str]
+  packaging_functions: set[Callable[..., None]]
 
 
 def build_test_suites(argv: list[str]) -> int:
-  """Builds the general-tests and any other test suites passed in.
+  """Builds all test suites passed in, optimizing based on the build_context content.
 
   Args:
     argv: The command line arguments passed in.
@@ -54,14 +100,29 @@ def build_test_suites(argv: list[str]) -> int:
   """
   args = parse_args(argv)
   check_required_env()
+  build_context = load_build_context()
+  build_planner = BuildPlanner(
+      build_context, args, optimized_targets.OPTIMIZED_BUILD_TARGETS
+  )
+  build_plan = build_planner.create_build_plan()
 
   try:
-    build_everything(args)
+    execute_build_plan(build_plan)
   except BuildFailureError as e:
     logging.error('Build command failed! Check build_log for details.')
     return e.return_code
 
   return 0
+
+
+def parse_args(argv: list[str]) -> argparse.Namespace:
+  argparser = argparse.ArgumentParser()
+
+  argparser.add_argument(
+      'extra_targets', nargs='*', help='Extra test suites to build.'
+  )
+
+  return argparser.parse_args(argv)
 
 
 def check_required_env():
@@ -79,43 +140,40 @@ def check_required_env():
   raise Error(f'Missing required environment variables: {t}')
 
 
-def parse_args(argv):
-  argparser = argparse.ArgumentParser()
+def load_build_context():
+  build_context_path = pathlib.Path(os.environ.get('BUILD_CONTEXT', ''))
+  if build_context_path.is_file():
+    try:
+      with open(build_context_path, 'r') as f:
+        return json.load(f)
+    except json.decoder.JSONDecodeError as e:
+      raise Error(f'Failed to load JSON file: {build_context_path}')
 
-  argparser.add_argument(
-      'extra_targets', nargs='*', help='Extra test suites to build.'
-  )
-
-  return argparser.parse_args(argv)
+  logging.info('No BUILD_CONTEXT found, skipping optimizations.')
+  return empty_build_context()
 
 
-def build_everything(args: argparse.Namespace):
-  """Builds all tests (regardless of whether they are needed).
+def empty_build_context():
+  return {'enabled_build_features': []}
 
-  Args:
-    args: The parsed arguments.
 
-  Raises:
-    BuildFailure: If the build command fails.
-  """
-  build_command = base_build_command(args, args.extra_targets)
+def execute_build_plan(build_plan: BuildPlan):
+  build_command = []
+  build_command.append(get_top().joinpath(SOONG_UI_EXE_REL_PATH))
+  build_command.append('--make-mode')
+  build_command.extend(build_plan.build_targets)
 
   try:
     run_command(build_command)
   except subprocess.CalledProcessError as e:
     raise BuildFailureError(e.returncode) from e
 
+  for packaging_function in build_plan.packaging_functions:
+    packaging_function()
 
-def base_build_command(
-    args: argparse.Namespace, extra_targets: set[str]
-) -> list[str]:
 
-  build_command = []
-  build_command.append(get_top().joinpath(SOONG_UI_EXE_REL_PATH))
-  build_command.append('--make-mode')
-  build_command.extend(extra_targets)
-
-  return build_command
+def get_top() -> pathlib.Path:
+  return pathlib.Path(os.environ['TOP'])
 
 
 def run_command(args: list[str], stdout=None):
