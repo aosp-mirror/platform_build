@@ -47,11 +47,11 @@ $(general_tests_zip) : .KATI_IMPLICIT_OUTPUTS := $(general_tests_list_zip) $(gen
 $(general_tests_zip) : PRIVATE_TOOLS := $(general_tests_tools)
 $(general_tests_zip) : PRIVATE_INTERMEDIATES_DIR := $(intermediates_dir)
 $(general_tests_zip) : PRIVATE_general_tests_configs_zip := $(general_tests_configs_zip)
-$(general_tests_zip) : $(COMPATIBILITY.general-tests.FILES) $(general_tests_tools) $(SOONG_ZIP)
+$(general_tests_zip) : $(COMPATIBILITY.general-tests.FILES) $(COMPATIBILITY.general-tests.SOONG_INSTALLED_COMPATIBILITY_SUPPORT_FILES) $(general_tests_tools) $(SOONG_ZIP)
 	rm -rf $(PRIVATE_INTERMEDIATES_DIR)
 	rm -f $@ $(PRIVATE_general_tests_list_zip)
 	mkdir -p $(PRIVATE_INTERMEDIATES_DIR) $(PRIVATE_INTERMEDIATES_DIR)/tools
-	echo $(sort $(COMPATIBILITY.general-tests.FILES)) | tr " " "\n" > $(PRIVATE_INTERMEDIATES_DIR)/list
+	echo $(sort $(COMPATIBILITY.general-tests.FILES) $(COMPATIBILITY.general-tests.SOONG_INSTALLED_COMPATIBILITY_SUPPORT_FILES)) | tr " " "\n" > $(PRIVATE_INTERMEDIATES_DIR)/list
 	find $(PRIVATE_KERNEL_LTP_HOST_OUT) >> $(PRIVATE_INTERMEDIATES_DIR)/list
 	grep $(HOST_OUT_TESTCASES) $(PRIVATE_INTERMEDIATES_DIR)/list > $(PRIVATE_INTERMEDIATES_DIR)/host.list || true
 	grep $(TARGET_OUT_TESTCASES) $(PRIVATE_INTERMEDIATES_DIR)/list > $(PRIVATE_INTERMEDIATES_DIR)/target.list || true
