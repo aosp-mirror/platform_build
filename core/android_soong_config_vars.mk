@@ -68,6 +68,12 @@ ifdef PRODUCT_AVF_ENABLED
 $(call add_soong_config_var_value,ANDROID,avf_enabled,$(PRODUCT_AVF_ENABLED))
 endif
 
+# Enable AVF remote attestation according to the flag value if PRODUCT_AVF_REMOTE_ATTESTATION_DISABLED is not
+# set to true explicitly.
+ifneq (true,$(PRODUCT_AVF_REMOTE_ATTESTATION_DISABLED))
+  $(call add_soong_config_var_value,ANDROID,avf_remote_attestation_enabled,$(RELEASE_AVF_ENABLE_REMOTE_ATTESTATION))
+endif
+
 ifdef PRODUCT_AVF_MICRODROID_GUEST_GKI_VERSION
 $(call add_soong_config_var_value,ANDROID,avf_microdroid_guest_gki_version,$(PRODUCT_AVF_MICRODROID_GUEST_GKI_VERSION))
 endif
@@ -86,6 +92,8 @@ $(call add_soong_config_var_value,ANDROID,release_avf_enable_dice_changes,$(RELE
 $(call add_soong_config_var_value,ANDROID,release_avf_enable_llpvm_changes,$(RELEASE_AVF_ENABLE_LLPVM_CHANGES))
 $(call add_soong_config_var_value,ANDROID,release_avf_enable_multi_tenant_microdroid_vm,$(RELEASE_AVF_ENABLE_MULTI_TENANT_MICRODROID_VM))
 $(call add_soong_config_var_value,ANDROID,release_avf_enable_network,$(RELEASE_AVF_ENABLE_NETWORK))
+# TODO(b/341292601): This flag is needed until the V release. We with clean it up after V together
+# with most of the release_avf_ flags here.
 $(call add_soong_config_var_value,ANDROID,release_avf_enable_remote_attestation,$(RELEASE_AVF_ENABLE_REMOTE_ATTESTATION))
 $(call add_soong_config_var_value,ANDROID,release_avf_enable_vendor_modules,$(RELEASE_AVF_ENABLE_VENDOR_MODULES))
 $(call add_soong_config_var_value,ANDROID,release_avf_enable_virt_cpufreq,$(RELEASE_AVF_ENABLE_VIRT_CPUFREQ))
@@ -94,11 +102,15 @@ $(call add_soong_config_var_value,ANDROID,release_avf_support_custom_vm_with_par
 
 $(call add_soong_config_var_value,ANDROID,release_binder_death_recipient_weak_from_jni,$(RELEASE_BINDER_DEATH_RECIPIENT_WEAK_FROM_JNI))
 
+$(call add_soong_config_var_value,ANDROID,release_libpower_no_lock_binder_txn,$(RELEASE_LIBPOWER_NO_LOCK_BINDER_TXN))
+
 $(call add_soong_config_var_value,ANDROID,release_package_libandroid_runtime_punch_holes,$(RELEASE_PACKAGE_LIBANDROID_RUNTIME_PUNCH_HOLES))
 
 $(call add_soong_config_var_value,ANDROID,release_selinux_data_data_ignore,$(RELEASE_SELINUX_DATA_DATA_IGNORE))
-
-$(call add_soong_config_var_value,ANDROID,release_write_appcompat_override_system_properties,$(RELEASE_WRITE_APPCOMPAT_OVERRIDE_SYSTEM_PROPERTIES))
+ifneq (,$(filter eng userdebug,$(TARGET_BUILD_VARIANT)))
+    # write appcompat system properties on userdebug and eng builds
+    $(call add_soong_config_var_value,ANDROID,release_write_appcompat_override_system_properties,true)
+endif
 
 # Enable system_server optimizations by default unless explicitly set or if
 # there may be dependent runtime jars.
