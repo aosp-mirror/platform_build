@@ -76,6 +76,11 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.virt:framework-virtualization \
     com.android.wifi:framework-wifi \
 
+# APEX boot jars that are in prebuilt BCP content, but not in source version.
+# Keep the list sorted by module names and then library names.
+PRODUCT_APEX_BOOT_JARS_PREBUILT_INCLUDED_LIST := \
+    com.android.mediaprovider:framework-pdf \
+
 # List of system_server classpath jars delivered via apex.
 # Keep the list sorted by module names and then library names.
 # Note: For modules available in Q, DO NOT add new entries here.
