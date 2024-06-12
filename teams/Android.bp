@@ -4391,3 +4391,10 @@ team {
     // go/trendy/manage/engineers/5955405559201792
     trendy_team_id: "5955405559201792",
 }
+
+team {
+    name: "trendy_team_android_media_better_together",
+
+    // go/trendy/manage/engineers/5617300451721216
+    trendy_team_id: "5617300451721216",
+}
