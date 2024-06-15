@@ -4398,3 +4398,10 @@ team {
     // go/trendy/manage/engineers/5617300451721216
     trendy_team_id: "5617300451721216",
 }
+
+team {
+    name: "trendy_team_attack_tools",
+
+    // go/trendy/manage/engineers/4705629185081344
+    trendy_team_id: "4705629185081344",
+}
