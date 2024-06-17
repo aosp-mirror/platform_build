@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2019 The Android Open Source Project
+# Copyright (C) 2024 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,16 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+########################################################################
+# clean-oat rules
 #
 
-# Base modules and settings for the product partition.
-PRODUCT_PACKAGES += \
-    build_flag_product \
-    fs_config_dirs_product \
-    fs_config_files_product \
-    group_product \
-    ModuleMetadata \
-    passwd_product \
-    product_compatibility_matrix.xml \
-    product_manifest.xml \
-    selinux_policy_product \
+.PHONY: clean-oat
+clean-oat: clean-oat-host clean-oat-target
+
+.PHONY: clean-oat-host
+clean-oat-host:
+	find $(OUT_DIR) '(' -name '*.oat' -o -name '*.odex' -o -name '*.art' -o -name '*.vdex' ')' -a -type f | xargs rm -f
+	rm -rf $(TMPDIR)/*/test-*/dalvik-cache/*
+	rm -rf $(TMPDIR)/android-data/dalvik-cache/*

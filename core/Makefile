@@ -7055,18 +7055,19 @@ $(DEXPREOPT_CONFIG_ZIP): $(DEX_PREOPT_CONFIG_FOR_MAKE) \
 
 endif
 
-$(DEXPREOPT_CONFIG_ZIP): $(SOONG_ZIP)
-	$(hide) mkdir -p $(dir $@) $(PRODUCT_OUT)/dexpreopt_config
-
+$(DEXPREOPT_CONFIG_ZIP): PRIVATE_DEXPREOPT_CONFIG_ZIP_PARAMS :=
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
 ifneq (,$(DEX_PREOPT_CONFIG_FOR_MAKE))
-	$(hide) cp $(DEX_PREOPT_CONFIG_FOR_MAKE) $(PRODUCT_OUT)/dexpreopt_config
+$(DEXPREOPT_CONFIG_ZIP): PRIVATE_DEXPREOPT_CONFIG_ZIP_PARAMS += -e $(notdir $(DEX_PREOPT_CONFIG_FOR_MAKE)) -f $(DEX_PREOPT_CONFIG_FOR_MAKE)
 endif
 ifneq (,$(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE))
-	$(hide) cp $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE) $(PRODUCT_OUT)/dexpreopt_config
+$(DEXPREOPT_CONFIG_ZIP): PRIVATE_DEXPREOPT_CONFIG_ZIP_PARAMS += -e $(notdir $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE)) -f $(DEX_PREOPT_SOONG_CONFIG_FOR_MAKE)
 endif
 endif #!TARGET_BUILD_UNBUNDLED
-	$(hide) $(SOONG_ZIP) -d -o $@ -C $(PRODUCT_OUT)/dexpreopt_config -D $(PRODUCT_OUT)/dexpreopt_config
+
+$(DEXPREOPT_CONFIG_ZIP): $(SOONG_ZIP)
+	$(hide) mkdir -p $(dir $@) $(PRODUCT_OUT)/dexpreopt_config
+	$(hide) $(SOONG_ZIP) -d -o $@ -C $(PRODUCT_OUT)/dexpreopt_config -D $(PRODUCT_OUT)/dexpreopt_config $(PRIVATE_DEXPREOPT_CONFIG_ZIP_PARAMS)
 
 .PHONY: dexpreopt_config_zip
 dexpreopt_config_zip: $(DEXPREOPT_CONFIG_ZIP)
@@ -7561,6 +7562,10 @@ systemimage: $(QEMU_VERIFIED_BOOT_PARAMS)
 droidcore-unbundled: $(QEMU_VERIFIED_BOOT_PARAMS)
 
 endif
+
+# Preprocess files for emulator and sdk.
+-include development/build/tools/sdk-preprocess-files.mk
+
 # -----------------------------------------------------------------
 # The emulator package
 ifeq ($(BUILD_EMULATOR),true)
