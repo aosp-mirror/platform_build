@@ -44,7 +44,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system_ext.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system_ext.mk)
 
 # pKVM
-$(call inherit-product, packages/modules/Virtualization/apex/product_packages.mk)
+$(call inherit-product-if-exists, packages/modules/Virtualization/apex/product_packages.mk)
 
 #
 # All components inherited here go to product image
@@ -57,6 +57,9 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_product.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_arm64/device.mk)
 AB_OTA_UPDATER := true
 AB_OTA_PARTITIONS ?= system
+
+# Set widevine apex signed with dev key
+$(call soong_config_set,widevine,use_devkey,true)
 
 #
 # Special settings for GSI releasing

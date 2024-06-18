@@ -1352,6 +1352,8 @@ my_warn_types := $(my_warn_ndk_types)
 my_allowed_types := $(my_allowed_ndk_types) native:platform native:platform_vndk
 endif
 
+ALL_MODULES.$(my_register_name).WHOLE_STATIC_LIBS := $(my_whole_static_libraries)
+
 my_link_deps := $(addprefix STATIC_LIBRARIES:,$(my_whole_static_libraries) $(my_static_libraries))
 ifneq ($(filter-out STATIC_LIBRARIES HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
 my_link_deps += $(addprefix SHARED_LIBRARIES:,$(my_shared_libraries))
