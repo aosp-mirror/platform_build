@@ -23,3 +23,5 @@ include $(BUILD_SYSTEM)/binary.mk
 $(LOCAL_BUILT_MODULE): $(built_whole_libraries)
 $(LOCAL_BUILT_MODULE): $(all_objects)
 	$(transform-host-o-to-static-lib)
+
+$(if $(my_register_name),$(eval ALL_MODULES.$(my_register_name).MAKE_MODULE_TYPE:=HOST_STATIC_LIBRARY))
