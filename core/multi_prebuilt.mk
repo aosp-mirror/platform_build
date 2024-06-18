@@ -132,3 +132,5 @@ prebuilt_java_libraries :=
 prebuilt_static_java_libraries :=
 prebuilt_is_host :=
 prebuilt_module_tags :=
+
+$(if $(my_register_name),$(eval ALL_MODULES.$(my_register_name).MAKE_MODULE_TYPE:=MULTI_PREBUILT))
