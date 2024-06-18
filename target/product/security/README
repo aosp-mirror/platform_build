@@ -37,3 +37,31 @@ input and prints a C structure to standard output:
 
 This is called by build/make/core/Makefile to incorporate the OTA signing keys
 into the recovery image.
+
+converting to java keystore for Android Studio
+----------------------------------------------
+
+Suppose we want to convert shared.pk8 and shared.x509.pem to shared.keystore.
+
+ $ openssl pkcs8 -inform DER -nocrypt                      \
+   -in build/make/target/product/security/shared.pk8       \
+   -out shared.pem
+ $ openssl pkcs12 -export                                  \
+   -in build/make/target/product/security/shared.x509.pem  \
+   -inkey shared.pem -out shared.p12                       \
+   -password pass:android -name AndroidDebugKey
+ $ keytool -importkeystore -deststorepass android          \
+   -destkeystore shared.keystore -srckeystore shared.p12   \
+   -srcstoretype PKCS12 -srcstorepass android
+
+The keystore can be used in build.gradle as follows.
+
+signingConfigs {
+    shared {
+        storeFile file("shared.keystore")
+        storePassword "android"
+        keyPassword "android"
+        keyAlias "AndroidDebugKey"
+    }
+}
+

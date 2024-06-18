@@ -126,4 +126,27 @@ function _wrap_build()
 }
 
 
+function log_tool_invocation()
+{
+    if [[ -z $ANDROID_TOOL_LOGGER ]]; then
+        return
+    fi
+
+    LOG_TOOL_TAG=$1
+    LOG_START_TIME=$(date +%s.%N)
+    trap '
+        exit_code=$?;
+        # Remove the trap to prevent duplicate log.
+        trap - EXIT;
+        $ANDROID_TOOL_LOGGER \
+                --tool_tag="${LOG_TOOL_TAG}" \
+                --start_timestamp="${LOG_START_TIME}" \
+                --end_timestamp="$(date +%s.%N)" \
+                --tool_args="$*" \
+                --exit_code="${exit_code}" \
+                ${ANDROID_TOOL_LOGGER_EXTRA_ARGS} \
+           > /dev/null 2>&1 &
+        exit ${exit_code}
+    ' SIGINT SIGTERM SIGQUIT EXIT
+}
 

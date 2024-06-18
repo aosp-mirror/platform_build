@@ -16,6 +16,7 @@
 
 # Base modules and settings for the product partition.
 PRODUCT_PACKAGES += \
+    build_flag_product \
     fs_config_dirs_product \
     fs_config_files_product \
     group_product \
