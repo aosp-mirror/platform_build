@@ -88,3 +88,5 @@ endif  # LOCAL_UNCOMPRESS_DEX
 $(eval $(call copy-one-file,$(common_javalib.jar),$(LOCAL_BUILT_MODULE)))
 
 endif # !LOCAL_IS_STATIC_JAVA_LIBRARY
+
+$(if $(my_register_name),$(eval ALL_MODULES.$(my_register_name).MAKE_MODULE_TYPE:=JAVA_LIBRARY))
