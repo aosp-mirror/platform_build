@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2024 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,10 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+########################################################################
+# clean-oat rules
 #
 
-$(call record-module-type,HOST_PREBUILT)
-LOCAL_IS_HOST_MODULE := true
-include $(BUILD_MULTI_PREBUILT)
+.PHONY: clean-oat
+clean-oat: clean-oat-host clean-oat-target
 
-$(if $(my_register_name),$(eval ALL_MODULES.$(my_register_name).MAKE_MODULE_TYPE:=HOST_PREBUILT))
+.PHONY: clean-oat-host
+clean-oat-host:
+	find $(OUT_DIR) '(' -name '*.oat' -o -name '*.odex' -o -name '*.art' -o -name '*.vdex' ')' -a -type f | xargs rm -f
+	rm -rf $(TMPDIR)/*/test-*/dalvik-cache/*
+	rm -rf $(TMPDIR)/android-data/dalvik-cache/*

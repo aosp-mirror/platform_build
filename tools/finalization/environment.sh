@@ -19,8 +19,14 @@ export FINAL_MAINLINE_EXTENSION='58'
 
 # Options:
 # 'unfinalized' - branch is in development state,
-# 'sdk' - SDK/API is finalized
+# 'vintf' - VINTF is finalized
+# 'sdk' - VINTF and SDK/API are finalized
 # 'rel' - branch is finalized, switched to REL
-export FINAL_STATE='unfinalized'
+export FINAL_STATE='vintf'
 
 export BUILD_FROM_SOURCE_STUB=true
+
+# FINAL versions for VINTF
+# TODO(b/323985297): The version must match with that from the release configuration.
+# Instead of hardcoding the version here, read it from a release configuration.
+export FINAL_BOARD_API_LEVEL='202404'
