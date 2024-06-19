@@ -1,6 +1,5 @@
 $(call json_start)
 
-$(call add_json_str, BuildFingerprintFile,              build_fingerprint.txt)
 $(call add_json_str, DeviceCpuVariantRuntime,           $(TARGET_CPU_VARIANT_RUNTIME))
 $(call add_json_str, DeviceAbiList,                     $(TARGET_CPU_ABI_LIST))
 $(call add_json_str, DeviceAbiList32,                   $(TARGET_CPU_ABI_LIST_32_BIT))
@@ -16,8 +15,6 @@ $(call add_json_str, BoardPlatform,          $(TARGET_BOARD_PLATFORM))
 $(call add_json_str, BoardShippingApiLevel,  $(BOARD_SHIPPING_API_LEVEL))
 $(call add_json_str, ShippingApiLevel,       $(PRODUCT_SHIPPING_API_LEVEL))
 $(call add_json_str, ShippingVendorApiLevel, $(PRODUCT_SHIPPING_VENDOR_API_LEVEL))
-
-$(call add_json_bool,BuildBrokenDupSysprop, $(filter true,$(BUILD_BROKEN_DUP_SYSPROP)))
 
 $(call add_json_str, ProductModel,                      $(PRODUCT_MODEL))
 $(call add_json_str, ProductModelForAttestation,        $(PRODUCT_MODEL_FOR_ATTESTATION))
@@ -39,16 +36,17 @@ define collapse-prop-pairs
 $(subst ",,$(call collapse-pairs,$(call collapse-pairs,$$($(1)),?=),=))
 endef
 
-$(call add_json_list, SystemProperties,        $(call collapse-prop-pairs,PRODUCT_SYSTEM_PROPERTIES))
-$(call add_json_list, SystemDefaultProperties, $(call collapse-prop-pairs,PRODUCT_SYSTEM_DEFAULT_PROPERTIES))
-$(call add_json_list, SystemExtProperties,     $(call collapse-prop-pairs,PRODUCT_SYSTEM_EXT_PROPERTIES))
-$(call add_json_list, VendorProperties,        $(call collapse-prop-pairs,PRODUCT_VENDOR_PROPERTIES))
-$(call add_json_list, ProductProperties,       $(call collapse-prop-pairs,PRODUCT_PRODUCT_PROPERTIES))
-$(call add_json_list, OdmProperties,           $(call collapse-prop-pairs,PRODUCT_ODM_PROPERTIES))
-$(call add_json_list, OemProperties,           $(call collapse-prop-pairs,PRODUCT_OEM_PROPERTIES))
-$(call add_json_list, PropertyOverrides,       $(call collapse-prop-pairs,PRODUCT_PROPERTY_OVERRIDES))
+$(call add_json_list, PRODUCT_SYSTEM_PROPERTIES,         $(call collapse-prop-pairs,PRODUCT_SYSTEM_PROPERTIES))
+$(call add_json_list, PRODUCT_SYSTEM_DEFAULT_PROPERTIES, $(call collapse-prop-pairs,PRODUCT_SYSTEM_DEFAULT_PROPERTIES))
+$(call add_json_list, PRODUCT_SYSTEM_EXT_PROPERTIES,     $(call collapse-prop-pairs,PRODUCT_SYSTEM_EXT_PROPERTIES))
+$(call add_json_list, PRODUCT_VENDOR_PROPERTIES,         $(call collapse-prop-pairs,PRODUCT_VENDOR_PROPERTIES))
+$(call add_json_list, PRODUCT_PRODUCT_PROPERTIES,        $(call collapse-prop-pairs,PRODUCT_PRODUCT_PROPERTIES))
+$(call add_json_list, PRODUCT_ODM_PROPERTIES,            $(call collapse-prop-pairs,PRODUCT_ODM_PROPERTIES))
+$(call add_json_list, PRODUCT_PROPERTY_OVERRIDES,        $(call collapse-prop-pairs,PRODUCT_PROPERTY_OVERRIDES))
 
 $(call add_json_str, BootloaderBoardName, $(TARGET_BOOTLOADER_BOARD_NAME))
+
+$(call add_json_bool, SdkBuild, $(filter sdk sdk_addon,$(MAKECMDGOALS)))
 
 _config_enable_uffd_gc := \
   $(firstword $(OVERRIDE_ENABLE_UFFD_GC) $(PRODUCT_ENABLE_UFFD_GC) default)
