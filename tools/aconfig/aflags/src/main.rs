@@ -233,6 +233,8 @@ fn format_flag_row(flag: &Flag, info: &PaddingInfo) -> String {
 }
 
 fn set_flag(qualified_name: &str, value: &str) -> Result<()> {
+    ensure!(nix::unistd::Uid::current().is_root(), "must be root to mutate flags");
+
     let flags_binding = DeviceConfigSource::list_flags()?;
     let flag = flags_binding.iter().find(|f| f.qualified_name() == qualified_name).ok_or(
         anyhow!("no aconfig flag '{qualified_name}'. Does the flag have an .aconfig definition?"),
@@ -280,9 +282,7 @@ fn list(source_type: FlagSourceType, container: Option<String>) -> Result<String
     Ok(result)
 }
 
-fn main() -> Result<()> {
-    ensure!(nix::unistd::Uid::current().is_root(), "must be root");
-
+fn main() {
     let cli = Cli::parse();
     let output = match cli.command {
         Command::List { use_new_storage: true, container } => {
@@ -299,8 +299,6 @@ fn main() -> Result<()> {
         Ok(None) => (),
         Err(message) => println!("Error: {message}"),
     }
-
-    Ok(())
 }
 
 #[cfg(test)]

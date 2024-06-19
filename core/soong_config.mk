@@ -1,4 +1,5 @@
 SOONG_MAKEVARS_MK := $(SOONG_OUT_DIR)/make_vars-$(TARGET_PRODUCT).mk
+SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.$(TARGET_PRODUCT).variables
 SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android-$(TARGET_PRODUCT).mk
 
 include $(BUILD_SYSTEM)/art_config.mk
@@ -354,7 +355,5 @@ $(shell if ! cmp -s $(SOONG_VARIABLES).tmp $(SOONG_VARIABLES); then \
 	else \
 	  rm $(SOONG_VARIABLES).tmp; \
 	fi)
-
-include $(BUILD_SYSTEM)/soong_extra_config.mk
 
 endif # CONFIGURE_SOONG
