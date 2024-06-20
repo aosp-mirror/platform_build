@@ -492,6 +492,9 @@ _product_single_value_vars += PRODUCT_16K_DEVELOPER_OPTION
 # by this flag.
 _product_single_value_vars += PRODUCT_NOT_DEBUGGABLE_IN_USERDEBUG
 
+# If set, the default value of the versionName of apps will include the build number.
+_product_single_value_vars += PRODUCT_BUILD_APPS_WITH_BUILD_NUMBER
+
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
 
