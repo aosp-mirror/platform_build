@@ -10,6 +10,7 @@ ExternalDocumentRef: DocumentRef-external_doc_ref external_doc_uri SHA1: 1234567
 FileName: file4.a
 SPDXID: SPDXRef-file4
 FileChecksum: SHA1: 44444
+LicenseConcluded: NOASSERTION
 
 PackageName: PRODUCT
 SPDXID: SPDXRef-PRODUCT
@@ -17,6 +18,7 @@ PackageDownloadLocation: NONE
 FilesAnalyzed: true
 PackageVersion: build_finger_print
 PackageSupplier: Organization: Google
+PackageLicenseDeclared: NOASSERTION
 PackageVerificationCode: 123456
 
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-PRODUCT
@@ -24,14 +26,17 @@ Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-PRODUCT
 FileName: /bin/file1
 SPDXID: SPDXRef-file1
 FileChecksum: SHA1: 11111
+LicenseConcluded: LicenseRef-Android-Apache-2.0
 
 FileName: /bin/file2
 SPDXID: SPDXRef-file2
 FileChecksum: SHA1: 22222
+LicenseConcluded: LicenseRef-Android-License-1
 
 FileName: /bin/file3
 SPDXID: SPDXRef-file3
 FileChecksum: SHA1: 33333
+LicenseConcluded: LicenseRef-Android-License-2 OR LicenseRef-Android-License-3
 
 PackageName: PLATFORM
 SPDXID: SPDXRef-PLATFORM
@@ -39,6 +44,7 @@ PackageDownloadLocation: NONE
 FilesAnalyzed: false
 PackageVersion: build_finger_print
 PackageSupplier: Organization: Google
+PackageLicenseDeclared: LicenseRef-Android-Apache-2.0
 
 PackageName: Prebuilt package1
 SPDXID: SPDXRef-PREBUILT-package1
@@ -46,6 +52,7 @@ PackageDownloadLocation: NONE
 FilesAnalyzed: false
 PackageVersion: build_finger_print
 PackageSupplier: Organization: Google
+PackageLicenseDeclared: LicenseRef-Android-License-1
 
 PackageName: Source package1
 SPDXID: SPDXRef-SOURCE-package1
@@ -53,6 +60,7 @@ PackageDownloadLocation: NONE
 FilesAnalyzed: false
 PackageVersion: build_finger_print
 PackageSupplier: Organization: Google
+PackageLicenseDeclared: LicenseRef-Android-License-2 OR LicenseRef-Android-License-3
 ExternalRef: SECURITY cpe22Type cpe:/a:jsoncpp_project:jsoncpp:1.9.4
 
 PackageName: Upstream package1
@@ -61,6 +69,7 @@ PackageDownloadLocation: NOASSERTION
 FilesAnalyzed: false
 PackageVersion: 1.1
 PackageSupplier: Organization: upstream
+PackageLicenseDeclared: LicenseRef-Android-License-2 OR LicenseRef-Android-License-3
 
 Relationship: SPDXRef-SOURCE-package1 VARIANT_OF SPDXRef-UPSTREAM-package1
 
@@ -68,3 +77,19 @@ Relationship: SPDXRef-file1 GENERATED_FROM SPDXRef-PLATFORM
 Relationship: SPDXRef-file2 GENERATED_FROM SPDXRef-PREBUILT-package1
 Relationship: SPDXRef-file3 GENERATED_FROM SPDXRef-SOURCE-package1
 Relationship: SPDXRef-file1 STATIC_LINK SPDXRef-file4
+
+LicenseID: LicenseRef-Android-Apache-2.0
+LicenseName: License-Apache
+ExtractedText: <text>LICENSE_APACHE</text>
+
+LicenseID: LicenseRef-Android-License-1
+LicenseName: License-1
+ExtractedText: <text>LICENSE 1</text>
+
+LicenseID: LicenseRef-Android-License-2
+LicenseName: License-2
+ExtractedText: <text>LICENSE 2</text>
+
+LicenseID: LicenseRef-Android-License-3
+LicenseName: License-3
+ExtractedText: <text>LICENSE 3</text>
