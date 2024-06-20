@@ -17,18 +17,14 @@
 include $(SRC_TARGET_DIR)/product/generic_kernel.mk
 
 PRODUCT_COPY_FILES += \
-    kernel/prebuilts/5.4/x86_64/kernel-5.4:kernel-5.4 \
     kernel/prebuilts/5.10/x86_64/kernel-5.10:kernel-5.10 \
 
-$(call _output-kernel-info,kernel/prebuilts/5.4/x86_64,kernel/5.4)
 $(call _output-kernel-info,kernel/prebuilts/5.10/x86_64,kernel/5.10)
 
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 PRODUCT_COPY_FILES += \
-    kernel/prebuilts/5.4/x86_64/kernel-5.4-allsyms:kernel-5.4-allsyms \
     kernel/prebuilts/5.10/x86_64/kernel-5.10-allsyms:kernel-5.10-allsyms \
 
-$(call _output-kernel-info-debug,kernel/prebuilts/5.4/x86_64,kernel/5.4-debug)
 $(call _output-kernel-info-debug,kernel/prebuilts/5.10/x86_64,kernel/5.10-debug)
 
 endif
