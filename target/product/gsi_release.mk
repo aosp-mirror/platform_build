@@ -51,9 +51,11 @@ PRODUCT_PACKAGES += \
     init.vndk-nodef.rc \
 
 
-# Overlay the GSI specific SystemUI setting
+# Overlay the GSI specific setting for framework and SystemUI
 ifneq ($(PRODUCT_IS_AUTOMOTIVE),true)
-    PRODUCT_PACKAGES += gsi_overlay_systemui
+    PRODUCT_PACKAGES += \
+        gsi_overlay_framework \
+        gsi_overlay_systemui \
     PRODUCT_COPY_FILES += \
         device/generic/common/overlays/overlay-config.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/overlay/config/config.xml
 endif
