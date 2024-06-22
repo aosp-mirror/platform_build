@@ -23,6 +23,7 @@ SUPPLIER_GOOGLE = 'Organization: Google'
 SUPPLIER_UPSTREAM = 'Organization: upstream'
 
 SPDXID_PREBUILT_PACKAGE1 = 'SPDXRef-PREBUILT-package1'
+SPDXID_PREBUILT_PACKAGE2 = 'SPDXRef-PREBUILT-package2'
 SPDXID_SOURCE_PACKAGE1 = 'SPDXRef-SOURCE-package1'
 SPDXID_UPSTREAM_PACKAGE1 = 'SPDXRef-UPSTREAM-package1'
 
@@ -30,6 +31,9 @@ SPDXID_FILE1 = 'SPDXRef-file1'
 SPDXID_FILE2 = 'SPDXRef-file2'
 SPDXID_FILE3 = 'SPDXRef-file3'
 SPDXID_FILE4 = 'SPDXRef-file4'
+
+SPDXID_LICENSE1 = "SPDXRef-License-1"
+SPDXID_LICENSE2 = "SPDXRef-License-2"
 
 
 class SBOMDataTest(unittest.TestCase):
@@ -133,6 +137,47 @@ class SBOMDataTest(unittest.TestCase):
 
     self.sbom_doc.generate_packages_verification_code()
     self.assertEqual(expected_package_verification_code, self.sbom_doc.packages[0].verification_code)
+
+  def test_add_package_(self):
+    self.sbom_doc.add_package(sbom_data.Package(id=SPDXID_PREBUILT_PACKAGE2,
+                                                name='Prebuilt package2',
+                                                download_location=sbom_data.VALUE_NONE,
+                                                supplier=SUPPLIER_GOOGLE,
+                                                version=BUILD_FINGER_PRINT,
+                                                ))
+    p = next((p for p in self.sbom_doc.packages if p.id == SPDXID_PREBUILT_PACKAGE2), None)
+    self.assertNotEqual(p, None)
+    self.assertEqual(p.declared_license_ids, [])
+
+    # Add same package with license 1
+    self.sbom_doc.add_package(sbom_data.Package(id=SPDXID_PREBUILT_PACKAGE2,
+                                                name='Prebuilt package2',
+                                                download_location=sbom_data.VALUE_NONE,
+                                                supplier=SUPPLIER_GOOGLE,
+                                                version=BUILD_FINGER_PRINT,
+                                                declared_license_ids=[SPDXID_LICENSE1]
+                                                ))
+    self.assertEqual(p.declared_license_ids, [SPDXID_LICENSE1])
+
+    # Add same package with license 2
+    self.sbom_doc.add_package(sbom_data.Package(id=SPDXID_PREBUILT_PACKAGE2,
+                                                name='Prebuilt package2',
+                                                download_location=sbom_data.VALUE_NONE,
+                                                supplier=SUPPLIER_GOOGLE,
+                                                version=BUILD_FINGER_PRINT,
+                                                declared_license_ids=[SPDXID_LICENSE2]
+                                                ))
+    self.assertEqual(p.declared_license_ids, [SPDXID_LICENSE1, SPDXID_LICENSE2])
+
+    # Add same package with license 2 again
+    self.sbom_doc.add_package(sbom_data.Package(id=SPDXID_PREBUILT_PACKAGE2,
+                                                name='Prebuilt package2',
+                                                download_location=sbom_data.VALUE_NONE,
+                                                supplier=SUPPLIER_GOOGLE,
+                                                version=BUILD_FINGER_PRINT,
+                                                declared_license_ids=[SPDXID_LICENSE2]
+                                                ))
+    self.assertEqual(p.declared_license_ids, [SPDXID_LICENSE1, SPDXID_LICENSE2])
 
 
 if __name__ == '__main__':
