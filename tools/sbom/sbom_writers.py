@@ -64,6 +64,11 @@ class Tags:
   # Relationship
   RELATIONSHIP = 'Relationship'
 
+  # License
+  LICENSE_ID = 'LicenseID'
+  LICENSE_NAME = 'LicenseName'
+  LICENSE_EXTRACTED_TEXT = 'ExtractedText'
+
 
 class TagValueWriter:
   @staticmethod
@@ -99,6 +104,12 @@ class TagValueWriter:
       tagvalues.append(f'{Tags.PACKAGE_VERSION}: {package.version}')
     if package.supplier:
       tagvalues.append(f'{Tags.PACKAGE_SUPPLIER}: {package.supplier}')
+
+    license = sbom_data.VALUE_NOASSERTION
+    if package.declared_license_ids:
+      license = ' OR '.join(package.declared_license_ids)
+    tagvalues.append(f'{Tags.PACKAGE_LICENSE_DECLARED}: {license}')
+
     if package.verification_code:
       tagvalues.append(f'{Tags.PACKAGE_VERIFICATION_CODE}: {package.verification_code}')
     if package.external_refs:
@@ -155,8 +166,12 @@ class TagValueWriter:
       f'{Tags.FILE_NAME}: {file.name}',
       f'{Tags.SPDXID}: {file.id}',
       f'{Tags.FILE_CHECKSUM}: {file.checksum}',
-      '',
     ]
+    license = sbom_data.VALUE_NOASSERTION
+    if file.concluded_license_ids:
+      license = ' OR '.join(file.concluded_license_ids)
+    tagvalues.append(f'{Tags.FILE_LICENSE_CONCLUDED}: {license}')
+    tagvalues.append('')
 
     return tagvalues
 
@@ -194,6 +209,22 @@ class TagValueWriter:
     return tagvalues
 
   @staticmethod
+  def marshal_license(license):
+    tagvalues = []
+    tagvalues.append(f'{Tags.LICENSE_ID}: {license.id}')
+    tagvalues.append(f'{Tags.LICENSE_NAME}: {license.name}')
+    tagvalues.append(f'{Tags.LICENSE_EXTRACTED_TEXT}: <text>{license.text}</text>')
+    return tagvalues
+
+  @staticmethod
+  def marshal_licenses(sbom_doc):
+    tagvalues = []
+    for license in sbom_doc.licenses:
+      tagvalues += TagValueWriter.marshal_license(license)
+      tagvalues.append('')
+    return tagvalues
+
+  @staticmethod
   def write(sbom_doc, file, fragment=False):
     content = []
     if not fragment:
@@ -202,6 +233,7 @@ class TagValueWriter:
     tagvalues, marshaled_relationships = TagValueWriter.marshal_packages(sbom_doc, fragment)
     content += tagvalues
     content += TagValueWriter.marshal_relationships(sbom_doc, marshaled_relationships)
+    content += TagValueWriter.marshal_licenses(sbom_doc)
     file.write('\n'.join(content))
 
 
@@ -236,17 +268,25 @@ class PropNames:
   PACKAGE_EXTERNAL_REF_TYPE = 'referenceType'
   PACKAGE_EXTERNAL_REF_LOCATOR = 'referenceLocator'
   PACKAGE_HAS_FILES = 'hasFiles'
+  PACKAGE_LICENSE_DECLARED = 'licenseDeclared'
 
   # File
   FILES = 'files'
   FILE_NAME = 'fileName'
   FILE_CHECKSUMS = 'checksums'
+  FILE_LICENSE_CONCLUDED = 'licenseConcluded'
 
   # Relationship
   RELATIONSHIPS = 'relationships'
   REL_ELEMENT_ID = 'spdxElementId'
   REL_RELATED_ELEMENT_ID = 'relatedSpdxElement'
   REL_TYPE = 'relationshipType'
+
+  # License
+  LICENSES = 'hasExtractedLicensingInfos'
+  LICENSE_ID = 'licenseId'
+  LICENSE_NAME = 'name'
+  LICENSE_EXTRACTED_TEXT = 'extractedText'
 
 
 class JSONWriter:
@@ -294,6 +334,9 @@ class JSONWriter:
         package[PropNames.PACKAGE_VERSION] = p.version
       if p.supplier:
         package[PropNames.PACKAGE_SUPPLIER] = p.supplier
+      package[PropNames.PACKAGE_LICENSE_DECLARED] = sbom_data.VALUE_NOASSERTION
+      if p.declared_license_ids:
+        package[PropNames.PACKAGE_LICENSE_DECLARED] = ' OR '.join(p.declared_license_ids)
       if p.verification_code:
         package[PropNames.PACKAGE_VERIFICATION_CODE] = {
           PropNames.PACKAGE_VERIFICATION_CODE_VALUE: p.verification_code
@@ -329,6 +372,9 @@ class JSONWriter:
         PropNames.ALGORITHM: checksum[0],
         PropNames.CHECKSUM_VALUE: checksum[1],
       }]
+      file[PropNames.FILE_LICENSE_CONCLUDED] = sbom_data.VALUE_NOASSERTION
+      if f.concluded_license_ids:
+        file[PropNames.FILE_LICENSE_CONCLUDED] = ' OR '.join(f.concluded_license_ids)
       files.append(file)
     return {PropNames.FILES: files}
 
@@ -347,10 +393,22 @@ class JSONWriter:
     return {PropNames.RELATIONSHIPS: relationships}
 
   @staticmethod
+  def marshal_licenses(sbom_doc):
+    licenses = []
+    for l in sbom_doc.licenses:
+      licenses.append({
+          PropNames.LICENSE_ID: l.id,
+          PropNames.LICENSE_NAME: l.name,
+          PropNames.LICENSE_EXTRACTED_TEXT: f'<text>{l.text}</text>'
+      })
+    return {PropNames.LICENSES: licenses}
+
+  @staticmethod
   def write(sbom_doc, file):
     doc = {}
     doc.update(JSONWriter.marshal_doc_headers(sbom_doc))
     doc.update(JSONWriter.marshal_packages(sbom_doc))
     doc.update(JSONWriter.marshal_files(sbom_doc))
     doc.update(JSONWriter.marshal_relationships(sbom_doc))
+    doc.update(JSONWriter.marshal_licenses(sbom_doc))
     file.write(json.dumps(doc, indent=4))
