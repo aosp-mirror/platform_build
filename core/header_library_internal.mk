@@ -19,3 +19,5 @@ endif
 
 $(LOCAL_BUILT_MODULE):
 	$(hide) touch $@
+
+$(if $(my_register_name),$(eval ALL_MODULES.$(my_register_name).MAKE_MODULE_TYPE:=HEADER_LIBRARY))
