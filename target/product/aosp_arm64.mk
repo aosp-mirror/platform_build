@@ -58,9 +58,6 @@ $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_arm64/device.mk)
 AB_OTA_UPDATER := true
 AB_OTA_PARTITIONS ?= system
 
-# Set widevine apex signed with dev key
-$(call soong_config_set,widevine,use_devkey,true)
-
 #
 # Special settings for GSI releasing
 #
