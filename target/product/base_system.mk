@@ -336,7 +336,8 @@ endif
 # Check if the build supports Profiling module
 ifeq ($(RELEASE_PACKAGE_PROFILING_MODULE),true)
     PRODUCT_PACKAGES += \
-       com.android.profiling
+       com.android.profiling \
+       trace_redactor
 endif
 
 ifeq ($(RELEASE_USE_WEBVIEW_BOOTSTRAP_MODULE),true)
@@ -412,7 +413,7 @@ PRODUCT_HOST_PACKAGES += \
     flags_health_check \
     fsck.erofs \
     icu-data_host_i18n_apex \
-    icu_tzdata.dat_host_tzdata_apex \
+    tzdata_icu_res_files_host_prebuilts \
     idmap2 \
     incident_report \
     ld.mc \
