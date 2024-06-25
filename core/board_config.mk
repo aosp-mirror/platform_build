@@ -923,9 +923,7 @@ endif
 ###########################################
 # Ensure consistency among TARGET_RECOVERY_UPDATER_LIBS, AB_OTA_UPDATER, and PRODUCT_OTA_FORCE_NON_AB_PACKAGE.
 TARGET_RECOVERY_UPDATER_LIBS ?=
-ifeq ($(AB_OTA_UPDATER),)
-AB_OTA_UPDATER := true
-endif
+AB_OTA_UPDATER ?=
 .KATI_READONLY := TARGET_RECOVERY_UPDATER_LIBS AB_OTA_UPDATER
 
 # Ensure that if PRODUCT_OTA_FORCE_NON_AB_PACKAGE == true, then AB_OTA_UPDATER must be true
