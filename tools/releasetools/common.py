@@ -2788,6 +2788,7 @@ def ParseOptions(argv,
             break
         elif handler(o, a):
           success = True
+          break
       if not success:
         raise ValueError("unknown option \"%s\"" % (o,))
 
