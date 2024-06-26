@@ -711,7 +711,7 @@ def AddVbmetaDigest(output_zip):
   boot_images = OPTIONS.info_dict.get("boot_images")
   # Disable the digest calculation if the target_file is used as a container
   # for boot images.
-  boot_container = boot_images and len(boot_images.split()) >= 2
+  boot_container = boot_images and (len(boot_images.split()) >= 2 or ('boot.img' not in boot_images.split()))
   if (OPTIONS.info_dict.get("avb_enable") == "true" and not boot_container and
       OPTIONS.info_dict.get("avb_building_vbmeta_image") == "true"):
     avbtool = OPTIONS.info_dict["avb_avbtool"]
