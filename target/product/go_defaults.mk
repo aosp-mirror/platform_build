@@ -21,7 +21,7 @@ $(call inherit-product, build/make/target/product/go_defaults_common.mk)
 PRODUCT_RELEASE_CONFIG_MAPS += $(wildcard vendor/google_shared/build/release/gms_mainline_go/required/release_config_map.textproto)
 
 # TODO (b/342265627): Remove v/g/r once all the flags have been moved to v/g_s/b/r
-PRODUCT_RELEASE_CONFIG_MAPS += $(wildcard vendor/google/release/go_devices/release_config_map.mk)
+PRODUCT_RELEASE_CONFIG_MAPS += $(wildcard vendor/google/release/go_devices/release_config_map.textproto)
 
 # Add the system properties.
 TARGET_SYSTEM_PROP += \
