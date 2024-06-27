@@ -1166,6 +1166,34 @@ ramdisk_16k: $(BUILT_RAMDISK_16K_TARGET)
 endif
 
 # -----------------------------------------------------------------
+# dtbo image
+ifdef BOARD_PREBUILT_DTBOIMAGE
+INSTALLED_DTBOIMAGE_TARGET := $(PRODUCT_OUT)/dtbo.img
+
+ifeq ($(BOARD_AVB_ENABLE),true)
+$(INSTALLED_DTBOIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE) $(AVBTOOL) $(BOARD_AVB_DTBO_KEY_PATH)
+	cp $(BOARD_PREBUILT_DTBOIMAGE) $@
+	chmod +w $@
+	$(AVBTOOL) add_hash_footer \
+	    --image $@ \
+	    $(call get-partition-size-argument,$(BOARD_DTBOIMG_PARTITION_SIZE)) \
+	    --partition_name dtbo $(INTERNAL_AVB_DTBO_SIGNING_ARGS) \
+	    $(BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS)
+
+$(call declare-1p-container,$(INSTALLED_DTBOIMAGE_TARGET),)
+$(call declare-container-license-deps,$(INSTALLED_DTBOIMAGE_TARGET),$(BOARD_PREBUILT_DTBOIMAGE),$(PRODUCT_OUT)/:/)
+
+UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_DTBOIMAGE_TARGET)
+else
+$(INSTALLED_DTBOIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE)
+	cp $(BOARD_PREBUILT_DTBOIMAGE) $@
+endif
+
+endif # BOARD_PREBUILT_DTBOIMAGE
+
+# -----------------------------------------------------------------
+
+# -----------------------------------------------------------------
 # 16KB dtbo image
 ifdef BOARD_PREBUILT_DTBOIMAGE_16KB
 INSTALLED_DTBOIMAGE_16KB_TARGET := $(PRODUCT_OUT)/dtbo_16k.img
@@ -1214,16 +1242,26 @@ bootimage_16k: $(BUILT_BOOTIMAGE_16K_TARGET)
 .PHONY: bootimage_16k
 
 BUILT_BOOT_OTA_PACKAGE_16K := $(PRODUCT_OUT)/boot_ota_16k.zip
-$(BUILT_BOOT_OTA_PACKAGE_16K): $(OTA_FROM_RAW_IMG) $(BUILT_BOOTIMAGE_16K_TARGET) $(INSTALLED_BOOTIMAGE_TARGET) $(DEFAULT_SYSTEM_DEV_CERTIFICATE).pk8
+$(BUILT_BOOT_OTA_PACKAGE_16K):  $(OTA_FROM_RAW_IMG) \
+                                $(BUILT_BOOTIMAGE_16K_TARGET) \
+                                $(INSTALLED_BOOTIMAGE_TARGET) \
+                                $(DEFAULT_SYSTEM_DEV_CERTIFICATE).pk8 \
+                                $(INSTALLED_DTBOIMAGE_16KB_TARGET) \
+                                $(INSTALLED_DTBOIMAGE_TARGET)
 	$(OTA_FROM_RAW_IMG) --package_key $(DEFAULT_SYSTEM_DEV_CERTIFICATE) \
                       --max_timestamp `cat $(BUILD_DATETIME_FILE)` \
                       --path $(HOST_OUT) \
-                      --partition_name boot \
+                      --partition_name $(if $(and $(INSTALLED_DTBOIMAGE_TARGET),\
+                          $(INSTALLED_DTBOIMAGE_16KB_TARGET)),\
+                        boot$(comma)dtbo,\
+                        boot) \
                       --output $@ \
                       $(if $(BOARD_16K_OTA_USE_INCREMENTAL),\
                         $(INSTALLED_BOOTIMAGE_TARGET):$(BUILT_BOOTIMAGE_16K_TARGET),\
                         $(BUILT_BOOTIMAGE_16K_TARGET)\
-                      )
+                      )\
+                      $(if $(and $(INSTALLED_DTBOIMAGE_TARGET),$(INSTALLED_DTBOIMAGE_16KB_TARGET)),\
+                        $(INSTALLED_DTBOIMAGE_16KB_TARGET))
 
 boototapackage_16k: $(BUILT_BOOT_OTA_PACKAGE_16K)
 .PHONY: boototapackage_16k
@@ -1488,16 +1526,26 @@ endif # my_installed_prebuilt_gki_apex not defined
 
 ifneq ($(BOARD_KERNEL_PATH_16K),)
 BUILT_BOOT_OTA_PACKAGE_4K := $(PRODUCT_OUT)/boot_ota_4k.zip
-$(BUILT_BOOT_OTA_PACKAGE_4K): $(OTA_FROM_RAW_IMG) $(INSTALLED_BOOTIMAGE_TARGET) $(BUILT_BOOTIMAGE_16K_TARGET) $(DEFAULT_SYSTEM_DEV_CERTIFICATE).pk8
+$(BUILT_BOOT_OTA_PACKAGE_4K): $(OTA_FROM_RAW_IMG) \
+                              $(INSTALLED_BOOTIMAGE_TARGET) \
+                              $(BUILT_BOOTIMAGE_16K_TARGET) \
+                              $(DEFAULT_SYSTEM_DEV_CERTIFICATE).pk8 \
+                              $(INSTALLED_DTBOIMAGE_TARGET) \
+                              $(INSTALLED_DTBOIMAGE_16KB_TARGET)
 	$(OTA_FROM_RAW_IMG) --package_key $(DEFAULT_SYSTEM_DEV_CERTIFICATE) \
                       --max_timestamp `cat $(BUILD_DATETIME_FILE)` \
                       --path $(HOST_OUT) \
-                      --partition_name boot \
+                      --partition_name $(if $(and $(INSTALLED_DTBOIMAGE_TARGET),\
+                          $(INSTALLED_DTBOIMAGE_16KB_TARGET)),\
+                        boot$(comma)dtbo,\
+                        boot) \
                       --output $@ \
                       $(if $(BOARD_16K_OTA_USE_INCREMENTAL),\
                         $(BUILT_BOOTIMAGE_16K_TARGET):$(INSTALLED_BOOTIMAGE_TARGET),\
                         $(INSTALLED_BOOTIMAGE_TARGET)\
-                      )
+                      )\
+                      $(if $(and $(INSTALLED_DTBOIMAGE_TARGET),$(INSTALLED_DTBOIMAGE_16KB_TARGET)),\
+                        $(INSTALLED_DTBOIMAGE_TARGET))
 
 boototapackage_4k: $(BUILT_BOOT_OTA_PACKAGE_4K)
 .PHONY: boototapackage_4k
@@ -4360,33 +4408,6 @@ INSTALLED_SYSTEM_DLKMIMAGE_TARGET := $(PRODUCT_OUT)/system_dlkm.img
 $(eval $(call copy-one-file,$(BOARD_PREBUILT_SYSTEM_DLKMIMAGE),$(INSTALLED_SYSTEM_DLKMIMAGE_TARGET)))
 endif
 
-# -----------------------------------------------------------------
-# dtbo image
-ifdef BOARD_PREBUILT_DTBOIMAGE
-INSTALLED_DTBOIMAGE_TARGET := $(PRODUCT_OUT)/dtbo.img
-
-ifeq ($(BOARD_AVB_ENABLE),true)
-$(INSTALLED_DTBOIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE) $(AVBTOOL) $(BOARD_AVB_DTBO_KEY_PATH)
-	cp $(BOARD_PREBUILT_DTBOIMAGE) $@
-	chmod +w $@
-	$(AVBTOOL) add_hash_footer \
-	    --image $@ \
-	    $(call get-partition-size-argument,$(BOARD_DTBOIMG_PARTITION_SIZE)) \
-	    --partition_name dtbo $(INTERNAL_AVB_DTBO_SIGNING_ARGS) \
-	    $(BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS)
-
-$(call declare-1p-container,$(INSTALLED_DTBOIMAGE_TARGET),)
-$(call declare-container-license-deps,$(INSTALLED_DTBOIMAGE_TARGET),$(BOARD_PREBUILT_DTBOIMAGE),$(PRODUCT_OUT)/:/)
-
-UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_DTBOIMAGE_TARGET)
-else
-$(INSTALLED_DTBOIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE)
-	cp $(BOARD_PREBUILT_DTBOIMAGE) $@
-endif
-
-endif # BOARD_PREBUILT_DTBOIMAGE
-
-# -----------------------------------------------------------------
 # Protected VM firmware image
 ifeq ($(BOARD_USES_PVMFWIMAGE),true)
 
