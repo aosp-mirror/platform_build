@@ -195,6 +195,7 @@ endif
 
 user_variant := $(filter user userdebug,$(TARGET_BUILD_VARIANT))
 enable_target_debugging := true
+enable_dalvik_lock_contention_logging := true
 ifneq (,$(user_variant))
   # Target is secure in user builds.
   ADDITIONAL_SYSTEM_PROPERTIES += ro.secure=1
@@ -207,6 +208,13 @@ ifneq (,$(user_variant))
   ifneq ($(user_variant),userdebug)
     # Disable debugging in plain user builds.
     enable_target_debugging :=
+    enable_dalvik_lock_contention_logging :=
+  else
+    # Disable debugging in userdebug builds if PRODUCT_NOT_DEBUGGABLE_IN_USERDEBUG
+    # is set.
+    ifneq (,$(strip $(PRODUCT_NOT_DEBUGGABLE_IN_USERDEBUG)))
+      enable_target_debugging :=
+    endif
   endif
 
   # Disallow mock locations by default for user builds
@@ -221,15 +229,21 @@ else # !user_variant
   ADDITIONAL_SYSTEM_PROPERTIES += ro.allow.mock.location=1
 endif # !user_variant
 
+ifeq (true,$(strip $(enable_dalvik_lock_contention_logging)))
+  # Enable Dalvik lock contention logging.
+  ADDITIONAL_SYSTEM_PROPERTIES += dalvik.vm.lockprof.threshold=500
+endif # !enable_dalvik_lock_contention_logging
+
 ifeq (true,$(strip $(enable_target_debugging)))
   # Target is more debuggable and adbd is on by default
   ADDITIONAL_SYSTEM_PROPERTIES += ro.debuggable=1
-  # Enable Dalvik lock contention logging.
-  ADDITIONAL_SYSTEM_PROPERTIES += dalvik.vm.lockprof.threshold=500
 else # !enable_target_debugging
   # Target is less debuggable and adbd is off by default
   ADDITIONAL_SYSTEM_PROPERTIES += ro.debuggable=0
 endif # !enable_target_debugging
+
+enable_target_debugging:=
+enable_dalvik_lock_contention_logging:=
 
 ifneq ($(filter sdk sdk_addon,$(MAKECMDGOALS)),)
 _is_sdk_build := true

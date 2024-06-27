@@ -176,4 +176,5 @@ PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.usap_pool_refill_delay_ms?=3000
 
 PRODUCT_SYSTEM_PROPERTIES += \
-    dalvik.vm.useartservice=true
+    dalvik.vm.useartservice=true \
+    dalvik.vm.enable_pr_dexopt=true
