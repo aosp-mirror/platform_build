@@ -53,4 +53,6 @@ $(LOCAL_BUILT_MODULE): \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-host-o-to-shared-lib)
 
+$(if $(my_register_name),$(eval ALL_MODULES.$(my_register_name).MAKE_MODULE_TYPE:=HOST_SHARED_LIBRARY))
+
 endif  # skip_build_from_source

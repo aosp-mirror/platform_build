@@ -1784,12 +1784,7 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file,
   if has_ramdisk:
     cmd.extend(["--ramdisk", ramdisk_img.name])
 
-  img_unsigned = None
-  if info_dict.get("vboot"):
-    img_unsigned = tempfile.NamedTemporaryFile()
-    cmd.extend(["--output", img_unsigned.name])
-  else:
-    cmd.extend(["--output", img.name])
+  cmd.extend(["--output", img.name])
 
   if partition_name == "recovery":
     if info_dict.get("include_recovery_dtbo") == "true":
@@ -1800,28 +1795,6 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file,
       cmd.extend(["--recovery_acpio", fn])
 
   RunAndCheckOutput(cmd)
-
-  # Sign the image if vboot is non-empty.
-  if info_dict.get("vboot"):
-    path = "/" + partition_name
-    img_keyblock = tempfile.NamedTemporaryFile()
-    # We have switched from the prebuilt futility binary to using the tool
-    # (futility-host) built from the source. Override the setting in the old
-    # TF.zip.
-    futility = info_dict["futility"]
-    if futility.startswith("prebuilts/"):
-      futility = "futility-host"
-    cmd = [info_dict["vboot_signer_cmd"], futility,
-           img_unsigned.name, info_dict["vboot_key"] + ".vbpubk",
-           info_dict["vboot_key"] + ".vbprivk",
-           info_dict["vboot_subkey"] + ".vbprivk",
-           img_keyblock.name,
-           img.name]
-    RunAndCheckOutput(cmd)
-
-    # Clean up the temp files.
-    img_unsigned.close()
-    img_keyblock.close()
 
   # AVB: if enabled, calculate and add hash to boot.img or recovery.img.
   if info_dict.get("avb_enable") == "true":
@@ -2815,6 +2788,7 @@ def ParseOptions(argv,
             break
         elif handler(o, a):
           success = True
+          break
       if not success:
         raise ValueError("unknown option \"%s\"" % (o,))
 

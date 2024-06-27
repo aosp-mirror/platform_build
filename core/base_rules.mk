@@ -717,11 +717,13 @@ else
 endif
 
 ifeq ($(EXCLUDE_MCTS),true)
+ifeq (,$(filter $(LOCAL_MODULE),$(mcts_whitelist)))
   ifneq (,$(test_config))
     ifneq (,$(filter mcts-%,$(LOCAL_COMPATIBILITY_SUITE)))
       LOCAL_COMPATIBILITY_SUITE := $(filter-out cts,$(LOCAL_COMPATIBILITY_SUITE))
     endif
   endif
+endif
 endif
 
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
@@ -965,6 +967,8 @@ ALL_MODULES.$(my_register_name).BUILT := \
     $(ALL_MODULES.$(my_register_name).BUILT) $(LOCAL_BUILT_MODULE)
 ALL_MODULES.$(my_register_name).SOONG_MODULE_TYPE := \
     $(ALL_MODULES.$(my_register_name).SOONG_MODULE_TYPE) $(LOCAL_SOONG_MODULE_TYPE)
+ALL_MODULES.$(my_register_name).IS_SOONG_MODULE := \
+    $(if $(filter $(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK)),true)
 ifndef LOCAL_IS_HOST_MODULE
 ALL_MODULES.$(my_register_name).TARGET_BUILT := \
     $(ALL_MODULES.$(my_register_name).TARGET_BUILT) $(LOCAL_BUILT_MODULE)
@@ -1265,6 +1269,8 @@ $(LOCAL_MODULE)-$(h_or_hc_or_t)$(my_32_64_bit_suffix) : $(my_all_targets)
 .PHONY: $(LOCAL_MODULE)-$(h_or_hc_or_t)$(my_32_64_bit_suffix)
 endif
 endif
+
+$(if $(my_register_name),$(eval ALL_MODULES.$(my_register_name).MAKE_MODULE_TYPE:=base_rules))
 
 ###########################################################
 # Ensure privileged applications always have LOCAL_PRIVILEGED_MODULE
