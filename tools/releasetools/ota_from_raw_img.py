@@ -54,7 +54,7 @@ def main(argv):
       prog=argv[0], description="Given a series of .img files, produces a full OTA package that installs thoese images")
   parser.add_argument("images", nargs="+", type=str,
                       help="List of images to generate OTA")
-  parser.add_argument("--partition_names", nargs='+', type=str,
+  parser.add_argument("--partition_names", nargs='?', type=str,
                       help="Partition names to install the images, default to basename of the image(no file name extension)")
   parser.add_argument('--output', type=str,
                       help='Paths to output merged ota', required=True)
@@ -74,18 +74,20 @@ def main(argv):
       old_imgs[i], args.images[i] = img.split(":", maxsplit=1)
 
   if not args.partition_names:
-    args.partition_names = [os.path.os.path.splitext(os.path.basename(path))[
+    args.partition_names = [os.path.splitext(os.path.basename(path))[
         0] for path in args.images]
+  else:
+    args.partition_names = args.partition_names.split(",")
   with tempfile.NamedTemporaryFile() as unsigned_payload, tempfile.NamedTemporaryFile() as dynamic_partition_info_file:
     dynamic_partition_info_file.writelines(
         [b"virtual_ab=true\n", b"super_partition_groups=\n"])
     dynamic_partition_info_file.flush()
     cmd = [ResolveBinaryPath("delta_generator", args.search_path)]
-    cmd.append("--partition_names=" + ",".join(args.partition_names))
+    cmd.append("--partition_names=" + ":".join(args.partition_names))
     cmd.append("--dynamic_partition_info_file=" +
                dynamic_partition_info_file.name)
-    cmd.append("--old_partitions=" + ",".join(old_imgs))
-    cmd.append("--new_partitions=" + ",".join(args.images))
+    cmd.append("--old_partitions=" + ":".join(old_imgs))
+    cmd.append("--new_partitions=" + ":".join(args.images))
     cmd.append("--out_file=" + unsigned_payload.name)
     cmd.append("--is_partial_update")
     if args.max_timestamp:
