@@ -1126,18 +1126,6 @@ $(foreach \
   ) \
 )
 
-ifeq ($(BOARD_RAMDISK_USE_LZ4),true)
-# -l enables the legacy format used by the Linux kernel
-COMPRESSION_COMMAND_DEPS := $(LZ4)
-COMPRESSION_COMMAND := $(LZ4) -l -12 --favor-decSpeed
-RAMDISK_EXT := .lz4
-else
-COMPRESSION_COMMAND_DEPS := $(GZIP)
-COMPRESSION_COMMAND := $(GZIP)
-RAMDISK_EXT := .gz
-endif
-
-
 BOARD_VENDOR_RAMDISK_FRAGMENT.16K.PREBUILT := $(BUILT_RAMDISK_16K_TARGET)
 
 ifndef BOARD_KERNEL_MODULES_LOAD_16K
@@ -1203,6 +1191,17 @@ boototapackage_16k: $(BUILT_BOOT_OTA_PACKAGE_16K)
 
 endif
 
+
+ifeq ($(BOARD_RAMDISK_USE_LZ4),true)
+# -l enables the legacy format used by the Linux kernel
+COMPRESSION_COMMAND_DEPS := $(LZ4)
+COMPRESSION_COMMAND := $(LZ4) -l -12 --favor-decSpeed
+RAMDISK_EXT := .lz4
+else
+COMPRESSION_COMMAND_DEPS := $(GZIP)
+COMPRESSION_COMMAND := $(GZIP)
+RAMDISK_EXT := .gz
+endif
 
 # This file contains /dev nodes description added to the generic ramdisk
 RAMDISK_NODE_LIST := $(PRODUCT_OUT)/ramdisk_node_list
