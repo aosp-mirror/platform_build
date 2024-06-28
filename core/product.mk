@@ -495,6 +495,9 @@ _product_single_value_vars += PRODUCT_NOT_DEBUGGABLE_IN_USERDEBUG
 # If set, the default value of the versionName of apps will include the build number.
 _product_single_value_vars += PRODUCT_BUILD_APPS_WITH_BUILD_NUMBER
 
+# If set, build would generate system image from Soong-defined module.
+_product_single_value_vars += PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE
+
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
 
