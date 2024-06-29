@@ -120,6 +120,10 @@ PRODUCT_PACKAGES += \
     init.zygote64.rc \
     init.zygote64_32.rc
 
+# Support Credential Manager
+PRODUCT_PACKAGES += \
+    android.software.credentials.prebuilt.xml
+
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 

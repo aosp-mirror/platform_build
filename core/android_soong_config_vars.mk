@@ -27,7 +27,7 @@ $(call add_soong_config_namespace,ANDROID)
 # Add variables to the namespace below:
 
 $(call add_soong_config_var,ANDROID,BOARD_USES_ODMIMAGE)
-$(call add_soong_config_var,ANDROID,BOARD_USES_RECOVERY_AS_BOOT)
+$(call soong_config_set_bool,ANDROID,BOARD_USES_RECOVERY_AS_BOOT,$(BOARD_USES_RECOVERY_AS_BOOT))
 $(call add_soong_config_var,ANDROID,CHECK_DEV_TYPE_VIOLATIONS)
 $(call add_soong_config_var,ANDROID,PLATFORM_SEPOLICY_VERSION)
 $(call add_soong_config_var,ANDROID,PLATFORM_SEPOLICY_COMPAT_VERSIONS)
