@@ -85,7 +85,7 @@ cc_library {
         "libcxx_aconfig_storage_read_api_bridge_header",
     ],
     generated_sources: ["libcxx_aconfig_storage_read_api_bridge_code"],
-    static_rlibs: ["libaconfig_storage_read_api_cxx_bridge"],
+    whole_static_libs: ["libaconfig_storage_read_api_cxx_bridge"],
     export_include_dirs: ["include"],
     host_supported: true,
     vendor_available: true,
