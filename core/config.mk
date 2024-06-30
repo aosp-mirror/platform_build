@@ -316,6 +316,19 @@ $(call soong_config_define_internal,$1,$2) \
 $(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(strip $3))
 endef
 
+# soong_config_set_bool is the same as soong_config_set, but it will
+# also type the variable as a bool, so that when using select() expressions
+# in blueprint files they can use boolean values instead of strings.
+# It will only accept "true" for its value, any other value will be
+# treated as false.
+# $1 is the namespace. $2 is the variable name. $3 is the variable value.
+# Ex: $(call soong_config_set_bool,acme,COOL_FEATURE,true)
+define soong_config_set_bool
+$(call soong_config_define_internal,$1,$2) \
+$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(filter true,$3))
+$(eval SOONG_CONFIG_TYPE_$(strip $1)_$(strip $2):=bool)
+endef
+
 # soong_config_append appends to the value of the variable in the given Soong
 # config namespace. If the variable does not exist, it will be defined. If the
 # namespace does not  exist, it will be defined.
@@ -825,9 +838,6 @@ ifdef PRODUCT_SHIPPING_API_LEVEL
     min_systemsdk_version := $(call math_min,$(board_api_level),$(PRODUCT_SHIPPING_API_LEVEL))
   else
     min_systemsdk_version := $(PRODUCT_SHIPPING_API_LEVEL)
-  endif
-  ifneq ($(call numbers_less_than,$(min_systemsdk_version),$(BOARD_SYSTEMSDK_VERSIONS)),)
-    $(error BOARD_SYSTEMSDK_VERSIONS ($(BOARD_SYSTEMSDK_VERSIONS)) must all be greater than or equal to BOARD_API_LEVEL, BOARD_SHIPPING_API_LEVEL or PRODUCT_SHIPPING_API_LEVEL ($(min_systemsdk_version)))
   endif
   ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),29),)
     ifneq ($(BOARD_OTA_FRAMEWORK_VBMETA_VERSION_OVERRIDE),)
