@@ -188,3 +188,6 @@ $(eval $(call declare-1p-copy-files,device/generic/goldfish,audio_policy_configu
 
 # Moved here from packages/services/Car/Android.mk
 $(eval $(call declare-1p-copy-files,packages/services/Car,))
+
+# Moved here from hardware/libhardware_legacy/Android.mk
+$(eval $(call declare-1p-copy-files,hardware/libhardware_legacy,))

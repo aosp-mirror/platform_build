@@ -315,8 +315,9 @@ $(call math-expect,(call numbers_greater_or_equal_to,1,0 2 1 3),2 1 3)
 $(call math-expect,(call numbers_greater_or_equal_to,0,0 2 1 3),0 2 1 3)
 $(call math-expect,(call numbers_greater_or_equal_to,1,0 2 1 3 2),2 1 3 2)
 
-_INT_LIMIT_WORDS := $(foreach a,x x,$(foreach b,x x x x x x x x x x x x x x x x,\
-  $(foreach c,x x x x x x x x x x x x x x x x,x x x x x x x x x x x x x x x x)))
+# 10,001 = 10 ** 4 + 1, contains 10,001 x's, so 1 more than 10,000 (future) API level
+_INT_LIMIT_WORDS := x $(foreach a,0 1 2 3 4 5 6 7 8 9,$(foreach b,0 1 2 3 4 5 6 7 8 9,\
+  $(foreach c,0 1 2 3 4 5 6 7 8 9,x x x x x x x x x x)))
 
 define _int_encode
 $(if $(filter $(words x $(_INT_LIMIT_WORDS)),$(words $(wordlist 1,$(1),x $(_INT_LIMIT_WORDS)))),\
