@@ -1925,13 +1925,13 @@ $(PRODUCT_OUT)/sbom-metadata.csv:
 	  echo '$(_lib_stem).a,$(_module_path),$(_soong_module_type),,,,,$(_built_file),$(_static_libs),$(_whole_static_libs),$(_is_static_lib)' >> $@; \
 	)
 
-# Create metadata for SBOM generation in Soong
-.PHONY: make-metadata
-make-metadata: \
-    $(SOONG_OUT_DIR)/metadata/$(TARGET_PRODUCT)/make-metadata.csv \
-    $(SOONG_OUT_DIR)/metadata/$(TARGET_PRODUCT)/make-modules.csv
+# Create metadata for compliance support in Soong
+.PHONY: make-compliance-metadata
+make-compliance-metadata: \
+    $(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/make-metadata.csv \
+    $(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/make-modules.csv
 
-$(SOONG_OUT_DIR)/metadata/$(TARGET_PRODUCT)/make-metadata.csv:
+$(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/make-metadata.csv:
 	rm -f $@
 	echo 'installed_file,module_path,is_soong_module,is_prebuilt_make_module,product_copy_files,kernel_module_copy_files,is_platform_generated,static_libs,whole_static_libs,license_text' >> $@
 	$(foreach f,$(installed_files),\
@@ -1962,7 +1962,7 @@ $(SOONG_OUT_DIR)/metadata/$(TARGET_PRODUCT)/make-metadata.csv:
 	  echo '$(_build_output_path),$(_module_path),$(_is_soong_module),$(_is_prebuilt_make_module),$(_product_copy_files),$(_kernel_module_copy_files),$(_is_platform_generated),$(_static_libs),$(_whole_static_libs),$(_license_text)' >> $@; \
 	)
 
-$(SOONG_OUT_DIR)/metadata/$(TARGET_PRODUCT)/make-modules.csv:
+$(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/make-modules.csv:
 	rm -f $@
 	echo 'name,module_path,module_class,module_type,static_libs,whole_static_libs,built_files,installed_files' >> $@
 	$(foreach m,$(ALL_MODULES), \
@@ -1980,7 +1980,7 @@ $(SOONG_OUT_DIR)/metadata/$(TARGET_PRODUCT)/make-modules.csv:
 	  ) \
 	)
 
-$(SOONG_OUT_DIR)/metadata/$(TARGET_PRODUCT)/installed_files.stamp: $(installed_files)
+$(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/installed_files.stamp: $(installed_files)
 	touch $@
 
 # (TODO: b/272358583 find another way of always rebuilding sbom.spdx)
