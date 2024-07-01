@@ -1,5 +1,4 @@
 SOONG_MAKEVARS_MK := $(SOONG_OUT_DIR)/make_vars-$(TARGET_PRODUCT).mk
-SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.$(TARGET_PRODUCT).variables
 SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android-$(TARGET_PRODUCT).mk
 
 include $(BUILD_SYSTEM)/art_config.mk
@@ -30,6 +29,7 @@ $(call json_start)
 $(call add_json_str,  Make_suffix, -$(TARGET_PRODUCT))
 
 $(call add_json_str,  BuildId,                           $(BUILD_ID))
+$(call add_json_str,  BuildFingerprintFile,              build_fingerprint.txt)
 $(call add_json_str,  BuildNumberFile,                   build_number.txt)
 $(call add_json_str,  BuildHostnameFile,                 build_hostname.txt)
 $(call add_json_str,  BuildThumbprintFile,               build_thumbprint.txt)
@@ -262,6 +262,18 @@ $(foreach namespace,$(sort $(SOONG_CONFIG_NAMESPACES)),\
   $(call end_json_map))
 $(call end_json_map)
 
+# Add the types of the variables in VendorVars. Since this is much newer
+# than VendorVars, which has a history of just using string values for everything,
+# variables are assumed to be strings by default. For strings, SOONG_CONFIG_TYPE_*
+# will not be set, and they will not have an entry in the VendorVarTypes map.
+$(call add_json_map, VendorVarTypes)
+$(foreach namespace,$(sort $(SOONG_CONFIG_NAMESPACES)),\
+  $(call add_json_map, $(namespace))\
+  $(foreach key,$(sort $(SOONG_CONFIG_$(namespace))),\
+    $(if $(SOONG_CONFIG_TYPE_$(namespace)_$(key)),$(call add_json_str,$(key),$(subst ",\",$(SOONG_CONFIG_TYPE_$(namespace)_$(key))))))\
+  $(call end_json_map))
+$(call end_json_map)
+
 $(call add_json_bool, EnforceProductPartitionInterface,  $(filter true,$(PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE)))
 $(call add_json_str,  DeviceCurrentApiLevelForVendorModules,  $(BOARD_CURRENT_API_LEVEL_FOR_VENDOR_MODULES))
 
@@ -297,6 +309,7 @@ $(call add_json_bool, BuildBrokenVendorPropertyNamespace,  $(filter true,$(BUILD
 $(call add_json_bool, BuildBrokenIncorrectPartitionImages, $(filter true,$(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES)))
 $(call add_json_list, BuildBrokenInputDirModules,          $(BUILD_BROKEN_INPUT_DIR_MODULES))
 $(call add_json_bool, BuildBrokenDontCheckSystemSdk,       $(filter true,$(BUILD_BROKEN_DONT_CHECK_SYSTEMSDK)))
+$(call add_json_bool, BuildBrokenDupSysprop,               $(filter true,$(BUILD_BROKEN_DUP_SYSPROP)))
 
 $(call add_json_list, BuildWarningBadOptionalUsesLibsAllowlist,    $(BUILD_WARNING_BAD_OPTIONAL_USES_LIBS_ALLOWLIST))
 
@@ -355,5 +368,7 @@ $(shell if ! cmp -s $(SOONG_VARIABLES).tmp $(SOONG_VARIABLES); then \
 	else \
 	  rm $(SOONG_VARIABLES).tmp; \
 	fi)
+
+include $(BUILD_SYSTEM)/soong_extra_config.mk
 
 endif # CONFIGURE_SOONG
