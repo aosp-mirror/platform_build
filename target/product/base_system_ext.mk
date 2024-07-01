@@ -16,6 +16,7 @@
 
 # Base modules and settings for the system_ext partition.
 PRODUCT_PACKAGES += \
+    build_flag_system_ext \
     fs_config_dirs_system_ext \
     fs_config_files_system_ext \
     group_system_ext \

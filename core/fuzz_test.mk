@@ -43,3 +43,5 @@ LOCAL_STRIP_MODULE := keep_symbols
 endif
 
 include $(BUILD_EXECUTABLE)
+
+$(if $(my_register_name),$(eval ALL_MODULES.$(my_register_name).MAKE_MODULE_TYPE:=FUZZ_TEST))
