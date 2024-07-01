@@ -18,6 +18,8 @@ package android.aconfig.storage.test;
 
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -33,7 +35,6 @@ import android.aconfig.storage.AconfigStorageReadAPI;
 import android.aconfig.storage.PackageReadContext;
 import android.aconfig.storage.FlagReadContext;
 import android.aconfig.storage.FlagReadContext.StoredFlagType;
-import android.aconfig.storage.BooleanFlagValue;
 
 @RunWith(JUnit4.class)
 public class AconfigStorageReadAPITest{
@@ -51,29 +52,24 @@ public class AconfigStorageReadAPITest{
         }
         assertTrue(packageMap != null);
 
-        PackageReadContext context = AconfigStorageReadAPI.getPackageReadContext(
-            packageMap, "com.android.aconfig.storage.test_1");
-        assertTrue(context.mQuerySuccess);
-        assertTrue(context.mErrorMessage, context.mErrorMessage.equals(""));
-        assertTrue(context.mPackageExists);
-        assertEquals(context.mPackageId, 0);
-        assertEquals(context.mBooleanStartIndex, 0);
+        try {
+            PackageReadContext context = AconfigStorageReadAPI.getPackageReadContext(
+                packageMap, "com.android.aconfig.storage.test_1");
+            assertEquals(context.mPackageId, 0);
+            assertEquals(context.mBooleanStartIndex, 0);
 
-        context = AconfigStorageReadAPI.getPackageReadContext(
-            packageMap, "com.android.aconfig.storage.test_2");
-        assertTrue(context.mQuerySuccess);
-        assertTrue(context.mErrorMessage, context.mErrorMessage.equals(""));
-        assertTrue(context.mPackageExists);
-        assertEquals(context.mPackageId, 1);
-        assertEquals(context.mBooleanStartIndex, 3);
+            context = AconfigStorageReadAPI.getPackageReadContext(
+                packageMap, "com.android.aconfig.storage.test_2");
+            assertEquals(context.mPackageId, 1);
+            assertEquals(context.mBooleanStartIndex, 3);
 
-        context = AconfigStorageReadAPI.getPackageReadContext(
-            packageMap, "com.android.aconfig.storage.test_4");
-        assertTrue(context.mQuerySuccess);
-        assertTrue(context.mErrorMessage, context.mErrorMessage.equals(""));
-        assertTrue(context.mPackageExists);
-        assertEquals(context.mPackageId, 2);
-        assertEquals(context.mBooleanStartIndex, 6);
+            context = AconfigStorageReadAPI.getPackageReadContext(
+                packageMap, "com.android.aconfig.storage.test_4");
+            assertEquals(context.mPackageId, 2);
+            assertEquals(context.mBooleanStartIndex, 6);
+        } catch (IOException ex) {
+            assertTrue(ex.toString(), false);
+        }
     }
 
     @Test
@@ -87,13 +83,14 @@ public class AconfigStorageReadAPITest{
         }
         assertTrue(packageMap != null);
 
-        PackageReadContext context = AconfigStorageReadAPI.getPackageReadContext(
-            packageMap, "unknown");
-        assertTrue(context.mQuerySuccess);
-        assertTrue(context.mErrorMessage, context.mErrorMessage.equals(""));
-        assertFalse(context.mPackageExists);
-        assertEquals(context.mPackageId, 0);
-        assertEquals(context.mBooleanStartIndex, 0);
+        try {
+            PackageReadContext context = AconfigStorageReadAPI.getPackageReadContext(
+                packageMap, "unknown");
+            assertEquals(context.mPackageId, -1);
+            assertEquals(context.mBooleanStartIndex, -1);
+        } catch(IOException ex){
+            assertTrue(ex.toString(), false);
+        }
     }
 
     @Test
@@ -134,14 +131,15 @@ public class AconfigStorageReadAPITest{
         baselines.add(new Baseline(2, "enabled_fixed_ro", StoredFlagType.FixedReadOnlyBoolean, 0));
         baselines.add(new Baseline(0, "disabled_rw", StoredFlagType.ReadWriteBoolean, 0));
 
-        for (Baseline baseline : baselines) {
-            FlagReadContext context = AconfigStorageReadAPI.getFlagReadContext(
-                flagMap, baseline.mPackageId,  baseline.mFlagName);
-            assertTrue(context.mQuerySuccess);
-            assertTrue(context.mErrorMessage, context.mErrorMessage.equals(""));
-            assertTrue(context.mFlagExists);
-            assertEquals(context.mFlagType, baseline.mFlagType);
-            assertEquals(context.mFlagIndex, baseline.mFlagIndex);
+        try {
+            for (Baseline baseline : baselines) {
+                FlagReadContext context = AconfigStorageReadAPI.getFlagReadContext(
+                    flagMap, baseline.mPackageId,  baseline.mFlagName);
+                assertEquals(context.mFlagType, baseline.mFlagType);
+                assertEquals(context.mFlagIndex, baseline.mFlagIndex);
+            }
+        } catch (IOException ex) {
+            assertTrue(ex.toString(), false);
         }
     }
 
@@ -156,21 +154,19 @@ public class AconfigStorageReadAPITest{
         }
         assertTrue(flagMap!= null);
 
-        FlagReadContext context = AconfigStorageReadAPI.getFlagReadContext(
-            flagMap, 0,  "unknown");
-        assertTrue(context.mQuerySuccess);
-        assertTrue(context.mErrorMessage, context.mErrorMessage.equals(""));
-        assertFalse(context.mFlagExists);
-        assertEquals(context.mFlagType, null);
-        assertEquals(context.mFlagIndex, 0);
+        try {
+            FlagReadContext context = AconfigStorageReadAPI.getFlagReadContext(
+                flagMap, 0,  "unknown");
+            assertEquals(context.mFlagType, null);
+            assertEquals(context.mFlagIndex, -1);
 
-        context = AconfigStorageReadAPI.getFlagReadContext(
-            flagMap, 3,  "enabled_ro");
-        assertTrue(context.mQuerySuccess);
-        assertTrue(context.mErrorMessage, context.mErrorMessage.equals(""));
-        assertFalse(context.mFlagExists);
-        assertEquals(context.mFlagType, null);
-        assertEquals(context.mFlagIndex, 0);
+            context = AconfigStorageReadAPI.getFlagReadContext(
+                flagMap, 3,  "enabled_ro");
+            assertEquals(context.mFlagType, null);
+            assertEquals(context.mFlagIndex, -1);
+        } catch (IOException ex) {
+            assertTrue(ex.toString(), false);
+        }
     }
 
     @Test
@@ -179,17 +175,19 @@ public class AconfigStorageReadAPITest{
         try {
             flagVal = AconfigStorageReadAPI.mapStorageFile(
                 mStorageDir + "/boot/mockup.val");
-        } catch(IOException ex){
+        } catch (IOException ex) {
             assertTrue(ex.toString(), false);
         }
         assertTrue(flagVal!= null);
 
         boolean[] baselines = {false, true, true, false, true, true, true, true};
         for (int i = 0; i < 8; ++i) {
-            BooleanFlagValue value = AconfigStorageReadAPI.getBooleanFlagValue(flagVal, i);
-            assertTrue(value.mQuerySuccess);
-            assertTrue(value.mErrorMessage, value.mErrorMessage.equals(""));
-            assertEquals(value.mFlagValue, baselines[i]);
+            try {
+                Boolean value = AconfigStorageReadAPI.getBooleanFlagValue(flagVal, i);
+                assertEquals(value, baselines[i]);
+            } catch (IOException ex) {
+                assertTrue(ex.toString(), false);
+            }
         }
     }
 
@@ -199,14 +197,17 @@ public class AconfigStorageReadAPITest{
         try {
             flagVal = AconfigStorageReadAPI.mapStorageFile(
                 mStorageDir + "/boot/mockup.val");
-        } catch(IOException ex){
+        } catch (IOException ex) {
             assertTrue(ex.toString(), false);
         }
         assertTrue(flagVal!= null);
 
-        BooleanFlagValue value = AconfigStorageReadAPI.getBooleanFlagValue(flagVal, 9);
-        String expectedErrmsg = "Flag value offset goes beyond the end of the file";
-        assertFalse(value.mQuerySuccess);
-        assertTrue(value.mErrorMessage, value.mErrorMessage.contains(expectedErrmsg));
+        try {
+            Boolean value = AconfigStorageReadAPI.getBooleanFlagValue(flagVal, 9);
+            assertTrue("should throw", false);
+        } catch (IOException ex) {
+            String expectedErrmsg = "invalid storage file byte offset";
+            assertTrue(ex.toString(), ex.toString().contains(expectedErrmsg));
+        }
     }
  }

@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2015 The Android Open Source Project
+# Copyright (C) 2024 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,14 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+########################################################################
+# clean-oat rules
 #
 
-# Provides dependencies necessary for verified boot
+.PHONY: clean-oat
+clean-oat: clean-oat-host clean-oat-target
 
-PRODUCT_SUPPORTS_VBOOT := true
-
-# The dev key is used to sign boot and recovery images.
-# We expect this file to exist with the suffixes ".vbprivk" and ".vbpupk".
-# TODO: find a proper location for this
-PRODUCT_VBOOT_SIGNING_KEY := external/vboot_reference/tests/devkeys/kernel_data_key
-PRODUCT_VBOOT_SIGNING_SUBKEY := external/vboot_reference/tests/devkeys/kernel_subkey
+.PHONY: clean-oat-host
+clean-oat-host:
+	find $(OUT_DIR) '(' -name '*.oat' -o -name '*.odex' -o -name '*.art' -o -name '*.vdex' ')' -a -type f | xargs rm -f
+	rm -rf $(TMPDIR)/*/test-*/dalvik-cache/*
+	rm -rf $(TMPDIR)/android-data/dalvik-cache/*

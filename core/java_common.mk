@@ -32,6 +32,8 @@ ifeq (,$(LOCAL_JAVA_LANGUAGE_VERSION))
     else ifneq (,$(LOCAL_SDK_VERSION)$(TARGET_BUILD_USE_PREBUILT_SDKS))
       # TODO(ccross): allow 1.9 for current and unbundled once we have SDK system modules
       LOCAL_JAVA_LANGUAGE_VERSION := 1.8
+    else ifeq ($(EXPERIMENTAL_TARGET_JAVA_VERSION_21),true)
+      LOCAL_JAVA_LANGUAGE_VERSION := 21
     else
       LOCAL_JAVA_LANGUAGE_VERSION := 17
     endif

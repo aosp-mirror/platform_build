@@ -16,20 +16,11 @@ package android.aconfig.storage;
  */
 
 public class FlagReadContext {
-    public boolean mQuerySuccess;
-    public String mErrorMessage;
-    public boolean mFlagExists;
     public StoredFlagType mFlagType;
     public int mFlagIndex;
 
-    public FlagReadContext(boolean querySuccess,
-            String errorMessage,
-            boolean flagExists,
-            int flagType,
+    public FlagReadContext(int flagType,
             int flagIndex) {
-        mQuerySuccess = querySuccess;
-        mErrorMessage = errorMessage;
-        mFlagExists = flagExists;
         mFlagType = StoredFlagType.fromInteger(flagType);
         mFlagIndex = flagIndex;
     }
