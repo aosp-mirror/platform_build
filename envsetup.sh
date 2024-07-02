@@ -865,6 +865,16 @@ function adb() {
     run_tool_with_logging "ADB" $ADB "${@}"
 }
 
+function fastboot() {
+    local FASTBOOT=$(command which fastboot)
+    if [ -z "$FASTBOOT" ]; then
+        echo "Command fastboot not found; try lunch (and building) first?"
+        return 1
+    fi
+    # Support tool event logging for fastboot command.
+    run_tool_with_logging "FASTBOOT" $FASTBOOT "${@}"
+}
+
 # communicate with a running device or emulator, set up necessary state,
 # and run the hat command.
 function runhat()
