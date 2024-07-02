@@ -717,11 +717,13 @@ else
 endif
 
 ifeq ($(EXCLUDE_MCTS),true)
+ifeq (,$(filter $(LOCAL_MODULE),$(mcts_whitelist)))
   ifneq (,$(test_config))
     ifneq (,$(filter mcts-%,$(LOCAL_COMPATIBILITY_SUITE)))
       LOCAL_COMPATIBILITY_SUITE := $(filter-out cts,$(LOCAL_COMPATIBILITY_SUITE))
     endif
   endif
+endif
 endif
 
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
