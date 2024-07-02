@@ -120,14 +120,14 @@ PRODUCT_PACKAGES += \
     init.zygote64.rc \
     init.zygote64_32.rc
 
+# Support Credential Manager
+PRODUCT_PACKAGES += \
+    android.software.credentials.prebuilt.xml
+
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
 PRODUCT_ENFORCE_RRO_TARGETS := *
-
-# Support Credential Manager
-PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/android.software.credentials.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/android.software.credentials.xml
 
 PRODUCT_NAME := generic_system
 PRODUCT_BRAND := generic
