@@ -3557,6 +3557,24 @@ define build-systemimage-target
 endef
 
 $(eval $(call write-partition-file-list,$(systemimage_intermediates)/file_list.txt,$(TARGET_OUT),$(FULL_SYSTEMIMAGE_DEPS)))
+
+ifneq ($(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE),)
+file_list_diff := $(HOST_OUT_EXECUTABLES)/file_list_diff$(HOST_EXECUTABLE_SUFFIX)
+system_file_diff_timestamp := $(systemimage_intermediates)/file_diff.timestamp
+
+$(system_file_diff_timestamp): \
+	    $(systemimage_intermediates)/file_list.txt \
+	    $(ALL_MODULES.$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE).FILESYSTEM_FILELIST) \
+	    $(ALL_MODULES.system_image_diff_allowlist.INSTALLED) \
+	    $(file_list_diff)
+	$(file_list_diff) $(systemimage_intermediates)/file_list.txt \
+	  $(ALL_MODULES.$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE).FILESYSTEM_FILELIST) \
+	  $(ALL_MODULES.system_image_diff_allowlist.INSTALLED) $(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE)
+	touch $@
+
+$(BUILT_SYSTEMIMAGE): $(system_file_diff_timestamp)
+endif
+
 # Used by soong sandwich to request the staging dir be built
 $(systemimage_intermediates)/staging_dir.stamp: $(filter $(TARGET_OUT)/%,$(FULL_SYSTEMIMAGE_DEPS))
 	touch $@
