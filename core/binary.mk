@@ -258,13 +258,6 @@ ifneq ($(LOCAL_SDK_VERSION),)
       my_ndk_stl_shared_lib_fullpath := $(my_libcxx_libdir)/libc++_shared.so
     endif
 
-    ifneq ($(my_ndk_api),current)
-      ifeq ($(call math_lt,$(my_ndk_api),21),true)
-        my_ndk_stl_include_path += $(my_ndk_source_root)/android/support/include
-        my_ndk_stl_static_lib += $(my_libcxx_libdir)/libandroid_support.a
-      endif
-    endif
-
     my_ndk_stl_static_lib += $(my_libcxx_libdir)/libunwind.a
     my_ldlibs += -ldl
   else # LOCAL_NDK_STL_VARIANT must be none
@@ -1351,6 +1344,8 @@ my_link_type := native:platform
 my_warn_types := $(my_warn_ndk_types)
 my_allowed_types := $(my_allowed_ndk_types) native:platform native:platform_vndk
 endif
+
+ALL_MODULES.$(my_register_name).WHOLE_STATIC_LIBS := $(my_whole_static_libraries)
 
 my_link_deps := $(addprefix STATIC_LIBRARIES:,$(my_whole_static_libraries) $(my_static_libraries))
 ifneq ($(filter-out STATIC_LIBRARIES HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
