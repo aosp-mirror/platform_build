@@ -33,11 +33,8 @@ public final class Flags \{
     public static void unsetFeatureFlags() \{
         Flags.FEATURE_FLAGS = null;
     }
-
-    private static FeatureFlags FEATURE_FLAGS;
-{{ -else }}
-
-    private static final FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
 {{ -endif }}
+
+    private static FeatureFlags FEATURE_FLAGS{{ -if not is_test_mode }} = new FeatureFlagsImpl(){{ -endif- }};
 
 }
