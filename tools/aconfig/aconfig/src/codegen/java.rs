@@ -482,7 +482,7 @@ mod tests {
                 .unwrap();
         let expect_flags_content = EXPECTED_FLAG_COMMON_CONTENT.to_string()
             + r#"
-            private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
+            private static final FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
         }"#;
 
         let expect_featureflagsimpl_content = r#"
@@ -670,7 +670,7 @@ mod tests {
             public static boolean enabledRoExported() {
                 return FEATURE_FLAGS.enabledRoExported();
             }
-            private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
+            private static final FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
         }
         "#;
 
@@ -1092,7 +1092,7 @@ mod tests {
             public static boolean enabledRw() {
                 return FEATURE_FLAGS.enabledRw();
             }
-            private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
+            private static final FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
         }"#;
 
         let expect_customfeatureflags_content = r#"
