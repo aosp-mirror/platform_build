@@ -37,9 +37,6 @@ _product_single_value_vars += PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE
 # Boolean variable determining if AOSP relies on bionic's PAGE_SIZE macro.
 _product_single_value_vars += PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO
 
-# Boolean variable determining if the kernel boots with 16kb page size kernel.
-_product_single_value_vars += PRODUCT_BOOTS_16K
-
 # The resource configuration options to use for this product.
 _product_list_vars += PRODUCT_LOCALES
 _product_list_vars += PRODUCT_AAPT_CONFIG
@@ -494,6 +491,9 @@ _product_single_value_vars += PRODUCT_16K_DEVELOPER_OPTION
 # builds. It's already off disabled in user builds. Eng builds are unaffected
 # by this flag.
 _product_single_value_vars += PRODUCT_NOT_DEBUGGABLE_IN_USERDEBUG
+
+# If set, build would generate system image from Soong-defined module.
+_product_single_value_vars += PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
