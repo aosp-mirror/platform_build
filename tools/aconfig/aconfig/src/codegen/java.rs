@@ -505,11 +505,11 @@ mod tests {
                 try {
                     Properties properties = DeviceConfig.getProperties("aconfig_test");
                     disabledRw =
-                        properties.getBoolean("com.android.aconfig.test.disabled_rw", false);
+                        properties.getBoolean(Flags.FLAG_DISABLED_RW, false);
                     disabledRwExported =
-                        properties.getBoolean("com.android.aconfig.test.disabled_rw_exported", false);
+                        properties.getBoolean(Flags.FLAG_DISABLED_RW_EXPORTED, false);
                     enabledRw =
-                        properties.getBoolean("com.android.aconfig.test.enabled_rw", true);
+                        properties.getBoolean(Flags.FLAG_ENABLED_RW, true);
                 } catch (NullPointerException e) {
                     throw new RuntimeException(
                         "Cannot read value from namespace aconfig_test "
@@ -527,7 +527,7 @@ mod tests {
                 try {
                     Properties properties = DeviceConfig.getProperties("other_namespace");
                     disabledRwInOtherNamespace =
-                        properties.getBoolean("com.android.aconfig.test.disabled_rw_in_other_namespace", false);
+                        properties.getBoolean(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE, false);
                 } catch (NullPointerException e) {
                     throw new RuntimeException(
                         "Cannot read value from namespace other_namespace "
@@ -700,11 +700,11 @@ mod tests {
                 try {
                     Properties properties = DeviceConfig.getProperties("aconfig_test");
                     disabledRwExported =
-                        properties.getBoolean("com.android.aconfig.test.disabled_rw_exported", false);
+                        properties.getBoolean(Flags.FLAG_DISABLED_RW_EXPORTED, false);
                     enabledFixedRoExported =
-                        properties.getBoolean("com.android.aconfig.test.enabled_fixed_ro_exported", false);
+                        properties.getBoolean(Flags.FLAG_ENABLED_FIXED_RO_EXPORTED, false);
                     enabledRoExported =
-                        properties.getBoolean("com.android.aconfig.test.enabled_ro_exported", false);
+                        properties.getBoolean(Flags.FLAG_ENABLED_RO_EXPORTED, false);
                 } catch (NullPointerException e) {
                     throw new RuntimeException(
                         "Cannot read value from namespace aconfig_test "
