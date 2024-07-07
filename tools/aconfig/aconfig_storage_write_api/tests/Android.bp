@@ -38,8 +38,7 @@ cc_test {
         "device-tests",
         "general-tests",
     ],
-    ldflags: ["-Wl,--allow-multiple-definition"],
-        generated_headers: [
+    generated_headers: [
         "cxx-bridge-header",
         "libcxx_aconfig_storage_read_api_bridge_header",
     ],
