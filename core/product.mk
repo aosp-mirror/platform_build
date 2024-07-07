@@ -37,9 +37,6 @@ _product_single_value_vars += PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE
 # Boolean variable determining if AOSP relies on bionic's PAGE_SIZE macro.
 _product_single_value_vars += PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO
 
-# Boolean variable determining if the kernel boots with 16kb page size kernel.
-_product_single_value_vars += PRODUCT_BOOTS_16K
-
 # The resource configuration options to use for this product.
 _product_list_vars += PRODUCT_LOCALES
 _product_list_vars += PRODUCT_AAPT_CONFIG
