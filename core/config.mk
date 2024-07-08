@@ -1097,7 +1097,6 @@ TARGET_AVAILABLE_SDK_VERSIONS := $(patsubst %/test,test_%,$(TARGET_AVAILABLE_SDK
 TARGET_AVAILABLE_SDK_VERSIONS := $(filter-out %/module-lib %/system-server,$(TARGET_AVAILABLE_SDK_VERSIONS))
 TARGET_AVAIALBLE_SDK_VERSIONS := $(call numerically_sort,$(TARGET_AVAILABLE_SDK_VERSIONS))
 
-TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT := $(call numbers_less_than,24,$(TARGET_AVAILABLE_SDK_VERSIONS))
 TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT := $(call numbers_less_than,30,$(TARGET_AVAILABLE_SDK_VERSIONS))
 
 # Missing optional uses-libraries so that the platform doesn't create build rules that depend on
