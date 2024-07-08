@@ -10,9 +10,7 @@ endif
 ## Java version
 ###########################################################
 # Use the LOCAL_JAVA_LANGUAGE_VERSION if it is set, otherwise
-# use one based on the LOCAL_SDK_VERSION. If it is < 24
-# pass "1.7" to the tools, if it is unset, >= 24 or "current"
-# pass "1.8".
+# use one based on the LOCAL_SDK_VERSION.
 #
 # The LOCAL_SDK_VERSION behavior is to ensure that, by default,
 # code that is expected to run on older releases of Android
@@ -21,9 +19,7 @@ endif
 # Modules can override this logic by specifying
 # LOCAL_JAVA_LANGUAGE_VERSION explicitly.
 ifeq (,$(LOCAL_JAVA_LANGUAGE_VERSION))
-  ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT)))
-    LOCAL_JAVA_LANGUAGE_VERSION := 1.7
-  else ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT)))
+  ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT)))
     LOCAL_JAVA_LANGUAGE_VERSION := 1.8
   else ifneq (,$(LOCAL_SDK_VERSION)$(TARGET_BUILD_USE_PREBUILT_SDKS))
     # TODO(ccross): allow 1.9 for current and unbundled once we have SDK system modules
