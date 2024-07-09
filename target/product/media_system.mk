@@ -21,6 +21,7 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base_system.mk)
 
 PRODUCT_PACKAGES += \
+    android.software.webview.prebuilt.xml \
     com.android.future.usb.accessory \
     com.android.mediadrm.signer \
     com.android.media.remotedisplay \
@@ -39,12 +40,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_HOST_PACKAGES += \
     fsck.f2fs \
 
-PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/android.software.webview.xml:system/etc/permissions/android.software.webview.xml
-
 ifneq (REL,$(PLATFORM_VERSION_CODENAME))
-PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/android.software.preview_sdk.xml:system/etc/permissions/android.software.preview_sdk.xml
+PRODUCT_PACKAGES += \
+    android.software.preview_sdk.prebuilt.xml
 endif
 
 # The order here is the same order they end up on the classpath, so it matters.

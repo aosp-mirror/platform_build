@@ -38,5 +38,10 @@ cc_test {
         "device-tests",
         "general-tests",
     ],
-    ldflags: ["-Wl,--allow-multiple-definition"],
+    generated_headers: [
+        "cxx-bridge-header",
+        "libcxx_aconfig_storage_read_api_bridge_header",
+    ],
+    generated_sources: ["libcxx_aconfig_storage_read_api_bridge_code"],
+    whole_static_libs: ["libaconfig_storage_read_api_cxx_bridge"],
 }

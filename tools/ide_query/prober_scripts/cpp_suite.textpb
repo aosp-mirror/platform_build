@@ -1,0 +1,5 @@
+tests: {
+  name: "general"
+  scripts: "build/make/tools/ide_query/prober_scripts/cpp/general.cc"
+  scripts: "build/make/tools/ide_query/prober_scripts/cpp/foo.proto"
+}

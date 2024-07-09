@@ -104,6 +104,33 @@ cc_library {
     afdo: true,
 }
 
+soong_config_module_type {
+    name: "aconfig_lib_cc_shared_link_defaults",
+    module_type: "cc_defaults",
+    config_namespace: "Aconfig",
+    bool_variables: [
+        "read_from_new_storage",
+    ],
+    properties: [
+        "shared_libs",
+    ],
+}
+
+soong_config_bool_variable {
+    name: "read_from_new_storage",
+}
+
+aconfig_lib_cc_shared_link_defaults {
+    name: "aconfig_lib_cc_shared_link.defaults",
+    soong_config_variables: {
+        read_from_new_storage: {
+            shared_libs: [
+                "libaconfig_storage_read_api_cc",
+            ],
+        },
+    },
+}
+
 cc_defaults {
     name: "aconfig_lib_cc_static_link.defaults",
     shared_libs: [
