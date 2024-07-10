@@ -85,3 +85,15 @@ init.environ.rc
 # Known diffs only in the Soong system image
 lib/libhidcommand_jni.so
 lib/libuinputcommand_jni.so
+
+# Known diffs in internal source
+bin/uprobestats
+etc/aconfig/flag.map
+etc/aconfig/flag.val
+etc/aconfig/package.map
+etc/bpf/uprobestats/BitmapAllocation.o
+etc/bpf/uprobestats/GenericInstrumentation.o
+etc/init/UprobeStats.rc
+lib/libuprobestats_client.so
+lib64/libuprobestats_client.so
+priv-app/DeviceDiagnostics/DeviceDiagnostics.apk
