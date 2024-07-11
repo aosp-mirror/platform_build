@@ -14,21 +14,29 @@
  * limitations under the License.
  */
 
-#ifndef _TOOLS_IDE_QUERY_CC_ANALYZER_ANALYZER_H_
-#define _TOOLS_IDE_QUERY_CC_ANALYZER_ANALYZER_H_
+package android.aconfig.storage;
 
-#include "cc_analyzer.pb.h"
+public enum FlagType {
+    ReadWriteBoolean (0),
+    ReadOnlyBoolean(1),
+    FixedReadOnlyBoolean(2);
 
-namespace tools::ide_query::cc_analyzer {
+    public final int type;
 
-// Scans the build graph and returns target names from the build graph to
-// generate all the dependencies for the active files.
-::cc_analyzer::DepsResponse GetDeps(::cc_analyzer::RepoState state);
+    FlagType(int type) {
+        this.type = type;
+    }
 
-// Scans the sources and returns all the source files required for analyzing the
-// active files.
-::cc_analyzer::IdeAnalysis GetBuildInputs(::cc_analyzer::RepoState state);
-
-}  // namespace tools::ide_query::cc_analyzer
-
-#endif
+    public static FlagType fromInt(int index) {
+        switch (index) {
+            case 0:
+                return ReadWriteBoolean;
+            case 1:
+                return ReadOnlyBoolean;
+            case 2:
+                return FixedReadOnlyBoolean;
+            default:
+                return null;
+        }
+    }
+}
