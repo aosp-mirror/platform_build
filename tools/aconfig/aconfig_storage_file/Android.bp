@@ -137,3 +137,12 @@ cc_library {
     min_sdk_version: "29",
     double_loadable: true,
 }
+
+// storage file parse api java cc_library
+java_library {
+    name: "aconfig_storage_file_java",
+    srcs: [
+        "srcs/**/*.java",
+    ],
+    sdk_version: "core_current",
+}
