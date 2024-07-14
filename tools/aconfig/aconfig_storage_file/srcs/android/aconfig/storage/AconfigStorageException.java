@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-#ifndef _TOOLS_IDE_QUERY_CC_ANALYZER_ANALYZER_H_
-#define _TOOLS_IDE_QUERY_CC_ANALYZER_ANALYZER_H_
+package android.aconfig.storage;
 
-#include "cc_analyzer.pb.h"
+public class AconfigStorageException extends RuntimeException {
+    public AconfigStorageException(String msg) {
+        super(msg);
+    }
 
-namespace tools::ide_query::cc_analyzer {
-
-// Scans the build graph and returns target names from the build graph to
-// generate all the dependencies for the active files.
-::cc_analyzer::DepsResponse GetDeps(::cc_analyzer::RepoState state);
-
-// Scans the sources and returns all the source files required for analyzing the
-// active files.
-::cc_analyzer::IdeAnalysis GetBuildInputs(::cc_analyzer::RepoState state);
-
-}  // namespace tools::ide_query::cc_analyzer
-
-#endif
+    public AconfigStorageException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
+}
