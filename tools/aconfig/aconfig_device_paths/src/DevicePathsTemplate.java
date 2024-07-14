@@ -36,7 +36,7 @@ public class DevicePaths {
      * Returns the list of all on-device aconfig protos paths.
      * @hide
      */
-    public List<String> parsedFlagsProtoPaths() {
+    public static List<String> parsedFlagsProtoPaths() {
         ArrayList<String> paths = new ArrayList(Arrays.asList(PATHS));
 
         File apexDirectory = new File(APEX_DIR);
