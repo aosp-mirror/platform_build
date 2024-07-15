@@ -147,7 +147,7 @@ namespace {cpp_namespace} \{
                 bool expected_value = cache_[{item.readwrite_idx}];
                 if (*value != expected_value) \{
                     ALOGI("error: {item.flag_name} value mismatch, new storage value is %s, old storage value is %s",
-                    *value, expected_value);
+                    *value ? "true" : "false", expected_value ? "true" : "false");
                 } else \{
                     ALOGI("success: {item.flag_name} value matches");
                 }
