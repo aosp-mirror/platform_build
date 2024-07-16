@@ -688,11 +688,16 @@ $(foreach suite,general-tests device-tests vts tvts art-host-tests host-unit-tes
           $(eval my_testcases := $(HOST_OUT_TESTCASES)),\
           $(eval my_testcases := $$(COMPATIBILITY_TESTCASES_OUT_$(suite))))\
         $(eval target := $(my_testcases)/$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
+        $(eval link_target := ../../../$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
+        $(eval symlink := $(my_testcases)/$(m)/shared_libs/$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
+        $(eval COMPATIBILITY.$(suite).SYMLINKS := \
+          $$(COMPATIBILITY.$(suite).SYMLINKS) $(f):$(link_target):$(symlink))\
         $(if $(strip $(ALL_TARGETS.$(target).META_LIC)),,$(call declare-copy-target-license-metadata,$(target),$(f)))\
         $(eval COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES := \
           $$(COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES) $(f):$(target))\
         $(eval COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES := \
-          $(sort $(COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES)))))))
+          $(sort $(COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES))))))\
+  $(eval COMPATIBILITY.$(suite).SYMLINKS := $(sort $(COMPATIBILITY.$(suite).SYMLINKS))))
 endef
 
 $(call resolve-shared-libs-depes,TARGET_)
@@ -1924,6 +1929,64 @@ $(PRODUCT_OUT)/sbom-metadata.csv:
 	  $(eval _is_static_lib := Y) \
 	  echo '$(_lib_stem).a,$(_module_path),$(_soong_module_type),,,,,$(_built_file),$(_static_libs),$(_whole_static_libs),$(_is_static_lib)' >> $@; \
 	)
+
+# Create metadata for compliance support in Soong
+.PHONY: make-compliance-metadata
+make-compliance-metadata: \
+    $(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/make-metadata.csv \
+    $(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/make-modules.csv
+
+$(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/make-metadata.csv:
+	rm -f $@
+	echo 'installed_file,module_path,is_soong_module,is_prebuilt_make_module,product_copy_files,kernel_module_copy_files,is_platform_generated,static_libs,whole_static_libs,license_text' >> $@
+	$(foreach f,$(installed_files),\
+	  $(eval _module_name := $(ALL_INSTALLED_FILES.$f)) \
+	  $(eval _path_on_device := $(patsubst $(PRODUCT_OUT)/%,%,$f)) \
+	  $(eval _build_output_path := $(PRODUCT_OUT)/$(_path_on_device)) \
+	  $(eval _module_path := $(strip $(sort $(ALL_MODULES.$(_module_name).PATH)))) \
+	  $(eval _is_soong_module := $(ALL_MODULES.$(_module_name).IS_SOONG_MODULE)) \
+	  $(eval _is_prebuilt_make_module := $(ALL_MODULES.$(_module_name).IS_PREBUILT_MAKE_MODULE)) \
+	  $(eval _product_copy_files := $(sort $(filter %:$(_path_on_device),$(product_copy_files_without_owner)))) \
+	  $(eval _kernel_module_copy_files := $(sort $(filter %$(_path_on_device),$(KERNEL_MODULE_COPY_FILES)))) \
+	  $(eval _is_build_prop := $(call is-build-prop,$f)) \
+	  $(eval _is_notice_file := $(call is-notice-file,$f)) \
+	  $(eval _is_dexpreopt_image_profile := $(if $(filter %:/$(_path_on_device),$(DEXPREOPT_IMAGE_PROFILE_BUILT_INSTALLED)),Y)) \
+	  $(eval _is_product_system_other_avbkey := $(if $(findstring $f,$(INSTALLED_PRODUCT_SYSTEM_OTHER_AVBKEY_TARGET)),Y)) \
+	  $(eval _is_event_log_tags_file := $(if $(findstring $f,$(event_log_tags_file)),Y)) \
+	  $(eval _is_system_other_odex_marker := $(if $(findstring $f,$(INSTALLED_SYSTEM_OTHER_ODEX_MARKER)),Y)) \
+	  $(eval _is_kernel_modules_blocklist := $(if $(findstring $f,$(ALL_KERNEL_MODULES_BLOCKLIST)),Y)) \
+	  $(eval _is_fsverity_build_manifest_apk := $(if $(findstring $f,$(ALL_FSVERITY_BUILD_MANIFEST_APK)),Y)) \
+	  $(eval _is_linker_config := $(if $(findstring $f,$(SYSTEM_LINKER_CONFIG) $(vendor_linker_config_file)),Y)) \
+	  $(eval _is_partition_compat_symlink := $(if $(findstring $f,$(PARTITION_COMPAT_SYMLINKS)),Y)) \
+	  $(eval _is_flags_file := $(if $(findstring $f, $(ALL_FLAGS_FILES)),Y)) \
+	  $(eval _is_rootdir_symlink := $(if $(findstring $f, $(ALL_ROOTDIR_SYMLINKS)),Y)) \
+	  $(eval _is_platform_generated := $(_is_build_prop)$(_is_notice_file)$(_is_dexpreopt_image_profile)$(_is_product_system_other_avbkey)$(_is_event_log_tags_file)$(_is_system_other_odex_marker)$(_is_kernel_modules_blocklist)$(_is_fsverity_build_manifest_apk)$(_is_linker_config)$(_is_partition_compat_symlink)$(_is_flags_file)$(_is_rootdir_symlink)) \
+	  $(eval _static_libs := $(if $(_is_soong_module),,$(ALL_INSTALLED_FILES.$f.STATIC_LIBRARIES))) \
+	  $(eval _whole_static_libs := $(if $(_is_soong_module),,$(ALL_INSTALLED_FILES.$f.WHOLE_STATIC_LIBRARIES))) \
+	  $(eval _license_text := $(if $(filter $(_build_output_path),$(ALL_NON_MODULES)),$(ALL_NON_MODULES.$(_build_output_path).NOTICES))) \
+	  echo '$(_build_output_path),$(_module_path),$(_is_soong_module),$(_is_prebuilt_make_module),$(_product_copy_files),$(_kernel_module_copy_files),$(_is_platform_generated),$(_static_libs),$(_whole_static_libs),$(_license_text)' >> $@; \
+	)
+
+$(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/make-modules.csv:
+	rm -f $@
+	echo 'name,module_path,module_class,module_type,static_libs,whole_static_libs,built_files,installed_files' >> $@
+	$(foreach m,$(ALL_MODULES), \
+	  $(eval _module_name := $m) \
+	  $(eval _module_path := $(strip $(sort $(ALL_MODULES.$(_module_name).PATH)))) \
+	  $(eval _make_module_class := $(ALL_MODULES.$(_module_name).CLASS)) \
+	  $(eval _make_module_type := $(ALL_MODULES.$(_module_name).MAKE_MODULE_TYPE)) \
+	  $(eval _static_libs := $(strip $(sort $(ALL_MODULES.$(_module_name).STATIC_LIBS)))) \
+	  $(eval _whole_static_libs := $(strip $(sort $(ALL_MODULES.$(_module_name).WHOLE_STATIC_LIBS)))) \
+	  $(eval _built_files := $(strip $(sort $(ALL_MODULES.$(_module_name).BUILT)))) \
+	  $(eval _installed_files := $(strip $(sort $(ALL_MODULES.$(_module_name).INSTALLED)))) \
+	  $(eval _is_soong_module := $(ALL_MODULES.$(_module_name).IS_SOONG_MODULE)) \
+	  $(if $(_is_soong_module),, \
+		echo '$(_module_name),$(_module_path),$(_make_module_class),$(_make_module_type),$(_static_libs),$(_whole_static_libs),$(_built_files),$(_installed_files)' >> $@; \
+	  ) \
+	)
+
+$(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/installed_files.stamp: $(installed_files)
+	touch $@
 
 # (TODO: b/272358583 find another way of always rebuilding sbom.spdx)
 # Remove the always_dirty_file.txt whenever the makefile is evaluated

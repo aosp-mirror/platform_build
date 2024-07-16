@@ -45,6 +45,8 @@ where
     let header = package.replace('.', "_");
     let package_macro = header.to_uppercase();
     let cpp_namespace = package.replace('.', "::");
+    ensure!(class_elements.len() > 0);
+    let container = class_elements[0].container.clone();
     ensure!(codegen::is_valid_name_ident(&header));
     let context = Context {
         header: &header,
@@ -56,6 +58,7 @@ where
         readwrite_count,
         is_test_mode: codegen_mode == CodegenMode::Test,
         class_elements,
+        container,
         allow_instrumentation,
     };
 
@@ -100,6 +103,7 @@ pub struct Context<'a> {
     pub readwrite_count: i32,
     pub is_test_mode: bool,
     pub class_elements: Vec<ClassElement>,
+    pub container: String,
     pub allow_instrumentation: bool,
 }
 

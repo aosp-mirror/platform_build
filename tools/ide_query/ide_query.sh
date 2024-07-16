@@ -32,6 +32,7 @@ case $(uname -s) in
       ;;
 esac
 
+export BUILD_ENV_SEQUENCE_NUMBER=13
 export ANDROID_BUILD_TOP=$TOP
 export OUT_DIR=${OUT_DIR}
 exec "${PREBUILTS_GO_ROOT}/bin/go" "run" "ide_query" "$@"
