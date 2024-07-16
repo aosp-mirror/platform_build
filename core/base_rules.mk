@@ -686,6 +686,14 @@ endif
 ifdef LOCAL_COMPATIBILITY_SUITE
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 
+ifeq ($(EXCLUDE_MCTS),true)
+  ifneq (,$(test_config))
+    ifneq (,$(filter mcts-%,$(LOCAL_COMPATIBILITY_SUITE)))
+      LOCAL_COMPATIBILITY_SUITE := $(filter-out cts,$(LOCAL_COMPATIBILITY_SUITE))
+    endif
+  endif
+endif
+
 # If we are building a native test or benchmark and its stem variants are not defined,
 # separate the multiple architectures into subdirectories of the testcase folder.
 arch_dir :=
