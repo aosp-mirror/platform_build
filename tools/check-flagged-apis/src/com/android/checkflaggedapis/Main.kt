@@ -19,13 +19,14 @@ package com.android.checkflaggedapis
 
 import android.aconfig.Aconfig
 import com.android.tools.metalava.model.BaseItemVisitor
+import com.android.tools.metalava.model.CallableItem
 import com.android.tools.metalava.model.ClassItem
 import com.android.tools.metalava.model.FieldItem
 import com.android.tools.metalava.model.Item
-import com.android.tools.metalava.model.MethodItem
 import com.android.tools.metalava.model.text.ApiFile
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.ProgramResult
+import com.github.ajalt.clikt.core.subcommands
 import com.github.ajalt.clikt.parameters.options.help
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
@@ -141,6 +142,33 @@ internal data class UnknownFlagError(override val symbol: Symbol, override val f
   }
 }
 
+val ARG_API_SIGNATURE = "--api-signature"
+val ARG_API_SIGNATURE_HELP =
+    """
+Path to API signature file.
+Usually named *current.txt.
+Tip: `m frameworks-base-api-current.txt` will generate a file that includes all platform and mainline APIs.
+"""
+
+val ARG_FLAG_VALUES = "--flag-values"
+val ARG_FLAG_VALUES_HELP =
+    """
+Path to aconfig parsed_flags binary proto file.
+Tip: `m all_aconfig_declarations` will generate a file that includes all information about all flags.
+"""
+
+val ARG_API_VERSIONS = "--api-versions"
+val ARG_API_VERSIONS_HELP =
+    """
+Path to API versions XML file.
+Usually named xml-versions.xml.
+Tip: `m sdk dist` will generate a file that includes all platform and mainline APIs.
+"""
+
+class MainCommand : CliktCommand() {
+  override fun run() {}
+}
+
 class CheckCommand :
     CliktCommand(
         help =
@@ -152,32 +180,18 @@ This tool reads the API signature file and checks that all flagged APIs are used
 The tool will exit with a non-zero exit code if any flagged APIs are found to be used in the incorrect way.
 """) {
   private val apiSignaturePath by
-      option("--api-signature")
-          .help(
-              """
-              Path to API signature file.
-              Usually named *current.txt.
-              Tip: `m frameworks-base-api-current.txt` will generate a file that includes all platform and mainline APIs.
-              """)
+      option(ARG_API_SIGNATURE)
+          .help(ARG_API_SIGNATURE_HELP)
           .path(mustExist = true, canBeDir = false, mustBeReadable = true)
           .required()
   private val flagValuesPath by
-      option("--flag-values")
-          .help(
-              """
-            Path to aconfig parsed_flags binary proto file.
-            Tip: `m all_aconfig_declarations` will generate a file that includes all information about all flags.
-            """)
+      option(ARG_FLAG_VALUES)
+          .help(ARG_FLAG_VALUES_HELP)
           .path(mustExist = true, canBeDir = false, mustBeReadable = true)
           .required()
   private val apiVersionsPath by
-      option("--api-versions")
-          .help(
-              """
-            Path to API versions XML file.
-            Usually named xml-versions.xml.
-            Tip: `m sdk dist` will generate a file that includes all platform and mainline APIs.
-            """)
+      option(ARG_API_VERSIONS)
+          .help(ARG_API_VERSIONS_HELP)
           .path(mustExist = true, canBeDir = false, mustBeReadable = true)
           .required()
 
@@ -193,6 +207,40 @@ The tool will exit with a non-zero exit code if any flagged APIs are found to be
       println(e)
     }
     throw ProgramResult(errors.size)
+  }
+}
+
+class ListCommand :
+    CliktCommand(
+        help =
+            """
+List all flagged APIs and corresponding flags.
+
+The output format is "<fully-qualified-name-of-flag> <state-of-flag> <API>", one line per API.
+
+The output can be post-processed by e.g. piping it to grep to filter out only enabled APIs, or all APIs guarded by a given flag.
+""") {
+  private val apiSignaturePath by
+      option(ARG_API_SIGNATURE)
+          .help(ARG_API_SIGNATURE_HELP)
+          .path(mustExist = true, canBeDir = false, mustBeReadable = true)
+          .required()
+  private val flagValuesPath by
+      option(ARG_FLAG_VALUES)
+          .help(ARG_FLAG_VALUES_HELP)
+          .path(mustExist = true, canBeDir = false, mustBeReadable = true)
+          .required()
+
+  override fun run() {
+    val flaggedSymbols =
+        apiSignaturePath.toFile().inputStream().use {
+          parseApiSignature(apiSignaturePath.toString(), it)
+        }
+    val flags = flagValuesPath.toFile().inputStream().use { parseFlagValues(it) }
+    val output = listFlaggedApis(flaggedSymbols, flags)
+    if (output.isNotEmpty()) {
+      println(output.joinToString("\n"))
+    }
   }
 }
 
@@ -226,15 +274,15 @@ internal fun parseApiSignature(path: String, input: InputStream): Set<Pair<Symbo
           }
         }
 
-        override fun visitMethod(method: MethodItem) {
-          getFlagOrNull(method)?.let { flag ->
-            val methodName = buildString {
-              append(method.name())
+        override fun visitCallable(callable: CallableItem) {
+          getFlagOrNull(callable)?.let { flag ->
+            val callableSignature = buildString {
+              append(callable.name())
               append("(")
-              method.parameters().joinTo(this, separator = "") { it.type().internalName() }
+              callable.parameters().joinTo(this, separator = "") { it.type().internalName() }
               append(")")
             }
-            val symbol = Symbol.createMethod(method.containingClass().qualifiedName(), methodName)
+            val symbol = Symbol.createMethod(callable.containingClass().qualifiedName(), callableSignature)
             output.add(Pair(symbol, flag))
           }
         }
@@ -446,4 +494,35 @@ internal fun findErrors(
   return errors
 }
 
-fun main(args: Array<String>) = CheckCommand().main(args)
+/**
+ * Collect all known info about all @FlaggedApi annotated APIs.
+ *
+ * Each API will be represented as a String, on the format
+ * <pre>
+ *   &lt;fully-qualified-name-of-flag&lt; &lt;state-of-flag&lt; &lt;API&lt;
+ * </pre>
+ *
+ * @param flaggedSymbolsInSource the set of symbols that are flagged in the source code
+ * @param flags the set of flags and their values
+ * @return a list of Strings encoding API data using the format described above, sorted
+ *   alphabetically
+ */
+internal fun listFlaggedApis(
+    flaggedSymbolsInSource: Set<Pair<Symbol, Flag>>,
+    flags: Map<Flag, Boolean>
+): List<String> {
+  val output = mutableListOf<String>()
+  for ((symbol, flag) in flaggedSymbolsInSource) {
+    val flagState =
+        when (flags.get(flag)) {
+          true -> "ENABLED"
+          false -> "DISABLED"
+          null -> "UNKNOWN"
+        }
+    output.add("$flag $flagState ${symbol.toPrettyString()}")
+  }
+  output.sort()
+  return output
+}
+
+fun main(args: Array<String>) = MainCommand().subcommands(CheckCommand(), ListCommand()).main(args)
