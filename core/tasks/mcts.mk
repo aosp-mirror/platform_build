@@ -21,7 +21,7 @@ $(foreach module, $(mts_modules), $(eval mcts_test_suites += mcts-$(module)))
 
 $(foreach suite, $(mcts_test_suites), \
 	$(eval test_suite_name := $(suite)) \
-	$(eval test_suite_tradefed := mts-tradefed) \
+	$(eval test_suite_tradefed := mcts-tradefed) \
 	$(eval test_suite_readme := test/mts/README.md) \
 	$(eval include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk) \
 	$(eval .PHONY: $(suite)) \
