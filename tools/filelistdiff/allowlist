@@ -78,6 +78,10 @@ lib/libvendorsupport.so
 lib/libwfds.so
 lib/libyuv.so
 
+# b/351258461
+adb_keys
+init.environ.rc
+
 # Known diffs only in the Soong system image
 lib/libhidcommand_jni.so
 lib/libuinputcommand_jni.so
