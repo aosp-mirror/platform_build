@@ -133,7 +133,8 @@ namespace {cpp_namespace} \{
             {{ if allow_instrumentation- }}
             if (read_from_new_storage_) \{
                 if (!flag_value_file_) \{
-                   ALOGI("error: failed to get flag {item.flag_name}: flag value file is null");
+                    ALOGI("error: failed to get flag {item.flag_name}: flag value file is null");
+                    return cache_[{item.readwrite_idx}];
                 }
 
                 auto value = aconfig_storage::get_boolean_flag_value(
@@ -142,6 +143,7 @@ namespace {cpp_namespace} \{
 
                 if (!value.ok()) \{
                     ALOGI("error: failed to read flag value: %s", value.error().c_str());
+                    return cache_[{item.readwrite_idx}];
                 }
 
                 bool expected_value = cache_[{item.readwrite_idx}];
