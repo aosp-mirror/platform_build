@@ -677,7 +677,7 @@ mod tests {
             modified_parsed_flags.into_iter(),
             mode,
             flag_ids,
-            false,
+            true,
         )
         .unwrap();
 
@@ -870,7 +870,7 @@ mod tests {
             modified_parsed_flags.into_iter(),
             mode,
             flag_ids,
-            false,
+            true,
         )
         .unwrap();
 
@@ -991,7 +991,7 @@ mod tests {
             modified_parsed_flags.into_iter(),
             mode,
             flag_ids,
-            false,
+            true,
         )
         .unwrap();
         let expect_featureflags_content = r#"
