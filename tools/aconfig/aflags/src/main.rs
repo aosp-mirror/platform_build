@@ -286,7 +286,9 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
     let output = match cli.command {
         Command::List { use_new_storage: true, container } => {
-            list(FlagSourceType::AconfigStorage, container).map(Some)
+            list(FlagSourceType::AconfigStorage, container)
+                .map_err(|_| anyhow!("storage may not be enabled"))
+                .map(Some)
         }
         Command::List { use_new_storage: false, container } => {
             list(FlagSourceType::DeviceConfig, container).map(Some)
