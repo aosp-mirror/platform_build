@@ -151,6 +151,8 @@ namespace {cpp_namespace} \{
                 } else \{
                     ALOGI("success: {item.flag_name} value matches");
                 }
+
+                return *value;
             }
             {{ -endif }}
 
