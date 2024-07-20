@@ -315,9 +315,11 @@ lazy_static::lazy_static! {
             match aconfig_storage_result {
                 Ok(storage_result) if storage_result == result => {
                     log!(Level::Info, "AconfigTestMission1: success! flag 'disabled_rw' contained correct value. Legacy storage was {result}, new storage was {storage_result}");
+                    return storage_result;
                 },
                 Ok(storage_result) => {
                     log!(Level::Error, "AconfigTestMission1: error: mismatch for flag 'disabled_rw'. Legacy storage was {result}, new storage was {storage_result}");
+                    return storage_result;
                 },
                 Err(err) => {
                     log!(Level::Error, "AconfigTestMission1: error: {err}")
@@ -364,9 +366,11 @@ lazy_static::lazy_static! {
             match aconfig_storage_result {
                 Ok(storage_result) if storage_result == result => {
                     log!(Level::Info, "AconfigTestMission1: success! flag 'disabled_rw_exported' contained correct value. Legacy storage was {result}, new storage was {storage_result}");
+                    return storage_result;
                 },
                 Ok(storage_result) => {
                     log!(Level::Error, "AconfigTestMission1: error: mismatch for flag 'disabled_rw_exported'. Legacy storage was {result}, new storage was {storage_result}");
+                    return storage_result;
                 },
                 Err(err) => {
                     log!(Level::Error, "AconfigTestMission1: error: {err}")
@@ -413,9 +417,11 @@ lazy_static::lazy_static! {
             match aconfig_storage_result {
                 Ok(storage_result) if storage_result == result => {
                     log!(Level::Info, "AconfigTestMission1: success! flag 'disabled_rw_in_other_namespace' contained correct value. Legacy storage was {result}, new storage was {storage_result}");
+                    return storage_result;
                 },
                 Ok(storage_result) => {
                     log!(Level::Error, "AconfigTestMission1: error: mismatch for flag 'disabled_rw_in_other_namespace'. Legacy storage was {result}, new storage was {storage_result}");
+                    return storage_result;
                 },
                 Err(err) => {
                     log!(Level::Error, "AconfigTestMission1: error: {err}")
@@ -462,9 +468,11 @@ lazy_static::lazy_static! {
             match aconfig_storage_result {
                 Ok(storage_result) if storage_result == result => {
                     log!(Level::Info, "AconfigTestMission1: success! flag 'enabled_rw' contained correct value. Legacy storage was {result}, new storage was {storage_result}");
+                    return storage_result;
                 },
                 Ok(storage_result) => {
                     log!(Level::Error, "AconfigTestMission1: error: mismatch for flag 'enabled_rw'. Legacy storage was {result}, new storage was {storage_result}");
+                    return storage_result;
                 },
                 Err(err) => {
                     log!(Level::Error, "AconfigTestMission1: error: {err}")
