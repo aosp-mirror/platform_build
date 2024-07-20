@@ -131,6 +131,9 @@ ifneq (,$(_use_protobuf))
         _args += --guard=false
     endif
     _args += --allow-missing=true
+    ifneq (,$(TARGET_PRODUCT))
+        _args += --product $(TARGET_PRODUCT)
+    endif
     _flags_dir:=$(OUT_DIR)/soong/release-config
     _flags_file:=$(_flags_dir)/release_config-$(TARGET_PRODUCT)-$(TARGET_RELEASE).vars
     # release-config generates $(_flags_varmk)
