@@ -63,9 +63,11 @@ lazy_static::lazy_static! \{
             match aconfig_storage_result \{
                 Ok(storage_result) if storage_result == result => \{
                     log!(Level::Info, "AconfigTestMission1: success! flag '{flag.name}' contained correct value. Legacy storage was \{result}, new storage was \{storage_result}");
+                    return storage_result;
                 },
                 Ok(storage_result) => \{
                     log!(Level::Error, "AconfigTestMission1: error: mismatch for flag '{flag.name}'. Legacy storage was \{result}, new storage was \{storage_result}");
+                    return storage_result;
                 },
                 Err(err) => \{
                     log!(Level::Error, "AconfigTestMission1: error: \{err}")
