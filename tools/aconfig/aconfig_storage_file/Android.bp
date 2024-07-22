@@ -145,4 +145,10 @@ java_library {
         "srcs/**/*.java",
     ],
     sdk_version: "core_current",
+    min_sdk_version: "29",
+    host_supported: true,
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
 }
