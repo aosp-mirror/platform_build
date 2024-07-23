@@ -175,4 +175,10 @@ java_library {
         "aconfig_storage_file_java",
     ],
     sdk_version: "core_current",
+    host_supported: true,
+    min_sdk_version: "29",
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
 }
