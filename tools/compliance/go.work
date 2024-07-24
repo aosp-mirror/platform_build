@@ -1,0 +1,18 @@
+go 1.22
+
+use (
+	.
+	../../../../build/blueprint
+	../../../../build/soong
+	../../../../external/go-cmp
+	../../../../external/golang-protobuf
+	../../../../external/spdx-tools
+)
+
+replace (
+	github.com/google/blueprint v0.0.0 => ../../../../build/blueprint
+	android/soong v0.0.0 => ../../../../build/soong
+	github.com/google/go-cmp v0.0.0 => ../../../../external/go-cmp
+	google.golang.org/protobuf v0.0.0 => ../../../../external/golang-protobuf
+	github.com/spdx/tools-golang v0.0.0 => ../../../../external/spdx-tools
+)

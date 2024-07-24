@@ -22,8 +22,9 @@ import zipfile
 import common
 import test_utils
 from sign_target_files_apks import (
-    CheckApkAndApexKeysAvailable, EditTags, GetApkFileInfo, ReadApexKeysInfo,
-    ReplaceCerts, RewriteAvbProps, RewriteProps, WriteOtacerts)
+    CheckApkAndApexKeysAvailable, EditTags, GetApkFileInfo, ParseAvbInfo,
+    ReadApexKeysInfo, ReplaceCerts, RewriteAvbProps, RewriteProps,
+    WriteOtacerts)
 
 
 class SignTargetFilesApksTest(test_utils.ReleaseToolsTestCase):
@@ -535,3 +536,86 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
             'build/make/target/product/security/testkey', None),
         }, keys_info)
+
+  def test_ParseAvbInfo(self):
+    avb_info_string = """
+    Footer version:           1.0
+    Image size:               9999999 bytes
+    Original image size:      8888888 bytes
+    VBMeta offset:            7777777
+    VBMeta size:              1111 bytes
+    --
+    Minimum libavb version:   1.0
+    Header Block:             222 bytes
+    Authentication Block:     333 bytes
+    Auxiliary Block:          888 bytes
+    Public key (sha1):        abababababababababababababababababababab
+    Algorithm:                SHA256_RSA2048
+    Rollback Index:           0
+    Flags:                    0
+    Rollback Index Location:  0
+    Release String:           'avbtool 1.3.0'
+    Descriptors:
+        Hashtree descriptor:
+          Version of dm-verity:  1
+          Image Size:            8888888 bytes
+          Tree Offset:           8888888
+          Tree Size:             44444 bytes
+          Data Block Size:       4444 bytes
+          Hash Block Size:       4444 bytes
+          FEC num roots:         0
+          FEC offset:            0
+          FEC size:              0 bytes
+          Hash Algorithm:        sha1
+          Partition Name:        partition-name
+          Salt:                  cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd
+          Root Digest:           efefefefefefefefefefefefefefefefefef
+          Flags:                 0
+        Prop: prop.key -> 'prop.value'
+    """
+
+    self.assertEqual(
+        {
+            'Footer version': '1.0',
+            'Image size': '9999999 bytes',
+            'Original image size': '8888888 bytes',
+            'VBMeta offset': '7777777',
+            'VBMeta size': '1111 bytes',
+            'Minimum libavb version': '1.0',
+            'Header Block': '222 bytes',
+            'Authentication Block': '333 bytes',
+            'Auxiliary Block': '888 bytes',
+            'Public key (sha1)': 'abababababababababababababababababababab',
+            'Algorithm': 'SHA256_RSA2048',
+            'Rollback Index': '0',
+            'Flags': '0',
+            'Rollback Index Location': '0',
+            'Release String': "'avbtool 1.3.0'",
+            'Descriptors': [
+                {
+                    'Hashtree descriptor': {
+                        'Version of dm-verity': '1',
+                        'Image Size': '8888888 bytes',
+                        'Tree Offset': '8888888',
+                        'Tree Size': '44444 bytes',
+                        'Data Block Size': '4444 bytes',
+                        'Hash Block Size': '4444 bytes',
+                        'FEC num roots': '0',
+                        'FEC offset': '0',
+                        'FEC size': '0 bytes',
+                        'Hash Algorithm': 'sha1',
+                        'Partition Name': 'partition-name',
+                        'Salt': 'cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd',
+                        'Root Digest': 'efefefefefefefefefefefefefefefefefef',
+                        'Flags': '0',
+                    }
+                },
+                {
+                    'Prop': {
+                        'prop.key': 'prop.value',
+                    }
+                },
+            ],
+        },
+        ParseAvbInfo(avb_info_string),
+    )

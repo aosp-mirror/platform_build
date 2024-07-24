@@ -258,13 +258,6 @@ ifneq ($(LOCAL_SDK_VERSION),)
       my_ndk_stl_shared_lib_fullpath := $(my_libcxx_libdir)/libc++_shared.so
     endif
 
-    ifneq ($(my_ndk_api),current)
-      ifeq ($(call math_lt,$(my_ndk_api),21),true)
-        my_ndk_stl_include_path += $(my_ndk_source_root)/android/support/include
-        my_ndk_stl_static_lib += $(my_libcxx_libdir)/libandroid_support.a
-      endif
-    endif
-
     my_ndk_stl_static_lib += $(my_libcxx_libdir)/libunwind.a
     my_ldlibs += -ldl
   else # LOCAL_NDK_STL_VARIANT must be none
@@ -479,6 +472,34 @@ endif
 # Extra cflags for projects under external/ directory
 ifneq ($(filter external/%,$(LOCAL_PATH)),)
     my_cflags += $(CLANG_EXTERNAL_CFLAGS)
+endif
+
+# Extra cflags for projects under hardware/ directory.
+# This should match the definition of `thirdPartyDirPrefixExceptions`
+# in build/soong/android/paths.go.
+# Get the second element of LOCAL_PATH
+ifneq ($(filter hardware/%,$(LOCAL_PATH)),)
+  my_subdir := $(word 2,$(subst /,$(space),$(LOCAL_PATH)))
+  must_compile_hardware_subdirs := \
+                  hardware/google/% \
+                  hardware/interfaces/% \
+                  hardware/libhardware/% \
+                  hardware/libhardware_legacy/% \
+                  hardware/ril/%
+  ifeq ($(filter $(must_compile_hardware_subdirs),$(my_subdir)),)
+    my_cflags += $(CLANG_EXTERNAL_CFLAGS)
+  endif
+endif
+
+# Extra cflags for projects under vendor/ directory.
+# This should match the definition of `thirdPartyDirPrefixExceptions`
+# in build/soong/android/paths.go.
+ifneq ($(filter vendor/%,$(LOCAL_PATH)),)
+  my_subdir := $(word 2,$(subst /,$(space),$(LOCAL_PATH)))
+  # Do not add the flags for any subdir that contains the string "google".
+  ifneq ($(findstring google,$(my_subdir)),)
+    my_cflags += $(CLANG_EXTERNAL_CFLAGS)
+  endif
 endif
 
 # arch-specific static libraries go first so that generic ones can depend on them
@@ -1168,6 +1189,17 @@ ifneq ($(filter hwaddress,$(my_sanitize)),)
 endif
 
 ###################################################################
+## When compiling a memtag_stack enabled target, use the .memtag_stack variant
+## of any static dependencies (where they exist).
+##################################################################
+ifneq ($(filter memtag_stack,$(my_sanitize)),)
+  my_whole_static_libraries := $(call use_soong_sanitized_static_libraries,\
+    $(my_whole_static_libraries),memtag_stack)
+  my_static_libraries := $(call use_soong_sanitized_static_libraries,\
+    $(my_static_libraries),memtag_stack)
+endif
+
+###################################################################
 ## When compiling against API imported module, use API import stub
 ## libraries.
 ##################################################################
@@ -1312,6 +1344,8 @@ my_link_type := native:platform
 my_warn_types := $(my_warn_ndk_types)
 my_allowed_types := $(my_allowed_ndk_types) native:platform native:platform_vndk
 endif
+
+ALL_MODULES.$(my_register_name).WHOLE_STATIC_LIBS := $(my_whole_static_libraries)
 
 my_link_deps := $(addprefix STATIC_LIBRARIES:,$(my_whole_static_libraries) $(my_static_libraries))
 ifneq ($(filter-out STATIC_LIBRARIES HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS)),)

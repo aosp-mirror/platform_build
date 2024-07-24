@@ -36,6 +36,11 @@ PRODUCT_PACKAGES += \
     Stk \
     Tag \
 
+ifeq ($(RELEASE_AVATAR_PICKER_APP),true)
+  PRODUCT_PACKAGES += \
+    AvatarPicker
+endif
+
 # OTA support
 PRODUCT_PACKAGES += \
     recovery-refresh \
@@ -68,7 +73,6 @@ PRODUCT_PACKAGES += \
     android.hardware.radio.config@1.0 \
     android.hardware.radio.deprecated@1.0 \
     android.hardware.secure_element@1.0 \
-    android.hardware.wifi \
     libaudio-resampler \
     libaudiohal \
     libdrm \
@@ -111,10 +115,14 @@ PRODUCT_PACKAGES += \
     $(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34)
 
 # Include all zygote init scripts. "ro.zygote" will select one of them.
-PRODUCT_COPY_FILES += \
-    system/core/rootdir/init.zygote32.rc:system/etc/init/hw/init.zygote32.rc \
-    system/core/rootdir/init.zygote64.rc:system/etc/init/hw/init.zygote64.rc \
-    system/core/rootdir/init.zygote64_32.rc:system/etc/init/hw/init.zygote64_32.rc \
+PRODUCT_PACKAGES += \
+    init.zygote32.rc \
+    init.zygote64.rc \
+    init.zygote64_32.rc
+
+# Support Credential Manager
+PRODUCT_PACKAGES += \
+    android.software.credentials.prebuilt.xml
 
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
@@ -142,3 +150,6 @@ _my_paths := \
   $(TARGET_COPY_OUT_SYSTEM)/ \
 
 $(call require-artifacts-in-path, $(_my_paths), $(_my_allowed_list))
+
+# Product config map to toggle between sources and prebuilts of required mainline modules
+PRODUCT_RELEASE_CONFIG_MAPS += $(wildcard vendor/google_shared/build/release/gms_mainline/required/release_config_map.textproto)

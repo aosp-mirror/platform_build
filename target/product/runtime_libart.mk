@@ -175,15 +175,9 @@ PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.usap_pool_size_min?=1 \
     dalvik.vm.usap_pool_refill_delay_ms?=3000
 
-# Allow dexopt files that are side-effects of already allowlisted files.
-# This is only necessary when ART is prebuilt.
-ifeq (false,$(ART_MODULE_BUILD_FROM_SOURCE))
-  PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
-      system/framework/%.art \
-      system/framework/%.oat \
-      system/framework/%.odex \
-      system/framework/%.vdex
-endif
-
 PRODUCT_SYSTEM_PROPERTIES += \
-    dalvik.vm.useartservice=true
+    dalvik.vm.useartservice=true \
+    dalvik.vm.enable_pr_dexopt=true
+
+# Copy preopted files from system_b on first boot.
+PRODUCT_SYSTEM_PROPERTIES += ro.cp_system_other_odex=1

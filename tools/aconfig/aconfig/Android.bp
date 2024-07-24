@@ -47,6 +47,7 @@ aconfig_declarations {
 aconfig_declarations {
     name: "aconfig.test.exported.flags",
     package: "com.android.aconfig.test.exported",
+    exportable: true,
     container: "system",
     srcs: ["tests/test_exported.aconfig"],
 }
@@ -160,6 +161,9 @@ cc_test {
     shared_libs: [
         "server_configurable_flags",
     ],
+    defaults: [
+        "aconfig_lib_cc_static_link.defaults",
+    ],
     test_suites: ["general-tests"],
 }
 
@@ -174,6 +178,9 @@ cc_test {
     ],
     shared_libs: [
         "server_configurable_flags",
+    ],
+    defaults: [
+        "aconfig_lib_cc_static_link.defaults",
     ],
     test_suites: ["general-tests"],
 }
@@ -198,6 +205,9 @@ cc_test {
     shared_libs: [
         "server_configurable_flags",
     ],
+    defaults: [
+        "aconfig_lib_cc_static_link.defaults",
+    ],
     test_suites: ["general-tests"],
 }
 */
@@ -213,6 +223,9 @@ cc_test {
     ],
     shared_libs: [
         "server_configurable_flags",
+    ],
+    defaults: [
+        "aconfig_lib_cc_static_link.defaults",
     ],
     test_suites: ["general-tests"],
 }

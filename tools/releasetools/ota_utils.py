@@ -1111,9 +1111,10 @@ def CopyTargetFilesDir(input_dir):
       relative_path = path.removeprefix(input_dir).removeprefix("/")
       if not Fnmatch(relative_path, UNZIP_PATTERN):
         continue
-      if filename.endswith(".prop") or filename == "prop.default" or "/etc/vintf/" in relative_path:
-        target_path = os.path.join(
-            output_dir, relative_path)
-        os.makedirs(os.path.dirname(target_path), exist_ok=True)
-        shutil.copy(path, target_path)
+      target_path = os.path.join(
+          output_dir, relative_path)
+      if os.path.exists(target_path):
+        continue
+      os.makedirs(os.path.dirname(target_path), exist_ok=True)
+      shutil.copy(path, target_path)
   return output_dir

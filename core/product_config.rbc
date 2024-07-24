@@ -351,6 +351,7 @@ def _percolate_inherited(configs, cfg_name, cfg, children_names):
                 if cfg.get(attr, "") == "":
                     cfg[attr] = value
                     percolated_attrs[attr] = True
+                    child_cfg.pop(attr)
 
     for attr in _options.trace_variables:
         if attr in percolated_attrs:
@@ -360,7 +361,7 @@ def __move_items(to_list, from_cfg, attr):
     value = from_cfg.get(attr, [])
     if value:
         to_list.extend(value)
-        from_cfg[attr] = []
+        from_cfg.pop(attr)
 
 def _indirect(pcm_name):
     """Returns configuration item for the inherited module."""

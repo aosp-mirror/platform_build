@@ -24,7 +24,7 @@ LLNDK: libvulkan.so
 VNDK-SP: android.hardware.common-V2-ndk.so
 VNDK-SP: android.hardware.common.fmq-V1-ndk.so
 VNDK-SP: android.hardware.graphics.allocator-V2-ndk.so
-VNDK-SP: android.hardware.graphics.common-V4-ndk.so
+VNDK-SP: android.hardware.graphics.common-V5-ndk.so
 VNDK-SP: android.hardware.graphics.common@1.0.so
 VNDK-SP: android.hardware.graphics.common@1.1.so
 VNDK-SP: android.hardware.graphics.common@1.2.so
@@ -60,8 +60,8 @@ VNDK-SP: libutils.so
 VNDK-SP: libutilscallstack.so
 VNDK-SP: libz.so
 VNDK-core: android.frameworks.cameraservice.common-V1-ndk.so
-VNDK-core: android.frameworks.cameraservice.device-V1-ndk.so
-VNDK-core: android.frameworks.cameraservice.service-V1-ndk.so
+VNDK-core: android.frameworks.cameraservice.device-V2-ndk.so
+VNDK-core: android.frameworks.cameraservice.service-V2-ndk.so
 VNDK-core: android.hardware.audio.common@2.0.so
 VNDK-core: android.hardware.configstore-utils.so
 VNDK-core: android.hardware.configstore@1.0.so
@@ -138,6 +138,7 @@ VNDK-core: libwifi-system-iface.so
 VNDK-core: libxml2.so
 VNDK-core: libyuv.so
 VNDK-core: libziparchive.so
+VNDK-core: server_configurable_flags.so
 VNDK-private: libblas.so
 VNDK-private: libcompiler_rt.so
 VNDK-private: libft2.so
@@ -208,3 +209,4 @@ VNDK-product: libxml2.so
 VNDK-product: libyuv.so
 VNDK-product: libz.so
 VNDK-product: libziparchive.so
+VNDK-product: server_configurable_flags.so

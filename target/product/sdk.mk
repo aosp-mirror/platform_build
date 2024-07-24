@@ -17,6 +17,9 @@
 # This is a simple product that uses configures the minimum amount
 # needed to build the SDK (without the emulator).
 
+# Ensure all trunk-stable flags are available.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/build_variables.mk)
+
 # In order to build the bootclasspath sources, the bootclasspath needs to
 # be setup via default_art_config.mk. The sources only really make sense
 # together with a device (e.g. the emulator). So if the SDK sources change
@@ -30,3 +33,13 @@ PRODUCT_BRAND := Android
 PRODUCT_DEVICE := mainline_x86
 
 PRODUCT_BUILD_FROM_SOURCE_STUB := true
+
+# Use sources of mainline modules
+PRODUCT_MODULE_BUILD_FROM_SOURCE := true
+
+ifeq ($(WITHOUT_CHECK_API),true)
+  $(error WITHOUT_CHECK_API cannot be set to true for SDK product builds)
+endif
+
+# Include Wear flag values so that Wear-related APIs are build in sdks.
+PRODUCT_RELEASE_CONFIG_MAPS += $(wildcard vendor/google_shared/wear/release/release_config_map.textproto)

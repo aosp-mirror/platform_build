@@ -244,7 +244,6 @@ python_library_host {
         "boot_signer",
         "brotli",
         "bsdiff",
-        "imgdiff",
         "lz4",
         "mkbootfs",
         "signapk",
@@ -308,7 +307,6 @@ python_defaults {
         "brotli",
         "bsdiff",
         "deapexer",
-        "imgdiff",
         "lz4",
         "mkbootfs",
         "signapk",
@@ -634,7 +632,6 @@ python_defaults {
     data: [
         "testdata/**/*",
         ":com.android.apex.compressed.v1",
-        ":com.android.apex.compressed.v1_original",
         ":com.android.apex.vendor.foo.with_vintf"
     ],
     target: {

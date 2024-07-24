@@ -18,7 +18,7 @@ pub mod flag_table;
 pub mod flag_value;
 pub mod package_table;
 
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use std::collections::{HashMap, HashSet};
 
 use crate::storage::{
@@ -26,16 +26,16 @@ use crate::storage::{
     package_table::create_package_table,
 };
 use aconfig_protos::{ProtoParsedFlag, ProtoParsedFlags};
-use aconfig_storage_file::StorageFileSelection;
+use aconfig_storage_file::StorageFileType;
 
 pub struct FlagPackage<'a> {
     pub package_name: &'a str,
     pub package_id: u32,
     pub flag_names: HashSet<&'a str>,
     pub boolean_flags: Vec<&'a ProtoParsedFlag>,
-    // offset of the first boolean flag in this flag package with respect to the start of
-    // boolean flag value array in the flag value file
-    pub boolean_offset: u32,
+    // The index of the first boolean flag in this aconfig package among all boolean
+    // flags in this container.
+    pub boolean_start_index: u32,
 }
 
 impl<'a> FlagPackage<'a> {
@@ -45,7 +45,7 @@ impl<'a> FlagPackage<'a> {
             package_id,
             flag_names: HashSet::new(),
             boolean_flags: vec![],
-            boolean_offset: 0,
+            boolean_start_index: 0,
         }
     }
 
@@ -73,12 +73,11 @@ where
         }
     }
 
-    // calculate package flag value start offset, in flag value file, each boolean
-    // is stored as a single byte
-    let mut boolean_offset = 0;
+    // cacluate boolean flag start index for each package
+    let mut boolean_start_index = 0;
     for p in packages.iter_mut() {
-        p.boolean_offset = boolean_offset;
-        boolean_offset += p.boolean_flags.len() as u32;
+        p.boolean_start_index = boolean_start_index;
+        boolean_start_index += p.boolean_flags.len() as u32;
     }
 
     packages
@@ -87,7 +86,7 @@ where
 pub fn generate_storage_file<'a, I>(
     container: &str,
     parsed_flags_vec_iter: I,
-    file: &StorageFileSelection,
+    file: &StorageFileType,
 ) -> Result<Vec<u8>>
 where
     I: Iterator<Item = &'a ProtoParsedFlags>,
@@ -95,18 +94,19 @@ where
     let packages = group_flags_by_package(parsed_flags_vec_iter);
 
     match file {
-        StorageFileSelection::PackageMap => {
+        StorageFileType::PackageMap => {
             let package_table = create_package_table(container, &packages)?;
-            Ok(package_table.as_bytes())
+            Ok(package_table.into_bytes())
         }
-        StorageFileSelection::FlagMap => {
+        StorageFileType::FlagMap => {
             let flag_table = create_flag_table(container, &packages)?;
-            Ok(flag_table.as_bytes())
+            Ok(flag_table.into_bytes())
         }
-        StorageFileSelection::FlagVal => {
+        StorageFileType::FlagVal => {
             let flag_value = create_flag_value(container, &packages)?;
-            Ok(flag_value.as_bytes())
+            Ok(flag_value.into_bytes())
         }
+        _ => Err(anyhow!("aconfig does not support the creation of this storage file type")),
     }
 }
 
@@ -121,30 +121,38 @@ mod tests {
                 "com.android.aconfig.storage.test_1",
                 "storage_test_1.aconfig",
                 include_bytes!("../../tests/storage_test_1.aconfig").as_slice(),
+                "storage_test_1.value",
+                include_bytes!("../../tests/storage_test_1.values").as_slice(),
             ),
             (
                 "com.android.aconfig.storage.test_2",
                 "storage_test_2.aconfig",
                 include_bytes!("../../tests/storage_test_2.aconfig").as_slice(),
+                "storage_test_2.value",
+                include_bytes!("../../tests/storage_test_2.values").as_slice(),
             ),
             (
                 "com.android.aconfig.storage.test_4",
                 "storage_test_4.aconfig",
                 include_bytes!("../../tests/storage_test_4.aconfig").as_slice(),
+                "storage_test_4.value",
+                include_bytes!("../../tests/storage_test_4.values").as_slice(),
             ),
         ];
-
         aconfig_files
             .into_iter()
-            .map(|(pkg, file, content)| {
+            .map(|(pkg, aconfig_file, aconfig_content, value_file, value_content)| {
                 let bytes = crate::commands::parse_flags(
                     pkg,
                     Some("system"),
                     vec![Input {
-                        source: format!("tests/{}", file).to_string(),
-                        reader: Box::new(content),
+                        source: format!("tests/{}", aconfig_file).to_string(),
+                        reader: Box::new(aconfig_content),
                     }],
-                    vec![],
+                    vec![Input {
+                        source: format!("tests/{}", value_file).to_string(),
+                        reader: Box::new(value_content),
+                    }],
                     crate::commands::DEFAULT_FLAG_PERMISSION,
                 )
                 .unwrap();
@@ -175,21 +183,21 @@ mod tests {
         assert!(packages[0].flag_names.contains("enabled_rw"));
         assert!(packages[0].flag_names.contains("disabled_rw"));
         assert!(packages[0].flag_names.contains("enabled_ro"));
-        assert_eq!(packages[0].boolean_offset, 0);
+        assert_eq!(packages[0].boolean_start_index, 0);
 
         assert_eq!(packages[1].package_name, "com.android.aconfig.storage.test_2");
         assert_eq!(packages[1].package_id, 1);
         assert_eq!(packages[1].flag_names.len(), 3);
         assert!(packages[1].flag_names.contains("enabled_ro"));
-        assert!(packages[1].flag_names.contains("disabled_ro"));
+        assert!(packages[1].flag_names.contains("disabled_rw"));
         assert!(packages[1].flag_names.contains("enabled_fixed_ro"));
-        assert_eq!(packages[1].boolean_offset, 3);
+        assert_eq!(packages[1].boolean_start_index, 3);
 
         assert_eq!(packages[2].package_name, "com.android.aconfig.storage.test_4");
         assert_eq!(packages[2].package_id, 2);
         assert_eq!(packages[2].flag_names.len(), 2);
-        assert!(packages[2].flag_names.contains("enabled_ro"));
+        assert!(packages[2].flag_names.contains("enabled_rw"));
         assert!(packages[2].flag_names.contains("enabled_fixed_ro"));
-        assert_eq!(packages[2].boolean_offset, 6);
+        assert_eq!(packages[2].boolean_start_index, 6);
     }
 }

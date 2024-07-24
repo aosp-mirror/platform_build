@@ -126,7 +126,7 @@ $(full_target_img): PRIVATE_STAGING_DIR := $(call append-path,$(staging),$(addon
 $(full_target_img): $(full_target) $(addon_img_source_prop) | $(SOONG_ZIP)
 	@echo Packaging SDK Addon System-Image: $@
 	$(hide) mkdir -p $(dir $@)
-	cp -R $(PRODUCT_OUT)/data $(PRIVATE_STAGING_DIR)/data
+	cp -R $(PRODUCT_OUT)/data $(PRIVATE_STAGING_DIR)
 	$(hide) $(SOONG_ZIP) -o $@ -C $(dir $(PRIVATE_STAGING_DIR)) -D $(PRIVATE_STAGING_DIR)
 
 

@@ -490,7 +490,6 @@ class BuildInfo(object):
       return -1
 
     props = [
-        "ro.board.api_level",
         "ro.board.first_api_level",
         "ro.product.first_api_level",
     ]
@@ -955,6 +954,13 @@ def LoadInfoDict(input_file, repacking=False):
   d["build.prop"] = d["system.build.prop"]
 
   if d.get("avb_enable") == "true":
+    build_info = BuildInfo(d, use_legacy_id=True)
+    # Set up the salt for partitions without build.prop
+    if build_info.fingerprint:
+      if "fingerprint" not in d:
+        d["fingerprint"] = build_info.fingerprint
+      if "avb_salt" not in d:
+        d["avb_salt"] = sha256(build_info.fingerprint.encode()).hexdigest()
     # Set the vbmeta digest if exists
     try:
       d["vbmeta_digest"] = read_helper("META/vbmeta_digest.txt").rstrip()
@@ -1313,7 +1319,11 @@ def MergeDynamicPartitionInfoDicts(framework_dict, vendor_dict):
     key = "super_%s_partition_list" % partition_group
     merged_dict[key] = uniq_concat(
         framework_dict.get(key, ""), vendor_dict.get(key, ""))
-
+  # in the case that vendor is on s build, but is taking a v3 -> v3 vabc ota, we want to fallback to v2
+  if "vabc_cow_version" not in vendor_dict or "vabc_cow_version" not in framework_dict:
+    merged_dict["vabc_cow_version"] = '2'
+  else:
+    merged_dict["vabc_cow_version"] = min(vendor_dict["vabc_cow_version"], framework_dict["vabc_cow_version"])
   # Various other flags should be copied from the vendor dict, if defined.
   for key in ("virtual_ab", "virtual_ab_retrofit", "lpmake",
               "super_metadata_device", "super_partition_error_limit",
@@ -1513,7 +1523,7 @@ def GetAvbPartitionsArg(partitions,
       AVB_ARG_NAME_CHAIN_PARTITION: []
   }
 
-  for partition, path in partitions.items():
+  for partition, path in sorted(partitions.items()):
     avb_partition_arg = GetAvbPartitionArg(partition, path, info_dict)
     if not avb_partition_arg:
       continue
@@ -1601,7 +1611,7 @@ def BuildVBMeta(image_path, partitions, name, needed_partitions,
       "avb_custom_vbmeta_images_partition_list", "").strip().split()]
 
   avb_partitions = {}
-  for partition, path in partitions.items():
+  for partition, path in sorted(partitions.items()):
     if partition not in needed_partitions:
       continue
     assert (partition in AVB_PARTITIONS or
@@ -1774,12 +1784,7 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file,
   if has_ramdisk:
     cmd.extend(["--ramdisk", ramdisk_img.name])
 
-  img_unsigned = None
-  if info_dict.get("vboot"):
-    img_unsigned = tempfile.NamedTemporaryFile()
-    cmd.extend(["--output", img_unsigned.name])
-  else:
-    cmd.extend(["--output", img.name])
+  cmd.extend(["--output", img.name])
 
   if partition_name == "recovery":
     if info_dict.get("include_recovery_dtbo") == "true":
@@ -1790,28 +1795,6 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file,
       cmd.extend(["--recovery_acpio", fn])
 
   RunAndCheckOutput(cmd)
-
-  # Sign the image if vboot is non-empty.
-  if info_dict.get("vboot"):
-    path = "/" + partition_name
-    img_keyblock = tempfile.NamedTemporaryFile()
-    # We have switched from the prebuilt futility binary to using the tool
-    # (futility-host) built from the source. Override the setting in the old
-    # TF.zip.
-    futility = info_dict["futility"]
-    if futility.startswith("prebuilts/"):
-      futility = "futility-host"
-    cmd = [info_dict["vboot_signer_cmd"], futility,
-           img_unsigned.name, info_dict["vboot_key"] + ".vbpubk",
-           info_dict["vboot_key"] + ".vbprivk",
-           info_dict["vboot_subkey"] + ".vbprivk",
-           img_keyblock.name,
-           img.name]
-    RunAndCheckOutput(cmd)
-
-    # Clean up the temp files.
-    img_unsigned.close()
-    img_keyblock.close()
 
   # AVB: if enabled, calculate and add hash to boot.img or recovery.img.
   if info_dict.get("avb_enable") == "true":
@@ -1961,7 +1944,7 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
   return None
 
 
-def _BuildVendorBootImage(sourcedir, partition_name, info_dict=None):
+def _BuildVendorBootImage(sourcedir, fs_config_file, partition_name, info_dict=None):
   """Build a vendor boot image from the specified sourcedir.
 
   Take a ramdisk, dtb, and vendor_cmdline from the input (in 'sourcedir'), and
@@ -1977,7 +1960,7 @@ def _BuildVendorBootImage(sourcedir, partition_name, info_dict=None):
   img = tempfile.NamedTemporaryFile()
 
   ramdisk_format = GetRamdiskFormat(info_dict)
-  ramdisk_img = _MakeRamdisk(sourcedir, ramdisk_format=ramdisk_format)
+  ramdisk_img = _MakeRamdisk(sourcedir, fs_config_file=fs_config_file, ramdisk_format=ramdisk_format)
 
   # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
   mkbootimg = os.getenv('MKBOOTIMG') or "mkbootimg"
@@ -2091,8 +2074,9 @@ def GetVendorBootImage(name, prebuilt_name, unpack_dir, tree_subdir,
   if info_dict is None:
     info_dict = OPTIONS.info_dict
 
+  fs_config = "META/" + tree_subdir.lower() + "_filesystem_config.txt"
   data = _BuildVendorBootImage(
-      os.path.join(unpack_dir, tree_subdir), "vendor_boot", info_dict)
+      os.path.join(unpack_dir, tree_subdir), os.path.join(unpack_dir, fs_config), "vendor_boot", info_dict)
   if data:
     return File(name, data)
   return None
@@ -2116,7 +2100,7 @@ def GetVendorKernelBootImage(name, prebuilt_name, unpack_dir, tree_subdir,
     info_dict = OPTIONS.info_dict
 
   data = _BuildVendorBootImage(
-      os.path.join(unpack_dir, tree_subdir), "vendor_kernel_boot", info_dict)
+      os.path.join(unpack_dir, tree_subdir), None, "vendor_kernel_boot", info_dict)
   if data:
     return File(name, data)
   return None
@@ -2456,7 +2440,7 @@ def GetMinSdkVersion(apk_name):
     m = re.match(r'(?:minSdkVersion|sdkVersion):\'([^\']*)\'', line)
     if m:
       return m.group(1)
-  raise ExternalError("No minSdkVersion returned by aapt2")
+  raise ExternalError("No minSdkVersion returned by aapt2 for apk: {}".format(apk_name))
 
 
 def GetMinSdkVersionInt(apk_name, codename_to_api_level_map):
@@ -2804,6 +2788,7 @@ def ParseOptions(argv,
             break
         elif handler(o, a):
           success = True
+          break
       if not success:
         raise ValueError("unknown option \"%s\"" % (o,))
 

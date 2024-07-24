@@ -393,8 +393,8 @@ endif
 
 logtags_sources := $(filter %.logtags,$(LOCAL_SRC_FILES)) $(LOCAL_LOGTAGS_FILES)
 
-ifneq ($(strip $(logtags_sources)),)
-event_log_tags := $(foreach f,$(addprefix $(LOCAL_PATH)/,$(logtags_sources)),$(call clean-path,$(f)))
+ifneq ($(strip $(logtags_sources) $(LOCAL_SOONG_LOGTAGS_FILES)),)
+event_log_tags := $(foreach f,$(LOCAL_SOONG_LOGTAGS_FILES) $(addprefix $(LOCAL_PATH)/,$(logtags_sources)),$(call clean-path,$(f)))
 else
 event_log_tags :=
 endif
@@ -694,6 +694,16 @@ endif
 endif
 
 ###########################################################
+## SOONG INSTALL PAIRS
+###########################################################
+# Declare dependencies for LOCAL_SOONG_INSTALL_PAIRS in soong to the module it relies on.
+ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
+$(my_all_targets): \
+    $(foreach f, $(LOCAL_SOONG_INSTALL_PAIRS),\
+      $(word 2,$(subst :,$(space),$(f))))
+endif
+
+###########################################################
 ## Compatibility suite files.
 ###########################################################
 ifdef LOCAL_COMPATIBILITY_SUITE
@@ -706,7 +716,25 @@ else
   test_config := $(wildcard $(LOCAL_PATH)/AndroidTest.xml)
 endif
 
+ifeq ($(EXCLUDE_MCTS),true)
+ifeq (,$(filter $(LOCAL_MODULE),$(mcts_whitelist)))
+  ifneq (,$(test_config))
+    ifneq (,$(filter mcts-%,$(LOCAL_COMPATIBILITY_SUITE)))
+      LOCAL_COMPATIBILITY_SUITE := $(filter-out cts,$(LOCAL_COMPATIBILITY_SUITE))
+    endif
+  endif
+endif
+endif
+
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
+
+ifeq ($(EXCLUDE_MCTS),true)
+  ifneq (,$(test_config))
+    ifneq (,$(filter mcts-%,$(LOCAL_COMPATIBILITY_SUITE)))
+      LOCAL_COMPATIBILITY_SUITE := $(filter-out cts,$(LOCAL_COMPATIBILITY_SUITE))
+    endif
+  endif
+endif
 
 # If we are building a native test or benchmark and its stem variants are not defined,
 # separate the multiple architectures into subdirectories of the testcase folder.
@@ -750,6 +778,10 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
       $(LOCAL_BUILT_MODULE):$(dir)/$(my_installed_module_stem)))) \
   $(eval my_compat_dist_config_$(suite) := ))
 
+ifneq (,$(LOCAL_SOONG_CLASSES_JAR))
+    $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+      $(eval my_compat_api_map_$(suite) += $(LOCAL_SOONG_CLASSES_JAR)))
+endif
 
 # Auto-generate build config.
 ifeq (,$(test_config))
@@ -803,6 +835,12 @@ else
       $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
         $(s):$(dir)/$(n)))))
 
+  $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+     $(eval my_compat_api_map_$(suite) += $(foreach f, $(LOCAL_COMPATIBILITY_SUPPORT_FILES), \
+       $(eval p := $(subst :,$(space),$(f))) \
+       $(eval s := $(word 1,$(p))) \
+       $(if $(filter %.apk,$(s)) $(filter %.jar,$(s)),$(s),))))
+
   ifneq (,$(test_config))
     $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
       $(eval my_compat_dist_config_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
@@ -845,7 +883,9 @@ $(foreach pair, $(my_test_data_file_pairs), \
       $(call filter-copy-pair,$(src_path),$(call append-path,$(dir),$(file)),$(my_installed_test_data)))) \
     $(eval my_compat_dist_test_data_$(suite) += \
       $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
-        $(filter $(my_installed_test_data),$(call append-path,$(dir),$(file)))))))
+        $(filter $(my_installed_test_data),$(call append-path,$(dir),$(file))))) \
+    $(eval my_compat_api_map_$(suite) += \
+      $(if $(filter %.apk,$(src_path)) $(filter %.jar,$(src_path)),$(src_path),))))
 endif
 else
 ifneq ($(my_test_data_file_pairs),)
@@ -855,7 +895,9 @@ $(foreach pair, $(my_test_data_file_pairs), \
   $(eval file := $(word 2,$(parts))) \
   $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
     $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
-      $(src_path):$(call append-path,$(dir),$(file))))))
+      $(src_path):$(call append-path,$(dir),$(file)))) \
+    $(eval my_compat_api_map_$(suite) += \
+      $(if $(filter %.apk,$(src_path)) $(filter %.jar,$(src_path)),$(src_path),))))
 endif
 endif
 
@@ -867,7 +909,8 @@ is_native :=
 $(call create-suite-dependencies)
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval my_compat_dist_config_$(suite) := ) \
-  $(eval my_compat_dist_test_data_$(suite) := ))
+  $(eval my_compat_dist_test_data_$(suite) := ) \
+  $(eval my_compat_api_map_$(suite) := ))
 
 endif  # LOCAL_UNINSTALLABLE_MODULE
 
@@ -932,6 +975,8 @@ ALL_MODULES.$(my_register_name).BUILT := \
     $(ALL_MODULES.$(my_register_name).BUILT) $(LOCAL_BUILT_MODULE)
 ALL_MODULES.$(my_register_name).SOONG_MODULE_TYPE := \
     $(ALL_MODULES.$(my_register_name).SOONG_MODULE_TYPE) $(LOCAL_SOONG_MODULE_TYPE)
+ALL_MODULES.$(my_register_name).IS_SOONG_MODULE := \
+    $(if $(filter $(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK)),true)
 ifndef LOCAL_IS_HOST_MODULE
 ALL_MODULES.$(my_register_name).TARGET_BUILT := \
     $(ALL_MODULES.$(my_register_name).TARGET_BUILT) $(LOCAL_BUILT_MODULE)
@@ -1022,6 +1067,11 @@ ifdef LOCAL_ACONFIG_FILES
       $(ALL_MODULES.$(my_register_name).ACONFIG_FILES) $(LOCAL_ACONFIG_FILES)
 endif
 
+ifdef LOCAL_FILESYSTEM_FILELIST
+  ALL_MODULES.$(my_register_name).FILESYSTEM_FILELIST := \
+      $(ALL_MODULES.$(my_register_name).FILESYSTEM_FILELIST) $(LOCAL_FILESYSTEM_FILELIST)
+endif
+
 ifndef LOCAL_SOONG_MODULE_INFO_JSON
   ALL_MAKE_MODULE_INFO_JSON_MODULES += $(my_register_name)
   ALL_MODULES.$(my_register_name).SHARED_LIBS := \
@@ -1090,6 +1140,7 @@ ifndef LOCAL_SOONG_MODULE_INFO_JSON
     $(LOCAL_JNI_SHARED_LIBRARIES)
 
 endif
+ALL_MODULES.$(my_register_name).TEST_MODULE_CONFIG_BASE := $(LOCAL_TEST_MODULE_CONFIG_BASE)
 
 ##########################################################################
 ## When compiling against API imported module, use API import stub
@@ -1231,6 +1282,8 @@ $(LOCAL_MODULE)-$(h_or_hc_or_t)$(my_32_64_bit_suffix) : $(my_all_targets)
 .PHONY: $(LOCAL_MODULE)-$(h_or_hc_or_t)$(my_32_64_bit_suffix)
 endif
 endif
+
+$(if $(my_register_name),$(eval ALL_MODULES.$(my_register_name).MAKE_MODULE_TYPE:=base_rules))
 
 ###########################################################
 # Ensure privileged applications always have LOCAL_PRIVILEGED_MODULE

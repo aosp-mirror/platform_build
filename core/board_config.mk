@@ -274,7 +274,7 @@ endif
 
 ifneq ($(MALLOC_IMPL),)
   $(warning *** Unsupported option MALLOC_IMPL defined by board config: $(board_config_mk).)
-  $(error Use `MALLOC_SVELTE := true` to configure jemalloc for low-memory)
+  $(error Use `MALLOC_LOW_MEMORY := true` to use low-memory allocator config)
 endif
 board_config_mk :=
 
@@ -286,6 +286,9 @@ $(foreach var,$(_board_true_false_vars), \
     $(error Valid values of $(var) are "true", "false", and "". Not "$($(var))")))
 
 include $(BUILD_SYSTEM)/board_config_wifi.mk
+
+# Set up soong config for "soong_config_value_variable".
+-include vendor/google/build/soong/soong_config_namespace/camera.mk
 
 # Default *_CPU_VARIANT_RUNTIME to CPU_VARIANT if unspecified.
 TARGET_CPU_VARIANT_RUNTIME := $(or $(TARGET_CPU_VARIANT_RUNTIME),$(TARGET_CPU_VARIANT))
@@ -920,7 +923,9 @@ endif
 ###########################################
 # Ensure consistency among TARGET_RECOVERY_UPDATER_LIBS, AB_OTA_UPDATER, and PRODUCT_OTA_FORCE_NON_AB_PACKAGE.
 TARGET_RECOVERY_UPDATER_LIBS ?=
-AB_OTA_UPDATER ?=
+ifeq ($(AB_OTA_UPDATER),)
+AB_OTA_UPDATER := true
+endif
 .KATI_READONLY := TARGET_RECOVERY_UPDATER_LIBS AB_OTA_UPDATER
 
 # Ensure that if PRODUCT_OTA_FORCE_NON_AB_PACKAGE == true, then AB_OTA_UPDATER must be true
@@ -946,6 +951,11 @@ ifneq ($(TARGET_OTA_ALLOW_NON_AB),true)
   endif
 endif
 
+# For Non A/B full OTA, disable brotli compression.
+ifeq ($(TARGET_OTA_ALLOW_NON_AB),true)
+  BOARD_NON_AB_OTA_DISABLE_COMPRESSION := true
+endif
+
 # Quick check for building generic OTA packages. Currently it only supports A/B OTAs.
 ifeq ($(PRODUCT_BUILD_GENERIC_OTA_PACKAGE),true)
   ifneq ($(AB_OTA_UPDATER),true)
@@ -964,15 +974,6 @@ define check_vndk_version
   $(eval vndk_path := prebuilts/vndk/v$(1)) \
   $(if $(wildcard $(vndk_path)/*/Android.bp),,$(error VNDK version $(1) not found))
 endef
-
-ifeq ($(KEEP_VNDK),true)
-ifeq ($(BOARD_VNDK_VERSION),$(PLATFORM_VNDK_VERSION))
-  $(error BOARD_VNDK_VERSION is equal to PLATFORM_VNDK_VERSION; use BOARD_VNDK_VERSION := current)
-endif
-ifneq ($(BOARD_VNDK_VERSION),current)
-  $(call check_vndk_version,$(BOARD_VNDK_VERSION))
-endif
-endif
 
 TARGET_VENDOR_TEST_SUFFIX := /vendor
 
@@ -993,7 +994,7 @@ endif
 # BOARD_API_LEVEL for vendor API surface
 ifdef RELEASE_BOARD_API_LEVEL
   ifdef BOARD_API_LEVEL
-    $(error BOARD_API_LEVEL must not set manully. The build system automatically sets this value.)
+    $(error BOARD_API_LEVEL must not be set manually. The build system automatically sets this value.)
   endif
   BOARD_API_LEVEL := $(RELEASE_BOARD_API_LEVEL)
   .KATI_READONLY := BOARD_API_LEVEL

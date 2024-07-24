@@ -6,16 +6,14 @@ rust_defaults {
     name: "aconfig_storage_file.defaults",
     edition: "2021",
     lints: "none",
-    srcs: ["src/lib.rs"],
     rustlibs: [
         "libanyhow",
-        "libaconfig_storage_protos",
-        "libonce_cell",
-        "libprotobuf",
-        "libtempfile",
-        "libmemmap2",
-        "libcxx",
         "libthiserror",
+        "libtempfile",
+        "libprotobuf",
+        "libclap",
+        "libcxx",
+        "libaconfig_storage_protos",
     ],
 }
 
@@ -24,38 +22,28 @@ rust_library {
     crate_name: "aconfig_storage_file",
     host_supported: true,
     defaults: ["aconfig_storage_file.defaults"],
+    srcs: ["src/lib.rs"],
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
+    min_sdk_version: "29",
+    vendor_available: true,
+    product_available: true,
 }
 
-genrule {
-    name: "ro.package.map",
-    out: ["tests/tmp.ro.package.map"],
-    srcs: ["tests/package.map"],
-    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
-}
-
-genrule {
-    name: "ro.flag.map",
-    out: ["tests/tmp.ro.flag.map"],
-    srcs: ["tests/flag.map"],
-    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
-}
-
-genrule {
-    name: "ro.flag.val",
-    out: ["tests/tmp.ro.flag.val"],
-    srcs: ["tests/flag.val"],
-    cmd: "rm -f $(out);cp -f $(in) $(out);chmod -w $(out)",
+rust_binary_host {
+    name: "aconfig-storage",
+    defaults: ["aconfig_storage_file.defaults"],
+    srcs: ["src/main.rs"],
+    rustlibs: ["libaconfig_storage_file"],
 }
 
 rust_test_host {
     name: "aconfig_storage_file.test",
     test_suites: ["general-tests"],
     defaults: ["aconfig_storage_file.defaults"],
-    data: [
-        "tests/package.map",
-        "tests/flag.map",
-        "tests/flag.val",
-    ],
+    srcs: ["src/lib.rs"],
 }
 
 rust_protobuf {
@@ -64,9 +52,16 @@ rust_protobuf {
     crate_name: "aconfig_storage_protos",
     source_stem: "aconfig_storage_protos",
     host_supported: true,
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
+    min_sdk_version: "29",
+    vendor_available: true,
+    product_available: true,
 }
 
-cc_library_static {
+cc_library {
     name: "libaconfig_storage_protos_cc",
     proto: {
         export_proto_headers: true,
@@ -78,39 +73,82 @@ cc_library_static {
         "//apex_available:anyapex",
     ],
     host_supported: true,
+    min_sdk_version: "29",
+    vendor_available: true,
+    product_available: true,
+    double_loadable: true,
 }
 
+// cxx source codegen from rust api
 genrule {
-    name: "libcxx_aconfig_storage_bridge_code",
+    name: "libcxx_aconfig_storage_file_bridge_code",
     tools: ["cxxbridge"],
     cmd: "$(location cxxbridge) $(in) > $(out)",
     srcs: ["src/lib.rs"],
     out: ["aconfig_storage/lib.rs.cc"],
 }
 
+// cxx header codegen from rust api
 genrule {
-    name: "libcxx_aconfig_storage_bridge_header",
+    name: "libcxx_aconfig_storage_file_bridge_header",
     tools: ["cxxbridge"],
     cmd: "$(location cxxbridge) $(in) --header > $(out)",
     srcs: ["src/lib.rs"],
     out: ["aconfig_storage/lib.rs.h"],
 }
 
+// a static cc lib based on generated code
 rust_ffi_static {
-    name: "libaconfig_storage_cxx_bridge",
-    crate_name: "aconfig_storage_cxx_bridge",
+    name: "libaconfig_storage_file_cxx_bridge",
+    crate_name: "aconfig_storage_file_cxx_bridge",
     host_supported: true,
+    vendor_available: true,
+    product_available: true,
+    srcs: ["src/lib.rs"],
     defaults: ["aconfig_storage_file.defaults"],
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
+    min_sdk_version: "29",
 }
 
-cc_library_static {
-    name: "libaconfig_storage_cc",
-    srcs: ["aconfig_storage.cpp"],
+// storage file parse api cc interface
+cc_library {
+    name: "libaconfig_storage_file_cc",
+    srcs: ["aconfig_storage_file.cpp"],
     generated_headers: [
         "cxx-bridge-header",
-        "libcxx_aconfig_storage_bridge_header"
+        "libcxx_aconfig_storage_file_bridge_header",
     ],
-    generated_sources: ["libcxx_aconfig_storage_bridge_code"],
-    whole_static_libs: ["libaconfig_storage_cxx_bridge"],
+    generated_sources: ["libcxx_aconfig_storage_file_bridge_code"],
+    whole_static_libs: ["libaconfig_storage_file_cxx_bridge"],
     export_include_dirs: ["include"],
+    host_supported: true,
+    vendor_available: true,
+    product_available: true,
+    shared_libs: [
+        "libbase",
+    ],
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
+    min_sdk_version: "29",
+    double_loadable: true,
+}
+
+// storage file parse api java cc_library
+java_library {
+    name: "aconfig_storage_file_java",
+    srcs: [
+        "srcs/**/*.java",
+    ],
+    sdk_version: "core_current",
+    min_sdk_version: "29",
+    host_supported: true,
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
 }

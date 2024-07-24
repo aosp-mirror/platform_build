@@ -172,6 +172,7 @@ $(KATI_obsolete_var PRODUCT_VERITY_SIGNING_KEY,VB 1.0 and related variables are 
 $(KATI_obsolete_var BOARD_PREBUILT_PVMFWIMAGE,pvmfw.bin is now built in AOSP and custom versions are no longer supported)
 $(KATI_obsolete_var BUILDING_PVMFW_IMAGE,BUILDING_PVMFW_IMAGE is no longer used)
 $(KATI_obsolete_var BOARD_BUILD_SYSTEM_ROOT_IMAGE)
+$(KATI_obsolete_var FS_GET_STATS)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -315,6 +316,19 @@ $(call soong_config_define_internal,$1,$2) \
 $(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(strip $3))
 endef
 
+# soong_config_set_bool is the same as soong_config_set, but it will
+# also type the variable as a bool, so that when using select() expressions
+# in blueprint files they can use boolean values instead of strings.
+# It will only accept "true" for its value, any other value will be
+# treated as false.
+# $1 is the namespace. $2 is the variable name. $3 is the variable value.
+# Ex: $(call soong_config_set_bool,acme,COOL_FEATURE,true)
+define soong_config_set_bool
+$(call soong_config_define_internal,$1,$2) \
+$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(filter true,$3))
+$(eval SOONG_CONFIG_TYPE_$(strip $1)_$(strip $2):=bool)
+endef
+
 # soong_config_append appends to the value of the variable in the given Soong
 # config namespace. If the variable does not exist, it will be defined. If the
 # namespace does not  exist, it will be defined.
@@ -406,35 +420,32 @@ ifdef PRODUCT_MAX_PAGE_SIZE_SUPPORTED
 else ifeq ($(strip $(call is-low-mem-device)),true)
   # Low memory device will have 4096 binary alignment.
   TARGET_MAX_PAGE_SIZE_SUPPORTED := 4096
-else
-  # The default binary alignment for userspace is 4096.
+else ifeq ($(call math_lt,$(VSR_VENDOR_API_LEVEL),34),true)
   TARGET_MAX_PAGE_SIZE_SUPPORTED := 4096
-  # When VSR vendor API level >= 34, binary alignment will be 65536.
-  ifeq ($(call math_gt_or_eq,$(VSR_VENDOR_API_LEVEL),34),true)
-    ifeq ($(TARGET_ARCH),arm64)
-      TARGET_MAX_PAGE_SIZE_SUPPORTED := 65536
-    endif
-  endif
+else ifeq (,$(filter arm64 x86_64,$(TARGET_ARCH)))
+  # TARGET_MAX_PAGE_SIZE_SUPPORTED > 4096 is only supported in arm64 and
+  # x86_64 targets.
+  TARGET_MAX_PAGE_SIZE_SUPPORTED := 4096
+else
+  # The default binary alignment for userspace is 16384.
+  TARGET_MAX_PAGE_SIZE_SUPPORTED := 16384
 endif
 .KATI_READONLY := TARGET_MAX_PAGE_SIZE_SUPPORTED
 
-# Only arm64 and x86_64 archs supports TARGET_MAX_PAGE_SIZE_SUPPORTED greater than 4096.
-ifneq ($(TARGET_MAX_PAGE_SIZE_SUPPORTED),4096)
-  ifeq (,$(filter arm64 x86_64,$(TARGET_ARCH)))
-    $(error TARGET_MAX_PAGE_SIZE_SUPPORTED=$(TARGET_MAX_PAGE_SIZE_SUPPORTED) is greater than 4096. Only supported in arm64 and x86_64 archs)
-  endif
+ifdef PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE
+  TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE := $(PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE)
+else
+  TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE := false
 endif
+.KATI_READONLY := TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE
 
-# Boolean variable determining if AOSP is page size agnostic. This means
-# that AOSP can use a kernel configured with 4k/16k/64k PAGE SIZES.
-TARGET_NO_BIONIC_PAGE_SIZE_MACRO := false
+# Boolean variable determining if AOSP relies on bionic's PAGE_SIZE macro.
 ifdef PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO
   TARGET_NO_BIONIC_PAGE_SIZE_MACRO := $(PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO)
-  ifeq ($(TARGET_NO_BIONIC_PAGE_SIZE_MACRO),true)
-      ifneq ($(TARGET_MAX_PAGE_SIZE_SUPPORTED),65536)
-          $(error TARGET_MAX_PAGE_SIZE_SUPPORTED has to be 65536 to support page size agnostic)
-      endif
-  endif
+else ifeq ($(call math_lt,$(VSR_VENDOR_API_LEVEL),35),true)
+  TARGET_NO_BIONIC_PAGE_SIZE_MACRO := false
+else
+  TARGET_NO_BIONIC_PAGE_SIZE_MACRO := true
 endif
 .KATI_READONLY := TARGET_NO_BIONIC_PAGE_SIZE_MACRO
 
@@ -518,7 +529,6 @@ include $(BUILD_SYSTEM)/combo/javac.mk
 
 ifeq ($(CALLED_FROM_SETUP),true)
 include $(BUILD_SYSTEM)/ccache.mk
-include $(BUILD_SYSTEM)/goma.mk
 include $(BUILD_SYSTEM)/rbe.mk
 endif
 
@@ -612,8 +622,6 @@ else
 prebuilt_build_tools_bin := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/asan/bin
 endif
 
-USE_PREBUILT_SDK_TOOLS_IN_PLACE := true
-
 # Work around for b/68406220
 # This should match the soong version.
 USE_D8 := true
@@ -679,18 +687,12 @@ MKBOOTIMG := $(HOST_OUT_EXECUTABLES)/mkbootimg$(HOST_EXECUTABLE_SUFFIX)
 else
 MKBOOTIMG := $(BOARD_CUSTOM_MKBOOTIMG)
 endif
-ifeq (,$(strip $(BOARD_CUSTOM_BPTTOOL)))
-BPTTOOL := $(HOST_OUT_EXECUTABLES)/bpttool$(HOST_EXECUTABLE_SUFFIX)
-else
-BPTTOOL := $(BOARD_CUSTOM_BPTTOOL)
-endif
 ifeq (,$(strip $(BOARD_CUSTOM_AVBTOOL)))
 AVBTOOL := $(HOST_OUT_EXECUTABLES)/avbtool$(HOST_EXECUTABLE_SUFFIX)
 else
 AVBTOOL := $(BOARD_CUSTOM_AVBTOOL)
 endif
 APICHECK := $(HOST_OUT_JAVA_LIBRARIES)/metalava$(COMMON_JAVA_PACKAGE_SUFFIX)
-FS_GET_STATS := $(HOST_OUT_EXECUTABLES)/fs_get_stats$(HOST_EXECUTABLE_SUFFIX)
 MKEXTUSERIMG := $(HOST_OUT_EXECUTABLES)/mkuserimg_mke2fs
 MKE2FS_CONF := system/extras/ext4_utils/mke2fs.conf
 MKEROFS := $(HOST_OUT_EXECUTABLES)/mkfs.erofs
@@ -729,8 +731,6 @@ APPEND2SIMG := $(HOST_OUT_EXECUTABLES)/append2simg
 VERITY_SIGNER := $(HOST_OUT_EXECUTABLES)/verity_signer
 BUILD_VERITY_METADATA := $(HOST_OUT_EXECUTABLES)/build_verity_metadata
 BUILD_VERITY_TREE := $(HOST_OUT_EXECUTABLES)/build_verity_tree
-FUTILITY := $(HOST_OUT_EXECUTABLES)/futility-host
-VBOOT_SIGNER := $(HOST_OUT_EXECUTABLES)/vboot_signer
 
 DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump$(BUILD_EXECUTABLE_SUFFIX)
 PROFMAN := $(HOST_OUT_EXECUTABLES)/profman
@@ -839,9 +839,6 @@ ifdef PRODUCT_SHIPPING_API_LEVEL
   else
     min_systemsdk_version := $(PRODUCT_SHIPPING_API_LEVEL)
   endif
-  ifneq ($(call numbers_less_than,$(min_systemsdk_version),$(BOARD_SYSTEMSDK_VERSIONS)),)
-    $(error BOARD_SYSTEMSDK_VERSIONS ($(BOARD_SYSTEMSDK_VERSIONS)) must all be greater than or equal to BOARD_API_LEVEL, BOARD_SHIPPING_API_LEVEL or PRODUCT_SHIPPING_API_LEVEL ($(min_systemsdk_version)))
-  endif
   ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),29),)
     ifneq ($(BOARD_OTA_FRAMEWORK_VBMETA_VERSION_OVERRIDE),)
       $(error When PRODUCT_SHIPPING_API_LEVEL >= 29, BOARD_OTA_FRAMEWORK_VBMETA_VERSION_OVERRIDE cannot be set)
@@ -885,6 +882,7 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := $(filter-out $(PLATFORM_SEPOLICY_VERSION), 
     32.0 \
     33.0 \
     34.0 \
+    202404 \
     )
 
 .KATI_READONLY := \
@@ -1248,14 +1246,22 @@ BUILD_WARNING_BAD_OPTIONAL_USES_LIBS_ALLOWLIST := LegacyCamera Gallery2
 # in the source tree.
 dont_bother_goals := out product-graph
 
+include $(BUILD_SYSTEM)/sysprop_config.mk
+
 # Make ANDROID Soong config variables visible to Android.mk files, for
 # consistency with those defined in BoardConfig.mk files.
 include $(BUILD_SYSTEM)/android_soong_config_vars.mk
+
+SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.$(TARGET_PRODUCT).variables
+SOONG_EXTRA_VARIABLES := $(SOONG_OUT_DIR)/soong.$(TARGET_PRODUCT).extra.variables
 
 ifeq ($(CALLED_FROM_SETUP),true)
 include $(BUILD_SYSTEM)/ninja_config.mk
 include $(BUILD_SYSTEM)/soong_config.mk
 endif
+
+SOONG_VARIABLES :=
+SOONG_EXTRA_VARIABLES :=
 
 -include external/ltp/android/ltp_package_list.mk
 DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages)
@@ -1263,17 +1269,15 @@ DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages)
 
 include $(BUILD_SYSTEM)/dumpvar.mk
 
-ifneq ($(KEEP_VNDK),true)
 ifdef BOARD_VNDK_VERSION
 BOARD_VNDK_VERSION=
 endif
 ifdef PLATFORM_VNDK_VERSION
 PLATFORM_VNDK_VERSION=
 endif
-endif
 
 ifeq (true,$(FULL_SYSTEM_OPTIMIZE_JAVA))
-ifeq (,$(SYSTEM_OPTIMIZE_JAVA))
+ifeq (false,$(SYSTEM_OPTIMIZE_JAVA))
 $(error SYSTEM_OPTIMIZE_JAVA must be enabled when FULL_SYSTEM_OPTIMIZE_JAVA is enabled)
 endif
 endif

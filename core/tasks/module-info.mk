@@ -32,6 +32,7 @@ $(MODULE_INFO_JSON): $(SOONG_MODULE_INFO)
 			$(call write-optional-json-list, "auto_test_config", $(sort $(ALL_MODULES.$(m).auto_test_config))) \
 			$(call write-optional-json-list, "test_config", $(strip $(ALL_MODULES.$(m).TEST_CONFIG) $(ALL_MODULES.$(m).EXTRA_TEST_CONFIGS))) \
 			$(call write-optional-json-list, "dependencies", $(sort $(ALL_MODULES.$(m).ALL_DEPS))) \
+			$(call write-optional-json-list, "required", $(sort $(ALL_MODULES.$(m).REQUIRED_FROM_TARGET))) \
 			$(call write-optional-json-list, "shared_libs", $(sort $(ALL_MODULES.$(m).SHARED_LIBS))) \
 			$(call write-optional-json-list, "static_libs", $(sort $(ALL_MODULES.$(m).STATIC_LIBS))) \
 			$(call write-optional-json-list, "system_shared_libs", $(sort $(ALL_MODULES.$(m).SYSTEM_SHARED_LIBS))) \
@@ -39,7 +40,7 @@ $(MODULE_INFO_JSON): $(SOONG_MODULE_INFO)
 			$(call write-optional-json-list, "srcjars", $(sort $(ALL_MODULES.$(m).SRCJARS))) \
 			$(call write-optional-json-list, "classes_jar", $(sort $(ALL_MODULES.$(m).CLASSES_JAR))) \
 			$(call write-optional-json-list, "test_mainline_modules", $(sort $(ALL_MODULES.$(m).TEST_MAINLINE_MODULES))) \
-			$(call write-optional-json-bool, $(ALL_MODULES.$(m).IS_UNIT_TEST)) \
+			$(call write-optional-json-bool, "is_unit_test", $(ALL_MODULES.$(m).IS_UNIT_TEST)) \
 			$(call write-optional-json-list, "test_options_tags", $(sort $(ALL_MODULES.$(m).TEST_OPTIONS_TAGS))) \
 			$(call write-optional-json-list, "data", $(sort $(ALL_MODULES.$(m).TEST_DATA))) \
 			$(call write-optional-json-list, "runtime_dependencies", $(sort $(ALL_MODULES.$(m).LOCAL_RUNTIME_LIBRARIES))) \
@@ -48,10 +49,13 @@ $(MODULE_INFO_JSON): $(SOONG_MODULE_INFO)
 			$(call write-optional-json-list, "supported_variants", $(sort $(ALL_MODULES.$(m).SUPPORTED_VARIANTS))) \
 			$(call write-optional-json-list, "host_dependencies", $(sort $(ALL_MODULES.$(m).HOST_REQUIRED_FROM_TARGET))) \
 			$(call write-optional-json-list, "target_dependencies", $(sort $(ALL_MODULES.$(m).TARGET_REQUIRED_FROM_HOST))) \
+			$(call write-optional-json-bool, "test_module_config_base", $(ALL_MODULES.$(m).TEST_MODULE_CONFIG_BASE)) \
 		'}')'\n}\n' >> $@.tmp
 	$(PRIVATE_MERGE_JSON_OBJECTS) -o $@ $(PRIVATE_SOONG_MODULE_INFO) $@.tmp
 	rm $@.tmp
 
+.PHONY: module-info
+module-info: $(MODULE_INFO_JSON)
 
 droidcore-unbundled: $(MODULE_INFO_JSON)
 

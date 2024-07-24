@@ -48,81 +48,13 @@ if [ ! "$T" ]; then
 fi
 IMPORTING_ENVSETUP=true source $T/build/make/shell_utils.sh
 
-
-# Help
-function hmm() {
-cat <<EOF
-
-Run "m help" for help with the build system itself.
-
-Invoke ". build/envsetup.sh" from your shell to add the following functions to your environment:
-- lunch:      lunch <product_name>-<release_type>-<build_variant>
-              Selects <product_name> as the product to build, and <build_variant> as the variant to
-              build, and stores those selections in the environment to be read by subsequent
-              invocations of 'm' etc.
-- tapas:      tapas [<App1> <App2> ...] [arm|x86|arm64|x86_64] [eng|userdebug|user]
-              Sets up the build environment for building unbundled apps (APKs).
-- banchan:    banchan <module1> [<module2> ...] \\
-                      [arm|x86|arm64|riscv64|x86_64|arm64_only|x86_64only] [eng|userdebug|user]
-              Sets up the build environment for building unbundled modules (APEXes).
-- croot:      Changes directory to the top of the tree, or a subdirectory thereof.
-- m:          Makes from the top of the tree.
-- mm:         Builds and installs all of the modules in the current directory, and their
-              dependencies.
-- mmm:        Builds and installs all of the modules in the supplied directories, and their
-              dependencies.
-              To limit the modules being built use the syntax: mmm dir/:target1,target2.
-- mma:        Same as 'mm'
-- mmma:       Same as 'mmm'
-- provision:  Flash device with all required partitions. Options will be passed on to fastboot.
-- cgrep:      Greps on all local C/C++ files.
-- ggrep:      Greps on all local Gradle files.
-- gogrep:     Greps on all local Go files.
-- jgrep:      Greps on all local Java files.
-- jsongrep:   Greps on all local Json files.
-- ktgrep:     Greps on all local Kotlin files.
-- resgrep:    Greps on all local res/*.xml files.
-- mangrep:    Greps on all local AndroidManifest.xml files.
-- mgrep:      Greps on all local Makefiles and *.bp files.
-- owngrep:    Greps on all local OWNERS files.
-- rsgrep:     Greps on all local Rust files.
-- sepgrep:    Greps on all local sepolicy files.
-- sgrep:      Greps on all local source files.
-- tomlgrep:   Greps on all local Toml files.
-- pygrep:     Greps on all local Python files.
-- godir:      Go to the directory containing a file.
-- allmod:     List all modules.
-- gomod:      Go to the directory containing a module.
-- bmod:       Get the Bazel label of a Soong module if it is converted with bp2build.
-- pathmod:    Get the directory containing a module.
-- outmod:     Gets the location of a module's installed outputs with a certain extension.
-- dirmods:    Gets the modules defined in a given directory.
-- installmod: Adb installs a module's built APK.
-- refreshmod: Refresh list of modules for allmod/gomod/pathmod/outmod/installmod.
-- syswrite:   Remount partitions (e.g. system.img) as writable, rebooting if necessary.
-
-Environment options:
-- SANITIZE_HOST: Set to 'address' to use ASAN for all host modules.
-- ANDROID_QUIET_BUILD: set to 'true' to display only the essential messages.
-
-Look at the source to view more functions. The complete list is:
-EOF
-    local T=$(gettop)
-    local A=""
-    local i
-    for i in `cat $T/build/envsetup.sh | sed -n "/^[[:blank:]]*function /s/function \([a-z_]*\).*/\1/p" | sort | uniq`; do
-      A="$A $i"
-    done
-    echo $A
-}
-
 # Get all the build variables needed by this script in a single call to the build system.
 function build_build_var_cache()
 {
     local T=$(gettop)
     # Grep out the variable names from the script.
-    cached_vars=(`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`)
-    cached_abs_vars=(`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_abs_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`)
+    cached_vars=(`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/_get_build_var_cached/) print $(i+1)}' | sort -u | tr '\n' ' '`)
+    cached_abs_vars=(`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/_get_abs_build_var_cached/) print $(i+1)}' | sort -u | tr '\n' ' '`)
     # Call the build system to dump the "<val>=<value>" pairs as a shell script.
     build_dicts_script=`\builtin cd $T; build/soong/soong_ui.bash --dumpvars-mode \
                         --vars="${cached_vars[*]}" \
@@ -163,7 +95,7 @@ function destroy_build_var_cache()
 }
 
 # Get the value of a build variable as an absolute path.
-function get_abs_build_var()
+function _get_abs_build_var_cached()
 {
     if [ "$BUILD_VAR_CACHE_READY" = "true" ]
     then
@@ -180,7 +112,7 @@ function get_abs_build_var()
 }
 
 # Get the exact value of a build variable.
-function get_build_var()
+function _get_build_var_cached()
 {
     if [ "$BUILD_VAR_CACHE_READY" = "true" ]
     then
@@ -196,39 +128,18 @@ function get_build_var()
     (\cd $T; build/soong/soong_ui.bash --dumpvar-mode $1)
 }
 
-# check to see if the supplied product is one we can build
-function check_product()
+# This logic matches envsetup.mk
+function get_host_prebuilt_prefix
 {
-    local T=$(gettop)
-    if [ ! "$T" ]; then
-        echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
-        return
-    fi
-        TARGET_PRODUCT=$1 \
-        TARGET_RELEASE= \
-        TARGET_BUILD_VARIANT= \
-        TARGET_BUILD_TYPE= \
-        TARGET_BUILD_APPS= \
-        get_build_var TARGET_DEVICE > /dev/null
-    # hide successful answers, but allow the errors to show
+  local un=$(uname)
+  if [[ $un == "Linux" ]] ; then
+    echo linux-x86
+  elif [[ $un == "Darwin" ]] ; then
+    echo darwin-x86
+  else
+    echo "Error: Invalid host operating system: $un" 1>&2
+  fi
 }
-
-VARIANT_CHOICES=(user userdebug eng)
-
-# check to see if the supplied variant is valid
-function check_variant()
-{
-    local v
-    for v in ${VARIANT_CHOICES[@]}
-    do
-        if [ "$v" = "$1" ]
-        then
-            return 0
-        fi
-    done
-    return 1
-}
-
 
 # Add directories to PATH that are dependent on the lunch target.
 # For directories that are not lunch-specific, add them in set_global_paths
@@ -273,25 +184,25 @@ function set_lunch_paths()
     fi
 
     # And in with the new...
-    ANDROID_LUNCH_BUILD_PATHS=$(get_abs_build_var SOONG_HOST_OUT_EXECUTABLES)
-    ANDROID_LUNCH_BUILD_PATHS+=:$(get_abs_build_var HOST_OUT_EXECUTABLES)
+    ANDROID_LUNCH_BUILD_PATHS=$(_get_abs_build_var_cached SOONG_HOST_OUT_EXECUTABLES)
+    ANDROID_LUNCH_BUILD_PATHS+=:$(_get_abs_build_var_cached HOST_OUT_EXECUTABLES)
 
     # Append llvm binutils prebuilts path to ANDROID_LUNCH_BUILD_PATHS.
-    local ANDROID_LLVM_BINUTILS=$(get_abs_build_var ANDROID_CLANG_PREBUILTS)/llvm-binutils-stable
+    local ANDROID_LLVM_BINUTILS=$(_get_abs_build_var_cached ANDROID_CLANG_PREBUILTS)/llvm-binutils-stable
     ANDROID_LUNCH_BUILD_PATHS+=:$ANDROID_LLVM_BINUTILS
 
     # Set up ASAN_SYMBOLIZER_PATH for SANITIZE_HOST=address builds.
     export ASAN_SYMBOLIZER_PATH=$ANDROID_LLVM_BINUTILS/llvm-symbolizer
 
     # Append asuite prebuilts path to ANDROID_LUNCH_BUILD_PATHS.
-    local os_arch=$(get_build_var HOST_PREBUILT_TAG)
+    local os_arch=$(_get_build_var_cached HOST_PREBUILT_TAG)
     ANDROID_LUNCH_BUILD_PATHS+=:$T/prebuilts/asuite/acloud/$os_arch
     ANDROID_LUNCH_BUILD_PATHS+=:$T/prebuilts/asuite/aidegen/$os_arch
     ANDROID_LUNCH_BUILD_PATHS+=:$T/prebuilts/asuite/atest/$os_arch
 
-    export ANDROID_JAVA_HOME=$(get_abs_build_var ANDROID_JAVA_HOME)
+    export ANDROID_JAVA_HOME=$(_get_abs_build_var_cached ANDROID_JAVA_HOME)
     export JAVA_HOME=$ANDROID_JAVA_HOME
-    export ANDROID_JAVA_TOOLCHAIN=$(get_abs_build_var ANDROID_JAVA_TOOLCHAIN)
+    export ANDROID_JAVA_TOOLCHAIN=$(_get_abs_build_var_cached ANDROID_JAVA_TOOLCHAIN)
     ANDROID_LUNCH_BUILD_PATHS+=:$ANDROID_JAVA_TOOLCHAIN
 
     # Fix up PYTHONPATH
@@ -320,20 +231,20 @@ function set_lunch_paths()
     export PYTHONPATH=$ANDROID_PYTHONPATH$PYTHONPATH
 
     unset ANDROID_PRODUCT_OUT
-    export ANDROID_PRODUCT_OUT=$(get_abs_build_var PRODUCT_OUT)
+    export ANDROID_PRODUCT_OUT=$(_get_abs_build_var_cached PRODUCT_OUT)
     export OUT=$ANDROID_PRODUCT_OUT
 
     unset ANDROID_HOST_OUT
-    export ANDROID_HOST_OUT=$(get_abs_build_var HOST_OUT)
+    export ANDROID_HOST_OUT=$(_get_abs_build_var_cached HOST_OUT)
 
     unset ANDROID_SOONG_HOST_OUT
-    export ANDROID_SOONG_HOST_OUT=$(get_abs_build_var SOONG_HOST_OUT)
+    export ANDROID_SOONG_HOST_OUT=$(_get_abs_build_var_cached SOONG_HOST_OUT)
 
     unset ANDROID_HOST_OUT_TESTCASES
-    export ANDROID_HOST_OUT_TESTCASES=$(get_abs_build_var HOST_OUT_TESTCASES)
+    export ANDROID_HOST_OUT_TESTCASES=$(_get_abs_build_var_cached HOST_OUT_TESTCASES)
 
     unset ANDROID_TARGET_OUT_TESTCASES
-    export ANDROID_TARGET_OUT_TESTCASES=$(get_abs_build_var TARGET_OUT_TESTCASES)
+    export ANDROID_TARGET_OUT_TESTCASES=$(_get_abs_build_var_cached TARGET_OUT_TESTCASES)
 
     # Finally, set PATH
     export PATH=$ANDROID_LUNCH_BUILD_PATHS:$PATH
@@ -406,7 +317,7 @@ function printconfig()
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
-    get_build_var report_config
+    _get_build_var_cached report_config
 }
 
 function set_stuff_for_environment()
@@ -467,9 +378,6 @@ function addcompletions()
         fi
     done
 
-    if should_add_completion bit ; then
-        complete -C "bit --tab" bit
-    fi
     if [ -z "$ZSH_VERSION" ]; then
         # Doesn't work in zsh.
         complete -o nospace -F _croot croot
@@ -477,243 +385,13 @@ function addcompletions()
         complete -F _bazel__complete -o nospace b
     fi
     complete -F _lunch lunch
+    complete -F _lunch_completion lunch2
 
     complete -F _complete_android_module_names pathmod
     complete -F _complete_android_module_names gomod
     complete -F _complete_android_module_names outmod
     complete -F _complete_android_module_names installmod
-    complete -F _complete_android_module_names bmod
     complete -F _complete_android_module_names m
-}
-
-function multitree_lunch_help()
-{
-    echo "usage: lunch PRODUCT-RELEASE-VARIANT" 1>&2
-    echo "    Set up android build environment based on a product short name and variant" 1>&2
-    echo 1>&2
-    echo "lunch COMBO_FILE VARIANT" 1>&2
-    echo "    Set up android build environment based on a specific lunch combo file" 1>&2
-    echo "    and variant." 1>&2
-    echo 1>&2
-    echo "lunch --print [CONFIG]" 1>&2
-    echo "    Print the contents of a configuration.  If CONFIG is supplied, that config" 1>&2
-    echo "    will be flattened and printed.  If CONFIG is not supplied, the currently" 1>&2
-    echo "    selected config will be printed.  Returns 0 on success or nonzero on error." 1>&2
-    echo 1>&2
-    echo "lunch --list" 1>&2
-    echo "    List all possible combo files available in the current tree" 1>&2
-    echo 1>&2
-    echo "lunch --help" 1>&2
-    echo "lunch -h" 1>&2
-    echo "    Prints this message." 1>&2
-}
-
-function multitree_lunch()
-{
-    local code
-    local results
-    # Lunch must be run in the topdir, but this way we get a clear error
-    # message, instead of FileNotFound.
-    local T=$(multitree_gettop)
-    if [ -z "$T" ]; then
-      _multitree_lunch_error
-      return 1
-    fi
-    if $(echo "$1" | grep -q '^-') ; then
-        # Calls starting with a -- argument are passed directly and the function
-        # returns with the lunch.py exit code.
-        "${T}/orchestrator/build/orchestrator/core/lunch.py" "$@"
-        code=$?
-        if [[ $code -eq 2 ]] ; then
-          echo 1>&2
-          multitree_lunch_help
-          return $code
-        elif [[ $code -ne 0 ]] ; then
-          return $code
-        fi
-    else
-        # All other calls go through the --lunch variant of lunch.py
-        results=($(${T}/orchestrator/build/orchestrator/core/lunch.py --lunch "$@"))
-        code=$?
-        if [[ $code -eq 2 ]] ; then
-          echo 1>&2
-          multitree_lunch_help
-          return $code
-        elif [[ $code -ne 0 ]] ; then
-          return $code
-        fi
-
-        export TARGET_BUILD_COMBO=${results[0]}
-        export TARGET_BUILD_VARIANT=${results[1]}
-    fi
-}
-
-function choosetype()
-{
-    echo "Build type choices are:"
-    echo "     1. release"
-    echo "     2. debug"
-    echo
-
-    local DEFAULT_NUM DEFAULT_VALUE
-    DEFAULT_NUM=1
-    DEFAULT_VALUE=release
-
-    export TARGET_BUILD_TYPE=
-    local ANSWER
-    while [ -z $TARGET_BUILD_TYPE ]
-    do
-        echo -n "Which would you like? ["$DEFAULT_NUM"] "
-        if [ -z "$1" ] ; then
-            read ANSWER
-        else
-            echo $1
-            ANSWER=$1
-        fi
-        case $ANSWER in
-        "")
-            export TARGET_BUILD_TYPE=$DEFAULT_VALUE
-            ;;
-        1)
-            export TARGET_BUILD_TYPE=release
-            ;;
-        release)
-            export TARGET_BUILD_TYPE=release
-            ;;
-        2)
-            export TARGET_BUILD_TYPE=debug
-            ;;
-        debug)
-            export TARGET_BUILD_TYPE=debug
-            ;;
-        *)
-            echo
-            echo "I didn't understand your response.  Please try again."
-            echo
-            ;;
-        esac
-        if [ -n "$1" ] ; then
-            break
-        fi
-    done
-
-    build_build_var_cache
-    set_stuff_for_environment
-    destroy_build_var_cache
-}
-
-#
-# This function isn't really right:  It chooses a TARGET_PRODUCT
-# based on the list of boards.  Usually, that gets you something
-# that kinda works with a generic product, but really, you should
-# pick a product by name.
-#
-function chooseproduct()
-{
-    local default_value
-    if [ "x$TARGET_PRODUCT" != x ] ; then
-        default_value=$TARGET_PRODUCT
-    else
-        default_value=aosp_arm
-    fi
-
-    export TARGET_BUILD_APPS=
-    export TARGET_PRODUCT=
-    local ANSWER
-    while [ -z "$TARGET_PRODUCT" ]
-    do
-        echo -n "Which product would you like? [$default_value] "
-        if [ -z "$1" ] ; then
-            read ANSWER
-        else
-            echo $1
-            ANSWER=$1
-        fi
-
-        if [ -z "$ANSWER" ] ; then
-            export TARGET_PRODUCT=$default_value
-        else
-            if check_product $ANSWER
-            then
-                export TARGET_PRODUCT=$ANSWER
-            else
-                echo "** Not a valid product: $ANSWER"
-            fi
-        fi
-        if [ -n "$1" ] ; then
-            break
-        fi
-    done
-
-    build_build_var_cache
-    set_stuff_for_environment
-    destroy_build_var_cache
-}
-
-function choosevariant()
-{
-    echo "Variant choices are:"
-    local index=1
-    local v
-    for v in ${VARIANT_CHOICES[@]}
-    do
-        # The product name is the name of the directory containing
-        # the makefile we found, above.
-        echo "     $index. $v"
-        index=$(($index+1))
-    done
-
-    local default_value=eng
-    local ANSWER
-
-    export TARGET_BUILD_VARIANT=
-    while [ -z "$TARGET_BUILD_VARIANT" ]
-    do
-        echo -n "Which would you like? [$default_value] "
-        if [ -z "$1" ] ; then
-            read ANSWER
-        else
-            echo $1
-            ANSWER=$1
-        fi
-
-        if [ -z "$ANSWER" ] ; then
-            export TARGET_BUILD_VARIANT=$default_value
-        elif (echo -n $ANSWER | grep -q -e "^[0-9][0-9]*$") ; then
-            if [ "$ANSWER" -le "${#VARIANT_CHOICES[@]}" ] ; then
-                export TARGET_BUILD_VARIANT=${VARIANT_CHOICES[@]:$(($ANSWER-1)):1}
-            fi
-        else
-            if check_variant $ANSWER
-            then
-                export TARGET_BUILD_VARIANT=$ANSWER
-            else
-                echo "** Not a valid variant: $ANSWER"
-            fi
-        fi
-        if [ -n "$1" ] ; then
-            break
-        fi
-    done
-}
-
-function choosecombo()
-{
-    choosetype $1
-
-    echo
-    echo
-    chooseproduct $2
-
-    echo
-    echo
-    choosevariant $3
-
-    echo
-    build_build_var_cache
-    set_stuff_for_environment
-    printconfig
-    destroy_build_var_cache
 }
 
 function add_lunch_combo()
@@ -730,7 +408,7 @@ function print_lunch_menu()
 {
     local uname=$(uname)
     local choices
-    choices=$(TARGET_BUILD_APPS= TARGET_PRODUCT= TARGET_RELEASE= TARGET_BUILD_VARIANT= get_build_var COMMON_LUNCH_CHOICES 2>/dev/null)
+    choices=$(TARGET_BUILD_APPS= TARGET_PRODUCT= TARGET_RELEASE= TARGET_BUILD_VARIANT= _get_build_var_cached COMMON_LUNCH_CHOICES 2>/dev/null)
     local ret=$?
 
     echo
@@ -789,7 +467,7 @@ function lunch()
         selection=aosp_cf_x86_64_phone-trunk_staging-eng
     elif (echo -n $answer | grep -q -e "^[0-9][0-9]*$")
     then
-        local choices=($(TARGET_BUILD_APPS= TARGET_PRODUCT= TARGET_RELEASE= TARGET_BUILD_VARIANT= get_build_var COMMON_LUNCH_CHOICES 2>/dev/null))
+        local choices=($(TARGET_BUILD_APPS= TARGET_PRODUCT= TARGET_RELEASE= TARGET_BUILD_VARIANT= _get_build_var_cached COMMON_LUNCH_CHOICES 2>/dev/null))
         if [ $answer -le ${#choices[@]} ]
         then
             # array in zsh starts from 1 instead of 0.
@@ -819,9 +497,18 @@ function lunch()
         return 1
     fi
 
+    _lunch_meat $product $release $variant
+}
+
+function _lunch_meat()
+{
+    local product=$1
+    local release=$2
+    local variant=$3
+
     TARGET_PRODUCT=$product \
-    TARGET_BUILD_VARIANT=$variant \
     TARGET_RELEASE=$release \
+    TARGET_BUILD_VARIANT=$variant \
     build_build_var_cache
     if [ $? -ne 0 ]
     then
@@ -831,8 +518,8 @@ function lunch()
         fi
         return 1
     fi
-    export TARGET_PRODUCT=$(get_build_var TARGET_PRODUCT)
-    export TARGET_BUILD_VARIANT=$(get_build_var TARGET_BUILD_VARIANT)
+    export TARGET_PRODUCT=$(_get_build_var_cached TARGET_PRODUCT)
+    export TARGET_BUILD_VARIANT=$(_get_build_var_cached TARGET_BUILD_VARIANT)
     export TARGET_RELEASE=$release
     # Note this is the string "release", not the value of the variable.
     export TARGET_BUILD_TYPE=release
@@ -842,14 +529,11 @@ function lunch()
     set_stuff_for_environment
     [[ -n "${ANDROID_QUIET_BUILD:-}" ]] || printconfig
 
-    if [ "${TARGET_BUILD_VARIANT}" = "userdebug" ] && [[  -z "${ANDROID_QUIET_BUILD}" ]]; then
-      echo
-      echo "Want FASTER LOCAL BUILDS? Use -eng instead of -userdebug (however for" \
-        "performance benchmarking continue to use userdebug)"
-    fi
-    if [ $used_lunch_menu -eq 1 ]; then
-      echo
-      echo "Hint: next time you can simply run 'lunch $selection'"
+    if [[ -z "${ANDROID_QUIET_BUILD}" ]]; then
+        local spam_for_lunch=$(gettop)/build/make/tools/envsetup/spam_for_lunch
+        if [[ -x $spam_for_lunch ]]; then
+            $spam_for_lunch
+        fi
     fi
 
     destroy_build_var_cache
@@ -869,12 +553,118 @@ function _lunch()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
     if [ -z "$COMMON_LUNCH_CHOICES_CACHE" ]; then
-        COMMON_LUNCH_CHOICES_CACHE=$(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES)
+        COMMON_LUNCH_CHOICES_CACHE=$(TARGET_BUILD_APPS= _get_build_var_cached COMMON_LUNCH_CHOICES)
     fi
 
     COMPREPLY=( $(compgen -W "${COMMON_LUNCH_CHOICES_CACHE}" -- ${cur}) )
     return 0
 }
+
+function _lunch_usage()
+{
+    (
+        echo "The lunch command selects the configuration to use for subsequent"
+        echo "Android builds."
+        echo
+        echo "Usage: lunch TARGET_PRODUCT [TARGET_RELEASE [TARGET_BUILD_VARIANT]]"
+        echo
+        echo "  Choose the product, release and variant to use. If not"
+        echo "  supplied, TARGET_RELEASE will be 'trunk_staging' and"
+        echo "  TARGET_BUILD_VARIANT will be 'eng'"
+        echo
+        echo
+        echo "Usage: lunch TARGET_PRODUCT-TARGET_RELEASE-TARGET_BUILD_VARIANT"
+        echo
+        echo "  Chose the product, release and variant to use. This"
+        echo "  legacy format is maintained for compatibility."
+        echo
+        echo
+        echo "Note that the previous interactive menu and list of hard-coded"
+        echo "list of curated targets has been removed. If you would like the"
+        echo "list of products, release configs for a particular product, or"
+        echo "variants, run list_products, list_release_configs, list_variants"
+        echo "respectively."
+        echo
+    ) 1>&2
+}
+
+function lunch2()
+{
+    if [[ $# -eq 1 && $1 = "--help" ]]; then
+        _lunch_usage
+        return 0
+    fi
+    if [[ $# -eq 0 ]]; then
+        echo "No target specified. See lunch --help" 1>&2
+        return 1
+    fi
+    if [[ $# -gt 3 ]]; then
+        echo "Too many parameters given. See lunch --help" 1>&2
+        return 1
+    fi
+
+    local product release variant
+
+    # Handle the legacy format
+    local legacy=$(echo $1 | grep "-")
+    if [[ $# -eq 1 && -n $legacy ]]; then
+        IFS="-" read -r product release variant <<< "$1"
+        if [[ -z "$product" ]] || [[ -z "$release" ]] || [[ -z "$variant" ]]; then
+            echo "Invalid lunch combo: $1" 1>&2
+            echo "Valid combos must be of the form <product>-<release>-<variant> when using" 1>&2
+            echo "the legacy format.  Run 'lunch --help' for usage." 1>&2
+            return 1
+        fi
+    fi
+
+    # Handle the new format.
+    if [[ -z $legacy ]]; then
+        product=$1
+        release=$2
+        if [[ -z $release ]]; then
+            release=trunk_staging
+        fi
+        variant=$3
+        if [[ -z $variant ]]; then
+            variant=eng
+        fi
+    fi
+
+    # Validate the selection and set all the environment stuff
+    _lunch_meat $product $release $variant
+}
+
+unset ANDROID_LUNCH_COMPLETION_PRODUCT_CACHE
+unset ANDROID_LUNCH_COMPLETION_CHOSEN_PRODUCT
+unset ANDROID_LUNCH_COMPLETION_RELEASE_CACHE
+# Tab completion for lunch.
+function _lunch_completion()
+{
+    # Available products
+    if [[ $COMP_CWORD -eq 1 ]] ; then
+        if [[ -z $ANDROID_LUNCH_COMPLETION_PRODUCT_CACHE ]]; then
+            ANDROID_LUNCH_COMPLETION_PRODUCT_CACHE=$(list_products)
+        fi
+        COMPREPLY=( $(compgen -W "${ANDROID_LUNCH_COMPLETION_PRODUCT_CACHE}" -- "${COMP_WORDS[COMP_CWORD]}") )
+    fi
+
+    # Available release configs
+    if [[ $COMP_CWORD -eq 2 ]] ; then
+        if [[ -z $ANDROID_LUNCH_COMPLETION_RELEASE_CACHE || $ANDROID_LUNCH_COMPLETION_CHOSEN_PRODUCT != ${COMP_WORDS[1]} ]] ; then
+            ANDROID_LUNCH_COMPLETION_RELEASE_CACHE=$(list_releases ${COMP_WORDS[1]})
+            ANDROID_LUNCH_COMPLETION_CHOSEN_PRODUCT=${COMP_WORDS[1]}
+        fi
+        COMPREPLY=( $(compgen -W "${ANDROID_LUNCH_COMPLETION_RELEASE_CACHE}" -- "${COMP_WORDS[COMP_CWORD]}") )
+    fi
+
+    # Available variants
+    if [[ $COMP_CWORD -eq 3 ]] ; then
+        COMPREPLY=(user userdebug eng)
+    fi
+
+    return 0
+}
+
 
 # Configures the build to build unbundled apps.
 # Run tapas with one or more app names (from LOCAL_PACKAGE_NAME)
@@ -1013,34 +803,6 @@ function banchan()
     destroy_build_var_cache
 }
 
-# TODO: Merge into gettop as part of launching multitree
-function multitree_gettop
-{
-    local TOPFILE=orchestrator/build/make/core/envsetup.mk
-    if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
-        # The following circumlocution ensures we remove symlinks from TOP.
-        (cd "$TOP"; PWD= /bin/pwd)
-    else
-        if [ -f $TOPFILE ] ; then
-            # The following circumlocution (repeated below as well) ensures
-            # that we record the true directory name and not one that is
-            # faked up with symlink names.
-            PWD= /bin/pwd
-        else
-            local HERE=$PWD
-            local T=
-            while [ \( ! \( -f $TOPFILE \) \) -a \( "$PWD" != "/" \) ]; do
-                \cd ..
-                T=`PWD= /bin/pwd -P`
-            done
-            \cd "$HERE"
-            if [ -f "$T/$TOPFILE" ]; then
-                echo "$T"
-            fi
-        fi
-    fi
-}
-
 function croot()
 {
     local T=$(gettop)
@@ -1084,291 +846,33 @@ function cproj()
     echo "can't find Android.mk"
 }
 
+# Ensure that we're always using the adb in the tree. This works around the fact
+# that bash caches $PATH lookups, so if you use adb before lunching/building the
+# one in your tree, you'll continue to get /usr/bin/adb or whatever even after
+# you have the one from your current tree on your path. Historically this would
+# cause confusion because glinux had adb in /usr/bin/ by default, though that
+# doesn't appear to be the case on my rodete hosts; it is however still the case
+# that my Mac has /usr/local/bin/adb installed by default and on the default
+# path.
 function adb() {
-   command adb "${@}"
-}
-
-# simplified version of ps; output in the form
-# <pid> <procname>
-function qpid() {
-    local prepend=''
-    local append=''
-    if [ "$1" = "--exact" ]; then
-        prepend=' '
-        append='$'
-        shift
-    elif [ "$1" = "--help" -o "$1" = "-h" ]; then
-        echo "usage: qpid [[--exact] <process name|pid>"
-        return 255
+    # We need `command which` because zsh has a built-in `which` that's more
+    # like `type`.
+    local ADB=$(command which adb)
+    if [ -z "$ADB" ]; then
+        echo "Command adb not found; try lunch (and building) first?"
+        return 1
     fi
+    run_tool_with_logging "ADB" $ADB "${@}"
+}
 
-    local EXE="$1"
-    if [ "$EXE" ] ; then
-        qpid | \grep "$prepend$EXE$append"
-    else
-        adb shell ps \
-            | tr -d '\r' \
-            | sed -e 1d -e 's/^[^ ]* *\([0-9]*\).* \([^ ]*\)$/\1 \2/'
+function fastboot() {
+    local FASTBOOT=$(command which fastboot)
+    if [ -z "$FASTBOOT" ]; then
+        echo "Command fastboot not found; try lunch (and building) first?"
+        return 1
     fi
-}
-
-# syswrite - disable verity, reboot if needed, and remount image
-#
-# Easy way to make system.img/etc writable
-function syswrite() {
-  adb wait-for-device && adb root && adb wait-for-device || return 1
-  if [[ $(adb disable-verity | grep -i "reboot") ]]; then
-      echo "rebooting"
-      adb reboot && adb wait-for-device && adb root && adb wait-for-device || return 1
-  fi
-  adb remount || return 1
-}
-
-# coredump_setup - enable core dumps globally for any process
-#                  that has the core-file-size limit set correctly
-#
-# NOTE: You must call also coredump_enable for a specific process
-#       if its core-file-size limit is not set already.
-# NOTE: Core dumps are written to ramdisk; they will not survive a reboot!
-
-function coredump_setup()
-{
-    echo "Getting root...";
-    adb root;
-    adb wait-for-device;
-
-    echo "Remounting root partition read-write...";
-    adb shell mount -w -o remount -t rootfs rootfs;
-    sleep 1;
-    adb wait-for-device;
-    adb shell mkdir -p /cores;
-    adb shell mount -t tmpfs tmpfs /cores;
-    adb shell chmod 0777 /cores;
-
-    echo "Granting SELinux permission to dump in /cores...";
-    adb shell restorecon -R /cores;
-
-    echo "Set core pattern.";
-    adb shell 'echo /cores/core.%p > /proc/sys/kernel/core_pattern';
-
-    echo "Done."
-}
-
-# coredump_enable - enable core dumps for the specified process
-# $1 = PID of process (e.g., $(pid mediaserver))
-#
-# NOTE: coredump_setup must have been called as well for a core
-#       dump to actually be generated.
-
-function coredump_enable()
-{
-    local PID=$1;
-    if [ -z "$PID" ]; then
-        printf "Expecting a PID!\n";
-        return;
-    fi;
-    echo "Setting core limit for $PID to infinite...";
-    adb shell /system/bin/ulimit -P $PID -c unlimited
-}
-
-# core - send SIGV and pull the core for process
-# $1 = PID of process (e.g., $(pid mediaserver))
-#
-# NOTE: coredump_setup must be called once per boot for core dumps to be
-#       enabled globally.
-
-function core()
-{
-    local PID=$1;
-
-    if [ -z "$PID" ]; then
-        printf "Expecting a PID!\n";
-        return;
-    fi;
-
-    local CORENAME=core.$PID;
-    local COREPATH=/cores/$CORENAME;
-    local SIG=SEGV;
-
-    coredump_enable $1;
-
-    local done=0;
-    while [ $(adb shell "[ -d /proc/$PID ] && echo -n yes") ]; do
-        printf "\tSending SIG%s to %d...\n" $SIG $PID;
-        adb shell kill -$SIG $PID;
-        sleep 1;
-    done;
-
-    adb shell "while [ ! -f $COREPATH ] ; do echo waiting for $COREPATH to be generated; sleep 1; done"
-    echo "Done: core is under $COREPATH on device.";
-}
-
-# systemstack - dump the current stack trace of all threads in the system process
-# to the usual ANR traces file
-function systemstack()
-{
-    stacks system_server
-}
-
-# Read the ELF header from /proc/$PID/exe to determine if the process is
-# 64-bit.
-function is64bit()
-{
-    local PID="$1"
-    if [ "$PID" ] ; then
-        if [[ "$(adb shell cat /proc/$PID/exe | xxd -l 1 -s 4 -p)" -eq "02" ]] ; then
-            echo "64"
-        else
-            echo ""
-        fi
-    else
-        echo ""
-    fi
-}
-
-case `uname -s` in
-    Darwin)
-        function sgrep()
-        {
-            find -E . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.(c|h|cc|cpp|hpp|S|java|kt|xml|sh|mk|aidl|vts|proto|rs|go)' \
-                -exec grep --color -n "$@" {} +
-        }
-
-        ;;
-    *)
-        function sgrep()
-        {
-            find . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.\(c\|h\|cc\|cpp\|hpp\|S\|java\|kt\|xml\|sh\|mk\|aidl\|vts\|proto\|rs\|go\)' \
-                -exec grep --color -n "$@" {} +
-        }
-        ;;
-esac
-
-function gettargetarch
-{
-    get_build_var TARGET_ARCH
-}
-
-function ggrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.gradle" \
-        -exec grep --color -n "$@" {} +
-}
-
-function gogrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.go" \
-        -exec grep --color -n "$@" {} +
-}
-
-function jgrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.java" \
-        -exec grep --color -n "$@" {} +
-}
-
-function rsgrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.rs" \
-        -exec grep --color -n "$@" {} +
-}
-
-function jsongrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.json" \
-        -exec grep --color -n "$@" {} +
-}
-
-function tomlgrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.toml" \
-        -exec grep --color -n "$@" {} +
-}
-
-function ktgrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.kt" \
-        -exec grep --color -n "$@" {} +
-}
-
-function cgrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f \( -name '*.c' -o -name '*.cc' -o -name '*.cpp' -o -name '*.h' -o -name '*.hpp' \) \
-        -exec grep --color -n "$@" {} +
-}
-
-function resgrep()
-{
-    local dir
-    for dir in `find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -name res -type d`; do
-        find $dir -type f -name '*\.xml' -exec grep --color -n "$@" {} +
-    done
-}
-
-function mangrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -type f -name 'AndroidManifest.xml' \
-        -exec grep --color -n "$@" {} +
-}
-
-function owngrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -type f -name 'OWNERS' \
-        -exec grep --color -n "$@" {} +
-}
-
-function sepgrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -name sepolicy -type d \
-        -exec grep --color -n -r --exclude-dir=\.git "$@" {} +
-}
-
-function rcgrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.rc*" \
-        -exec grep --color -n "$@" {} +
-}
-
-function pygrep()
-{
-    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.py" \
-        -exec grep --color -n "$@" {} +
-}
-
-case `uname -s` in
-    Darwin)
-        function mgrep()
-        {
-            find -E . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o \( -iregex '.*/(Makefile|Makefile\..*|.*\.make|.*\.mak|.*\.mk|.*\.bp)' -o -regex '(.*/)?(build|soong)/.*[^/]*\.go' \) -type f \
-                -exec grep --color -n "$@" {} +
-        }
-
-        function treegrep()
-        {
-            find -E . -name .repo -prune -o -name .git -prune -o -type f -iregex '.*\.(c|h|cpp|hpp|S|java|kt|xml)' \
-                -exec grep --color -n -i "$@" {} +
-        }
-
-        ;;
-    *)
-        function mgrep()
-        {
-            find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o \( -regextype posix-egrep -iregex '(.*\/Makefile|.*\/Makefile\..*|.*\.make|.*\.mak|.*\.mk|.*\.bp)' -o -regextype posix-extended -regex '(.*/)?(build|soong)/.*[^/]*\.go' \) -type f \
-                -exec grep --color -n "$@" {} +
-        }
-
-        function treegrep()
-        {
-            find . -name .repo -prune -o -name .git -prune -o -regextype posix-egrep -iregex '.*\.(c|h|cpp|hpp|S|java|kt|xml)' -type f \
-                -exec grep --color -n -i "$@" {} +
-        }
-
-        ;;
-esac
-
-function getprebuilt
-{
-    get_abs_build_var ANDROID_PREBUILTS
+    # Support tool event logging for fastboot command.
+    run_tool_with_logging "FASTBOOT" $FASTBOOT "${@}"
 }
 
 # communicate with a running device or emulator, set up necessary state,
@@ -1423,111 +927,6 @@ function runhat()
     hat -JXmx512m $localFile
 }
 
-function getbugreports()
-{
-    local reports=(`adb shell ls /sdcard/bugreports | tr -d '\r'`)
-
-    if [ ! "$reports" ]; then
-        echo "Could not locate any bugreports."
-        return
-    fi
-
-    local report
-    for report in ${reports[@]}
-    do
-        echo "/sdcard/bugreports/${report}"
-        adb pull /sdcard/bugreports/${report} ${report}
-        gunzip ${report}
-    done
-}
-
-function getsdcardpath()
-{
-    adb ${adbOptions} shell echo -n \$\{EXTERNAL_STORAGE\}
-}
-
-function getscreenshotpath()
-{
-    echo "$(getsdcardpath)/Pictures/Screenshots"
-}
-
-function getlastscreenshot()
-{
-    local screenshot_path=$(getscreenshotpath)
-    local screenshot=`adb ${adbOptions} ls ${screenshot_path} | grep Screenshot_[0-9-]*.*\.png | sort -rk 3 | cut -d " " -f 4 | head -n 1`
-    if [ "$screenshot" = "" ]; then
-        echo "No screenshots found."
-        return
-    fi
-    echo "${screenshot}"
-    adb ${adbOptions} pull ${screenshot_path}/${screenshot}
-}
-
-function startviewserver()
-{
-    local port=4939
-    if [ $# -gt 0 ]; then
-            port=$1
-    fi
-    adb shell service call window 1 i32 $port
-}
-
-function stopviewserver()
-{
-    adb shell service call window 2
-}
-
-function isviewserverstarted()
-{
-    adb shell service call window 3
-}
-
-function key_home()
-{
-    adb shell input keyevent 3
-}
-
-function key_back()
-{
-    adb shell input keyevent 4
-}
-
-function key_menu()
-{
-    adb shell input keyevent 82
-}
-
-function smoketest()
-{
-    if [ ! "$ANDROID_PRODUCT_OUT" ]; then
-        echo "Couldn't locate output files.  Try running 'lunch' first." >&2
-        return
-    fi
-    local T=$(gettop)
-    if [ ! "$T" ]; then
-        echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
-        return
-    fi
-
-    (\cd "$T" && mmm tests/SmokeTest) &&
-      adb uninstall com.android.smoketest > /dev/null &&
-      adb uninstall com.android.smoketest.tests > /dev/null &&
-      adb install $ANDROID_PRODUCT_OUT/data/app/SmokeTestApp.apk &&
-      adb install $ANDROID_PRODUCT_OUT/data/app/SmokeTest.apk &&
-      adb shell am instrument -w com.android.smoketest.tests/android.test.InstrumentationTestRunner
-}
-
-# simple shortcut to the runtest command
-function runtest()
-{
-    local T=$(gettop)
-    if [ ! "$T" ]; then
-        echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
-        return
-    fi
-    ("$T"/development/testrunner/runtest.py $@)
-}
-
 function godir () {
     if [[ -z "$1" ]]; then
         echo "Usage: godir <regex>"
@@ -1579,146 +978,10 @@ function godir () {
     \cd $T/$pathname
 }
 
-# Update module-info.json in out.
-function refreshmod() {
-    if [ ! "$ANDROID_PRODUCT_OUT" ]; then
-        echo "No ANDROID_PRODUCT_OUT. Try running 'lunch' first." >&2
-        return 1
-    fi
-
-    echo "Refreshing modules (building module-info.json). Log at $ANDROID_PRODUCT_OUT/module-info.json.build.log." >&2
-
-    # for the output of the next command
-    mkdir -p $ANDROID_PRODUCT_OUT || return 1
-
-    # Note, can't use absolute path because of the way make works.
-    m $(get_build_var PRODUCT_OUT)/module-info.json \
-        > $ANDROID_PRODUCT_OUT/module-info.json.build.log 2>&1
-}
-
-# Verifies that module-info.txt exists, returning nonzero if it doesn't.
-function verifymodinfo() {
-    if [ ! "$ANDROID_PRODUCT_OUT" ]; then
-        if [ "$QUIET_VERIFYMODINFO" != "true" ] ; then
-            echo "No ANDROID_PRODUCT_OUT. Try running 'lunch' first." >&2
-        fi
-        return 1
-    fi
-
-    if [ ! -f "$ANDROID_PRODUCT_OUT/module-info.json" ]; then
-        if [ "$QUIET_VERIFYMODINFO" != "true" ] ; then
-            echo "Could not find module-info.json. Please run 'refreshmod' first." >&2
-        fi
-        return 1
-    fi
-}
-
-# List all modules for the current device, as cached in all_modules.txt. If any build change is
-# made and it should be reflected in the output, you should run `m nothing` first.
-function allmod() {
-    cat $ANDROID_PRODUCT_OUT/all_modules.txt 2>/dev/null
-}
-
-# Return the Bazel label of a Soong module if it is converted with bp2build.
-function bmod()
-(
-    if [ $# -eq 0 ]; then
-        echo "usage: bmod <module 1> <module 2> ... <module n>" >&2
-        return 1
-    fi
-
-    # We could run bp2build here, but it might trigger bp2build invalidation
-    # when used with `b` (e.g. --run_soong_tests) and/or add unnecessary waiting
-    # time overhead.
-    #
-    # For a snappy result, use the latest generated version in soong_injection,
-    # and ask users to run m bp2build if it doesn't exist.
-    converted_json="$(get_abs_build_var OUT_DIR)/soong/soong_injection/metrics/converted_modules_path_map.json"
-
-    if [ ! -f ${converted_json} ]; then
-      echo "bp2build files not found. Have you ran 'm bp2build'?" >&2
-      return 1
-    fi
-
-    modules=()
-    for m in "$@"; do
-        modules+=("\"$m\",")
-    done
-    local res=$(python3 -c "import json
-modules = [${modules[*]}]
-converted_json='$converted_json'
-bp2build_converted_map = json.load(open(converted_json))
-for module in modules:
-    if module not in bp2build_converted_map:
-        print(module + ' is not converted to Bazel.')
-    else:
-        print(bp2build_converted_map[module] + ':' + module)")
-
-    echo "${res}"
-    unconverted_count=$(echo "${res}" | grep -c "not converted to Bazel")
-    if [[ ${unconverted_count} -ne 0 ]]; then
-        return 1
-    fi
-)
-
-# Get the path of a specific module in the android tree, as cached in module-info.json.
-# If any build change is made, and it should be reflected in the output, you should run
-# 'refreshmod' first.  Note: This is the inverse of dirmods.
-function pathmod() {
-    if [[ $# -ne 1 ]]; then
-        echo "usage: pathmod <module>" >&2
-        return 1
-    fi
-
-    verifymodinfo || return 1
-
-    local relpath=$(python3 -c "import json, os
-module = '$1'
-module_info = json.load(open('$ANDROID_PRODUCT_OUT/module-info.json'))
-if module not in module_info:
-    exit(1)
-print(module_info[module]['path'][0])" 2>/dev/null)
-
-    if [ -z "$relpath" ]; then
-        echo "Could not find module '$1' (try 'refreshmod' if there have been build changes?)." >&2
-        return 1
-    else
-        echo "$ANDROID_BUILD_TOP/$relpath"
-    fi
-}
-
-# Get the path of a specific module in the android tree, as cached in module-info.json.
-# If any build change is made, and it should be reflected in the output, you should run
-# 'refreshmod' first.  Note: This is the inverse of pathmod.
-function dirmods() {
-    if [[ $# -ne 1 ]]; then
-        echo "usage: dirmods <path>" >&2
-        return 1
-    fi
-
-    verifymodinfo || return 1
-
-    python3 -c "import json, os
-dir = '$1'
-while dir.endswith('/'):
-    dir = dir[:-1]
-prefix = dir + '/'
-module_info = json.load(open('$ANDROID_PRODUCT_OUT/module-info.json'))
-results = set()
-for m in module_info.values():
-    for path in m.get(u'path', []):
-        if path == dir or path.startswith(prefix):
-            name = m.get(u'module_name')
-            if name:
-                results.add(name)
-for name in sorted(results):
-    print(name)
-"
-}
-
-
 # Go to a specific module in the android tree, as cached in module-info.json. If any build change
 # is made, and it should be reflected in the output, you should run 'refreshmod' first.
+# Note: This function is in envsetup because changing the directory needs to happen in the current
+# shell. All other functions that use module-info.json should be in build/soong/bin.
 function gomod() {
     if [[ $# -ne 1 ]]; then
         echo "usage: gomod <module>" >&2
@@ -1732,88 +995,9 @@ function gomod() {
     cd $path
 }
 
-# Gets the list of a module's installed outputs, as cached in module-info.json.
-# If any build change is made, and it should be reflected in the output, you should run 'refreshmod' first.
-function outmod() {
-    if [[ $# -ne 1 ]]; then
-        echo "usage: outmod <module>" >&2
-        return 1
-    fi
-
-    verifymodinfo || return 1
-
-    local relpath
-    relpath=$(python3 -c "import json, os
-module = '$1'
-module_info = json.load(open('$ANDROID_PRODUCT_OUT/module-info.json'))
-if module not in module_info:
-    exit(1)
-for output in module_info[module]['installed']:
-    print(os.path.join('$ANDROID_BUILD_TOP', output))" 2>/dev/null)
-
-    if [ $? -ne 0 ]; then
-        echo "Could not find module '$1' (try 'refreshmod' if there have been build changes?)" >&2
-        return 1
-    elif [ ! -z "$relpath" ]; then
-        echo "$relpath"
-    fi
-}
-
-# adb install a module's apk, as cached in module-info.json. If any build change
-# is made, and it should be reflected in the output, you should run 'refreshmod' first.
-# Usage: installmod [adb install arguments] <module>
-# For example: installmod -r Dialer -> adb install -r /path/to/Dialer.apk
-function installmod() {
-    if [[ $# -eq 0 ]]; then
-        echo "usage: installmod [adb install arguments] <module>" >&2
-        echo "" >&2
-        echo "Only flags to be passed after the \"install\" in adb install are supported," >&2
-        echo "with the exception of -s. If -s is passed it will be placed before the \"install\"." >&2
-        echo "-s must be the first flag passed if it exists." >&2
-        return 1
-    fi
-
-    local _path
-    _path=$(outmod ${@:$#:1})
-    if [ $? -ne 0 ]; then
-        return 1
-    fi
-
-    _path=$(echo "$_path" | grep -E \\.apk$ | head -n 1)
-    if [ -z "$_path" ]; then
-        echo "Module '$1' does not produce a file ending with .apk (try 'refreshmod' if there have been build changes?)" >&2
-        return 1
-    fi
-    local serial_device=""
-    if [[ "$1" == "-s" ]]; then
-        if [[ $# -le 2 ]]; then
-            echo "-s requires an argument" >&2
-            return 1
-        fi
-        serial_device="-s $2"
-        shift 2
-    fi
-    local length=$(( $# - 1 ))
-    echo adb $serial_device install ${@:1:$length} $_path
-    adb $serial_device install ${@:1:$length} $_path
-}
-
 function _complete_android_module_names() {
     local word=${COMP_WORDS[COMP_CWORD]}
     COMPREPLY=( $(allmod | grep -E "^$word") )
-}
-
-# Print colored exit condition
-function pez {
-    "$@"
-    local retval=$?
-    if [ $retval -ne 0 ]
-    then
-        echo $'\E'"[0;31mFAILURE\e[00m"
-    else
-        echo $'\E'"[0;32mSUCCESS\e[00m"
-    fi
-    return $retval
 }
 
 function get_make_command()
@@ -1833,140 +1017,9 @@ function get_make_command()
     fi
 }
 
-function _wrap_build()
-{
-    if [[ "${ANDROID_QUIET_BUILD:-}" == true ]]; then
-      "$@"
-      return $?
-    fi
-    local start_time=$(date +"%s")
-    "$@"
-    local ret=$?
-    local end_time=$(date +"%s")
-    local tdiff=$(($end_time-$start_time))
-    local hours=$(($tdiff / 3600 ))
-    local mins=$((($tdiff % 3600) / 60))
-    local secs=$(($tdiff % 60))
-    local ncolors=$(tput colors 2>/dev/null)
-    if [ -n "$ncolors" ] && [ $ncolors -ge 8 ]; then
-        color_failed=$'\E'"[0;31m"
-        color_success=$'\E'"[0;32m"
-        color_warning=$'\E'"[0;33m"
-        color_reset=$'\E'"[00m"
-    else
-        color_failed=""
-        color_success=""
-        color_reset=""
-    fi
-
-    echo
-    if [ $ret -eq 0 ] ; then
-        echo -n "${color_success}#### build completed successfully "
-    else
-        echo -n "${color_failed}#### failed to build some targets "
-    fi
-    if [ $hours -gt 0 ] ; then
-        printf "(%02g:%02g:%02g (hh:mm:ss))" $hours $mins $secs
-    elif [ $mins -gt 0 ] ; then
-        printf "(%02g:%02g (mm:ss))" $mins $secs
-    elif [ $secs -gt 0 ] ; then
-        printf "(%s seconds)" $secs
-    fi
-    echo " ####${color_reset}"
-    echo
-    return $ret
-}
-
-function _trigger_build()
-(
-    local -r bc="$1"; shift
-    local T=$(gettop)
-    if [ -n "$T" ]; then
-      _wrap_build "$T/build/soong/soong_ui.bash" --build-mode --${bc} --dir="$(pwd)" "$@"
-    else
-      >&2 echo "Couldn't locate the top of the tree. Try setting TOP."
-      return 1
-    fi
-    local ret=$?
-    if [[ ret -eq 0 &&  -z "${ANDROID_QUIET_BUILD:-}" && -n "${ANDROID_BUILD_BANNER}" ]]; then
-      echo "${ANDROID_BUILD_BANNER}"
-    fi
-    return $ret
-)
-
-function m()
-(
-    _trigger_build "all-modules" "$@"
-)
-
-function mm()
-(
-    _trigger_build "modules-in-a-dir-no-deps" "$@"
-)
-
-function mmm()
-(
-    _trigger_build "modules-in-dirs-no-deps" "$@"
-)
-
-function mma()
-(
-    _trigger_build "modules-in-a-dir" "$@"
-)
-
-function mmma()
-(
-    _trigger_build "modules-in-dirs" "$@"
-)
-
 function make()
 {
     _wrap_build $(get_make_command "$@") "$@"
-}
-
-function _multitree_lunch_error()
-{
-      >&2 echo "Couldn't locate the top of the tree. Please run \'source build/envsetup.sh\' and multitree_lunch from the root of your workspace."
-}
-
-function multitree_build()
-{
-    local T=$(multitree_gettop)
-    if [ -n "$T" ]; then
-      "$T/orchestrator/build/orchestrator/core/orchestrator.py" "$@"
-    else
-      _multitree_lunch_error
-      return 1
-    fi
-}
-
-function provision()
-{
-    if [ ! "$ANDROID_PRODUCT_OUT" ]; then
-        echo "Couldn't locate output files.  Try running 'lunch' first." >&2
-        return 1
-    fi
-    if [ ! -e "$ANDROID_PRODUCT_OUT/provision-device" ]; then
-        echo "There is no provisioning script for the device." >&2
-        return 1
-    fi
-
-    # Check if user really wants to do this.
-    if [ "$1" = "--no-confirmation" ]; then
-        shift 1
-    else
-        echo "This action will reflash your device."
-        echo ""
-        echo "ALL DATA ON THE DEVICE WILL BE IRREVOCABLY ERASED."
-        echo ""
-        echo -n "Are you sure you want to do this (yes/no)? "
-        read
-        if [[ "${REPLY}" != "yes" ]] ; then
-            echo "Not taking any action. Exiting." >&2
-            return 1
-        fi
-    fi
-    "$ANDROID_PRODUCT_OUT/provision-device" "$@"
 }
 
 # Zsh needs bashcompinit called to support bash-style completion.
@@ -2050,7 +1103,7 @@ function showcommands() {
             return
             ;;
     esac
-    OUT_DIR="$(get_abs_build_var OUT_DIR)"
+    OUT_DIR="$(_get_abs_build_var_cached OUT_DIR)"
     if [[ "$1" == "--regenerate" ]]; then
       shift 1
       NINJA_ARGS="-t commands $@" m
@@ -2061,25 +1114,68 @@ function showcommands() {
     fi
 }
 
-function avbtool() {
-    if [[ ! -f "$ANDROID_SOONG_HOST_OUT"/bin/avbtool ]]; then
-        m avbtool
-    fi
-    "$ANDROID_SOONG_HOST_OUT"/bin/avbtool $@
-}
+# These functions used to be here but are now standalone scripts
+# in build/soong/bin.  Unset these for the time being so the real
+# script is picked up.
+# TODO: Remove this some time after a suitable delay (maybe 2025?)
+unset allmod
+unset aninja
+unset cgrep
+unset core
+unset coredump_enable
+unset coredump_setup
+unset dirmods
+unset get_build_var
+unset get_abs_build_var
+unset getlastscreenshot
+unset getprebuilt
+unset getscreenshotpath
+unset getsdcardpath
+unset gettargetarch
+unset ggrep
+unset gogrep
+unset hmm
+unset installmod
+unset is64bit
+unset isviewserverstarted
+unset jgrep
+unset jsongrep
+unset key_back
+unset key_home
+unset key_menu
+unset ktgrep
+unset m
+unset mangrep
+unset mgrep
+unset mm
+unset mma
+unset mmm
+unset mmma
+unset outmod
+unset overrideflags
+unset owngrep
+unset pathmod
+unset pez
+unset pygrep
+unset qpid
+unset rcgrep
+unset refreshmod
+unset resgrep
+unset rsgrep
+unset run_tool_with_logging
+unset sepgrep
+unset sgrep
+unset startviewserver
+unset stopviewserver
+unset systemstack
+unset syswrite
+unset tomlgrep
+unset treegrep
 
-function overrideflags() {
-    local T="$(gettop)"
-    (\cd "${T}" && build/make/tools/overrideflags.sh "$@")
-}
-
-function aninja() {
-    local T="$(gettop)"
-    (\cd "${T}" && prebuilts/build-tools/linux-x86/bin/ninja -f out/combined-${TARGET_PRODUCT}.ninja "$@")
-}
 
 validate_current_shell
 set_global_paths
 source_vendorsetup
 addcompletions
+
 

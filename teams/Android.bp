@@ -732,7 +732,7 @@ team {
 }
 
 team {
-    name: "trendy_team_deprecated_systemui_gfx",
+    name: "trendy_team_ailabs",
 
     // go/trendy/manage/engineers/6673470538285056
     trendy_team_id: "6673470538285056",
@@ -4337,30 +4337,85 @@ team {
 }
 
 team {
-  name: "trendy_team_media_framework_drm",
+    name: "trendy_team_media_framework_drm",
 
-  // go/trendy/manage/engineers/5311752690335744
-  trendy_team_id: "5311752690335744",
+    // go/trendy/manage/engineers/5311752690335744
+    trendy_team_id: "5311752690335744",
 }
 
 team {
-  name: "trendy_team_media_framework_audio",
+    name: "trendy_team_media_framework_audio",
 
-  // go/trendy/manage/engineers/5823575353065472
-  trendy_team_id: "5823575353065472",
+    // go/trendy/manage/engineers/5823575353065472
+    trendy_team_id: "5823575353065472",
 }
 
 team {
-  name: "trendy_team_ar_sensors_context_hub",
+    name: "trendy_team_pixel_pearl",
 
-  // go/trendy/manage/engineers/4776371090259968
-  trendy_team_id: "4776371090259968",
+    // go/trendy/manage/engineers/6326219602231296
+    trendy_team_id: "6326219602231296",
 }
 
+team {
+    name: "trendy_team_ar_sensors_context_hub",
+
+    // go/trendy/manage/engineers/4776371090259968
+    trendy_team_id: "4776371090259968",
+}
 
 team {
-  name: "trendy_team_media_codec_framework",
+    name: "trendy_team_media_codec_framework",
 
-  // go/trendy/manage/engineers/4943966050844672
-  trendy_team_id: "4943966050844672",
+    // go/trendy/manage/engineers/4943966050844672
+    trendy_team_id: "4943966050844672",
+}
+
+team {
+    name: "trendy_team_android_platform_performance_testing",
+
+    // go/trendy/manage/engineers/5810097836621824
+    trendy_team_id: "5810097836621824",
+}
+
+team {
+    name: "trendy_team_adte",
+
+    // go/trendy/manage/engineers/5551098528825344
+    trendy_team_id: "5551098528825344",
+}
+
+team {
+    name: "trendy_team_incremental",
+
+    // go/trendy/manage/engineers/5955405559201792
+    trendy_team_id: "5955405559201792",
+}
+
+team {
+    name: "trendy_team_android_media_better_together",
+
+    // go/trendy/manage/engineers/5617300451721216
+    trendy_team_id: "5617300451721216",
+}
+
+team {
+    name: "trendy_team_attack_tools",
+
+    // go/trendy/manage/engineers/4705629185081344
+    trendy_team_id: "4705629185081344",
+}
+
+team {
+    name: "trendy_team_android_media_solutions_editing",
+
+    // go/trendy/manage/engineers/5350750192762880
+    trendy_team_id: "5350750192762880",
+}
+
+team {
+    name: "trendy_team_android_telemetry_client_infra",
+
+    // go/trendy/manage/engineers/5403245077430272
+    trendy_team_id: "5403245077430272",
 }

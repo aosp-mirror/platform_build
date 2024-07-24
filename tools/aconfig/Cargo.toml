@@ -2,8 +2,11 @@
 
 members = [
     "aconfig",
+    "aconfig_device_paths",
     "aconfig_protos",
     "aconfig_storage_file",
+    "aconfig_storage_read_api",
+    "aconfig_storage_write_api",
     "aflags",
     "printflags"
 ]

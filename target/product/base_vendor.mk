@@ -18,6 +18,7 @@
 PRODUCT_PACKAGES += \
     adbd.recovery \
     android.hardware.health@2.0-impl-default.recovery \
+    build_flag_vendor \
     cgroups.recovery.json \
     charger.recovery \
     init_second_stage.recovery \
@@ -51,7 +52,6 @@ PRODUCT_PACKAGES += \
     dumpsys_vendor \
     fs_config_files_nonsystem \
     fs_config_dirs_nonsystem \
-    gpu_counter_producer \
     gralloc.default \
     group_odm \
     group_vendor \
@@ -105,3 +105,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     adb_debug.prop \
     userdebug_plat_sepolicy.cil
+
+# On eng or userdebug builds, build in perf-setup-sh by default.
+ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
+PRODUCT_PACKAGES += \
+    perf-setup-sh
+endif

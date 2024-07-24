@@ -53,6 +53,7 @@ _all_flags_schema = {
                     for t in _valid_types
                 ],
             },
+            "origin": {"type": "string"},
             "declared_in": {"type": "string"},
         },
         "optional_keys": {
@@ -80,13 +81,14 @@ _all_values_schema = {
     },
 }
 
-def flag(name, partitions, default, *, appends = False):
+def flag(name, partitions, default, *, origin = "Unknown", appends = False):
     """Declare a flag.
 
     Args:
       name: name of the flag
       partitions: the partitions where this should be recorded.
       default: the default value of the flag.
+      origin: The origin of this flag.
       appends: Whether new values should be append (not replace) the old.
 
     Returns:
@@ -112,6 +114,7 @@ def flag(name, partitions, default, *, appends = False):
         "partitions": partitions,
         "default": default,
         "appends": appends,
+        "origin": origin,
     }
 
 def value(name, value):
@@ -145,6 +148,24 @@ def _format_value(val):
     else:
         return val
 
+def equal_flag_declaration(flag, other):
+    """Return true if the flag declarations are equal.
+
+    Args:
+      flag: This flag declaration.
+      other: Another flag declaration.
+
+    Returns:
+      Whether the declarations are the same.
+    """
+    for key in "name", "partitions", "default", "appends":
+        if flag[key] != other[key]:
+            return False
+    # For now, allow Unknown to match any other origin.
+    if flag["origin"] == "Unknown" or other["origin"] == "Unknown":
+        return True
+    return flag["origin"] == other["origin"]
+
 def release_config(all_flags, all_values):
     """Return the make variables that should be set for this release config.
 
@@ -158,14 +179,23 @@ def release_config(all_flags, all_values):
     validate(all_flags, _all_flags_schema)
     validate(all_values, _all_values_schema)
 
+    # Final values.
+    values = {}
     # Validate flags
     flag_names = []
     flags_dict = {}
     for flag in all_flags:
-        if flag["name"] in flag_names:
-            fail(flag["declared_in"] + ": Duplicate declaration of flag " + flag["name"])
-        flag_names.append(flag["name"])
-        flags_dict[flag["name"]] = flag
+        name = flag["name"]
+        if name in flag_names:
+            if equal_flag_declaration(flag, flags_dict[name]):
+                continue
+            else:
+                fail(flag["declared_in"] + ": Duplicate declaration of flag " + name +
+                     " (declared first in " + flags_dict[name]["declared_in"] + ")")
+        flag_names.append(name)
+        flags_dict[name] = flag
+        # Set the flag value to the default value.
+        values[name] = {"name": name, "value": _format_value(flag["default"]), "set_in": flag["declared_in"]}
 
     # Record which flags go on which partition
     partitions = {}
@@ -181,7 +211,6 @@ def release_config(all_flags, all_values):
 
     # Generate final values.
     # Only declared flags may have a value.
-    values = {}
     for value in all_values:
         name = value["name"]
         if name not in flag_names:
@@ -202,18 +231,13 @@ def release_config(all_flags, all_values):
     for partition, names in partitions.items():
         result["_ALL_RELEASE_FLAGS.PARTITIONS." + partition] = names
     for flag in all_flags:
-        if flag["name"] in values:
-            val = values[flag["name"]]["value"]
-            set_in = values[flag["name"]]["set_in"]
-        else:
-            val = flag["default"]
-            set_in = flag["declared_in"]
-        val = _format_value(val)
+        val = _format_value(values[flag["name"]]["value"])
         result[flag["name"]] = val
         result["_ALL_RELEASE_FLAGS." + flag["name"] + ".PARTITIONS"] = flag["partitions"]
         result["_ALL_RELEASE_FLAGS." + flag["name"] + ".DEFAULT"] = _format_value(flag["default"])
         result["_ALL_RELEASE_FLAGS." + flag["name"] + ".VALUE"] = val
         result["_ALL_RELEASE_FLAGS." + flag["name"] + ".DECLARED_IN"] = flag["declared_in"]
-        result["_ALL_RELEASE_FLAGS." + flag["name"] + ".SET_IN"] = set_in
+        result["_ALL_RELEASE_FLAGS." + flag["name"] + ".SET_IN"] = values[flag["name"]]["set_in"]
+        result["_ALL_RELEASE_FLAGS." + flag["name"] + ".ORIGIN"] = flag["origin"]
 
     return result

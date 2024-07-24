@@ -2,6 +2,9 @@
 #
 # Common compile-time definitions for mainline images.
 
+# Ensure all trunk-stable flags are available.
+include build/make/target/product/build_variables.mk
+
 # The generic product target doesn't have any hardware-specific pieces.
 TARGET_NO_BOOTLOADER := true
 TARGET_NO_RECOVERY := true
@@ -20,11 +23,6 @@ BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := ext4
 # Creates metadata partition mount point under root for
 # the devices with metadata parition
 BOARD_USES_METADATA_PARTITION := true
-
-ifeq ($(KEEP_VNDK),true)
-# Default is current, but allow devices to override vndk version if needed.
-BOARD_VNDK_VERSION ?= current
-endif
 
 # 64 bit mediadrmserver
 TARGET_ENABLE_MEDIADRM_64 := true

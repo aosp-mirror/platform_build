@@ -6,7 +6,11 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.69"
 paste = "1.0.11"
-clap = { version = "4", features = ["derive"] }
 protobuf = "3.2.0"
 regex = "1.10.3"
 aconfig_protos = { path = "../aconfig_protos" }
+nix = { version = "0.28.0", features = ["user"] }
+aconfig_storage_file = { version = "0.1.0", path = "../aconfig_storage_file" }
+aconfig_storage_read_api = { version = "0.1.0", path = "../aconfig_storage_read_api" }
+clap = {version = "4.5.2" }
+aconfig_device_paths = { version = "0.1.0", path = "../aconfig_device_paths" }

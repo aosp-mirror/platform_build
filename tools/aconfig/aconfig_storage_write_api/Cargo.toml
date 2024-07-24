@@ -1,0 +1,20 @@
+[package]
+name = "aconfig_storage_write_api"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = ["cargo"]
+cargo = []
+
+[dependencies]
+anyhow = "1.0.69"
+cxx = "1.0"
+memmap2 = "0.8.0"
+tempfile = "3.9.0"
+thiserror = "1.0.56"
+aconfig_storage_file = { path = "../aconfig_storage_file" }
+aconfig_storage_read_api = { path = "../aconfig_storage_read_api" }
+
+[build-dependencies]
+cxx-build = "1.0"

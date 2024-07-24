@@ -1,5 +1,15 @@
 #include "{header}.h"
 
+{{ if allow_instrumentation }}
+#include <sys/stat.h>
+#include "aconfig_storage/aconfig_storage_read_api.hpp"
+#include <android/log.h>
+
+#define ALOGI(msg, ...)                                                        \
+  __android_log_print(ANDROID_LOG_INFO, "AconfigTestMission1", (msg), __VA_ARGS__)
+
+{{ endif }}
+
 {{ if readwrite- }}
 #include <server_configurable_flags/get_flags.h>
 {{ endif }}
@@ -97,10 +107,67 @@ bool {header}_{item.flag_name}() \{
     {{ -if item.readwrite }}
     return {cpp_namespace}::{item.flag_name}();
     {{ -else }}
+    {{ if allow_instrumentation }}
+    auto result =
+        {{ if item.is_fixed_read_only }}
+	    {package_macro}_{item.flag_macro}
+	{{ else }}
+	    {item.default_value}
+	{{ endif }};
+
+    struct stat buffer;
+    if (stat("/metadata/aconfig_test_missions/mission_1", &buffer) != 0) \{
+        return result;
+    }
+
+    auto package_map_file = aconfig_storage::get_mapped_file(
+        "{item.container}",
+        aconfig_storage::StorageFileType::package_map);
+    if (!package_map_file.ok()) \{
+        ALOGI("error: failed to get package map file: %s", package_map_file.error().c_str());
+        return result;
+    }
+
+    auto package_read_context = aconfig_storage::get_package_read_context(
+        **package_map_file, "{package}");
+    if (!package_read_context.ok()) \{
+        ALOGI("error: failed to get package read context: %s", package_map_file.error().c_str());
+        return result;
+    }
+
+    delete *package_map_file;
+
+    auto flag_val_map = aconfig_storage::get_mapped_file(
+        "{item.container}",
+        aconfig_storage::StorageFileType::flag_val);
+    if (!flag_val_map.ok()) \{
+        ALOGI("error: failed to get flag val map: %s", package_map_file.error().c_str());
+        return result;
+    }
+
+    auto value = aconfig_storage::get_boolean_flag_value(
+        **flag_val_map,
+        package_read_context->boolean_start_index + {item.flag_offset});
+    if (!value.ok()) \{
+        ALOGI("error: failed to get flag val: %s", package_map_file.error().c_str());
+        return result;
+    }
+
+    delete *flag_val_map;
+
+    if (*value != result) \{
+        ALOGI("error: new storage value '%d' does not match current value '%d'", *value, result);
+    } else \{
+        ALOGI("success: new storage value was '%d, legacy storage was '%d'", *value, result);
+    }
+
+    return result;
+    {{ else }}
     {{ -if item.is_fixed_read_only }}
     return {package_macro}_{item.flag_macro};
     {{ -else }}
     return {item.default_value};
+    {{ -endif }}
     {{ -endif }}
     {{ -endif }}
     {{ -endif }}
@@ -118,4 +185,5 @@ void {header}_reset_flags() \{
      {cpp_namespace}::reset_flags();
 }
 {{ -endif }}
+
 

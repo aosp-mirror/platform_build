@@ -1,26 +1,39 @@
 package {package_name};
-// TODO(b/303773055): Remove the annotation after access issue is resolved.
-import android.compat.annotation.UnsupportedAppUsage;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+import java.util.function.Predicate;
 
 /** @hide */
-public class FakeFeatureFlagsImpl implements FeatureFlags \{
+public class FakeFeatureFlagsImpl extends CustomFeatureFlags \{
+    private final Map<String, Boolean> mFlagMap = new HashMap<>();
+    private final FeatureFlags mDefaults;
+
     public FakeFeatureFlagsImpl() \{
-        resetAll();
+        this(null);
     }
 
-{{ for item in flag_elements}}
-    @Override
-    @UnsupportedAppUsage
-    public boolean {item.method_name}() \{
-        return getValue(Flags.FLAG_{item.flag_name_constant_suffix});
+    public FakeFeatureFlagsImpl(FeatureFlags defaults) \{
+        super(null);
+        mDefaults = defaults;
+        // Initialize the map with null values
+        for (String flagName : getFlagNames()) \{
+            mFlagMap.put(flagName, null);
+        }
     }
-{{ endfor}}
+
+    @Override
+    protected boolean getValue(String flagName, Predicate<FeatureFlags> getter) \{
+        Boolean value = this.mFlagMap.get(flagName);
+        if (value != null) \{
+            return value;
+        }
+        if (mDefaults != null) \{
+            return getter.test(mDefaults);
+        }
+        throw new IllegalArgumentException(flagName + " is not set");
+    }
+
     public void setFlag(String flagName, boolean value) \{
         if (!this.mFlagMap.containsKey(flagName)) \{
             throw new IllegalArgumentException("no such flag " + flagName);
@@ -33,45 +46,4 @@ public class FakeFeatureFlagsImpl implements FeatureFlags \{
             entry.setValue(null);
         }
     }
-
-    public boolean isFlagReadOnlyOptimized(String flagName) \{
-        if (mReadOnlyFlagsSet.contains(flagName) &&
-            isOptimizationEnabled()) \{
-                return true;
-        }
-        return false;
-    }
-
-    private boolean getValue(String flagName) \{
-        Boolean value = this.mFlagMap.get(flagName);
-        if (value == null) \{
-            throw new IllegalArgumentException(flagName + " is not set");
-        }
-        return value;
-    }
-
-    @com.android.aconfig.annotations.AssumeTrueForR8
-    private boolean isOptimizationEnabled() \{
-        return false;
-    }
-
-    private Map<String, Boolean> mFlagMap = new HashMap<>(
-        Map.ofEntries(
-            {{ -for item in flag_elements }}
-            Map.entry(Flags.FLAG_{item.flag_name_constant_suffix}, false)
-            {{ -if not @last }},{{ endif }}
-            {{ -endfor }}
-        )
-    );
-
-    private Set<String> mReadOnlyFlagsSet = new HashSet<>(
-        Arrays.asList(
-            {{ -for item in flag_elements }}
-            {{ -if not item.is_read_write }}
-            Flags.FLAG_{item.flag_name_constant_suffix},
-            {{ -endif }}
-            {{ -endfor }}
-            ""{# The empty string here is to resolve the ending comma #}
-        )
-    );
 }

@@ -29,7 +29,7 @@ mod commands;
 mod dump;
 mod storage;
 
-use aconfig_storage_file::StorageFileSelection;
+use aconfig_storage_file::StorageFileType;
 use codegen::CodegenMode;
 use dump::DumpFormat;
 
@@ -72,6 +72,12 @@ fn cli() -> Command {
                         .long("mode")
                         .value_parser(EnumValueParser::<CodegenMode>::new())
                         .default_value("production"),
+                )
+                .arg(
+                    Arg::new("allow-instrumentation")
+                        .long("allow-instrumentation")
+                        .value_parser(clap::value_parser!(bool))
+                        .default_value("false"),
                 ),
         )
         .subcommand(
@@ -83,6 +89,12 @@ fn cli() -> Command {
                         .long("mode")
                         .value_parser(EnumValueParser::<CodegenMode>::new())
                         .default_value("production"),
+                )
+                .arg(
+                    Arg::new("allow-instrumentation")
+                        .long("allow-instrumentation")
+                        .value_parser(clap::value_parser!(bool))
+                        .default_value("false"),
                 ),
         )
         .subcommand(
@@ -138,7 +150,7 @@ fn cli() -> Command {
                 .arg(
                     Arg::new("file")
                         .long("file")
-                        .value_parser(|s: &str| StorageFileSelection::try_from(s)),
+                        .value_parser(|s: &str| StorageFileType::try_from(s)),
                 )
                 .arg(Arg::new("cache").long("cache").action(ArgAction::Append).required(true))
                 .arg(Arg::new("out").long("out").required(true)),
@@ -231,8 +243,10 @@ fn main() -> Result<()> {
         Some(("create-java-lib", sub_matches)) => {
             let cache = open_single_file(sub_matches, "cache")?;
             let mode = get_required_arg::<CodegenMode>(sub_matches, "mode")?;
-            let generated_files =
-                commands::create_java_lib(cache, *mode).context("failed to create java lib")?;
+            let allow_instrumentation =
+                get_required_arg::<bool>(sub_matches, "allow-instrumentation")?;
+            let generated_files = commands::create_java_lib(cache, *mode, *allow_instrumentation)
+                .context("failed to create java lib")?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
             generated_files
                 .iter()
@@ -241,8 +255,10 @@ fn main() -> Result<()> {
         Some(("create-cpp-lib", sub_matches)) => {
             let cache = open_single_file(sub_matches, "cache")?;
             let mode = get_required_arg::<CodegenMode>(sub_matches, "mode")?;
-            let generated_files =
-                commands::create_cpp_lib(cache, *mode).context("failed to create cpp lib")?;
+            let allow_instrumentation =
+                get_required_arg::<bool>(sub_matches, "allow-instrumentation")?;
+            let generated_files = commands::create_cpp_lib(cache, *mode, *allow_instrumentation)
+                .context("failed to create cpp lib")?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
             generated_files
                 .iter()
@@ -285,7 +301,7 @@ fn main() -> Result<()> {
             write_output_to_file_or_stdout(path, &output)?;
         }
         Some(("create-storage", sub_matches)) => {
-            let file = get_required_arg::<StorageFileSelection>(sub_matches, "file")
+            let file = get_required_arg::<StorageFileType>(sub_matches, "file")
                 .context("Invalid storage file selection")?;
             let cache = open_zero_or_more_files(sub_matches, "cache")?;
             let container = get_required_arg::<String>(sub_matches, "container")?;

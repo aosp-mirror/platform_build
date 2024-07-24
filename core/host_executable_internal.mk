@@ -57,4 +57,6 @@ $(LOCAL_BUILT_MODULE): $(my_crtbegin) $(my_crtend) $(my_libcrt_builtins)
 $(LOCAL_BUILT_MODULE): $(all_objects) $(all_libraries) $(CLANG_CXX)
 	$(transform-host-o-to-executable)
 
+$(if $(my_register_name),$(eval ALL_MODULES.$(my_register_name).MAKE_MODULE_TYPE:=HOST_EXECUTABLE))
+
 endif  # skip_build_from_source
