@@ -215,7 +215,7 @@ def PrepareApexDirectory(inp, dirmap):
 
   This simulates how apexd activates APEXes.
   1. create {inp}/APEX which is treated as a "/apex" on device.
-  2. invoke apexd_host with vendor APEXes.
+  2. invoke apexd_host with APEXes.
   """
 
   apex_dir = common.MakeTempDir('APEX')
@@ -225,12 +225,13 @@ def PrepareApexDirectory(inp, dirmap):
   # Always create /apex directory for dirmap
   os.makedirs(apex_dir, exist_ok=True)
 
-  # Invoke apexd_host to activate vendor APEXes for checkvintf
+  # Invoke apexd_host to activate APEXes for checkvintf
   apex_host = os.path.join(OPTIONS.search_path, 'bin', 'apexd_host')
   cmd = [apex_host, '--tool_path', OPTIONS.search_path]
   cmd += ['--apex_path', dirmap['/apex']]
-  if '/vendor' in dirmap:
-      cmd += ['--vendor_path', dirmap['/vendor']]
+  for p in ['system', 'system_ext', 'product', 'vendor']:
+    if '/' + p in dirmap:
+      cmd += ['--' + p + '_path', dirmap['/' + p]]
   common.RunAndCheckOutput(cmd)
 
 

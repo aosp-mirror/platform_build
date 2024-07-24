@@ -50,6 +50,7 @@ PRODUCT_TEST_ONLY_ART_BOOT_IMAGE_JARS := \
 PRODUCT_BOOT_JARS += \
     framework-minus-apex \
     framework-graphics \
+    framework-location \
     ext \
     telephony-common \
     voip-common \
@@ -100,8 +101,16 @@ ifeq ($(RELEASE_PACKAGE_NFC_STACK),NfcNci)
     PRODUCT_BOOT_JARS += \
         framework-nfc
 else
-    PRODUCT_APEX_BOOT_JARS := \
+    PRODUCT_APEX_BOOT_JARS += \
         com.android.nfcservices:framework-nfc
+    $(call soong_config_set,bootclasspath,nfc_apex_bootclasspath_fragment,true)
+endif
+
+# Check if build supports Profiling module.
+ifeq ($(RELEASE_PACKAGE_PROFILING_MODULE),true)
+    PRODUCT_APEX_BOOT_JARS += \
+        com.android.profiling:framework-profiling \
+
 endif
 
 # List of system_server classpath jars delivered via apex.
@@ -151,6 +160,13 @@ PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS := \
     com.android.tethering:service-connectivity \
     com.android.uwb:service-uwb \
     com.android.wifi:service-wifi \
+
+# Check if build supports Profiling module.
+ifeq ($(RELEASE_PACKAGE_PROFILING_MODULE),true)
+    PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS += \
+        com.android.profiling:service-profiling \
+
+endif
 
 # Overrides the (apex, jar) pairs above when determining the on-device location. The format is:
 # <old_apex>:<old_jar>:<new_apex>:<new_jar>

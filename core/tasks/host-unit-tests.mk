@@ -29,14 +29,27 @@ my_host_shared_lib_for_host_unit_tests := $(foreach f,$(COMPATIBILITY.host-unit-
     $(eval _cmf_src := $(word 1,$(_cmf_tuple))) \
     $(_cmf_src)))
 
+my_symlinks_for_host_unit_tests := $(foreach f,$(COMPATIBILITY.host-unit-tests.SYMLINKS),\
+	$(strip $(eval _cmf_tuple := $(subst :, ,$(f))) \
+	$(eval _cmf_dep := $(word 1,$(_cmf_tuple))) \
+	$(eval _cmf_src := $(word 2,$(_cmf_tuple))) \
+	$(eval _cmf_dest := $(word 3,$(_cmf_tuple))) \
+	$(call symlink-file,$(_cmf_dep),$(_cmf_src),$(_cmf_dest)) \
+	$(_cmf_dest)))
+
 $(host_unit_tests_zip) : PRIVATE_HOST_SHARED_LIBS := $(my_host_shared_lib_for_host_unit_tests)
 
-$(host_unit_tests_zip) : $(COMPATIBILITY.host-unit-tests.FILES) $(my_host_shared_lib_for_host_unit_tests) $(SOONG_ZIP)
+$(host_unit_tests_zip) : PRIVATE_SYMLINKS := $(my_symlinks_for_host_unit_tests)
+
+$(host_unit_tests_zip) : $(COMPATIBILITY.host-unit-tests.FILES) $(my_host_shared_lib_for_host_unit_tests) $(my_symlinks_for_host_unit_tests) $(SOONG_ZIP)
 	echo $(sort $(COMPATIBILITY.host-unit-tests.FILES)) | tr " " "\n" > $@.list
 	grep $(HOST_OUT_TESTCASES) $@.list > $@-host.list || true
 	echo "" >> $@-host-libs.list
 	$(hide) for shared_lib in $(PRIVATE_HOST_SHARED_LIBS); do \
 	  echo $$shared_lib >> $@-host-libs.list; \
+	done
+	$(hide) for symlink in $(PRIVATE_SYMLINKS); do \
+	  echo $$symlink >> $@-host.list; \
 	done
 	grep $(TARGET_OUT_TESTCASES) $@.list > $@-target.list || true
 	$(hide) $(SOONG_ZIP) -d -o $@ -P host -C $(HOST_OUT) -l $@-host.list \

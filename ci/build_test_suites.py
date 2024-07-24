@@ -12,397 +12,173 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Script to build only the necessary modules for general-tests along
-
-with whatever other targets are passed in.
-"""
+"""Build script for the CI `test_suites` target."""
 
 import argparse
-from collections.abc import Sequence
+from dataclasses import dataclass
 import json
+import logging
 import os
 import pathlib
-import re
 import subprocess
 import sys
-from typing import Any
-
-import test_mapping_module_retriever
-
-
-# List of modules that are always required to be in general-tests.zip
-REQUIRED_MODULES = frozenset(
-    ['cts-tradefed', 'vts-tradefed', 'compatibility-host-util', 'soong_zip']
-)
+from typing import Callable
+import optimized_targets
 
 
-def build_test_suites(argv):
+REQUIRED_ENV_VARS = frozenset(['TARGET_PRODUCT', 'TARGET_RELEASE', 'TOP'])
+SOONG_UI_EXE_REL_PATH = 'build/soong/soong_ui.bash'
+
+
+class Error(Exception):
+
+  def __init__(self, message):
+    super().__init__(message)
+
+
+class BuildFailureError(Error):
+
+  def __init__(self, return_code):
+    super().__init__(f'Build command failed with return code: f{return_code}')
+    self.return_code = return_code
+
+
+class BuildPlanner:
+  """Class in charge of determining how to optimize build targets.
+
+  Given the build context and targets to build it will determine a final list of
+  targets to build along with getting a set of packaging functions to package up
+  any output zip files needed by the build.
+  """
+
+  def __init__(
+      self,
+      build_context: dict[str, any],
+      args: argparse.Namespace,
+      target_optimizations: dict[str, optimized_targets.OptimizedBuildTarget],
+  ):
+    self.build_context = build_context
+    self.args = args
+    self.target_optimizations = target_optimizations
+
+  def create_build_plan(self):
+
+    if 'optimized_build' not in self.build_context['enabled_build_features']:
+      return BuildPlan(set(self.args.extra_targets), set())
+
+    build_targets = set()
+    packaging_functions = set()
+    for target in self.args.extra_targets:
+      target_optimizer_getter = self.target_optimizations.get(target, None)
+      if not target_optimizer_getter:
+        build_targets.add(target)
+        continue
+
+      target_optimizer = target_optimizer_getter(
+          target, self.build_context, self.args
+      )
+      build_targets.update(target_optimizer.get_build_targets())
+      packaging_functions.add(target_optimizer.package_outputs)
+
+    return BuildPlan(build_targets, packaging_functions)
+
+
+@dataclass(frozen=True)
+class BuildPlan:
+  build_targets: set[str]
+  packaging_functions: set[Callable[..., None]]
+
+
+def build_test_suites(argv: list[str]) -> int:
+  """Builds all test suites passed in, optimizing based on the build_context content.
+
+  Args:
+    argv: The command line arguments passed in.
+
+  Returns:
+    The exit code of the build.
+  """
   args = parse_args(argv)
+  check_required_env()
+  build_context = load_build_context()
+  build_planner = BuildPlanner(
+      build_context, args, optimized_targets.OPTIMIZED_BUILD_TARGETS
+  )
+  build_plan = build_planner.create_build_plan()
 
-  if not os.environ.get('BUILD_NUMBER')[0] == 'P':
-    build_everything(args)
-    return
+  try:
+    execute_build_plan(build_plan)
+  except BuildFailureError as e:
+    logging.error('Build command failed! Check build_log for details.')
+    return e.return_code
 
-  # Call the class to map changed files to modules to build.
-  # TODO(lucafarsi): Move this into a replaceable class.
-  build_affected_modules(args)
+  return 0
 
 
-def parse_args(argv):
+def parse_args(argv: list[str]) -> argparse.Namespace:
   argparser = argparse.ArgumentParser()
+
   argparser.add_argument(
       'extra_targets', nargs='*', help='Extra test suites to build.'
   )
-  argparser.add_argument('--target_product')
-  argparser.add_argument('--target_release')
-  argparser.add_argument(
-      '--with_dexpreopt_boot_img_and_system_server_only', action='store_true'
-  )
-  argparser.add_argument('--dist_dir')
-  argparser.add_argument('--change_info', nargs='?')
-  argparser.add_argument('--extra_required_modules', nargs='*')
 
-  return argparser.parse_args()
+  return argparser.parse_args(argv)
 
 
-def build_everything(args: argparse.Namespace):
-  build_command = base_build_command(args)
-  build_command.append('general-tests')
+def check_required_env():
+  """Check for required env vars.
 
-  run_command(build_command, print_output=True)
+  Raises:
+    RuntimeError: If any required env vars are not found.
+  """
+  missing_env_vars = sorted(v for v in REQUIRED_ENV_VARS if v not in os.environ)
 
+  if not missing_env_vars:
+    return
 
-def build_affected_modules(args: argparse.Namespace):
-  modules_to_build = find_modules_to_build(
-      pathlib.Path(args.change_info), args.extra_required_modules
-  )
-
-  # Call the build command with everything.
-  build_command = base_build_command(args)
-  build_command.extend(modules_to_build)
-  # When not building general-tests we also have to build the general tests
-  # shared libs.
-  build_command.append('general-tests-shared-libs')
-
-  run_command(build_command, print_output=True)
-
-  zip_build_outputs(modules_to_build, args.dist_dir, args.target_release)
+  t = ','.join(missing_env_vars)
+  raise Error(f'Missing required environment variables: {t}')
 
 
-def base_build_command(args: argparse.Namespace) -> list:
+def load_build_context():
+  build_context_path = pathlib.Path(os.environ.get('BUILD_CONTEXT', ''))
+  if build_context_path.is_file():
+    try:
+      with open(build_context_path, 'r') as f:
+        return json.load(f)
+    except json.decoder.JSONDecodeError as e:
+      raise Error(f'Failed to load JSON file: {build_context_path}')
+
+  logging.info('No BUILD_CONTEXT found, skipping optimizations.')
+  return empty_build_context()
+
+
+def empty_build_context():
+  return {'enabled_build_features': []}
+
+
+def execute_build_plan(build_plan: BuildPlan):
   build_command = []
-  build_command.append('time')
-  build_command.append('./build/soong/soong_ui.bash')
+  build_command.append(get_top().joinpath(SOONG_UI_EXE_REL_PATH))
   build_command.append('--make-mode')
-  build_command.append('dist')
-  build_command.append('DIST_DIR=' + args.dist_dir)
-  build_command.append('TARGET_PRODUCT=' + args.target_product)
-  build_command.append('TARGET_RELEASE=' + args.target_release)
-  if args.with_dexpreopt_boot_img_and_system_server_only:
-    build_command.append('WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY=true')
-  build_command.extend(args.extra_targets)
+  build_command.extend(build_plan.build_targets)
 
-  return build_command
+  try:
+    run_command(build_command)
+  except subprocess.CalledProcessError as e:
+    raise BuildFailureError(e.returncode) from e
 
-
-def run_command(
-    args: list[str],
-    env: dict[str, str] = os.environ,
-    print_output: bool = False,
-) -> str:
-  result = subprocess.run(
-      args=args,
-      text=True,
-      capture_output=True,
-      check=False,
-      env=env,
-  )
-  # If the process failed, print its stdout and propagate the exception.
-  if not result.returncode == 0:
-    print('Build command failed! output:')
-    print('stdout: ' + result.stdout)
-    print('stderr: ' + result.stderr)
-
-  result.check_returncode()
-
-  if print_output:
-    print(result.stdout)
-
-  return result.stdout
+  for packaging_function in build_plan.packaging_functions:
+    packaging_function()
 
 
-def find_modules_to_build(
-    change_info: pathlib.Path, extra_required_modules: list[str]
-) -> set[str]:
-  changed_files = find_changed_files(change_info)
-
-  test_mappings = test_mapping_module_retriever.GetTestMappings(
-      changed_files, set()
-  )
-
-  # Soong_zip is required to generate the output zip so always build it.
-  modules_to_build = set(REQUIRED_MODULES)
-  if extra_required_modules:
-    modules_to_build.update(extra_required_modules)
-
-  modules_to_build.update(find_affected_modules(test_mappings, changed_files))
-
-  return modules_to_build
+def get_top() -> pathlib.Path:
+  return pathlib.Path(os.environ['TOP'])
 
 
-def find_changed_files(change_info: pathlib.Path) -> set[str]:
-  with open(change_info) as change_info_file:
-    change_info_contents = json.load(change_info_file)
-
-  changed_files = set()
-
-  for change in change_info_contents['changes']:
-    project_path = change.get('projectPath') + '/'
-
-    for revision in change.get('revisions'):
-      for file_info in revision.get('fileInfos'):
-        changed_files.add(project_path + file_info.get('path'))
-
-  return changed_files
-
-
-def find_affected_modules(
-    test_mappings: dict[str, Any], changed_files: set[str]
-) -> set[str]:
-  modules = set()
-
-  # The test_mappings object returned by GetTestMappings is organized as
-  # follows:
-  # {
-  #   'test_mapping_file_path': {
-  #     'group_name' : [
-  #       'name': 'module_name',
-  #     ],
-  #   }
-  # }
-  for test_mapping in test_mappings.values():
-    for group in test_mapping.values():
-      for entry in group:
-        module_name = entry.get('name', None)
-
-        if not module_name:
-          continue
-
-        file_patterns = entry.get('file_patterns')
-        if not file_patterns:
-          modules.add(module_name)
-          continue
-
-        if matches_file_patterns(file_patterns, changed_files):
-          modules.add(module_name)
-          continue
-
-  return modules
-
-
-# TODO(lucafarsi): Share this logic with the original logic in
-# test_mapping_test_retriever.py
-def matches_file_patterns(
-    file_patterns: list[set], changed_files: set[str]
-) -> bool:
-  for changed_file in changed_files:
-    for pattern in file_patterns:
-      if re.search(pattern, changed_file):
-        return True
-
-  return False
-
-
-def zip_build_outputs(
-    modules_to_build: set[str], dist_dir: str, target_release: str
-):
-  src_top = os.environ.get('TOP', os.getcwd())
-
-  # Call dumpvars to get the necessary things.
-  # TODO(lucafarsi): Don't call soong_ui 4 times for this, --dumpvars-mode can
-  # do it but it requires parsing.
-  host_out_testcases = pathlib.Path(
-      get_soong_var('HOST_OUT_TESTCASES', target_release)
-  )
-  target_out_testcases = pathlib.Path(
-      get_soong_var('TARGET_OUT_TESTCASES', target_release)
-  )
-  product_out = pathlib.Path(get_soong_var('PRODUCT_OUT', target_release))
-  soong_host_out = pathlib.Path(get_soong_var('SOONG_HOST_OUT', target_release))
-  host_out = pathlib.Path(get_soong_var('HOST_OUT', target_release))
-
-  # Call the class to package the outputs.
-  # TODO(lucafarsi): Move this code into a replaceable class.
-  host_paths = []
-  target_paths = []
-  host_config_files = []
-  target_config_files = []
-  for module in modules_to_build:
-    host_path = os.path.join(host_out_testcases, module)
-    if os.path.exists(host_path):
-      host_paths.append(host_path)
-      collect_config_files(src_top, host_path, host_config_files)
-
-    target_path = os.path.join(target_out_testcases, module)
-    if os.path.exists(target_path):
-      target_paths.append(target_path)
-      collect_config_files(src_top, target_path, target_config_files)
-
-  zip_test_configs_zips(
-      dist_dir, host_out, product_out, host_config_files, target_config_files
-  )
-
-  zip_command = base_zip_command(host_out, dist_dir, 'general-tests.zip')
-
-  # Add host testcases.
-  zip_command.append('-C')
-  zip_command.append(os.path.join(src_top, soong_host_out))
-  zip_command.append('-P')
-  zip_command.append('host/')
-  for path in host_paths:
-    zip_command.append('-D')
-    zip_command.append(path)
-
-  # Add target testcases.
-  zip_command.append('-C')
-  zip_command.append(os.path.join(src_top, product_out))
-  zip_command.append('-P')
-  zip_command.append('target')
-  for path in target_paths:
-    zip_command.append('-D')
-    zip_command.append(path)
-
-  # TODO(lucafarsi): Push this logic into a general-tests-minimal build command
-  # Add necessary tools. These are also hardcoded in general-tests.mk.
-  framework_path = os.path.join(soong_host_out, 'framework')
-
-  zip_command.append('-C')
-  zip_command.append(framework_path)
-  zip_command.append('-P')
-  zip_command.append('host/tools')
-  zip_command.append('-f')
-  zip_command.append(os.path.join(framework_path, 'cts-tradefed.jar'))
-  zip_command.append('-f')
-  zip_command.append(
-      os.path.join(framework_path, 'compatibility-host-util.jar')
-  )
-  zip_command.append('-f')
-  zip_command.append(os.path.join(framework_path, 'vts-tradefed.jar'))
-
-  run_command(zip_command, print_output=True)
-
-
-def collect_config_files(
-    src_top: pathlib.Path, root_dir: pathlib.Path, config_files: list[str]
-):
-  for root, dirs, files in os.walk(os.path.join(src_top, root_dir)):
-    for file in files:
-      if file.endswith('.config'):
-        config_files.append(os.path.join(root_dir, file))
-
-
-def base_zip_command(
-    host_out: pathlib.Path, dist_dir: pathlib.Path, name: str
-) -> list[str]:
-  return [
-      'time',
-      os.path.join(host_out, 'bin', 'soong_zip'),
-      '-d',
-      '-o',
-      os.path.join(dist_dir, name),
-  ]
-
-
-# generate general-tests_configs.zip which contains all of the .config files
-# that were built and general-tests_list.zip which contains a text file which
-# lists all of the .config files that are in general-tests_configs.zip.
-#
-# general-tests_comfigs.zip is organized as follows:
-# /
-#   host/
-#     testcases/
-#       test_1.config
-#       test_2.config
-#       ...
-#   target/
-#     testcases/
-#       test_1.config
-#       test_2.config
-#       ...
-#
-# So the process is we write out the paths to all the host config files into one
-# file and all the paths to the target config files in another. We also write
-# the paths to all the config files into a third file to use for
-# general-tests_list.zip.
-def zip_test_configs_zips(
-    dist_dir: pathlib.Path,
-    host_out: pathlib.Path,
-    product_out: pathlib.Path,
-    host_config_files: list[str],
-    target_config_files: list[str],
-):
-  with open(
-      os.path.join(host_out, 'host_general-tests_list'), 'w'
-  ) as host_list_file, open(
-      os.path.join(product_out, 'target_general-tests_list'), 'w'
-  ) as target_list_file, open(
-      os.path.join(host_out, 'general-tests_list'), 'w'
-  ) as list_file:
-
-    for config_file in host_config_files:
-      host_list_file.write(config_file + '\n')
-      list_file.write('host/' + os.path.relpath(config_file, host_out) + '\n')
-
-    for config_file in target_config_files:
-      target_list_file.write(config_file + '\n')
-      list_file.write(
-          'target/' + os.path.relpath(config_file, product_out) + '\n'
-      )
-
-  tests_config_zip_command = base_zip_command(
-      host_out, dist_dir, 'general-tests_configs.zip'
-  )
-  tests_config_zip_command.append('-P')
-  tests_config_zip_command.append('host')
-  tests_config_zip_command.append('-C')
-  tests_config_zip_command.append(host_out)
-  tests_config_zip_command.append('-l')
-  tests_config_zip_command.append(
-      os.path.join(host_out, 'host_general-tests_list')
-  )
-  tests_config_zip_command.append('-P')
-  tests_config_zip_command.append('target')
-  tests_config_zip_command.append('-C')
-  tests_config_zip_command.append(product_out)
-  tests_config_zip_command.append('-l')
-  tests_config_zip_command.append(
-      os.path.join(product_out, 'target_general-tests_list')
-  )
-  run_command(tests_config_zip_command, print_output=True)
-
-  tests_list_zip_command = base_zip_command(
-      host_out, dist_dir, 'general-tests_list.zip'
-  )
-  tests_list_zip_command.append('-C')
-  tests_list_zip_command.append(host_out)
-  tests_list_zip_command.append('-f')
-  tests_list_zip_command.append(os.path.join(host_out, 'general-tests_list'))
-  run_command(tests_list_zip_command, print_output=True)
-
-
-def get_soong_var(var: str, target_release: str) -> str:
-  new_env = os.environ.copy()
-  new_env['TARGET_RELEASE'] = target_release
-
-  value = run_command(
-      ['./build/soong/soong_ui.bash', '--dumpvar-mode', '--abs', var],
-      env=new_env,
-  ).strip()
-  if not value:
-    raise RuntimeError('Necessary soong variable ' + var + ' not found.')
-
-  return value
+def run_command(args: list[str], stdout=None):
+  subprocess.run(args=args, check=True, stdout=stdout)
 
 
 def main(argv):
-  build_test_suites(sys.argv)
+  sys.exit(build_test_suites(argv))

@@ -1,42 +1,46 @@
-rust_test {
-    name: "aconfig_storage.test.rust",
-    srcs: [
-        "storage_lib_rust_test.rs"
-    ],
-    rustlibs: [
-        "libanyhow",
-        "libaconfig_storage_file",
-        "libprotobuf",
-        "libtempfile",
-    ],
-    data: [
-        ":ro.package.map",
-        ":ro.flag.map",
-        ":ro.flag.val",
-    ],
-    test_suites: ["general-tests"],
-}
-
 cc_test {
-    name: "aconfig_storage.test.cpp",
+    name: "aconfig_storage_file.test.cpp",
+    team: "trendy_team_android_core_experiments",
     srcs: [
-        "storage_lib_cc_test.cpp",
+        "storage_file_test.cpp",
     ],
     static_libs: [
         "libgmock",
-        "libaconfig_storage_protos_cc",
-        "libprotobuf-cpp-lite",
-        "libaconfig_storage_cc",
+        "libaconfig_storage_file_cc",
         "libbase",
-        "liblog",
     ],
     data: [
-        ":ro.package.map",
-        ":ro.flag.map",
-        ":ro.flag.val",
+        "package.map",
+        "flag.map",
+        "flag.val",
+        "flag.info",
     ],
     test_suites: [
         "device-tests",
+        "general-tests",
+    ],
+}
+
+android_test {
+    name: "aconfig_storage_file.test.java",
+    team: "trendy_team_android_core_experiments",
+    srcs: [
+        "srcs/**/*.java",
+    ],
+    static_libs: [
+        "aconfig_storage_file_java",
+        "androidx.test.runner",
+        "junit",
+    ],
+    sdk_version: "test_current",
+    test_config: "AndroidStorageJaveTest.xml",
+    data: [
+        "package.map",
+        "flag.map",
+        "flag.val",
+        "flag.info",
+    ],
+    test_suites: [
         "general-tests",
     ],
 }

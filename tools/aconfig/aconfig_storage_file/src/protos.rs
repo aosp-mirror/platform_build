@@ -49,8 +49,11 @@ mod auto_generated {
 pub use auto_generated::*;
 
 use anyhow::Result;
+use protobuf::Message;
+use std::io::Write;
+use tempfile::NamedTempFile;
 
-pub mod storage_files {
+pub mod storage_record_pb {
     use super::*;
     use anyhow::ensure;
 
@@ -80,15 +83,28 @@ pub mod storage_files {
         }
         Ok(())
     }
+
+    pub fn get_binary_proto_from_text_proto(text_proto: &str) -> Result<Vec<u8>> {
+        let storage_files: ProtoStorageFiles = protobuf::text_format::parse_from_str(text_proto)?;
+        let mut binary_proto = Vec::new();
+        storage_files.write_to_vec(&mut binary_proto)?;
+        Ok(binary_proto)
+    }
+
+    pub fn write_proto_to_temp_file(text_proto: &str) -> Result<NamedTempFile> {
+        let bytes = get_binary_proto_from_text_proto(text_proto).unwrap();
+        let mut file = NamedTempFile::new()?;
+        let _ = file.write_all(&bytes);
+        Ok(file)
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::get_binary_storage_proto_bytes;
 
     #[test]
-    fn test_parse_storage_files() {
+    fn test_parse_storage_record_pb() {
         let text_proto = r#"
 files {
     version: 0
@@ -107,8 +123,9 @@ files {
     timestamp: 54321
 }
 "#;
-        let binary_proto_bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-        let storage_files = storage_files::try_from_binary_proto(&binary_proto_bytes).unwrap();
+        let binary_proto_bytes =
+            storage_record_pb::get_binary_proto_from_text_proto(text_proto).unwrap();
+        let storage_files = storage_record_pb::try_from_binary_proto(&binary_proto_bytes).unwrap();
         assert_eq!(storage_files.files.len(), 2);
         let system_file = &storage_files.files[0];
         assert_eq!(system_file.version(), 0);
@@ -127,7 +144,7 @@ files {
     }
 
     #[test]
-    fn test_parse_invalid_storage_files() {
+    fn test_parse_invalid_storage_record_pb() {
         let text_proto = r#"
 files {
     version: 0
@@ -138,8 +155,9 @@ files {
     timestamp: 12345
 }
 "#;
-        let binary_proto_bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-        let err = storage_files::try_from_binary_proto(&binary_proto_bytes).unwrap_err();
+        let binary_proto_bytes =
+            storage_record_pb::get_binary_proto_from_text_proto(text_proto).unwrap();
+        let err = storage_record_pb::try_from_binary_proto(&binary_proto_bytes).unwrap_err();
         assert_eq!(
             format!("{:?}", err),
             "invalid storage file record: missing package map file for container system"
@@ -155,8 +173,9 @@ files {
     timestamp: 12345
 }
 "#;
-        let binary_proto_bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-        let err = storage_files::try_from_binary_proto(&binary_proto_bytes).unwrap_err();
+        let binary_proto_bytes =
+            storage_record_pb::get_binary_proto_from_text_proto(text_proto).unwrap();
+        let err = storage_record_pb::try_from_binary_proto(&binary_proto_bytes).unwrap_err();
         assert_eq!(
             format!("{:?}", err),
             "invalid storage file record: missing flag map file for container system"
@@ -172,8 +191,9 @@ files {
     timestamp: 12345
 }
 "#;
-        let binary_proto_bytes = get_binary_storage_proto_bytes(text_proto).unwrap();
-        let err = storage_files::try_from_binary_proto(&binary_proto_bytes).unwrap_err();
+        let binary_proto_bytes =
+            storage_record_pb::get_binary_proto_from_text_proto(text_proto).unwrap();
+        let err = storage_record_pb::try_from_binary_proto(&binary_proto_bytes).unwrap_err();
         assert_eq!(
             format!("{:?}", err),
             "invalid storage file record: missing flag val file for container system"

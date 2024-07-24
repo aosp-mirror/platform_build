@@ -33,6 +33,7 @@ $(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
 $(call inherit-product-if-exists, frameworks/webview/chromium/chromium.mk)
 
 PRODUCT_PACKAGES += \
+    android.software.window_magnification.prebuilt.xml \
     BasicDreams \
     BlockedNumberProvider \
     BluetoothMidiService \
@@ -74,6 +75,11 @@ PRODUCT_PACKAGES += \
     VpnDialogs \
     vr \
 
+PRODUCT_PACKAGES += $(RELEASE_PACKAGE_VIRTUAL_CAMERA)
+# Set virtual_camera_service_enabled soong config variable based on the
+# RELEASE_PACKAGE_VIRTUAL_CAMERA build. virtual_camera_service_enabled soong config
+# variable is used to prevent accessing the service when it's not present in the build.
+$(call soong_config_set,vdm,virtual_camera_service_enabled,$(if $(RELEASE_PACKAGE_VIRTUAL_CAMERA),true,false))
 
 PRODUCT_SYSTEM_SERVER_APPS += \
     FusedLocation \
@@ -81,9 +87,7 @@ PRODUCT_SYSTEM_SERVER_APPS += \
     KeyChain \
     Telecom \
 
-PRODUCT_COPY_FILES += \
-    frameworks/av/media/libeffects/data/audio_effects.xml:system/etc/audio_effects.xml \
-    frameworks/native/data/etc/android.software.window_magnification.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/android.software.window_magnification.xml \
+PRODUCT_PACKAGES += framework-audio_effects.xml
 
 PRODUCT_VENDOR_PROPERTIES += \
     ro.carrier?=unknown \

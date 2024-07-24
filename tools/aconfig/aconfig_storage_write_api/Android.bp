@@ -1,0 +1,83 @@
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+rust_defaults {
+    name: "aconfig_storage_write_api.defaults",
+    edition: "2021",
+    lints: "none",
+    srcs: ["src/lib.rs"],
+    rustlibs: [
+        "libanyhow",
+        "libtempfile",
+        "libmemmap2",
+        "libcxx",
+        "libthiserror",
+        "libaconfig_storage_file",
+        "libaconfig_storage_read_api",
+    ],
+}
+
+rust_library {
+    name: "libaconfig_storage_write_api",
+    crate_name: "aconfig_storage_write_api",
+    host_supported: true,
+    defaults: ["aconfig_storage_write_api.defaults"],
+}
+
+rust_test_host {
+    name: "aconfig_storage_write_api.test",
+    test_suites: ["general-tests"],
+    defaults: ["aconfig_storage_write_api.defaults"],
+    data: [
+        "tests/flag.val",
+        "tests/flag.info",
+    ],
+    rustlibs: [
+        "libaconfig_storage_read_api",
+    ],
+}
+
+// cxx source codegen from rust api
+genrule {
+    name: "libcxx_aconfig_storage_write_api_bridge_code",
+    tools: ["cxxbridge"],
+    cmd: "$(location cxxbridge) $(in) > $(out)",
+    srcs: ["src/lib.rs"],
+    out: ["aconfig_storage/lib.rs.cc"],
+}
+
+// cxx header codegen from rust api
+genrule {
+    name: "libcxx_aconfig_storage_write_api_bridge_header",
+    tools: ["cxxbridge"],
+    cmd: "$(location cxxbridge) $(in) --header > $(out)",
+    srcs: ["src/lib.rs"],
+    out: ["aconfig_storage/lib.rs.h"],
+}
+
+// a static cc lib based on generated code
+rust_ffi_static {
+    name: "libaconfig_storage_write_api_cxx_bridge",
+    crate_name: "aconfig_storage_write_api_cxx_bridge",
+    host_supported: true,
+    defaults: ["aconfig_storage_write_api.defaults"],
+}
+
+// flag write api cc interface
+cc_library_static {
+    name: "libaconfig_storage_write_api_cc",
+    srcs: ["aconfig_storage_write_api.cpp"],
+    generated_headers: [
+        "cxx-bridge-header",
+        "libcxx_aconfig_storage_write_api_bridge_header",
+    ],
+    generated_sources: ["libcxx_aconfig_storage_write_api_bridge_code"],
+    whole_static_libs: ["libaconfig_storage_write_api_cxx_bridge"],
+    export_include_dirs: ["include"],
+    static_libs: [
+        "libaconfig_storage_read_api_cc",
+        "libprotobuf-cpp-lite",
+        "libbase",
+    ],
+}

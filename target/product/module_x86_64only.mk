@@ -19,3 +19,6 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
 
 PRODUCT_NAME := module_x86_64only
 PRODUCT_DEVICE := module_x86_64only
+
+PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO := true
+PRODUCT_MAX_PAGE_SIZE_SUPPORTED := 16384

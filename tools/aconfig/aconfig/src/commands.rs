@@ -31,7 +31,7 @@ use aconfig_protos::{
     ParsedFlagExt, ProtoFlagMetadata, ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag,
     ProtoParsedFlags, ProtoTracepoint,
 };
-use aconfig_storage_file::StorageFileSelection;
+use aconfig_storage_file::StorageFileType;
 
 pub struct Input {
     pub source: String,
@@ -191,18 +191,32 @@ pub fn parse_flags(
     Ok(output)
 }
 
-pub fn create_java_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec<OutputFile>> {
+pub fn create_java_lib(
+    mut input: Input,
+    codegen_mode: CodegenMode,
+    allow_instrumentation: bool,
+) -> Result<Vec<OutputFile>> {
     let parsed_flags = input.try_parse_flags()?;
     let modified_parsed_flags = modify_parsed_flags_based_on_mode(parsed_flags, codegen_mode)?;
     let Some(package) = find_unique_package(&modified_parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
     let package = package.to_string();
-    let _flag_ids = assign_flag_ids(&package, modified_parsed_flags.iter())?;
-    generate_java_code(&package, modified_parsed_flags.into_iter(), codegen_mode)
+    let flag_ids = assign_flag_ids(&package, modified_parsed_flags.iter())?;
+    generate_java_code(
+        &package,
+        modified_parsed_flags.into_iter(),
+        codegen_mode,
+        flag_ids,
+        allow_instrumentation,
+    )
 }
 
-pub fn create_cpp_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec<OutputFile>> {
+pub fn create_cpp_lib(
+    mut input: Input,
+    codegen_mode: CodegenMode,
+    allow_instrumentation: bool,
+) -> Result<Vec<OutputFile>> {
     // TODO(327420679): Enable export mode for native flag library
     ensure!(
         codegen_mode != CodegenMode::Exported,
@@ -214,8 +228,14 @@ pub fn create_cpp_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Vec
         bail!("no parsed flags, or the parsed flags use different packages");
     };
     let package = package.to_string();
-    let _flag_ids = assign_flag_ids(&package, modified_parsed_flags.iter())?;
-    generate_cpp_code(&package, modified_parsed_flags.into_iter(), codegen_mode)
+    let flag_ids = assign_flag_ids(&package, modified_parsed_flags.iter())?;
+    generate_cpp_code(
+        &package,
+        modified_parsed_flags.into_iter(),
+        codegen_mode,
+        flag_ids,
+        allow_instrumentation,
+    )
 }
 
 pub fn create_rust_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<OutputFile> {
@@ -237,15 +257,10 @@ pub fn create_rust_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Ou
 pub fn create_storage(
     caches: Vec<Input>,
     container: &str,
-    file: &StorageFileSelection,
+    file: &StorageFileType,
 ) -> Result<Vec<u8>> {
-    let parsed_flags_vec: Vec<ProtoParsedFlags> = caches
-        .into_iter()
-        .map(|mut input| input.try_parse_flags())
-        .collect::<Result<Vec<_>>>()?
-        .into_iter()
-        .filter(|pfs| find_unique_container(pfs) == Some(container))
-        .collect();
+    let parsed_flags_vec: Vec<ProtoParsedFlags> =
+        caches.into_iter().map(|mut input| input.try_parse_flags()).collect::<Result<Vec<_>>>()?;
     generate_storage_file(container, parsed_flags_vec.iter(), file)
 }
 
@@ -317,23 +332,11 @@ pub fn dump_parsed_flags(
 }
 
 fn find_unique_package(parsed_flags: &[ProtoParsedFlag]) -> Option<&str> {
-    let Some(package) = parsed_flags.first().map(|pf| pf.package()) else {
-        return None;
-    };
+    let package = parsed_flags.first().map(|pf| pf.package())?;
     if parsed_flags.iter().any(|pf| pf.package() != package) {
         return None;
     }
     Some(package)
-}
-
-fn find_unique_container(parsed_flags: &ProtoParsedFlags) -> Option<&str> {
-    let Some(container) = parsed_flags.parsed_flag.first().map(|pf| pf.container()) else {
-        return None;
-    };
-    if parsed_flags.parsed_flag.iter().any(|pf| pf.container() != container) {
-        return None;
-    }
-    Some(container)
 }
 
 pub fn modify_parsed_flags_based_on_mode(

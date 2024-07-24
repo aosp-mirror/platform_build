@@ -67,9 +67,23 @@ fn main() -> Result<()> {
     let device_config_flags = parse_device_config(dc_stdout);
 
     // read aconfig_flags.pb files
+    let apex_pattern = Regex::new(r"^/apex/[^@]+\.[^@]+$").unwrap();
+    let mut mount_points = vec![
+        "system".to_string(),
+        "system_ext".to_string(),
+        "product".to_string(),
+        "vendor".to_string(),
+    ];
+    for apex in fs::read_dir("/apex")? {
+        let path_name = apex?.path().display().to_string();
+        if let Some(canonical_path) = apex_pattern.captures(&path_name) {
+            mount_points.push(canonical_path.get(0).unwrap().as_str().to_owned());
+        }
+    }
+
     let mut flags: BTreeMap<String, Vec<String>> = BTreeMap::new();
-    for partition in ["system", "system_ext", "product", "vendor"] {
-        let path = format!("/{}/etc/aconfig_flags.pb", partition);
+    for mount_point in mount_points {
+        let path = format!("/{}/etc/aconfig_flags.pb", mount_point);
         let Ok(bytes) = fs::read(&path) else {
             eprintln!("warning: failed to read {}", path);
             continue;
@@ -80,7 +94,7 @@ fn main() -> Result<()> {
             })?;
         for flag in parsed_flags.parsed_flag {
             let key = format!("{}/{}.{}", flag.namespace(), flag.package(), flag.name());
-            let value = format!("{:?} + {:?} ({})", flag.permission(), flag.state(), partition);
+            let value = format!("{:?} + {:?} ({})", flag.permission(), flag.state(), mount_point);
             flags.entry(key).or_default().push(value);
         }
     }

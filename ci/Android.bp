@@ -1,0 +1,87 @@
+// Copyright 2024 Google Inc. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+    default_team: "trendy_team_adte",
+}
+
+python_test_host {
+    name: "build_test_suites_test",
+    main: "build_test_suites_test.py",
+    pkg_path: "testdata",
+    srcs: [
+        "build_test_suites_test.py",
+    ],
+    libs: [
+        "build_test_suites",
+        "pyfakefs",
+        "ci_test_lib",
+    ],
+    test_options: {
+        unit_test: true,
+    },
+    data: [
+        ":py3-cmd",
+    ],
+    version: {
+        py3: {
+            embedded_launcher: true,
+        },
+    },
+}
+
+// This test is only intended to be run locally since it's slow, not hermetic,
+// and requires a lot of system state. It is therefore not marked as `unit_test`
+// and is not part of any test suite. Note that we also don't want to run this
+// test with Bazel since that would require disabling sandboxing and explicitly
+// passing in all the env vars we depend on via the command-line. The test
+// target could be configured to do so but it's not worth doing seeing that
+// we're moving away from Bazel.
+python_test_host {
+    name: "build_test_suites_local_test",
+    main: "build_test_suites_local_test.py",
+    srcs: [
+        "build_test_suites_local_test.py",
+    ],
+    libs: [
+        "build_test_suites",
+        "pyfakefs",
+        "ci_test_lib",
+    ],
+    test_config_template: "AndroidTest.xml.template",
+    test_options: {
+        unit_test: false,
+    },
+    version: {
+        py3: {
+            embedded_launcher: true,
+        },
+    },
+}
+
+python_library_host {
+    name: "build_test_suites",
+    srcs: [
+        "build_test_suites.py",
+        "optimized_targets.py",
+    ],
+}
+
+python_library_host {
+    name: "ci_test_lib",
+    srcs: [
+        "ci_test_lib.py",
+    ],
+}

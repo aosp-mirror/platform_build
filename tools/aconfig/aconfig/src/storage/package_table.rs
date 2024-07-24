@@ -17,7 +17,8 @@
 use anyhow::Result;
 
 use aconfig_storage_file::{
-    get_table_size, PackageTable, PackageTableHeader, PackageTableNode, FILE_VERSION,
+    get_table_size, PackageTable, PackageTableHeader, PackageTableNode, StorageFileType,
+    FILE_VERSION,
 };
 
 use crate::storage::FlagPackage;
@@ -26,6 +27,7 @@ fn new_header(container: &str, num_packages: u32) -> PackageTableHeader {
     PackageTableHeader {
         version: FILE_VERSION,
         container: String::from(container),
+        file_type: StorageFileType::PackageMap as u8,
         file_size: 0,
         num_packages,
         bucket_offset: 0,
@@ -46,7 +48,7 @@ impl PackageTableNodeWrapper {
         let node = PackageTableNode {
             package_name: String::from(package.package_name),
             package_id: package.package_id,
-            boolean_offset: package.boolean_offset,
+            boolean_start_index: package.boolean_start_index,
             next_offset: None,
         };
         let bucket_index = PackageTableNode::find_bucket_index(package.package_name, num_buckets);
@@ -64,10 +66,10 @@ pub fn create_package_table(container: &str, packages: &[FlagPackage]) -> Result
         packages.iter().map(|pkg| PackageTableNodeWrapper::new(pkg, num_buckets)).collect();
 
     // initialize all header fields
-    header.bucket_offset = header.as_bytes().len() as u32;
+    header.bucket_offset = header.into_bytes().len() as u32;
     header.node_offset = header.bucket_offset + num_buckets * 4;
     header.file_size = header.node_offset
-        + node_wrappers.iter().map(|x| x.node.as_bytes().len()).sum::<usize>() as u32;
+        + node_wrappers.iter().map(|x| x.node.into_bytes().len()).sum::<usize>() as u32;
 
     // sort node_wrappers by bucket index for efficiency
     node_wrappers.sort_by(|a, b| a.bucket_index.cmp(&b.bucket_index));
@@ -85,7 +87,7 @@ pub fn create_package_table(container: &str, packages: &[FlagPackage]) -> Result
         if buckets[node_bucket_idx as usize].is_none() {
             buckets[node_bucket_idx as usize] = Some(offset);
         }
-        offset += node_wrappers[i].node.as_bytes().len() as u32;
+        offset += node_wrappers[i].node.into_bytes().len() as u32;
 
         if let Some(index) = next_node_bucket_idx {
             if index == node_bucket_idx {
@@ -107,55 +109,18 @@ mod tests {
     use super::*;
     use crate::storage::{group_flags_by_package, tests::parse_all_test_flags};
 
-    pub fn create_test_package_table() -> Result<PackageTable> {
+    pub fn create_test_package_table_from_source() -> Result<PackageTable> {
         let caches = parse_all_test_flags();
         let packages = group_flags_by_package(caches.iter());
-        create_package_table("system", &packages)
+        create_package_table("mockup", &packages)
     }
 
     #[test]
     // this test point locks down the table creation and each field
     fn test_table_contents() {
-        let package_table = create_test_package_table();
+        let package_table = create_test_package_table_from_source();
         assert!(package_table.is_ok());
-
-        let header: &PackageTableHeader = &package_table.as_ref().unwrap().header;
-        let expected_header = PackageTableHeader {
-            version: FILE_VERSION,
-            container: String::from("system"),
-            file_size: 208,
-            num_packages: 3,
-            bucket_offset: 30,
-            node_offset: 58,
-        };
-        assert_eq!(header, &expected_header);
-
-        let buckets: &Vec<Option<u32>> = &package_table.as_ref().unwrap().buckets;
-        let expected: Vec<Option<u32>> = vec![Some(58), None, None, Some(108), None, None, None];
-        assert_eq!(buckets, &expected);
-
-        let nodes: &Vec<PackageTableNode> = &package_table.as_ref().unwrap().nodes;
-        assert_eq!(nodes.len(), 3);
-        let first_node_expected = PackageTableNode {
-            package_name: String::from("com.android.aconfig.storage.test_2"),
-            package_id: 1,
-            boolean_offset: 3,
-            next_offset: None,
-        };
-        assert_eq!(nodes[0], first_node_expected);
-        let second_node_expected = PackageTableNode {
-            package_name: String::from("com.android.aconfig.storage.test_1"),
-            package_id: 0,
-            boolean_offset: 0,
-            next_offset: Some(158),
-        };
-        assert_eq!(nodes[1], second_node_expected);
-        let third_node_expected = PackageTableNode {
-            package_name: String::from("com.android.aconfig.storage.test_4"),
-            package_id: 2,
-            boolean_offset: 6,
-            next_offset: None,
-        };
-        assert_eq!(nodes[2], third_node_expected);
+        let expected_package_table = aconfig_storage_file::test_utils::create_test_package_table();
+        assert_eq!(package_table.unwrap(), expected_package_table);
     }
 }

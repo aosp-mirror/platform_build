@@ -17,30 +17,55 @@
 //! flag table module defines the flag table file format and methods for serialization
 //! and deserialization
 
-use crate::AconfigStorageError::{self, BytesParseFail, HigherStorageFileVersion};
-use crate::{get_bucket_index, read_str_from_bytes, read_u16_from_bytes, read_u32_from_bytes};
+use crate::{
+    get_bucket_index, read_str_from_bytes, read_u16_from_bytes, read_u32_from_bytes,
+    read_u8_from_bytes,
+};
+use crate::{AconfigStorageError, StorageFileType, StoredFlagType};
 use anyhow::anyhow;
-pub type FlagOffset = u16;
+use std::fmt;
 
 /// Flag table header struct
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 pub struct FlagTableHeader {
     pub version: u32,
     pub container: String,
+    pub file_type: u8,
     pub file_size: u32,
     pub num_flags: u32,
     pub bucket_offset: u32,
     pub node_offset: u32,
 }
 
+/// Implement debug print trait for header
+impl fmt::Debug for FlagTableHeader {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(
+            f,
+            "Version: {}, Container: {}, File Type: {:?}, File Size: {}",
+            self.version,
+            self.container,
+            StorageFileType::try_from(self.file_type),
+            self.file_size
+        )?;
+        writeln!(
+            f,
+            "Num of Flags: {}, Bucket Offset:{}, Node Offset: {}",
+            self.num_flags, self.bucket_offset, self.node_offset
+        )?;
+        Ok(())
+    }
+}
+
 impl FlagTableHeader {
     /// Serialize to bytes
-    pub fn as_bytes(&self) -> Vec<u8> {
+    pub fn into_bytes(&self) -> Vec<u8> {
         let mut result = Vec::new();
         result.extend_from_slice(&self.version.to_le_bytes());
         let container_bytes = self.container.as_bytes();
         result.extend_from_slice(&(container_bytes.len() as u32).to_le_bytes());
         result.extend_from_slice(container_bytes);
+        result.extend_from_slice(&self.file_type.to_le_bytes());
         result.extend_from_slice(&self.file_size.to_le_bytes());
         result.extend_from_slice(&self.num_flags.to_le_bytes());
         result.extend_from_slice(&self.bucket_offset.to_le_bytes());
@@ -51,37 +76,57 @@ impl FlagTableHeader {
     /// Deserialize from bytes
     pub fn from_bytes(bytes: &[u8]) -> Result<Self, AconfigStorageError> {
         let mut head = 0;
-        Ok(Self {
+        let table = Self {
             version: read_u32_from_bytes(bytes, &mut head)?,
             container: read_str_from_bytes(bytes, &mut head)?,
+            file_type: read_u8_from_bytes(bytes, &mut head)?,
             file_size: read_u32_from_bytes(bytes, &mut head)?,
             num_flags: read_u32_from_bytes(bytes, &mut head)?,
             bucket_offset: read_u32_from_bytes(bytes, &mut head)?,
             node_offset: read_u32_from_bytes(bytes, &mut head)?,
-        })
+        };
+        if table.file_type != StorageFileType::FlagMap as u8 {
+            return Err(AconfigStorageError::BytesParseFail(anyhow!(
+                "binary file is not a flag map"
+            )));
+        }
+        Ok(table)
     }
 }
 
 /// Flag table node struct
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Clone)]
 pub struct FlagTableNode {
     pub package_id: u32,
     pub flag_name: String,
-    pub flag_type: u16,
-    pub flag_id: u16,
+    pub flag_type: StoredFlagType,
+    // within package flag index of this flag type
+    pub flag_index: u16,
     pub next_offset: Option<u32>,
+}
+
+/// Implement debug print trait for node
+impl fmt::Debug for FlagTableNode {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(
+            f,
+            "Package Id: {}, Flag: {}, Type: {:?}, Index: {}, Next: {:?}",
+            self.package_id, self.flag_name, self.flag_type, self.flag_index, self.next_offset
+        )?;
+        Ok(())
+    }
 }
 
 impl FlagTableNode {
     /// Serialize to bytes
-    pub fn as_bytes(&self) -> Vec<u8> {
+    pub fn into_bytes(&self) -> Vec<u8> {
         let mut result = Vec::new();
         result.extend_from_slice(&self.package_id.to_le_bytes());
         let name_bytes = self.flag_name.as_bytes();
         result.extend_from_slice(&(name_bytes.len() as u32).to_le_bytes());
         result.extend_from_slice(name_bytes);
-        result.extend_from_slice(&self.flag_type.to_le_bytes());
-        result.extend_from_slice(&self.flag_id.to_le_bytes());
+        result.extend_from_slice(&(self.flag_type as u16).to_le_bytes());
+        result.extend_from_slice(&self.flag_index.to_le_bytes());
         result.extend_from_slice(&self.next_offset.unwrap_or(0).to_le_bytes());
         result
     }
@@ -92,8 +137,8 @@ impl FlagTableNode {
         let node = Self {
             package_id: read_u32_from_bytes(bytes, &mut head)?,
             flag_name: read_str_from_bytes(bytes, &mut head)?,
-            flag_type: read_u16_from_bytes(bytes, &mut head)?,
-            flag_id: read_u16_from_bytes(bytes, &mut head)?,
+            flag_type: StoredFlagType::try_from(read_u16_from_bytes(bytes, &mut head)?)?,
+            flag_index: read_u16_from_bytes(bytes, &mut head)?,
             next_offset: match read_u32_from_bytes(bytes, &mut head)? {
                 0 => None,
                 val => Some(val),
@@ -109,21 +154,36 @@ impl FlagTableNode {
     }
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 pub struct FlagTable {
     pub header: FlagTableHeader,
     pub buckets: Vec<Option<u32>>,
     pub nodes: Vec<FlagTableNode>,
 }
 
+/// Implement debug print trait for flag table
+impl fmt::Debug for FlagTable {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(f, "Header:")?;
+        write!(f, "{:?}", self.header)?;
+        writeln!(f, "Buckets:")?;
+        writeln!(f, "{:?}", self.buckets)?;
+        writeln!(f, "Nodes:")?;
+        for node in self.nodes.iter() {
+            write!(f, "{:?}", node)?;
+        }
+        Ok(())
+    }
+}
+
 /// Flag table struct
 impl FlagTable {
     /// Serialize to bytes
-    pub fn as_bytes(&self) -> Vec<u8> {
+    pub fn into_bytes(&self) -> Vec<u8> {
         [
-            self.header.as_bytes(),
+            self.header.into_bytes(),
             self.buckets.iter().map(|v| v.unwrap_or(0).to_le_bytes()).collect::<Vec<_>>().concat(),
-            self.nodes.iter().map(|v| v.as_bytes()).collect::<Vec<_>>().concat(),
+            self.nodes.iter().map(|v| v.into_bytes()).collect::<Vec<_>>().concat(),
         ]
         .concat()
     }
@@ -133,7 +193,7 @@ impl FlagTable {
         let header = FlagTableHeader::from_bytes(bytes)?;
         let num_flags = header.num_flags;
         let num_buckets = crate::get_table_size(num_flags)?;
-        let mut head = header.as_bytes().len();
+        let mut head = header.into_bytes().len();
         let buckets = (0..num_buckets)
             .map(|_| match read_u32_from_bytes(bytes, &mut head).unwrap() {
                 0 => None,
@@ -143,112 +203,23 @@ impl FlagTable {
         let nodes = (0..num_flags)
             .map(|_| {
                 let node = FlagTableNode::from_bytes(&bytes[head..])?;
-                head += node.as_bytes().len();
+                head += node.into_bytes().len();
                 Ok(node)
             })
             .collect::<Result<Vec<_>, AconfigStorageError>>()
-            .map_err(|errmsg| BytesParseFail(anyhow!("fail to parse flag table: {}", errmsg)))?;
+            .map_err(|errmsg| {
+                AconfigStorageError::BytesParseFail(anyhow!("fail to parse flag table: {}", errmsg))
+            })?;
 
         let table = Self { header, buckets, nodes };
         Ok(table)
     }
 }
 
-/// Query flag within package offset
-pub fn find_flag_offset(
-    buf: &[u8],
-    package_id: u32,
-    flag: &str,
-) -> Result<Option<FlagOffset>, AconfigStorageError> {
-    let interpreted_header = FlagTableHeader::from_bytes(buf)?;
-    if interpreted_header.version > crate::FILE_VERSION {
-        return Err(HigherStorageFileVersion(anyhow!(
-            "Cannot read storage file with a higher version of {} with lib version {}",
-            interpreted_header.version,
-            crate::FILE_VERSION
-        )));
-    }
-
-    let num_buckets = (interpreted_header.node_offset - interpreted_header.bucket_offset) / 4;
-    let bucket_index = FlagTableNode::find_bucket_index(package_id, flag, num_buckets);
-
-    let mut pos = (interpreted_header.bucket_offset + 4 * bucket_index) as usize;
-    let mut flag_node_offset = read_u32_from_bytes(buf, &mut pos)? as usize;
-    if flag_node_offset < interpreted_header.node_offset as usize
-        || flag_node_offset >= interpreted_header.file_size as usize
-    {
-        return Ok(None);
-    }
-
-    loop {
-        let interpreted_node = FlagTableNode::from_bytes(&buf[flag_node_offset..])?;
-        if interpreted_node.package_id == package_id && interpreted_node.flag_name == flag {
-            return Ok(Some(interpreted_node.flag_id));
-        }
-        match interpreted_node.next_offset {
-            Some(offset) => flag_node_offset = offset as usize,
-            None => return Ok(None),
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    impl FlagTableNode {
-        // create test baseline, syntactic sugar
-        fn new_expected(
-            package_id: u32,
-            flag_name: &str,
-            flag_type: u16,
-            flag_id: u16,
-            next_offset: Option<u32>,
-        ) -> Self {
-            Self { package_id, flag_name: flag_name.to_string(), flag_type, flag_id, next_offset }
-        }
-    }
-
-    pub fn create_test_flag_table() -> FlagTable {
-        let header = FlagTableHeader {
-            version: crate::FILE_VERSION,
-            container: String::from("system"),
-            file_size: 320,
-            num_flags: 8,
-            bucket_offset: 30,
-            node_offset: 98,
-        };
-        let buckets: Vec<Option<u32>> = vec![
-            Some(98),
-            Some(124),
-            None,
-            None,
-            None,
-            Some(177),
-            None,
-            Some(203),
-            None,
-            Some(261),
-            None,
-            None,
-            None,
-            None,
-            None,
-            Some(293),
-            None,
-        ];
-        let nodes = vec![
-            FlagTableNode::new_expected(0, "enabled_ro", 1, 1, None),
-            FlagTableNode::new_expected(0, "enabled_rw", 1, 2, Some(150)),
-            FlagTableNode::new_expected(1, "disabled_ro", 1, 0, None),
-            FlagTableNode::new_expected(2, "enabled_ro", 1, 1, None),
-            FlagTableNode::new_expected(1, "enabled_fixed_ro", 1, 1, Some(235)),
-            FlagTableNode::new_expected(1, "enabled_ro", 1, 2, None),
-            FlagTableNode::new_expected(2, "enabled_fixed_ro", 1, 0, None),
-            FlagTableNode::new_expected(0, "disabled_rw", 1, 0, None),
-        ];
-        FlagTable { header, buckets, nodes }
-    }
+    use crate::test_utils::create_test_flag_table;
 
     #[test]
     // this test point locks down the table serialization
@@ -256,66 +227,43 @@ mod tests {
         let flag_table = create_test_flag_table();
 
         let header: &FlagTableHeader = &flag_table.header;
-        let reinterpreted_header = FlagTableHeader::from_bytes(&header.as_bytes());
+        let reinterpreted_header = FlagTableHeader::from_bytes(&header.into_bytes());
         assert!(reinterpreted_header.is_ok());
         assert_eq!(header, &reinterpreted_header.unwrap());
 
         let nodes: &Vec<FlagTableNode> = &flag_table.nodes;
         for node in nodes.iter() {
-            let reinterpreted_node = FlagTableNode::from_bytes(&node.as_bytes()).unwrap();
+            let reinterpreted_node = FlagTableNode::from_bytes(&node.into_bytes()).unwrap();
             assert_eq!(node, &reinterpreted_node);
         }
 
-        let reinterpreted_table = FlagTable::from_bytes(&flag_table.as_bytes());
+        let flag_table_bytes = flag_table.into_bytes();
+        let reinterpreted_table = FlagTable::from_bytes(&flag_table_bytes);
         assert!(reinterpreted_table.is_ok());
         assert_eq!(&flag_table, &reinterpreted_table.unwrap());
+        assert_eq!(flag_table_bytes.len() as u32, header.file_size);
     }
 
     #[test]
-    // this test point locks down table query
-    fn test_flag_query() {
-        let flag_table = create_test_flag_table().as_bytes();
-        let baseline = vec![
-            (0, "enabled_ro", 1u16),
-            (0, "enabled_rw", 2u16),
-            (1, "disabled_ro", 0u16),
-            (2, "enabled_ro", 1u16),
-            (1, "enabled_fixed_ro", 1u16),
-            (1, "enabled_ro", 2u16),
-            (2, "enabled_fixed_ro", 0u16),
-            (0, "disabled_rw", 0u16),
-        ];
-        for (package_id, flag_name, expected_offset) in baseline.into_iter() {
-            let flag_offset =
-                find_flag_offset(&flag_table[..], package_id, flag_name).unwrap().unwrap();
-            assert_eq!(flag_offset, expected_offset);
-        }
+    // this test point locks down that version number should be at the top of serialized
+    // bytes
+    fn test_version_number() {
+        let flag_table = create_test_flag_table();
+        let bytes = &flag_table.into_bytes();
+        let mut head = 0;
+        let version = read_u32_from_bytes(bytes, &mut head).unwrap();
+        assert_eq!(version, 1);
     }
 
     #[test]
-    // this test point locks down table query of a non exist flag
-    fn test_not_existed_flag_query() {
-        let flag_table = create_test_flag_table().as_bytes();
-        let flag_offset = find_flag_offset(&flag_table[..], 1, "disabled_fixed_ro").unwrap();
-        assert_eq!(flag_offset, None);
-        let flag_offset = find_flag_offset(&flag_table[..], 2, "disabled_rw").unwrap();
-        assert_eq!(flag_offset, None);
-    }
-
-    #[test]
-    // this test point locks down query error when file has a higher version
-    fn test_higher_version_storage_file() {
-        let mut table = create_test_flag_table();
-        table.header.version = crate::FILE_VERSION + 1;
-        let flag_table = table.as_bytes();
-        let error = find_flag_offset(&flag_table[..], 0, "enabled_ro").unwrap_err();
+    // this test point locks down file type check
+    fn test_file_type_check() {
+        let mut flag_table = create_test_flag_table();
+        flag_table.header.file_type = 123u8;
+        let error = FlagTable::from_bytes(&flag_table.into_bytes()).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
-            format!(
-                "HigherStorageFileVersion(Cannot read storage file with a higher version of {} with lib version {})",
-                crate::FILE_VERSION + 1,
-                crate::FILE_VERSION
-            )
+            format!("BytesParseFail(binary file is not a flag map)")
         );
     }
 }

@@ -31,11 +31,7 @@ BUILDING_GSI := true
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     system/etc/init/config \
     system/product/% \
-    system/system_ext/% \
-    system/lib/vndk-29 \
-    system/lib/vndk-sp-29 \
-    system/lib64/vndk-29 \
-    system/lib64/vndk-sp-29
+    system/system_ext/%
 
 # GSI should always support up-to-date platform features.
 # Keep this value at the latest API level to ensure latest build system
@@ -48,22 +44,21 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
-# Disable the build-time debugfs restrictions on GSI builds
-PRODUCT_SET_DEBUGFS_RESTRICTIONS := false
-
 # GSI specific tasks on boot
 PRODUCT_PACKAGES += \
     gsi_skip_mount.cfg \
     init.gsi.rc \
     init.vndk-nodef.rc \
 
-# Overlay the GSI specific SystemUI setting
-PRODUCT_PACKAGES += gsi_overlay_systemui
-PRODUCT_COPY_FILES += \
-    device/generic/common/overlays/overlay-config.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/overlay/config/config.xml
 
-# b/308878144 no more VNDK on 24Q1 and beyond
-KEEP_VNDK ?= false
+# Overlay the GSI specific setting for framework and SystemUI
+ifneq ($(PRODUCT_IS_AUTOMOTIVE),true)
+    PRODUCT_PACKAGES += \
+        gsi_overlay_framework \
+        gsi_overlay_systemui \
+    PRODUCT_COPY_FILES += \
+        device/generic/common/overlays/overlay-config.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/overlay/config/config.xml
+endif
 
 # Support additional VNDK snapshots
 PRODUCT_EXTRA_VNDK_VERSIONS := \

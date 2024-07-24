@@ -271,6 +271,10 @@ def IsOtaPackage(fp):
 
 def IsEntryOtaPackage(input_zip, filename):
   with input_zip.open(filename, "r") as fp:
+    external_attr = input_zip.getinfo(filename).external_attr
+    if stat.S_ISLNK(external_attr >> 16):
+      return IsEntryOtaPackage(input_zip,
+          os.path.join(os.path.dirname(filename), fp.read().decode()))
     return IsOtaPackage(fp)
 
 
@@ -795,6 +799,16 @@ def ProcessTargetFiles(input_tf_zip: zipfile.ZipFile, output_tf_zip, misc_info,
         # Copy it verbatim if we allow the file to exist.
         common.ZipWriteStr(output_tf_zip, out_info, data)
 
+    # Sign microdroid_vendor.img.
+    elif filename == "VENDOR/etc/avf/microdroid/microdroid_vendor.img":
+      vendor_key = OPTIONS.avb_keys.get("vendor")
+      vendor_algorithm = OPTIONS.avb_algorithms.get("vendor")
+      with tempfile.NamedTemporaryFile() as image:
+        image.write(data)
+        image.flush()
+        ReplaceKeyInAvbHashtreeFooter(image, vendor_key, vendor_algorithm,
+            misc_info)
+        common.ZipWrite(output_tf_zip, image.name, filename)
     # A non-APK file; copy it verbatim.
     else:
       common.ZipWriteStr(output_tf_zip, out_info, data)
@@ -812,6 +826,108 @@ def ProcessTargetFiles(input_tf_zip: zipfile.ZipFile, output_tf_zip, misc_info,
   # Write back misc_info with the latest values.
   ReplaceMiscInfoTxt(input_tf_zip, output_tf_zip, misc_info)
 
+# Parse string output of `avbtool info_image`.
+def ParseAvbInfo(info_raw):
+  # line_matcher is for parsing each output line of `avbtool info_image`.
+  # example string input: "      Hash Algorithm:        sha1"
+  # example matched input: ("      ", "Hash Algorithm", "sha1")
+  line_matcher = re.compile(r'^(\s*)([^:]+):\s*(.*)$')
+  # prop_matcher is for parsing value part of 'Prop' in `avbtool info_image`.
+  # example string input: "example_prop_key -> 'example_prop_value'"
+  # example matched output: ("example_prop_key", "example_prop_value")
+  prop_matcher = re.compile(r"(.+)\s->\s'(.+)'")
+  info = {}
+  indent_stack = [[-1, info]]
+  for line_info_raw in info_raw.split('\n'):
+    # Parse the line
+    line_info_parsed = line_matcher.match(line_info_raw)
+    if not line_info_parsed:
+      continue
+    indent = len(line_info_parsed.group(1))
+    key = line_info_parsed.group(2).strip()
+    value = line_info_parsed.group(3).strip()
+
+    # Pop indentation stack
+    while indent <= indent_stack[-1][0]:
+      del indent_stack[-1]
+
+    # Insert information into 'info'.
+    cur_info = indent_stack[-1][1]
+    if value == "":
+      if key == "Descriptors":
+        empty_list = []
+        cur_info[key] = empty_list
+        indent_stack.append([indent, empty_list])
+      else:
+        empty_dict = {}
+        cur_info.append({key:empty_dict})
+        indent_stack.append([indent, empty_dict])
+    elif key == "Prop":
+      prop_parsed = prop_matcher.match(value)
+      if not prop_parsed:
+        raise ValueError(
+            "Failed to parse prop while getting avb information.")
+      cur_info.append({key:{prop_parsed.group(1):prop_parsed.group(2)}})
+    else:
+      cur_info[key] = value
+  return info
+
+def ReplaceKeyInAvbHashtreeFooter(image, new_key, new_algorithm, misc_info):
+  # Get avb information about the image by parsing avbtool info_image.
+  def GetAvbInfo(avbtool, image_name):
+    # Get information with raw string by `avbtool info_image`.
+    info_raw = common.RunAndCheckOutput([
+      avbtool, 'info_image',
+      '--image', image_name
+    ])
+    return ParseAvbInfo(info_raw)
+
+  # Get hashtree descriptor from info
+  def GetAvbHashtreeDescriptor(avb_info):
+    hashtree_descriptors = tuple(filter(lambda x: "Hashtree descriptor" in x,
+        info.get('Descriptors')))
+    if len(hashtree_descriptors) != 1:
+      raise ValueError("The number of hashtree descriptor is not 1.")
+    return hashtree_descriptors[0]["Hashtree descriptor"]
+
+  # Get avb info
+  avbtool = misc_info['avb_avbtool']
+  info = GetAvbInfo(avbtool, image.name)
+  hashtree_descriptor = GetAvbHashtreeDescriptor(info)
+
+  # Generate command
+  cmd = [avbtool, 'add_hashtree_footer',
+    '--key', new_key,
+    '--algorithm', new_algorithm,
+    '--partition_name', hashtree_descriptor.get("Partition Name"),
+    '--partition_size', info.get("Image size").removesuffix(" bytes"),
+    '--hash_algorithm', hashtree_descriptor.get("Hash Algorithm"),
+    '--salt', hashtree_descriptor.get("Salt"),
+    '--do_not_generate_fec',
+    '--image', image.name
+  ]
+
+  # Append properties into command
+  props = map(lambda x: x.get("Prop"), filter(lambda x: "Prop" in x,
+      info.get('Descriptors')))
+  for prop_wrapped in props:
+    prop = tuple(prop_wrapped.items())
+    if len(prop) != 1:
+      raise ValueError("The number of property is not 1.")
+    cmd.append('--prop')
+    cmd.append(prop[0][0] + ':' + prop[0][1])
+
+  # Replace Hashtree Footer with new key
+  common.RunAndCheckOutput(cmd)
+
+  # Check root digest is not changed
+  new_info = GetAvbInfo(avbtool, image.name)
+  new_hashtree_descriptor = GetAvbHashtreeDescriptor(info)
+  root_digest = hashtree_descriptor.get("Root Digest")
+  new_root_digest = new_hashtree_descriptor.get("Root Digest")
+  assert root_digest == new_root_digest, \
+      ("Root digest in hashtree descriptor shouldn't be changed. Old: {}, New: "
+       "{}").format(root_digest, new_root_digest)
 
 def ReplaceCerts(data):
   """Replaces all the occurences of X.509 certs with the new ones.

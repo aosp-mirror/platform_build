@@ -9,12 +9,15 @@ cargo = []
 
 [dependencies]
 anyhow = "1.0.69"
-memmap2 = "0.8.0"
 protobuf = "3.2.0"
-once_cell = "1.19.0"
 tempfile = "3.9.0"
-cxx = "1.0"
 thiserror = "1.0.56"
+clap = { version = "4.1.8", features = ["derive"] }
+cxx = "1.0"
+
+[[bin]]
+name = "aconfig-storage"
+path = "src/main.rs"
 
 [build-dependencies]
 protobuf-codegen = "3.2.0"

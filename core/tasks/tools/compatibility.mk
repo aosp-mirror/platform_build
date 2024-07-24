@@ -26,7 +26,15 @@
 # Output variables:
 #   compatibility_zip: the path to the output zip file.
 
-test_suite_subdir := android-$(test_suite_name)
+special_mts_test_suites :=
+special_mts_test_suites += mcts
+special_mts_test_suites += $(mts_modules)
+ifneq ($(filter $(special_mts_test_suites),$(subst -, ,$(test_suite_name))),)
+	test_suite_subdir := android-mts
+else
+	test_suite_subdir := android-$(test_suite_name)
+endif
+
 out_dir := $(HOST_OUT)/$(test_suite_name)/$(test_suite_subdir)
 test_artifacts := $(COMPATIBILITY.$(test_suite_name).FILES)
 test_tools := $(HOST_OUT_JAVA_LIBRARIES)/tradefed.jar \
@@ -107,9 +115,9 @@ test_suite_notice_html := $(out_dir)/NOTICE.html
 compatibility_zip_deps += $(test_suite_notice_txt)
 compatibility_zip_resources += $(test_suite_notice_txt)
 
-compatibility_tests_list_zip := $(out_dir)-tests_list.zip
+compatibility_tests_list_zip := $(HOST_OUT)/$(test_suite_name)/android-$(test_suite_name)-tests_list.zip
 
-compatibility_zip := $(out_dir).zip
+compatibility_zip := $(HOST_OUT)/$(test_suite_name)/android-$(test_suite_name).zip
 $(compatibility_zip) : .KATI_IMPLICIT_OUTPUTS := $(compatibility_tests_list_zip)
 $(compatibility_zip): PRIVATE_OUT_DIR := $(out_dir)
 $(compatibility_zip): PRIVATE_TOOLS := $(test_tools) $(test_suite_prebuilt_tools)

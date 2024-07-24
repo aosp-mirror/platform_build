@@ -45,6 +45,7 @@ PRODUCT_PACKAGES += \
     bu \
     bugreport \
     bugreportz \
+    build_flag_system \
     cgroups.json \
     charger \
     cmd \
@@ -82,6 +83,7 @@ PRODUCT_PACKAGES += \
     CtsShimPrivPrebuilt \
     debuggerd\
     device_config \
+    DeviceDiagnostics \
     dmctl \
     dnsmasq \
     dmesgd \
@@ -90,19 +92,22 @@ PRODUCT_PACKAGES += \
     dump.erofs \
     dumpstate \
     dumpsys \
+    E2eeContactKeysProvider \
     e2fsck \
+    enhanced-confirmation.xml \
     ExtShared \
     flags_health_check \
     framework-graphics \
+    framework-location \
     framework-minus-apex \
     framework-minus-apex-install-dependencies \
-    framework-res \
     framework-sysconfig.xml \
     fsck.erofs \
     fsck_msdos \
     fsverity-release-cert-der \
     fs_config_files_system \
     fs_config_dirs_system \
+    gpu_counter_producer \
     group_system \
     gsid \
     gsi_tool \
@@ -171,7 +176,6 @@ PRODUCT_PACKAGES += \
     libjpeg \
     liblog \
     libm.bootstrap \
-    libmdnssd \
     libmedia \
     libmedia_jni \
     libmediandk \
@@ -234,14 +238,18 @@ PRODUCT_PACKAGES += \
     org.apache.http.legacy \
     otacerts \
     PackageInstaller \
+    package-shareduid-allowlist.xml \
     passwd_system \
     perfetto \
+    perfetto-extras \
     ping \
     ping6 \
+    pintool \
     platform.xml \
     pm \
     preinstalled-packages-asl-files.xml \
     preinstalled-packages-platform.xml \
+    preinstalled-packages-strict-signature.xml \
     printflags \
     privapp-permissions-platform.xml \
     prng_seeder \
@@ -262,6 +270,7 @@ PRODUCT_PACKAGES += \
     services \
     settings \
     SettingsProvider \
+    sfdo \
     sgdisk \
     Shell \
     shell_and_utilities_system \
@@ -282,9 +291,10 @@ PRODUCT_PACKAGES += \
     uiautomator \
     uinput \
     uncrypt \
+    uprobestats \
     usbd \
     vdc \
-    viewcompiler \
+    vintf \
     voip-common \
     vold \
     watchdogd \
@@ -321,6 +331,13 @@ ifeq ($(RELEASE_PACKAGE_NFC_STACK),NfcNci)
 else
     PRODUCT_PACKAGES += \
         com.android.nfcservices
+endif
+
+# Check if the build supports Profiling module
+ifeq ($(RELEASE_PACKAGE_PROFILING_MODULE),true)
+    PRODUCT_PACKAGES += \
+       com.android.profiling \
+       trace_redactor
 endif
 
 ifeq ($(RELEASE_USE_WEBVIEW_BOOTSTRAP_MODULE),true)
@@ -371,14 +388,10 @@ ifeq (,$(DISABLE_WALLPAPER_BACKUP))
     WallpaperBackup
 endif
 
-# Moving angle from vendor to system
-ifeq ($(RELEASE_ANGLE_ON_SYSTEM),true)
 PRODUCT_PACKAGES += \
     libEGL_angle \
     libGLESv1_CM_angle \
     libGLESv2_angle
-$(call soong_config_set,angle,angle_on_system,true)
-endif
 
 # For testing purposes
 ifeq ($(FORCE_AUDIO_SILENT), true)
@@ -400,7 +413,7 @@ PRODUCT_HOST_PACKAGES += \
     flags_health_check \
     fsck.erofs \
     icu-data_host_i18n_apex \
-    icu_tzdata.dat_host_tzdata_apex \
+    tzdata_icu_res_files_host_prebuilts \
     idmap2 \
     incident_report \
     ld.mc \
@@ -415,24 +428,26 @@ PRODUCT_HOST_PACKAGES += \
     unwind_info \
     unwind_reg_info \
     unwind_symbols \
-    viewcompiler \
     tzdata_host \
     tzdata_host_tzdata_apex \
     tzlookup.xml_host_tzdata_apex \
     tz_version_host \
     tz_version_host_tzdata_apex \
 
+PRODUCT_PACKAGES += init.usb.rc init.usb.configfs.rc
 
-PRODUCT_COPY_FILES += \
-    system/core/rootdir/init.usb.rc:system/etc/init/hw/init.usb.rc \
-    system/core/rootdir/init.usb.configfs.rc:system/etc/init/hw/init.usb.configfs.rc \
-    system/core/rootdir/etc/hosts:system/etc/hosts
+PRODUCT_PACKAGES += etc_hosts
 
-PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:system/etc/init/hw/init.zygote32.rc
+PRODUCT_PACKAGES += init.zygote32.rc
 PRODUCT_VENDOR_PROPERTIES += ro.zygote?=zygote32
 
 PRODUCT_SYSTEM_PROPERTIES += debug.atrace.tags.enableflags=0
 PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
+
+# Include kernel configs.
+PRODUCT_PACKAGES += \
+    approved-ogki-builds.xml \
+    kernel-lifetimes.xml
 
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
@@ -440,6 +455,7 @@ PRODUCT_PACKAGES_DEBUG := \
     adevice_fingerprint \
     arping \
     dmuserd \
+    evemu-record \
     idlcli \
     init-debug.rc \
     iotop \
@@ -485,12 +501,21 @@ PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE := \
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/preloaded-classes:system/etc/preloaded-classes)
 
-# Note: it is acceptable to not have a dirty-image-objects file. In that case, the special bin
-#       for known dirty objects in the image will be empty.
-PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
-    frameworks/base/config/dirty-image-objects:system/etc/dirty-image-objects)
+# Enable dirty image object binning to reduce dirty pages in the image.
+PRODUCT_PACKAGES += dirty-image-objects
+
+# Enable go/perfetto-persistent-tracing for eng builds
+ifneq (,$(filter eng, $(TARGET_BUILD_VARIANT)))
+    PRODUCT_PRODUCT_PROPERTIES += persist.debug.perfetto.persistent_sysui_tracing_for_bugreport=1
+endif
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
 
+# Ensure all trunk-stable flags are available.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/build_variables.mk)
+
 # Use "image" APEXes always.
 $(call inherit-product,$(SRC_TARGET_DIR)/product/updatable_apex.mk)
+
+$(call soong_config_set, bionic, large_system_property_node, $(RELEASE_LARGE_SYSTEM_PROPERTY_NODE))
+$(call soong_config_set, Aconfig, read_from_new_storage, $(RELEASE_READ_FROM_NEW_STORAGE))

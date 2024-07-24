@@ -20,7 +20,7 @@
       // aconfig C++ integration tests (test mode auto-generated code)
       "name": "aconfig.test.cpp.test_mode"
     },
-    // TODO(327420679): Enable export mode for native flag library
+    // TODO(b/327420679): Enable export mode for native flag library
     // {
     //   // aconfig C++ integration tests (exported mode auto-generated code)
     //   "name": "aconfig.test.cpp.exported_mode"
@@ -33,11 +33,15 @@
       // aconfig Rust integration tests (test mode auto-generated code)
       "name": "aconfig.test_mode.test.rust"
     },
-    // TODO(327420679): Enable export mode for native flag library
+    // TODO(b/327420679): Enable export mode for native flag library
     // {
     //   // aconfig Rust integration tests (exported mode auto-generated code)
     //   "name": "aconfig.exported_mode.test.rust"
     // },
+    {
+      // aflags CLI unit tests
+      "name": "aflags.test"
+    },
     {
       // printflags unit tests
       "name": "printflags.test"
@@ -66,21 +70,44 @@
       // test testing filtering logic. Breakage on this test means all tests
       // that using the flag macros to do filtering will get affected.
       "name": "FlagMacrosTests"
+    },
+    {
+      // aconfig_storage_write_api unit tests
+      "name": "aconfig_storage_write_api.test"
+    },
+    {
+      // aconfig_storage_read_api unit tests
+      "name": "aconfig_storage_read_api.test"
+    },
+    {
+      // aconfig_storage write api rust integration tests
+      "name": "aconfig_storage_write_api.test.rust"
+    },
+    {
+      // aconfig_storage write api cpp integration tests
+      "name": "aconfig_storage_write_api.test.cpp"
+    },
+    {
+      // aconfig_storage read api rust integration tests
+      "name": "aconfig_storage_read_api.test.rust"
+    },
+    {
+      // aconfig_storage read api cpp integration tests
+      "name": "aconfig_storage_read_api.test.cpp"
+    },
+    {
+      // aconfig_storage file cpp integration tests
+      "name": "aconfig_storage_file.test.cpp"
+    },
+    {
+      // aconfig_storage file java integration tests
+      "name": "aconfig_storage_file.test.java"
     }
   ],
   "postsubmit": [
     {
-      // aconfig_storage read api rust integration tests
-      "name": "aconfig_storage.test.rust"
-    },
-    {
-      // aconfig_storage read api cpp integration tests
-      "name": "aconfig_storage.test.cpp"
-    },
-    {
-      // aflags CLI unit tests
-      // TODO(b/326062088): add to presubmit once proven in postsubmit.
-      "name": "aflags.test"
+      // aconfig_storage read api java integration tests
+      "name": "aconfig_storage_read_api.test.java"
     }
   ]
 }

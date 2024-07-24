@@ -195,6 +195,8 @@ A/B OTA specific options
       ro.product.* properties are overridden by the 'import' statement.
       The file expects one property per line, and each line has the following
       format: 'prop_name=value1,value2'. e.g. 'ro.boot.product.sku=std,pro'
+      The path specified can either be relative to the current working directory
+      or the path to a file inside of input_target_files.
 
   --skip_postinstall
       Skip the postinstall hooks when generating an A/B OTA package (default:
@@ -327,7 +329,7 @@ OPTIONS.vabc_downgrade = False
 OPTIONS.enable_vabc_xor = True
 OPTIONS.force_minor_version = None
 OPTIONS.compressor_types = None
-OPTIONS.enable_zucchini = True
+OPTIONS.enable_zucchini = False
 OPTIONS.enable_puffdiff = None
 OPTIONS.enable_lz4diff = False
 OPTIONS.vabc_compression_param = None
@@ -745,7 +747,7 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
     os.rename(source_path, target_path)
 
   # Write new ab_partitions.txt file
-  new_ab_partitions = os.paht.join(input_file, AB_PARTITIONS)
+  new_ab_partitions = os.path.join(input_file, AB_PARTITIONS)
   with open(new_ab_partitions, 'w') as f:
     for partition in ab_partitions:
       if (partition in dynamic_partition_list and
@@ -872,6 +874,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   target_info = common.BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
   if OPTIONS.disable_vabc and target_info.is_release_key:
     raise ValueError("Disabling VABC on release-key builds is not supported.")
+
   ValidateCompressionParam(target_info)
   vabc_compression_param = target_info.vabc_compression_param
 
@@ -907,17 +910,18 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
       logger.info("Source build and target build use different compression methods {} vs {}, default to source builds parameter {}".format(
           source_info.vabc_compression_param, target_info.vabc_compression_param, source_info.vabc_compression_param))
       vabc_compression_param = source_info.vabc_compression_param
-
     # Virtual AB Cow version 3 is introduced in Android U with improved memory
     # and install time performance. All OTA's with
     # both the source build and target build with VIRTUAL_AB_COW_VERSION = 3
     # can support the new format. Otherwise, fallback on older versions
-    if not source_info.vabc_cow_version or not target_info.vabc_cow_version:
-      logger.info("Source or Target doesn't have VABC_COW_VERSION specified, default to version 2")
-      OPTIONS.vabc_cow_version = 2
-    elif source_info.vabc_cow_version != target_info.vabc_cow_version:
-      logger.info("Source and Target have different cow VABC_COW_VERSION specified, default to minimum version")
-      OPTIONS.vabc_cow_version = min(source_info.vabc_cow_version, target_info.vabc_cow_version)
+    if not OPTIONS.vabc_cow_version:
+      if not source_info.vabc_cow_version or not target_info.vabc_cow_version:
+        logger.info("Source or Target doesn't have VABC_COW_VERSION specified, default to version 2")
+        OPTIONS.vabc_cow_version = 2
+      elif source_info.vabc_cow_version != target_info.vabc_cow_version:
+        logger.info("Source and Target have different cow VABC_COW_VERSION specified, default to minimum version")
+        OPTIONS.vabc_cow_version = min(source_info.vabc_cow_version, target_info.vabc_cow_version)
+
     # Virtual AB Compression was introduced in Androd S.
     # Later, we backported VABC to Android R. But verity support was not
     # backported, so if VABC is used and we are on Android R, disable
@@ -930,6 +934,20 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     assert "ab_partitions" in OPTIONS.info_dict, \
         "META/ab_partitions.txt is required for ab_update."
     source_info = None
+    if not OPTIONS.vabc_cow_version:
+      if not target_info.vabc_cow_version:
+          OPTIONS.vabc_cow_version = 2
+      elif target_info.vabc_cow_version >= "3" and target_info.vendor_api_level < 35:
+        logger.warning(
+              "This full OTA is configured to use VABC cow version"
+              " 3 which is supported since"
+              " Android API level 35, but device is "
+              "launched with {} . If this full OTA is"
+              " served to a device running old build, OTA might fail due to "
+              "unsupported vabc cow version. For safety, version 2 is used because "
+              "it's supported since day 1.".format(
+                  target_info.vendor_api_level))
+        OPTIONS.vabc_cow_version = 2
     if OPTIONS.vabc_compression_param is None and vabc_compression_param:
       minimum_api_level_required = VABC_COMPRESSION_PARAM_SUPPORT[
           vabc_compression_param]
@@ -1034,6 +1052,10 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   from check_target_files_vintf import CheckVintfIfTrebleEnabled
   CheckVintfIfTrebleEnabled(target_file, target_info)
 
+  # Allow boot_variable_file to also exist in target-files
+  if OPTIONS.boot_variable_file:
+    if not os.path.isfile(OPTIONS.boot_variable_file):
+      OPTIONS.boot_variable_file = os.path.join(target_file, OPTIONS.boot_variable_file)
   # Metadata to comply with Android OTA package format.
   metadata = GetPackageMetadata(target_info, source_info)
   # Generate payload.
@@ -1274,7 +1296,7 @@ def main(argv):
       assert len(words) >= 1 and len(words) <= 2
       OPTIONS.vabc_compression_param = a.lower()
       if len(words) == 2:
-        if not words[1].isdigit():
+        if not words[1].lstrip("-").isdigit():
           raise ValueError("Cannot parse value %r for option $COMPRESSION_LEVEL - only "
                            "integers are allowed." % words[1])
     elif o == "--security_patch_level":

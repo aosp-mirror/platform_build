@@ -113,36 +113,7 @@ ifdef TARGET_ARCH_SUITE
   # $(error TARGET_ARCH_SUITE is not supported in kati/make builds)
 endif
 
-# ADDITIONAL_<partition>_PROPERTIES are properties that are determined by the
-# build system itself. Don't let it be defined from outside of the core build
-# system like Android.mk or <product>.mk files.
-_additional_prop_var_names := \
-    ADDITIONAL_SYSTEM_PROPERTIES \
-    ADDITIONAL_VENDOR_PROPERTIES \
-    ADDITIONAL_ODM_PROPERTIES \
-    ADDITIONAL_PRODUCT_PROPERTIES
-
-$(foreach name, $(_additional_prop_var_names),\
-  $(if $($(name)),\
-    $(error $(name) must not set before here. $($(name)))\
-  ,)\
-  $(eval $(name) :=)\
-)
-_additional_prop_var_names :=
-
 $(KATI_obsolete_var ADDITIONAL_BUILD_PROPERTIES, Please use ADDITIONAL_SYSTEM_PROPERTIES)
-
-#
-# -----------------------------------------------------------------
-# Add the product-defined properties to the build properties.
-ifneq ($(BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED), true)
-  ADDITIONAL_SYSTEM_PROPERTIES += $(PRODUCT_PROPERTY_OVERRIDES)
-else
-  ifndef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
-    ADDITIONAL_SYSTEM_PROPERTIES += $(PRODUCT_PROPERTY_OVERRIDES)
-  endif
-endif
-
 
 # Bring in standard build system definitions.
 include $(BUILD_SYSTEM)/definitions.mk
@@ -175,200 +146,8 @@ endif
 # PDK builds are no longer supported, this is always platform
 TARGET_BUILD_JAVA_SUPPORT_LEVEL :=$= platform
 
-# -----------------------------------------------------------------
-
-ADDITIONAL_SYSTEM_PROPERTIES += ro.treble.enabled=${PRODUCT_FULL_TREBLE}
-
 $(KATI_obsolete_var PRODUCT_FULL_TREBLE,\
 	Code should be written to work regardless of a device being Treble)
-
-# Set ro.llndk.api_level to show the maximum vendor API level that the LLNDK in
-# the system partition supports.
-ifdef RELEASE_BOARD_API_LEVEL
-ADDITIONAL_SYSTEM_PROPERTIES += ro.llndk.api_level=$(RELEASE_BOARD_API_LEVEL)
-endif
-
-# Sets ro.actionable_compatible_property.enabled to know on runtime whether the
-# allowed list of actionable compatible properties is enabled or not.
-ADDITIONAL_SYSTEM_PROPERTIES += ro.actionable_compatible_property.enabled=true
-
-# Add the system server compiler filter if they are specified for the product.
-ifneq (,$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER))
-ADDITIONAL_PRODUCT_PROPERTIES += dalvik.vm.systemservercompilerfilter=$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER)
-endif
-
-# Add the 16K developer option if it is defined for the product.
-ifeq ($(PRODUCT_16K_DEVELOPER_OPTION),true)
-ADDITIONAL_PRODUCT_PROPERTIES += ro.product.build.16k_page.enabled=true
-else
-ADDITIONAL_PRODUCT_PROPERTIES += ro.product.build.16k_page.enabled=false
-endif
-
-# Enable core platform API violation warnings on userdebug and eng builds.
-ifneq ($(TARGET_BUILD_VARIANT),user)
-ADDITIONAL_SYSTEM_PROPERTIES += persist.debug.dalvik.vm.core_platform_api_policy=just-warn
-endif
-
-# Define ro.sanitize.<name> properties for all global sanitizers.
-ADDITIONAL_SYSTEM_PROPERTIES += $(foreach s,$(SANITIZE_TARGET),ro.sanitize.$(s)=true)
-
-# Sets the default value of ro.postinstall.fstab.prefix to /system.
-# Device board config should override the value to /product when needed by:
-#
-#     PRODUCT_PRODUCT_PROPERTIES += ro.postinstall.fstab.prefix=/product
-#
-# It then uses ${ro.postinstall.fstab.prefix}/etc/fstab.postinstall to
-# mount system_other partition.
-ADDITIONAL_SYSTEM_PROPERTIES += ro.postinstall.fstab.prefix=/system
-
-# -----------------------------------------------------------------
-# ADDITIONAL_VENDOR_PROPERTIES will be installed in vendor/build.prop if
-# property_overrides_split_enabled is true. Otherwise it will be installed in
-# /system/build.prop
-ifeq ($(KEEP_VNDK),true)
-ifdef BOARD_VNDK_VERSION
-  ifeq ($(BOARD_VNDK_VERSION),current)
-    ADDITIONAL_VENDOR_PROPERTIES := ro.vndk.version=$(PLATFORM_VNDK_VERSION)
-  else
-    ADDITIONAL_VENDOR_PROPERTIES := ro.vndk.version=$(BOARD_VNDK_VERSION)
-  endif
-endif
-endif
-
-# Add cpu properties for bionic and ART.
-ADDITIONAL_VENDOR_PROPERTIES += ro.bionic.arch=$(TARGET_ARCH)
-ADDITIONAL_VENDOR_PROPERTIES += ro.bionic.cpu_variant=$(TARGET_CPU_VARIANT_RUNTIME)
-ADDITIONAL_VENDOR_PROPERTIES += ro.bionic.2nd_arch=$(TARGET_2ND_ARCH)
-ADDITIONAL_VENDOR_PROPERTIES += ro.bionic.2nd_cpu_variant=$(TARGET_2ND_CPU_VARIANT_RUNTIME)
-
-ADDITIONAL_VENDOR_PROPERTIES += persist.sys.dalvik.vm.lib.2=libart.so
-ADDITIONAL_VENDOR_PROPERTIES += dalvik.vm.isa.$(TARGET_ARCH).variant=$(DEX2OAT_TARGET_CPU_VARIANT_RUNTIME)
-ifneq ($(DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES),)
-  ADDITIONAL_VENDOR_PROPERTIES += dalvik.vm.isa.$(TARGET_ARCH).features=$(DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES)
-endif
-
-ifdef TARGET_2ND_ARCH
-  ADDITIONAL_VENDOR_PROPERTIES += dalvik.vm.isa.$(TARGET_2ND_ARCH).variant=$($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_CPU_VARIANT_RUNTIME)
-  ifneq ($($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES),)
-    ADDITIONAL_VENDOR_PROPERTIES += dalvik.vm.isa.$(TARGET_2ND_ARCH).features=$($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES)
-  endif
-endif
-
-# Although these variables are prefixed with TARGET_RECOVERY_, they are also needed under charger
-# mode (via libminui).
-ifdef TARGET_RECOVERY_DEFAULT_ROTATION
-ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.minui.default_rotation=$(TARGET_RECOVERY_DEFAULT_ROTATION)
-endif
-ifdef TARGET_RECOVERY_OVERSCAN_PERCENT
-ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.minui.overscan_percent=$(TARGET_RECOVERY_OVERSCAN_PERCENT)
-endif
-ifdef TARGET_RECOVERY_PIXEL_FORMAT
-ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.minui.pixel_format=$(TARGET_RECOVERY_PIXEL_FORMAT)
-endif
-
-ifdef PRODUCT_USE_DYNAMIC_PARTITIONS
-ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.boot.dynamic_partitions=$(PRODUCT_USE_DYNAMIC_PARTITIONS)
-endif
-
-ifdef PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
-ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.boot.dynamic_partitions_retrofit=$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)
-endif
-
-ifdef PRODUCT_SHIPPING_API_LEVEL
-ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.product.first_api_level=$(PRODUCT_SHIPPING_API_LEVEL)
-endif
-
-ifdef PRODUCT_SHIPPING_VENDOR_API_LEVEL
-ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.vendor.api_level=$(PRODUCT_SHIPPING_VENDOR_API_LEVEL)
-endif
-
-ifneq ($(TARGET_BUILD_VARIANT),user)
-  ifdef PRODUCT_SET_DEBUGFS_RESTRICTIONS
-    ADDITIONAL_VENDOR_PROPERTIES += \
-      ro.product.debugfs_restrictions.enabled=$(PRODUCT_SET_DEBUGFS_RESTRICTIONS)
-  endif
-endif
-
-# Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
-# This must not be defined for the non-GRF devices.
-# The values of the GRF properties will be verified by post_process_props.py
-ifdef BOARD_SHIPPING_API_LEVEL
-ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.board.first_api_level=$(BOARD_SHIPPING_API_LEVEL)
-endif
-
-# Build system set BOARD_API_LEVEL to show the api level of the vendor API surface.
-# This must not be altered outside of build system.
-ifdef BOARD_API_LEVEL
-ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.board.api_level=$(BOARD_API_LEVEL)
-endif
-# RELEASE_BOARD_API_LEVEL_FROZEN is true when the vendor API surface is frozen.
-ifdef RELEASE_BOARD_API_LEVEL_FROZEN
-ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.board.api_frozen=$(RELEASE_BOARD_API_LEVEL_FROZEN)
-endif
-
-# Set build prop. This prop is read by ota_from_target_files when generating OTA,
-# to decide if VABC should be disabled.
-ifeq ($(BOARD_DONT_USE_VABC_OTA),true)
-ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.vendor.build.dont_use_vabc=true
-endif
-
-# Set the flag in vendor. So VTS would know if the new fingerprint format is in use when
-# the system images are replaced by GSI.
-ifeq ($(BOARD_USE_VBMETA_DIGTEST_IN_FINGERPRINT),true)
-ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.vendor.build.fingerprint_has_digest=1
-endif
-
-ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.vendor.build.security_patch=$(VENDOR_SECURITY_PATCH) \
-    ro.product.board=$(TARGET_BOOTLOADER_BOARD_NAME) \
-    ro.board.platform=$(TARGET_BOARD_PLATFORM) \
-    ro.hwui.use_vulkan=$(TARGET_USES_VULKAN)
-
-ifdef TARGET_SCREEN_DENSITY
-ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.sf.lcd_density=$(TARGET_SCREEN_DENSITY)
-endif
-
-ifdef AB_OTA_UPDATER
-ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.build.ab_update=$(AB_OTA_UPDATER)
-endif
-
-# Set ro.product.vndk.version to PLATFORM_VNDK_VERSION only if
-# KEEP_VNDK is true, PRODUCT_PRODUCT_VNDK_VERSION is current and
-# PLATFORM_VNDK_VERSION is less than or equal to 35.
-# ro.product.vndk.version must be removed for the other future builds.
-ifeq ($(KEEP_VNDK)|$(PRODUCT_PRODUCT_VNDK_VERSION),true|current)
-ifeq ($(call math_is_number,$(PLATFORM_VNDK_VERSION)),true)
-ifeq ($(call math_lt_or_eq,$(PLATFORM_VNDK_VERSION),35),true)
-ADDITIONAL_PRODUCT_PROPERTIES += ro.product.vndk.version=$(PLATFORM_VNDK_VERSION)
-endif
-endif
-endif
-
-ADDITIONAL_PRODUCT_PROPERTIES += ro.build.characteristics=$(TARGET_AAPT_CHARACTERISTICS)
-
-ifeq ($(AB_OTA_UPDATER),true)
-ADDITIONAL_PRODUCT_PROPERTIES += ro.product.ab_ota_partitions=$(subst $(space),$(comma),$(sort $(AB_OTA_PARTITIONS)))
-ADDITIONAL_VENDOR_PROPERTIES += ro.vendor.build.ab_ota_partitions=$(subst $(space),$(comma),$(sort $(AB_OTA_PARTITIONS)))
-endif
-
-# Set this property for VTS to skip large page size tests on unsupported devices.
-ADDITIONAL_PRODUCT_PROPERTIES += \
-    ro.product.cpu.pagesize.max=$(TARGET_MAX_PAGE_SIZE_SUPPORTED)
-
 # -----------------------------------------------------------------
 ###
 ### In this section we set up the things that are different
@@ -381,66 +160,15 @@ ifneq ($(filter sdk sdk_addon,$(MAKECMDGOALS)),)
 is_sdk_build := true
 endif
 
-## user/userdebug ##
-
-user_variant := $(filter user userdebug,$(TARGET_BUILD_VARIANT))
-enable_target_debugging := true
 tags_to_install :=
-ifneq (,$(user_variant))
-  # Target is secure in user builds.
-  ADDITIONAL_SYSTEM_PROPERTIES += ro.secure=1
-  ADDITIONAL_SYSTEM_PROPERTIES += security.perf_harden=1
 
-  ifeq ($(user_variant),user)
-    ADDITIONAL_SYSTEM_PROPERTIES += ro.adb.secure=1
-  endif
-
-  ifeq ($(user_variant),userdebug)
-    # Pick up some extra useful tools
-    tags_to_install += debug
-  else
-    # Disable debugging in plain user builds.
-    enable_target_debugging :=
-  endif
-
-  # Disallow mock locations by default for user builds
-  ADDITIONAL_SYSTEM_PROPERTIES += ro.allow.mock.location=0
-
-else # !user_variant
-  # Turn on checkjni for non-user builds.
-  ADDITIONAL_SYSTEM_PROPERTIES += ro.kernel.android.checkjni=1
-  # Set device insecure for non-user builds.
-  ADDITIONAL_SYSTEM_PROPERTIES += ro.secure=0
-  # Allow mock locations by default for non user builds
-  ADDITIONAL_SYSTEM_PROPERTIES += ro.allow.mock.location=1
-endif # !user_variant
-
-ifeq (true,$(strip $(enable_target_debugging)))
-  # Target is more debuggable and adbd is on by default
-  ADDITIONAL_SYSTEM_PROPERTIES += ro.debuggable=1
-  # Enable Dalvik lock contention logging.
-  ADDITIONAL_SYSTEM_PROPERTIES += dalvik.vm.lockprof.threshold=500
-else # !enable_target_debugging
-  # Target is less debuggable and adbd is off by default
-  ADDITIONAL_SYSTEM_PROPERTIES += ro.debuggable=0
-endif # !enable_target_debugging
-
-## eng ##
+ifeq ($(TARGET_BUILD_VARIANT),userdebug)
+# Pick up some extra useful tools
+tags_to_install := debug
+endif
 
 ifeq ($(TARGET_BUILD_VARIANT),eng)
 tags_to_install := debug eng
-ifneq ($(filter ro.setupwizard.mode=ENABLED, $(call collapse-pairs, $(ADDITIONAL_SYSTEM_PROPERTIES))),)
-  # Don't require the setup wizard on eng builds
-  ADDITIONAL_SYSTEM_PROPERTIES := $(filter-out ro.setupwizard.mode=%,\
-          $(call collapse-pairs, $(ADDITIONAL_SYSTEM_PROPERTIES))) \
-          ro.setupwizard.mode=OPTIONAL
-endif
-ifndef is_sdk_build
-  # To speedup startup of non-preopted builds, don't verify or compile the boot image.
-  ADDITIONAL_SYSTEM_PROPERTIES += dalvik.vm.image-dex2oat-filter=extract
-endif
-# b/323566535
-ADDITIONAL_SYSTEM_PROPERTIES += init.svc_debug.no_fatal.zygote=true
 endif
 
 ## asan ##
@@ -476,17 +204,10 @@ endif
 # TODO: this should be eng I think.  Since the sdk is built from the eng
 # variant.
 tags_to_install := debug eng
-ADDITIONAL_SYSTEM_PROPERTIES += xmpp.auto-presence=true
-ADDITIONAL_SYSTEM_PROPERTIES += ro.config.nocheckin=yes
 else # !sdk
 endif
 
 BUILD_WITHOUT_PV := true
-
-ADDITIONAL_SYSTEM_PROPERTIES += net.bt.name=Android
-
-# This property is set by flashing debug boot image, so default to false.
-ADDITIONAL_SYSTEM_PROPERTIES += ro.force.debuggable=0
 
 # ------------------------------------------------------------
 # Define a function that, given a list of module tags, returns
@@ -528,10 +249,6 @@ include $(BUILD_SYSTEM)/dex_preopt.mk
 
 # Strip and readonly a few more variables so they won't be modified.
 $(readonly-final-product-vars)
-ADDITIONAL_SYSTEM_PROPERTIES := $(strip $(ADDITIONAL_SYSTEM_PROPERTIES))
-.KATI_READONLY := ADDITIONAL_SYSTEM_PROPERTIES
-ADDITIONAL_PRODUCT_PROPERTIES := $(strip $(ADDITIONAL_PRODUCT_PROPERTIES))
-.KATI_READONLY := ADDITIONAL_PRODUCT_PROPERTIES
 
 ifneq ($(PRODUCT_ENFORCE_RRO_TARGETS),)
 ENFORCE_RRO_SOURCES :=
@@ -971,11 +688,16 @@ $(foreach suite,general-tests device-tests vts tvts art-host-tests host-unit-tes
           $(eval my_testcases := $(HOST_OUT_TESTCASES)),\
           $(eval my_testcases := $$(COMPATIBILITY_TESTCASES_OUT_$(suite))))\
         $(eval target := $(my_testcases)/$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
+        $(eval link_target := ../../../$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
+        $(eval symlink := $(my_testcases)/$(m)/shared_libs/$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
+        $(eval COMPATIBILITY.$(suite).SYMLINKS := \
+          $$(COMPATIBILITY.$(suite).SYMLINKS) $(f):$(link_target):$(symlink))\
         $(if $(strip $(ALL_TARGETS.$(target).META_LIC)),,$(call declare-copy-target-license-metadata,$(target),$(f)))\
         $(eval COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES := \
           $$(COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES) $(f):$(target))\
         $(eval COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES := \
-          $(sort $(COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES)))))))
+          $(sort $(COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES))))))\
+  $(eval COMPATIBILITY.$(suite).SYMLINKS := $(sort $(COMPATIBILITY.$(suite).SYMLINKS))))
 endef
 
 $(call resolve-shared-libs-depes,TARGET_)
@@ -1248,8 +970,7 @@ endef
 # Returns modules included automatically as a result of certain BoardConfig
 # variables being set.
 define auto-included-modules
-  $(if $(and $(BOARD_VNDK_VERSION),$(filter true,$(KEEP_VNDK))),vndk_package) \
-  $(if $(filter true,$(KEEP_VNDK)),,llndk_in_system) \
+  llndk_in_system \
   $(if $(DEVICE_MANIFEST_FILE),vendor_manifest.xml) \
   $(if $(DEVICE_MANIFEST_SKUS),$(foreach sku, $(DEVICE_MANIFEST_SKUS),vendor_manifest_$(sku).xml)) \
   $(if $(ODM_MANIFEST_FILES),odm_manifest.xml) \
@@ -1859,12 +1580,12 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
     $(INSTALLED_FILES_JSON_SYSTEMOTHER) \
     $(INSTALLED_FILES_FILE_RECOVERY) \
     $(INSTALLED_FILES_JSON_RECOVERY) \
-    $(INSTALLED_BUILD_PROP_TARGET):build.prop \
-    $(INSTALLED_VENDOR_BUILD_PROP_TARGET):build.prop-vendor \
-    $(INSTALLED_PRODUCT_BUILD_PROP_TARGET):build.prop-product \
-    $(INSTALLED_ODM_BUILD_PROP_TARGET):build.prop-odm \
-    $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET):build.prop-system_ext \
-    $(INSTALLED_RAMDISK_BUILD_PROP_TARGET):build.prop-ramdisk \
+    $(if $(BUILDING_SYSTEM_IMAGE), $(INSTALLED_BUILD_PROP_TARGET):build.prop) \
+    $(if $(BUILDING_VENDOR_IMAGE), $(INSTALLED_VENDOR_BUILD_PROP_TARGET):build.prop-vendor) \
+    $(if $(BUILDING_PRODUCT_IMAGE), $(INSTALLED_PRODUCT_BUILD_PROP_TARGET):build.prop-product) \
+    $(if $(BUILDING_ODM_IMAGE), $(INSTALLED_ODM_BUILD_PROP_TARGET):build.prop-odm) \
+    $(if $(BUILDING_SYSTEM_EXT_IMAGE), $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET):build.prop-system_ext) \
+    $(if $(BUILDING_RAMDISK_IMAGE), $(INSTALLED_RAMDISK_BUILD_PROP_TARGET):build.prop-ramdisk) \
     $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
     $(INSTALLED_MISC_INFO_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
@@ -1935,7 +1656,7 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
   $(api_xmls):
 	$(hide) echo "Converting API file to XML: $@"
 	$(hide) mkdir -p $(dir $@)
-	$(hide) $(APICHECK_COMMAND) --input-api-jar $< --api-xml $@
+	$(hide) $(APICHECK_COMMAND) jar-to-jdiff $< $@
 
   $(foreach xml,$(sort $(api_xmls)),$(call declare-1p-target,$(xml),))
 
@@ -2208,6 +1929,64 @@ $(PRODUCT_OUT)/sbom-metadata.csv:
 	  $(eval _is_static_lib := Y) \
 	  echo '$(_lib_stem).a,$(_module_path),$(_soong_module_type),,,,,$(_built_file),$(_static_libs),$(_whole_static_libs),$(_is_static_lib)' >> $@; \
 	)
+
+# Create metadata for compliance support in Soong
+.PHONY: make-compliance-metadata
+make-compliance-metadata: \
+    $(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/make-metadata.csv \
+    $(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/make-modules.csv
+
+$(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/make-metadata.csv:
+	rm -f $@
+	echo 'installed_file,module_path,is_soong_module,is_prebuilt_make_module,product_copy_files,kernel_module_copy_files,is_platform_generated,static_libs,whole_static_libs,license_text' >> $@
+	$(foreach f,$(installed_files),\
+	  $(eval _module_name := $(ALL_INSTALLED_FILES.$f)) \
+	  $(eval _path_on_device := $(patsubst $(PRODUCT_OUT)/%,%,$f)) \
+	  $(eval _build_output_path := $(PRODUCT_OUT)/$(_path_on_device)) \
+	  $(eval _module_path := $(strip $(sort $(ALL_MODULES.$(_module_name).PATH)))) \
+	  $(eval _is_soong_module := $(ALL_MODULES.$(_module_name).IS_SOONG_MODULE)) \
+	  $(eval _is_prebuilt_make_module := $(ALL_MODULES.$(_module_name).IS_PREBUILT_MAKE_MODULE)) \
+	  $(eval _product_copy_files := $(sort $(filter %:$(_path_on_device),$(product_copy_files_without_owner)))) \
+	  $(eval _kernel_module_copy_files := $(sort $(filter %$(_path_on_device),$(KERNEL_MODULE_COPY_FILES)))) \
+	  $(eval _is_build_prop := $(call is-build-prop,$f)) \
+	  $(eval _is_notice_file := $(call is-notice-file,$f)) \
+	  $(eval _is_dexpreopt_image_profile := $(if $(filter %:/$(_path_on_device),$(DEXPREOPT_IMAGE_PROFILE_BUILT_INSTALLED)),Y)) \
+	  $(eval _is_product_system_other_avbkey := $(if $(findstring $f,$(INSTALLED_PRODUCT_SYSTEM_OTHER_AVBKEY_TARGET)),Y)) \
+	  $(eval _is_event_log_tags_file := $(if $(findstring $f,$(event_log_tags_file)),Y)) \
+	  $(eval _is_system_other_odex_marker := $(if $(findstring $f,$(INSTALLED_SYSTEM_OTHER_ODEX_MARKER)),Y)) \
+	  $(eval _is_kernel_modules_blocklist := $(if $(findstring $f,$(ALL_KERNEL_MODULES_BLOCKLIST)),Y)) \
+	  $(eval _is_fsverity_build_manifest_apk := $(if $(findstring $f,$(ALL_FSVERITY_BUILD_MANIFEST_APK)),Y)) \
+	  $(eval _is_linker_config := $(if $(findstring $f,$(SYSTEM_LINKER_CONFIG) $(vendor_linker_config_file)),Y)) \
+	  $(eval _is_partition_compat_symlink := $(if $(findstring $f,$(PARTITION_COMPAT_SYMLINKS)),Y)) \
+	  $(eval _is_flags_file := $(if $(findstring $f, $(ALL_FLAGS_FILES)),Y)) \
+	  $(eval _is_rootdir_symlink := $(if $(findstring $f, $(ALL_ROOTDIR_SYMLINKS)),Y)) \
+	  $(eval _is_platform_generated := $(_is_build_prop)$(_is_notice_file)$(_is_dexpreopt_image_profile)$(_is_product_system_other_avbkey)$(_is_event_log_tags_file)$(_is_system_other_odex_marker)$(_is_kernel_modules_blocklist)$(_is_fsverity_build_manifest_apk)$(_is_linker_config)$(_is_partition_compat_symlink)$(_is_flags_file)$(_is_rootdir_symlink)) \
+	  $(eval _static_libs := $(if $(_is_soong_module),,$(ALL_INSTALLED_FILES.$f.STATIC_LIBRARIES))) \
+	  $(eval _whole_static_libs := $(if $(_is_soong_module),,$(ALL_INSTALLED_FILES.$f.WHOLE_STATIC_LIBRARIES))) \
+	  $(eval _license_text := $(if $(filter $(_build_output_path),$(ALL_NON_MODULES)),$(ALL_NON_MODULES.$(_build_output_path).NOTICES))) \
+	  echo '$(_build_output_path),$(_module_path),$(_is_soong_module),$(_is_prebuilt_make_module),$(_product_copy_files),$(_kernel_module_copy_files),$(_is_platform_generated),$(_static_libs),$(_whole_static_libs),$(_license_text)' >> $@; \
+	)
+
+$(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/make-modules.csv:
+	rm -f $@
+	echo 'name,module_path,module_class,module_type,static_libs,whole_static_libs,built_files,installed_files' >> $@
+	$(foreach m,$(ALL_MODULES), \
+	  $(eval _module_name := $m) \
+	  $(eval _module_path := $(strip $(sort $(ALL_MODULES.$(_module_name).PATH)))) \
+	  $(eval _make_module_class := $(ALL_MODULES.$(_module_name).CLASS)) \
+	  $(eval _make_module_type := $(ALL_MODULES.$(_module_name).MAKE_MODULE_TYPE)) \
+	  $(eval _static_libs := $(strip $(sort $(ALL_MODULES.$(_module_name).STATIC_LIBS)))) \
+	  $(eval _whole_static_libs := $(strip $(sort $(ALL_MODULES.$(_module_name).WHOLE_STATIC_LIBS)))) \
+	  $(eval _built_files := $(strip $(sort $(ALL_MODULES.$(_module_name).BUILT)))) \
+	  $(eval _installed_files := $(strip $(sort $(ALL_MODULES.$(_module_name).INSTALLED)))) \
+	  $(eval _is_soong_module := $(ALL_MODULES.$(_module_name).IS_SOONG_MODULE)) \
+	  $(if $(_is_soong_module),, \
+		echo '$(_module_name),$(_module_path),$(_make_module_class),$(_make_module_type),$(_static_libs),$(_whole_static_libs),$(_built_files),$(_installed_files)' >> $@; \
+	  ) \
+	)
+
+$(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/installed_files.stamp: $(installed_files)
+	touch $@
 
 # (TODO: b/272358583 find another way of always rebuilding sbom.spdx)
 # Remove the always_dirty_file.txt whenever the makefile is evaluated

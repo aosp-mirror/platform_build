@@ -32,25 +32,28 @@
 //! apis. DO NOT DIRECTLY USE THESE APIS IN YOUR SOURCE CODE. For auto generated flag apis
 //! please refer to the g3doc go/android-flags
 
+pub mod flag_info;
 pub mod flag_table;
 pub mod flag_value;
-pub mod mapped_file;
 pub mod package_table;
 pub mod protos;
-
-#[cfg(test)]
-mod test_utils;
+pub mod test_utils;
 
 use anyhow::anyhow;
+use std::cmp::Ordering;
 use std::collections::hash_map::DefaultHasher;
+use std::fs::File;
 use std::hash::{Hash, Hasher};
+use std::io::Read;
 
-pub use crate::flag_table::{FlagOffset, FlagTable, FlagTableHeader, FlagTableNode};
+pub use crate::flag_info::{FlagInfoBit, FlagInfoHeader, FlagInfoList, FlagInfoNode};
+pub use crate::flag_table::{FlagTable, FlagTableHeader, FlagTableNode};
 pub use crate::flag_value::{FlagValueHeader, FlagValueList};
-pub use crate::package_table::{PackageOffset, PackageTable, PackageTableHeader, PackageTableNode};
-pub use crate::protos::ProtoStorageFiles;
+pub use crate::package_table::{PackageTable, PackageTableHeader, PackageTableNode};
 
-use crate::AconfigStorageError::{BytesParseFail, HashTableSizeLimit};
+use crate::AconfigStorageError::{
+    BytesParseFail, HashTableSizeLimit, InvalidFlagValueType, InvalidStoredFlagType,
+};
 
 /// Storage file version
 pub const FILE_VERSION: u32 = 1;
@@ -62,18 +65,16 @@ pub(crate) const HASH_PRIMES: [u32; 29] = [
     402653189, 805306457, 1610612741,
 ];
 
-/// Storage file location pb file
-pub const STORAGE_LOCATION_FILE: &str = "/metadata/aconfig/available_storage_file_records.pb";
-
 /// Storage file type enum
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum StorageFileSelection {
-    PackageMap,
-    FlagMap,
-    FlagVal,
+pub enum StorageFileType {
+    PackageMap = 0,
+    FlagMap = 1,
+    FlagVal = 2,
+    FlagInfo = 3,
 }
 
-impl TryFrom<&str> for StorageFileSelection {
+impl TryFrom<&str> for StorageFileType {
     type Error = anyhow::Error;
 
     fn try_from(value: &str) -> std::result::Result<Self, Self::Error> {
@@ -81,9 +82,122 @@ impl TryFrom<&str> for StorageFileSelection {
             "package_map" => Ok(Self::PackageMap),
             "flag_map" => Ok(Self::FlagMap),
             "flag_val" => Ok(Self::FlagVal),
-            _ => Err(anyhow!("Invalid storage file to create")),
+            "flag_info" => Ok(Self::FlagInfo),
+            _ => Err(anyhow!(
+                "Invalid storage file type, valid types are package_map|flag_map|flag_val|flag_info"
+            )),
         }
     }
+}
+
+impl TryFrom<u8> for StorageFileType {
+    type Error = anyhow::Error;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            x if x == Self::PackageMap as u8 => Ok(Self::PackageMap),
+            x if x == Self::FlagMap as u8 => Ok(Self::FlagMap),
+            x if x == Self::FlagVal as u8 => Ok(Self::FlagVal),
+            x if x == Self::FlagInfo as u8 => Ok(Self::FlagInfo),
+            _ => Err(anyhow!("Invalid storage file type")),
+        }
+    }
+}
+
+/// Flag type enum as stored by storage file
+/// ONLY APPEND, NEVER REMOVE FOR BACKWARD COMPATIBILITY. THE MAX IS U16.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum StoredFlagType {
+    ReadWriteBoolean = 0,
+    ReadOnlyBoolean = 1,
+    FixedReadOnlyBoolean = 2,
+}
+
+impl TryFrom<u16> for StoredFlagType {
+    type Error = AconfigStorageError;
+
+    fn try_from(value: u16) -> Result<Self, Self::Error> {
+        match value {
+            x if x == Self::ReadWriteBoolean as u16 => Ok(Self::ReadWriteBoolean),
+            x if x == Self::ReadOnlyBoolean as u16 => Ok(Self::ReadOnlyBoolean),
+            x if x == Self::FixedReadOnlyBoolean as u16 => Ok(Self::FixedReadOnlyBoolean),
+            _ => Err(InvalidStoredFlagType(anyhow!("Invalid stored flag type"))),
+        }
+    }
+}
+
+/// Flag value type enum, one FlagValueType maps to many StoredFlagType
+/// ONLY APPEND, NEVER REMOVE FOR BACKWARD COMPATIBILITY. THE MAX IS U16
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum FlagValueType {
+    Boolean = 0,
+}
+
+impl TryFrom<StoredFlagType> for FlagValueType {
+    type Error = AconfigStorageError;
+
+    fn try_from(value: StoredFlagType) -> Result<Self, Self::Error> {
+        match value {
+            StoredFlagType::ReadWriteBoolean => Ok(Self::Boolean),
+            StoredFlagType::ReadOnlyBoolean => Ok(Self::Boolean),
+            StoredFlagType::FixedReadOnlyBoolean => Ok(Self::Boolean),
+        }
+    }
+}
+
+impl TryFrom<u16> for FlagValueType {
+    type Error = AconfigStorageError;
+
+    fn try_from(value: u16) -> Result<Self, Self::Error> {
+        match value {
+            x if x == Self::Boolean as u16 => Ok(Self::Boolean),
+            _ => Err(InvalidFlagValueType(anyhow!("Invalid flag value type"))),
+        }
+    }
+}
+
+/// Storage query api error
+#[non_exhaustive]
+#[derive(thiserror::Error, Debug)]
+pub enum AconfigStorageError {
+    #[error("failed to read the file")]
+    FileReadFail(#[source] anyhow::Error),
+
+    #[error("fail to parse protobuf")]
+    ProtobufParseFail(#[source] anyhow::Error),
+
+    #[error("storage files not found for this container")]
+    StorageFileNotFound(#[source] anyhow::Error),
+
+    #[error("fail to map storage file")]
+    MapFileFail(#[source] anyhow::Error),
+
+    #[error("fail to get mapped file")]
+    ObtainMappedFileFail(#[source] anyhow::Error),
+
+    #[error("fail to flush mapped storage file")]
+    MapFlushFail(#[source] anyhow::Error),
+
+    #[error("number of items in hash table exceed limit")]
+    HashTableSizeLimit(#[source] anyhow::Error),
+
+    #[error("failed to parse bytes into data")]
+    BytesParseFail(#[source] anyhow::Error),
+
+    #[error("cannot parse storage files with a higher version")]
+    HigherStorageFileVersion(#[source] anyhow::Error),
+
+    #[error("invalid storage file byte offset")]
+    InvalidStorageFileOffset(#[source] anyhow::Error),
+
+    #[error("failed to create file")]
+    FileCreationFail(#[source] anyhow::Error),
+
+    #[error("invalid stored flag type")]
+    InvalidStoredFlagType(#[source] anyhow::Error),
+
+    #[error("invalid flag value type")]
+    InvalidFlagValueType(#[source] anyhow::Error),
 }
 
 /// Get the right hash table size given number of entries in the table. Use a
@@ -104,7 +218,7 @@ pub(crate) fn get_bucket_index<T: Hash>(val: &T, num_buckets: u32) -> u32 {
 }
 
 /// Read and parse bytes as u8
-pub(crate) fn read_u8_from_bytes(buf: &[u8], head: &mut usize) -> Result<u8, AconfigStorageError> {
+pub fn read_u8_from_bytes(buf: &[u8], head: &mut usize) -> Result<u8, AconfigStorageError> {
     let val =
         u8::from_le_bytes(buf[*head..*head + 1].try_into().map_err(|errmsg| {
             BytesParseFail(anyhow!("fail to parse u8 from bytes: {}", errmsg))
@@ -127,10 +241,7 @@ pub(crate) fn read_u16_from_bytes(
 }
 
 /// Read and parse bytes as u32
-pub(crate) fn read_u32_from_bytes(
-    buf: &[u8],
-    head: &mut usize,
-) -> Result<u32, AconfigStorageError> {
+pub fn read_u32_from_bytes(buf: &[u8], head: &mut usize) -> Result<u32, AconfigStorageError> {
     let val =
         u32::from_le_bytes(buf[*head..*head + 4].try_into().map_err(|errmsg| {
             BytesParseFail(anyhow!("fail to parse u32 from bytes: {}", errmsg))
@@ -151,420 +262,417 @@ pub(crate) fn read_str_from_bytes(
     Ok(val)
 }
 
-/// Storage query api error
-#[non_exhaustive]
-#[derive(thiserror::Error, Debug)]
-pub enum AconfigStorageError {
-    #[error("failed to read the file")]
-    FileReadFail(#[source] anyhow::Error),
-
-    #[error("fail to parse protobuf")]
-    ProtobufParseFail(#[source] anyhow::Error),
-
-    #[error("storage files not found for this container")]
-    StorageFileNotFound(#[source] anyhow::Error),
-
-    #[error("fail to map storage file")]
-    MapFileFail(#[source] anyhow::Error),
-
-    #[error("number of items in hash table exceed limit")]
-    HashTableSizeLimit(#[source] anyhow::Error),
-
-    #[error("failed to parse bytes into data")]
-    BytesParseFail(#[source] anyhow::Error),
-
-    #[error("cannot parse storage files with a higher version")]
-    HigherStorageFileVersion(#[source] anyhow::Error),
-
-    #[error("invalid storage file byte offset")]
-    InvalidStorageFileOffset(#[source] anyhow::Error),
+/// Read in storage file as bytes
+pub fn read_file_to_bytes(file_path: &str) -> Result<Vec<u8>, AconfigStorageError> {
+    let mut file = File::open(file_path).map_err(|errmsg| {
+        AconfigStorageError::FileReadFail(anyhow!("Failed to open file {}: {}", file_path, errmsg))
+    })?;
+    let mut buffer = Vec::new();
+    file.read_to_end(&mut buffer).map_err(|errmsg| {
+        AconfigStorageError::FileReadFail(anyhow!(
+            "Failed to read bytes from file {}: {}",
+            file_path,
+            errmsg
+        ))
+    })?;
+    Ok(buffer)
 }
 
-/// Get package start offset implementation
-pub fn get_package_offset_impl(
-    pb_file: &str,
-    container: &str,
-    package: &str,
-) -> Result<Option<PackageOffset>, AconfigStorageError> {
-    let mapped_file =
-        crate::mapped_file::get_mapped_file(pb_file, container, StorageFileSelection::PackageMap)?;
-    crate::package_table::find_package_offset(&mapped_file, package)
+/// Flag value summary
+#[derive(Debug, PartialEq)]
+pub struct FlagValueSummary {
+    pub package_name: String,
+    pub flag_name: String,
+    pub flag_value: String,
+    pub value_type: StoredFlagType,
 }
 
-/// Get flag offset implementation
-pub fn get_flag_offset_impl(
-    pb_file: &str,
-    container: &str,
-    package_id: u32,
-    flag: &str,
-) -> Result<Option<FlagOffset>, AconfigStorageError> {
-    let mapped_file =
-        crate::mapped_file::get_mapped_file(pb_file, container, StorageFileSelection::FlagMap)?;
-    crate::flag_table::find_flag_offset(&mapped_file, package_id, flag)
+/// List flag values from storage files
+pub fn list_flags(
+    package_map: &str,
+    flag_map: &str,
+    flag_val: &str,
+) -> Result<Vec<FlagValueSummary>, AconfigStorageError> {
+    let package_table = PackageTable::from_bytes(&read_file_to_bytes(package_map)?)?;
+    let flag_table = FlagTable::from_bytes(&read_file_to_bytes(flag_map)?)?;
+    let flag_value_list = FlagValueList::from_bytes(&read_file_to_bytes(flag_val)?)?;
+
+    let mut package_info = vec![("", 0); package_table.header.num_packages as usize];
+    for node in package_table.nodes.iter() {
+        package_info[node.package_id as usize] = (&node.package_name, node.boolean_start_index);
+    }
+
+    let mut flags = Vec::new();
+    for node in flag_table.nodes.iter() {
+        let (package_name, boolean_start_index) = package_info[node.package_id as usize];
+        let flag_index = boolean_start_index + node.flag_index as u32;
+        let flag_value = flag_value_list.booleans[flag_index as usize];
+        flags.push(FlagValueSummary {
+            package_name: String::from(package_name),
+            flag_name: node.flag_name.clone(),
+            flag_value: flag_value.to_string(),
+            value_type: node.flag_type,
+        });
+    }
+
+    flags.sort_by(|v1, v2| match v1.package_name.cmp(&v2.package_name) {
+        Ordering::Equal => v1.flag_name.cmp(&v2.flag_name),
+        other => other,
+    });
+    Ok(flags)
 }
 
-/// Get boolean flag value implementation
-pub fn get_boolean_flag_value_impl(
-    pb_file: &str,
-    container: &str,
-    offset: u32,
-) -> Result<bool, AconfigStorageError> {
-    let mapped_file =
-        crate::mapped_file::get_mapped_file(pb_file, container, StorageFileSelection::FlagVal)?;
-    crate::flag_value::find_boolean_flag_value(&mapped_file, offset)
+/// Flag value and info summary
+#[derive(Debug, PartialEq)]
+pub struct FlagValueAndInfoSummary {
+    pub package_name: String,
+    pub flag_name: String,
+    pub flag_value: String,
+    pub value_type: StoredFlagType,
+    pub is_readwrite: bool,
+    pub has_server_override: bool,
+    pub has_local_override: bool,
 }
 
-/// Get package start offset for flags given the container and package name.
-///
-/// This function would map the corresponding package map file if has not been mapped yet,
-/// and then look for the target package in this mapped file.
-///
-/// If a package is found, it returns Ok(Some(PackageOffset))
-/// If a package is not found, it returns Ok(None)
-/// If errors out such as no such package map file is found, it returns an Err(errmsg)
-pub fn get_package_offset(
-    container: &str,
-    package: &str,
-) -> Result<Option<PackageOffset>, AconfigStorageError> {
-    get_package_offset_impl(STORAGE_LOCATION_FILE, container, package)
+/// List flag values and info from storage files
+pub fn list_flags_with_info(
+    package_map: &str,
+    flag_map: &str,
+    flag_val: &str,
+    flag_info: &str,
+) -> Result<Vec<FlagValueAndInfoSummary>, AconfigStorageError> {
+    let package_table = PackageTable::from_bytes(&read_file_to_bytes(package_map)?)?;
+    let flag_table = FlagTable::from_bytes(&read_file_to_bytes(flag_map)?)?;
+    let flag_value_list = FlagValueList::from_bytes(&read_file_to_bytes(flag_val)?)?;
+    let flag_info = FlagInfoList::from_bytes(&read_file_to_bytes(flag_info)?)?;
+
+    let mut package_info = vec![("", 0); package_table.header.num_packages as usize];
+    for node in package_table.nodes.iter() {
+        package_info[node.package_id as usize] = (&node.package_name, node.boolean_start_index);
+    }
+
+    let mut flags = Vec::new();
+    for node in flag_table.nodes.iter() {
+        let (package_name, boolean_start_index) = package_info[node.package_id as usize];
+        let flag_index = boolean_start_index + node.flag_index as u32;
+        let flag_value = flag_value_list.booleans[flag_index as usize];
+        let flag_attribute = flag_info.nodes[flag_index as usize].attributes;
+        flags.push(FlagValueAndInfoSummary {
+            package_name: String::from(package_name),
+            flag_name: node.flag_name.clone(),
+            flag_value: flag_value.to_string(),
+            value_type: node.flag_type,
+            is_readwrite: flag_attribute & (FlagInfoBit::IsReadWrite as u8) != 0,
+            has_server_override: flag_attribute & (FlagInfoBit::HasServerOverride as u8) != 0,
+            has_local_override: flag_attribute & (FlagInfoBit::HasLocalOverride as u8) != 0,
+        });
+    }
+
+    flags.sort_by(|v1, v2| match v1.package_name.cmp(&v2.package_name) {
+        Ordering::Equal => v1.flag_name.cmp(&v2.flag_name),
+        other => other,
+    });
+    Ok(flags)
 }
 
-/// Get flag offset within a package given the container name, package id and flag name.
-///
-/// This function would map the corresponding flag map file if has not been mapped yet,
-/// and then look for the target flag in this mapped file.
-///
-/// If a flag is found, it returns Ok(Some(u16))
-/// If a flag is not found, it returns Ok(None)
-/// If errors out such as no such flag map file is found, it returns an Err(errmsg)
-pub fn get_flag_offset(
-    container: &str,
-    package_id: u32,
-    flag: &str,
-) -> Result<Option<FlagOffset>, AconfigStorageError> {
-    get_flag_offset_impl(STORAGE_LOCATION_FILE, container, package_id, flag)
-}
+// *************************************** //
+// CC INTERLOP
+// *************************************** //
 
-/// Get the boolean flag value given the container name and flag global offset
-///
-/// This function would map the corresponding flag value file if has not been mapped yet,
-/// and then look for the target flag value at the specified offset.
-///
-/// If flag value file is successfully mapped and the provide offset is valid, it returns
-/// the boolean flag value, otherwise it returns the error message.
-pub fn get_boolean_flag_value(container: &str, offset: u32) -> Result<bool, AconfigStorageError> {
-    get_boolean_flag_value_impl(STORAGE_LOCATION_FILE, container, offset)
-}
-
+// Exported rust data structure and methods, c++ code will be generated
 #[cxx::bridge]
 mod ffi {
-    // Package table query return for cc interlop
-    pub struct PackageOffsetQueryCXX {
-        pub query_success: bool,
-        pub error_message: String,
-        pub package_exists: bool,
-        pub package_id: u32,
-        pub boolean_offset: u32,
+    /// flag value summary cxx return
+    pub struct FlagValueSummaryCXX {
+        pub package_name: String,
+        pub flag_name: String,
+        pub flag_value: String,
+        pub value_type: String,
     }
 
-    // Flag table query return for cc interlop
-    pub struct FlagOffsetQueryCXX {
-        pub query_success: bool,
-        pub error_message: String,
-        pub flag_exists: bool,
-        pub flag_offset: u16,
+    /// flag value and info summary cxx return
+    pub struct FlagValueAndInfoSummaryCXX {
+        pub package_name: String,
+        pub flag_name: String,
+        pub flag_value: String,
+        pub value_type: String,
+        pub is_readwrite: bool,
+        pub has_server_override: bool,
+        pub has_local_override: bool,
     }
 
-    // Flag value query return for cc interlop
-    pub struct BooleanFlagValueQueryCXX {
+    /// list flag result cxx return
+    pub struct ListFlagValueResultCXX {
         pub query_success: bool,
         pub error_message: String,
-        pub flag_value: bool,
+        pub flags: Vec<FlagValueSummaryCXX>,
+    }
+
+    /// list flag with info result cxx return
+    pub struct ListFlagValueAndInfoResultCXX {
+        pub query_success: bool,
+        pub error_message: String,
+        pub flags: Vec<FlagValueAndInfoSummaryCXX>,
     }
 
     // Rust export to c++
     extern "Rust" {
-        pub fn get_package_offset_cxx_impl(
-            pb_file: &str,
-            container: &str,
-            package: &str,
-        ) -> PackageOffsetQueryCXX;
+        pub fn list_flags_cxx(
+            package_map: &str,
+            flag_map: &str,
+            flag_val: &str,
+        ) -> ListFlagValueResultCXX;
 
-        pub fn get_flag_offset_cxx_impl(
-            pb_file: &str,
-            container: &str,
-            package_id: u32,
-            flag: &str,
-        ) -> FlagOffsetQueryCXX;
-
-        pub fn get_boolean_flag_value_cxx_impl(
-            pb_file: &str,
-            container: &str,
-            offset: u32,
-        ) -> BooleanFlagValueQueryCXX;
-
-        pub fn get_package_offset_cxx(container: &str, package: &str) -> PackageOffsetQueryCXX;
-
-        pub fn get_flag_offset_cxx(
-            container: &str,
-            package_id: u32,
-            flag: &str,
-        ) -> FlagOffsetQueryCXX;
-
-        pub fn get_boolean_flag_value_cxx(container: &str, offset: u32)
-            -> BooleanFlagValueQueryCXX;
+        pub fn list_flags_with_info_cxx(
+            package_map: &str,
+            flag_map: &str,
+            flag_val: &str,
+            flag_info: &str,
+        ) -> ListFlagValueAndInfoResultCXX;
     }
 }
 
-/// Get package start offset impl cc interlop
-pub fn get_package_offset_cxx_impl(
-    pb_file: &str,
-    container: &str,
-    package: &str,
-) -> ffi::PackageOffsetQueryCXX {
-    ffi::PackageOffsetQueryCXX::new(get_package_offset_impl(pb_file, container, package))
-}
-
-/// Get flag start offset impl cc interlop
-pub fn get_flag_offset_cxx_impl(
-    pb_file: &str,
-    container: &str,
-    package_id: u32,
-    flag: &str,
-) -> ffi::FlagOffsetQueryCXX {
-    ffi::FlagOffsetQueryCXX::new(get_flag_offset_impl(pb_file, container, package_id, flag))
-}
-
-/// Get boolean flag value impl cc interlop
-pub fn get_boolean_flag_value_cxx_impl(
-    pb_file: &str,
-    container: &str,
-    offset: u32,
-) -> ffi::BooleanFlagValueQueryCXX {
-    ffi::BooleanFlagValueQueryCXX::new(get_boolean_flag_value_impl(pb_file, container, offset))
-}
-
-/// Get package start offset cc interlop
-pub fn get_package_offset_cxx(container: &str, package: &str) -> ffi::PackageOffsetQueryCXX {
-    ffi::PackageOffsetQueryCXX::new(get_package_offset(container, package))
-}
-
-/// Get flag start offset cc interlop
-pub fn get_flag_offset_cxx(
-    container: &str,
-    package_id: u32,
-    flag: &str,
-) -> ffi::FlagOffsetQueryCXX {
-    ffi::FlagOffsetQueryCXX::new(get_flag_offset(container, package_id, flag))
-}
-
-/// Get boolean flag value cc interlop
-pub fn get_boolean_flag_value_cxx(container: &str, offset: u32) -> ffi::BooleanFlagValueQueryCXX {
-    ffi::BooleanFlagValueQueryCXX::new(get_boolean_flag_value(container, offset))
-}
-
-impl ffi::PackageOffsetQueryCXX {
-    pub(crate) fn new(offset_result: Result<Option<PackageOffset>, AconfigStorageError>) -> Self {
-        match offset_result {
-            Ok(offset_opt) => match offset_opt {
-                Some(offset) => Self {
-                    query_success: true,
-                    error_message: String::from(""),
-                    package_exists: true,
-                    package_id: offset.package_id,
-                    boolean_offset: offset.boolean_offset,
-                },
-                None => Self {
-                    query_success: true,
-                    error_message: String::from(""),
-                    package_exists: false,
-                    package_id: 0,
-                    boolean_offset: 0,
-                },
-            },
-            Err(errmsg) => Self {
-                query_success: false,
-                error_message: format!("{:?}", errmsg),
-                package_exists: false,
-                package_id: 0,
-                boolean_offset: 0,
-            },
+/// implement flag value summary cxx return type
+impl ffi::FlagValueSummaryCXX {
+    pub(crate) fn new(summary: FlagValueSummary) -> Self {
+        Self {
+            package_name: summary.package_name,
+            flag_name: summary.flag_name,
+            flag_value: summary.flag_value,
+            value_type: format!("{:?}", summary.value_type),
         }
     }
 }
 
-impl ffi::FlagOffsetQueryCXX {
-    pub(crate) fn new(offset_result: Result<Option<FlagOffset>, AconfigStorageError>) -> Self {
-        match offset_result {
-            Ok(offset_opt) => match offset_opt {
-                Some(offset) => Self {
-                    query_success: true,
-                    error_message: String::from(""),
-                    flag_exists: true,
-                    flag_offset: offset,
-                },
-                None => Self {
-                    query_success: true,
-                    error_message: String::from(""),
-                    flag_exists: false,
-                    flag_offset: 0,
-                },
-            },
-            Err(errmsg) => Self {
-                query_success: false,
-                error_message: format!("{:?}", errmsg),
-                flag_exists: false,
-                flag_offset: 0,
-            },
+/// implement flag value and info summary cxx return type
+impl ffi::FlagValueAndInfoSummaryCXX {
+    pub(crate) fn new(summary: FlagValueAndInfoSummary) -> Self {
+        Self {
+            package_name: summary.package_name,
+            flag_name: summary.flag_name,
+            flag_value: summary.flag_value,
+            value_type: format!("{:?}", summary.value_type),
+            is_readwrite: summary.is_readwrite,
+            has_server_override: summary.has_server_override,
+            has_local_override: summary.has_local_override,
         }
     }
 }
 
-impl ffi::BooleanFlagValueQueryCXX {
-    pub(crate) fn new(value_result: Result<bool, AconfigStorageError>) -> Self {
-        match value_result {
-            Ok(value) => {
-                Self { query_success: true, error_message: String::from(""), flag_value: value }
-            }
-            Err(errmsg) => Self {
-                query_success: false,
-                error_message: format!("{:?}", errmsg),
-                flag_value: false,
-            },
-        }
+/// implement list flag cxx interlop
+pub fn list_flags_cxx(
+    package_map: &str,
+    flag_map: &str,
+    flag_val: &str,
+) -> ffi::ListFlagValueResultCXX {
+    match list_flags(package_map, flag_map, flag_val) {
+        Ok(summary) => ffi::ListFlagValueResultCXX {
+            query_success: true,
+            error_message: String::new(),
+            flags: summary.into_iter().map(ffi::FlagValueSummaryCXX::new).collect(),
+        },
+        Err(errmsg) => ffi::ListFlagValueResultCXX {
+            query_success: false,
+            error_message: format!("{:?}", errmsg),
+            flags: Vec::new(),
+        },
+    }
+}
+
+/// implement list flag with info cxx interlop
+pub fn list_flags_with_info_cxx(
+    package_map: &str,
+    flag_map: &str,
+    flag_val: &str,
+    flag_info: &str,
+) -> ffi::ListFlagValueAndInfoResultCXX {
+    match list_flags_with_info(package_map, flag_map, flag_val, flag_info) {
+        Ok(summary) => ffi::ListFlagValueAndInfoResultCXX {
+            query_success: true,
+            error_message: String::new(),
+            flags: summary.into_iter().map(ffi::FlagValueAndInfoSummaryCXX::new).collect(),
+        },
+        Err(errmsg) => ffi::ListFlagValueAndInfoResultCXX {
+            query_success: false,
+            error_message: format!("{:?}", errmsg),
+            flags: Vec::new(),
+        },
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::{write_storage_text_to_temp_file, TestStorageFileSet};
-
-    fn create_test_storage_files(read_only: bool) -> TestStorageFileSet {
-        TestStorageFileSet::new(
-            "./tests/package.map",
-            "./tests/flag.map",
-            "./tests/flag.val",
-            read_only,
-        )
-        .unwrap()
-    }
+    use crate::test_utils::{
+        create_test_flag_info_list, create_test_flag_table, create_test_flag_value_list,
+        create_test_package_table, write_bytes_to_temp_file,
+    };
 
     #[test]
-    // this test point locks down flag package offset query
-    fn test_package_offset_query() {
-        let ro_files = create_test_storage_files(true);
-        let text_proto = format!(
-            r#"
-files {{
-    version: 0
-    container: "system"
-    package_map: "{}"
-    flag_map: "{}"
-    flag_val: "{}"
-    timestamp: 12345
-}}
-"#,
-            ro_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
-        );
+    // this test point locks down the flag list api
+    fn test_list_flag() {
+        let package_table =
+            write_bytes_to_temp_file(&create_test_package_table().into_bytes()).unwrap();
+        let flag_table = write_bytes_to_temp_file(&create_test_flag_table().into_bytes()).unwrap();
+        let flag_value_list =
+            write_bytes_to_temp_file(&create_test_flag_value_list().into_bytes()).unwrap();
 
-        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
-        let file_full_path = file.path().display().to_string();
-        let package_offset = get_package_offset_impl(
-            &file_full_path,
-            "system",
-            "com.android.aconfig.storage.test_1",
-        )
-        .unwrap()
-        .unwrap();
-        let expected_package_offset = PackageOffset { package_id: 0, boolean_offset: 0 };
-        assert_eq!(package_offset, expected_package_offset);
+        let package_table_path = package_table.path().display().to_string();
+        let flag_table_path = flag_table.path().display().to_string();
+        let flag_value_list_path = flag_value_list.path().display().to_string();
 
-        let package_offset = get_package_offset_impl(
-            &file_full_path,
-            "system",
-            "com.android.aconfig.storage.test_2",
-        )
-        .unwrap()
-        .unwrap();
-        let expected_package_offset = PackageOffset { package_id: 1, boolean_offset: 3 };
-        assert_eq!(package_offset, expected_package_offset);
-
-        let package_offset = get_package_offset_impl(
-            &file_full_path,
-            "system",
-            "com.android.aconfig.storage.test_4",
-        )
-        .unwrap()
-        .unwrap();
-        let expected_package_offset = PackageOffset { package_id: 2, boolean_offset: 6 };
-        assert_eq!(package_offset, expected_package_offset);
-    }
-
-    #[test]
-    // this test point locks down flag offset query
-    fn test_flag_offset_query() {
-        let ro_files = create_test_storage_files(true);
-        let text_proto = format!(
-            r#"
-files {{
-    version: 0
-    container: "system"
-    package_map: "{}"
-    flag_map: "{}"
-    flag_val: "{}"
-    timestamp: 12345
-}}
-"#,
-            ro_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
-        );
-
-        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
-        let file_full_path = file.path().display().to_string();
-        let baseline = vec![
-            (0, "enabled_ro", 1u16),
-            (0, "enabled_rw", 2u16),
-            (1, "disabled_ro", 0u16),
-            (2, "enabled_ro", 1u16),
-            (1, "enabled_fixed_ro", 1u16),
-            (1, "enabled_ro", 2u16),
-            (2, "enabled_fixed_ro", 0u16),
-            (0, "disabled_rw", 0u16),
+        let flags =
+            list_flags(&package_table_path, &flag_table_path, &flag_value_list_path).unwrap();
+        let expected = [
+            FlagValueSummary {
+                package_name: String::from("com.android.aconfig.storage.test_1"),
+                flag_name: String::from("disabled_rw"),
+                value_type: StoredFlagType::ReadWriteBoolean,
+                flag_value: String::from("false"),
+            },
+            FlagValueSummary {
+                package_name: String::from("com.android.aconfig.storage.test_1"),
+                flag_name: String::from("enabled_ro"),
+                value_type: StoredFlagType::ReadOnlyBoolean,
+                flag_value: String::from("true"),
+            },
+            FlagValueSummary {
+                package_name: String::from("com.android.aconfig.storage.test_1"),
+                flag_name: String::from("enabled_rw"),
+                value_type: StoredFlagType::ReadWriteBoolean,
+                flag_value: String::from("true"),
+            },
+            FlagValueSummary {
+                package_name: String::from("com.android.aconfig.storage.test_2"),
+                flag_name: String::from("disabled_rw"),
+                value_type: StoredFlagType::ReadWriteBoolean,
+                flag_value: String::from("false"),
+            },
+            FlagValueSummary {
+                package_name: String::from("com.android.aconfig.storage.test_2"),
+                flag_name: String::from("enabled_fixed_ro"),
+                value_type: StoredFlagType::FixedReadOnlyBoolean,
+                flag_value: String::from("true"),
+            },
+            FlagValueSummary {
+                package_name: String::from("com.android.aconfig.storage.test_2"),
+                flag_name: String::from("enabled_ro"),
+                value_type: StoredFlagType::ReadOnlyBoolean,
+                flag_value: String::from("true"),
+            },
+            FlagValueSummary {
+                package_name: String::from("com.android.aconfig.storage.test_4"),
+                flag_name: String::from("enabled_fixed_ro"),
+                value_type: StoredFlagType::FixedReadOnlyBoolean,
+                flag_value: String::from("true"),
+            },
+            FlagValueSummary {
+                package_name: String::from("com.android.aconfig.storage.test_4"),
+                flag_name: String::from("enabled_rw"),
+                value_type: StoredFlagType::ReadWriteBoolean,
+                flag_value: String::from("true"),
+            },
         ];
-        for (package_id, flag_name, expected_offset) in baseline.into_iter() {
-            let flag_offset =
-                get_flag_offset_impl(&file_full_path, "system", package_id, flag_name)
-                    .unwrap()
-                    .unwrap();
-            assert_eq!(flag_offset, expected_offset);
-        }
+        assert_eq!(flags, expected);
     }
 
     #[test]
-    // this test point locks down flag offset query
-    fn test_flag_value_query() {
-        let ro_files = create_test_storage_files(true);
-        let text_proto = format!(
-            r#"
-files {{
-    version: 0
-    container: "system"
-    package_map: "{}"
-    flag_map: "{}"
-    flag_val: "{}"
-    timestamp: 12345
-}}
-"#,
-            ro_files.package_map.name, ro_files.flag_map.name, ro_files.flag_val.name
-        );
+    // this test point locks down the flag list with info api
+    fn test_list_flag_with_info() {
+        let package_table =
+            write_bytes_to_temp_file(&create_test_package_table().into_bytes()).unwrap();
+        let flag_table = write_bytes_to_temp_file(&create_test_flag_table().into_bytes()).unwrap();
+        let flag_value_list =
+            write_bytes_to_temp_file(&create_test_flag_value_list().into_bytes()).unwrap();
+        let flag_info_list =
+            write_bytes_to_temp_file(&create_test_flag_info_list().into_bytes()).unwrap();
 
-        let file = write_storage_text_to_temp_file(&text_proto).unwrap();
-        let file_full_path = file.path().display().to_string();
-        let baseline: Vec<bool> = vec![false; 8];
-        for (offset, expected_value) in baseline.into_iter().enumerate() {
-            let flag_value =
-                get_boolean_flag_value_impl(&file_full_path, "system", offset as u32).unwrap();
-            assert_eq!(flag_value, expected_value);
-        }
+        let package_table_path = package_table.path().display().to_string();
+        let flag_table_path = flag_table.path().display().to_string();
+        let flag_value_list_path = flag_value_list.path().display().to_string();
+        let flag_info_list_path = flag_info_list.path().display().to_string();
+
+        let flags = list_flags_with_info(
+            &package_table_path,
+            &flag_table_path,
+            &flag_value_list_path,
+            &flag_info_list_path,
+        )
+        .unwrap();
+        let expected = [
+            FlagValueAndInfoSummary {
+                package_name: String::from("com.android.aconfig.storage.test_1"),
+                flag_name: String::from("disabled_rw"),
+                value_type: StoredFlagType::ReadWriteBoolean,
+                flag_value: String::from("false"),
+                is_readwrite: true,
+                has_server_override: false,
+                has_local_override: false,
+            },
+            FlagValueAndInfoSummary {
+                package_name: String::from("com.android.aconfig.storage.test_1"),
+                flag_name: String::from("enabled_ro"),
+                value_type: StoredFlagType::ReadOnlyBoolean,
+                flag_value: String::from("true"),
+                is_readwrite: false,
+                has_server_override: false,
+                has_local_override: false,
+            },
+            FlagValueAndInfoSummary {
+                package_name: String::from("com.android.aconfig.storage.test_1"),
+                flag_name: String::from("enabled_rw"),
+                value_type: StoredFlagType::ReadWriteBoolean,
+                flag_value: String::from("true"),
+                is_readwrite: true,
+                has_server_override: false,
+                has_local_override: false,
+            },
+            FlagValueAndInfoSummary {
+                package_name: String::from("com.android.aconfig.storage.test_2"),
+                flag_name: String::from("disabled_rw"),
+                value_type: StoredFlagType::ReadWriteBoolean,
+                flag_value: String::from("false"),
+                is_readwrite: true,
+                has_server_override: false,
+                has_local_override: false,
+            },
+            FlagValueAndInfoSummary {
+                package_name: String::from("com.android.aconfig.storage.test_2"),
+                flag_name: String::from("enabled_fixed_ro"),
+                value_type: StoredFlagType::FixedReadOnlyBoolean,
+                flag_value: String::from("true"),
+                is_readwrite: false,
+                has_server_override: false,
+                has_local_override: false,
+            },
+            FlagValueAndInfoSummary {
+                package_name: String::from("com.android.aconfig.storage.test_2"),
+                flag_name: String::from("enabled_ro"),
+                value_type: StoredFlagType::ReadOnlyBoolean,
+                flag_value: String::from("true"),
+                is_readwrite: false,
+                has_server_override: false,
+                has_local_override: false,
+            },
+            FlagValueAndInfoSummary {
+                package_name: String::from("com.android.aconfig.storage.test_4"),
+                flag_name: String::from("enabled_fixed_ro"),
+                value_type: StoredFlagType::FixedReadOnlyBoolean,
+                flag_value: String::from("true"),
+                is_readwrite: false,
+                has_server_override: false,
+                has_local_override: false,
+            },
+            FlagValueAndInfoSummary {
+                package_name: String::from("com.android.aconfig.storage.test_4"),
+                flag_name: String::from("enabled_rw"),
+                value_type: StoredFlagType::ReadWriteBoolean,
+                flag_value: String::from("true"),
+                is_readwrite: true,
+                has_server_override: false,
+                has_local_override: false,
+            },
+        ];
+        assert_eq!(flags, expected);
     }
 }

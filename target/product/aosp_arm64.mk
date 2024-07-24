@@ -44,7 +44,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system_ext.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system_ext.mk)
 
 # pKVM
-$(call inherit-product, packages/modules/Virtualization/apex/product_packages.mk)
+$(call inherit-product-if-exists, packages/modules/Virtualization/apex/product_packages.mk)
 
 #
 # All components inherited here go to product image
@@ -55,7 +55,8 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_product.mk)
 # All components inherited here go to vendor or vendor_boot image
 #
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_arm64/device.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/non_ab_device.mk)
+AB_OTA_UPDATER := true
+AB_OTA_PARTITIONS ?= system
 
 #
 # Special settings for GSI releasing
@@ -72,3 +73,5 @@ PRODUCT_NAME := aosp_arm64
 PRODUCT_DEVICE := generic_arm64
 PRODUCT_BRAND := Android
 PRODUCT_MODEL := AOSP on ARM64
+
+PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO := true
