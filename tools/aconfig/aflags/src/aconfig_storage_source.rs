@@ -65,7 +65,9 @@ fn reconcile(
         } else {
             FlagPermission::ReadOnly
         };
-        let value_picked_from = if Some(value) == default_value {
+        let value_picked_from = if listed_flag.has_local_override {
+            ValuePickedFrom::Local
+        } else if Some(value) == default_value {
             ValuePickedFrom::Default
         } else {
             ValuePickedFrom::Server

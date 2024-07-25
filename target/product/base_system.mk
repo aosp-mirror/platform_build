@@ -444,6 +444,11 @@ PRODUCT_VENDOR_PROPERTIES += ro.zygote?=zygote32
 PRODUCT_SYSTEM_PROPERTIES += debug.atrace.tags.enableflags=0
 PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
 
+# Include kernel configs.
+PRODUCT_PACKAGES += \
+    approved-ogki-builds.xml \
+    kernel-lifetimes.xml
+
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \

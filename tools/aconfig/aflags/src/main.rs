@@ -50,6 +50,7 @@ impl std::fmt::Display for FlagPermission {
 enum ValuePickedFrom {
     Default,
     Server,
+    Local,
 }
 
 impl std::fmt::Display for ValuePickedFrom {
@@ -60,6 +61,7 @@ impl std::fmt::Display for ValuePickedFrom {
             match &self {
                 Self::Default => "default",
                 Self::Server => "server",
+                Self::Local => "local",
             }
         )
     }
