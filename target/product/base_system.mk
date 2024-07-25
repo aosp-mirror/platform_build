@@ -279,6 +279,7 @@ PRODUCT_PACKAGES += \
     storaged \
     surfaceflinger \
     svc \
+    system-build.prop \
     task_profiles.json \
     tc \
     telecom \
