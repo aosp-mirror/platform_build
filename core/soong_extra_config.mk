@@ -93,8 +93,6 @@ $(call add_json_str, VendorImageFileSystemType, $(BOARD_VENDORIMAGE_FILE_SYSTEM_
 
 $(call add_json_list, BuildVersionTags, $(BUILD_VERSION_TAGS))
 
-$(call add_json_bool, ProductNotDebuggableInUserdebug, $(PRODUCT_NOT_DEBUGGABLE_IN_USERDEBUG))
-
 $(call json_end)
 
 $(shell mkdir -p $(dir $(SOONG_EXTRA_VARIABLES)))
