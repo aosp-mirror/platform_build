@@ -17,22 +17,31 @@ pub struct AconfigStorageSource {}
 
 fn convert(msg: ProtoFlagQueryReturnMessage) -> Result<Flag> {
     let (value, value_picked_from) = match (
+        &msg.boot_flag_value,
+        msg.default_flag_value,
         msg.local_flag_value,
         msg.has_local_override,
-        msg.server_flag_value,
-        msg.has_server_override,
-        msg.default_flag_value,
     ) {
-        (Some(local), Some(has_local), _, _, _) if has_local => {
+        (_, _, Some(local), Some(has_local)) if has_local => {
             (FlagValue::try_from(local.as_str())?, ValuePickedFrom::Local)
         }
-        (_, _, Some(server), Some(has_server), _) if has_server => {
-            (FlagValue::try_from(server.as_str())?, ValuePickedFrom::Server)
+        (Some(boot), Some(default), _, _) => {
+            let value = FlagValue::try_from(boot.as_str())?;
+            if *boot == default {
+                (value, ValuePickedFrom::Default)
+            } else {
+                (value, ValuePickedFrom::Server)
+            }
         }
-        (_, _, _, _, Some(default)) => {
-            (FlagValue::try_from(default.as_str())?, ValuePickedFrom::Default)
+        _ => return Err(anyhow!("missing override")),
+    };
+
+    let staged_value = match (msg.boot_flag_value, msg.server_flag_value, msg.has_server_override) {
+        (Some(boot), Some(server), _) if boot == server => None,
+        (Some(boot), Some(server), Some(has_server)) if boot != server && has_server => {
+            Some(FlagValue::try_from(server.as_str())?)
         }
-        _ => return Err(anyhow!("missing")),
+        _ => None,
     };
 
     let permission = match msg.is_readwrite {
@@ -52,13 +61,13 @@ fn convert(msg: ProtoFlagQueryReturnMessage) -> Result<Flag> {
         value,
         permission,
         value_picked_from,
+        staged_value,
 
         // TODO: remove once DeviceConfig is not in the CLI.
         namespace: "-".to_string(),
 
         // TODO: populate these fields once they are available in the list API.
         container: "-".to_string(),
-        staged_value: None,
     })
 }
 
