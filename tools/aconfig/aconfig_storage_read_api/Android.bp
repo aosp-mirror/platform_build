@@ -185,3 +185,19 @@ java_library {
         "//apex_available:anyapex",
     ],
 }
+
+java_library {
+    name: "aconfig_storage_reader_java_none",
+    srcs: [
+        "srcs/android/aconfig/storage/StorageInternalReader.java",
+    ],
+    libs: [
+        "unsupportedappusage-sdk-none",
+    ],
+    static_libs: [
+        "aconfig_storage_file_java_none",
+    ],
+    sdk_version: "none",
+    system_modules: "core-all-system-modules",
+    host_supported: true,
+}
