@@ -56,18 +56,16 @@ fn convert(msg: ProtoFlagQueryReturnMessage) -> Result<Flag> {
     };
 
     Ok(Flag {
-        name: msg.flag_name.unwrap(),
-        package: msg.package_name.unwrap(),
+        name: msg.flag_name.ok_or(anyhow!("missing flag name"))?,
+        package: msg.package_name.ok_or(anyhow!("missing package name"))?,
         value,
         permission,
         value_picked_from,
         staged_value,
+        container: msg.container.ok_or(anyhow!("missing container"))?,
 
         // TODO: remove once DeviceConfig is not in the CLI.
         namespace: "-".to_string(),
-
-        // TODO: populate these fields once they are available in the list API.
-        container: "-".to_string(),
     })
 }
 
