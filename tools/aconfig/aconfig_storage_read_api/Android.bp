@@ -171,6 +171,9 @@ java_library {
     srcs: [
         "srcs/android/aconfig/storage/StorageInternalReader.java",
     ],
+    libs: [
+        "unsupportedappusage",
+    ],
     static_libs: [
         "aconfig_storage_file_java",
     ],

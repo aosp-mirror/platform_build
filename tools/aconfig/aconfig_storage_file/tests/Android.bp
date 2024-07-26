@@ -32,7 +32,6 @@ android_test {
         "androidx.test.runner",
         "junit",
     ],
-    sdk_version: "test_current",
     test_config: "AndroidStorageJaveTest.xml",
     data: [
         "package.map",
