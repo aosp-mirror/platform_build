@@ -728,6 +728,14 @@ endif
 
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 
+ifeq ($(EXCLUDE_MCTS),true)
+  ifneq (,$(test_config))
+    ifneq (,$(filter mcts-%,$(LOCAL_COMPATIBILITY_SUITE)))
+      LOCAL_COMPATIBILITY_SUITE := $(filter-out cts,$(LOCAL_COMPATIBILITY_SUITE))
+    endif
+  endif
+endif
+
 # If we are building a native test or benchmark and its stem variants are not defined,
 # separate the multiple architectures into subdirectories of the testcase folder.
 arch_dir :=
@@ -1057,6 +1065,11 @@ endif
 ifdef LOCAL_ACONFIG_FILES
   ALL_MODULES.$(my_register_name).ACONFIG_FILES := \
       $(ALL_MODULES.$(my_register_name).ACONFIG_FILES) $(LOCAL_ACONFIG_FILES)
+endif
+
+ifdef LOCAL_FILESYSTEM_FILELIST
+  ALL_MODULES.$(my_register_name).FILESYSTEM_FILELIST := \
+      $(ALL_MODULES.$(my_register_name).FILESYSTEM_FILELIST) $(LOCAL_FILESYSTEM_FILELIST)
 endif
 
 ifndef LOCAL_SOONG_MODULE_INFO_JSON

@@ -40,3 +40,6 @@ PRODUCT_MODULE_BUILD_FROM_SOURCE := true
 ifeq ($(WITHOUT_CHECK_API),true)
   $(error WITHOUT_CHECK_API cannot be set to true for SDK product builds)
 endif
+
+# Include Wear flag values so that Wear-related APIs are build in sdks.
+PRODUCT_RELEASE_CONFIG_MAPS += $(wildcard vendor/google_shared/wear/release/release_config_map.textproto)
