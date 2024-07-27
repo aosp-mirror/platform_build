@@ -81,6 +81,8 @@ namespace {cpp_namespace} \{
             struct stat buffer;
             if (stat("/metadata/aconfig_test_missions/mission_1", &buffer) == 0) \{
                read_from_new_storage_ = true;
+            } else \{
+               return;
             }
 
             auto package_map_file = aconfig_storage::get_mapped_file(
