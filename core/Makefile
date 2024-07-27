@@ -7884,6 +7884,8 @@ $(PACKED_IMAGE_ARCHIVE_TARGET): $(PACK_IMAGE_TARGET) | $(GZIP)
 
 droidcore-unbundled: $(PACKED_IMAGE_ARCHIVE_TARGET)
 
+$(call dist-for-goals,dist_files,$(PACKED_IMAGE_ARCHIVE_TARGET))
+
 endif # PACK_DESKTOP_FILESYSTEM_IMAGES
 
 # -----------------------------------------------------------------
