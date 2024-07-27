@@ -44,6 +44,8 @@ $(call soong_config_set_bool,ANDROID,SANITIZE_TARGET_SYSTEM_ENABLED,$(if $(filte
 # PRODUCT_PRECOMPILED_SEPOLICY defaults to true. Explicitly check if it's "false" or not.
 $(call soong_config_set_bool,ANDROID,PRODUCT_PRECOMPILED_SEPOLICY,$(if $(filter false,$(PRODUCT_PRECOMPILED_SEPOLICY)),false,true))
 
+# For art modules
+$(call soong_config_set_bool,art_module,host_prefer_32_bit,$(if $(filter true,$(HOST_PREFER_32_BIT)),true,false))
 ifdef ART_DEBUG_OPT_FLAG
 $(call soong_config_set,art_module,art_debug_opt_flag,$(ART_DEBUG_OPT_FLAG))
 endif

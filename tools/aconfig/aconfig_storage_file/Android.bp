@@ -138,7 +138,7 @@ cc_library {
     double_loadable: true,
 }
 
-// storage file parse api java cc_library
+// storage file parse api java library
 java_library {
     name: "aconfig_storage_file_java",
     srcs: [
@@ -151,4 +151,15 @@ java_library {
         "//apex_available:platform",
         "//apex_available:anyapex",
     ],
+}
+
+// storage file parse api java library for core library
+java_library {
+    name: "aconfig_storage_file_java_none",
+    srcs: [
+        "srcs/**/*.java",
+    ],
+    sdk_version: "none",
+    system_modules: "core-all-system-modules",
+    host_supported: true,
 }
