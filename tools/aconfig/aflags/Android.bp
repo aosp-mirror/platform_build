@@ -11,6 +11,7 @@ rust_defaults {
     rustlibs: [
         "libaconfig_device_paths",
         "libaconfig_protos",
+        "libaconfigd_protos",
         "libaconfig_storage_read_api",
         "libaconfig_storage_file",
         "libanyhow",
