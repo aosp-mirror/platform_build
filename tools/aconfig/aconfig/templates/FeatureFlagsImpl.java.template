@@ -45,7 +45,7 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
             readFromNewStorage = true;
             try \{
                 reader = new StorageInternalReader("{container}", "{package_name}");
-            } catch(Exception e) \{
+            } catch (Exception e) \{
                 reader = null;
             }
         }
@@ -78,7 +78,7 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
                             val, {flag.method_name}));
                     }
                 } catch (Exception e) \{
-                    Log.e(TAG,"error: failed to read flag value of {flag.method_name}", e);
+                    Log.e(TAG, "error: failed to read flag value of {flag.method_name}", e);
                 }
             }
 {{ -endif }}
