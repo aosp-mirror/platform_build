@@ -105,3 +105,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     adb_debug.prop \
     userdebug_plat_sepolicy.cil
+
+# On eng or userdebug builds, build in perf-setup-sh by default.
+ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
+PRODUCT_PACKAGES += \
+    perf-setup-sh
+endif
