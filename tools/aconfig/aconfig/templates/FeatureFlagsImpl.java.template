@@ -10,11 +10,13 @@ import android.provider.DeviceConfig;
 import android.provider.DeviceConfig.Properties;
 
 
+{{ -if not library_exported }}
 {{ -if allow_instrumentation }}
 import android.aconfig.storage.StorageInternalReader;
 import android.util.Log;
 
 import java.io.File;
+{{ -endif }}
 {{ -endif }}
 
 {{ -endif }}
@@ -30,6 +32,7 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
     private static boolean {flag.method_name} = {flag.default_value};
 {{ -endif }}
 {{ -endfor }}
+{{ -if not library_exported }}
 {{ -if allow_instrumentation }}
     StorageInternalReader reader;
     boolean readFromNewStorage;
@@ -40,23 +43,31 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
         File file = new File("/metadata/aconfig_test_missions/mission_1");
         if (file.exists()) \{
             readFromNewStorage = true;
-            reader = new StorageInternalReader("{container}", "{package_name}");
+            try \{
+                reader = new StorageInternalReader("{container}", "{package_name}");
+            } catch (Exception e) \{
+                reader = null;
+            }
         }
     }
+{{ -endif }}
 {{ -endif }}
 {{ for namespace_with_flags in namespace_flags }}
     private void load_overrides_{namespace_with_flags.namespace}() \{
         try \{
+{{ -if not library_exported }}
 {{ -if allow_instrumentation }}
             boolean val;
+{{ -endif }}
 {{ -endif }}
             Properties properties = DeviceConfig.getProperties("{namespace_with_flags.namespace}");
 {{ -for flag in namespace_with_flags.flags }}
 {{ -if flag.is_read_write }}
             {flag.method_name} =
                 properties.getBoolean(Flags.FLAG_{flag.flag_name_constant_suffix}, {flag.default_value});
+{{ -if not library_exported }}
 {{ -if allow_instrumentation }}
-            if (readFromNewStorage) \{
+            if (readFromNewStorage && reader != null) \{
                 try \{
                     val = reader.getBooleanFlagValue({flag.flag_offset});
                     if (val == {flag.method_name}) \{
@@ -67,9 +78,10 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
                             val, {flag.method_name}));
                     }
                 } catch (Exception e) \{
-                    Log.e(TAG,"error: failed to read flag value of {flag.method_name}");
+                    Log.e(TAG, "error: failed to read flag value of {flag.method_name}", e);
                 }
             }
+{{ -endif }}
 {{ -endif }}
 {{ -endif }}
 {{ -endfor }}
