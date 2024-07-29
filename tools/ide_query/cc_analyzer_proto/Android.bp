@@ -19,9 +19,9 @@ package {
 }
 
 cc_library_host_static {
-    name: "ide_query_proto",
+    name: "cc_analyzer_proto",
     srcs: [
-        "ide_query.proto",
+        "cc_analyzer.proto",
     ],
     proto: {
         export_proto_headers: true,

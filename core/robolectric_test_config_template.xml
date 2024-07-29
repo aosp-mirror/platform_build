@@ -18,7 +18,7 @@
     <option name="test-suite-tag" value="robolectric" />
     <option name="test-suite-tag" value="robolectric-tests" />
 
-    <option name="java-folder" value="prebuilts/jdk/jdk17/linux-x86/" />
+    <option name="java-folder" value="prebuilts/jdk/jdk21/linux-x86/" />
     <option name="exclude-paths" value="java" />
     <option name="use-robolectric-resources" value="true" />
 
