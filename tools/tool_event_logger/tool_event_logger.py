@@ -38,6 +38,7 @@ class ToolEventLogger:
       tool_tag: str,
       invocation_id: str,
       user_name: str,
+      host_name: str,
       source_root: str,
       platform_version: str,
       python_version: str,
@@ -46,6 +47,7 @@ class ToolEventLogger:
     self.tool_tag = tool_tag
     self.invocation_id = invocation_id
     self.user_name = user_name
+    self.host_name = host_name
     self.source_root = source_root
     self.platform_version = platform_version
     self.python_version = python_version
@@ -57,6 +59,7 @@ class ToolEventLogger:
         tool_tag=tool_tag,
         invocation_id=str(uuid.uuid4()),
         user_name=getpass.getuser(),
+        host_name=platform.node(),
         source_root=os.environ.get('ANDROID_BUILD_TOP', ''),
         platform_version=platform.platform(),
         python_version=platform.python_version(),
@@ -110,6 +113,7 @@ class ToolEventLogger:
         tool_tag=self.tool_tag,
         invocation_id=self.invocation_id,
         user_name=self.user_name,
+        host_name=self.host_name,
         source_root=self.source_root,
     )
 

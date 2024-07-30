@@ -731,3 +731,5 @@ ifneq (,$(runtime_resource_overlays_product)$(runtime_resource_overlays_vendor))
     )
   endif
 endif
+
+$(if $(my_register_name),$(eval ALL_MODULES.$(my_register_name).MAKE_MODULE_TYPE:=PACKAGE))

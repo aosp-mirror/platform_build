@@ -28,7 +28,7 @@
 
 #include "analyzer.h"
 #include "google/protobuf/message.h"
-#include "ide_query.pb.h"
+#include "cc_analyzer.pb.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/TargetSelect.h"
@@ -48,9 +48,9 @@ llvm::cl::opt<OpMode> mode{
     llvm::cl::desc("Print the list of headers to insert and remove"),
 };
 
-ide_query::IdeAnalysis ReturnError(llvm::StringRef message) {
-  ide_query::IdeAnalysis result;
-  result.mutable_status()->set_code(ide_query::Status::FAILURE);
+cc_analyzer::IdeAnalysis ReturnError(llvm::StringRef message) {
+  cc_analyzer::IdeAnalysis result;
+  result.mutable_status()->set_code(cc_analyzer::Status::FAILURE);
   result.mutable_status()->set_message(message.str());
   return result;
 }
@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
   llvm::InitializeAllTargetInfos();
   llvm::cl::ParseCommandLineOptions(argc, argv);
 
-  ide_query::RepoState state;
+  cc_analyzer::RepoState state;
   if (!state.ParseFromFileDescriptor(STDIN_FILENO)) {
     llvm::errs() << "Failed to parse input!\n";
     return 1;
@@ -70,12 +70,12 @@ int main(int argc, char* argv[]) {
   std::unique_ptr<google::protobuf::Message> result;
   switch (mode) {
     case OpMode::DEPS: {
-      result = std::make_unique<ide_query::DepsResponse>(
+      result = std::make_unique<cc_analyzer::DepsResponse>(
           tools::ide_query::cc_analyzer::GetDeps(std::move(state)));
       break;
     }
     case OpMode::INPUTS: {
-      result = std::make_unique<ide_query::IdeAnalysis>(
+      result = std::make_unique<cc_analyzer::IdeAnalysis>(
           tools::ide_query::cc_analyzer::GetBuildInputs(std::move(state)));
       break;
     }
