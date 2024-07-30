@@ -16,10 +16,13 @@
 
 package android.aconfig.storage;
 
+import android.compat.annotation.UnsupportedAppUsage;
+
 import java.io.FileInputStream;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
+/** @hide */
 public class StorageInternalReader {
 
     private static final String MAP_PATH = "/metadata/aconfig/maps/";
@@ -30,16 +33,19 @@ public class StorageInternalReader {
 
     private int mPackageBooleanStartOffset;
 
+    @UnsupportedAppUsage
     public StorageInternalReader(String container, String packageName) {
         this(packageName, MAP_PATH + container + ".package.map", BOOT_PATH + container + ".val");
     }
 
+    @UnsupportedAppUsage
     public StorageInternalReader(String packageName, String packageMapFile, String flagValueFile) {
         mPackageTable = PackageTable.fromBytes(mapStorageFile(packageMapFile));
         mFlagValueList = FlagValueList.fromBytes(mapStorageFile(flagValueFile));
         mPackageBooleanStartOffset = getPackageBooleanStartOffset(packageName);
     }
 
+    @UnsupportedAppUsage
     public boolean getBooleanFlagValue(int index) {
         index += mPackageBooleanStartOffset;
         if (index >= mFlagValueList.size()) {
