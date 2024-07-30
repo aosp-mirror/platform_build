@@ -280,6 +280,7 @@ PRODUCT_PACKAGES += \
     storaged \
     surfaceflinger \
     svc \
+    system-build.prop \
     task_profiles.json \
     tc \
     telecom \
@@ -403,7 +404,6 @@ PRODUCT_HOST_PACKAGES += \
     BugReport \
     adb \
     adevice \
-    art-tools \
     atest \
     bcc \
     bit \
@@ -433,6 +433,21 @@ PRODUCT_HOST_PACKAGES += \
     tzlookup.xml_host_tzdata_apex \
     tz_version_host \
     tz_version_host_tzdata_apex \
+
+# For art-tools, if the dependencies have changed, please sync them to art/Android.bp as well.
+PRODUCT_HOST_PACKAGES += \
+    ahat \
+    dexdump \
+    hprof-conv
+# A subset of the tools are disabled when HOST_PREFER_32_BIT is defined as make reports that
+# they are not supported on host (b/129323791). This is likely due to art_apex disabling host
+# APEX builds when HOST_PREFER_32_BIT is set (b/120617876).
+ifneq ($(HOST_PREFER_32_BIT),true)
+PRODUCT_HOST_PACKAGES += \
+    dexlist \
+    oatdump
+endif
+
 
 PRODUCT_PACKAGES += init.usb.rc init.usb.configfs.rc
 
