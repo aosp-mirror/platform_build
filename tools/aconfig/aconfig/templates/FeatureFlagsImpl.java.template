@@ -22,7 +22,7 @@ import android.util.Log;
 public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ -if runtime_lookup_required }}
 {{ -for namespace_with_flags in namespace_flags }}
-    private static boolean {namespace_with_flags.namespace}_is_cached = false;
+    private static volatile boolean {namespace_with_flags.namespace}_is_cached = false;
 {{ -endfor- }}
 
 {{ for flag in flag_elements }}
