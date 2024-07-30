@@ -1,3 +1,4 @@
+#include <android-base/unique_fd.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -59,22 +60,22 @@ Result<MappedStorageFile*> get_mapped_file_impl(
 
 /// Map a storage file
 Result<MappedStorageFile*> map_storage_file(std::string const& file) {
-  int fd = open(file.c_str(), O_CLOEXEC | O_NOFOLLOW | O_RDONLY);
-  if (fd == -1) {
+  android::base::unique_fd ufd(open(file.c_str(), O_CLOEXEC | O_NOFOLLOW | O_RDONLY));
+  if (ufd.get() == -1) {
     auto result = Result<MappedStorageFile*>();
     result.errmsg = std::string("failed to open ") + file + ": " + strerror(errno);
     return result;
   };
 
   struct stat fd_stat;
-  if (fstat(fd, &fd_stat) < 0) {
+  if (fstat(ufd.get(), &fd_stat) < 0) {
     auto result = Result<MappedStorageFile*>();
     result.errmsg = std::string("fstat failed: ") + strerror(errno);
     return result;
   }
   size_t file_size = fd_stat.st_size;
 
-  void* const map_result = mmap(nullptr, file_size, PROT_READ, MAP_SHARED, fd, 0);
+  void* const map_result = mmap(nullptr, file_size, PROT_READ, MAP_SHARED, ufd.get(), 0);
   if (map_result == MAP_FAILED) {
     auto result = Result<MappedStorageFile*>();
     result.errmsg = std::string("mmap failed: ") + strerror(errno);
