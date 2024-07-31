@@ -50,6 +50,12 @@ else
 ADDITIONAL_PRODUCT_PROPERTIES += ro.product.build.16k_page.enabled=false
 endif
 
+ifeq ($(TARGET_BOOTS_16K),true)
+ADDITIONAL_PRODUCT_PROPERTIES += ro.product.page_size=16384
+else
+ADDITIONAL_PRODUCT_PROPERTIES += ro.product.page_size=4096
+endif
+
 # Enable core platform API violation warnings on userdebug and eng builds.
 ifneq ($(TARGET_BUILD_VARIANT),user)
 ADDITIONAL_SYSTEM_PROPERTIES += persist.debug.dalvik.vm.core_platform_api_policy=just-warn
