@@ -28,4 +28,5 @@ PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.batch_writes=true
 PRODUCT_VIRTUAL_AB_COMPRESSION := true
 PRODUCT_PACKAGES += \
     snapuserd.vendor_ramdisk \
-    snapuserd
+    snapuserd \
+    snapuserd.recovery
