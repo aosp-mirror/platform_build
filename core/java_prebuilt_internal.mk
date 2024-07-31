@@ -172,6 +172,12 @@ framework_res_package_export := \
 endif
 endif
 
+# transitive-res-packages is only populated for Soong modules for now, but needs
+# to exist so that other Make modules can depend on it.  Create an empty file.
+my_transitive_res_packages := $(intermediates.COMMON)/transitive-res-packages
+$(my_transitive_res_packages):
+	touch $@
+
 my_res_package := $(intermediates.COMMON)/package-res.apk
 
 # We needed only very few PRIVATE variables and aapt2.mk input variables. Reset the unnecessary ones.
