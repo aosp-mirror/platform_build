@@ -140,9 +140,7 @@ $(foreach partition, $(_FLAG_PARTITIONS), \
 				$(aconfig_storage_package_map.$(partition)), \
 				$(aconfig_storage_flag_map.$(partition)), \
 				$(aconfig_storage_flag_val.$(partition)), \
-				$(sort $(foreach m,$(call register-names-for-partition, $(partition)), \
-					$(ALL_MODULES.$(m).ACONFIG_FILES) \
-				)), \
+				$(aconfig_flag_summaries_protobuf.$(partition)), \
 				$(partition), \
 	)) \
 )
