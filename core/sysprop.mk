@@ -231,11 +231,7 @@ KNOWN_OEM_THUMBPRINT_PROPERTIES:=
 
 buildinfo_prop := $(call intermediates-dir-for,ETC,buildinfo.prop)/buildinfo.prop
 
-ifdef TARGET_SYSTEM_PROP
 system_prop_file := $(TARGET_SYSTEM_PROP)
-else
-system_prop_file := $(wildcard $(TARGET_DEVICE_DIR)/system.prop)
-endif
 
 _prop_files_ := \
   $(buildinfo_prop) \
