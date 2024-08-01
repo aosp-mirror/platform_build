@@ -48,11 +48,6 @@ $(call add_json_str, BootloaderBoardName, $(TARGET_BOOTLOADER_BOARD_NAME))
 
 $(call add_json_bool, SdkBuild, $(filter sdk sdk_addon,$(MAKECMDGOALS)))
 
-_config_enable_uffd_gc := \
-  $(firstword $(OVERRIDE_ENABLE_UFFD_GC) $(PRODUCT_ENABLE_UFFD_GC) default)
-$(call add_json_str, EnableUffdGc, $(_config_enable_uffd_gc))
-_config_enable_uffd_gc :=
-
 $(call add_json_str, SystemServerCompilerFilter, $(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER))
 
 $(call add_json_bool, Product16KDeveloperOption, $(filter true,$(PRODUCT_16K_DEVELOPER_OPTION)))
