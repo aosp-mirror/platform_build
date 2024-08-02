@@ -56,7 +56,7 @@ BUILD_DATETIME_FILE := $(OUT_DIR)/build_date.txt
 
 # Escape quotation marks for CSV, and wraps in quotation marks.
 define escape-for-csv
-"$(subst ","",$1)"
+"$(subst ","",$(subst $(newline), ,$1))"
 endef
 
 # Args:
