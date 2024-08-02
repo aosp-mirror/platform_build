@@ -68,7 +68,7 @@ endef
 # Args:
 #   $(1): include stack
 define dump-import-done
-$(eval $(file >> $(DUMPCONFIG_FILE),imported,$(strip $(1))))
+$(eval $(file >> $(DUMPCONFIG_FILE),imported,$(strip $(1)),$(filter-out $(1),$(MAKEFILE_LIST))))
 endef
 
 # Args:
