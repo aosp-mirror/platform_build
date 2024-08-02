@@ -15,28 +15,7 @@ $(foreach name, $(_additional_prop_var_names),\
 )
 _additional_prop_var_names :=
 
-#
-# -----------------------------------------------------------------
-# Add the product-defined properties to the build properties.
-ifneq ($(BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED), true)
-  ADDITIONAL_SYSTEM_PROPERTIES += $(PRODUCT_PROPERTY_OVERRIDES)
-else
-  ifndef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
-    ADDITIONAL_SYSTEM_PROPERTIES += $(PRODUCT_PROPERTY_OVERRIDES)
-  endif
-endif
-
-ADDITIONAL_SYSTEM_PROPERTIES += ro.treble.enabled=${PRODUCT_FULL_TREBLE}
-
-# Set ro.llndk.api_level to show the maximum vendor API level that the LLNDK in
-# the system partition supports.
-ifdef RELEASE_BOARD_API_LEVEL
-ADDITIONAL_SYSTEM_PROPERTIES += ro.llndk.api_level=$(RELEASE_BOARD_API_LEVEL)
-endif
-
-# Sets ro.actionable_compatible_property.enabled to know on runtime whether the
-# allowed list of actionable compatible properties is enabled or not.
-ADDITIONAL_SYSTEM_PROPERTIES += ro.actionable_compatible_property.enabled=true
+$(KATI_obsolete_var ADDITIONAL_SYSTEM_PROPERTIES,Use build/soong/scripts/gen_build_prop.py instead)
 
 # Add the system server compiler filter if they are specified for the product.
 ifneq (,$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER))
@@ -55,23 +34,6 @@ ADDITIONAL_PRODUCT_PROPERTIES += ro.product.page_size=16384
 else
 ADDITIONAL_PRODUCT_PROPERTIES += ro.product.page_size=4096
 endif
-
-# Enable core platform API violation warnings on userdebug and eng builds.
-ifneq ($(TARGET_BUILD_VARIANT),user)
-ADDITIONAL_SYSTEM_PROPERTIES += persist.debug.dalvik.vm.core_platform_api_policy=just-warn
-endif
-
-# Define ro.sanitize.<name> properties for all global sanitizers.
-ADDITIONAL_SYSTEM_PROPERTIES += $(foreach s,$(SANITIZE_TARGET),ro.sanitize.$(s)=true)
-
-# Sets the default value of ro.postinstall.fstab.prefix to /system.
-# Device board config should override the value to /product when needed by:
-#
-#     PRODUCT_PRODUCT_PROPERTIES += ro.postinstall.fstab.prefix=/product
-#
-# It then uses ${ro.postinstall.fstab.prefix}/etc/fstab.postinstall to
-# mount system_other partition.
-ADDITIONAL_SYSTEM_PROPERTIES += ro.postinstall.fstab.prefix=/system
 
 # Add cpu properties for bionic and ART.
 ADDITIONAL_VENDOR_PROPERTIES += ro.bionic.arch=$(TARGET_ARCH)
@@ -200,87 +162,6 @@ ADDITIONAL_PRODUCT_PROPERTIES += ro.product.build.no_bionic_page_size_macro=true
 endif
 
 user_variant := $(filter user userdebug,$(TARGET_BUILD_VARIANT))
-enable_target_debugging := true
-enable_dalvik_lock_contention_logging := true
-ifneq (,$(user_variant))
-  # Target is secure in user builds.
-  ADDITIONAL_SYSTEM_PROPERTIES += ro.secure=1
-  ADDITIONAL_SYSTEM_PROPERTIES += security.perf_harden=1
-
-  ifeq ($(user_variant),user)
-    ADDITIONAL_SYSTEM_PROPERTIES += ro.adb.secure=1
-  endif
-
-  ifneq ($(user_variant),userdebug)
-    # Disable debugging in plain user builds.
-    enable_target_debugging :=
-    enable_dalvik_lock_contention_logging :=
-  else
-    # Disable debugging in userdebug builds if PRODUCT_NOT_DEBUGGABLE_IN_USERDEBUG
-    # is set.
-    ifneq (,$(strip $(PRODUCT_NOT_DEBUGGABLE_IN_USERDEBUG)))
-      enable_target_debugging :=
-    endif
-  endif
-
-  # Disallow mock locations by default for user builds
-  ADDITIONAL_SYSTEM_PROPERTIES += ro.allow.mock.location=0
-
-else # !user_variant
-  # Turn on checkjni for non-user builds.
-  ADDITIONAL_SYSTEM_PROPERTIES += ro.kernel.android.checkjni=1
-  # Set device insecure for non-user builds.
-  ADDITIONAL_SYSTEM_PROPERTIES += ro.secure=0
-  # Allow mock locations by default for non user builds
-  ADDITIONAL_SYSTEM_PROPERTIES += ro.allow.mock.location=1
-endif # !user_variant
-
-ifeq (true,$(strip $(enable_dalvik_lock_contention_logging)))
-  # Enable Dalvik lock contention logging.
-  ADDITIONAL_SYSTEM_PROPERTIES += dalvik.vm.lockprof.threshold=500
-endif # !enable_dalvik_lock_contention_logging
-
-ifeq (true,$(strip $(enable_target_debugging)))
-  # Target is more debuggable and adbd is on by default
-  ADDITIONAL_SYSTEM_PROPERTIES += ro.debuggable=1
-else # !enable_target_debugging
-  # Target is less debuggable and adbd is off by default
-  ADDITIONAL_SYSTEM_PROPERTIES += ro.debuggable=0
-endif # !enable_target_debugging
-
-enable_target_debugging:=
-enable_dalvik_lock_contention_logging:=
-
-ifneq ($(filter sdk sdk_addon,$(MAKECMDGOALS)),)
-_is_sdk_build := true
-endif
-
-ifeq ($(TARGET_BUILD_VARIANT),eng)
-ifneq ($(filter ro.setupwizard.mode=ENABLED, $(call collapse-pairs, $(ADDITIONAL_SYSTEM_PROPERTIES))),)
-  # Don't require the setup wizard on eng builds
-  ADDITIONAL_SYSTEM_PROPERTIES := $(filter-out ro.setupwizard.mode=%,\
-          $(call collapse-pairs, $(ADDITIONAL_SYSTEM_PROPERTIES))) \
-          ro.setupwizard.mode=OPTIONAL
-endif
-ifndef _is_sdk_build
-  # To speedup startup of non-preopted builds, don't verify or compile the boot image.
-  ADDITIONAL_SYSTEM_PROPERTIES += dalvik.vm.image-dex2oat-filter=extract
-endif
-# b/323566535
-ADDITIONAL_SYSTEM_PROPERTIES += init.svc_debug.no_fatal.zygote=true
-endif
-
-ifdef _is_sdk_build
-ADDITIONAL_SYSTEM_PROPERTIES += xmpp.auto-presence=true
-ADDITIONAL_SYSTEM_PROPERTIES += ro.config.nocheckin=yes
-endif
-
-_is_sdk_build :=
-
-ADDITIONAL_SYSTEM_PROPERTIES += net.bt.name=Android
-
-# This property is set by flashing debug boot image, so default to false.
-ADDITIONAL_SYSTEM_PROPERTIES += ro.force.debuggable=0
 
 config_enable_uffd_gc := \
   $(firstword $(OVERRIDE_ENABLE_UFFD_GC) $(PRODUCT_ENABLE_UFFD_GC) default)
@@ -291,11 +172,9 @@ config_enable_uffd_gc := \
 # If the value is "default", it will be mangled by post_process_props.py.
 ADDITIONAL_PRODUCT_PROPERTIES += ro.dalvik.vm.enable_uffd_gc=$(config_enable_uffd_gc)
 
-ADDITIONAL_SYSTEM_PROPERTIES := $(strip $(ADDITIONAL_SYSTEM_PROPERTIES))
 ADDITIONAL_PRODUCT_PROPERTIES := $(strip $(ADDITIONAL_PRODUCT_PROPERTIES))
 ADDITIONAL_VENDOR_PROPERTIES := $(strip $(ADDITIONAL_VENDOR_PROPERTIES))
 
 .KATI_READONLY += \
-    ADDITIONAL_SYSTEM_PROPERTIES \
     ADDITIONAL_PRODUCT_PROPERTIES \
     ADDITIONAL_VENDOR_PROPERTIES
