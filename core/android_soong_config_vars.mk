@@ -55,6 +55,8 @@ $(call soong_config_set_bool,art_module,host_prefer_32_bit,$(if $(filter true,$(
 ifdef ART_DEBUG_OPT_FLAG
 $(call soong_config_set,art_module,art_debug_opt_flag,$(ART_DEBUG_OPT_FLAG))
 endif
+# The default value of ART_BUILD_HOST_DEBUG is true
+$(call soong_config_set_bool,art_module,art_build_host_debug,$(if $(filter false,$(ART_BUILD_HOST_DEBUG)),false,true))
 
 ifdef TARGET_BOARD_AUTO
   $(call add_soong_config_var_value, ANDROID, target_board_auto, $(TARGET_BOARD_AUTO))
