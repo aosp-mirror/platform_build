@@ -324,6 +324,55 @@ class BuildPlannerTest(unittest.TestCase):
         self.run_packaging_functions(build_plan),
     )
 
+  def test_target_output_used_target_built(self):
+    build_target = 'test_target'
+    build_planner = self.create_build_planner(
+        build_targets={build_target},
+        build_context=self.create_build_context(
+            test_context=self.get_test_context(build_target),
+            enabled_build_features={'test_target_unused_exclusion'},
+        ),
+    )
+
+    build_plan = build_planner.create_build_plan()
+
+    self.assertSetEqual(build_plan.build_targets, {build_target})
+
+  def test_target_regex_used_target_built(self):
+    build_target = 'test_target'
+    test_context = self.get_test_context(build_target)
+    test_context['testInfos'][0]['extraOptions'] = [{
+        'key': 'additional-files-filter',
+        'values': [f'.*{build_target}.*\.zip'],
+    }]
+    build_planner = self.create_build_planner(
+        build_targets={build_target},
+        build_context=self.create_build_context(
+            test_context=test_context,
+            enabled_build_features={'test_target_unused_exclusion'},
+        ),
+    )
+
+    build_plan = build_planner.create_build_plan()
+
+    self.assertSetEqual(build_plan.build_targets, {build_target})
+
+  def test_target_output_not_used_target_not_built(self):
+    build_target = 'test_target'
+    test_context = self.get_test_context(build_target)
+    test_context['testInfos'][0]['extraOptions'] = []
+    build_planner = self.create_build_planner(
+        build_targets={build_target},
+        build_context=self.create_build_context(
+            test_context=test_context,
+            enabled_build_features={'test_target_unused_exclusion'},
+        ),
+    )
+
+    build_plan = build_planner.create_build_plan()
+
+    self.assertSetEqual(build_plan.build_targets, set())
+
   def create_build_planner(
       self,
       build_targets: set[str],
@@ -352,10 +401,10 @@ class BuildPlannerTest(unittest.TestCase):
       test_context: dict[str, any] = {},
   ) -> dict[str, any]:
     build_context = {}
-    build_context['enabled_build_features'] = enabled_build_features
+    build_context['enabledBuildFeatures'] = enabled_build_features
     if optimized_build_enabled:
-      build_context['enabled_build_features'].add('optimized_build')
-    build_context['test_context'] = test_context
+      build_context['enabledBuildFeatures'].add('optimized_build')
+    build_context['testContext'] = test_context
     return build_context
 
   def create_args(
@@ -397,6 +446,25 @@ class BuildPlannerTest(unittest.TestCase):
       output.add(packaging_function())
 
     return output
+
+  def get_test_context(self, target: str):
+    return {
+        'testInfos': [
+            {
+                'name': 'atp_test',
+                'target': 'test_target',
+                'branch': 'branch',
+                'extraOptions': [{
+                    'key': 'additional-files-filter',
+                    'values': [f'{target}.zip'],
+                }],
+                'command': '/tf/command',
+                'extraBuildTargets': [
+                    'extra_build_target',
+                ],
+            },
+        ],
+    }
 
 
 def wait_until(
