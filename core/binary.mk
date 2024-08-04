@@ -205,8 +205,6 @@ ifneq ($(LOCAL_SDK_VERSION),)
     my_api_level := $(my_ndk_api)
   endif
 
-  my_ndk_source_root := \
-      $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/sources
   my_built_ndk := $(SOONG_OUT_DIR)/ndk
   my_ndk_triple := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NDK_TRIPLE)
   my_ndk_sysroot_include := \
@@ -239,16 +237,18 @@ ifneq ($(LOCAL_SDK_VERSION),)
   endif
 
   ifeq (system,$(LOCAL_NDK_STL_VARIANT))
+    my_ndk_source_root := \
+        $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/sources
     my_ndk_stl_include_path := $(my_ndk_source_root)/cxx-stl/system/include
     my_system_shared_libraries += libstdc++
   else ifneq (,$(filter c++_%, $(LOCAL_NDK_STL_VARIANT)))
-    my_ndk_stl_include_path := \
-      $(my_ndk_source_root)/cxx-stl/llvm-libc++/include
-    my_ndk_stl_include_path += \
-      $(my_ndk_source_root)/cxx-stl/llvm-libc++abi/include
+    my_llvm_dir := $(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(LLVM_PREBUILTS_VERSION)
+    my_libcxx_arch_dir := $(my_llvm_dir)/android_libc++/ndk/$($(LOCAL_2ND_ARCH_VAR_PREFIX)PREBUILT_LIBCXX_ARCH_DIR)
 
-    my_libcxx_libdir := \
-      $(my_ndk_source_root)/cxx-stl/llvm-libc++/libs/$(my_cpu_variant)
+    # Include the target-specific __config_site file followed by the generic libc++ headers.
+    my_ndk_stl_include_path := $(my_libcxx_arch_dir)/include/c++/v1
+    my_ndk_stl_include_path += $(my_llvm_dir)/include/c++/v1
+    my_libcxx_libdir := $(my_libcxx_arch_dir)/lib
 
     ifeq (c++_static,$(LOCAL_NDK_STL_VARIANT))
       my_ndk_stl_static_lib := \
@@ -258,7 +258,7 @@ ifneq ($(LOCAL_SDK_VERSION),)
       my_ndk_stl_shared_lib_fullpath := $(my_libcxx_libdir)/libc++_shared.so
     endif
 
-    my_ndk_stl_static_lib += $(my_libcxx_libdir)/libunwind.a
+    my_ndk_stl_static_lib += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_LIBUNWIND)
     my_ldlibs += -ldl
   else # LOCAL_NDK_STL_VARIANT must be none
     # Do nothing.
