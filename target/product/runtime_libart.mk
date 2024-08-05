@@ -180,9 +180,4 @@ PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.enable_pr_dexopt=true
 
 # Copy preopted files from system_b on first boot.
-ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
 PRODUCT_SYSTEM_PROPERTIES += ro.cp_system_other_odex=1
-
-PRODUCT_PACKAGES += \
-        cppreopts.sh
-endif
