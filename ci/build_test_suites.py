@@ -20,6 +20,7 @@ import json
 import logging
 import os
 import pathlib
+import re
 import subprocess
 import sys
 from typing import Callable
@@ -52,6 +53,15 @@ class BuildPlanner:
   any output zip files needed by the build.
   """
 
+  _DOWNLOAD_OPTS = {
+      'test-config-only-zip',
+      'test-zip-file-filter',
+      'extra-host-shared-lib-zip',
+      'sandbox-tests-zips',
+      'additional-files-filter',
+      'cts-package-name',
+  }
+
   def __init__(
       self,
       build_context: dict[str, any],
@@ -64,12 +74,19 @@ class BuildPlanner:
 
   def create_build_plan(self):
 
-    if 'optimized_build' not in self.build_context['enabled_build_features']:
+    if 'optimized_build' not in self.build_context.get(
+        'enabledBuildFeatures', []
+    ):
       return BuildPlan(set(self.args.extra_targets), set())
 
     build_targets = set()
     packaging_functions = set()
     for target in self.args.extra_targets:
+      if self._unused_target_exclusion_enabled(
+          target
+      ) and not self._build_target_used(target):
+        continue
+
       target_optimizer_getter = self.target_optimizations.get(target, None)
       if not target_optimizer_getter:
         build_targets.add(target)
@@ -82,6 +99,60 @@ class BuildPlanner:
       packaging_functions.add(target_optimizer.package_outputs)
 
     return BuildPlan(build_targets, packaging_functions)
+
+  def _unused_target_exclusion_enabled(self, target: str) -> bool:
+    return f'{target}_unused_exclusion' in self.build_context.get(
+        'enabledBuildFeatures', []
+    )
+
+  def _build_target_used(self, target: str) -> bool:
+    """Determines whether this target's outputs are used by the test configurations listed in the build context."""
+    file_download_regexes = self._aggregate_file_download_regexes()
+    # For all of a targets' outputs, check if any of the regexes used by tests
+    # to download artifacts would match it. If any of them do then this target
+    # is necessary.
+    for artifact in self._get_target_potential_outputs(target):
+      for regex in file_download_regexes:
+        if re.match(regex, artifact):
+          return True
+    return False
+
+  def _get_target_potential_outputs(self, target: str) -> set[str]:
+    tests_suffix = '-tests'
+    if target.endswith('tests'):
+      tests_suffix = ''
+    # This is a list of all the potential zips output by the test suite targets.
+    # If the test downloads artifacts from any of these zips, we will be
+    # conservative and avoid skipping the tests.
+    return {
+        f'{target}.zip',
+        f'android-{target}.zip',
+        f'android-{target}-verifier.zip',
+        f'{target}{tests_suffix}_list.zip',
+        f'android-{target}{tests_suffix}_list.zip',
+        f'{target}{tests_suffix}_host-shared-libs.zip',
+        f'android-{target}{tests_suffix}_host-shared-libs.zip',
+        f'{target}{tests_suffix}_configs.zip',
+        f'android-{target}{tests_suffix}_configs.zip',
+    }
+
+  def _aggregate_file_download_regexes(self) -> set[re.Pattern]:
+    """Lists out all test config options to specify targets to download.
+
+    These come in the form of regexes.
+    """
+    all_regexes = set()
+    for test_info in self._get_test_infos():
+      for opt in test_info.get('extraOptions', []):
+        # check the known list of options for downloading files.
+        if opt.get('key') in self._DOWNLOAD_OPTS:
+          all_regexes.update(
+              re.compile(value) for value in opt.get('values', [])
+          )
+    return all_regexes
+
+  def _get_test_infos(self):
+    return self.build_context.get('testContext', dict()).get('testInfos', [])
 
 
 @dataclass(frozen=True)
@@ -155,7 +226,7 @@ def load_build_context():
 
 
 def empty_build_context():
-  return {'enabled_build_features': []}
+  return {'enabledBuildFeatures': []}
 
 
 def execute_build_plan(build_plan: BuildPlan):
