@@ -128,7 +128,7 @@ impl FlagSource for DeviceConfigSource {
     }
 
     fn override_flag(namespace: &str, qualified_name: &str, value: &str) -> Result<()> {
-        read_device_config_output(&["override", namespace, qualified_name, value]).map(|_| ())
+        read_device_config_output(&["put", namespace, qualified_name, value]).map(|_| ())
     }
 }
 
