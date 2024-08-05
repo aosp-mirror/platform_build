@@ -395,25 +395,10 @@ $(eval $(call declare-1p-target,$(INSTALLED_SYSTEM_DLKM_BUILD_PROP_TARGET)))
 # -----------------------------------------------------------------
 # system_ext/etc/build.prop
 #
-_prop_files_ := $(if $(TARGET_SYSTEM_EXT_PROP),\
-    $(TARGET_SYSTEM_EXT_PROP),\
-    $(wildcard $(TARGET_DEVICE_DIR)/system_ext.prop))
-
-# Order matters here. When there are duplicates, the last one wins.
-# TODO(b/117892318): don't allow duplicates so that the ordering doesn't matter
-_prop_vars_ := PRODUCT_SYSTEM_EXT_PROPERTIES
+# system_ext/build.prop is built by Soong. See system-build.prop module in
+# build/soong/Android.bp.
 
 INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET := $(TARGET_OUT_SYSTEM_EXT)/etc/build.prop
-$(eval $(call build-properties,\
-    system_ext,\
-    $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET),\
-    $(_prop_files_),\
-    $(_prop_vars_),\
-    $(empty),\
-    $(empty),\
-    $(empty)))
-
-$(eval $(call declare-1p-target,$(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET)))
 
 # ----------------------------------------------------------------
 # ramdisk/boot/etc/build.prop
