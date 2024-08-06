@@ -13,25 +13,6 @@ else
 install-on-system-other = $(filter-out $(PRODUCT_DEXPREOPT_SPEED_APPS) $(PRODUCT_SYSTEM_SERVER_APPS),$(basename $(notdir $(filter $(foreach f,$(SYSTEM_OTHER_ODEX_FILTER),$(TARGET_OUT)/$(f)),$(1)))))
 endif
 
-# We want to install the profile even if we are not using preopt since it is required to generate
-# the image on the device.
-ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(DEXPREOPT_IMAGE_PROFILE_BUILT_INSTALLED),$(PRODUCT_OUT))
-
-# Install boot images. Note that there can be multiple.
-my_boot_image_arch := TARGET_ARCH
-my_boot_image_out := $(PRODUCT_OUT)
-my_boot_image_syms := $(TARGET_OUT_UNSTRIPPED)
-DEFAULT_DEX_PREOPT_INSTALLED_IMAGE_MODULE := \
-  $(foreach my_boot_image_name,$(DEXPREOPT_IMAGE_NAMES),$(strip \
-    $(eval include $(BUILD_SYSTEM)/dex_preopt_libart.mk) \
-    $(my_boot_image_module)))
-ifdef TARGET_2ND_ARCH
-  my_boot_image_arch := TARGET_2ND_ARCH
-  2ND_DEFAULT_DEX_PREOPT_INSTALLED_IMAGE_MODULE := \
-    $(foreach my_boot_image_name,$(DEXPREOPT_IMAGE_NAMES),$(strip \
-      $(eval include $(BUILD_SYSTEM)/dex_preopt_libart.mk) \
-      $(my_boot_image_module)))
-endif
 # Install boot images for testing on host. We exclude framework image as it is not part of art manifest.
 my_boot_image_arch := HOST_ARCH
 my_boot_image_out := $(HOST_OUT)
