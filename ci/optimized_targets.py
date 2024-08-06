@@ -53,7 +53,7 @@ class NullOptimizer(OptimizedBuildTarget):
 
 
 def get_target_optimizer(target, enabled_flag, build_context, optimizer):
-  if enabled_flag in build_context['enabled_build_features']:
+  if enabled_flag in build_context['enabledBuildFeatures']:
     return optimizer
 
   return NullOptimizer(target)
