@@ -19,9 +19,10 @@ package android.aconfig.storage;
 import android.compat.annotation.UnsupportedAppUsage;
 
 import java.io.Closeable;
-import java.io.FileInputStream;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 /** @hide */
 public class StorageInternalReader {
@@ -69,16 +70,15 @@ public class StorageInternalReader {
 
     // Map a storage file given file path
     private static MappedByteBuffer mapStorageFile(String file) {
-        FileInputStream stream = null;
+        FileChannel channel = null;
         try {
-            stream = new FileInputStream(file);
-            FileChannel channel = stream.getChannel();
+            channel = FileChannel.open(Paths.get(file), StandardOpenOption.READ);
             return channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
         } catch (Exception e) {
             throw new AconfigStorageException(
                     String.format("Fail to mmap storage file %s", file), e);
         } finally {
-            quietlyDispose(stream);
+            quietlyDispose(channel);
         }
     }
 
