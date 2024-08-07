@@ -158,8 +158,6 @@ namespace {cpp_namespace} \{
                 if (*value != expected_value) \{
                     ALOGI("error: {item.flag_name} value mismatch, new storage value is %s, old storage value is %s",
                     *value ? "true" : "false", expected_value ? "true" : "false");
-                } else \{
-                    ALOGI("success: {item.flag_name} value matches");
                 }
 
                 if (use_new_storage_value) \{
