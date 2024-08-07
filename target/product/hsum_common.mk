@@ -26,4 +26,4 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
 PRODUCT_USE_HSUM := true
 
 PRODUCT_PACKAGES += \
-    HsumConfigOverlay
+    HsumDefaultConfigOverlay

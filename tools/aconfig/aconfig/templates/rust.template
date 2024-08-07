@@ -35,6 +35,11 @@ lazy_static::lazy_static! \{
             "{flag.device_config_flag}",
             "{flag.default_value}") == "true";
 
+        let use_new_storage_value = flags_rust::GetServerConfigurableFlag(
+            "aconfig_flags.core_experiments_team_internal",
+            "com.android.providers.settings.use_new_storage_value",
+            "false") == "true";
+
         if Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() \{
             // This will be called multiple times. Subsequent calls after the first are noops.
             logger::init(
@@ -63,14 +68,23 @@ lazy_static::lazy_static! \{
             match aconfig_storage_result \{
                 Ok(storage_result) if storage_result == result => \{
                     log!(Level::Info, "AconfigTestMission1: success! flag '{flag.name}' contained correct value. Legacy storage was \{result}, new storage was \{storage_result}");
-                    return storage_result;
+                    if use_new_storage_value \{
+                        return storage_result;
+                    } else \{
+                        return result;
+                    }
                 },
                 Ok(storage_result) => \{
                     log!(Level::Error, "AconfigTestMission1: error: mismatch for flag '{flag.name}'. Legacy storage was \{result}, new storage was \{storage_result}");
-                    return storage_result;
+                    if use_new_storage_value \{
+                        return storage_result;
+                    } else \{
+                        return result;
+                    }
                 },
                 Err(err) => \{
-                    log!(Level::Error, "AconfigTestMission1: error: \{err}")
+                    log!(Level::Error, "AconfigTestMission1: error: \{err}");
+                    panic!("failed to read flag value: \{err}");
                 }
             }
         }
