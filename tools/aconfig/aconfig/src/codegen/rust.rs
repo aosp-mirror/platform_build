@@ -319,7 +319,6 @@ lazy_static::lazy_static! {
 
             match aconfig_storage_result {
                 Ok(storage_result) if storage_result == result => {
-                    log!(Level::Info, "AconfigTestMission1: success! flag 'disabled_rw' contained correct value. Legacy storage was {result}, new storage was {storage_result}");
                     if use_new_storage_value {
                         return storage_result;
                     } else {
@@ -336,7 +335,9 @@ lazy_static::lazy_static! {
                 },
                 Err(err) => {
                     log!(Level::Error, "AconfigTestMission1: error: {err}");
-                    panic!("failed to read flag value: {err}");
+                    if use_new_storage_value {
+                        panic!("failed to read flag value: {err}");
+                    }
                 }
             }
         }
@@ -384,7 +385,6 @@ lazy_static::lazy_static! {
 
             match aconfig_storage_result {
                 Ok(storage_result) if storage_result == result => {
-                    log!(Level::Info, "AconfigTestMission1: success! flag 'disabled_rw_exported' contained correct value. Legacy storage was {result}, new storage was {storage_result}");
                     if use_new_storage_value {
                         return storage_result;
                     } else {
@@ -401,7 +401,9 @@ lazy_static::lazy_static! {
                 },
                 Err(err) => {
                     log!(Level::Error, "AconfigTestMission1: error: {err}");
-                    panic!("failed to read flag value: {err}");
+                    if use_new_storage_value {
+                        panic!("failed to read flag value: {err}");
+                    }
                 }
             }
         }
@@ -449,7 +451,6 @@ lazy_static::lazy_static! {
 
             match aconfig_storage_result {
                 Ok(storage_result) if storage_result == result => {
-                    log!(Level::Info, "AconfigTestMission1: success! flag 'disabled_rw_in_other_namespace' contained correct value. Legacy storage was {result}, new storage was {storage_result}");
                     if use_new_storage_value {
                         return storage_result;
                     } else {
@@ -466,7 +467,9 @@ lazy_static::lazy_static! {
                 },
                 Err(err) => {
                     log!(Level::Error, "AconfigTestMission1: error: {err}");
-                    panic!("failed to read flag value: {err}");
+                    if use_new_storage_value {
+                        panic!("failed to read flag value: {err}");
+                    }
                 }
             }
         }
@@ -514,7 +517,6 @@ lazy_static::lazy_static! {
 
             match aconfig_storage_result {
                 Ok(storage_result) if storage_result == result => {
-                    log!(Level::Info, "AconfigTestMission1: success! flag 'enabled_rw' contained correct value. Legacy storage was {result}, new storage was {storage_result}");
                     if use_new_storage_value {
                         return storage_result;
                     } else {
@@ -531,7 +533,9 @@ lazy_static::lazy_static! {
                 },
                 Err(err) => {
                     log!(Level::Error, "AconfigTestMission1: error: {err}");
-                    panic!("failed to read flag value: {err}");
+                    if use_new_storage_value {
+                        panic!("failed to read flag value: {err}");
+                    }
                 }
             }
         }
@@ -653,7 +657,6 @@ pub fn disabled_ro() -> bool {
             log!(Level::Error, "AconfigTestMission1: error: flag mismatch for 'disabled_ro'. Legacy storage was {result}, new storage was {value}");
         } else {
             let default_value = false;
-            log!(Level::Info, "AconfigTestMission1: success! flag 'disabled_ro' contained correct value. Legacy storage was {default_value}, new storage was {value}");
         }
     }
 
@@ -736,7 +739,6 @@ pub fn enabled_fixed_ro() -> bool {
             log!(Level::Error, "AconfigTestMission1: error: flag mismatch for 'enabled_fixed_ro'. Legacy storage was {result}, new storage was {value}");
         } else {
             let default_value = true;
-            log!(Level::Info, "AconfigTestMission1: success! flag 'enabled_fixed_ro' contained correct value. Legacy storage was {default_value}, new storage was {value}");
         }
     }
 
@@ -801,7 +803,6 @@ pub fn enabled_fixed_ro_exported() -> bool {
             log!(Level::Error, "AconfigTestMission1: error: flag mismatch for 'enabled_fixed_ro_exported'. Legacy storage was {result}, new storage was {value}");
         } else {
             let default_value = true;
-            log!(Level::Info, "AconfigTestMission1: success! flag 'enabled_fixed_ro_exported' contained correct value. Legacy storage was {default_value}, new storage was {value}");
         }
     }
 
@@ -866,7 +867,6 @@ pub fn enabled_ro() -> bool {
             log!(Level::Error, "AconfigTestMission1: error: flag mismatch for 'enabled_ro'. Legacy storage was {result}, new storage was {value}");
         } else {
             let default_value = true;
-            log!(Level::Info, "AconfigTestMission1: success! flag 'enabled_ro' contained correct value. Legacy storage was {default_value}, new storage was {value}");
         }
     }
 
@@ -931,7 +931,6 @@ pub fn enabled_ro_exported() -> bool {
             log!(Level::Error, "AconfigTestMission1: error: flag mismatch for 'enabled_ro_exported'. Legacy storage was {result}, new storage was {value}");
         } else {
             let default_value = true;
-            log!(Level::Info, "AconfigTestMission1: success! flag 'enabled_ro_exported' contained correct value. Legacy storage was {default_value}, new storage was {value}");
         }
     }
 
