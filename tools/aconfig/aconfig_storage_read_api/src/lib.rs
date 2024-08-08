@@ -53,7 +53,7 @@ use flag_value_query::find_boolean_flag_value;
 use package_table_query::find_package_read_context;
 
 use anyhow::anyhow;
-use memmap2::Mmap;
+pub use memmap2::Mmap;
 use std::fs::File;
 use std::io::Read;
 
