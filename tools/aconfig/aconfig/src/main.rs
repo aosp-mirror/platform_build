@@ -102,6 +102,12 @@ fn cli() -> Command {
                 .arg(Arg::new("cache").long("cache").required(true))
                 .arg(Arg::new("out").long("out").required(true))
                 .arg(
+                    Arg::new("allow-instrumentation")
+                        .long("allow-instrumentation")
+                        .value_parser(clap::value_parser!(bool))
+                        .default_value("false"),
+                )
+                .arg(
                     Arg::new("mode")
                         .long("mode")
                         .value_parser(EnumValueParser::<CodegenMode>::new())
@@ -267,8 +273,10 @@ fn main() -> Result<()> {
         Some(("create-rust-lib", sub_matches)) => {
             let cache = open_single_file(sub_matches, "cache")?;
             let mode = get_required_arg::<CodegenMode>(sub_matches, "mode")?;
-            let generated_file =
-                commands::create_rust_lib(cache, *mode).context("failed to create rust lib")?;
+            let allow_instrumentation =
+                get_required_arg::<bool>(sub_matches, "allow-instrumentation")?;
+            let generated_file = commands::create_rust_lib(cache, *mode, *allow_instrumentation)
+                .context("failed to create rust lib")?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
             write_output_file_realtive_to_dir(&dir, &generated_file)?;
         }
