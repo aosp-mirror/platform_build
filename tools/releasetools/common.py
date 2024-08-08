@@ -907,9 +907,10 @@ def LoadInfoDict(input_file, repacking=False):
     d["root_fs_config"] = os.path.join(
         input_file, "META", "root_filesystem_config.txt")
 
+    partitions = ["system", "vendor", "system_ext", "product", "odm",
+                  "vendor_dlkm", "odm_dlkm", "system_dlkm"]
     # Redirect {partition}_base_fs_file for each of the named partitions.
-    for part_name in ["system", "vendor", "system_ext", "product", "odm",
-                      "vendor_dlkm", "odm_dlkm", "system_dlkm"]:
+    for part_name in partitions:
       key_name = part_name + "_base_fs_file"
       if key_name not in d:
         continue
@@ -921,6 +922,25 @@ def LoadInfoDict(input_file, repacking=False):
         logger.warning(
             "Failed to find %s base fs file: %s", part_name, base_fs_file)
         del d[key_name]
+
+    # Redirecting helper for optional properties like erofs_compress_hints
+    def redirect_file(prop, filename):
+      if prop not in d:
+        return
+      config_file = os.path.join(input_file, "META/" + filename)
+      if os.path.exists(config_file):
+        d[prop] = config_file
+      else:
+        logger.warning(
+            "Failed to find %s fro %s", filename, prop)
+        del d[key_name]
+
+    # Redirect erofs_[default_]compress_hints files
+    redirect_file("erofs_default_compress_hints",
+                  "erofs_default_compress_hints.txt")
+    for part in partitions:
+      redirect_file(part + "_erofs_compress_hints",
+                    part + "_erofs_compress_hints.txt")
 
   def makeint(key):
     if key in d:
