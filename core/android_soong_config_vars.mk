@@ -184,3 +184,6 @@ $(call soong_config_set,bootclasspath,release_package_profiling_module,$(RELEASE
 ifdef BOARD_PERFSETUP_SCRIPT
   $(call soong_config_set,perf,board_perfsetup_script,$(notdir $(BOARD_PERFSETUP_SCRIPT)))
 endif
+
+# Add target_use_pan_display flag for hardware/libhardware:gralloc.default
+$(call soong_config_set_bool,gralloc,target_use_pan_display,$(if $(filter true,$(TARGET_USE_PAN_DISPLAY)),true,false))
