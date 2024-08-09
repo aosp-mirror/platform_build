@@ -688,8 +688,11 @@ $(foreach suite,general-tests device-tests vts tvts art-host-tests host-unit-tes
           $(eval my_testcases := $(HOST_OUT_TESTCASES)),\
           $(eval my_testcases := $$(COMPATIBILITY_TESTCASES_OUT_$(suite))))\
         $(eval target := $(my_testcases)/$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
-        $(eval link_target := ../../../$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
-        $(eval symlink := $(my_testcases)/$(m)/shared_libs/$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
+        $(eval prefix := ../../..)
+        $(if $(strip $(patsubst %x86,,$(COMPATIBILITY.$(suite).ARCH_DIRS.$(m)))), \
+          $(if $(strip $(patsubst %x86_64,,$(COMPATIBILITY.$(suite).ARCH_DIRS.$(m)))),$(eval prefix := ../..),),) \
+        $(eval link_target := $(prefix)/$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
+        $(eval symlink := $(COMPATIBILITY.$(suite).ARCH_DIRS.$(m))/shared_libs/$(notdir $(f)))\
         $(eval COMPATIBILITY.$(suite).SYMLINKS := \
           $$(COMPATIBILITY.$(suite).SYMLINKS) $(f):$(link_target):$(symlink))\
         $(if $(strip $(ALL_TARGETS.$(target).META_LIC)),,$(call declare-copy-target-license-metadata,$(target),$(f)))\
