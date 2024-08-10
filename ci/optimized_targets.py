@@ -14,6 +14,9 @@
 # limitations under the License.
 
 from abc import ABC
+from typing import Self
+import argparse
+import functools
 
 
 class OptimizedBuildTarget(ABC):
@@ -24,15 +27,41 @@ class OptimizedBuildTarget(ABC):
   build.
   """
 
-  def __init__(self, build_context, args):
+  def __init__(
+      self,
+      target: str,
+      build_context: dict[str, any],
+      args: argparse.Namespace,
+  ):
+    self.target = target
     self.build_context = build_context
     self.args = args
 
-  def get_build_targets(self):
-    pass
+  def get_build_targets(self) -> set[str]:
+    features = self.build_context.get('enabledBuildFeatures', [])
+    if self.get_enabled_flag() in features:
+      return self.get_build_targets_impl()
+    return {self.target}
 
   def package_outputs(self):
-    pass
+    features = self.build_context.get('enabledBuildFeatures', [])
+    if self.get_enabled_flag() in features:
+      return self.package_outputs_impl()
+
+  def package_outputs_impl(self):
+    raise NotImplementedError(
+        f'package_outputs_impl not implemented in {type(self).__name__}'
+    )
+
+  def get_enabled_flag(self):
+    raise NotImplementedError(
+        f'get_enabled_flag not implemented in {type(self).__name__}'
+    )
+
+  def get_build_targets_impl(self) -> set[str]:
+    raise NotImplementedError(
+        f'get_build_targets_impl not implemented in {type(self).__name__}'
+    )
 
 
 class NullOptimizer(OptimizedBuildTarget):
@@ -52,18 +81,25 @@ class NullOptimizer(OptimizedBuildTarget):
     pass
 
 
-def get_target_optimizer(target, enabled_flag, build_context, optimizer):
-  if enabled_flag in build_context['enabledBuildFeatures']:
-    return optimizer
+class GeneralTestsOptimizer(OptimizedBuildTarget):
+  """general-tests optimizer
 
-  return NullOptimizer(target)
+  TODO(b/358215235): Implement
+
+  This optimizer reads in the list of changed files from the file located in
+  env[CHANGE_INFO] and uses this list alongside the normal TEST MAPPING logic to
+  determine what test mapping modules will run for the given changes. It then
+  builds those modules and packages them in the same way general-tests.zip is
+  normally built.
+  """
+
+  def get_enabled_flag(self):
+    return 'general-tests-optimized'
+
+  @classmethod
+  def get_optimized_targets(cls) -> dict[str, OptimizedBuildTarget]:
+    return {'general-tests': functools.partial(cls)}
 
 
-# To be written as:
-#    'target': lambda target, build_context, args: get_target_optimizer(
-#        target,
-#        'target_enabled_flag',
-#        build_context,
-#        TargetOptimizer(build_context, args),
-#    )
-OPTIMIZED_BUILD_TARGETS = dict()
+OPTIMIZED_BUILD_TARGETS = {}
+OPTIMIZED_BUILD_TARGETS.update(GeneralTestsOptimizer.get_optimized_targets())
