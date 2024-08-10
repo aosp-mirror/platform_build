@@ -1255,7 +1255,11 @@ ifeq ($(TARGET_SYSTEM_PROP),)
 TARGET_SYSTEM_PROP := $(wildcard $(TARGET_DEVICE_DIR)/system.prop)
 endif
 
-.KATI_READONLY += TARGET_SYSTEM_PROP
+ifeq ($(TARGET_SYSTEM_EXT_PROP),)
+TARGET_SYSTEM_EXT_PROP := $(wildcard $(TARGET_DEVICE_DIR)/system_ext.prop)
+endif
+
+.KATI_READONLY += TARGET_SYSTEM_PROP TARGET_SYSTEM_EXT_PROP
 
 include $(BUILD_SYSTEM)/sysprop_config.mk
 

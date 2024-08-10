@@ -776,6 +776,8 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval my_compat_dist_$(suite) := $(patsubst %:$(LOCAL_INSTALLED_MODULE),$(LOCAL_INSTALLED_MODULE):$(LOCAL_INSTALLED_MODULE),\
     $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
       $(LOCAL_BUILT_MODULE):$(dir)/$(my_installed_module_stem)))) \
+  $(eval my_compat_module_arch_dir_$(suite).$(my_register_name) :=) \
+  $(foreach dir,$(call compatibility_suite_dirs,$(suite),$(arch_dir)),$(eval my_compat_module_arch_dir_$(suite).$(my_register_name) += $(dir))) \
   $(eval my_compat_dist_config_$(suite) := ))
 
 ifneq (,$(LOCAL_SOONG_CLASSES_JAR))
