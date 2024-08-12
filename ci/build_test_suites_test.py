@@ -380,6 +380,25 @@ class BuildPlannerTest(unittest.TestCase):
 
     self.assertSetEqual(build_plan.build_targets, set())
 
+  def test_target_regex_matching_not_too_broad(self):
+    build_target = 'test_target'
+    test_context = self.get_test_context(build_target)
+    test_context['testInfos'][0]['extraOptions'] = [{
+        'key': 'additional-files-filter',
+        'values': [f'.*a{build_target}.*\.zip'],
+    }]
+    build_planner = self.create_build_planner(
+        build_targets={build_target},
+        build_context=self.create_build_context(
+            test_context=test_context,
+            enabled_build_features={'test_target_unused_exclusion'},
+        ),
+    )
+
+    build_plan = build_planner.create_build_plan()
+
+    self.assertSetEqual(build_plan.build_targets, set())
+
   def create_build_planner(
       self,
       build_targets: set[str],
