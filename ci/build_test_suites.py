@@ -81,6 +81,7 @@ class BuildPlanner:
 
     build_targets = set()
     packaging_functions = set()
+    self.file_download_options = self._aggregate_file_download_options()
     for target in self.args.extra_targets:
       if self._unused_target_exclusion_enabled(
           target
@@ -107,49 +108,24 @@ class BuildPlanner:
 
   def _build_target_used(self, target: str) -> bool:
     """Determines whether this target's outputs are used by the test configurations listed in the build context."""
-    file_download_regexes = self._aggregate_file_download_regexes()
     # For all of a targets' outputs, check if any of the regexes used by tests
     # to download artifacts would match it. If any of them do then this target
     # is necessary.
-    for artifact in self._get_target_potential_outputs(target):
-      for regex in file_download_regexes:
-        if re.match(regex, artifact):
-          return True
-    return False
+    regex = r'\b(%s)\b' % re.escape(target)
+    return any(re.search(regex, opt) for opt in self.file_download_options)
 
-  def _get_target_potential_outputs(self, target: str) -> set[str]:
-    tests_suffix = '-tests'
-    if target.endswith('tests'):
-      tests_suffix = ''
-    # This is a list of all the potential zips output by the test suite targets.
-    # If the test downloads artifacts from any of these zips, we will be
-    # conservative and avoid skipping the tests.
-    return {
-        f'{target}.zip',
-        f'android-{target}.zip',
-        f'android-{target}-verifier.zip',
-        f'{target}{tests_suffix}_list.zip',
-        f'android-{target}{tests_suffix}_list.zip',
-        f'{target}{tests_suffix}_host-shared-libs.zip',
-        f'android-{target}{tests_suffix}_host-shared-libs.zip',
-        f'{target}{tests_suffix}_configs.zip',
-        f'android-{target}{tests_suffix}_configs.zip',
-    }
-
-  def _aggregate_file_download_regexes(self) -> set[re.Pattern]:
+  def _aggregate_file_download_options(self) -> set[str]:
     """Lists out all test config options to specify targets to download.
 
     These come in the form of regexes.
     """
-    all_regexes = set()
+    all_options = set()
     for test_info in self._get_test_infos():
       for opt in test_info.get('extraOptions', []):
         # check the known list of options for downloading files.
         if opt.get('key') in self._DOWNLOAD_OPTS:
-          all_regexes.update(
-              re.compile(value) for value in opt.get('values', [])
-          )
-    return all_regexes
+          all_options.update(opt.get('values', []))
+    return all_options
 
   def _get_test_infos(self):
     return self.build_context.get('testContext', dict()).get('testInfos', [])
