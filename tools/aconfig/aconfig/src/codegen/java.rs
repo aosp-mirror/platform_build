@@ -698,6 +698,8 @@ mod tests {
         StorageInternalReader reader;
         boolean readFromNewStorage;
 
+        boolean useNewStorageValueAndDiscardOld = false;
+
         private final static String TAG = "AconfigJavaCodegen";
         private final static String SUCCESS_LOG = "success: %s value matches";
         private final static String MISMATCH_LOG = "error: %s value mismatch, new storage value is %s, old storage value is %s";
@@ -713,6 +715,9 @@ mod tests {
                     reader = null;
                 }
             }
+
+            useNewStorageValueAndDiscardOld =
+                DeviceConfig.getBoolean("core_experiments_team_internal", "com.android.providers.settings.use_new_storage_value", false);
         }
 
         private void load_overrides_aconfig_test() {
@@ -746,7 +751,7 @@ mod tests {
                         Log.i(TAG, String.format(MISMATCH_LOG, "disabledRw", val, disabledRw));
                     }
 
-                    if (DeviceConfig.getBoolean("core_experiments_team_internal", "com.android.providers.settings.use_new_storage_value", false)) {
+                    if (useNewStorageValueAndDiscardOld) {
                         disabledRw = val;
                     }
 
@@ -757,7 +762,7 @@ mod tests {
                         Log.i(TAG, String.format(MISMATCH_LOG, "disabledRwExported", val, disabledRwExported));
                     }
 
-                    if (DeviceConfig.getBoolean("core_experiments_team_internal", "com.android.providers.settings.use_new_storage_value", false)) {
+                    if (useNewStorageValueAndDiscardOld) {
                         disabledRwExported = val;
                     }
 
@@ -768,7 +773,7 @@ mod tests {
                         Log.i(TAG, String.format(MISMATCH_LOG, "enabledRw", val, enabledRw));
                     }
 
-                    if (DeviceConfig.getBoolean("core_experiments_team_internal", "com.android.providers.settings.use_new_storage_value", false)) {
+                    if (useNewStorageValueAndDiscardOld) {
                         enabledRw = val;
                     }
 
@@ -805,7 +810,7 @@ mod tests {
                         Log.i(TAG, String.format(MISMATCH_LOG, "disabledRwInOtherNamespace", val, disabledRwInOtherNamespace));
                     }
 
-                    if (DeviceConfig.getBoolean("core_experiments_team_internal", "com.android.providers.settings.use_new_storage_value", false)) {
+                    if (useNewStorageValueAndDiscardOld) {
                         disabledRwInOtherNamespace = val;
                     }
 
