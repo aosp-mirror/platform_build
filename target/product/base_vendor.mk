@@ -73,6 +73,7 @@ PRODUCT_PACKAGES += \
     passwd_vendor \
     selinux_policy_nonsystem \
     shell_and_utilities_vendor \
+    odm-build.prop \
 
 # libhealthloop BPF filter. This is in base_vendor.mk because libhealthloop must
 # be a static library and because the Android build system ignores 'required'

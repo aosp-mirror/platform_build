@@ -90,6 +90,10 @@ $(call add_json_list, BuildVersionTags, $(BUILD_VERSION_TAGS))
 
 $(call add_json_bool, ProductNotDebuggableInUserdebug, $(PRODUCT_NOT_DEBUGGABLE_IN_USERDEBUG))
 
+$(call add_json_bool, UsesProductImage, $(filter true,$(BOARD_USES_PRODUCTIMAGE)))
+
+$(call add_json_bool, TargetBoots16K, $(filter true,$(TARGET_BOOTS_16K)))
+
 $(call json_end)
 
 $(shell mkdir -p $(dir $(SOONG_EXTRA_VARIABLES)))
