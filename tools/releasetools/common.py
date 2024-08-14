@@ -933,7 +933,7 @@ def LoadInfoDict(input_file, repacking=False):
       else:
         logger.warning(
             "Failed to find %s fro %s", filename, prop)
-        del d[key_name]
+        del d[prop]
 
     # Redirect erofs_[default_]compress_hints files
     redirect_file("erofs_default_compress_hints",
