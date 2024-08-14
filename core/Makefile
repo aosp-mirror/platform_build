@@ -6883,6 +6883,33 @@ ifdef BOARD_KERNEL_PAGESIZE
 	$(hide) echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/INIT_BOOT/pagesize
 endif # BOARD_KERNEL_PAGESIZE
 endif # BUILDING_INIT_BOOT_IMAGE
+ifdef BOARD_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_EROFS_COMPRESS_HINTS) $(zip_root)/META/erofs_default_compress_hints.txt
+endif
+ifdef BOARD_SYSTEMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_SYSTEMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/system_erofs_compress_hints.txt
+endif
+ifdef BOARD_SYSTEM_EXTIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_SYSTEM_EXTIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/system_ext_erofs_compress_hints.txt
+endif
+ifdef BOARD_PRODUCTIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_PRODUCTIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/product_erofs_compress_hints.txt
+endif
+ifdef BOARD_VENDORIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_VENDORIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/vendor_erofs_compress_hints.txt
+endif
+ifdef BOARD_ODMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_ODMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/odm_erofs_compress_hints.txt
+endif
+ifdef BOARD_VENDOR_DLKMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_VENDOR_DLKMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/vendor_dlkm_erofs_compress_hints.txt
+endif
+ifdef BOARD_ODM_DLKMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_ODM_DLKMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/odm_dlkm_erofs_compress_hints.txt
+endif
+ifdef BOARD_SYSTEM_DLKMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_SYSTEM_DLKMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/system_dlkm_erofs_compress_hints.txt
+endif
 ifneq ($(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
 	$(call fs_config,$(zip_root)/VENDOR_BOOT/RAMDISK,) > $(zip_root)/META/vendor_boot_filesystem_config.txt
 endif
