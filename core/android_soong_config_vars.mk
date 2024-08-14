@@ -71,11 +71,6 @@ $(call add_soong_config_var_value,ANDROID,library_linking_strategy,prefer_static
 endif
 endif
 
-# TODO(b/308187800): some internal modules set `prefer` to true on the prebuilt apex module,
-# and set that to false when `ANDROID.module_build_from_source` is true.
-# Set this soong config variable to true for now, and cleanup `prefer` as part of b/308187800
-$(call add_soong_config_var_value,ANDROID,module_build_from_source,true)
-
 # Enable SystemUI optimizations by default unless explicitly set.
 SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
