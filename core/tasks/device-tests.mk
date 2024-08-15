@@ -27,9 +27,9 @@ $(device-tests-zip) : .KATI_IMPLICIT_OUTPUTS := $(device-tests-list-zip) $(devic
 $(device-tests-zip) : PRIVATE_device_tests_list := $(PRODUCT_OUT)/device-tests_list
 $(device-tests-zip) : PRIVATE_HOST_SHARED_LIBS := $(my_host_shared_lib_for_device_tests)
 $(device-tests-zip) : PRIVATE_device_host_shared_libs_zip := $(device_tests_host_shared_libs_zip)
-$(device-tests-zip) : $(COMPATIBILITY.device-tests.FILES) $(my_host_shared_lib_for_device_tests) $(SOONG_ZIP)
+$(device-tests-zip) : $(COMPATIBILITY.device-tests.FILES) $(COMPATIBILITY.device-tests.SOONG_INSTALLED_COMPATIBILITY_SUPPORT_FILES) $(my_host_shared_lib_for_device_tests) $(SOONG_ZIP)
 	rm -f $@-shared-libs.list
-	echo $(sort $(COMPATIBILITY.device-tests.FILES)) | tr " " "\n" > $@.list
+	echo $(sort $(COMPATIBILITY.device-tests.FILES) $(COMPATIBILITY.device-tests.SOONG_INSTALLED_COMPATIBILITY_SUPPORT_FILES)) | tr " " "\n" > $@.list
 	grep $(HOST_OUT_TESTCASES) $@.list > $@-host.list || true
 	grep -e .*\\.config$$ $@-host.list > $@-host-test-configs.list || true
 	$(hide) for shared_lib in $(PRIVATE_HOST_SHARED_LIBS); do \

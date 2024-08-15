@@ -49,9 +49,6 @@ endif
 
 # If this is a google source tree, restrict it to only the one file
 # which has OWNERS control.  If it isn't let others define their own.
-# TODO: Remove wildcard for build/release one when all branch manifests
-# have updated.
-_must_protobuf :=
 config_map_files := $(wildcard build/release/release_config_map.mk) \
     $(wildcard vendor/google_shared/build/release/release_config_map.mk) \
     $(if $(wildcard vendor/google/release/release_config_map.mk), \
@@ -64,7 +61,7 @@ config_map_files := $(wildcard build/release/release_config_map.mk) \
         ) \
     )
 
-protobuf_map_files := $(wildcard build/release/release_config_map.textproto) \
+protobuf_map_files := build/release/release_config_map.textproto \
     $(wildcard vendor/google_shared/build/release/release_config_map.textproto) \
     $(if $(wildcard vendor/google/release/release_config_map.textproto), \
         vendor/google/release/release_config_map.textproto, \
@@ -75,6 +72,9 @@ protobuf_map_files := $(wildcard build/release/release_config_map.textproto) \
             $(wildcard vendor/*/*/release/release_config_map.textproto) \
         ) \
     )
+
+# Remove support for the legacy approach.
+_must_protobuf := true
 
 # PRODUCT_RELEASE_CONFIG_MAPS is set by Soong using an initial run of product
 # config to capture only the list of config maps needed by the build.
@@ -130,6 +130,10 @@ ifneq (,$(_use_protobuf))
         # Disable the build flag in release-config.
         _args += --guard=false
     endif
+    _args += --allow-missing=true
+    ifneq (,$(TARGET_PRODUCT))
+        _args += --product $(TARGET_PRODUCT)
+    endif
     _flags_dir:=$(OUT_DIR)/soong/release-config
     _flags_file:=$(_flags_dir)/release_config-$(TARGET_PRODUCT)-$(TARGET_RELEASE).vars
     # release-config generates $(_flags_varmk)
@@ -139,7 +143,7 @@ ifneq (,$(_use_protobuf))
     ifneq (,$(_final_product_config_pass))
         # Save the final version of the config.
         $(shell if ! cmp --quiet $(_flags_varmk) $(_flags_file); then cp $(_flags_varmk) $(_flags_file); fi)
-        # This will also set _all_release_configs and _used_files for us.
+        # This will also set ALL_RELEASE_CONFIGS_FOR_PRODUCT and _used_files for us.
         $(eval include $(_flags_file))
         $(KATI_extra_file_deps $(OUT_DIR)/release-config $(protobuf_map_files) $(_flags_file))
     else
@@ -155,8 +159,11 @@ ifneq (,$(_use_protobuf))
             $(_flags_dir)/$(_base_all_release).pb:build_flags/all_release_configs.pb \
             $(_flags_dir)/$(_base_all_release).textproto:build_flags/all_release_configs.textproto \
             $(_flags_dir)/$(_base_all_release).json:build_flags/all_release_configs.json \
+            $(_flags_dir)/inheritance_graph-$(TARGET_PRODUCT).dot:build_flags/inheritance_graph-$(TARGET_PRODUCT).dot \
         )
 # These are always created, add an empty rule for them to keep ninja happy.
+$(_flags_dir)/inheritance_graph-$(TARGET_PRODUCT).dot:
+	: created by $(OUT_DIR)/release-config
 $(_flags_dir)/$(_base_all_release).pb $(_flags_dir)/$(_base_all_release).textproto $(_flags_dir)/$(_base_all_release).json:
 	: created by $(OUT_DIR)/release-config
         _base_all_release :=
@@ -214,9 +221,9 @@ define _declare-release-config
         $(error declare-release-config: config $(strip $(1)) must have release config files, override another release config, or both) \
     )
     $(if $(strip $(4)),$(eval _all_release_configs.$(strip $(1)).ALIAS := true))
-    $(eval _all_release_configs := $(sort $(_all_release_configs) $(strip $(1))))
+    $(eval ALL_RELEASE_CONFIGS_FOR_PRODUCT := $(sort $(ALL_RELEASE_CONFIGS_FOR_PRODUCT) $(strip $(1))))
     $(if $(strip $(3)), \
-      $(if $(filter $(_all_release_configs), $(strip $(3))),
+      $(if $(filter $(ALL_RELEASE_CONFIGS_FOR_PRODUCT), $(strip $(3))),
         $(if $(filter $(_all_release_configs.$(strip $(1)).OVERRIDES),$(strip $(3))),,
           $(eval _all_release_configs.$(strip $(1)).OVERRIDES := $(_all_release_configs.$(strip $(1)).OVERRIDES) $(strip $(3)))), \
         $(error No release config $(strip $(3))) \
@@ -242,13 +249,13 @@ $(foreach f, $(config_map_files), \
 FLAG_DECLARATION_FILES :=
 
 # Verify that all inherited/overridden release configs are declared.
-$(foreach config,$(_all_release_configs),\
+$(foreach config,$(ALL_RELEASE_CONFIGS_FOR_PRODUCT),\
   $(foreach r,$(all_release_configs.$(r).OVERRIDES),\
     $(if $(strip $(_all_release_configs.$(r).FILES)$(_all_release_configs.$(r).OVERRIDES)),,\
     $(error Release config $(config) [declared in: $(_all_release_configs.$(r).DECLARED_IN)] inherits from non-existent $(r).)\
 )))
 # Verify that alias configs do not have config files.
-$(foreach r,$(_all_release_configs),\
+$(foreach r,$(ALL_RELEASE_CONFIGS_FOR_PRODUCT),\
   $(if $(_all_release_configs.$(r).ALIAS),$(if $(_all_release_configs.$(r).FILES),\
     $(error Alias release config "$(r)" may not specify release config files $(_all_release_configs.$(r).FILES))\
 )))
@@ -263,7 +270,7 @@ ifeq ($(TARGET_RELEASE),)
     # if the variable was completely unset.
     TARGET_RELEASE ?= was_unset
     ifeq ($(TARGET_RELEASE),was_unset)
-        $(error No release config set for target; please set TARGET_RELEASE, or if building on the command line use 'lunch <target>-<release>-<build_type>', where release is one of: $(_all_release_configs))
+        $(error No release config set for target; please set TARGET_RELEASE, or if building on the command line use 'lunch <target>-<release>-<build_type>', where release is one of: $(ALL_RELEASE_CONFIGS_FOR_PRODUCT))
     endif
     # Instead of leaving this string empty, we want to default to a valid
     # setting.  Full builds coming through this path is a bug, but in case
@@ -274,8 +281,8 @@ endif
 # During pass 1 of product config, using a non-existent release config is not an error.
 # We can safely assume that we are doing pass 1 if DUMP_MANY_VARS=="PRODUCT_RELEASE_CONFIG_MAPS".
 ifneq (,$(_final_product_config_pass))
-    ifeq ($(filter $(_all_release_configs), $(TARGET_RELEASE)),)
-        $(error No release config found for TARGET_RELEASE: $(TARGET_RELEASE). Available releases are: $(_all_release_configs))
+    ifeq ($(filter $(ALL_RELEASE_CONFIGS_FOR_PRODUCT), $(TARGET_RELEASE)),)
+        $(error No release config found for TARGET_RELEASE: $(TARGET_RELEASE). Available releases are: $(ALL_RELEASE_CONFIGS_FOR_PRODUCT))
     endif
 endif
 
@@ -324,14 +331,13 @@ endif
 .KATI_READONLY := TARGET_RELEASE
 
 ifeq (,$(_use_protobuf))
-$(foreach config, $(_all_release_configs), \
+$(foreach config, $(ALL_RELEASE_CONFIGS_FOR_PRODUCT), \
     $(eval _all_release_configs.$(config).DECLARED_IN:= ) \
     $(eval _all_release_configs.$(config).FILES:= ) \
 )
 applied_releases:=
 # use makefiles
 endif
-_all_release_configs:=
 config_map_files:=
 protobuf_map_files:=
 
@@ -378,3 +384,4 @@ endif
 _can_protobuf :=
 _must_protobuf :=
 _use_protobuf :=
+

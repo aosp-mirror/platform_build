@@ -26,12 +26,14 @@ _product_single_value_vars += PRODUCT_NAME
 _product_single_value_vars += PRODUCT_MODEL
 _product_single_value_vars += PRODUCT_NAME_FOR_ATTESTATION
 _product_single_value_vars += PRODUCT_MODEL_FOR_ATTESTATION
+_product_single_value_vars += PRODUCT_BASE_OS
 
 # Defines the ELF segment alignment for binaries (executables and shared libraries).
 # The ELF segment alignment has to be a PAGE_SIZE multiple. For example, if
 # PRODUCT_MAX_PAGE_SIZE_SUPPORTED=65536, the possible values for PAGE_SIZE could be
 # 4096, 16384 and 65536.
 _product_single_value_vars += PRODUCT_MAX_PAGE_SIZE_SUPPORTED
+_product_single_value_vars += PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE
 
 # Boolean variable determining if AOSP relies on bionic's PAGE_SIZE macro.
 _product_single_value_vars += PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO
@@ -159,7 +161,6 @@ _product_list_vars += PRODUCT_BOOT_JARS_EXTRA
 # List of jars to be included in the ART boot image for testing.
 _product_list_vars += PRODUCT_TEST_ONLY_ART_BOOT_IMAGE_JARS
 
-_product_single_value_vars += PRODUCT_SUPPORTS_VBOOT
 _product_list_vars += PRODUCT_SYSTEM_SERVER_APPS
 # List of system_server classpath jars on the platform.
 _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS
@@ -302,9 +303,6 @@ _product_list_vars += PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION
 # is launched with dynamic partitions.
 # This flag implies PRODUCT_USE_DYNAMIC_PARTITIONS.
 _product_single_value_vars += PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
-
-# List of tags that will be used to gate blueprint modules from the build graph
-_product_list_vars += PRODUCT_INCLUDE_TAGS
 
 # List of directories that will be used to gate blueprint modules from the build graph
 _product_list_vars += PRODUCT_SOURCE_ROOT_DIRS
@@ -489,6 +487,17 @@ _product_single_value_vars += PRODUCT_AVF_MICRODROID_GUEST_GKI_VERSION
 
 # Enables 16KB developer option for device if set.
 _product_single_value_vars += PRODUCT_16K_DEVELOPER_OPTION
+
+# If set, adb root will be disabled (really ro.debuggable=0) in userdebug
+# builds. It's already off disabled in user builds. Eng builds are unaffected
+# by this flag.
+_product_single_value_vars += PRODUCT_NOT_DEBUGGABLE_IN_USERDEBUG
+
+# If set, the default value of the versionName of apps will include the build number.
+_product_single_value_vars += PRODUCT_BUILD_APPS_WITH_BUILD_NUMBER
+
+# If set, build would generate system image from Soong-defined module.
+_product_single_value_vars += PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)

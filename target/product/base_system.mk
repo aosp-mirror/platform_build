@@ -45,6 +45,7 @@ PRODUCT_PACKAGES += \
     bu \
     bugreport \
     bugreportz \
+    build_flag_system \
     cgroups.json \
     charger \
     cmd \
@@ -203,6 +204,7 @@ PRODUCT_PACKAGES += \
     libstdc++ \
     libsysutils \
     libui \
+    libuprobestats_client \
     libusbhost \
     libutils \
     libvintf_jni \
@@ -278,6 +280,7 @@ PRODUCT_PACKAGES += \
     storaged \
     surfaceflinger \
     svc \
+    system-build.prop \
     task_profiles.json \
     tc \
     telecom \
@@ -401,7 +404,6 @@ PRODUCT_HOST_PACKAGES += \
     BugReport \
     adb \
     adevice \
-    art-tools \
     atest \
     bcc \
     bit \
@@ -411,7 +413,7 @@ PRODUCT_HOST_PACKAGES += \
     flags_health_check \
     fsck.erofs \
     icu-data_host_i18n_apex \
-    icu_tzdata.dat_host_tzdata_apex \
+    tzdata_icu_res_files_host_prebuilts \
     idmap2 \
     incident_report \
     ld.mc \
@@ -432,6 +434,21 @@ PRODUCT_HOST_PACKAGES += \
     tz_version_host \
     tz_version_host_tzdata_apex \
 
+# For art-tools, if the dependencies have changed, please sync them to art/Android.bp as well.
+PRODUCT_HOST_PACKAGES += \
+    ahat \
+    dexdump \
+    hprof-conv
+# A subset of the tools are disabled when HOST_PREFER_32_BIT is defined as make reports that
+# they are not supported on host (b/129323791). This is likely due to art_apex disabling host
+# APEX builds when HOST_PREFER_32_BIT is set (b/120617876).
+ifneq ($(HOST_PREFER_32_BIT),true)
+PRODUCT_HOST_PACKAGES += \
+    dexlist \
+    oatdump
+endif
+
+
 PRODUCT_PACKAGES += init.usb.rc init.usb.configfs.rc
 
 PRODUCT_PACKAGES += etc_hosts
@@ -441,6 +458,11 @@ PRODUCT_VENDOR_PROPERTIES += ro.zygote?=zygote32
 
 PRODUCT_SYSTEM_PROPERTIES += debug.atrace.tags.enableflags=0
 PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
+
+# Include kernel configs.
+PRODUCT_PACKAGES += \
+    approved-ogki-builds.xml \
+    kernel-lifetimes.xml
 
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
@@ -511,4 +533,5 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/build_variables.mk)
 $(call inherit-product,$(SRC_TARGET_DIR)/product/updatable_apex.mk)
 
 $(call soong_config_set, bionic, large_system_property_node, $(RELEASE_LARGE_SYSTEM_PROPERTY_NODE))
+$(call soong_config_set, Aconfig, read_from_new_storage, $(RELEASE_READ_FROM_NEW_STORAGE))
 $(call soong_config_set, SettingsLib, legacy_avatar_picker_app_enabled, $(if $(RELEASE_AVATAR_PICKER_APP),,true))

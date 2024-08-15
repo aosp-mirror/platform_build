@@ -2584,7 +2584,28 @@ define dump-words-to-file
         @$(call emit-line,$(wordlist 98001,98500,$(1)),$(2))
         @$(call emit-line,$(wordlist 98501,99000,$(1)),$(2))
         @$(call emit-line,$(wordlist 99001,99500,$(1)),$(2))
-        @$(if $(wordlist 99501,99502,$(1)),$(error dump-words-to-file: Too many words ($(words $(1)))))
+        @$(call emit-line,$(wordlist 99501,100000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 100001,100500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 100501,101000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 101001,101500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 101501,102000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 102001,102500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 102501,103000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 103001,103500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 103501,104000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 104001,104500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 104501,105000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 105001,105500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 105501,106000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 106001,106500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 106501,107000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 107001,107500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 107501,108000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 108001,108500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 108501,109000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 109001,109500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 109501,110000,$(1)),$(2))
+        @$(if $(wordlist 110001,110002,$(1)),$(error dump-words-to-file: Too many words ($(words $(1)))))
 endef
 # Return jar arguments to compress files in a given directory
 # $(1): directory
@@ -2925,19 +2946,15 @@ $(hide) \
   echo "Install path: $(patsubst $(PRODUCT_OUT)/%,%,$(PRIVATE_INSTALLED_MODULE))" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
   echo >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log
 endef
-ART_VERIDEX_APPCOMPAT_SCRIPT:=$(HOST_OUT)/bin/appcompat.sh
+ART_VERIDEX_APPCOMPAT:=$(HOST_OUT)/bin/appcompat
 define run-appcompat
 $(hide) \
-  echo "appcompat.sh output:" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
-  PACKAGING=$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING ANDROID_LOG_TAGS="*:e" $(ART_VERIDEX_APPCOMPAT_SCRIPT) --dex-file=$@ --api-flags=$(INTERNAL_PLATFORM_HIDDENAPI_FLAGS) 2>&1 >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log
+  echo "appcompat output:" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
+  ANDROID_LOG_TAGS="*:e" $(ART_VERIDEX_APPCOMPAT) --dex-file=$@ 2>&1 >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log
 endef
 appcompat-files = \
   $(AAPT2) \
-  $(ART_VERIDEX_APPCOMPAT_SCRIPT) \
-  $(INTERNAL_PLATFORM_HIDDENAPI_FLAGS) \
-  $(HOST_OUT_EXECUTABLES)/veridex \
-  $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/core_dex_intermediates/classes.dex \
-  $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/oahl_dex_intermediates/classes.dex
+  $(ART_VERIDEX_APPCOMPAT) \
 else
 appcompat-header =
 run-appcompat =
@@ -3589,11 +3606,15 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(if $(filter $(suite),$(ALL_COMPATIBILITY_SUITES)),,\
     $(eval ALL_COMPATIBILITY_SUITES += $(suite)) \
     $(eval COMPATIBILITY.$(suite).FILES :=) \
-    $(eval COMPATIBILITY.$(suite).MODULES :=)) \
+    $(eval COMPATIBILITY.$(suite).MODULES :=) \
+    $(eval COMPATIBILITY.$(suite).API_MAP_FILES :=)) \
   $(eval COMPATIBILITY.$(suite).FILES += \
     $$(foreach f,$$(my_compat_dist_$(suite)),$$(call word-colon,2,$$(f))) \
     $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(call word-colon,2,$$(f))) \
     $$(my_compat_dist_test_data_$(suite))) \
+  $(eval COMPATIBILITY.$(suite).ARCH_DIRS.$(my_register_name) := $(my_compat_module_arch_dir_$(suite).$(my_register_name))) \
+  $(eval COMPATIBILITY.$(suite).API_MAP_FILES += $$(my_compat_api_map_$(suite))) \
+  $(eval COMPATIBILITY.$(suite).SOONG_INSTALLED_COMPATIBILITY_SUPPORT_FILES += $(LOCAL_SOONG_INSTALLED_COMPATIBILITY_SUPPORT_FILES)) \
   $(eval ALL_COMPATIBILITY_DIST_FILES += $$(my_compat_dist_$(suite))) \
   $(eval COMPATIBILITY.$(suite).MODULES += $$(my_register_name))) \
 $(eval $(my_all_targets) : \

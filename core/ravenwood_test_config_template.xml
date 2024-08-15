@@ -18,10 +18,9 @@
     <option name="test-suite-tag" value="ravenwood" />
     <option name="test-suite-tag" value="ravenwood-tests" />
 
-    <option name="java-folder" value="prebuilts/jdk/jdk17/linux-x86/" />
+    <option name="java-folder" value="prebuilts/jdk/jdk21/linux-x86/" />
     <option name="use-ravenwood-resources" value="true" />
     <option name="exclude-paths" value="java" />
-    <option name="socket-timeout" value="10000" />
     <option name="null-device" value="true" />
 
     {EXTRA_CONFIGS}

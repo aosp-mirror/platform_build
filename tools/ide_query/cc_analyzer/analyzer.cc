@@ -20,9 +20,9 @@
 #include <utility>
 #include <vector>
 
+#include "cc_analyzer.pb.h"
 #include "clang/Tooling/CompilationDatabase.h"
 #include "clang/Tooling/JSONCompilationDatabase.h"
-#include "ide_query.pb.h"
 #include "include_scanner.h"
 #include "llvm/ADT/SmallString.h"
 #include "llvm/ADT/StringRef.h"
@@ -48,11 +48,11 @@ llvm::Expected<std::unique_ptr<clang::tooling::CompilationDatabase>> LoadCompDB(
 }
 }  // namespace
 
-::ide_query::DepsResponse GetDeps(::ide_query::RepoState state) {
-  ::ide_query::DepsResponse results;
+::cc_analyzer::DepsResponse GetDeps(::cc_analyzer::RepoState state) {
+  ::cc_analyzer::DepsResponse results;
   auto db = LoadCompDB(state.comp_db_path());
   if (!db) {
-    results.mutable_status()->set_code(::ide_query::Status::FAILURE);
+    results.mutable_status()->set_code(::cc_analyzer::Status::FAILURE);
     results.mutable_status()->set_message(llvm::toString(db.takeError()));
     return results;
   }
@@ -63,7 +63,7 @@ llvm::Expected<std::unique_ptr<clang::tooling::CompilationDatabase>> LoadCompDB(
     llvm::sys::path::append(abs_file, active_file);
     auto cmds = db->get()->getCompileCommands(active_file);
     if (cmds.empty()) {
-      result.mutable_status()->set_code(::ide_query::Status::FAILURE);
+      result.mutable_status()->set_code(::cc_analyzer::Status::FAILURE);
       result.mutable_status()->set_message(
           llvm::Twine("Can't find compile flags for file: ", abs_file).str());
       continue;
@@ -80,11 +80,11 @@ llvm::Expected<std::unique_ptr<clang::tooling::CompilationDatabase>> LoadCompDB(
   return results;
 }
 
-::ide_query::IdeAnalysis GetBuildInputs(::ide_query::RepoState state) {
+::cc_analyzer::IdeAnalysis GetBuildInputs(::cc_analyzer::RepoState state) {
   auto db = LoadCompDB(state.comp_db_path());
-  ::ide_query::IdeAnalysis results;
+  ::cc_analyzer::IdeAnalysis results;
   if (!db) {
-    results.mutable_status()->set_code(::ide_query::Status::FAILURE);
+    results.mutable_status()->set_code(::cc_analyzer::Status::FAILURE);
     results.mutable_status()->set_message(llvm::toString(db.takeError()));
     return results;
   }
@@ -97,7 +97,6 @@ llvm::Expected<std::unique_ptr<clang::tooling::CompilationDatabase>> LoadCompDB(
     genfile_root_abs.push_back('/');
   }
 
-  results.set_build_artifact_root(state.out_dir());
   for (llvm::StringRef active_file : state.active_file_path()) {
     auto& result = *results.add_sources();
     result.set_path(active_file.str());
@@ -106,7 +105,7 @@ llvm::Expected<std::unique_ptr<clang::tooling::CompilationDatabase>> LoadCompDB(
     llvm::sys::path::append(abs_file, active_file);
     auto cmds = db->get()->getCompileCommands(abs_file);
     if (cmds.empty()) {
-      result.mutable_status()->set_code(::ide_query::Status::FAILURE);
+      result.mutable_status()->set_code(::cc_analyzer::Status::FAILURE);
       result.mutable_status()->set_message(
           llvm::Twine("Can't find compile flags for file: ", abs_file).str());
       continue;
@@ -114,7 +113,7 @@ llvm::Expected<std::unique_ptr<clang::tooling::CompilationDatabase>> LoadCompDB(
     const auto& cmd = cmds.front();
     llvm::StringRef working_dir = cmd.Directory;
     if (!working_dir.consume_front(repo_dir)) {
-      result.mutable_status()->set_code(::ide_query::Status::FAILURE);
+      result.mutable_status()->set_code(::cc_analyzer::Status::FAILURE);
       result.mutable_status()->set_message("Command working dir " +
                                            working_dir.str() +
                                            " outside repository " + repo_dir);
@@ -127,7 +126,7 @@ llvm::Expected<std::unique_ptr<clang::tooling::CompilationDatabase>> LoadCompDB(
     auto includes =
         ScanIncludes(cmds.front(), llvm::vfs::createPhysicalFileSystem());
     if (!includes) {
-      result.mutable_status()->set_code(::ide_query::Status::FAILURE);
+      result.mutable_status()->set_code(::cc_analyzer::Status::FAILURE);
       result.mutable_status()->set_message(
           llvm::toString(includes.takeError()));
       continue;

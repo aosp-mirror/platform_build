@@ -31,6 +31,7 @@
             "filesAnalyzed": true,
             "versionInfo": "build_finger_print",
             "supplier": "Organization: Google",
+            "licenseDeclared": "NOASSERTION",
             "packageVerificationCode": {
                 "packageVerificationCodeValue": "123456"
             },
@@ -46,7 +47,8 @@
             "downloadLocation": "NONE",
             "filesAnalyzed": false,
             "versionInfo": "build_finger_print",
-            "supplier": "Organization: Google"
+            "supplier": "Organization: Google",
+            "licenseDeclared": "LicenseRef-Android-Apache-2.0"
         },
         {
             "name": "Prebuilt package1",
@@ -54,7 +56,8 @@
             "downloadLocation": "NONE",
             "filesAnalyzed": false,
             "versionInfo": "build_finger_print",
-            "supplier": "Organization: Google"
+            "supplier": "Organization: Google",
+            "licenseDeclared": "LicenseRef-Android-License-1"
         },
         {
             "name": "Source package1",
@@ -63,6 +66,7 @@
             "filesAnalyzed": false,
             "versionInfo": "build_finger_print",
             "supplier": "Organization: Google",
+            "licenseDeclared": "LicenseRef-Android-License-2 OR LicenseRef-Android-License-3",
             "externalRefs": [
                 {
                     "referenceCategory": "SECURITY",
@@ -77,7 +81,8 @@
             "downloadLocation": "NOASSERTION",
             "filesAnalyzed": false,
             "versionInfo": "1.1",
-            "supplier": "Organization: upstream"
+            "supplier": "Organization: upstream",
+            "licenseDeclared": "LicenseRef-Android-License-2 OR LicenseRef-Android-License-3"
         }
     ],
     "files": [
@@ -89,7 +94,8 @@
                     "algorithm": "SHA1",
                     "checksumValue": "11111"
                 }
-            ]
+            ],
+            "licenseConcluded": "LicenseRef-Android-Apache-2.0"
         },
         {
             "fileName": "/bin/file2",
@@ -99,7 +105,8 @@
                     "algorithm": "SHA1",
                     "checksumValue": "22222"
                 }
-            ]
+            ],
+            "licenseConcluded": "LicenseRef-Android-License-1"
         },
         {
             "fileName": "/bin/file3",
@@ -109,7 +116,8 @@
                     "algorithm": "SHA1",
                     "checksumValue": "33333"
                 }
-            ]
+            ],
+            "licenseConcluded": "LicenseRef-Android-License-2 OR LicenseRef-Android-License-3"
         },
         {
             "fileName": "file4.a",
@@ -119,7 +127,8 @@
                     "algorithm": "SHA1",
                     "checksumValue": "44444"
                 }
-            ]
+            ],
+            "licenseConcluded": "NOASSERTION"
         }
     ],
     "relationships": [
@@ -147,6 +156,28 @@
             "spdxElementId": "SPDXRef-SOURCE-package1",
             "relatedSpdxElement": "SPDXRef-UPSTREAM-package1",
             "relationshipType": "VARIANT_OF"
+        }
+    ],
+    "hasExtractedLicensingInfos": [
+        {
+            "licenseId": "LicenseRef-Android-Apache-2.0",
+            "name": "License-Apache",
+            "extractedText": "<text>LICENSE_APACHE</text>"
+        },
+        {
+            "licenseId": "LicenseRef-Android-License-1",
+            "name": "License-1",
+            "extractedText": "<text>LICENSE 1</text>"
+        },
+        {
+            "licenseId": "LicenseRef-Android-License-2",
+            "name": "License-2",
+            "extractedText": "<text>LICENSE 2</text>"
+        },
+        {
+            "licenseId": "LicenseRef-Android-License-3",
+            "name": "License-3",
+            "extractedText": "<text>LICENSE 3</text>"
         }
     ]
 }

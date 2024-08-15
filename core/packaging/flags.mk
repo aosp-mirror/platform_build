@@ -22,57 +22,31 @@ _FLAG_PARTITIONS := product system system_ext vendor
 
 
 # -----------------------------------------------------------------
-# Release Config Flags
-
-# Create a summary file of build flags for each partition
-# $(1): built build flags json file
-# $(2): installed build flags json file
-# $(3): flag names
-define generate-partition-build-flag-file
-$(eval $(strip $(1)): PRIVATE_OUT := $(strip $(1)))
-$(eval $(strip $(1)): PRIVATE_FLAG_NAMES := $(strip $(3)))
-$(strip $(1)):
-	mkdir -p $$(dir $$(PRIVATE_OUT))
-	echo '{' > $$(PRIVATE_OUT)
-	echo '"flags": [' >> $$(PRIVATE_OUT)
-	$$(foreach flag, $$(PRIVATE_FLAG_NAMES), \
-		( \
-			printf '  { "name": "%s", "value": "%s", ' \
-					'$$(flag)' \
-					'$$(_ALL_RELEASE_FLAGS.$$(flag).VALUE)' \
-					; \
-			printf '"set": "%s", "default": "%s", "declared": "%s" }' \
-					'$$(_ALL_RELEASE_FLAGS.$$(flag).SET_IN)' \
-					'$$(_ALL_RELEASE_FLAGS.$$(flag).DEFAULT)' \
-					'$$(_ALL_RELEASE_FLAGS.$$(flag).DECLARED_IN)' \
-					; \
-			printf '$$(if $$(filter $$(lastword $$(PRIVATE_FLAG_NAMES)),$$(flag)),,$$(comma))\n' ; \
-		) >> $$(PRIVATE_OUT) ; \
-	)
-	echo "]" >> $$(PRIVATE_OUT)
-	echo "}" >> $$(PRIVATE_OUT)
-$(call copy-one-file, $(1), $(2))
-endef
-
-$(foreach partition, $(_FLAG_PARTITIONS), \
-	$(eval build_flag_summaries.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/build_flags.json) \
-	$(eval $(call generate-partition-build-flag-file, \
-				$(TARGET_OUT_FLAGS)/$(partition)/build_flags.json, \
-				$(build_flag_summaries.$(partition)), \
-				$(_ALL_RELEASE_FLAGS.PARTITIONS.$(partition)) \
-			) \
-	) \
-)
-
-
-# -----------------------------------------------------------------
 # Aconfig Flags
 
 # Create a summary file of build flags for each partition
 # $(1): built aconfig flags file (out)
 # $(2): installed aconfig flags file (out)
-# $(3): input aconfig files for the partition (in)
+# $(3): the partition (in)
+# $(4): input aconfig files for the partition (in)
 define generate-partition-aconfig-flag-file
+$(eval $(strip $(1)): PRIVATE_OUT := $(strip $(1)))
+$(eval $(strip $(1)): PRIVATE_IN := $(strip $(4)))
+$(strip $(1)): $(ACONFIG) $(strip $(4))
+	mkdir -p $$(dir $$(PRIVATE_OUT))
+	$$(if $$(PRIVATE_IN), \
+		$$(ACONFIG) dump --dedup --format protobuf --out $$(PRIVATE_OUT) \
+			--filter container:$$(strip $(3)) $$(addprefix --cache ,$$(PRIVATE_IN)), \
+		echo -n > $$(PRIVATE_OUT) \
+	)
+$(call copy-one-file, $(1), $(2))
+endef
+
+# Create a summary file of build flags for each partition
+# $(1): built aconfig flags file (out)
+# $(2): installed aconfig flags file (out)
+# $(3): input aconfig files for the partition (in)
+define generate-global-aconfig-flag-file
 $(eval $(strip $(1)): PRIVATE_OUT := $(strip $(1)))
 $(eval $(strip $(1)): PRIVATE_IN := $(strip $(3)))
 $(strip $(1)): $(ACONFIG) $(strip $(3))
@@ -91,6 +65,7 @@ $(foreach partition, $(_FLAG_PARTITIONS), \
 	$(eval $(call generate-partition-aconfig-flag-file, \
 				$(TARGET_OUT_FLAGS)/$(partition)/aconfig_flags.pb, \
 				$(aconfig_flag_summaries_protobuf.$(partition)), \
+				$(partition), \
 				$(sort $(foreach m,$(call register-names-for-partition, $(partition)), \
 					$(ALL_MODULES.$(m).ACONFIG_FILES) \
 				)), \
@@ -105,7 +80,7 @@ required_aconfig_flags_files := \
 
 .PHONY: device_aconfig_declarations
 device_aconfig_declarations: $(PRODUCT_OUT)/device_aconfig_declarations.pb
-$(eval $(call generate-partition-aconfig-flag-file, \
+$(eval $(call generate-global-aconfig-flag-file, \
 			$(TARGET_OUT_FLAGS)/device_aconfig_declarations.pb, \
 			$(PRODUCT_OUT)/device_aconfig_declarations.pb, \
 			$(sort $(required_aconfig_flags_files)) \
@@ -165,9 +140,7 @@ $(foreach partition, $(_FLAG_PARTITIONS), \
 				$(aconfig_storage_package_map.$(partition)), \
 				$(aconfig_storage_flag_map.$(partition)), \
 				$(aconfig_storage_flag_val.$(partition)), \
-				$(sort $(foreach m,$(call register-names-for-partition, $(partition)), \
-					$(ALL_MODULES.$(m).ACONFIG_FILES) \
-				)), \
+				$(aconfig_flag_summaries_protobuf.$(partition)), \
 				$(partition), \
 	)) \
 )

@@ -30,6 +30,23 @@ $(eval $(call declare-1p-copy-files,device/google_car/common,))
 $(eval $(call declare-1p-copy-files,device/google/atv,atv-component-overrides.xml))
 $(eval $(call declare-1p-copy-files,device/google/atv,tv_core_hardware.xml))
 
+# Moved here from device/google/bramble/Android.mk
+$(eval $(call declare-copy-files-license-metadata,device/google/bramble,default-permissions.xml,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/bramble,libnfc-nci.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/bramble,fstab.postinstall,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/bramble,ueventd.rc,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/bramble,wpa_supplicant.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/bramble,hals.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/bramble,media_profiles_V1_0.xml,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/bramble,media_codecs_performance.xml,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/bramble,device_state_configuration.xml,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/bramble,task_profiles.json,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/bramble,p2p_supplicant.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/bramble,wpa_supplicant.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/bramble,wpa_supplicant_overlay.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+
+$(eval $(call declare-1p-copy-files,device/google/bramble,audio_policy_configuration.xml))
+
 # Moved here from device/google/barbet/Android.mk
 $(eval $(call declare-copy-files-license-metadata,device/google/barbet,default-permissions.xml,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
 $(eval $(call declare-copy-files-license-metadata,device/google/barbet,libnfc-nci.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
@@ -65,6 +82,40 @@ $(eval $(call declare-copy-files-license-metadata,device/google/coral,display_19
 
 $(eval $(call declare-1p-copy-files,device/google/coral,audio_policy_configuration.xml))
 $(eval $(call declare-1p-copy-files,device/google/coral,display_19260504575090817.xml))
+
+# Moved here from device/google/cuttlefish/Android.mk
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,.idc,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,default-permissions.xml,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,libnfc-nci.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,fstab.postinstall,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,ueventd.rc,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,wpa_supplicant.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,hals.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,device_state_configuration.xml,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,p2p_supplicant.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,wpa_supplicant.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,wpa_supplicant_overlay.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,wpa_supplicant.rc,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,init.cutf_cvm.rc,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,fstab.cf.f2fs.hctr2,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,fstab.cf.f2fs.cts,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,fstab.cf.ext4.hctr2,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,fstab.cf.ext4.cts,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,init.rc,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish,audio_policy.conf,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
+
+$(eval $(call declare-copy-files-license-metadata,device/google/cuttlefish/shared/config,pci.ids,SPDX-license-identifier-BSD-3-Clause,notice,device/google/cuttlefish/shared/config/LICENSE_BSD,))
+
+$(eval $(call declare-1p-copy-files,device/google/cuttlefish,privapp-permissions-cuttlefish.xml))
+$(eval $(call declare-1p-copy-files,device/google/cuttlefish,media_profiles_V1_0.xml))
+$(eval $(call declare-1p-copy-files,device/google/cuttlefish,media_codecs_performance.xml))
+$(eval $(call declare-1p-copy-files,device/google/cuttlefish,cuttlefish_excluded_hardware.xml))
+$(eval $(call declare-1p-copy-files,device/google/cuttlefish,media_codecs.xml))
+$(eval $(call declare-1p-copy-files,device/google/cuttlefish,media_codecs_google_video.xml))
+$(eval $(call declare-1p-copy-files,device/google/cuttlefish,car_audio_configuration.xml))
+$(eval $(call declare-1p-copy-files,device/google/cuttlefish,audio_policy_configuration.xml))
+$(eval $(call declare-1p-copy-files,device/google/cuttlefish,preinstalled-packages-product-car-cuttlefish.xml))
+$(eval $(call declare-1p-copy-files,hardware/google/camera/devices,.json))
 
 # Moved here from device/google/gs101/Android.mk
 $(eval $(call declare-copy-files-license-metadata,device/google/gs101,default-permissions.xml,SPDX-license-identifier-Apache-2.0,notice,build/soong/licenses/LICENSE,))
@@ -147,3 +198,30 @@ $(eval $(call declare-1p-copy-files,hardware/google/camera,))
 # Moved here from hardware/interfaces/tv/Android.mk
 $(eval $(call declare-1p-copy-files,hardware/interfaces/tv,tuner_vts_config_1_0.xml))
 $(eval $(call declare-1p-copy-files,hardware/interfaces/tv,tuner_vts_config_1_1.xml))
+
+# Moved here from device/generic/goldfish/Android.mk
+$(eval $(call declare-1p-copy-files,device/generic/goldfish/data,))
+$(eval $(call declare-1p-copy-files,device/generic/goldfish/input,))
+$(eval $(call declare-1p-copy-files,device/generic/goldfish/wifi,))
+$(eval $(call declare-1p-copy-files,device/generic/goldfish/camera,))
+$(eval $(call declare-1p-copy-files,device/generic/goldfish,hals.conf))
+$(eval $(call declare-1p-copy-files,device/generic/goldfish,init.qemu-adb-keys.sh))
+$(eval $(call declare-1p-copy-files,device/generic/goldfish,init.system_ext.rc))
+$(eval $(call declare-1p-copy-files,device/generic/goldfish,.json))
+$(eval $(call declare-1p-copy-files,device/generic/goldfish,ueventd.rc))
+$(eval $(call declare-1p-copy-files,device/generic/goldfish,wpa_supplicant.conf))
+$(eval $(call declare-1p-copy-files,device/generic/goldfish,media_profiles_V1_0.xml))
+$(eval $(call declare-1p-copy-files,device/generic/goldfish,init.ranchu.rc))
+$(eval $(call declare-1p-copy-files,device/generic/goldfish,fstab.ranchu))
+$(eval $(call declare-1p-copy-files,device/generic/goldfish,display_settings.xml))
+$(eval $(call declare-1p-copy-files,device/generic/goldfish,display_settings_freeform.xml))
+$(eval $(call declare-1p-copy-files,device/generic/goldfish,device_state_configuration.xml))
+$(eval $(call declare-1p-copy-files,device/generic/goldfish,init.ranchu-core.sh))
+$(eval $(call declare-1p-copy-files,device/generic/goldfish,init.ranchu-net.sh))
+$(eval $(call declare-1p-copy-files,device/generic/goldfish,audio_policy_configuration.xml))
+
+# Moved here from packages/services/Car/Android.mk
+$(eval $(call declare-1p-copy-files,packages/services/Car,))
+
+# Moved here from hardware/libhardware_legacy/Android.mk
+$(eval $(call declare-1p-copy-files,hardware/libhardware_legacy,))

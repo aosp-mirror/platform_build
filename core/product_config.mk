@@ -280,27 +280,6 @@ endif
 
 current_product_makefile :=
 
-#############################################################################
-# Check product include tag allowlist
-BLUEPRINT_INCLUDE_TAGS_ALLOWLIST := \
-  com.android.mainline_go \
-  com.android.mainline \
-  mainline_module_prebuilt_nightly \
-  mainline_module_prebuilt_monthly_release
-.KATI_READONLY := BLUEPRINT_INCLUDE_TAGS_ALLOWLIST
-$(foreach include_tag,$(PRODUCT_INCLUDE_TAGS), \
-	$(if $(filter $(include_tag),$(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST)),,\
-	$(call pretty-error, $(include_tag) is not in BLUEPRINT_INCLUDE_TAGS_ALLOWLIST: $(BLUEPRINT_INCLUDE_TAGS_ALLOWLIST))))
-# Create default PRODUCT_INCLUDE_TAGS
-ifeq (, $(PRODUCT_INCLUDE_TAGS))
-# Soong analysis is global: even though a module might not be relevant to a specific product (e.g. build_tools for aosp_arm),
-# we still analyse it.
-# This means that in setups where we two have two prebuilts of module_sdk, we need a "default" to use in analysis
-# This should be a no-op in aosp and internal since no Android.bp file contains blueprint_package_includes
-# Use the big android one and main-based prebuilts by default
-PRODUCT_INCLUDE_TAGS += com.android.mainline mainline_module_prebuilt_nightly
-endif
-
 # AOSP and Google products currently share the same `apex_contributions` in next.
 # This causes issues when building <aosp_product>-next-userdebug in main.
 # Create a temporary allowlist to ignore the google apexes listed in `contents` of apex_contributions of `next`
@@ -331,6 +310,14 @@ endif
 # Quick check and assign default values
 
 TARGET_DEVICE := $(PRODUCT_DEVICE)
+
+# Allow overriding PLATFORM_BASE_OS when PRODUCT_BASE_OS is defined
+ifdef PRODUCT_BASE_OS
+  PLATFORM_BASE_OS := $(PRODUCT_BASE_OS)
+else
+  PLATFORM_BASE_OS := $(PLATFORM_BASE_OS_ENV_INPUT)
+endif
+.KATI_READONLY := PLATFORM_BASE_OS
 
 # TODO: also keep track of things like "port", "land" in product files.
 
@@ -424,6 +411,10 @@ ifndef PRODUCT_CHARACTERISTICS
   TARGET_AAPT_CHARACTERISTICS := default
 else
   TARGET_AAPT_CHARACTERISTICS := $(PRODUCT_CHARACTERISTICS)
+endif
+
+ifndef PRODUCT_SHIPPING_API_LEVEL
+  PRODUCT_SHIPPING_API_LEVEL := 10000
 endif
 
 ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
@@ -578,10 +569,25 @@ ifdef PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS
 endif
 
 # This table maps sdk version 35 to vendor api level 202404 and assumes yearly
-# release for the same month.
+# release for the same month. If 10000 API level or more is used, which usually
+# represents 'current' or 'future' API levels, several zeros are added to
+# preserve ordering. Specifically API level 10,000 is converted to 10,000,000
+# which importantly is greater than 202404 = 202,404. This convention will break
+# in 100,000 CE, which is the closest multiple of 10 that doesn't break earlier
+# than 10,000 as an API level breaks.
 define sdk-to-vendor-api-level
-  $(if $(call math_lt_or_eq,$(1),34),$(1),20$(call int_subtract,$(1),11)04)
+$(if $(call math_lt_or_eq,$(1),34),$(1),$(if $(call math_lt,$(1),10000),20$(call int_subtract,$(1),11)04,$(1)000))
 endef
+
+ifneq ($(call sdk-to-vendor-api-level,34),34)
+$(error sdk-to-vendor-api-level is broken for pre-Trunk-Stable SDKs)
+endif
+ifneq ($(call sdk-to-vendor-api-level,35),202404)
+$(error sdk-to-vendor-api-level is broken for post-Trunk-Stable SDKs)
+endif
+ifneq ($(call sdk-to-vendor-api-level,10000),10000000)
+$(error sdk-to-vendor-api-level is broken for current $(call sdk-to-vendor-api-level,10000))
+endif
 
 ifdef PRODUCT_SHIPPING_VENDOR_API_LEVEL
 # Follow the version that is set manually.

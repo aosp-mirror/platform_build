@@ -194,18 +194,21 @@ mod ffi {
     // Flag value update return for cc interlop
     pub struct BooleanFlagValueUpdateCXX {
         pub update_success: bool,
+        pub offset: usize,
         pub error_message: String,
     }
 
     // Flag has server override update return for cc interlop
     pub struct FlagHasServerOverrideUpdateCXX {
         pub update_success: bool,
+        pub offset: usize,
         pub error_message: String,
     }
 
     // Flag has local override update return for cc interlop
     pub struct FlagHasLocalOverrideUpdateCXX {
         pub update_success: bool,
+        pub offset: usize,
         pub error_message: String,
     }
 
@@ -251,11 +254,14 @@ pub(crate) fn update_boolean_flag_value_cxx(
     value: bool,
 ) -> ffi::BooleanFlagValueUpdateCXX {
     match crate::flag_value_update::update_boolean_flag_value(file, offset, value) {
-        Ok(()) => {
-            ffi::BooleanFlagValueUpdateCXX { update_success: true, error_message: String::from("") }
-        }
+        Ok(head) => ffi::BooleanFlagValueUpdateCXX {
+            update_success: true,
+            offset: head,
+            error_message: String::from(""),
+        },
         Err(errmsg) => ffi::BooleanFlagValueUpdateCXX {
             update_success: false,
+            offset: usize::MAX,
             error_message: format!("{:?}", errmsg),
         },
     }
@@ -272,18 +278,21 @@ pub(crate) fn update_flag_has_server_override_cxx(
             match crate::flag_info_update::update_flag_has_server_override(
                 file, value_type, offset, value,
             ) {
-                Ok(()) => ffi::FlagHasServerOverrideUpdateCXX {
+                Ok(head) => ffi::FlagHasServerOverrideUpdateCXX {
                     update_success: true,
+                    offset: head,
                     error_message: String::from(""),
                 },
                 Err(errmsg) => ffi::FlagHasServerOverrideUpdateCXX {
                     update_success: false,
+                    offset: usize::MAX,
                     error_message: format!("{:?}", errmsg),
                 },
             }
         }
         Err(errmsg) => ffi::FlagHasServerOverrideUpdateCXX {
             update_success: false,
+            offset: usize::MAX,
             error_message: format!("{:?}", errmsg),
         },
     }
@@ -300,18 +309,21 @@ pub(crate) fn update_flag_has_local_override_cxx(
             match crate::flag_info_update::update_flag_has_local_override(
                 file, value_type, offset, value,
             ) {
-                Ok(()) => ffi::FlagHasLocalOverrideUpdateCXX {
+                Ok(head) => ffi::FlagHasLocalOverrideUpdateCXX {
                     update_success: true,
+                    offset: head,
                     error_message: String::from(""),
                 },
                 Err(errmsg) => ffi::FlagHasLocalOverrideUpdateCXX {
                     update_success: false,
+                    offset: usize::MAX,
                     error_message: format!("{:?}", errmsg),
                 },
             }
         }
         Err(errmsg) => ffi::FlagHasLocalOverrideUpdateCXX {
             update_success: false,
+            offset: usize::MAX,
             error_message: format!("{:?}", errmsg),
         },
     }

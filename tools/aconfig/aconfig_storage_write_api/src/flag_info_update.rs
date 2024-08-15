@@ -67,13 +67,13 @@ pub fn update_flag_has_server_override(
     flag_type: FlagValueType,
     flag_index: u32,
     value: bool,
-) -> Result<(), AconfigStorageError> {
+) -> Result<usize, AconfigStorageError> {
     let (attribute, head) = get_flag_attribute_and_offset(buf, flag_type, flag_index)?;
     let has_override = (attribute & (FlagInfoBit::HasServerOverride as u8)) != 0;
     if has_override != value {
         buf[head] = (attribute ^ FlagInfoBit::HasServerOverride as u8).to_le_bytes()[0];
     }
-    Ok(())
+    Ok(head)
 }
 
 /// Set if flag has local override
@@ -82,13 +82,13 @@ pub fn update_flag_has_local_override(
     flag_type: FlagValueType,
     flag_index: u32,
     value: bool,
-) -> Result<(), AconfigStorageError> {
+) -> Result<usize, AconfigStorageError> {
     let (attribute, head) = get_flag_attribute_and_offset(buf, flag_type, flag_index)?;
     let has_override = (attribute & (FlagInfoBit::HasLocalOverride as u8)) != 0;
     if has_override != value {
         buf[head] = (attribute ^ FlagInfoBit::HasLocalOverride as u8).to_le_bytes()[0];
     }
-    Ok(())
+    Ok(head)
 }
 
 #[cfg(test)]

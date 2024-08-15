@@ -50,13 +50,6 @@ endef
 # Release config
 include $(BUILD_SYSTEM)/release_config.mk
 
-# Set default value of KEEP_VNDK.
-ifeq ($(RELEASE_DEPRECATE_VNDK),true)
-  KEEP_VNDK ?= false
-else
-  KEEP_VNDK ?= true
-endif
-
 # ---------------------------------------------------------------
 # Set up version information
 include $(BUILD_SYSTEM)/version_util.mk
@@ -82,7 +75,7 @@ CORRECT_BUILD_ENV_SEQUENCE_NUMBER := 13
 # ---------------------------------------------------------------
 # The product defaults to generic on hardware
 ifeq ($(TARGET_PRODUCT),)
-TARGET_PRODUCT := aosp_arm
+TARGET_PRODUCT := aosp_arm64
 endif
 
 
