@@ -96,6 +96,7 @@ python_defaults {
     ],
     libs: [
         "apex_manifest",
+        "releasetools_apex_utils",
         "releasetools_common",
     ],
     required: [
