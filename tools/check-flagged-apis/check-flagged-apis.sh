@@ -14,8 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Run check-flagged-apis for public APIs and the three @SystemApi flavours
-# Usage: lunch <your-target> && source <this script>
+# Run check-flagged-apis for public APIs and the three @SystemApi flavours.
+#
+# This script expects an argument to tell it which subcommand of
+# check-flagged-apis to execute. Run the script without any arguments to see
+# the valid options.
+#
+# Remember to lunch to select the relevant release config before running this script.
 
 source $(cd $(dirname $BASH_SOURCE) &> /dev/null && pwd)/../../shell_utils.sh
 require_top
@@ -43,6 +48,10 @@ function build() {
         $MODULE_LIB_XML_VERSIONS
 }
 
+function noop() {
+    true
+}
+
 function aninja() {
     local T="$(gettop)"
     (\cd "${T}" && prebuilts/build-tools/linux-x86/bin/ninja -f out/combined-${TARGET_PRODUCT}.ninja "$@")
@@ -52,11 +61,11 @@ function path_to_api_signature_file {
     aninja -t query device_"$1"_all_targets | grep -A1 -e input: | tail -n1
 }
 
-function run() {
+function run_check() {
     local errors=0
 
     echo "# current"
-    check-flagged-apis \
+    check-flagged-apis check \
         --api-signature $(path_to_api_signature_file "frameworks-base-api-current.txt") \
         --flag-values $(gettop)/out/soong/.intermediates/all_aconfig_declarations.pb \
         --api-versions $PUBLIC_XML_VERSIONS
@@ -64,7 +73,7 @@ function run() {
 
     echo
     echo "# system-current"
-    check-flagged-apis \
+    check-flagged-apis check \
         --api-signature $(path_to_api_signature_file "frameworks-base-api-system-current.txt") \
         --flag-values $(gettop)/out/soong/.intermediates/all_aconfig_declarations.pb \
         --api-versions $SYSTEM_XML_VERSIONS
@@ -72,7 +81,7 @@ function run() {
 
     echo
     echo "# system-server-current"
-    check-flagged-apis \
+    check-flagged-apis check \
         --api-signature $(path_to_api_signature_file "frameworks-base-api-system-server-current.txt") \
         --flag-values $(gettop)/out/soong/.intermediates/all_aconfig_declarations.pb \
         --api-versions $SYSTEM_SERVER_XML_VERSONS
@@ -80,7 +89,7 @@ function run() {
 
     echo
     echo "# module-lib"
-    check-flagged-apis \
+    check-flagged-apis check \
         --api-signature $(path_to_api_signature_file "frameworks-base-api-module-lib-current.txt") \
         --flag-values $(gettop)/out/soong/.intermediates/all_aconfig_declarations.pb \
         --api-versions $MODULE_LIB_XML_VERSIONS
@@ -89,8 +98,39 @@ function run() {
     return $errors
 }
 
-if [[ "$1" != "--skip-build" ]]; then
-    build && run
-else
-    run
+function run_list() {
+    echo "# current"
+    check-flagged-apis list \
+        --api-signature $(path_to_api_signature_file "frameworks-base-api-current.txt") \
+        --flag-values $(gettop)/out/soong/.intermediates/all_aconfig_declarations.pb
+
+    echo
+    echo "# system-current"
+    check-flagged-apis list \
+        --api-signature $(path_to_api_signature_file "frameworks-base-api-system-current.txt") \
+        --flag-values $(gettop)/out/soong/.intermediates/all_aconfig_declarations.pb
+
+    echo
+    echo "# system-server-current"
+    check-flagged-apis list \
+        --api-signature $(path_to_api_signature_file "frameworks-base-api-system-server-current.txt") \
+        --flag-values $(gettop)/out/soong/.intermediates/all_aconfig_declarations.pb
+
+    echo
+    echo "# module-lib"
+    check-flagged-apis list \
+        --api-signature $(path_to_api_signature_file "frameworks-base-api-module-lib-current.txt") \
+        --flag-values $(gettop)/out/soong/.intermediates/all_aconfig_declarations.pb
+}
+
+build_cmd=build
+if [[ "$1" == "--skip-build" ]]; then
+    build_cmd=noop
+    shift 1
 fi
+
+case "$1" in
+    check) $build_cmd && run_check ;;
+    list) $build_cmd && run_list ;;
+    *) echo "usage: $(basename $0): [--skip-build] check|list"; exit 1
+esac

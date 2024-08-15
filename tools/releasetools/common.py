@@ -907,9 +907,10 @@ def LoadInfoDict(input_file, repacking=False):
     d["root_fs_config"] = os.path.join(
         input_file, "META", "root_filesystem_config.txt")
 
+    partitions = ["system", "vendor", "system_ext", "product", "odm",
+                  "vendor_dlkm", "odm_dlkm", "system_dlkm"]
     # Redirect {partition}_base_fs_file for each of the named partitions.
-    for part_name in ["system", "vendor", "system_ext", "product", "odm",
-                      "vendor_dlkm", "odm_dlkm", "system_dlkm"]:
+    for part_name in partitions:
       key_name = part_name + "_base_fs_file"
       if key_name not in d:
         continue
@@ -921,6 +922,25 @@ def LoadInfoDict(input_file, repacking=False):
         logger.warning(
             "Failed to find %s base fs file: %s", part_name, base_fs_file)
         del d[key_name]
+
+    # Redirecting helper for optional properties like erofs_compress_hints
+    def redirect_file(prop, filename):
+      if prop not in d:
+        return
+      config_file = os.path.join(input_file, "META/" + filename)
+      if os.path.exists(config_file):
+        d[prop] = config_file
+      else:
+        logger.warning(
+            "Failed to find %s fro %s", filename, prop)
+        del d[prop]
+
+    # Redirect erofs_[default_]compress_hints files
+    redirect_file("erofs_default_compress_hints",
+                  "erofs_default_compress_hints.txt")
+    for part in partitions:
+      redirect_file(part + "_erofs_compress_hints",
+                    part + "_erofs_compress_hints.txt")
 
   def makeint(key):
     if key in d:
@@ -1784,12 +1804,7 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file,
   if has_ramdisk:
     cmd.extend(["--ramdisk", ramdisk_img.name])
 
-  img_unsigned = None
-  if info_dict.get("vboot"):
-    img_unsigned = tempfile.NamedTemporaryFile()
-    cmd.extend(["--output", img_unsigned.name])
-  else:
-    cmd.extend(["--output", img.name])
+  cmd.extend(["--output", img.name])
 
   if partition_name == "recovery":
     if info_dict.get("include_recovery_dtbo") == "true":
@@ -1800,28 +1815,6 @@ def _BuildBootableImage(image_name, sourcedir, fs_config_file,
       cmd.extend(["--recovery_acpio", fn])
 
   RunAndCheckOutput(cmd)
-
-  # Sign the image if vboot is non-empty.
-  if info_dict.get("vboot"):
-    path = "/" + partition_name
-    img_keyblock = tempfile.NamedTemporaryFile()
-    # We have switched from the prebuilt futility binary to using the tool
-    # (futility-host) built from the source. Override the setting in the old
-    # TF.zip.
-    futility = info_dict["futility"]
-    if futility.startswith("prebuilts/"):
-      futility = "futility-host"
-    cmd = [info_dict["vboot_signer_cmd"], futility,
-           img_unsigned.name, info_dict["vboot_key"] + ".vbpubk",
-           info_dict["vboot_key"] + ".vbprivk",
-           info_dict["vboot_subkey"] + ".vbprivk",
-           img_keyblock.name,
-           img.name]
-    RunAndCheckOutput(cmd)
-
-    # Clean up the temp files.
-    img_unsigned.close()
-    img_keyblock.close()
 
   # AVB: if enabled, calculate and add hash to boot.img or recovery.img.
   if info_dict.get("avb_enable") == "true":
@@ -2461,12 +2454,23 @@ def GetMinSdkVersion(apk_name):
         "Failed to obtain minSdkVersion for {}: aapt2 return code {}:\n{}\n{}".format(
             apk_name, proc.returncode, stdoutdata, stderrdata))
 
+  is_split_apk = False
   for line in stdoutdata.split("\n"):
+    # See b/353837347 , split APKs do not have sdk version defined,
+    # so we default to 21 as split APKs are only supported since SDK
+    # 21.
+    if (re.search(r"split=[\"'].*[\"']", line)):
+      is_split_apk = True
     # Due to ag/24161708, looking for lines such as minSdkVersion:'23',minSdkVersion:'M'
     # or sdkVersion:'23', sdkVersion:'M'.
     m = re.match(r'(?:minSdkVersion|sdkVersion):\'([^\']*)\'', line)
     if m:
       return m.group(1)
+  if is_split_apk:
+    logger.info("%s is a split APK, it does not have minimum SDK version"
+                " defined. Defaulting to 21 because split APK isn't supported"
+                " before that.", apk_name)
+    return 21
   raise ExternalError("No minSdkVersion returned by aapt2 for apk: {}".format(apk_name))
 
 
@@ -2815,6 +2819,7 @@ def ParseOptions(argv,
             break
         elif handler(o, a):
           success = True
+          break
       if not success:
         raise ValueError("unknown option \"%s\"" % (o,))
 

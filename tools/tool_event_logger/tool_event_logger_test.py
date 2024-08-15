@@ -25,6 +25,7 @@ from tool_event_logger import tool_event_logger
 
 TEST_INVOCATION_ID = 'test_invocation_id'
 TEST_USER_NAME = 'test_user'
+TEST_HOST_NAME = 'test_host_name'
 TEST_TOOL_TAG = 'test_tool'
 TEST_SOURCE_ROOT = 'test_source_root'
 TEST_PLATFORM_VERSION = 'test_platform_version'
@@ -41,6 +42,7 @@ class ToolEventLoggerTest(unittest.TestCase):
         TEST_TOOL_TAG,
         TEST_INVOCATION_ID,
         TEST_USER_NAME,
+        TEST_HOST_NAME,
         TEST_SOURCE_ROOT,
         TEST_PLATFORM_VERSION,
         TEST_PYTHON_VERSION,
@@ -65,6 +67,7 @@ class ToolEventLoggerTest(unittest.TestCase):
     log_event = tool_event_pb2.ToolEvent.FromString(sent_event.source_extension)
     self.assertEqual(log_event.invocation_id, TEST_INVOCATION_ID)
     self.assertEqual(log_event.user_name, TEST_USER_NAME)
+    self.assertEqual(log_event.host_name, TEST_HOST_NAME)
     self.assertEqual(log_event.tool_tag, TEST_TOOL_TAG)
     self.assertEqual(log_event.source_root, TEST_SOURCE_ROOT)
 

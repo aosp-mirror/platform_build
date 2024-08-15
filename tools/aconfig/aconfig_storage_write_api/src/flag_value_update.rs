@@ -24,7 +24,7 @@ pub fn update_boolean_flag_value(
     buf: &mut [u8],
     flag_index: u32,
     flag_value: bool,
-) -> Result<(), AconfigStorageError> {
+) -> Result<usize, AconfigStorageError> {
     let interpreted_header = FlagValueHeader::from_bytes(buf)?;
     if interpreted_header.version > FILE_VERSION {
         return Err(AconfigStorageError::HigherStorageFileVersion(anyhow!(
@@ -43,7 +43,7 @@ pub fn update_boolean_flag_value(
     }
 
     buf[head] = u8::from(flag_value).to_le_bytes()[0];
-    Ok(())
+    Ok(head)
 }
 
 #[cfg(test)]

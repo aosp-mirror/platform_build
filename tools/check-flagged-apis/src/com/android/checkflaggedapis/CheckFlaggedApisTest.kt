@@ -358,4 +358,23 @@ class CheckFlaggedApisTest {
             parseApiVersions(API_VERSIONS.byteInputStream()))
     assertEquals(expected, actual)
   }
+
+  @Test
+  fun testListFlaggedApis() {
+    val expected =
+        listOf(
+            "android.flag.bar DISABLED android/Clazz/Builder",
+            "android.flag.foo ENABLED android/Clazz",
+            "android.flag.foo ENABLED android/Clazz/Clazz()",
+            "android.flag.foo ENABLED android/Clazz/FOO",
+            "android.flag.foo ENABLED android/Clazz/getErrorCode()",
+            "android.flag.foo ENABLED android/Clazz/innerClassArg(Landroid/Clazz/Builder;)",
+            "android.flag.foo ENABLED android/Clazz/setData(I[[ILandroid/util/Utility;)",
+            "android.flag.foo ENABLED android/Clazz/setVariableData(I[Landroid/util/Atom;)")
+    val actual =
+        listFlaggedApis(
+            parseApiSignature("in-memory", API_SIGNATURE.byteInputStream()),
+            parseFlagValues(generateFlagsProto(ENABLED, DISABLED)))
+    assertEquals(expected, actual)
+  }
 }

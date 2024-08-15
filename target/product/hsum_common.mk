@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015 The Android Open Source Project
+# Copyright (C) 2024 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,12 +14,16 @@
 # limitations under the License.
 #
 
-# Provides dependencies necessary for verified boot
+# Contains common default elements for devices running in Headless System User Mode.
 
-PRODUCT_SUPPORTS_VBOOT := true
+# Should generally be inherited first as using an HSUM configuration can affect downstream choices
+# (such as ensuring that the HSUM-variants of packages are selected).
 
-# The dev key is used to sign boot and recovery images.
-# We expect this file to exist with the suffixes ".vbprivk" and ".vbpupk".
-# TODO: find a proper location for this
-PRODUCT_VBOOT_SIGNING_KEY := external/vboot_reference/tests/devkeys/kernel_data_key
-PRODUCT_VBOOT_SIGNING_SUBKEY := external/vboot_reference/tests/devkeys/kernel_subkey
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    ro.fw.mu.headless_system_user=true
+
+# Variable for elsewhere choosing the appropriate products based on HSUM status.
+PRODUCT_USE_HSUM := true
+
+PRODUCT_PACKAGES += \
+    HsumDefaultConfigOverlay
