@@ -1052,6 +1052,35 @@ $(INSTALLED_DTBIMAGE_TARGET) : $(sort $(wildcard $(BOARD_PREBUILT_DTBIMAGE_DIR)/
 endif
 endif
 
+
+# -----------------------------------------------------------------
+# dtbo image
+ifdef BOARD_PREBUILT_DTBOIMAGE
+INSTALLED_DTBOIMAGE_TARGET := $(PRODUCT_OUT)/dtbo.img
+
+ifeq ($(BOARD_AVB_ENABLE),true)
+$(INSTALLED_DTBOIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE) $(AVBTOOL) $(BOARD_AVB_DTBO_KEY_PATH)
+	cp $(BOARD_PREBUILT_DTBOIMAGE) $@
+	chmod +w $@
+	$(AVBTOOL) add_hash_footer \
+	    --image $@ \
+	    $(call get-partition-size-argument,$(BOARD_DTBOIMG_PARTITION_SIZE)) \
+	    --partition_name dtbo $(INTERNAL_AVB_DTBO_SIGNING_ARGS) \
+	    $(BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS)
+
+$(call declare-1p-container,$(INSTALLED_DTBOIMAGE_TARGET),)
+$(call declare-container-license-deps,$(INSTALLED_DTBOIMAGE_TARGET),$(BOARD_PREBUILT_DTBOIMAGE),$(PRODUCT_OUT)/:/)
+
+UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_DTBOIMAGE_TARGET)
+else
+$(INSTALLED_DTBOIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE)
+	cp $(BOARD_PREBUILT_DTBOIMAGE) $@
+endif
+
+endif # BOARD_PREBUILT_DTBOIMAGE
+
+# -----------------------------------------------------------------
+
 # -----------------------------------------------------------------
 # the ramdisk
 INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_RAMDISK_OUT)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
@@ -1075,6 +1104,16 @@ $(eval $(call declare-0p-target,$(INSTALLED_FILES_JSON_RAMDISK)))
 
 BUILT_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
 
+ifeq ($(BOARD_RAMDISK_USE_LZ4),true)
+# -l enables the legacy format used by the Linux kernel
+COMPRESSION_COMMAND_DEPS := $(LZ4)
+COMPRESSION_COMMAND := $(LZ4) -l -12 --favor-decSpeed
+RAMDISK_EXT := .lz4
+else
+COMPRESSION_COMMAND_DEPS := $(GZIP)
+COMPRESSION_COMMAND := $(GZIP)
+RAMDISK_EXT := .gz
+endif
 
 ifneq ($(BOARD_KERNEL_MODULES_16K),)
 
@@ -1154,34 +1193,6 @@ ramdisk_16k: $(BUILT_RAMDISK_16K_TARGET)
 endif
 
 # -----------------------------------------------------------------
-# dtbo image
-ifdef BOARD_PREBUILT_DTBOIMAGE
-INSTALLED_DTBOIMAGE_TARGET := $(PRODUCT_OUT)/dtbo.img
-
-ifeq ($(BOARD_AVB_ENABLE),true)
-$(INSTALLED_DTBOIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE) $(AVBTOOL) $(BOARD_AVB_DTBO_KEY_PATH)
-	cp $(BOARD_PREBUILT_DTBOIMAGE) $@
-	chmod +w $@
-	$(AVBTOOL) add_hash_footer \
-	    --image $@ \
-	    $(call get-partition-size-argument,$(BOARD_DTBOIMG_PARTITION_SIZE)) \
-	    --partition_name dtbo $(INTERNAL_AVB_DTBO_SIGNING_ARGS) \
-	    $(BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS)
-
-$(call declare-1p-container,$(INSTALLED_DTBOIMAGE_TARGET),)
-$(call declare-container-license-deps,$(INSTALLED_DTBOIMAGE_TARGET),$(BOARD_PREBUILT_DTBOIMAGE),$(PRODUCT_OUT)/:/)
-
-UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_DTBOIMAGE_TARGET)
-else
-$(INSTALLED_DTBOIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE)
-	cp $(BOARD_PREBUILT_DTBOIMAGE) $@
-endif
-
-endif # BOARD_PREBUILT_DTBOIMAGE
-
-# -----------------------------------------------------------------
-
-# -----------------------------------------------------------------
 # 16KB dtbo image
 ifdef BOARD_PREBUILT_DTBOIMAGE_16KB
 INSTALLED_DTBOIMAGE_16KB_TARGET := $(PRODUCT_OUT)/dtbo_16k.img
@@ -1256,17 +1267,6 @@ boototapackage_16k: $(BUILT_BOOT_OTA_PACKAGE_16K)
 
 endif
 
-
-ifeq ($(BOARD_RAMDISK_USE_LZ4),true)
-# -l enables the legacy format used by the Linux kernel
-COMPRESSION_COMMAND_DEPS := $(LZ4)
-COMPRESSION_COMMAND := $(LZ4) -l -12 --favor-decSpeed
-RAMDISK_EXT := .lz4
-else
-COMPRESSION_COMMAND_DEPS := $(GZIP)
-COMPRESSION_COMMAND := $(GZIP)
-RAMDISK_EXT := .gz
-endif
 
 # This file contains /dev nodes description added to the generic ramdisk
 RAMDISK_NODE_LIST := $(PRODUCT_OUT)/ramdisk_node_list
@@ -3557,6 +3557,24 @@ define build-systemimage-target
 endef
 
 $(eval $(call write-partition-file-list,$(systemimage_intermediates)/file_list.txt,$(TARGET_OUT),$(FULL_SYSTEMIMAGE_DEPS)))
+
+ifneq ($(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE),)
+file_list_diff := $(HOST_OUT_EXECUTABLES)/file_list_diff$(HOST_EXECUTABLE_SUFFIX)
+system_file_diff_timestamp := $(systemimage_intermediates)/file_diff.timestamp
+
+$(system_file_diff_timestamp): \
+	    $(systemimage_intermediates)/file_list.txt \
+	    $(ALL_MODULES.$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE).FILESYSTEM_FILELIST) \
+	    $(ALL_MODULES.system_image_diff_allowlist.INSTALLED) \
+	    $(file_list_diff)
+	$(file_list_diff) $(systemimage_intermediates)/file_list.txt \
+	  $(ALL_MODULES.$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE).FILESYSTEM_FILELIST) \
+	  $(ALL_MODULES.system_image_diff_allowlist.INSTALLED) $(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE)
+	touch $@
+
+$(BUILT_SYSTEMIMAGE): $(system_file_diff_timestamp)
+endif
+
 # Used by soong sandwich to request the staging dir be built
 $(systemimage_intermediates)/staging_dir.stamp: $(filter $(TARGET_OUT)/%,$(FULL_SYSTEMIMAGE_DEPS))
 	touch $@
@@ -3564,8 +3582,19 @@ $(systemimage_intermediates)/staging_dir.stamp: $(filter $(TARGET_OUT)/%,$(FULL_
 ifeq ($(BOARD_AVB_ENABLE),true)
 $(BUILT_SYSTEMIMAGE): $(BOARD_AVB_SYSTEM_KEY_PATH)
 endif
+
+ifeq ($(USE_SOONG_DEFINED_SYSTEM_IMAGE),true)
+ifeq ($(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE),)
+$(error PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE must be set if USE_SOONG_DEFINED_SYSTEM_IMAGE is true)
+endif
+soong_defined_system_image := $(call intermediates-dir-for,ETC,$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE))/$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE)
+$(BUILT_SYSTEMIMAGE): $(INSTALLED_FILES_FILE) $(systemimage_intermediates)/file_list.txt $(soong_defined_system_image)
+$(eval $(call copy-one-file, $(soong_defined_system_image), $(BUILT_SYSTEMIMAGE)))
+soong_defined_system_image :=
+else
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE) $(systemimage_intermediates)/file_list.txt
 	$(call build-systemimage-target,$@)
+endif
 
 $(call declare-1p-container,$(BUILT_SYSTEMIMAGE),system/extras)
 $(call declare-container-license-deps,$(BUILT_SYSTEMIMAGE),$(FULL_SYSTEMIMAGE_DEPS),$(PRODUCT_OUT)/:/)
@@ -5107,6 +5136,7 @@ apex_dirs := \
   $(TARGET_OUT)/apex/% \
   $(TARGET_OUT_SYSTEM_EXT)/apex/% \
   $(TARGET_OUT_VENDOR)/apex/% \
+  $(TARGET_OUT_ODM)/apex/% \
   $(TARGET_OUT_PRODUCT)/apex/% \
 
 apex_files := $(sort $(filter $(apex_dirs), $(INTERNAL_ALLIMAGES_FILES)))
@@ -5159,6 +5189,7 @@ apex_dirs := \
   $(TARGET_OUT_PRODUCT)/apex/% \
   $(TARGET_OUT_SYSTEM_EXT)/apex/% \
   $(TARGET_OUT_VENDOR)/apex/% \
+  $(TARGET_OUT_ODM)/apex/% \
 
 apex_files := $(sort $(filter $(apex_dirs), $(INTERNAL_ALLIMAGES_FILES)))
 
@@ -5177,6 +5208,7 @@ $(APEX_INFO_FILE): $(HOST_OUT_EXECUTABLES)/apexd_host $(apex_files)
 	   --system_ext_path $(TARGET_OUT_SYSTEM_EXT) \
 	   --product_path $(TARGET_OUT_PRODUCT) \
 	   --vendor_path $(TARGET_OUT_VENDOR) \
+	   --odm_path $(TARGET_OUT_ODM) \
 	   --apex_path $(APEX_OUT)
 
 apex_files :=
@@ -6854,6 +6886,33 @@ ifdef BOARD_KERNEL_PAGESIZE
 	$(hide) echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/INIT_BOOT/pagesize
 endif # BOARD_KERNEL_PAGESIZE
 endif # BUILDING_INIT_BOOT_IMAGE
+ifdef BOARD_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_EROFS_COMPRESS_HINTS) $(zip_root)/META/erofs_default_compress_hints.txt
+endif
+ifdef BOARD_SYSTEMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_SYSTEMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/system_erofs_compress_hints.txt
+endif
+ifdef BOARD_SYSTEM_EXTIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_SYSTEM_EXTIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/system_ext_erofs_compress_hints.txt
+endif
+ifdef BOARD_PRODUCTIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_PRODUCTIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/product_erofs_compress_hints.txt
+endif
+ifdef BOARD_VENDORIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_VENDORIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/vendor_erofs_compress_hints.txt
+endif
+ifdef BOARD_ODMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_ODMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/odm_erofs_compress_hints.txt
+endif
+ifdef BOARD_VENDOR_DLKMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_VENDOR_DLKMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/vendor_dlkm_erofs_compress_hints.txt
+endif
+ifdef BOARD_ODM_DLKMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_ODM_DLKMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/odm_dlkm_erofs_compress_hints.txt
+endif
+ifdef BOARD_SYSTEM_DLKMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_SYSTEM_DLKMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/system_dlkm_erofs_compress_hints.txt
+endif
 ifneq ($(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
 	$(call fs_config,$(zip_root)/VENDOR_BOOT/RAMDISK,) > $(zip_root)/META/vendor_boot_filesystem_config.txt
 endif
@@ -7833,6 +7892,53 @@ $(call dist-for-goals,haiku-presubmit,$(SOONG_PRESUBMIT_FUZZ_PACKAGING_ARCH_MODU
 # Extract platform fonts used in Layoutlib
 include $(BUILD_SYSTEM)/layoutlib_data.mk
 
+# -----------------------------------------------------------------
+# Desktop pack common variables.
+PACK_IMAGE_SCRIPT := $(HOST_OUT_EXECUTABLES)/pack_image
+IMAGES := $(INSTALLED_BOOTIMAGE_TARGET) \
+	$(INSTALLED_SUPERIMAGE_TARGET) \
+	$(INSTALLED_INIT_BOOT_IMAGE_TARGET) \
+	$(INSTALLED_VENDOR_BOOTIMAGE_TARGET) \
+	$(INSTALLED_VBMETAIMAGE_TARGET) \
+	$(INSTALLED_USERDATAIMAGE_TARGET)
+
+# -----------------------------------------------------------------
+# Desktop pack image hook.
+ifneq (,$(strip $(PACK_DESKTOP_FILESYSTEM_IMAGES)))
+PACK_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_image.bin
+
+$(PACK_IMAGE_TARGET): $(IMAGES) $(PACK_IMAGE_SCRIPT)
+	$(PACK_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) --noarchive
+
+PACKED_IMAGE_ARCHIVE_TARGET := $(PACK_IMAGE_TARGET).gz
+
+$(PACKED_IMAGE_ARCHIVE_TARGET): $(PACK_IMAGE_TARGET) | $(GZIP)
+	$(GZIP) -fk $(PACK_IMAGE_TARGET)
+
+droidcore-unbundled: $(PACKED_IMAGE_ARCHIVE_TARGET)
+
+$(call dist-for-goals,dist_files,$(PACKED_IMAGE_ARCHIVE_TARGET))
+
+endif # PACK_DESKTOP_FILESYSTEM_IMAGES
+
+# -----------------------------------------------------------------
+# Desktop pack recovery image hook.
+ifneq (,$(strip $(PACK_DESKTOP_RECOVERY_IMAGE)))
+PACK_RECOVERY_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_recovery_image.bin
+
+$(PACK_RECOVERY_IMAGE_TARGET): $(IMAGES) $(PACK_IMAGE_SCRIPT)
+	$(PACK_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) --noarchive --recovery
+
+PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET := $(PACK_RECOVERY_IMAGE_TARGET).gz
+
+$(PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET): $(PACK_RECOVERY_IMAGE_TARGET) | $(GZIP)
+	$(GZIP) -fk $(PACK_RECOVERY_IMAGE_TARGET)
+
+droidcore-unbundled: $(PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET)
+
+$(call dist-for-goals,dist_files,$(PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET))
+
+endif # PACK_DESKTOP_RECOVERY_IMAGE
 
 # -----------------------------------------------------------------
 # OS Licensing

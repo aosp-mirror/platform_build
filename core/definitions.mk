@@ -2584,7 +2584,28 @@ define dump-words-to-file
         @$(call emit-line,$(wordlist 98001,98500,$(1)),$(2))
         @$(call emit-line,$(wordlist 98501,99000,$(1)),$(2))
         @$(call emit-line,$(wordlist 99001,99500,$(1)),$(2))
-        @$(if $(wordlist 99501,99502,$(1)),$(error dump-words-to-file: Too many words ($(words $(1)))))
+        @$(call emit-line,$(wordlist 99501,100000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 100001,100500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 100501,101000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 101001,101500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 101501,102000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 102001,102500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 102501,103000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 103001,103500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 103501,104000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 104001,104500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 104501,105000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 105001,105500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 105501,106000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 106001,106500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 106501,107000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 107001,107500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 107501,108000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 108001,108500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 108501,109000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 109001,109500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 109501,110000,$(1)),$(2))
+        @$(if $(wordlist 110001,110002,$(1)),$(error dump-words-to-file: Too many words ($(words $(1)))))
 endef
 # Return jar arguments to compress files in a given directory
 # $(1): directory
@@ -3591,6 +3612,7 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
     $$(foreach f,$$(my_compat_dist_$(suite)),$$(call word-colon,2,$$(f))) \
     $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(call word-colon,2,$$(f))) \
     $$(my_compat_dist_test_data_$(suite))) \
+  $(eval COMPATIBILITY.$(suite).ARCH_DIRS.$(my_register_name) := $(my_compat_module_arch_dir_$(suite).$(my_register_name))) \
   $(eval COMPATIBILITY.$(suite).API_MAP_FILES += $$(my_compat_api_map_$(suite))) \
   $(eval COMPATIBILITY.$(suite).SOONG_INSTALLED_COMPATIBILITY_SUPPORT_FILES += $(LOCAL_SOONG_INSTALLED_COMPATIBILITY_SUPPORT_FILES)) \
   $(eval ALL_COMPATIBILITY_DIST_FILES += $$(my_compat_dist_$(suite))) \
