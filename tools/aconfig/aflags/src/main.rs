@@ -289,7 +289,7 @@ fn main() -> Result<()> {
     let output = match cli.command {
         Command::List { use_new_storage: true, container } => {
             list(FlagSourceType::AconfigStorage, container)
-                .map_err(|err| anyhow!("storage may not be enabled: {err}"))
+                .map_err(|_| anyhow!("storage may not be enabled"))
                 .map(Some)
         }
         Command::List { use_new_storage: false, container } => {
