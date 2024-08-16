@@ -14,8 +14,6 @@ import android.provider.DeviceConfig.Properties;
 {{ -if allow_instrumentation }}
 import android.aconfig.storage.StorageInternalReader;
 import android.util.Log;
-
-import java.io.File;
 {{ -endif }}
 {{ -endif }}
 
@@ -24,7 +22,7 @@ import java.io.File;
 public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ -if runtime_lookup_required }}
 {{ -for namespace_with_flags in namespace_flags }}
-    private static boolean {namespace_with_flags.namespace}_is_cached = false;
+    private static volatile boolean {namespace_with_flags.namespace}_is_cached = false;
 {{ -endfor- }}
 
 {{ for flag in flag_elements }}
@@ -37,11 +35,16 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
     StorageInternalReader reader;
     boolean readFromNewStorage;
 
-    private final static String TAG = "AconfigJavaCodegen";
+    boolean useNewStorageValueAndDiscardOld = false;
 
-    public FeatureFlagsImpl() \{
-        File file = new File("/metadata/aconfig_test_missions/mission_1");
-        if (file.exists()) \{
+    private final static String TAG = "AconfigJavaCodegen";
+    private final static String SUCCESS_LOG = "success: %s value matches";
+    private final static String MISMATCH_LOG = "error: %s value mismatch, new storage value is %s, old storage value is %s";
+    private final static String ERROR_LOG = "error: failed to read flag value";
+
+    private void init() \{
+        if (reader != null) return;
+        if (DeviceConfig.getBoolean("core_experiments_team_internal", "com.android.providers.settings.storage_test_mission_1", false)) \{
             readFromNewStorage = true;
             try \{
                 reader = new StorageInternalReader("{container}", "{package_name}");
@@ -49,40 +52,21 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
                 reader = null;
             }
         }
+
+        useNewStorageValueAndDiscardOld =
+            DeviceConfig.getBoolean("core_experiments_team_internal", "com.android.providers.settings.use_new_storage_value", false);
     }
+
 {{ -endif }}
 {{ -endif }}
 {{ for namespace_with_flags in namespace_flags }}
     private void load_overrides_{namespace_with_flags.namespace}() \{
         try \{
-{{ -if not library_exported }}
-{{ -if allow_instrumentation }}
-            boolean val;
-{{ -endif }}
-{{ -endif }}
             Properties properties = DeviceConfig.getProperties("{namespace_with_flags.namespace}");
 {{ -for flag in namespace_with_flags.flags }}
 {{ -if flag.is_read_write }}
             {flag.method_name} =
                 properties.getBoolean(Flags.FLAG_{flag.flag_name_constant_suffix}, {flag.default_value});
-{{ -if not library_exported }}
-{{ -if allow_instrumentation }}
-            if (readFromNewStorage && reader != null) \{
-                try \{
-                    val = reader.getBooleanFlagValue({flag.flag_offset});
-                    if (val == {flag.method_name}) \{
-                        Log.i(TAG, "success: {flag.method_name} value matches");
-                    } else \{
-                        Log.i(TAG, String.format(
-                            "error: {flag.method_name} value mismatch, new storage value is %s, old storage value is %s",
-                            val, {flag.method_name}));
-                    }
-                } catch (Exception e) \{
-                    Log.e(TAG, "error: failed to read flag value of {flag.method_name}", e);
-                }
-            }
-{{ -endif }}
-{{ -endif }}
 {{ -endif }}
 {{ -endfor }}
         } catch (NullPointerException e) \{
@@ -96,6 +80,34 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
             );
         }
         {namespace_with_flags.namespace}_is_cached = true;
+{{ -if not library_exported }}
+{{ -if allow_instrumentation }}
+        init();
+        if (readFromNewStorage && reader != null) \{
+            boolean val;
+            try \{
+{{ -for flag in namespace_with_flags.flags }}
+{{ -if flag.is_read_write }}
+
+                val = reader.getBooleanFlagValue({flag.flag_offset});
+                if (val == {flag.method_name}) \{
+                    Log.i(TAG, String.format(SUCCESS_LOG, "{flag.method_name}"));
+                } else \{
+                    Log.i(TAG, String.format(MISMATCH_LOG, "{flag.method_name}", val, {flag.method_name}));
+                }
+
+                if (useNewStorageValueAndDiscardOld) \{
+                    {flag.method_name} = val;
+                }
+
+{{ -endif }}
+{{ -endfor }}
+            } catch (Exception e) \{
+                    Log.e(TAG, ERROR_LOG, e);
+            }
+        }
+{{ -endif }}
+{{ -endif }}
     }
 {{ endfor- }}
 {{ -endif }}{#- end of runtime_lookup_required #}

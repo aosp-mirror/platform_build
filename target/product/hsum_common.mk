@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019 The Android Open Source Project
+# Copyright (C) 2024 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,4 +14,16 @@
 # limitations under the License.
 #
 
-# DEPRECATED! Do not inherit this.
+# Contains common default elements for devices running in Headless System User Mode.
+
+# Should generally be inherited first as using an HSUM configuration can affect downstream choices
+# (such as ensuring that the HSUM-variants of packages are selected).
+
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    ro.fw.mu.headless_system_user=true
+
+# Variable for elsewhere choosing the appropriate products based on HSUM status.
+PRODUCT_USE_HSUM := true
+
+PRODUCT_PACKAGES += \
+    HsumDefaultConfigOverlay

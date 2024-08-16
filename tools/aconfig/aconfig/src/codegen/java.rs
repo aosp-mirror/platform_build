@@ -46,7 +46,6 @@ where
     let runtime_lookup_required =
         flag_elements.iter().any(|elem| elem.is_read_write) || library_exported;
     let container = (flag_elements.first().expect("zero template flags").container).to_string();
-
     let context = Context {
         flag_elements,
         namespace_flags,
@@ -519,8 +518,8 @@ mod tests {
         let expected_featureflagsmpl_content_1 = r#"
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
-            private static boolean aconfig_test_is_cached = false;
-            private static boolean other_namespace_is_cached = false;
+            private static volatile boolean aconfig_test_is_cached = false;
+            private static volatile boolean other_namespace_is_cached = false;
             private static boolean disabledRw = false;
             private static boolean disabledRwExported = false;
             private static boolean disabledRwInOtherNamespace = false;
@@ -693,18 +692,22 @@ mod tests {
             + r#"
             import android.aconfig.storage.StorageInternalReader;
             import android.util.Log;
-            import java.io.File;
             "#
             + expected_featureflagsmpl_content_1
             + r#"
         StorageInternalReader reader;
         boolean readFromNewStorage;
 
-        private final static String TAG = "AconfigJavaCodegen";
+        boolean useNewStorageValueAndDiscardOld = false;
 
-        public FeatureFlagsImpl() {
-            File file = new File("/metadata/aconfig_test_missions/mission_1");
-            if (file.exists()) {
+        private final static String TAG = "AconfigJavaCodegen";
+        private final static String SUCCESS_LOG = "success: %s value matches";
+        private final static String MISMATCH_LOG = "error: %s value mismatch, new storage value is %s, old storage value is %s";
+        private final static String ERROR_LOG = "error: failed to read flag value";
+
+        private void init() {
+            if (reader != null) return;
+            if (DeviceConfig.getBoolean("core_experiments_team_internal", "com.android.providers.settings.storage_test_mission_1", false)) {
                 readFromNewStorage = true;
                 try {
                     reader = new StorageInternalReader("system", "com.android.aconfig.test");
@@ -712,60 +715,20 @@ mod tests {
                     reader = null;
                 }
             }
+
+            useNewStorageValueAndDiscardOld =
+                DeviceConfig.getBoolean("core_experiments_team_internal", "com.android.providers.settings.use_new_storage_value", false);
         }
 
         private void load_overrides_aconfig_test() {
             try {
-                boolean val;
                 Properties properties = DeviceConfig.getProperties("aconfig_test");
                 disabledRw =
                     properties.getBoolean(Flags.FLAG_DISABLED_RW, false);
-                if (readFromNewStorage && reader != null) {
-                    try {
-                        val = reader.getBooleanFlagValue(1);
-                        if (val == disabledRw) {
-                            Log.i(TAG, "success: disabledRw value matches");
-                        } else {
-                            Log.i(TAG, String.format(
-                                "error: disabledRw value mismatch, new storage value is %s, old storage value is %s",
-                                val, disabledRw));
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, "error: failed to read flag value of disabledRw", e);
-                    }
-                }
                 disabledRwExported =
                     properties.getBoolean(Flags.FLAG_DISABLED_RW_EXPORTED, false);
-                if (readFromNewStorage && reader != null) {
-                    try {
-                        val = reader.getBooleanFlagValue(2);
-                        if (val == disabledRwExported) {
-                            Log.i(TAG, "success: disabledRwExported value matches");
-                        } else {
-                            Log.i(TAG, String.format(
-                                "error: disabledRwExported value mismatch, new storage value is %s, old storage value is %s",
-                                val, disabledRwExported));
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, "error: failed to read flag value of disabledRwExported", e);
-                    }
-                }
                 enabledRw =
                     properties.getBoolean(Flags.FLAG_ENABLED_RW, true);
-                if (readFromNewStorage && reader != null) {
-                    try {
-                        val = reader.getBooleanFlagValue(8);
-                        if (val == enabledRw) {
-                            Log.i(TAG, "success: enabledRw value matches");
-                        } else {
-                            Log.i(TAG, String.format(
-                                "error: enabledRw value mismatch, new storage value is %s, old storage value is %s",
-                                val, enabledRw));
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, "error: failed to read flag value of enabledRw", e);
-                    }
-                }
             } catch (NullPointerException e) {
                 throw new RuntimeException(
                     "Cannot read value from namespace aconfig_test "
@@ -777,28 +740,54 @@ mod tests {
                 );
             }
             aconfig_test_is_cached = true;
+            init();
+            if (readFromNewStorage && reader != null) {
+                boolean val;
+                try {
+                    val = reader.getBooleanFlagValue(1);
+                    if (val == disabledRw) {
+                        Log.i(TAG, String.format(SUCCESS_LOG, "disabledRw"));
+                    } else {
+                        Log.i(TAG, String.format(MISMATCH_LOG, "disabledRw", val, disabledRw));
+                    }
+
+                    if (useNewStorageValueAndDiscardOld) {
+                        disabledRw = val;
+                    }
+
+                    val = reader.getBooleanFlagValue(2);
+                    if (val == disabledRwExported) {
+                        Log.i(TAG, String.format(SUCCESS_LOG, "disabledRwExported"));
+                    } else {
+                        Log.i(TAG, String.format(MISMATCH_LOG, "disabledRwExported", val, disabledRwExported));
+                    }
+
+                    if (useNewStorageValueAndDiscardOld) {
+                        disabledRwExported = val;
+                    }
+
+                    val = reader.getBooleanFlagValue(8);
+                    if (val == enabledRw) {
+                        Log.i(TAG, String.format(SUCCESS_LOG, "enabledRw"));
+                    } else {
+                        Log.i(TAG, String.format(MISMATCH_LOG, "enabledRw", val, enabledRw));
+                    }
+
+                    if (useNewStorageValueAndDiscardOld) {
+                        enabledRw = val;
+                    }
+
+                } catch (Exception e) {
+                    Log.e(TAG, ERROR_LOG, e);
+                }
+            }
         }
 
         private void load_overrides_other_namespace() {
             try {
-                boolean val;
                 Properties properties = DeviceConfig.getProperties("other_namespace");
                 disabledRwInOtherNamespace =
                     properties.getBoolean(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE, false);
-                if (readFromNewStorage && reader != null) {
-                    try {
-                        val = reader.getBooleanFlagValue(3);
-                        if (val == disabledRwInOtherNamespace) {
-                            Log.i(TAG, "success: disabledRwInOtherNamespace value matches");
-                        } else {
-                            Log.i(TAG, String.format(
-                                "error: disabledRwInOtherNamespace value mismatch, new storage value is %s, old storage value is %s",
-                                val, disabledRwInOtherNamespace));
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, "error: failed to read flag value of disabledRwInOtherNamespace", e);
-                    }
-                }
             } catch (NullPointerException e) {
                 throw new RuntimeException(
                     "Cannot read value from namespace other_namespace "
@@ -810,6 +799,25 @@ mod tests {
                 );
             }
             other_namespace_is_cached = true;
+            init();
+            if (readFromNewStorage && reader != null) {
+                boolean val;
+                try {
+                    val = reader.getBooleanFlagValue(3);
+                    if (val == disabledRwInOtherNamespace) {
+                        Log.i(TAG, String.format(SUCCESS_LOG, "disabledRwInOtherNamespace"));
+                    } else {
+                        Log.i(TAG, String.format(MISMATCH_LOG, "disabledRwInOtherNamespace", val, disabledRwInOtherNamespace));
+                    }
+
+                    if (useNewStorageValueAndDiscardOld) {
+                        disabledRwInOtherNamespace = val;
+                    }
+
+                } catch (Exception e) {
+                    Log.e(TAG, ERROR_LOG, e);
+                }
+            }
         }"# + expected_featureflagsmpl_content_2;
 
         let mut file_set = HashMap::from([
@@ -903,7 +911,7 @@ mod tests {
         import android.provider.DeviceConfig.Properties;
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
-            private static boolean aconfig_test_is_cached = false;
+            private static volatile boolean aconfig_test_is_cached = false;
             private static boolean disabledRwExported = false;
             private static boolean enabledFixedRoExported = false;
             private static boolean enabledRoExported = false;

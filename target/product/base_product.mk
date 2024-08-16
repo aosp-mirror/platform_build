@@ -25,3 +25,4 @@ PRODUCT_PACKAGES += \
     product_compatibility_matrix.xml \
     product_manifest.xml \
     selinux_policy_product \
+    product-build.prop \
