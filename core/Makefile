@@ -5136,6 +5136,7 @@ apex_dirs := \
   $(TARGET_OUT)/apex/% \
   $(TARGET_OUT_SYSTEM_EXT)/apex/% \
   $(TARGET_OUT_VENDOR)/apex/% \
+  $(TARGET_OUT_ODM)/apex/% \
   $(TARGET_OUT_PRODUCT)/apex/% \
 
 apex_files := $(sort $(filter $(apex_dirs), $(INTERNAL_ALLIMAGES_FILES)))
@@ -5188,6 +5189,7 @@ apex_dirs := \
   $(TARGET_OUT_PRODUCT)/apex/% \
   $(TARGET_OUT_SYSTEM_EXT)/apex/% \
   $(TARGET_OUT_VENDOR)/apex/% \
+  $(TARGET_OUT_ODM)/apex/% \
 
 apex_files := $(sort $(filter $(apex_dirs), $(INTERNAL_ALLIMAGES_FILES)))
 
@@ -5206,6 +5208,7 @@ $(APEX_INFO_FILE): $(HOST_OUT_EXECUTABLES)/apexd_host $(apex_files)
 	   --system_ext_path $(TARGET_OUT_SYSTEM_EXT) \
 	   --product_path $(TARGET_OUT_PRODUCT) \
 	   --vendor_path $(TARGET_OUT_VENDOR) \
+	   --odm_path $(TARGET_OUT_ODM) \
 	   --apex_path $(APEX_OUT)
 
 apex_files :=
