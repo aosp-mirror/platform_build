@@ -1,5 +1,4 @@
 SOONG_MAKEVARS_MK := $(SOONG_OUT_DIR)/make_vars-$(TARGET_PRODUCT).mk
-SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.$(TARGET_PRODUCT).variables
 SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android-$(TARGET_PRODUCT).mk
 
 include $(BUILD_SYSTEM)/art_config.mk
@@ -30,6 +29,7 @@ $(call json_start)
 $(call add_json_str,  Make_suffix, -$(TARGET_PRODUCT))
 
 $(call add_json_str,  BuildId,                           $(BUILD_ID))
+$(call add_json_str,  BuildFingerprintFile,              build_fingerprint.txt)
 $(call add_json_str,  BuildNumberFile,                   build_number.txt)
 $(call add_json_str,  BuildHostnameFile,                 build_hostname.txt)
 $(call add_json_str,  BuildThumbprintFile,               build_thumbprint.txt)
@@ -109,6 +109,8 @@ $(call add_json_str,  AAPTPreferredConfig,               $(PRODUCT_AAPT_PREF_CON
 $(call add_json_list, AAPTPrebuiltDPI,                   $(PRODUCT_AAPT_PREBUILT_DPI))
 
 $(call add_json_str,  DefaultAppCertificate,             $(PRODUCT_DEFAULT_DEV_CERTIFICATE))
+$(call add_json_list, ExtraOtaKeys,                      $(PRODUCT_EXTRA_OTA_KEYS))
+$(call add_json_list, ExtraOtaRecoveryKeys,              $(PRODUCT_EXTRA_RECOVERY_KEYS))
 $(call add_json_str,  MainlineSepolicyDevCertificates,   $(MAINLINE_SEPOLICY_DEV_CERTIFICATES))
 
 $(call add_json_str,  AppsDefaultVersionName,            $(APPS_DEFAULT_VERSION_NAME))
@@ -150,7 +152,6 @@ $(call add_json_list, DeviceKernelHeaders,               $(TARGET_DEVICE_KERNEL_
 $(call add_json_str,  VendorApiLevel,                    $(BOARD_API_LEVEL))
 $(call add_json_list, ExtraVndkVersions,                 $(PRODUCT_EXTRA_VNDK_VERSIONS))
 $(call add_json_list, DeviceSystemSdkVersions,           $(BOARD_SYSTEMSDK_VERSIONS))
-$(call add_json_str,  RecoverySnapshotVersion,           $(RECOVERY_SNAPSHOT_VERSION))
 $(call add_json_list, Platform_systemsdk_versions,       $(PLATFORM_SYSTEMSDK_VERSIONS))
 $(call add_json_bool, Malloc_low_memory,                 $(findstring true,$(MALLOC_SVELTE) $(MALLOC_LOW_MEMORY)))
 $(call add_json_bool, Malloc_zero_contents,              $(call invert_bool,$(filter false,$(MALLOC_ZERO_CONTENTS))))
@@ -165,8 +166,6 @@ $(call add_json_list, ModulesLoadedByPrivilegedModules,  $(PRODUCT_LOADED_BY_PRI
 $(call add_json_list, BootJars,                          $(PRODUCT_BOOT_JARS))
 $(call add_json_list, ApexBootJars,                      $(filter-out $(APEX_BOOT_JARS_EXCLUDED), $(PRODUCT_APEX_BOOT_JARS)))
 
-$(call add_json_bool, VndkSnapshotBuildArtifacts,        $(VNDK_SNAPSHOT_BUILD_ARTIFACTS))
-
 $(call add_json_map,  BuildFlags)
 $(foreach flag,$(_ALL_RELEASE_FLAGS),\
   $(call add_json_str,$(flag),$(_ALL_RELEASE_FLAGS.$(flag).VALUE)))
@@ -175,24 +174,6 @@ $(call add_json_map,  BuildFlagTypes)
 $(foreach flag,$(_ALL_RELEASE_FLAGS),\
   $(call add_json_str,$(flag),$(_ALL_RELEASE_FLAGS.$(flag).TYPE)))
 $(call end_json_map)
-
-$(call add_json_bool, DirectedVendorSnapshot,            $(DIRECTED_VENDOR_SNAPSHOT))
-$(call add_json_map,  VendorSnapshotModules)
-$(foreach module,$(VENDOR_SNAPSHOT_MODULES),\
-  $(call add_json_bool,$(module),true))
-$(call end_json_map)
-
-$(call add_json_bool, DirectedRecoverySnapshot,          $(DIRECTED_RECOVERY_SNAPSHOT))
-$(call add_json_map,  RecoverySnapshotModules)
-$(foreach module,$(RECOVERY_SNAPSHOT_MODULES),\
-  $(call add_json_bool,$(module),true))
-$(call end_json_map)
-
-$(call add_json_list, VendorSnapshotDirsIncluded,        $(VENDOR_SNAPSHOT_DIRS_INCLUDED))
-$(call add_json_list, VendorSnapshotDirsExcluded,        $(VENDOR_SNAPSHOT_DIRS_EXCLUDED))
-$(call add_json_list, RecoverySnapshotDirsIncluded,      $(RECOVERY_SNAPSHOT_DIRS_INCLUDED))
-$(call add_json_list, RecoverySnapshotDirsExcluded,      $(RECOVERY_SNAPSHOT_DIRS_EXCLUDED))
-$(call add_json_bool, HostFakeSnapshotEnabled,           $(HOST_FAKE_SNAPSHOT_ENABLE))
 
 $(call add_json_bool, MultitreeUpdateMeta,               $(filter true,$(TARGET_MULTITREE_UPDATE_META)))
 
@@ -262,6 +243,18 @@ $(foreach namespace,$(sort $(SOONG_CONFIG_NAMESPACES)),\
   $(call end_json_map))
 $(call end_json_map)
 
+# Add the types of the variables in VendorVars. Since this is much newer
+# than VendorVars, which has a history of just using string values for everything,
+# variables are assumed to be strings by default. For strings, SOONG_CONFIG_TYPE_*
+# will not be set, and they will not have an entry in the VendorVarTypes map.
+$(call add_json_map, VendorVarTypes)
+$(foreach namespace,$(sort $(SOONG_CONFIG_NAMESPACES)),\
+  $(call add_json_map, $(namespace))\
+  $(foreach key,$(sort $(SOONG_CONFIG_$(namespace))),\
+    $(if $(SOONG_CONFIG_TYPE_$(namespace)_$(key)),$(call add_json_str,$(key),$(subst ",\",$(SOONG_CONFIG_TYPE_$(namespace)_$(key))))))\
+  $(call end_json_map))
+$(call end_json_map)
+
 $(call add_json_bool, EnforceProductPartitionInterface,  $(filter true,$(PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE)))
 $(call add_json_str,  DeviceCurrentApiLevelForVendorModules,  $(BOARD_CURRENT_API_LEVEL_FOR_VENDOR_MODULES))
 
@@ -297,6 +290,7 @@ $(call add_json_bool, BuildBrokenVendorPropertyNamespace,  $(filter true,$(BUILD
 $(call add_json_bool, BuildBrokenIncorrectPartitionImages, $(filter true,$(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES)))
 $(call add_json_list, BuildBrokenInputDirModules,          $(BUILD_BROKEN_INPUT_DIR_MODULES))
 $(call add_json_bool, BuildBrokenDontCheckSystemSdk,       $(filter true,$(BUILD_BROKEN_DONT_CHECK_SYSTEMSDK)))
+$(call add_json_bool, BuildBrokenDupSysprop,               $(filter true,$(BUILD_BROKEN_DUP_SYSPROP)))
 
 $(call add_json_list, BuildWarningBadOptionalUsesLibsAllowlist,    $(BUILD_WARNING_BAD_OPTIONAL_USES_LIBS_ALLOWLIST))
 
@@ -346,6 +340,26 @@ $(call add_json_bool, BoardUseVbmetaDigestInFingerprint, $(filter true,$(BOARD_U
 
 $(call add_json_list, OemProperties, $(PRODUCT_OEM_PROPERTIES))
 
+$(call add_json_list, SystemPropFiles, $(TARGET_SYSTEM_PROP))
+$(call add_json_list, SystemExtPropFiles, $(TARGET_SYSTEM_EXT_PROP))
+$(call add_json_list, ProductPropFiles, $(TARGET_PRODUCT_PROP))
+
+# Do not set ArtTargetIncludeDebugBuild into any value if PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD is not set,
+# to have the same behavior from runtime_libart.mk.
+ifneq ($(PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD),)
+$(call add_json_bool, ArtTargetIncludeDebugBuild, $(PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD))
+endif
+
+_config_enable_uffd_gc := \
+  $(firstword $(OVERRIDE_ENABLE_UFFD_GC) $(PRODUCT_ENABLE_UFFD_GC) default)
+$(call add_json_str, EnableUffdGc, $(_config_enable_uffd_gc))
+_config_enable_uffd_gc :=
+
+$(call add_json_list, DeviceFrameworkCompatibilityMatrixFile, $(DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE))
+$(call add_json_list, DeviceProductCompatibilityMatrixFile, $(DEVICE_PRODUCT_COMPATIBILITY_MATRIX_FILE))
+$(call add_json_list, BoardAvbSystemAddHashtreeFooterArgs, $(BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS))
+$(call add_json_bool, BoardAvbEnable, $(filter true,$(BOARD_AVB_ENABLE)))
+
 $(call json_end)
 
 $(file >$(SOONG_VARIABLES).tmp,$(json_contents))
@@ -355,5 +369,7 @@ $(shell if ! cmp -s $(SOONG_VARIABLES).tmp $(SOONG_VARIABLES); then \
 	else \
 	  rm $(SOONG_VARIABLES).tmp; \
 	fi)
+
+include $(BUILD_SYSTEM)/soong_extra_config.mk
 
 endif # CONFIGURE_SOONG

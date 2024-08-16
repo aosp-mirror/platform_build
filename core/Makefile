@@ -1052,6 +1052,35 @@ $(INSTALLED_DTBIMAGE_TARGET) : $(sort $(wildcard $(BOARD_PREBUILT_DTBIMAGE_DIR)/
 endif
 endif
 
+
+# -----------------------------------------------------------------
+# dtbo image
+ifdef BOARD_PREBUILT_DTBOIMAGE
+INSTALLED_DTBOIMAGE_TARGET := $(PRODUCT_OUT)/dtbo.img
+
+ifeq ($(BOARD_AVB_ENABLE),true)
+$(INSTALLED_DTBOIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE) $(AVBTOOL) $(BOARD_AVB_DTBO_KEY_PATH)
+	cp $(BOARD_PREBUILT_DTBOIMAGE) $@
+	chmod +w $@
+	$(AVBTOOL) add_hash_footer \
+	    --image $@ \
+	    $(call get-partition-size-argument,$(BOARD_DTBOIMG_PARTITION_SIZE)) \
+	    --partition_name dtbo $(INTERNAL_AVB_DTBO_SIGNING_ARGS) \
+	    $(BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS)
+
+$(call declare-1p-container,$(INSTALLED_DTBOIMAGE_TARGET),)
+$(call declare-container-license-deps,$(INSTALLED_DTBOIMAGE_TARGET),$(BOARD_PREBUILT_DTBOIMAGE),$(PRODUCT_OUT)/:/)
+
+UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_DTBOIMAGE_TARGET)
+else
+$(INSTALLED_DTBOIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE)
+	cp $(BOARD_PREBUILT_DTBOIMAGE) $@
+endif
+
+endif # BOARD_PREBUILT_DTBOIMAGE
+
+# -----------------------------------------------------------------
+
 # -----------------------------------------------------------------
 # the ramdisk
 INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_RAMDISK_OUT)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
@@ -1075,6 +1104,16 @@ $(eval $(call declare-0p-target,$(INSTALLED_FILES_JSON_RAMDISK)))
 
 BUILT_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
 
+ifeq ($(BOARD_RAMDISK_USE_LZ4),true)
+# -l enables the legacy format used by the Linux kernel
+COMPRESSION_COMMAND_DEPS := $(LZ4)
+COMPRESSION_COMMAND := $(LZ4) -l -12 --favor-decSpeed
+RAMDISK_EXT := .lz4
+else
+COMPRESSION_COMMAND_DEPS := $(GZIP)
+COMPRESSION_COMMAND := $(GZIP)
+RAMDISK_EXT := .gz
+endif
 
 ifneq ($(BOARD_KERNEL_MODULES_16K),)
 
@@ -1153,6 +1192,33 @@ ramdisk_16k: $(BUILT_RAMDISK_16K_TARGET)
 
 endif
 
+# -----------------------------------------------------------------
+# 16KB dtbo image
+ifdef BOARD_PREBUILT_DTBOIMAGE_16KB
+INSTALLED_DTBOIMAGE_16KB_TARGET := $(PRODUCT_OUT)/dtbo_16k.img
+
+ifeq ($(BOARD_AVB_ENABLE),true)
+$(INSTALLED_DTBOIMAGE_16KB_TARGET): $(BOARD_PREBUILT_DTBOIMAGE_16KB) $(AVBTOOL) $(BOARD_AVB_DTBO_KEY_PATH)
+	cp $(BOARD_PREBUILT_DTBOIMAGE_16KB) $@
+	chmod +w $@
+	$(AVBTOOL) add_hash_footer \
+	    --image $@ \
+	    $(call get-partition-size-argument,$(BOARD_DTBOIMG_PARTITION_SIZE)) \
+	    --partition_name dtbo $(INTERNAL_AVB_DTBO_SIGNING_ARGS) \
+	    $(BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS)
+
+$(call declare-1p-container,$(INSTALLED_DTBOIMAGE_16KB_TARGET),)
+$(call declare-container-license-deps,$(INSTALLED_DTBOIMAGE_16KB_TARGET),$(BOARD_PREBUILT_DTBOIMAGE_16KB),$(PRODUCT_OUT)/:/)
+
+UNMOUNTED_NOTICE_VENDOR_DEPS += $(INSTALLED_DTBOIMAGE_16KB_TARGET)
+else
+$(INSTALLED_DTBOIMAGE_16KB_TARGET): $(BOARD_PREBUILT_DTBOIMAGE_16KB)
+	cp $(BOARD_PREBUILT_DTBOIMAGE_16KB) $@
+endif
+
+endif # BOARD_PREBUILT_DTBOIMAGE_16KB
+
+
 ifneq ($(BOARD_KERNEL_PATH_16K),)
 BUILT_KERNEL_16K_TARGET := $(PRODUCT_OUT)/kernel_16k
 
@@ -1175,33 +1241,32 @@ bootimage_16k: $(BUILT_BOOTIMAGE_16K_TARGET)
 .PHONY: bootimage_16k
 
 BUILT_BOOT_OTA_PACKAGE_16K := $(PRODUCT_OUT)/boot_ota_16k.zip
-$(BUILT_BOOT_OTA_PACKAGE_16K): $(OTA_FROM_RAW_IMG) $(BUILT_BOOTIMAGE_16K_TARGET) $(INSTALLED_BOOTIMAGE_TARGET) $(DEFAULT_SYSTEM_DEV_CERTIFICATE).pk8
+$(BUILT_BOOT_OTA_PACKAGE_16K):  $(OTA_FROM_RAW_IMG) \
+                                $(BUILT_BOOTIMAGE_16K_TARGET) \
+                                $(INSTALLED_BOOTIMAGE_TARGET) \
+                                $(DEFAULT_SYSTEM_DEV_CERTIFICATE).pk8 \
+                                $(INSTALLED_DTBOIMAGE_16KB_TARGET) \
+                                $(INSTALLED_DTBOIMAGE_TARGET)
 	$(OTA_FROM_RAW_IMG) --package_key $(DEFAULT_SYSTEM_DEV_CERTIFICATE) \
                       --max_timestamp `cat $(BUILD_DATETIME_FILE)` \
                       --path $(HOST_OUT) \
-                      --partition_name boot \
+                      --partition_name $(if $(and $(INSTALLED_DTBOIMAGE_TARGET),\
+                          $(INSTALLED_DTBOIMAGE_16KB_TARGET)),\
+                        boot$(comma)dtbo,\
+                        boot) \
                       --output $@ \
                       $(if $(BOARD_16K_OTA_USE_INCREMENTAL),\
                         $(INSTALLED_BOOTIMAGE_TARGET):$(BUILT_BOOTIMAGE_16K_TARGET),\
                         $(BUILT_BOOTIMAGE_16K_TARGET)\
-                      )
+                      )\
+                      $(if $(and $(INSTALLED_DTBOIMAGE_TARGET),$(INSTALLED_DTBOIMAGE_16KB_TARGET)),\
+                        $(INSTALLED_DTBOIMAGE_16KB_TARGET))
 
 boototapackage_16k: $(BUILT_BOOT_OTA_PACKAGE_16K)
 .PHONY: boototapackage_16k
 
 endif
 
-
-ifeq ($(BOARD_RAMDISK_USE_LZ4),true)
-# -l enables the legacy format used by the Linux kernel
-COMPRESSION_COMMAND_DEPS := $(LZ4)
-COMPRESSION_COMMAND := $(LZ4) -l -12 --favor-decSpeed
-RAMDISK_EXT := .lz4
-else
-COMPRESSION_COMMAND_DEPS := $(GZIP)
-COMPRESSION_COMMAND := $(GZIP)
-RAMDISK_EXT := .gz
-endif
 
 # This file contains /dev nodes description added to the generic ramdisk
 RAMDISK_NODE_LIST := $(PRODUCT_OUT)/ramdisk_node_list
@@ -1375,30 +1440,7 @@ bootimage-nodeps: $(MKBOOTIMG) $(AVBTOOL) $(BOARD_AVB_BOOT_KEY_PATH)
 	@echo "make $@: ignoring dependencies"
 	$(foreach b,$(INSTALLED_BOOTIMAGE_TARGET),$(call build_boot_board_avb_enabled,$(b)))
 
-else ifeq (true,$(PRODUCT_SUPPORTS_VBOOT)) # BOARD_AVB_ENABLE != true
-
-# $1: boot image target
-define build_boot_supports_vboot
-  $(MKBOOTIMG) --kernel $(call bootimage-to-kernel,$(1)) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1).unsigned
-  $(VBOOT_SIGNER) $(FUTILITY) $(1).unsigned $(PRODUCT_VBOOT_SIGNING_KEY).vbpubk $(PRODUCT_VBOOT_SIGNING_KEY).vbprivk $(PRODUCT_VBOOT_SIGNING_SUBKEY).vbprivk $(1).keyblock $(1)
-  $(call assert-max-image-size,$(1),$(call get-bootimage-partition-size,$(1),boot))
-endef
-
-$(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES) $(VBOOT_SIGNER) $(FUTILITY)
-	$(call pretty,"Target boot image: $@")
-	$(call build_boot_supports_vboot,$@)
-
-$(call declare-container-license-metadata,$(INSTALLED_BOOTIMAGE_TARGET),SPDX-license-identifier-GPL-2.0-only SPDX-license-identifier-Apache-2.0,restricted notice,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING build/soong/licenses/LICENSE,"Boot Image",boot)
-$(call declare-container-license-deps,$(INSTALLED_BOOTIMAGE_TARGET),$(INTERNAL_BOOTIMAGE_FILES),$(PRODUCT_OUT)/:/)
-
-UNMOUNTED_NOTICE_VENDOR_DEPS += $(INSTALLED_BOOTIMAGE_TARGET)
-
-.PHONY: bootimage-nodeps
-bootimage-nodeps: $(MKBOOTIMG) $(VBOOT_SIGNER) $(FUTILITY)
-	@echo "make $@: ignoring dependencies"
-	$(foreach b,$(INSTALLED_BOOTIMAGE_TARGET),$(call build_boot_supports_vboot,$(b)))
-
-else # PRODUCT_SUPPORTS_VBOOT != true
+else # BOARD_AVB_ENABLE != true
 
 # $1: boot image target
 define build_boot_novboot
@@ -1460,16 +1502,26 @@ endif # my_installed_prebuilt_gki_apex not defined
 
 ifneq ($(BOARD_KERNEL_PATH_16K),)
 BUILT_BOOT_OTA_PACKAGE_4K := $(PRODUCT_OUT)/boot_ota_4k.zip
-$(BUILT_BOOT_OTA_PACKAGE_4K): $(OTA_FROM_RAW_IMG) $(INSTALLED_BOOTIMAGE_TARGET) $(BUILT_BOOTIMAGE_16K_TARGET) $(DEFAULT_SYSTEM_DEV_CERTIFICATE).pk8
+$(BUILT_BOOT_OTA_PACKAGE_4K): $(OTA_FROM_RAW_IMG) \
+                              $(INSTALLED_BOOTIMAGE_TARGET) \
+                              $(BUILT_BOOTIMAGE_16K_TARGET) \
+                              $(DEFAULT_SYSTEM_DEV_CERTIFICATE).pk8 \
+                              $(INSTALLED_DTBOIMAGE_TARGET) \
+                              $(INSTALLED_DTBOIMAGE_16KB_TARGET)
 	$(OTA_FROM_RAW_IMG) --package_key $(DEFAULT_SYSTEM_DEV_CERTIFICATE) \
                       --max_timestamp `cat $(BUILD_DATETIME_FILE)` \
                       --path $(HOST_OUT) \
-                      --partition_name boot \
+                      --partition_name $(if $(and $(INSTALLED_DTBOIMAGE_TARGET),\
+                          $(INSTALLED_DTBOIMAGE_16KB_TARGET)),\
+                        boot$(comma)dtbo,\
+                        boot) \
                       --output $@ \
                       $(if $(BOARD_16K_OTA_USE_INCREMENTAL),\
                         $(BUILT_BOOTIMAGE_16K_TARGET):$(INSTALLED_BOOTIMAGE_TARGET),\
                         $(INSTALLED_BOOTIMAGE_TARGET)\
-                      )
+                      )\
+                      $(if $(and $(INSTALLED_DTBOIMAGE_TARGET),$(INSTALLED_DTBOIMAGE_16KB_TARGET)),\
+                        $(INSTALLED_DTBOIMAGE_TARGET))
 
 boototapackage_4k: $(BUILT_BOOT_OTA_PACKAGE_4K)
 .PHONY: boototapackage_4k
@@ -1697,6 +1749,30 @@ endif
 $(call declare-1p-container,$(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_VENDOR_BOOTIMAGE_TARGET),$(INTERNAL_VENDOR_RAMDISK_TARGET) $(INSTALLED_DTB_IMAGE_TARGET) $(INTERNAL_VENDOR_RAMDISK_FRAGMENT_TARGETS) $(INTERNAL_VENDOR_BOOTCONDIG_TARGET),$(PRODUCT_OUT)/:/)
 VENDOR_NOTICE_DEPS += $(INSTALLED_VENDOR_BOOTIMAGE_TARGET)
+
+else # BUILDING_VENDOR_BOOT_IMAGE not defined, use prebuilt image
+
+ifdef BOARD_PREBUILT_VENDOR_BOOTIMAGE
+INTERNAL_PREBUILT_VENDOR_BOOTIMAGE := $(BOARD_PREBUILT_VENDOR_BOOTIMAGE)
+INSTALLED_VENDOR_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/vendor_boot.img
+
+ifeq ($(BOARD_AVB_ENABLE),true)
+$(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(INTERNAL_PREBUILT_VENDOR_BOOTIMAGE) $(AVBTOOL) $(BOARD_AVB_VENDOR_BOOT_KEY_PATH)
+	cp $(INTERNAL_PREBUILT_VENDOR_BOOTIMAGE) $@
+	chmod +w $@
+	$(AVBTOOL) add_hash_footer \
+	    --image $@ \
+	    $(call get-partition-size-argument,$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE)) \
+	    --partition_name vendor_boot $(INTERNAL_AVB_VENDOR_BOOT_SIGNING_ARGS) \
+	    $(BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS)
+else
+$(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(INTERNAL_PREBUILT_VENDOR_BOOTIMAGE)
+	cp $(INTERNAL_PREBUILT_VENDOR_BOOTIMAGE) $@
+
+endif # BOARD_AVB_ENABLE
+$(call declare-1p-container,$(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
+$(call declare-container-license-deps,$(INSTALLED_VENDOR_BOOTIMAGE_TARGET),$(INTERNAL_PREBUILT_VENDOR_BOOTIMAGE),$(PRODUCT_OUT)/:/)
+endif # BOARD_PREBUILT_VENDOR_BOOTIMAGE
 endif # BUILDING_VENDOR_BOOT_IMAGE
 
 # -----------------------------------------------------------------
@@ -2233,11 +2309,6 @@ $(if $(PRODUCT_SYSTEM_EXT_VERITY_PARTITION),$(hide) echo "system_ext_verity_bloc
 $(if $(PRODUCT_VENDOR_DLKM_VERITY_PARTITION),$(hide) echo "vendor_dlkm_verity_block_device=$(PRODUCT_VENDOR_DLKM_VERITY_PARTITION)" >> $(1))
 $(if $(PRODUCT_ODM_DLKM_VERITY_PARTITION),$(hide) echo "odm_dlkm_verity_block_device=$(PRODUCT_ODM_DLKM_VERITY_PARTITION)" >> $(1))
 $(if $(PRODUCT_SYSTEM_DLKM_VERITY_PARTITION),$(hide) echo "system_dlkm_verity_block_device=$(PRODUCT_SYSTEM_DLKM_VERITY_PARTITION)" >> $(1))
-$(if $(PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot=$(PRODUCT_SUPPORTS_VBOOT)" >> $(1))
-$(if $(PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot_key=$(PRODUCT_VBOOT_SIGNING_KEY)" >> $(1))
-$(if $(PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot_subkey=$(PRODUCT_VBOOT_SIGNING_SUBKEY)" >> $(1))
-$(if $(PRODUCT_SUPPORTS_VBOOT),$(hide) echo "futility=$(notdir $(FUTILITY))" >> $(1))
-$(if $(PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot_signer_cmd=$(VBOOT_SIGNER)" >> $(1))
 $(if $(BOARD_AVB_ENABLE), \
   $(hide) echo "avb_avbtool=$(notdir $(AVBTOOL))" >> $(1)$(newline) \
   $(if $(filter $(2),system), \
@@ -2747,15 +2818,9 @@ $(recovery_ramdisk): $(INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP)
 # $(1): output file
 # $(2): optional kernel file
 define build-recoveryimage-target
-  $(if $(filter true,$(PRODUCT_SUPPORTS_VBOOT)), \
-    $(MKBOOTIMG) $(if $(strip $(2)),--kernel $(strip $(2))) $(INTERNAL_RECOVERYIMAGE_ARGS) \
-                 $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_RECOVERY_MKBOOTIMG_ARGS) \
-                 --output $(1).unsigned, \
-    $(MKBOOTIMG) $(if $(strip $(2)),--kernel $(strip $(2))) $(INTERNAL_RECOVERYIMAGE_ARGS) \
-                 $(INTERNAL_MKBOOTIMG_VERSION_ARGS) \
-                 $(BOARD_RECOVERY_MKBOOTIMG_ARGS) --output $(1))
-  $(if $(filter true,$(PRODUCT_SUPPORTS_VBOOT)), \
-    $(VBOOT_SIGNER) $(FUTILITY) $(1).unsigned $(PRODUCT_VBOOT_SIGNING_KEY).vbpubk $(PRODUCT_VBOOT_SIGNING_KEY).vbprivk $(PRODUCT_VBOOT_SIGNING_SUBKEY).vbprivk $(1).keyblock $(1))
+  $(MKBOOTIMG) $(if $(strip $(2)),--kernel $(strip $(2))) $(INTERNAL_RECOVERYIMAGE_ARGS) \
+               $(INTERNAL_MKBOOTIMG_VERSION_ARGS) \
+               $(BOARD_RECOVERY_MKBOOTIMG_ARGS) --output $(1)
   $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)), \
     $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(call get-bootimage-partition-size,$(1),boot))), \
     $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(BOARD_RECOVERYIMAGE_PARTITION_SIZE))))
@@ -2766,9 +2831,6 @@ define build-recoveryimage-target
 endef
 
 recoveryimage-deps := $(MKBOOTIMG) $(recovery_ramdisk) $(recovery_kernel)
-ifeq (true,$(PRODUCT_SUPPORTS_VBOOT))
-  recoveryimage-deps += $(VBOOT_SIGNER)
-endif
 ifeq (true,$(BOARD_AVB_ENABLE))
   recoveryimage-deps += $(AVBTOOL) $(BOARD_AVB_BOOT_KEY_PATH)
 endif
@@ -3495,6 +3557,24 @@ define build-systemimage-target
 endef
 
 $(eval $(call write-partition-file-list,$(systemimage_intermediates)/file_list.txt,$(TARGET_OUT),$(FULL_SYSTEMIMAGE_DEPS)))
+
+ifneq ($(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE),)
+file_list_diff := $(HOST_OUT_EXECUTABLES)/file_list_diff$(HOST_EXECUTABLE_SUFFIX)
+system_file_diff_timestamp := $(systemimage_intermediates)/file_diff.timestamp
+
+$(system_file_diff_timestamp): \
+	    $(systemimage_intermediates)/file_list.txt \
+	    $(ALL_MODULES.$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE).FILESYSTEM_FILELIST) \
+	    $(ALL_MODULES.system_image_diff_allowlist.INSTALLED) \
+	    $(file_list_diff)
+	$(file_list_diff) $(systemimage_intermediates)/file_list.txt \
+	  $(ALL_MODULES.$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE).FILESYSTEM_FILELIST) \
+	  $(ALL_MODULES.system_image_diff_allowlist.INSTALLED) $(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE)
+	touch $@
+
+$(BUILT_SYSTEMIMAGE): $(system_file_diff_timestamp)
+endif
+
 # Used by soong sandwich to request the staging dir be built
 $(systemimage_intermediates)/staging_dir.stamp: $(filter $(TARGET_OUT)/%,$(FULL_SYSTEMIMAGE_DEPS))
 	touch $@
@@ -3502,8 +3582,19 @@ $(systemimage_intermediates)/staging_dir.stamp: $(filter $(TARGET_OUT)/%,$(FULL_
 ifeq ($(BOARD_AVB_ENABLE),true)
 $(BUILT_SYSTEMIMAGE): $(BOARD_AVB_SYSTEM_KEY_PATH)
 endif
+
+ifeq ($(USE_SOONG_DEFINED_SYSTEM_IMAGE),true)
+ifeq ($(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE),)
+$(error PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE must be set if USE_SOONG_DEFINED_SYSTEM_IMAGE is true)
+endif
+soong_defined_system_image := $(call intermediates-dir-for,ETC,$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE))/$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE)
+$(BUILT_SYSTEMIMAGE): $(INSTALLED_FILES_FILE) $(systemimage_intermediates)/file_list.txt $(soong_defined_system_image)
+$(eval $(call copy-one-file, $(soong_defined_system_image), $(BUILT_SYSTEMIMAGE)))
+soong_defined_system_image :=
+else
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE) $(systemimage_intermediates)/file_list.txt
 	$(call build-systemimage-target,$@)
+endif
 
 $(call declare-1p-container,$(BUILT_SYSTEMIMAGE),system/extras)
 $(call declare-container-license-deps,$(BUILT_SYSTEMIMAGE),$(FULL_SYSTEMIMAGE_DEPS),$(PRODUCT_OUT)/:/)
@@ -4332,33 +4423,6 @@ INSTALLED_SYSTEM_DLKMIMAGE_TARGET := $(PRODUCT_OUT)/system_dlkm.img
 $(eval $(call copy-one-file,$(BOARD_PREBUILT_SYSTEM_DLKMIMAGE),$(INSTALLED_SYSTEM_DLKMIMAGE_TARGET)))
 endif
 
-# -----------------------------------------------------------------
-# dtbo image
-ifdef BOARD_PREBUILT_DTBOIMAGE
-INSTALLED_DTBOIMAGE_TARGET := $(PRODUCT_OUT)/dtbo.img
-
-ifeq ($(BOARD_AVB_ENABLE),true)
-$(INSTALLED_DTBOIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE) $(AVBTOOL) $(BOARD_AVB_DTBO_KEY_PATH)
-	cp $(BOARD_PREBUILT_DTBOIMAGE) $@
-	chmod +w $@
-	$(AVBTOOL) add_hash_footer \
-	    --image $@ \
-	    $(call get-partition-size-argument,$(BOARD_DTBOIMG_PARTITION_SIZE)) \
-	    --partition_name dtbo $(INTERNAL_AVB_DTBO_SIGNING_ARGS) \
-	    $(BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS)
-
-$(call declare-1p-container,$(INSTALLED_DTBOIMAGE_TARGET),)
-$(call declare-container-license-deps,$(INSTALLED_DTBOIMAGE_TARGET),$(BOARD_PREBUILT_DTBOIMAGE),$(PRODUCT_OUT)/:/)
-
-UNMOUNTED_NOTICE_VENDOR_DEPS+= $(INSTALLED_DTBOIMAGE_TARGET)
-else
-$(INSTALLED_DTBOIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE)
-	cp $(BOARD_PREBUILT_DTBOIMAGE) $@
-endif
-
-endif # BOARD_PREBUILT_DTBOIMAGE
-
-# -----------------------------------------------------------------
 # Protected VM firmware image
 ifeq ($(BOARD_USES_PVMFWIMAGE),true)
 
@@ -5072,6 +5136,7 @@ apex_dirs := \
   $(TARGET_OUT)/apex/% \
   $(TARGET_OUT_SYSTEM_EXT)/apex/% \
   $(TARGET_OUT_VENDOR)/apex/% \
+  $(TARGET_OUT_ODM)/apex/% \
   $(TARGET_OUT_PRODUCT)/apex/% \
 
 apex_files := $(sort $(filter $(apex_dirs), $(INTERNAL_ALLIMAGES_FILES)))
@@ -5124,6 +5189,7 @@ apex_dirs := \
   $(TARGET_OUT_PRODUCT)/apex/% \
   $(TARGET_OUT_SYSTEM_EXT)/apex/% \
   $(TARGET_OUT_VENDOR)/apex/% \
+  $(TARGET_OUT_ODM)/apex/% \
 
 apex_files := $(sort $(filter $(apex_dirs), $(INTERNAL_ALLIMAGES_FILES)))
 
@@ -5142,6 +5208,7 @@ $(APEX_INFO_FILE): $(HOST_OUT_EXECUTABLES)/apexd_host $(apex_files)
 	   --system_ext_path $(TARGET_OUT_SYSTEM_EXT) \
 	   --product_path $(TARGET_OUT_PRODUCT) \
 	   --vendor_path $(TARGET_OUT_VENDOR) \
+	   --odm_path $(TARGET_OUT_ODM) \
 	   --apex_path $(APEX_OUT)
 
 apex_files :=
@@ -5651,12 +5718,6 @@ INTERNAL_OTATOOLS_MODULES += \
   resize2fs \
   soong_zip \
 
-ifeq (true,$(PRODUCT_SUPPORTS_VBOOT))
-INTERNAL_OTATOOLS_MODULES += \
-  futility-host \
-  vboot_signer
-endif
-
 INTERNAL_OTATOOLS_FILES := \
   $(filter $(HOST_OUT)/%,$(call module-installed-files,$(INTERNAL_OTATOOLS_MODULES)))
 
@@ -5691,10 +5752,6 @@ ifneq (,$(wildcard external/avb))
 INTERNAL_OTATOOLS_PACKAGE_FILES += \
   $(sort $(shell find external/avb/test/data -type f -name "testkey_*.pem" -o \
       -name "atx_metadata.bin"))
-endif
-ifeq (true,$(PRODUCT_SUPPORTS_VBOOT))
-INTERNAL_OTATOOLS_PACKAGE_FILES += \
-  $(sort $(shell find external/vboot_reference/tests/devkeys -type f))
 endif
 
 INTERNAL_OTATOOLS_RELEASETOOLS := \
@@ -6131,12 +6188,6 @@ ifeq ($(AB_OTA_UPDATER),true)
     $(BUILT_TARGET_FILES_DIR): $(TARGET_OUT_OEM)/$(OSRELEASED_DIRECTORY)/product_id
     $(BUILT_TARGET_FILES_DIR): $(TARGET_OUT_OEM)/$(OSRELEASED_DIRECTORY)/product_version
     $(BUILT_TARGET_FILES_DIR): $(TARGET_OUT_ETC)/$(OSRELEASED_DIRECTORY)/system_version
-  endif
-
-  # Not checking in board_config.mk, since AB_OTA_PARTITIONS may be updated in Android.mk (e.g. to
-  # additionally include radio or bootloader partitions).
-  ifeq ($(AB_OTA_PARTITIONS),)
-    $(error AB_OTA_PARTITIONS must be defined when using AB_OTA_UPDATER)
   endif
 endif
 
@@ -6708,6 +6759,10 @@ ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
 	@# If breakpad symbols have been generated, add them to the zip.
 	$(hide) cp -R $(TARGET_OUT_BREAKPAD) $(zip_root)/BREAKPAD
 endif
+ifdef BOARD_PREBUILT_VENDOR_BOOTIMAGE
+	$(hide) mkdir -p $(zip_root)/IMAGES
+	$(hide) cp $(INSTALLED_VENDOR_BOOTIMAGE_TARGET) $(zip_root)/IMAGES/
+endif
 ifdef BOARD_PREBUILT_VENDORIMAGE
 	$(hide) mkdir -p $(zip_root)/IMAGES
 	$(hide) cp $(INSTALLED_VENDORIMAGE_TARGET) $(zip_root)/IMAGES/
@@ -6831,6 +6886,33 @@ ifdef BOARD_KERNEL_PAGESIZE
 	$(hide) echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/INIT_BOOT/pagesize
 endif # BOARD_KERNEL_PAGESIZE
 endif # BUILDING_INIT_BOOT_IMAGE
+ifdef BOARD_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_EROFS_COMPRESS_HINTS) $(zip_root)/META/erofs_default_compress_hints.txt
+endif
+ifdef BOARD_SYSTEMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_SYSTEMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/system_erofs_compress_hints.txt
+endif
+ifdef BOARD_SYSTEM_EXTIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_SYSTEM_EXTIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/system_ext_erofs_compress_hints.txt
+endif
+ifdef BOARD_PRODUCTIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_PRODUCTIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/product_erofs_compress_hints.txt
+endif
+ifdef BOARD_VENDORIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_VENDORIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/vendor_erofs_compress_hints.txt
+endif
+ifdef BOARD_ODMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_ODMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/odm_erofs_compress_hints.txt
+endif
+ifdef BOARD_VENDOR_DLKMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_VENDOR_DLKMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/vendor_dlkm_erofs_compress_hints.txt
+endif
+ifdef BOARD_ODM_DLKMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_ODM_DLKMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/odm_dlkm_erofs_compress_hints.txt
+endif
+ifdef BOARD_SYSTEM_DLKMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_SYSTEM_DLKMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/system_dlkm_erofs_compress_hints.txt
+endif
 ifneq ($(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
 	$(call fs_config,$(zip_root)/VENDOR_BOOT/RAMDISK,) > $(zip_root)/META/vendor_boot_filesystem_config.txt
 endif
@@ -7562,6 +7644,10 @@ systemimage: $(QEMU_VERIFIED_BOOT_PARAMS)
 droidcore-unbundled: $(QEMU_VERIFIED_BOOT_PARAMS)
 
 endif
+
+# Preprocess files for emulator and sdk.
+-include development/build/tools/sdk-preprocess-files.mk
+
 # -----------------------------------------------------------------
 # The emulator package
 ifeq ($(BUILD_EMULATOR),true)
@@ -7606,7 +7692,6 @@ sdk_name := $(sdk_name)_$(INTERNAL_SDK_HOST_OS_NAME)
 sdk_dep_file := $(sdk_dir)/sdk_deps.mk
 
 ATREE_FILES :=
-include development/build/tools/sdk-preprocess-files.mk
 -include $(sdk_dep_file)
 
 # if we don't have a real list, then use "everything"
@@ -7807,6 +7892,53 @@ $(call dist-for-goals,haiku-presubmit,$(SOONG_PRESUBMIT_FUZZ_PACKAGING_ARCH_MODU
 # Extract platform fonts used in Layoutlib
 include $(BUILD_SYSTEM)/layoutlib_data.mk
 
+# -----------------------------------------------------------------
+# Desktop pack common variables.
+PACK_IMAGE_SCRIPT := $(HOST_OUT_EXECUTABLES)/pack_image
+IMAGES := $(INSTALLED_BOOTIMAGE_TARGET) \
+	$(INSTALLED_SUPERIMAGE_TARGET) \
+	$(INSTALLED_INIT_BOOT_IMAGE_TARGET) \
+	$(INSTALLED_VENDOR_BOOTIMAGE_TARGET) \
+	$(INSTALLED_VBMETAIMAGE_TARGET) \
+	$(INSTALLED_USERDATAIMAGE_TARGET)
+
+# -----------------------------------------------------------------
+# Desktop pack image hook.
+ifneq (,$(strip $(PACK_DESKTOP_FILESYSTEM_IMAGES)))
+PACK_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_image.bin
+
+$(PACK_IMAGE_TARGET): $(IMAGES) $(PACK_IMAGE_SCRIPT)
+	$(PACK_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) --noarchive
+
+PACKED_IMAGE_ARCHIVE_TARGET := $(PACK_IMAGE_TARGET).gz
+
+$(PACKED_IMAGE_ARCHIVE_TARGET): $(PACK_IMAGE_TARGET) | $(GZIP)
+	$(GZIP) -fk $(PACK_IMAGE_TARGET)
+
+droidcore-unbundled: $(PACKED_IMAGE_ARCHIVE_TARGET)
+
+$(call dist-for-goals,dist_files,$(PACKED_IMAGE_ARCHIVE_TARGET))
+
+endif # PACK_DESKTOP_FILESYSTEM_IMAGES
+
+# -----------------------------------------------------------------
+# Desktop pack recovery image hook.
+ifneq (,$(strip $(PACK_DESKTOP_RECOVERY_IMAGE)))
+PACK_RECOVERY_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_recovery_image.bin
+
+$(PACK_RECOVERY_IMAGE_TARGET): $(IMAGES) $(PACK_IMAGE_SCRIPT)
+	$(PACK_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) --noarchive --recovery
+
+PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET := $(PACK_RECOVERY_IMAGE_TARGET).gz
+
+$(PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET): $(PACK_RECOVERY_IMAGE_TARGET) | $(GZIP)
+	$(GZIP) -fk $(PACK_RECOVERY_IMAGE_TARGET)
+
+droidcore-unbundled: $(PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET)
+
+$(call dist-for-goals,dist_files,$(PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET))
+
+endif # PACK_DESKTOP_RECOVERY_IMAGE
 
 # -----------------------------------------------------------------
 # OS Licensing

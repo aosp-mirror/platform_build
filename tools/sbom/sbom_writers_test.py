@@ -33,6 +33,14 @@ SPDXID_FILE2 = 'SPDXRef-file2'
 SPDXID_FILE3 = 'SPDXRef-file3'
 SPDXID_FILE4 = 'SPDXRef-file4'
 
+SPDXID_LICENSE_1 = 'LicenseRef-Android-License-1'
+SPDXID_LICENSE_2 = 'LicenseRef-Android-License-2'
+SPDXID_LICENSE_3 = 'LicenseRef-Android-License-3'
+
+LICENSE_APACHE_TEXT = "LICENSE_APACHE"
+LICENSE1_TEXT = 'LICENSE 1'
+LICENSE2_TEXT = 'LICENSE 2'
+LICENSE3_TEXT = 'LICENSE 3'
 
 class SBOMWritersTest(unittest.TestCase):
 
@@ -63,6 +71,7 @@ class SBOMWritersTest(unittest.TestCase):
                         download_location=sbom_data.VALUE_NONE,
                         supplier=SUPPLIER_GOOGLE,
                         version=BUILD_FINGER_PRINT,
+                        declared_license_ids=[sbom_data.SPDXID_LICENSE_APACHE]
                         ))
 
     self.sbom_doc.add_package(
@@ -71,6 +80,7 @@ class SBOMWritersTest(unittest.TestCase):
                         download_location=sbom_data.VALUE_NONE,
                         supplier=SUPPLIER_GOOGLE,
                         version=BUILD_FINGER_PRINT,
+                        declared_license_ids=[SPDXID_LICENSE_1],
                         ))
 
     self.sbom_doc.add_package(
@@ -79,6 +89,7 @@ class SBOMWritersTest(unittest.TestCase):
                         download_location=sbom_data.VALUE_NONE,
                         supplier=SUPPLIER_GOOGLE,
                         version=BUILD_FINGER_PRINT,
+                        declared_license_ids=[SPDXID_LICENSE_2, SPDXID_LICENSE_3],
                         external_refs=[sbom_data.PackageExternalRef(
                           category=sbom_data.PackageExternalRefCategory.SECURITY,
                           type=sbom_data.PackageExternalRefType.cpe22Type,
@@ -90,6 +101,7 @@ class SBOMWritersTest(unittest.TestCase):
                         name='Upstream package1',
                         supplier=SUPPLIER_UPSTREAM,
                         version='1.1',
+                        declared_license_ids=[SPDXID_LICENSE_2, SPDXID_LICENSE_3],
                         ))
 
     self.sbom_doc.add_relationship(sbom_data.Relationship(id1=SPDXID_SOURCE_PACKAGE1,
@@ -97,11 +109,11 @@ class SBOMWritersTest(unittest.TestCase):
                                                           id2=SPDXID_UPSTREAM_PACKAGE1))
 
     self.sbom_doc.files.append(
-      sbom_data.File(id=SPDXID_FILE1, name='/bin/file1', checksum='SHA1: 11111'))
+      sbom_data.File(id=SPDXID_FILE1, name='/bin/file1', checksum='SHA1: 11111', concluded_license_ids=[sbom_data.SPDXID_LICENSE_APACHE]))
     self.sbom_doc.files.append(
-      sbom_data.File(id=SPDXID_FILE2, name='/bin/file2', checksum='SHA1: 22222'))
+      sbom_data.File(id=SPDXID_FILE2, name='/bin/file2', checksum='SHA1: 22222', concluded_license_ids=[SPDXID_LICENSE_1]))
     self.sbom_doc.files.append(
-      sbom_data.File(id=SPDXID_FILE3, name='/bin/file3', checksum='SHA1: 33333'))
+      sbom_data.File(id=SPDXID_FILE3, name='/bin/file3', checksum='SHA1: 33333', concluded_license_ids=[SPDXID_LICENSE_2, SPDXID_LICENSE_3]))
     self.sbom_doc.files.append(
       sbom_data.File(id=SPDXID_FILE4, name='file4.a', checksum='SHA1: 44444'))
 
@@ -119,6 +131,11 @@ class SBOMWritersTest(unittest.TestCase):
                                                           relationship=sbom_data.RelationshipType.STATIC_LINK,
                                                           id2=SPDXID_FILE4
                                                           ))
+
+    self.sbom_doc.add_license(sbom_data.License(sbom_data.SPDXID_LICENSE_APACHE, LICENSE_APACHE_TEXT, "License-Apache"))
+    self.sbom_doc.add_license(sbom_data.License(SPDXID_LICENSE_1, LICENSE1_TEXT, "License-1"))
+    self.sbom_doc.add_license(sbom_data.License(SPDXID_LICENSE_2, LICENSE2_TEXT, "License-2"))
+    self.sbom_doc.add_license(sbom_data.License(SPDXID_LICENSE_3, LICENSE3_TEXT, "License-3"))
 
     # SBOM fragment of a APK
     self.unbundled_sbom_doc = sbom_data.Document(name='test doc',

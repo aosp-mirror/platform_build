@@ -791,6 +791,9 @@ $(call add-clean-step, find $(OUT_DIR) -type f -name "*.jar" -print0 | xargs -0 
 $(call add-clean-step, rm -f $(PRODUCT_OUT)/dexpreopt_config/dexpreopt.config)
 $(call add-clean-step, rm -f $(PRODUCT_OUT)/dexpreopt_config/dexpreopt_soong.config)
 
+# Clear out Soong .intermediates directory regarding removal of hashed subdir
+$(call add-clean-step, rm -rf $(OUT_DIR)/soong/.intermediates)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

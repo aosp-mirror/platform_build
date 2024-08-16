@@ -30,6 +30,7 @@ import hashlib
 SPDXID_DOC = 'SPDXRef-DOCUMENT'
 SPDXID_PRODUCT = 'SPDXRef-PRODUCT'
 SPDXID_PLATFORM = 'SPDXRef-PLATFORM'
+SPDXID_LICENSE_APACHE = 'LicenseRef-Android-Apache-2.0'
 
 PACKAGE_NAME_PRODUCT = 'PRODUCT'
 PACKAGE_NAME_PLATFORM = 'PLATFORM'
@@ -50,7 +51,7 @@ class PackageExternalRefType:
   cpe23Type = 'cpe23Type'
 
 
-@dataclass
+@dataclass(frozen=True)
 class PackageExternalRef:
   category: PackageExternalRefCategory
   type: PackageExternalRefType
@@ -68,6 +69,7 @@ class Package:
   verification_code: str = None
   file_ids: List[str] = field(default_factory=list)
   external_refs: List[PackageExternalRef] = field(default_factory=list)
+  declared_license_ids: List[str] = field(default_factory=list)
 
 
 @dataclass
@@ -75,6 +77,7 @@ class File:
   id: str
   name: str
   checksum: str
+  concluded_license_ids: List[str] = field(default_factory=list)
 
 
 class RelationshipType:
@@ -85,18 +88,25 @@ class RelationshipType:
   STATIC_LINK = 'STATIC_LINK'
 
 
-@dataclass
+@dataclass(frozen=True)
 class Relationship:
   id1: str
   relationship: RelationshipType
   id2: str
 
 
-@dataclass
+@dataclass(frozen=True)
 class DocumentExternalReference:
   id: str
   uri: str
   checksum: str
+
+
+@dataclass(frozen=True)
+class License:
+  id: str
+  text: str
+  name: str
 
 
 @dataclass
@@ -111,19 +121,29 @@ class Document:
   packages: List[Package] = field(default_factory=list)
   files: List[File] = field(default_factory=list)
   relationships: List[Relationship] = field(default_factory=list)
+  licenses: List[License] = field(default_factory=list)
 
   def add_external_ref(self, external_ref):
     if not any(external_ref.uri == ref.uri for ref in self.external_refs):
       self.external_refs.append(external_ref)
 
   def add_package(self, package):
-    if not any(package.id == p.id for p in self.packages):
+    p = next((p for p in self.packages if package.id == p.id), None)
+    if not p:
       self.packages.append(package)
+    else:
+      for license_id in package.declared_license_ids:
+        if license_id not in p.declared_license_ids:
+          p.declared_license_ids.append(license_id)
 
   def add_relationship(self, rel):
     if not any(rel.id1 == r.id1 and rel.id2 == r.id2 and rel.relationship == r.relationship
                for r in self.relationships):
       self.relationships.append(rel)
+
+  def add_license(self, license):
+    if not any(license.id == l.id for l in self.licenses):
+      self.licenses.append(license)
 
   def generate_packages_verification_code(self):
     for package in self.packages:

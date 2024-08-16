@@ -14,7 +14,10 @@
 
 """Tests for build_test_suites.py"""
 
+import argparse
+import functools
 from importlib import resources
+import json
 import multiprocessing
 import os
 import pathlib
@@ -27,9 +30,11 @@ import tempfile
 import textwrap
 import time
 from typing import Callable
+import unittest
 from unittest import mock
 import build_test_suites
 import ci_test_lib
+import optimized_targets
 from pyfakefs import fake_filesystem_unittest
 
 
@@ -80,12 +85,20 @@ class BuildTestSuitesTest(fake_filesystem_unittest.TestCase):
     with self.assertRaisesRegex(SystemExit, '42'):
       build_test_suites.main([])
 
+  def test_incorrectly_formatted_build_context_raises(self):
+    build_context = self.fake_top.joinpath('build_context')
+    build_context.touch()
+    os.environ['BUILD_CONTEXT'] = str(build_context)
+
+    with self.assert_raises_word(build_test_suites.Error, 'JSON'):
+      build_test_suites.main([])
+
   def test_build_success_returns(self):
     with self.assertRaisesRegex(SystemExit, '0'):
       build_test_suites.main([])
 
   def assert_raises_word(self, cls, word):
-    return self.assertRaisesRegex(build_test_suites.Error, rf'\b{word}\b')
+    return self.assertRaisesRegex(cls, rf'\b{word}\b')
 
   def _setup_working_build_env(self):
     self.fake_top = pathlib.Path('/fake/top')
@@ -220,6 +233,260 @@ class RunCommandIntegrationTest(ci_test_lib.TestCase):
       # `SIGKILL` doesn't kill any grandchild processes and we don't have
       # `psutil` available to easily query all children.
       os.kill(p.pid, signal.SIGINT)
+
+
+class BuildPlannerTest(unittest.TestCase):
+
+  class TestOptimizedBuildTarget(optimized_targets.OptimizedBuildTarget):
+
+    def __init__(
+        self, target, build_context, args, output_targets, packaging_outputs
+    ):
+      super().__init__(target, build_context, args)
+      self.output_targets = output_targets
+      self.packaging_outputs = packaging_outputs
+
+    def get_build_targets_impl(self):
+      return self.output_targets
+
+    def package_outputs_impl(self):
+      self.packaging_outputs.add(f'packaging {" ".join(self.output_targets)}')
+
+    def get_enabled_flag(self):
+      return f'{self.target}_enabled'
+
+  def test_build_optimization_off_builds_everything(self):
+    build_targets = {'target_1', 'target_2'}
+    build_planner = self.create_build_planner(
+        build_context=self.create_build_context(optimized_build_enabled=False),
+        build_targets=build_targets,
+    )
+
+    build_plan = build_planner.create_build_plan()
+
+    self.assertSetEqual(build_targets, build_plan.build_targets)
+
+  def test_build_optimization_off_doesnt_package(self):
+    build_targets = {'target_1', 'target_2'}
+    build_planner = self.create_build_planner(
+        build_context=self.create_build_context(optimized_build_enabled=False),
+        build_targets=build_targets,
+    )
+
+    build_plan = build_planner.create_build_plan()
+
+    self.assertEqual(len(build_plan.packaging_functions), 0)
+
+  def test_build_optimization_on_optimizes_target(self):
+    build_targets = {'target_1', 'target_2'}
+    build_planner = self.create_build_planner(
+        build_targets=build_targets,
+        build_context=self.create_build_context(
+            enabled_build_features={self.get_target_flag('target_1')}
+        ),
+    )
+
+    build_plan = build_planner.create_build_plan()
+
+    expected_targets = {self.get_optimized_target_name('target_1'), 'target_2'}
+    self.assertSetEqual(expected_targets, build_plan.build_targets)
+
+  def test_build_optimization_on_packages_target(self):
+    build_targets = {'target_1', 'target_2'}
+    packaging_outputs = set()
+    build_planner = self.create_build_planner(
+        build_targets=build_targets,
+        build_context=self.create_build_context(
+            enabled_build_features={self.get_target_flag('target_1')},
+        ),
+        packaging_outputs=packaging_outputs,
+    )
+
+    build_plan = build_planner.create_build_plan()
+    self.run_packaging_functions(build_plan)
+
+    optimized_target_name = self.get_optimized_target_name('target_1')
+    self.assertIn(f'packaging {optimized_target_name}', packaging_outputs)
+
+  def test_individual_build_optimization_off_doesnt_optimize(self):
+    build_targets = {'target_1', 'target_2'}
+    build_planner = self.create_build_planner(
+        build_targets=build_targets,
+    )
+
+    build_plan = build_planner.create_build_plan()
+
+    self.assertSetEqual(build_targets, build_plan.build_targets)
+
+  def test_individual_build_optimization_off_doesnt_package(self):
+    build_targets = {'target_1', 'target_2'}
+    packaging_outputs = set()
+    build_planner = self.create_build_planner(
+        build_targets=build_targets,
+        packaging_outputs=packaging_outputs,
+    )
+
+    build_plan = build_planner.create_build_plan()
+    self.run_packaging_functions(build_plan)
+
+    self.assertFalse(packaging_outputs)
+
+  def test_target_output_used_target_built(self):
+    build_target = 'test_target'
+    build_planner = self.create_build_planner(
+        build_targets={build_target},
+        build_context=self.create_build_context(
+            test_context=self.get_test_context(build_target),
+            enabled_build_features={'test_target_unused_exclusion'},
+        ),
+    )
+
+    build_plan = build_planner.create_build_plan()
+
+    self.assertSetEqual(build_plan.build_targets, {build_target})
+
+  def test_target_regex_used_target_built(self):
+    build_target = 'test_target'
+    test_context = self.get_test_context(build_target)
+    test_context['testInfos'][0]['extraOptions'] = [{
+        'key': 'additional-files-filter',
+        'values': [f'.*{build_target}.*\.zip'],
+    }]
+    build_planner = self.create_build_planner(
+        build_targets={build_target},
+        build_context=self.create_build_context(
+            test_context=test_context,
+            enabled_build_features={'test_target_unused_exclusion'},
+        ),
+    )
+
+    build_plan = build_planner.create_build_plan()
+
+    self.assertSetEqual(build_plan.build_targets, {build_target})
+
+  def test_target_output_not_used_target_not_built(self):
+    build_target = 'test_target'
+    test_context = self.get_test_context(build_target)
+    test_context['testInfos'][0]['extraOptions'] = []
+    build_planner = self.create_build_planner(
+        build_targets={build_target},
+        build_context=self.create_build_context(
+            test_context=test_context,
+            enabled_build_features={'test_target_unused_exclusion'},
+        ),
+    )
+
+    build_plan = build_planner.create_build_plan()
+
+    self.assertSetEqual(build_plan.build_targets, set())
+
+  def test_target_regex_matching_not_too_broad(self):
+    build_target = 'test_target'
+    test_context = self.get_test_context(build_target)
+    test_context['testInfos'][0]['extraOptions'] = [{
+        'key': 'additional-files-filter',
+        'values': [f'.*a{build_target}.*\.zip'],
+    }]
+    build_planner = self.create_build_planner(
+        build_targets={build_target},
+        build_context=self.create_build_context(
+            test_context=test_context,
+            enabled_build_features={'test_target_unused_exclusion'},
+        ),
+    )
+
+    build_plan = build_planner.create_build_plan()
+
+    self.assertSetEqual(build_plan.build_targets, set())
+
+  def create_build_planner(
+      self,
+      build_targets: set[str],
+      build_context: dict[str, any] = None,
+      args: argparse.Namespace = None,
+      target_optimizations: dict[
+          str, optimized_targets.OptimizedBuildTarget
+      ] = None,
+      packaging_outputs: set[str] = set(),
+  ) -> build_test_suites.BuildPlanner:
+    if not build_context:
+      build_context = self.create_build_context()
+    if not args:
+      args = self.create_args(extra_build_targets=build_targets)
+    if not target_optimizations:
+      target_optimizations = self.create_target_optimizations(
+          build_context,
+          build_targets,
+          packaging_outputs,
+      )
+    return build_test_suites.BuildPlanner(
+        build_context, args, target_optimizations
+    )
+
+  def create_build_context(
+      self,
+      optimized_build_enabled: bool = True,
+      enabled_build_features: set[str] = set(),
+      test_context: dict[str, any] = {},
+  ) -> dict[str, any]:
+    build_context = {}
+    build_context['enabledBuildFeatures'] = enabled_build_features
+    if optimized_build_enabled:
+      build_context['enabledBuildFeatures'].add('optimized_build')
+    build_context['testContext'] = test_context
+    return build_context
+
+  def create_args(
+      self, extra_build_targets: set[str] = set()
+  ) -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument('extra_targets', nargs='*')
+    return parser.parse_args(extra_build_targets)
+
+  def create_target_optimizations(
+      self,
+      build_context: dict[str, any],
+      build_targets: set[str],
+      packaging_outputs: set[str] = set(),
+  ):
+    target_optimizations = dict()
+    for target in build_targets:
+      target_optimizations[target] = functools.partial(
+          self.TestOptimizedBuildTarget,
+          output_targets={self.get_optimized_target_name(target)},
+          packaging_outputs=packaging_outputs,
+      )
+
+    return target_optimizations
+
+  def get_target_flag(self, target: str):
+    return f'{target}_enabled'
+
+  def get_optimized_target_name(self, target: str):
+    return f'{target}_optimized'
+
+  def run_packaging_functions(self, build_plan: build_test_suites.BuildPlan):
+    for packaging_function in build_plan.packaging_functions:
+      packaging_function()
+
+  def get_test_context(self, target: str):
+    return {
+        'testInfos': [
+            {
+                'name': 'atp_test',
+                'target': 'test_target',
+                'branch': 'branch',
+                'extraOptions': [{
+                    'key': 'additional-files-filter',
+                    'values': [f'{target}.zip'],
+                }],
+                'command': '/tf/command',
+                'extraBuildTargets': [
+                    'extra_build_target',
+                ],
+            },
+        ],
+    }
 
 
 def wait_until(

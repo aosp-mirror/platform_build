@@ -26,6 +26,7 @@ _product_single_value_vars += PRODUCT_NAME
 _product_single_value_vars += PRODUCT_MODEL
 _product_single_value_vars += PRODUCT_NAME_FOR_ATTESTATION
 _product_single_value_vars += PRODUCT_MODEL_FOR_ATTESTATION
+_product_single_value_vars += PRODUCT_BASE_OS
 
 # Defines the ELF segment alignment for binaries (executables and shared libraries).
 # The ELF segment alignment has to be a PAGE_SIZE multiple. For example, if
@@ -160,7 +161,6 @@ _product_list_vars += PRODUCT_BOOT_JARS_EXTRA
 # List of jars to be included in the ART boot image for testing.
 _product_list_vars += PRODUCT_TEST_ONLY_ART_BOOT_IMAGE_JARS
 
-_product_single_value_vars += PRODUCT_SUPPORTS_VBOOT
 _product_list_vars += PRODUCT_SYSTEM_SERVER_APPS
 # List of system_server classpath jars on the platform.
 _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS
@@ -492,6 +492,12 @@ _product_single_value_vars += PRODUCT_16K_DEVELOPER_OPTION
 # builds. It's already off disabled in user builds. Eng builds are unaffected
 # by this flag.
 _product_single_value_vars += PRODUCT_NOT_DEBUGGABLE_IN_USERDEBUG
+
+# If set, the default value of the versionName of apps will include the build number.
+_product_single_value_vars += PRODUCT_BUILD_APPS_WITH_BUILD_NUMBER
+
+# If set, build would generate system image from Soong-defined module.
+_product_single_value_vars += PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
