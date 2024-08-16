@@ -1251,6 +1251,20 @@ BUILD_WARNING_BAD_OPTIONAL_USES_LIBS_ALLOWLIST := LegacyCamera Gallery2
 # in the source tree.
 dont_bother_goals := out product-graph
 
+ifeq ($(TARGET_SYSTEM_PROP),)
+TARGET_SYSTEM_PROP := $(wildcard $(TARGET_DEVICE_DIR)/system.prop)
+endif
+
+ifeq ($(TARGET_SYSTEM_EXT_PROP),)
+TARGET_SYSTEM_EXT_PROP := $(wildcard $(TARGET_DEVICE_DIR)/system_ext.prop)
+endif
+
+ifeq ($(TARGET_PRODUCT_PROP),)
+TARGET_PRODUCT_PROP := $(wildcard $(TARGET_DEVICE_DIR)/product.prop)
+endif
+
+.KATI_READONLY := TARGET_SYSTEM_PROP TARGET_SYSTEM_EXT_PROP TARGET_PRODUCT_PROP
+
 include $(BUILD_SYSTEM)/sysprop_config.mk
 
 # Make ANDROID Soong config variables visible to Android.mk files, for

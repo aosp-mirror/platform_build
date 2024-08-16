@@ -28,12 +28,11 @@ android_test {
         "srcs/**/*.java",
     ],
     static_libs: [
-        "aconfig_storage_file_java",
         "androidx.test.runner",
         "junit",
     ],
-    sdk_version: "test_current",
     test_config: "AndroidStorageJaveTest.xml",
+    certificate: "platform",
     data: [
         "package.map",
         "flag.map",

@@ -728,6 +728,14 @@ endif
 
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 
+ifeq ($(EXCLUDE_MCTS),true)
+  ifneq (,$(test_config))
+    ifneq (,$(filter mcts-%,$(LOCAL_COMPATIBILITY_SUITE)))
+      LOCAL_COMPATIBILITY_SUITE := $(filter-out cts,$(LOCAL_COMPATIBILITY_SUITE))
+    endif
+  endif
+endif
+
 # If we are building a native test or benchmark and its stem variants are not defined,
 # separate the multiple architectures into subdirectories of the testcase folder.
 arch_dir :=
@@ -768,6 +776,8 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval my_compat_dist_$(suite) := $(patsubst %:$(LOCAL_INSTALLED_MODULE),$(LOCAL_INSTALLED_MODULE):$(LOCAL_INSTALLED_MODULE),\
     $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
       $(LOCAL_BUILT_MODULE):$(dir)/$(my_installed_module_stem)))) \
+  $(eval my_compat_module_arch_dir_$(suite).$(my_register_name) :=) \
+  $(foreach dir,$(call compatibility_suite_dirs,$(suite),$(arch_dir)),$(eval my_compat_module_arch_dir_$(suite).$(my_register_name) += $(dir))) \
   $(eval my_compat_dist_config_$(suite) := ))
 
 ifneq (,$(LOCAL_SOONG_CLASSES_JAR))
