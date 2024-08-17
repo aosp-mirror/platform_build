@@ -30,6 +30,7 @@ import subprocess
 import sys
 import zipfile
 
+import apex_utils
 import common
 from apex_manifest import ParseApexManifest
 
@@ -229,7 +230,7 @@ def PrepareApexDirectory(inp, dirmap):
   apex_host = os.path.join(OPTIONS.search_path, 'bin', 'apexd_host')
   cmd = [apex_host, '--tool_path', OPTIONS.search_path]
   cmd += ['--apex_path', dirmap['/apex']]
-  for p in ['system', 'system_ext', 'product', 'vendor']:
+  for p in apex_utils.PARTITIONS:
     if '/' + p in dirmap:
       cmd += ['--' + p + '_path', dirmap['/' + p]]
   common.RunAndCheckOutput(cmd)
