@@ -1267,9 +1267,8 @@ boototapackage_16k: $(BUILT_BOOT_OTA_PACKAGE_16K)
 
 endif
 
-
+# The value of RAMDISK_NODE_LIST is defined in system/core/rootdir/Android.bp.
 # This file contains /dev nodes description added to the generic ramdisk
-RAMDISK_NODE_LIST := $(PRODUCT_OUT)/ramdisk_node_list
 
 # We just build this directly to the install location.
 INSTALLED_RAMDISK_TARGET := $(BUILT_RAMDISK_TARGET)
@@ -5136,6 +5135,7 @@ apex_dirs := \
   $(TARGET_OUT)/apex/% \
   $(TARGET_OUT_SYSTEM_EXT)/apex/% \
   $(TARGET_OUT_VENDOR)/apex/% \
+  $(TARGET_OUT_ODM)/apex/% \
   $(TARGET_OUT_PRODUCT)/apex/% \
 
 apex_files := $(sort $(filter $(apex_dirs), $(INTERNAL_ALLIMAGES_FILES)))
@@ -5188,6 +5188,7 @@ apex_dirs := \
   $(TARGET_OUT_PRODUCT)/apex/% \
   $(TARGET_OUT_SYSTEM_EXT)/apex/% \
   $(TARGET_OUT_VENDOR)/apex/% \
+  $(TARGET_OUT_ODM)/apex/% \
 
 apex_files := $(sort $(filter $(apex_dirs), $(INTERNAL_ALLIMAGES_FILES)))
 
@@ -5206,6 +5207,7 @@ $(APEX_INFO_FILE): $(HOST_OUT_EXECUTABLES)/apexd_host $(apex_files)
 	   --system_ext_path $(TARGET_OUT_SYSTEM_EXT) \
 	   --product_path $(TARGET_OUT_PRODUCT) \
 	   --vendor_path $(TARGET_OUT_VENDOR) \
+	   --odm_path $(TARGET_OUT_ODM) \
 	   --apex_path $(APEX_OUT)
 
 apex_files :=
@@ -6883,6 +6885,33 @@ ifdef BOARD_KERNEL_PAGESIZE
 	$(hide) echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/INIT_BOOT/pagesize
 endif # BOARD_KERNEL_PAGESIZE
 endif # BUILDING_INIT_BOOT_IMAGE
+ifdef BOARD_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_EROFS_COMPRESS_HINTS) $(zip_root)/META/erofs_default_compress_hints.txt
+endif
+ifdef BOARD_SYSTEMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_SYSTEMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/system_erofs_compress_hints.txt
+endif
+ifdef BOARD_SYSTEM_EXTIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_SYSTEM_EXTIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/system_ext_erofs_compress_hints.txt
+endif
+ifdef BOARD_PRODUCTIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_PRODUCTIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/product_erofs_compress_hints.txt
+endif
+ifdef BOARD_VENDORIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_VENDORIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/vendor_erofs_compress_hints.txt
+endif
+ifdef BOARD_ODMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_ODMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/odm_erofs_compress_hints.txt
+endif
+ifdef BOARD_VENDOR_DLKMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_VENDOR_DLKMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/vendor_dlkm_erofs_compress_hints.txt
+endif
+ifdef BOARD_ODM_DLKMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_ODM_DLKMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/odm_dlkm_erofs_compress_hints.txt
+endif
+ifdef BOARD_SYSTEM_DLKMIMAGE_EROFS_COMPRESS_HINTS
+	$(hide) cp $(BOARD_SYSTEM_DLKMIMAGE_EROFS_COMPRESS_HINTS) $(zip_root)/META/system_dlkm_erofs_compress_hints.txt
+endif
 ifneq ($(INSTALLED_VENDOR_BOOTIMAGE_TARGET),)
 	$(call fs_config,$(zip_root)/VENDOR_BOOT/RAMDISK,) > $(zip_root)/META/vendor_boot_filesystem_config.txt
 endif
