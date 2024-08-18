@@ -14,6 +14,4 @@
 # limitations under the License.
 #
 
-# Inherit this when the target supports userspace reboot
-
-PRODUCT_VENDOR_PROPERTIES := init.userspace_reboot.is_supported=true
+# DEPRECATED! Do not inherit this.
