@@ -266,83 +266,18 @@ $(eval $(call declare-1p-target,$(INSTALLED_VENDOR_BUILD_PROP_TARGET)))
 # -----------------------------------------------------------------
 # product/etc/build.prop
 #
-
-_prop_files_ := $(if $(TARGET_PRODUCT_PROP),\
-    $(TARGET_PRODUCT_PROP),\
-    $(wildcard $(TARGET_DEVICE_DIR)/product.prop))
-
-# Order matters here. When there are duplicates, the last one wins.
-# TODO(b/117892318): don't allow duplicates so that the ordering doesn't matter
-_prop_vars_ := \
-    ADDITIONAL_PRODUCT_PROPERTIES \
-    PRODUCT_PRODUCT_PROPERTIES
+# product/etc/build.prop is built by Soong. See product-build.prop module in
+# build/soong/Android.bp.
 
 INSTALLED_PRODUCT_BUILD_PROP_TARGET := $(TARGET_OUT_PRODUCT)/etc/build.prop
-
-ifdef PRODUCT_OEM_PROPERTIES
-import_oem_prop := $(call intermediates-dir-for,ETC,import_oem_prop)/oem.prop
-
-$(import_oem_prop):
-	$(hide) echo "####################################" >> $@; \
-	        echo "# PRODUCT_OEM_PROPERTIES" >> $@; \
-	        echo "####################################" >> $@;
-	$(hide) $(foreach prop,$(PRODUCT_OEM_PROPERTIES), \
-	    echo "import /oem/oem.prop $(prop)" >> $@;)
-
-_footers_ := $(import_oem_prop)
-else
-_footers_ :=
-endif
-
-# Skip common /product properties generation if device released before R and
-# has no product partition. This is the first part of the check.
-ifeq ($(call math_lt,$(if $(PRODUCT_SHIPPING_API_LEVEL),$(PRODUCT_SHIPPING_API_LEVEL),30),30), true)
-  _skip_common_properties := true
-endif
-
-# The second part of the check - always generate common properties for the
-# devices with product partition regardless of shipping level.
-ifneq ($(BOARD_USES_PRODUCTIMAGE),)
-  _skip_common_properties :=
-endif
-
-$(eval $(call build-properties,\
-    product,\
-    $(INSTALLED_PRODUCT_BUILD_PROP_TARGET),\
-    $(_prop_files_),\
-    $(_prop_vars_),\
-    $(empty),\
-    $(_footers_),\
-    $(_skip_common_properties)))
-
-$(eval $(call declare-1p-target,$(INSTALLED_PRODUCT_BUILD_PROP_TARGET)))
-
-_skip_common_properties :=
 
 # ----------------------------------------------------------------
 # odm/etc/build.prop
 #
-_prop_files_ := $(if $(TARGET_ODM_PROP),\
-    $(TARGET_ODM_PROP),\
-    $(wildcard $(TARGET_DEVICE_DIR)/odm.prop))
-
-# Order matters here. When there are duplicates, the last one wins.
-# TODO(b/117892318): don't allow duplicates so that the ordering doesn't matter
-_prop_vars_ := \
-    ADDITIONAL_ODM_PROPERTIES \
-    PRODUCT_ODM_PROPERTIES
+# odm/etc/build.prop is built by Soong. See odm-build.prop module in
+# build/soong/Android.bp.
 
 INSTALLED_ODM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM)/etc/build.prop
-$(eval $(call build-properties,\
-    odm,\
-    $(INSTALLED_ODM_BUILD_PROP_TARGET),\
-    $(_prop_files_),\
-    $(_prop_vars_),\
-    $(empty),\
-    $(empty),\
-    $(empty)))
-
-$(eval $(call declare-1p-target,$(INSTALLED_ODM_BUILD_PROP_TARGET)))
 
 # ----------------------------------------------------------------
 # vendor_dlkm/etc/build.prop
@@ -395,7 +330,7 @@ $(eval $(call declare-1p-target,$(INSTALLED_SYSTEM_DLKM_BUILD_PROP_TARGET)))
 # -----------------------------------------------------------------
 # system_ext/etc/build.prop
 #
-# system_ext/build.prop is built by Soong. See system-build.prop module in
+# system_ext/etc/build.prop is built by Soong. See system-build.prop module in
 # build/soong/Android.bp.
 
 INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET := $(TARGET_OUT_SYSTEM_EXT)/etc/build.prop
