@@ -4433,3 +4433,10 @@ team {
     // go/trendy/manage/engineers/5185897463382016
     trendy_team_id: "5185897463382016",
 }
+
+team {
+    name: "trendy_team_pixel_troubleshooting_app",
+
+    // go/trendy/manage/engineers/5097003746426880
+    trendy_team_id: "5097003746426880",
+}
