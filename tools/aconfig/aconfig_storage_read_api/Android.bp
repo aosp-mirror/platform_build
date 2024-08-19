@@ -87,6 +87,9 @@ cc_library {
     generated_sources: ["libcxx_aconfig_storage_read_api_bridge_code"],
     whole_static_libs: ["libaconfig_storage_read_api_cxx_bridge"],
     export_include_dirs: ["include"],
+    static_libs: [
+        "libbase",
+    ],
     host_supported: true,
     vendor_available: true,
     product_available: true,
@@ -102,6 +105,33 @@ cc_library {
     },
     double_loadable: true,
     afdo: true,
+}
+
+soong_config_module_type {
+    name: "aconfig_lib_cc_shared_link_defaults",
+    module_type: "cc_defaults",
+    config_namespace: "Aconfig",
+    bool_variables: [
+        "read_from_new_storage",
+    ],
+    properties: [
+        "shared_libs",
+    ],
+}
+
+soong_config_bool_variable {
+    name: "read_from_new_storage",
+}
+
+aconfig_lib_cc_shared_link_defaults {
+    name: "aconfig_lib_cc_shared_link.defaults",
+    soong_config_variables: {
+        read_from_new_storage: {
+            shared_libs: [
+                "libaconfig_storage_read_api_cc",
+            ],
+        },
+    },
 }
 
 cc_defaults {
@@ -127,7 +157,9 @@ rust_ffi_shared {
 java_library {
     name: "libaconfig_storage_read_api_java",
     srcs: [
-        "srcs/**/*.java",
+        "srcs/android/aconfig/storage/AconfigStorageReadAPI.java",
+        "srcs/android/aconfig/storage/FlagReadContext.java",
+        "srcs/android/aconfig/storage/PackageReadContext.java",
     ],
     required: ["libaconfig_storage_read_api_rust_jni"],
     min_sdk_version: "UpsideDownCake",
@@ -135,4 +167,42 @@ java_library {
         "//apex_available:anyapex",
         "//apex_available:platform",
     ],
+}
+
+java_library {
+    name: "aconfig_storage_reader_java",
+    srcs: [
+        "srcs/android/aconfig/storage/StorageInternalReader.java",
+    ],
+    libs: [
+        "unsupportedappusage",
+        "strict_mode_stub",
+    ],
+    static_libs: [
+        "aconfig_storage_file_java",
+    ],
+    sdk_version: "core_current",
+    host_supported: true,
+    min_sdk_version: "29",
+    apex_available: [
+        "//apex_available:platform",
+        "//apex_available:anyapex",
+    ],
+}
+
+java_library {
+    name: "aconfig_storage_reader_java_none",
+    srcs: [
+        "srcs/android/aconfig/storage/StorageInternalReader.java",
+    ],
+    libs: [
+        "unsupportedappusage-sdk-none",
+        "fake_device_config",
+    ],
+    static_libs: [
+        "aconfig_storage_file_java_none",
+    ],
+    sdk_version: "none",
+    system_modules: "core-all-system-modules",
+    host_supported: true,
 }

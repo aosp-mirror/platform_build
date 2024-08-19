@@ -50,4 +50,5 @@ $(foreach header,$(LOCAL_COPY_HEADERS), \
 _chFrom :=
 _chTo :=
 
+$(if $(my_register_name),$(eval ALL_MODULES.$(my_register_name).MAKE_MODULE_TYPE:=COPY_HEADERS))
 endif # LOCAL_COPY_HEADERS

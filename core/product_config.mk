@@ -311,6 +311,14 @@ endif
 
 TARGET_DEVICE := $(PRODUCT_DEVICE)
 
+# Allow overriding PLATFORM_BASE_OS when PRODUCT_BASE_OS is defined
+ifdef PRODUCT_BASE_OS
+  PLATFORM_BASE_OS := $(PRODUCT_BASE_OS)
+else
+  PLATFORM_BASE_OS := $(PLATFORM_BASE_OS_ENV_INPUT)
+endif
+.KATI_READONLY := PLATFORM_BASE_OS
+
 # TODO: also keep track of things like "port", "land" in product files.
 
 # Figure out which resoure configuration options to use for this
@@ -403,6 +411,10 @@ ifndef PRODUCT_CHARACTERISTICS
   TARGET_AAPT_CHARACTERISTICS := default
 else
   TARGET_AAPT_CHARACTERISTICS := $(PRODUCT_CHARACTERISTICS)
+endif
+
+ifndef PRODUCT_SHIPPING_API_LEVEL
+  PRODUCT_SHIPPING_API_LEVEL := 10000
 endif
 
 ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
@@ -557,10 +569,25 @@ ifdef PRODUCT_ENFORCE_RRO_EXEMPTED_TARGETS
 endif
 
 # This table maps sdk version 35 to vendor api level 202404 and assumes yearly
-# release for the same month.
+# release for the same month. If 10000 API level or more is used, which usually
+# represents 'current' or 'future' API levels, several zeros are added to
+# preserve ordering. Specifically API level 10,000 is converted to 10,000,000
+# which importantly is greater than 202404 = 202,404. This convention will break
+# in 100,000 CE, which is the closest multiple of 10 that doesn't break earlier
+# than 10,000 as an API level breaks.
 define sdk-to-vendor-api-level
-  $(if $(call math_lt_or_eq,$(1),34),$(1),20$(call int_subtract,$(1),11)04)
+$(if $(call math_lt_or_eq,$(1),34),$(1),$(if $(call math_lt,$(1),10000),20$(call int_subtract,$(1),11)04,$(1)000))
 endef
+
+ifneq ($(call sdk-to-vendor-api-level,34),34)
+$(error sdk-to-vendor-api-level is broken for pre-Trunk-Stable SDKs)
+endif
+ifneq ($(call sdk-to-vendor-api-level,35),202404)
+$(error sdk-to-vendor-api-level is broken for post-Trunk-Stable SDKs)
+endif
+ifneq ($(call sdk-to-vendor-api-level,10000),10000000)
+$(error sdk-to-vendor-api-level is broken for current $(call sdk-to-vendor-api-level,10000))
+endif
 
 ifdef PRODUCT_SHIPPING_VENDOR_API_LEVEL
 # Follow the version that is set manually.

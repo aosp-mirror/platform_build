@@ -110,4 +110,6 @@ $(my_coverage_path)/$(GCNO_ARCHIVE) : $(intermediates)/$(GCNO_ARCHIVE)
 $(LOCAL_BUILT_MODULE): $(my_coverage_path)/$(GCNO_ARCHIVE)
 endif
 
+$(if $(my_register_name),$(eval ALL_MODULES.$(my_register_name).MAKE_MODULE_TYPE:=EXECUTABLE))
+
 endif  # skip_build_from_source

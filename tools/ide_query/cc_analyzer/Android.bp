@@ -58,7 +58,7 @@ cc_library_host_static {
     shared_libs: ["libclang-cpp_host"],
     static_libs: [
         "include_scanner",
-        "ide_query_proto",
+        "cc_analyzer_proto",
     ],
     defaults: ["ide_query_cc_analyzer_defaults"],
 }
@@ -72,7 +72,7 @@ cc_binary_host {
         "libprotobuf-cpp-full",
     ],
     static_libs: [
-        "ide_query_proto",
+        "cc_analyzer_proto",
         "builtin_headers",
         "include_scanner",
         "analyzer",

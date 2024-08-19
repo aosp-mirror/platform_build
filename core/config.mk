@@ -316,6 +316,19 @@ $(call soong_config_define_internal,$1,$2) \
 $(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(strip $3))
 endef
 
+# soong_config_set_bool is the same as soong_config_set, but it will
+# also type the variable as a bool, so that when using select() expressions
+# in blueprint files they can use boolean values instead of strings.
+# It will only accept "true" for its value, any other value will be
+# treated as false.
+# $1 is the namespace. $2 is the variable name. $3 is the variable value.
+# Ex: $(call soong_config_set_bool,acme,COOL_FEATURE,true)
+define soong_config_set_bool
+$(call soong_config_define_internal,$1,$2) \
+$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(filter true,$3))
+$(eval SOONG_CONFIG_TYPE_$(strip $1)_$(strip $2):=bool)
+endef
+
 # soong_config_append appends to the value of the variable in the given Soong
 # config namespace. If the variable does not exist, it will be defined. If the
 # namespace does not  exist, it will be defined.
@@ -718,8 +731,6 @@ APPEND2SIMG := $(HOST_OUT_EXECUTABLES)/append2simg
 VERITY_SIGNER := $(HOST_OUT_EXECUTABLES)/verity_signer
 BUILD_VERITY_METADATA := $(HOST_OUT_EXECUTABLES)/build_verity_metadata
 BUILD_VERITY_TREE := $(HOST_OUT_EXECUTABLES)/build_verity_tree
-FUTILITY := $(HOST_OUT_EXECUTABLES)/futility-host
-VBOOT_SIGNER := $(HOST_OUT_EXECUTABLES)/vboot_signer
 
 DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump$(BUILD_EXECUTABLE_SUFFIX)
 PROFMAN := $(HOST_OUT_EXECUTABLES)/profman
@@ -827,9 +838,6 @@ ifdef PRODUCT_SHIPPING_API_LEVEL
     min_systemsdk_version := $(call math_min,$(board_api_level),$(PRODUCT_SHIPPING_API_LEVEL))
   else
     min_systemsdk_version := $(PRODUCT_SHIPPING_API_LEVEL)
-  endif
-  ifneq ($(call numbers_less_than,$(min_systemsdk_version),$(BOARD_SYSTEMSDK_VERSIONS)),)
-    $(error BOARD_SYSTEMSDK_VERSIONS ($(BOARD_SYSTEMSDK_VERSIONS)) must all be greater than or equal to BOARD_API_LEVEL, BOARD_SHIPPING_API_LEVEL or PRODUCT_SHIPPING_API_LEVEL ($(min_systemsdk_version)))
   endif
   ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),29),)
     ifneq ($(BOARD_OTA_FRAMEWORK_VBMETA_VERSION_OVERRIDE),)
@@ -1193,8 +1201,8 @@ RSCOMPAT_NO_USAGEIO_API_LEVELS := 8 9 10 11 12 13
 
 APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)
 
-# Add BUILD_NUMBER to apps if TARGET_BUILD_APPS_WITH_BUILD_NUMBER is defined.
-ifeq ($(TARGET_BUILD_APPS_WITH_BUILD_NUMBER),true)
+# Add BUILD_NUMBER to apps if PRODUCT_BUILD_APPS_WITH_BUILD_NUMBER is defined.
+ifeq ($(PRODUCT_BUILD_APPS_WITH_BUILD_NUMBER),true)
   APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)-$(BUILD_NUMBER_FROM_FILE)
 endif
 
@@ -1243,16 +1251,36 @@ BUILD_WARNING_BAD_OPTIONAL_USES_LIBS_ALLOWLIST := LegacyCamera Gallery2
 # in the source tree.
 dont_bother_goals := out product-graph
 
+ifeq ($(TARGET_SYSTEM_PROP),)
+TARGET_SYSTEM_PROP := $(wildcard $(TARGET_DEVICE_DIR)/system.prop)
+endif
+
+ifeq ($(TARGET_SYSTEM_EXT_PROP),)
+TARGET_SYSTEM_EXT_PROP := $(wildcard $(TARGET_DEVICE_DIR)/system_ext.prop)
+endif
+
+ifeq ($(TARGET_PRODUCT_PROP),)
+TARGET_PRODUCT_PROP := $(wildcard $(TARGET_DEVICE_DIR)/product.prop)
+endif
+
+.KATI_READONLY := TARGET_SYSTEM_PROP TARGET_SYSTEM_EXT_PROP TARGET_PRODUCT_PROP
+
 include $(BUILD_SYSTEM)/sysprop_config.mk
 
 # Make ANDROID Soong config variables visible to Android.mk files, for
 # consistency with those defined in BoardConfig.mk files.
 include $(BUILD_SYSTEM)/android_soong_config_vars.mk
 
+SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.$(TARGET_PRODUCT).variables
+SOONG_EXTRA_VARIABLES := $(SOONG_OUT_DIR)/soong.$(TARGET_PRODUCT).extra.variables
+
 ifeq ($(CALLED_FROM_SETUP),true)
 include $(BUILD_SYSTEM)/ninja_config.mk
 include $(BUILD_SYSTEM)/soong_config.mk
 endif
+
+SOONG_VARIABLES :=
+SOONG_EXTRA_VARIABLES :=
 
 -include external/ltp/android/ltp_package_list.mk
 DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages)

@@ -33,6 +33,7 @@ $(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
 $(call inherit-product-if-exists, frameworks/webview/chromium/chromium.mk)
 
 PRODUCT_PACKAGES += \
+    android.software.window_magnification.prebuilt.xml \
     BasicDreams \
     BlockedNumberProvider \
     BluetoothMidiService \
@@ -68,12 +69,18 @@ PRODUCT_PACKAGES += \
     SharedStorageBackup \
     SimAppDialog \
     Telecom \
-    TelephonyProvider \
     TeleService \
     Traceur \
     UserDictionaryProvider \
     VpnDialogs \
     vr \
+
+# Choose the correct products based on HSUM status
+ifeq ($(PRODUCT_USE_HSUM),true)
+  PRODUCT_PACKAGES += TelephonyProviderHsum
+else
+  PRODUCT_PACKAGES += TelephonyProvider
+endif
 
 PRODUCT_PACKAGES += $(RELEASE_PACKAGE_VIRTUAL_CAMERA)
 # Set virtual_camera_service_enabled soong config variable based on the
@@ -88,9 +95,6 @@ PRODUCT_SYSTEM_SERVER_APPS += \
     Telecom \
 
 PRODUCT_PACKAGES += framework-audio_effects.xml
-
-PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/android.software.window_magnification.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/android.software.window_magnification.xml \
 
 PRODUCT_VENDOR_PROPERTIES += \
     ro.carrier?=unknown \

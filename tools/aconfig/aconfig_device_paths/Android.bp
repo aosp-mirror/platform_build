@@ -39,13 +39,16 @@ rust_library {
 
 genrule {
     name: "libaconfig_java_device_paths_src",
-    srcs: ["src/DevicePathsTemplate.java"],
-    out: ["DevicePaths.java"],
+    srcs: ["src/DeviceProtosTemplate.java"],
+    out: ["DeviceProtos.java"],
     tool_files: ["partition_aconfig_flags_paths.txt"],
-    cmd: "sed -e '/TEMPLATE/{r$(location partition_aconfig_flags_paths.txt)' -e 'd}' $(in) > $(out)"
+    cmd: "sed -e '/TEMPLATE/{r$(location partition_aconfig_flags_paths.txt)' -e 'd}' $(in) > $(out)",
 }
 
 java_library {
     name: "aconfig_device_paths_java",
     srcs: [":libaconfig_java_device_paths_src"],
+    static_libs: [
+        "libaconfig_java_proto_nano",
+    ],
 }
