@@ -518,8 +518,8 @@ mod tests {
         let expected_featureflagsmpl_content_1 = r#"
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
-            private static boolean aconfig_test_is_cached = false;
-            private static boolean other_namespace_is_cached = false;
+            private static volatile boolean aconfig_test_is_cached = false;
+            private static volatile boolean other_namespace_is_cached = false;
             private static boolean disabledRw = false;
             private static boolean disabledRwExported = false;
             private static boolean disabledRwInOtherNamespace = false;
@@ -698,6 +698,8 @@ mod tests {
         StorageInternalReader reader;
         boolean readFromNewStorage;
 
+        boolean useNewStorageValueAndDiscardOld = false;
+
         private final static String TAG = "AconfigJavaCodegen";
         private final static String SUCCESS_LOG = "success: %s value matches";
         private final static String MISMATCH_LOG = "error: %s value mismatch, new storage value is %s, old storage value is %s";
@@ -713,6 +715,9 @@ mod tests {
                     reader = null;
                 }
             }
+
+            useNewStorageValueAndDiscardOld =
+                DeviceConfig.getBoolean("core_experiments_team_internal", "com.android.providers.settings.use_new_storage_value", false);
         }
 
         private void load_overrides_aconfig_test() {
@@ -745,18 +750,33 @@ mod tests {
                     } else {
                         Log.i(TAG, String.format(MISMATCH_LOG, "disabledRw", val, disabledRw));
                     }
+
+                    if (useNewStorageValueAndDiscardOld) {
+                        disabledRw = val;
+                    }
+
                     val = reader.getBooleanFlagValue(2);
                     if (val == disabledRwExported) {
                         Log.i(TAG, String.format(SUCCESS_LOG, "disabledRwExported"));
                     } else {
                         Log.i(TAG, String.format(MISMATCH_LOG, "disabledRwExported", val, disabledRwExported));
                     }
+
+                    if (useNewStorageValueAndDiscardOld) {
+                        disabledRwExported = val;
+                    }
+
                     val = reader.getBooleanFlagValue(8);
                     if (val == enabledRw) {
                         Log.i(TAG, String.format(SUCCESS_LOG, "enabledRw"));
                     } else {
                         Log.i(TAG, String.format(MISMATCH_LOG, "enabledRw", val, enabledRw));
                     }
+
+                    if (useNewStorageValueAndDiscardOld) {
+                        enabledRw = val;
+                    }
+
                 } catch (Exception e) {
                     Log.e(TAG, ERROR_LOG, e);
                 }
@@ -789,6 +809,11 @@ mod tests {
                     } else {
                         Log.i(TAG, String.format(MISMATCH_LOG, "disabledRwInOtherNamespace", val, disabledRwInOtherNamespace));
                     }
+
+                    if (useNewStorageValueAndDiscardOld) {
+                        disabledRwInOtherNamespace = val;
+                    }
+
                 } catch (Exception e) {
                     Log.e(TAG, ERROR_LOG, e);
                 }
@@ -886,7 +911,7 @@ mod tests {
         import android.provider.DeviceConfig.Properties;
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
-            private static boolean aconfig_test_is_cached = false;
+            private static volatile boolean aconfig_test_is_cached = false;
             private static boolean disabledRwExported = false;
             private static boolean enabledFixedRoExported = false;
             private static boolean enabledRoExported = false;
