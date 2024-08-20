@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2019 The Android Open Source Project
+# Copyright (C) 2024 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,4 +13,9 @@
 # limitations under the License.
 #
 
-# DEPRECATED! Do not inherit this.
+# Window Extensions
+$(call inherit-product, $(SRC_TARGET_DIR)/product/window_extensions.mk)
+
+# Enable Settings 2-pane optimization for large-screen
+PRODUCT_SYSTEM_PROPERTIES += \
+    persist.settings.large_screen_opt.enabled=true

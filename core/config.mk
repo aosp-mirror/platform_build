@@ -1246,14 +1246,35 @@ BUILD_WARNING_BAD_OPTIONAL_USES_LIBS_ALLOWLIST := LegacyCamera Gallery2
 # in the source tree.
 dont_bother_goals := out product-graph
 
+ifeq ($(TARGET_SYSTEM_PROP),)
+TARGET_SYSTEM_PROP := $(wildcard $(TARGET_DEVICE_DIR)/system.prop)
+endif
+
+ifeq ($(TARGET_SYSTEM_EXT_PROP),)
+TARGET_SYSTEM_EXT_PROP := $(wildcard $(TARGET_DEVICE_DIR)/system_ext.prop)
+endif
+
+ifeq ($(TARGET_PRODUCT_PROP),)
+TARGET_PRODUCT_PROP := $(wildcard $(TARGET_DEVICE_DIR)/product.prop)
+endif
+
+.KATI_READONLY := TARGET_SYSTEM_PROP TARGET_SYSTEM_EXT_PROP TARGET_PRODUCT_PROP
+
 include $(BUILD_SYSTEM)/sysprop_config.mk
 
 # Make ANDROID Soong config variables visible to Android.mk files, for
 # consistency with those defined in BoardConfig.mk files.
 include $(BUILD_SYSTEM)/android_soong_config_vars.mk
 
-SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.$(TARGET_PRODUCT).variables
-SOONG_EXTRA_VARIABLES := $(SOONG_OUT_DIR)/soong.$(TARGET_PRODUCT).extra.variables
+# EMMA_INSTRUMENT is set to true when coverage is enabled. Creates a suffix to
+# differeciate the coverage version of ninja files. This will save 5 minutes of
+# build time used to regenerate ninja.
+ifeq (true,$(EMMA_INSTRUMENT))
+COVERAGE_SUFFIX := .coverage
+endif
+
+SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.$(TARGET_PRODUCT)$(COVERAGE_SUFFIX).variables
+SOONG_EXTRA_VARIABLES := $(SOONG_OUT_DIR)/soong.$(TARGET_PRODUCT)$(COVERAGE_SUFFIX).extra.variables
 
 ifeq ($(CALLED_FROM_SETUP),true)
 include $(BUILD_SYSTEM)/ninja_config.mk

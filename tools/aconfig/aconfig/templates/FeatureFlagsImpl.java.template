@@ -22,7 +22,7 @@ import android.util.Log;
 public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ -if runtime_lookup_required }}
 {{ -for namespace_with_flags in namespace_flags }}
-    private static boolean {namespace_with_flags.namespace}_is_cached = false;
+    private static volatile boolean {namespace_with_flags.namespace}_is_cached = false;
 {{ -endfor- }}
 
 {{ for flag in flag_elements }}
@@ -34,6 +34,8 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ -if allow_instrumentation }}
     StorageInternalReader reader;
     boolean readFromNewStorage;
+
+    boolean useNewStorageValueAndDiscardOld = false;
 
     private final static String TAG = "AconfigJavaCodegen";
     private final static String SUCCESS_LOG = "success: %s value matches";
@@ -50,6 +52,9 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
                 reader = null;
             }
         }
+
+        useNewStorageValueAndDiscardOld =
+            DeviceConfig.getBoolean("core_experiments_team_internal", "com.android.providers.settings.use_new_storage_value", false);
     }
 
 {{ -endif }}
@@ -90,6 +95,11 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
                 } else \{
                     Log.i(TAG, String.format(MISMATCH_LOG, "{flag.method_name}", val, {flag.method_name}));
                 }
+
+                if (useNewStorageValueAndDiscardOld) \{
+                    {flag.method_name} = val;
+                }
+
 {{ -endif }}
 {{ -endfor }}
             } catch (Exception e) \{
