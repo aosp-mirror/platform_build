@@ -36,6 +36,8 @@ APEX_PAYLOAD_IMAGE = 'apex_payload.img'
 
 APEX_PUBKEY = 'apex_pubkey'
 
+# Partitions supporting APEXes
+PARTITIONS = ['system', 'system_ext', 'product', 'vendor', 'odm']
 
 class ApexInfoError(Exception):
   """An Exception raised during Apex Information command."""
@@ -550,7 +552,7 @@ def GetApexInfoFromTargetFiles(input_file):
   if not isinstance(input_file, str):
     raise RuntimeError("must pass filepath to target-files zip or directory")
   apex_infos = []
-  for partition in ['system', 'system_ext', 'product', 'vendor']:
+  for partition in PARTITIONS:
     apex_infos.extend(GetApexInfoForPartition(input_file, partition))
   return apex_infos
 
