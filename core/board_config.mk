@@ -289,6 +289,7 @@ $(foreach var,$(_board_true_false_vars), \
     $(error Valid values of $(var) are "true", "false", and "". Not "$($(var))")))
 
 include $(BUILD_SYSTEM)/board_config_wifi.mk
+include $(BUILD_SYSTEM)/board_config_wpa_supplicant.mk
 
 # Set up soong config for "soong_config_value_variable".
 -include vendor/google/build/soong/soong_config_namespace/camera.mk
