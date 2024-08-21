@@ -340,7 +340,7 @@ LOCAL_BUILT_MODULE := $(intermediates)/$(my_built_module_stem)
 
 ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
   ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-    $(call pretty-error, LOCAL_MODULE_MAKEFILE can only be used from $(SOONG_ANDROID_MK))
+    $(call pretty-error, LOCAL_SOONG_INSTALLED_MODULE can only be used from $(SOONG_ANDROID_MK))
   endif
   # Use the install path requested by Soong.
   LOCAL_INSTALLED_MODULE := $(LOCAL_SOONG_INSTALLED_MODULE)
