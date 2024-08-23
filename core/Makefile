@@ -717,7 +717,7 @@ $(foreach kmd,$(BOARD_KERNEL_MODULE_DIRS), \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-vendor-ramdisk-charger-load,$(kmd))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-vendor-kernel-ramdisk-charger-load,$(kmd))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,ODM,$(if $(filter true,$(BOARD_USES_ODM_DLKMIMAGE)),$(TARGET_OUT_ODM_DLKM),$(TARGET_OUT_ODM)),odm,modules.load,,$(kmd))) \
-  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,SYSTEM,$(if $(filter true,$(BOARD_USES_SYSTEM_DLKMIMAGE)),$(TARGET_OUT_SYSTEM_DLKM),$(TARGET_OUT_SYSTEM)),system,modules.load,,$(kmd))) \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,SYSTEM,$(if $(filter true,$(BOARD_USES_SYSTEM_DLKMIMAGE)),$(TARGET_OUT_SYSTEM_DLKM),$(TARGET_OUT)),system,modules.load,,$(kmd))) \
   $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
     $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-recovery-as-boot-load,$(kmd))),\
     $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,GENERIC_RAMDISK,$(TARGET_RAMDISK_OUT),,modules.load,$(GENERIC_RAMDISK_STRIPPED_MODULE_STAGING_DIR),$(kmd)))))
