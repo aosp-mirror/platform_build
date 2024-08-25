@@ -22,6 +22,7 @@ java_library {
     sdk_version: "none",
     system_modules: "core-all-system-modules",
     host_supported: true,
+    is_stubs_module: true,
 }
 
 java_library {
@@ -31,4 +32,5 @@ java_library {
     ],
     sdk_version: "core_current",
     host_supported: true,
+    is_stubs_module: true,
 }
