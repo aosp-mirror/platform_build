@@ -56,7 +56,7 @@ public class StorageInternalReader {
         if (index >= mFlagValueList.size()) {
             throw new AconfigStorageException("Fail to get boolean flag value");
         }
-        return mFlagValueList.get(index);
+        return mFlagValueList.getBoolean(index);
     }
 
     private int getPackageBooleanStartOffset(String packageName) {
