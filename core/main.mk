@@ -1860,6 +1860,11 @@ ifndef INSTALLED_RECOVERYIMAGE_TARGET
 filter_out_files += $(PRODUCT_OUT)/recovery/%
 endif
 
+# userdata.img
+ifndef BUILDING_USERDATA_IMAGE
+filter_out_files += $(PRODUCT_OUT)/data/%
+endif
+
 installed_files := $(sort $(filter-out $(filter_out_files),$(filter $(PRODUCT_OUT)/%,$(modules_to_install))))
 else
 installed_files := $(apps_only_installed_files)
