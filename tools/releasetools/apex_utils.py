@@ -198,7 +198,7 @@ class ApexApkSigner(object):
     # --signing_args "--signing_helper_with_files=%path" to apexer
     if signing_args:
       generate_image_cmd.extend(
-          ['--signing_args', signing_args])
+          ['--signing_args', '"{}"'.format(signing_args)])
 
     # optional arguments for apex repacking
     manifest_json = os.path.join(apex_dir, 'apex_manifest.json')
