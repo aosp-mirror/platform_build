@@ -76,6 +76,7 @@ python_library_host {
     srcs: [
         "build_test_suites.py",
         "optimized_targets.py",
+        "build_context.py",
     ],
 }
 
