@@ -31,8 +31,7 @@ endif
 .KATI_READONLY := $(foreach n,$(SOONG_CONFIG_NAMESPACES),SOONG_CONFIG_$(n))
 .KATI_READONLY := $(foreach n,$(SOONG_CONFIG_NAMESPACES),$(foreach k,$(SOONG_CONFIG_$(n)),SOONG_CONFIG_$(n)_$(k)))
 
-include $(SOONG_MAKEVARS_MK)
-
+include $(SOONG_OUT_DIR)/make_vars-$(TARGET_PRODUCT)$(COVERAGE_SUFFIX).mk
 YACC :=$= $(BISON) -d
 
 include $(BUILD_SYSTEM)/clang/config.mk
@@ -276,12 +275,15 @@ FULL_BUILD := true
 # Include all of the makefiles in the system
 #
 
-subdir_makefiles := $(SOONG_OUT_DIR)/installs-$(TARGET_PRODUCT).mk $(SOONG_ANDROID_MK)
+subdir_makefiles := $(SOONG_OUT_DIR)/installs-$(TARGET_PRODUCT)$(COVERAGE_SUFFIX).mk $(SOONG_ANDROID_MK)
+
 # Android.mk files are only used on Linux builds, Mac only supports Android.bp
 ifeq ($(HOST_OS),linux)
   subdir_makefiles += $(file <$(OUT_DIR)/.module_paths/Android.mk.list)
 endif
-subdir_makefiles += $(SOONG_OUT_DIR)/late-$(TARGET_PRODUCT).mk
+
+subdir_makefiles += $(SOONG_OUT_DIR)/late-$(TARGET_PRODUCT)$(COVERAGE_SUFFIX).mk
+
 subdir_makefiles_total := $(words int $(subdir_makefiles) post finish)
 .KATI_READONLY := subdir_makefiles_total
 
@@ -1856,6 +1858,11 @@ endif
 # recovery.img
 ifndef INSTALLED_RECOVERYIMAGE_TARGET
 filter_out_files += $(PRODUCT_OUT)/recovery/%
+endif
+
+# userdata.img
+ifndef BUILDING_USERDATA_IMAGE
+filter_out_files += $(PRODUCT_OUT)/data/%
 endif
 
 installed_files := $(sort $(filter-out $(filter_out_files),$(filter $(PRODUCT_OUT)/%,$(modules_to_install))))
