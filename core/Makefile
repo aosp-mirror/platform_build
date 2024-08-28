@@ -7944,6 +7944,26 @@ pack-recovery-image: $(PACK_RECOVERY_IMAGE_TARGET)
 endif # PACK_DESKTOP_RECOVERY_IMAGE
 
 # -----------------------------------------------------------------
+# Desktop pack update image hook.
+ifneq (,$(strip $(PACK_DESKTOP_UPDATE_IMAGE)))
+PACK_UPDATE_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_update_image.bin
+
+$(PACK_UPDATE_IMAGE_TARGET): $(IMAGES) $(PACK_IMAGE_SCRIPT)
+	$(PACK_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) --noarchive --update
+
+PACKED_UPDATE_IMAGE_ARCHIVE_TARGET := $(PACK_UPDATE_IMAGE_TARGET).gz
+
+$(PACKED_UPDATE_IMAGE_ARCHIVE_TARGET): $(PACK_UPDATE_IMAGE_TARGET) | $(GZIP)
+	$(GZIP) -fk $(PACK_UPDATE_IMAGE_TARGET)
+
+$(call dist-for-goals,dist_files,$(PACKED_UPDATE_IMAGE_ARCHIVE_TARGET))
+
+.PHONY: pack-update-image
+pack-update-image: $(PACK_UPDATE_IMAGE_TARGET)
+
+endif # PACK_DESKTOP_UPDATE_IMAGE
+
+# -----------------------------------------------------------------
 # OS Licensing
 
 include $(BUILD_SYSTEM)/os_licensing.mk
