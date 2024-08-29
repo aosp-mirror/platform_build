@@ -146,7 +146,7 @@ impl PackageTableNode {
     /// construction side (aconfig binary) and consumption side (flag read lib)
     /// use the same method of hashing
     pub fn find_bucket_index(package: &str, num_buckets: u32) -> u32 {
-        get_bucket_index(&package, num_buckets)
+        get_bucket_index(package.as_bytes(), num_buckets)
     }
 }
 
