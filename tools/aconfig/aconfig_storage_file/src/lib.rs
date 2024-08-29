@@ -37,19 +37,20 @@ pub mod flag_table;
 pub mod flag_value;
 pub mod package_table;
 pub mod protos;
+pub mod sip_hasher13;
 pub mod test_utils;
 
 use anyhow::anyhow;
 use std::cmp::Ordering;
-use std::collections::hash_map::DefaultHasher;
 use std::fs::File;
-use std::hash::{Hash, Hasher};
+use std::hash::Hasher;
 use std::io::Read;
 
 pub use crate::flag_info::{FlagInfoBit, FlagInfoHeader, FlagInfoList, FlagInfoNode};
 pub use crate::flag_table::{FlagTable, FlagTableHeader, FlagTableNode};
 pub use crate::flag_value::{FlagValueHeader, FlagValueList};
 pub use crate::package_table::{PackageTable, PackageTableHeader, PackageTableNode};
+pub use crate::sip_hasher13::SipHasher13;
 
 use crate::AconfigStorageError::{
     BytesParseFail, HashTableSizeLimit, InvalidFlagValueType, InvalidStoredFlagType,
@@ -211,10 +212,12 @@ pub fn get_table_size(entries: u32) -> Result<u32, AconfigStorageError> {
 }
 
 /// Get the corresponding bucket index given the key and number of buckets
-pub(crate) fn get_bucket_index<T: Hash>(val: &T, num_buckets: u32) -> u32 {
-    let mut s = DefaultHasher::new();
-    val.hash(&mut s);
-    (s.finish() % num_buckets as u64) as u32
+pub(crate) fn get_bucket_index(val: &[u8], num_buckets: u32) -> u32 {
+    let mut s = SipHasher13::new();
+    s.write(val);
+    s.write_u8(0xff);
+    let ret = (s.finish() % num_buckets as u64) as u32;
+    ret
 }
 
 /// Read and parse bytes as u8
