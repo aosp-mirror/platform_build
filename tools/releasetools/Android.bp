@@ -555,7 +555,6 @@ python_binary_host {
         "releasetools_common",
         "ota_metadata_proto",
         "ota_utils_lib",
-        "update_payload",
     ],
 }
 
