@@ -3416,8 +3416,10 @@ endif  # PRODUCT_FSVERITY_GENERATE_METADATA
 # system image
 
 INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_OUT)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
+ifdef BUILDING_SYSTEM_IMAGE
 INTERNAL_SYSTEMIMAGE_FILES := $(sort $(filter $(TARGET_OUT)/%, \
     $(ALL_DEFAULT_INSTALLED_MODULES)))
+endif
 
 # Create symlink /system/vendor to /vendor if necessary.
 ifdef BOARD_USES_VENDORIMAGE
@@ -3674,10 +3676,10 @@ platform-java:
 # -----------------------------------------------------------------
 # data partition image
 INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_OUT_DATA)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
+ifdef BUILDING_USERDATA_IMAGE
 INTERNAL_USERDATAIMAGE_FILES := \
     $(filter $(TARGET_OUT_DATA)/%,$(ALL_DEFAULT_INSTALLED_MODULES))
 
-ifdef BUILDING_USERDATA_IMAGE
 userdataimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,userdata)
 BUILT_USERDATAIMAGE_TARGET := $(PRODUCT_OUT)/userdata.img
@@ -7940,6 +7942,26 @@ $(call dist-for-goals,dist_files,$(PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET))
 pack-recovery-image: $(PACK_RECOVERY_IMAGE_TARGET)
 
 endif # PACK_DESKTOP_RECOVERY_IMAGE
+
+# -----------------------------------------------------------------
+# Desktop pack update image hook.
+ifneq (,$(strip $(PACK_DESKTOP_UPDATE_IMAGE)))
+PACK_UPDATE_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_update_image.bin
+
+$(PACK_UPDATE_IMAGE_TARGET): $(IMAGES) $(PACK_IMAGE_SCRIPT)
+	$(PACK_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) --noarchive --update
+
+PACKED_UPDATE_IMAGE_ARCHIVE_TARGET := $(PACK_UPDATE_IMAGE_TARGET).gz
+
+$(PACKED_UPDATE_IMAGE_ARCHIVE_TARGET): $(PACK_UPDATE_IMAGE_TARGET) | $(GZIP)
+	$(GZIP) -fk $(PACK_UPDATE_IMAGE_TARGET)
+
+$(call dist-for-goals,dist_files,$(PACKED_UPDATE_IMAGE_ARCHIVE_TARGET))
+
+.PHONY: pack-update-image
+pack-update-image: $(PACK_UPDATE_IMAGE_TARGET)
+
+endif # PACK_DESKTOP_UPDATE_IMAGE
 
 # -----------------------------------------------------------------
 # OS Licensing

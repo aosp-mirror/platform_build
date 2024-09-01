@@ -17,31 +17,30 @@
 package android.aconfig.storage;
 
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class PackageTable {
 
     private Header mHeader;
-    private Map<String, Node> mNodeMap;
+    private ByteBufferReader mReader;
 
     public static PackageTable fromBytes(ByteBuffer bytes) {
         PackageTable packageTable = new PackageTable();
-        ByteBufferReader reader = new ByteBufferReader(bytes);
-        Header header = Header.fromBytes(reader);
-        packageTable.mHeader = header;
-        packageTable.mNodeMap = new HashMap(TableUtils.getTableSize(header.mNumPackages));
-        reader.position(header.mNodeOffset);
-        for (int i = 0; i < header.mNumPackages; i++) {
-            Node node = Node.fromBytes(reader);
-            packageTable.mNodeMap.put(node.mPackageName, node);
-        }
+        packageTable.mReader = new ByteBufferReader(bytes);
+        packageTable.mHeader = Header.fromBytes(packageTable.mReader);
+
         return packageTable;
     }
 
     public Node get(String packageName) {
-        return mNodeMap.get(packageName);
+        mReader.position(mHeader.mNodeOffset);
+        for (int i = 0; i < mHeader.mNumPackages; i++) {
+            Node node = Node.fromBytes(mReader);
+            if (Objects.equals(node.mPackageName, packageName)) {
+                return node;
+            }
+        }
+        throw new AconfigStorageException("get cannot find package: " + packageName);
     }
 
     public Header getHeader() {
