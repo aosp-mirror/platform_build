@@ -122,31 +122,36 @@ static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 /// flag provider
 pub struct FlagProvider;
 
-lazy_static::lazy_static! {
     /// flag value cache for disabled_rw
+lazy_static::lazy_static! {
     static ref CACHED_disabled_rw: bool = flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.aconfig_test",
         "com.android.aconfig.test.disabled_rw",
         "false") == "true";
+}
 
     /// flag value cache for disabled_rw_exported
+lazy_static::lazy_static! {
     static ref CACHED_disabled_rw_exported: bool = flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.aconfig_test",
         "com.android.aconfig.test.disabled_rw_exported",
         "false") == "true";
+}
 
     /// flag value cache for disabled_rw_in_other_namespace
+lazy_static::lazy_static! {
     static ref CACHED_disabled_rw_in_other_namespace: bool = flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.other_namespace",
         "com.android.aconfig.test.disabled_rw_in_other_namespace",
         "false") == "true";
+}
 
     /// flag value cache for enabled_rw
+lazy_static::lazy_static! {
     static ref CACHED_enabled_rw: bool = flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.aconfig_test",
         "com.android.aconfig.test.enabled_rw",
         "true") == "true";
-
 }
 
 impl FlagProvider {
@@ -269,7 +274,6 @@ static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 pub struct FlagProvider;
 
 lazy_static::lazy_static! {
-
     static ref PACKAGE_OFFSET: Result<Option<u32>, AconfigStorageError> = unsafe {
         get_mapped_storage_file("system", StorageFileType::PackageMap)
         .and_then(|package_map| get_package_read_context(&package_map, "com.android.aconfig.test"))
@@ -279,8 +283,10 @@ lazy_static::lazy_static! {
     static ref FLAG_VAL_MAP: Result<Mmap, AconfigStorageError> = unsafe {
         get_mapped_storage_file("system", StorageFileType::FlagVal)
     };
-    /// flag value cache for disabled_rw
+}
 
+    /// flag value cache for disabled_rw
+lazy_static::lazy_static! {
     static ref CACHED_disabled_rw: bool = {
         let result = flags_rust::GetServerConfigurableFlag(
             "aconfig_flags.aconfig_test",
@@ -344,9 +350,10 @@ lazy_static::lazy_static! {
 
         result
         };
+}
 
     /// flag value cache for disabled_rw_exported
-
+lazy_static::lazy_static! {
     static ref CACHED_disabled_rw_exported: bool = {
         let result = flags_rust::GetServerConfigurableFlag(
             "aconfig_flags.aconfig_test",
@@ -410,9 +417,10 @@ lazy_static::lazy_static! {
 
         result
         };
+}
 
     /// flag value cache for disabled_rw_in_other_namespace
-
+lazy_static::lazy_static! {
     static ref CACHED_disabled_rw_in_other_namespace: bool = {
         let result = flags_rust::GetServerConfigurableFlag(
             "aconfig_flags.other_namespace",
@@ -476,9 +484,10 @@ lazy_static::lazy_static! {
 
         result
         };
+}
 
     /// flag value cache for enabled_rw
-
+lazy_static::lazy_static! {
     static ref CACHED_enabled_rw: bool = {
         let result = flags_rust::GetServerConfigurableFlag(
             "aconfig_flags.aconfig_test",
@@ -542,7 +551,6 @@ lazy_static::lazy_static! {
 
         result
         };
-
 }
 
 impl FlagProvider {
@@ -1216,25 +1224,28 @@ static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 /// flag provider
 pub struct FlagProvider;
 
-lazy_static::lazy_static! {
     /// flag value cache for disabled_rw_exported
+lazy_static::lazy_static! {
     static ref CACHED_disabled_rw_exported: bool = flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.aconfig_test",
         "com.android.aconfig.test.disabled_rw_exported",
         "false") == "true";
+}
 
     /// flag value cache for enabled_fixed_ro_exported
+lazy_static::lazy_static! {
     static ref CACHED_enabled_fixed_ro_exported: bool = flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.aconfig_test",
         "com.android.aconfig.test.enabled_fixed_ro_exported",
         "false") == "true";
+}
 
     /// flag value cache for enabled_ro_exported
+lazy_static::lazy_static! {
     static ref CACHED_enabled_ro_exported: bool = flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.aconfig_test",
         "com.android.aconfig.test.enabled_ro_exported",
         "false") == "true";
-
 }
 
 impl FlagProvider {
