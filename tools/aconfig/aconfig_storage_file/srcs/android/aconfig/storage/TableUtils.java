@@ -58,4 +58,9 @@ public class TableUtils {
         }
         throw new AconfigStorageException("Number of items in a hash table exceeds limit");
     }
+
+    public static int getBucketIndex(byte[] val, int numBuckets) {
+        long hashVal = SipHasher13.hash(val);
+        return (int) Long.remainderUnsigned(hashVal, numBuckets);
+    }
 }
