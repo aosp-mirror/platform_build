@@ -48,6 +48,10 @@ public class ByteBufferReader {
         return new String(bytes, StandardCharsets.UTF_8);
     }
 
+    public int readByte(int i) {
+        return Byte.toUnsignedInt(mByteBuffer.get(i));
+    }
+
     public void position(int newPosition) {
         mByteBuffer.position(newPosition);
     }
