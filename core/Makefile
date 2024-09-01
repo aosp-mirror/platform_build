@@ -6812,14 +6812,22 @@ ifdef BOARD_PREBUILT_DTBOIMAGE
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(INSTALLED_DTBOIMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES/
 endif # BOARD_PREBUILT_DTBOIMAGE
-ifdef BUILT_KERNEL_16K_TARGET
+ifdef BOARD_KERNEL_PATH_16K
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(BUILT_KERNEL_16K_TARGET) $(zip_root)/PREBUILT_IMAGES/
-endif # BUILT_KERNEL_16K_TARGET
-ifdef BUILT_RAMDISK_16K_TARGET
+endif # BOARD_KERNEL_PATH_16K
+ifdef BOARD_KERNEL_MODULES_16K
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(BUILT_RAMDISK_16K_TARGET) $(zip_root)/PREBUILT_IMAGES/
-endif # BUILT_RAMDISK_16K_TARGET
+endif # BOARD_KERNEL_MODULES_16K
+ifdef BUILT_BOOTIMAGE_16K_TARGET
+	$(hide) mkdir -p $(zip_root)/IMAGES
+	$(hide) cp $(BUILT_BOOTIMAGE_16K_TARGET) $(zip_root)/IMAGES/
+endif # BUILT_BOOTIMAGE_16K_TARGET
+ifdef INSTALLED_DTBOIMAGE_16KB_TARGET
+	$(hide) mkdir -p $(zip_root)/IMAGES
+	$(hide) cp $(INSTALLED_DTBOIMAGE_16KB_TARGET) $(zip_root)/IMAGES/
+endif # INSTALLED_DTBOIMAGE_16KB_TARGET
 ifeq ($(BOARD_USES_PVMFWIMAGE),true)
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(INSTALLED_PVMFWIMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES/
@@ -7942,6 +7950,26 @@ $(call dist-for-goals,dist_files,$(PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET))
 pack-recovery-image: $(PACK_RECOVERY_IMAGE_TARGET)
 
 endif # PACK_DESKTOP_RECOVERY_IMAGE
+
+# -----------------------------------------------------------------
+# Desktop pack update image hook.
+ifneq (,$(strip $(PACK_DESKTOP_UPDATE_IMAGE)))
+PACK_UPDATE_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_update_image.bin
+
+$(PACK_UPDATE_IMAGE_TARGET): $(IMAGES) $(PACK_IMAGE_SCRIPT)
+	$(PACK_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) --noarchive --update
+
+PACKED_UPDATE_IMAGE_ARCHIVE_TARGET := $(PACK_UPDATE_IMAGE_TARGET).gz
+
+$(PACKED_UPDATE_IMAGE_ARCHIVE_TARGET): $(PACK_UPDATE_IMAGE_TARGET) | $(GZIP)
+	$(GZIP) -fk $(PACK_UPDATE_IMAGE_TARGET)
+
+$(call dist-for-goals,dist_files,$(PACKED_UPDATE_IMAGE_ARCHIVE_TARGET))
+
+.PHONY: pack-update-image
+pack-update-image: $(PACK_UPDATE_IMAGE_TARGET)
+
+endif # PACK_DESKTOP_UPDATE_IMAGE
 
 # -----------------------------------------------------------------
 # OS Licensing
