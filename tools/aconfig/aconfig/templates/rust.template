@@ -12,8 +12,8 @@ static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 pub struct FlagProvider;
 
 {{ if has_readwrite- }}
+{{ if allow_instrumentation }}
 lazy_static::lazy_static! \{
-    {{ if allow_instrumentation }}
     static ref PACKAGE_OFFSET: Result<Option<u32>, AconfigStorageError> = unsafe \{
         get_mapped_storage_file("{container}", StorageFileType::PackageMap)
         .and_then(|package_map| get_package_read_context(&package_map, "{package}"))
@@ -23,12 +23,14 @@ lazy_static::lazy_static! \{
     static ref FLAG_VAL_MAP: Result<Mmap, AconfigStorageError> = unsafe \{
         get_mapped_storage_file("{container}", StorageFileType::FlagVal)
     };
-    {{ -endif }}
-
+}
+{{ -endif }}
 {{ -for flag in template_flags }}
-    {{ -if flag.readwrite }}
-    /// flag value cache for {flag.name}
-    {{ if allow_instrumentation }}
+
+{{ -if flag.readwrite }}
+/// flag value cache for {flag.name}
+{{ if allow_instrumentation }}
+lazy_static::lazy_static! \{
     static ref CACHED_{flag.name}: bool = \{
         let result = flags_rust::GetServerConfigurableFlag(
             "aconfig_flags.{flag.device_config_namespace}",
@@ -92,15 +94,17 @@ lazy_static::lazy_static! \{
 
         result
         };
-    {{ else }}
+}
+{{ else }}
+lazy_static::lazy_static! \{
     static ref CACHED_{flag.name}: bool = flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.{flag.device_config_namespace}",
         "{flag.device_config_flag}",
         "{flag.default_value}") == "true";
-    {{ endif }}
-    {{ -endif }}
-{{ -endfor }}
 }
+{{ endif }}
+{{ -endif }}
+{{ -endfor }}
 {{ -endif }}
 
 impl FlagProvider \{

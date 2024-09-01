@@ -16,18 +16,14 @@
 
 package android.aconfig.storage;
 
+import dalvik.annotation.optimization.FastNative;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.channels.FileChannel.MapMode;
-
-import android.aconfig.storage.PackageReadContext;
-import android.aconfig.storage.FlagReadContext;
-
-import dalvik.annotation.optimization.FastNative;
 
 public class AconfigStorageReadAPI {
 
@@ -50,9 +46,8 @@ public class AconfigStorageReadAPI {
     }
 
     // Map a storage file given container and file type
-    public static MappedByteBuffer getMappedFile(
-        String container,
-        StorageFileType type) throws IOException{
+    public static MappedByteBuffer getMappedFile(String container, StorageFileType type)
+            throws IOException {
         switch (type) {
             case PACKAGE_MAP:
                 return mapStorageFile(STORAGEDIR + "/maps/" + container + ".package.map");
@@ -73,14 +68,14 @@ public class AconfigStorageReadAPI {
     // @throws IOException if the passed in file is not a valid package map file
     @FastNative
     private static native ByteBuffer getPackageReadContextImpl(
-        ByteBuffer mappedFile, String packageName) throws IOException;
+            ByteBuffer mappedFile, String packageName) throws IOException;
 
     // API to get package read context
     // @param mappedFile: memory mapped package map file
     // @param packageName: package name
     // @throws IOException if the passed in file is not a valid package map file
-    static public PackageReadContext getPackageReadContext (
-        ByteBuffer mappedFile, String packageName) throws IOException {
+    public static PackageReadContext getPackageReadContext(
+            ByteBuffer mappedFile, String packageName) throws IOException {
         ByteBuffer buffer = getPackageReadContextImpl(mappedFile, packageName);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         return new PackageReadContext(buffer.getInt(), buffer.getInt(4));
@@ -94,7 +89,7 @@ public class AconfigStorageReadAPI {
     // @throws IOException if the passed in file is not a valid flag map file
     @FastNative
     private static native ByteBuffer getFlagReadContextImpl(
-        ByteBuffer mappedFile, int packageId, String flagName) throws IOException;
+            ByteBuffer mappedFile, int packageId, String flagName) throws IOException;
 
     // API to get flag read context
     // @param mappedFile: memory mapped flag map file
@@ -103,7 +98,7 @@ public class AconfigStorageReadAPI {
     // @param flagName: flag name
     // @throws IOException if the passed in file is not a valid flag map file
     public static FlagReadContext getFlagReadContext(
-        ByteBuffer mappedFile, int packageId, String flagName) throws IOException {
+            ByteBuffer mappedFile, int packageId, String flagName) throws IOException {
         ByteBuffer buffer = getFlagReadContextImpl(mappedFile, packageId, flagName);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         return new FlagReadContext(buffer.getInt(), buffer.getInt(4));
@@ -115,8 +110,11 @@ public class AconfigStorageReadAPI {
     // @throws IOException if the passed in file is not a valid flag value file or the
     // flag index went over the file boundary.
     @FastNative
-    public static native boolean getBooleanFlagValue(
-        ByteBuffer mappedFile, int flagIndex) throws IOException;
+    public static native boolean getBooleanFlagValue(ByteBuffer mappedFile, int flagIndex)
+            throws IOException;
+
+    @FastNative
+    public static native long hash(String packageName) throws IOException;
 
     static {
         System.loadLibrary("aconfig_storage_read_api_rust_jni");

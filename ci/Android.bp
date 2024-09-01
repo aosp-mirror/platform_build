@@ -71,11 +71,37 @@ python_test_host {
     },
 }
 
+python_test_host {
+    name: "optimized_targets_test",
+    main: "optimized_targets_test.py",
+    pkg_path: "testdata",
+    srcs: [
+        "optimized_targets_test.py",
+    ],
+    libs: [
+        "build_test_suites",
+        "pyfakefs",
+    ],
+    test_options: {
+        unit_test: true,
+    },
+    data: [
+        ":py3-cmd",
+    ],
+    version: {
+        py3: {
+            embedded_launcher: true,
+        },
+    },
+}
+
 python_library_host {
     name: "build_test_suites",
     srcs: [
         "build_test_suites.py",
         "optimized_targets.py",
+        "test_mapping_module_retriever.py",
+        "build_context.py",
     ],
 }
 
