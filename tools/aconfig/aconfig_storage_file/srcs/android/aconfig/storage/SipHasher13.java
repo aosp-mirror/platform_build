@@ -44,42 +44,38 @@ public class SipHasher13 {
 
         private void cRounds() {
             v0 += v1;
-            v1 = rotateLeft(v1, 13);
+            v1 = Long.rotateLeft(v1, 13);
             v1 ^= v0;
-            v0 = rotateLeft(v0, 32);
+            v0 = Long.rotateLeft(v0, 32);
             v2 += v3;
-            v3 = rotateLeft(v3, 16);
+            v3 = Long.rotateLeft(v3, 16);
             v3 ^= v2;
             v0 += v3;
-            v3 = rotateLeft(v3, 21);
+            v3 = Long.rotateLeft(v3, 21);
             v3 ^= v0;
             v2 += v1;
-            v1 = rotateLeft(v1, 17);
+            v1 = Long.rotateLeft(v1, 17);
             v1 ^= v2;
-            v2 = rotateLeft(v2, 32);
+            v2 = Long.rotateLeft(v2, 32);
         }
 
         private void dRounds() {
             for (int i = 0; i < 3; i++) {
                 v0 += v1;
-                v1 = rotateLeft(v1, 13);
+                v1 = Long.rotateLeft(v1, 13);
                 v1 ^= v0;
-                v0 = rotateLeft(v0, 32);
+                v0 = Long.rotateLeft(v0, 32);
                 v2 += v3;
-                v3 = rotateLeft(v3, 16);
+                v3 = Long.rotateLeft(v3, 16);
                 v3 ^= v2;
                 v0 += v3;
-                v3 = rotateLeft(v3, 21);
+                v3 = Long.rotateLeft(v3, 21);
                 v3 ^= v0;
                 v2 += v1;
-                v1 = rotateLeft(v1, 17);
+                v1 = Long.rotateLeft(v1, 17);
                 v1 ^= v2;
-                v2 = rotateLeft(v2, 32);
+                v2 = Long.rotateLeft(v2, 32);
             }
-        }
-
-        private static long rotateLeft(long value, int shift) {
-            return (value << shift) | value >>> (64 - shift);
         }
     }
 

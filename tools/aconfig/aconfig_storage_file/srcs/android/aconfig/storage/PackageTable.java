@@ -16,6 +16,8 @@
 
 package android.aconfig.storage;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.nio.ByteBuffer;
 import java.util.Objects;
 
@@ -33,13 +35,22 @@ public class PackageTable {
     }
 
     public Node get(String packageName) {
-        mReader.position(mHeader.mNodeOffset);
-        for (int i = 0; i < mHeader.mNumPackages; i++) {
+
+        int numBuckets = (mHeader.mNodeOffset - mHeader.mBucketOffset) / 4;
+        int bucketIndex = TableUtils.getBucketIndex(packageName.getBytes(UTF_8), numBuckets);
+
+        mReader.position(mHeader.mBucketOffset + bucketIndex * 4);
+        int nodeIndex = mReader.readInt();
+
+        while (nodeIndex != -1) {
+            mReader.position(nodeIndex);
             Node node = Node.fromBytes(mReader);
-            if (Objects.equals(node.mPackageName, packageName)) {
+            if (Objects.equals(packageName, node.mPackageName)) {
                 return node;
             }
+            nodeIndex = node.mNextOffset;
         }
+
         throw new AconfigStorageException("get cannot find package: " + packageName);
     }
 
