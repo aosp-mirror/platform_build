@@ -17,10 +17,13 @@
 package android.aconfig.storage;
 
 import android.compat.annotation.UnsupportedAppUsage;
+import android.os.StrictMode;
 
-import java.io.FileInputStream;
+import java.io.Closeable;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 /** @hide */
 public class StorageInternalReader {
@@ -40,8 +43,10 @@ public class StorageInternalReader {
 
     @UnsupportedAppUsage
     public StorageInternalReader(String packageName, String packageMapFile, String flagValueFile) {
+        StrictMode.ThreadPolicy oldPolicy = StrictMode.allowThreadDiskReads();
         mPackageTable = PackageTable.fromBytes(mapStorageFile(packageMapFile));
         mFlagValueList = FlagValueList.fromBytes(mapStorageFile(flagValueFile));
+        StrictMode.setThreadPolicy(oldPolicy);
         mPackageBooleanStartOffset = getPackageBooleanStartOffset(packageName);
     }
 
@@ -51,7 +56,7 @@ public class StorageInternalReader {
         if (index >= mFlagValueList.size()) {
             throw new AconfigStorageException("Fail to get boolean flag value");
         }
-        return mFlagValueList.get(index);
+        return mFlagValueList.getBoolean(index);
     }
 
     private int getPackageBooleanStartOffset(String packageName) {
@@ -68,13 +73,25 @@ public class StorageInternalReader {
 
     // Map a storage file given file path
     private static MappedByteBuffer mapStorageFile(String file) {
+        FileChannel channel = null;
         try {
-            FileInputStream stream = new FileInputStream(file);
-            FileChannel channel = stream.getChannel();
+            channel = FileChannel.open(Paths.get(file), StandardOpenOption.READ);
             return channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
         } catch (Exception e) {
             throw new AconfigStorageException(
                     String.format("Fail to mmap storage file %s", file), e);
+        } finally {
+            quietlyDispose(channel);
+        }
+    }
+
+    private static void quietlyDispose(Closeable closable) {
+        try {
+            if (closable != null) {
+                closable.close();
+            }
+        } catch (Exception e) {
+            // no need to care, at least as of now
         }
     }
 }

@@ -38,8 +38,9 @@ ifdef my_embed_jni
       $(error LOCAL_SDK_VERSION must be defined with LOCAL_NDK_STL_VARIANT, \
           LOCAL_PACKAGE_NAME=$(LOCAL_PACKAGE_NAME))
     endif
+    my_libcxx_arch := $($(LOCAL_2ND_ARCH_VAR_PREFIX)PREBUILT_LIBCXX_ARCH_DIR)
     my_jni_shared_libraries += \
-        $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/sources/cxx-stl/llvm-libc++/libs/$(TARGET_$(my_2nd_arch_prefix)CPU_ABI)/libc++_shared.so
+        $(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(LLVM_PREBUILTS_VERSION)/android_libc++/ndk/$(my_libcxx_arch)/lib/libc++_shared.so
   endif
 
   # Set the abi directory used by the local JNI shared libraries.

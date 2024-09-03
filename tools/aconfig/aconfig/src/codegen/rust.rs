@@ -122,31 +122,36 @@ static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 /// flag provider
 pub struct FlagProvider;
 
-lazy_static::lazy_static! {
     /// flag value cache for disabled_rw
+lazy_static::lazy_static! {
     static ref CACHED_disabled_rw: bool = flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.aconfig_test",
         "com.android.aconfig.test.disabled_rw",
         "false") == "true";
+}
 
     /// flag value cache for disabled_rw_exported
+lazy_static::lazy_static! {
     static ref CACHED_disabled_rw_exported: bool = flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.aconfig_test",
         "com.android.aconfig.test.disabled_rw_exported",
         "false") == "true";
+}
 
     /// flag value cache for disabled_rw_in_other_namespace
+lazy_static::lazy_static! {
     static ref CACHED_disabled_rw_in_other_namespace: bool = flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.other_namespace",
         "com.android.aconfig.test.disabled_rw_in_other_namespace",
         "false") == "true";
+}
 
     /// flag value cache for enabled_rw
+lazy_static::lazy_static! {
     static ref CACHED_enabled_rw: bool = flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.aconfig_test",
         "com.android.aconfig.test.enabled_rw",
         "true") == "true";
-
 }
 
 impl FlagProvider {
@@ -269,7 +274,6 @@ static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 pub struct FlagProvider;
 
 lazy_static::lazy_static! {
-
     static ref PACKAGE_OFFSET: Result<Option<u32>, AconfigStorageError> = unsafe {
         get_mapped_storage_file("system", StorageFileType::PackageMap)
         .and_then(|package_map| get_package_read_context(&package_map, "com.android.aconfig.test"))
@@ -279,12 +283,19 @@ lazy_static::lazy_static! {
     static ref FLAG_VAL_MAP: Result<Mmap, AconfigStorageError> = unsafe {
         get_mapped_storage_file("system", StorageFileType::FlagVal)
     };
-    /// flag value cache for disabled_rw
+}
 
+    /// flag value cache for disabled_rw
+lazy_static::lazy_static! {
     static ref CACHED_disabled_rw: bool = {
         let result = flags_rust::GetServerConfigurableFlag(
             "aconfig_flags.aconfig_test",
             "com.android.aconfig.test.disabled_rw",
+            "false") == "true";
+
+        let use_new_storage_value = flags_rust::GetServerConfigurableFlag(
+            "aconfig_flags.core_experiments_team_internal",
+            "com.android.providers.settings.use_new_storage_value",
             "false") == "true";
 
         if Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() {
@@ -314,28 +325,44 @@ lazy_static::lazy_static! {
 
             match aconfig_storage_result {
                 Ok(storage_result) if storage_result == result => {
-                    log!(Level::Info, "AconfigTestMission1: success! flag 'disabled_rw' contained correct value. Legacy storage was {result}, new storage was {storage_result}");
-                    return storage_result;
+                    if use_new_storage_value {
+                        return storage_result;
+                    } else {
+                        return result;
+                    }
                 },
                 Ok(storage_result) => {
                     log!(Level::Error, "AconfigTestMission1: error: mismatch for flag 'disabled_rw'. Legacy storage was {result}, new storage was {storage_result}");
-                    return storage_result;
+                    if use_new_storage_value {
+                        return storage_result;
+                    } else {
+                        return result;
+                    }
                 },
                 Err(err) => {
-                    log!(Level::Error, "AconfigTestMission1: error: {err}")
+                    log!(Level::Error, "AconfigTestMission1: error: {err}");
+                    if use_new_storage_value {
+                        panic!("failed to read flag value: {err}");
+                    }
                 }
             }
         }
 
         result
         };
+}
 
     /// flag value cache for disabled_rw_exported
-
+lazy_static::lazy_static! {
     static ref CACHED_disabled_rw_exported: bool = {
         let result = flags_rust::GetServerConfigurableFlag(
             "aconfig_flags.aconfig_test",
             "com.android.aconfig.test.disabled_rw_exported",
+            "false") == "true";
+
+        let use_new_storage_value = flags_rust::GetServerConfigurableFlag(
+            "aconfig_flags.core_experiments_team_internal",
+            "com.android.providers.settings.use_new_storage_value",
             "false") == "true";
 
         if Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() {
@@ -365,28 +392,44 @@ lazy_static::lazy_static! {
 
             match aconfig_storage_result {
                 Ok(storage_result) if storage_result == result => {
-                    log!(Level::Info, "AconfigTestMission1: success! flag 'disabled_rw_exported' contained correct value. Legacy storage was {result}, new storage was {storage_result}");
-                    return storage_result;
+                    if use_new_storage_value {
+                        return storage_result;
+                    } else {
+                        return result;
+                    }
                 },
                 Ok(storage_result) => {
                     log!(Level::Error, "AconfigTestMission1: error: mismatch for flag 'disabled_rw_exported'. Legacy storage was {result}, new storage was {storage_result}");
-                    return storage_result;
+                    if use_new_storage_value {
+                        return storage_result;
+                    } else {
+                        return result;
+                    }
                 },
                 Err(err) => {
-                    log!(Level::Error, "AconfigTestMission1: error: {err}")
+                    log!(Level::Error, "AconfigTestMission1: error: {err}");
+                    if use_new_storage_value {
+                        panic!("failed to read flag value: {err}");
+                    }
                 }
             }
         }
 
         result
         };
+}
 
     /// flag value cache for disabled_rw_in_other_namespace
-
+lazy_static::lazy_static! {
     static ref CACHED_disabled_rw_in_other_namespace: bool = {
         let result = flags_rust::GetServerConfigurableFlag(
             "aconfig_flags.other_namespace",
             "com.android.aconfig.test.disabled_rw_in_other_namespace",
+            "false") == "true";
+
+        let use_new_storage_value = flags_rust::GetServerConfigurableFlag(
+            "aconfig_flags.core_experiments_team_internal",
+            "com.android.providers.settings.use_new_storage_value",
             "false") == "true";
 
         if Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() {
@@ -416,29 +459,45 @@ lazy_static::lazy_static! {
 
             match aconfig_storage_result {
                 Ok(storage_result) if storage_result == result => {
-                    log!(Level::Info, "AconfigTestMission1: success! flag 'disabled_rw_in_other_namespace' contained correct value. Legacy storage was {result}, new storage was {storage_result}");
-                    return storage_result;
+                    if use_new_storage_value {
+                        return storage_result;
+                    } else {
+                        return result;
+                    }
                 },
                 Ok(storage_result) => {
                     log!(Level::Error, "AconfigTestMission1: error: mismatch for flag 'disabled_rw_in_other_namespace'. Legacy storage was {result}, new storage was {storage_result}");
-                    return storage_result;
+                    if use_new_storage_value {
+                        return storage_result;
+                    } else {
+                        return result;
+                    }
                 },
                 Err(err) => {
-                    log!(Level::Error, "AconfigTestMission1: error: {err}")
+                    log!(Level::Error, "AconfigTestMission1: error: {err}");
+                    if use_new_storage_value {
+                        panic!("failed to read flag value: {err}");
+                    }
                 }
             }
         }
 
         result
         };
+}
 
     /// flag value cache for enabled_rw
-
+lazy_static::lazy_static! {
     static ref CACHED_enabled_rw: bool = {
         let result = flags_rust::GetServerConfigurableFlag(
             "aconfig_flags.aconfig_test",
             "com.android.aconfig.test.enabled_rw",
             "true") == "true";
+
+        let use_new_storage_value = flags_rust::GetServerConfigurableFlag(
+            "aconfig_flags.core_experiments_team_internal",
+            "com.android.providers.settings.use_new_storage_value",
+            "false") == "true";
 
         if Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() {
             // This will be called multiple times. Subsequent calls after the first are noops.
@@ -467,22 +526,31 @@ lazy_static::lazy_static! {
 
             match aconfig_storage_result {
                 Ok(storage_result) if storage_result == result => {
-                    log!(Level::Info, "AconfigTestMission1: success! flag 'enabled_rw' contained correct value. Legacy storage was {result}, new storage was {storage_result}");
-                    return storage_result;
+                    if use_new_storage_value {
+                        return storage_result;
+                    } else {
+                        return result;
+                    }
                 },
                 Ok(storage_result) => {
                     log!(Level::Error, "AconfigTestMission1: error: mismatch for flag 'enabled_rw'. Legacy storage was {result}, new storage was {storage_result}");
-                    return storage_result;
+                    if use_new_storage_value {
+                        return storage_result;
+                    } else {
+                        return result;
+                    }
                 },
                 Err(err) => {
-                    log!(Level::Error, "AconfigTestMission1: error: {err}")
+                    log!(Level::Error, "AconfigTestMission1: error: {err}");
+                    if use_new_storage_value {
+                        panic!("failed to read flag value: {err}");
+                    }
                 }
             }
         }
 
         result
         };
-
 }
 
 impl FlagProvider {
@@ -597,7 +665,6 @@ pub fn disabled_ro() -> bool {
             log!(Level::Error, "AconfigTestMission1: error: flag mismatch for 'disabled_ro'. Legacy storage was {result}, new storage was {value}");
         } else {
             let default_value = false;
-            log!(Level::Info, "AconfigTestMission1: success! flag 'disabled_ro' contained correct value. Legacy storage was {default_value}, new storage was {value}");
         }
     }
 
@@ -680,7 +747,6 @@ pub fn enabled_fixed_ro() -> bool {
             log!(Level::Error, "AconfigTestMission1: error: flag mismatch for 'enabled_fixed_ro'. Legacy storage was {result}, new storage was {value}");
         } else {
             let default_value = true;
-            log!(Level::Info, "AconfigTestMission1: success! flag 'enabled_fixed_ro' contained correct value. Legacy storage was {default_value}, new storage was {value}");
         }
     }
 
@@ -745,7 +811,6 @@ pub fn enabled_fixed_ro_exported() -> bool {
             log!(Level::Error, "AconfigTestMission1: error: flag mismatch for 'enabled_fixed_ro_exported'. Legacy storage was {result}, new storage was {value}");
         } else {
             let default_value = true;
-            log!(Level::Info, "AconfigTestMission1: success! flag 'enabled_fixed_ro_exported' contained correct value. Legacy storage was {default_value}, new storage was {value}");
         }
     }
 
@@ -810,7 +875,6 @@ pub fn enabled_ro() -> bool {
             log!(Level::Error, "AconfigTestMission1: error: flag mismatch for 'enabled_ro'. Legacy storage was {result}, new storage was {value}");
         } else {
             let default_value = true;
-            log!(Level::Info, "AconfigTestMission1: success! flag 'enabled_ro' contained correct value. Legacy storage was {default_value}, new storage was {value}");
         }
     }
 
@@ -875,7 +939,6 @@ pub fn enabled_ro_exported() -> bool {
             log!(Level::Error, "AconfigTestMission1: error: flag mismatch for 'enabled_ro_exported'. Legacy storage was {result}, new storage was {value}");
         } else {
             let default_value = true;
-            log!(Level::Info, "AconfigTestMission1: success! flag 'enabled_ro_exported' contained correct value. Legacy storage was {default_value}, new storage was {value}");
         }
     }
 
@@ -1161,25 +1224,28 @@ static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 /// flag provider
 pub struct FlagProvider;
 
-lazy_static::lazy_static! {
     /// flag value cache for disabled_rw_exported
+lazy_static::lazy_static! {
     static ref CACHED_disabled_rw_exported: bool = flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.aconfig_test",
         "com.android.aconfig.test.disabled_rw_exported",
         "false") == "true";
+}
 
     /// flag value cache for enabled_fixed_ro_exported
+lazy_static::lazy_static! {
     static ref CACHED_enabled_fixed_ro_exported: bool = flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.aconfig_test",
         "com.android.aconfig.test.enabled_fixed_ro_exported",
         "false") == "true";
+}
 
     /// flag value cache for enabled_ro_exported
+lazy_static::lazy_static! {
     static ref CACHED_enabled_ro_exported: bool = flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.aconfig_test",
         "com.android.aconfig.test.enabled_ro_exported",
         "false") == "true";
-
 }
 
 impl FlagProvider {

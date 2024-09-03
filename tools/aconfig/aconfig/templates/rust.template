@@ -12,8 +12,8 @@ static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 pub struct FlagProvider;
 
 {{ if has_readwrite- }}
+{{ if allow_instrumentation }}
 lazy_static::lazy_static! \{
-    {{ if allow_instrumentation }}
     static ref PACKAGE_OFFSET: Result<Option<u32>, AconfigStorageError> = unsafe \{
         get_mapped_storage_file("{container}", StorageFileType::PackageMap)
         .and_then(|package_map| get_package_read_context(&package_map, "{package}"))
@@ -23,17 +23,24 @@ lazy_static::lazy_static! \{
     static ref FLAG_VAL_MAP: Result<Mmap, AconfigStorageError> = unsafe \{
         get_mapped_storage_file("{container}", StorageFileType::FlagVal)
     };
-    {{ -endif }}
-
+}
+{{ -endif }}
 {{ -for flag in template_flags }}
-    {{ -if flag.readwrite }}
-    /// flag value cache for {flag.name}
-    {{ if allow_instrumentation }}
+
+{{ -if flag.readwrite }}
+/// flag value cache for {flag.name}
+{{ if allow_instrumentation }}
+lazy_static::lazy_static! \{
     static ref CACHED_{flag.name}: bool = \{
         let result = flags_rust::GetServerConfigurableFlag(
             "aconfig_flags.{flag.device_config_namespace}",
             "{flag.device_config_flag}",
             "{flag.default_value}") == "true";
+
+        let use_new_storage_value = flags_rust::GetServerConfigurableFlag(
+            "aconfig_flags.core_experiments_team_internal",
+            "com.android.providers.settings.use_new_storage_value",
+            "false") == "true";
 
         if Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() \{
             // This will be called multiple times. Subsequent calls after the first are noops.
@@ -62,30 +69,42 @@ lazy_static::lazy_static! \{
 
             match aconfig_storage_result \{
                 Ok(storage_result) if storage_result == result => \{
-                    log!(Level::Info, "AconfigTestMission1: success! flag '{flag.name}' contained correct value. Legacy storage was \{result}, new storage was \{storage_result}");
-                    return storage_result;
+                    if use_new_storage_value \{
+                        return storage_result;
+                    } else \{
+                        return result;
+                    }
                 },
                 Ok(storage_result) => \{
                     log!(Level::Error, "AconfigTestMission1: error: mismatch for flag '{flag.name}'. Legacy storage was \{result}, new storage was \{storage_result}");
-                    return storage_result;
+                    if use_new_storage_value \{
+                        return storage_result;
+                    } else \{
+                        return result;
+                    }
                 },
                 Err(err) => \{
-                    log!(Level::Error, "AconfigTestMission1: error: \{err}")
+                    log!(Level::Error, "AconfigTestMission1: error: \{err}");
+                    if use_new_storage_value \{
+                        panic!("failed to read flag value: \{err}");
+                    }
                 }
             }
         }
 
         result
         };
-    {{ else }}
+}
+{{ else }}
+lazy_static::lazy_static! \{
     static ref CACHED_{flag.name}: bool = flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.{flag.device_config_namespace}",
         "{flag.device_config_flag}",
         "{flag.default_value}") == "true";
-    {{ endif }}
-    {{ -endif }}
-{{ -endfor }}
 }
+{{ endif }}
+{{ -endif }}
+{{ -endfor }}
 {{ -endif }}
 
 impl FlagProvider \{
@@ -170,7 +189,6 @@ pub fn {flag.name}() -> bool \{
             log!(Level::Error, "AconfigTestMission1: error: flag mismatch for '{flag.name}'. Legacy storage was \{result}, new storage was \{value}");
         } else \{
             let default_value = {flag.default_value};
-            log!(Level::Info, "AconfigTestMission1: success! flag '{flag.name}' contained correct value. Legacy storage was \{default_value}, new storage was \{value}");
         }
     }
 
