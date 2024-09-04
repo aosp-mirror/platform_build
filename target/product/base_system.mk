@@ -178,6 +178,7 @@ PRODUCT_PACKAGES += \
     libmedia \
     libmedia_jni \
     libmediandk \
+    libmonkey_jni \
     libmtp \
     libnetd_client \
     libnetlink \
@@ -466,7 +467,6 @@ PRODUCT_PACKAGES += \
 
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
-    adb_keys \
     adevice_fingerprint \
     arping \
     dmuserd \
