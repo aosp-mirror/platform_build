@@ -147,6 +147,7 @@ rust_ffi_shared {
     crate_name: "aconfig_storage_read_api_rust_jni",
     srcs: ["srcs/lib.rs"],
     rustlibs: [
+        "libaconfig_storage_file",
         "libaconfig_storage_read_api",
         "libanyhow",
         "libjni",
@@ -176,6 +177,7 @@ java_library {
     ],
     libs: [
         "unsupportedappusage",
+        "strict_mode_stub",
     ],
     static_libs: [
         "aconfig_storage_file_java",
@@ -196,6 +198,7 @@ java_library {
     ],
     libs: [
         "unsupportedappusage-sdk-none",
+        "fake_device_config",
     ],
     static_libs: [
         "aconfig_storage_file_java_none",
