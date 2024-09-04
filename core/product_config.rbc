@@ -382,6 +382,11 @@ def _soong_config_set(g, nsname, var, value):
     _soong_config_namespace(g, nsname)
     g[_soong_config_namespaces_key][nsname][var]=_mkstrip(value)
 
+def _soong_config_set_bool(g, nsname, var, value):
+    """Assigns the value to the variable in the namespace, and marks it as a boolean."""
+    _soong_config_set(g, nsname, var, _filter("true", value))
+    g["SOONG_CONFIG_TYPE_%s_%s" % (nsname, var)] = "bool"
+
 def _soong_config_append(g, nsname, var, value):
     """Appends to the value of the variable in the namespace."""
     _soong_config_namespace(g, nsname)
@@ -861,6 +866,7 @@ rblf = struct(
     soong_config_namespace = _soong_config_namespace,
     soong_config_append = _soong_config_append,
     soong_config_set = _soong_config_set,
+    soong_config_set_bool = _soong_config_set_bool,
     soong_config_get = _soong_config_get,
     abspath = _abspath,
     add_product_dex_preopt_module_config = _add_product_dex_preopt_module_config,

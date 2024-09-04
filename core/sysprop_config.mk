@@ -16,24 +16,8 @@ $(foreach name, $(_additional_prop_var_names),\
 _additional_prop_var_names :=
 
 $(KATI_obsolete_var ADDITIONAL_SYSTEM_PROPERTIES,Use build/soong/scripts/gen_build_prop.py instead)
-
-# Add the system server compiler filter if they are specified for the product.
-ifneq (,$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER))
-ADDITIONAL_PRODUCT_PROPERTIES += dalvik.vm.systemservercompilerfilter=$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER)
-endif
-
-# Add the 16K developer option if it is defined for the product.
-ifeq ($(PRODUCT_16K_DEVELOPER_OPTION),true)
-ADDITIONAL_PRODUCT_PROPERTIES += ro.product.build.16k_page.enabled=true
-else
-ADDITIONAL_PRODUCT_PROPERTIES += ro.product.build.16k_page.enabled=false
-endif
-
-ifeq ($(TARGET_BOOTS_16K),true)
-ADDITIONAL_PRODUCT_PROPERTIES += ro.product.page_size=16384
-else
-ADDITIONAL_PRODUCT_PROPERTIES += ro.product.page_size=4096
-endif
+$(KATI_obsolete_var ADDITIONAL_ODM_PROPERTIES,Use build/soong/scripts/gen_build_prop.py instead)
+$(KATI_obsolete_var ADDITIONAL_PRODUCT_PROPERTIES,Use build/soong/scripts/gen_build_prop.py instead)
 
 # Add cpu properties for bionic and ART.
 ADDITIONAL_VENDOR_PROPERTIES += ro.bionic.arch=$(TARGET_ARCH)
@@ -146,19 +130,8 @@ ADDITIONAL_VENDOR_PROPERTIES += \
     ro.build.ab_update=$(AB_OTA_UPDATER)
 endif
 
-ADDITIONAL_PRODUCT_PROPERTIES += ro.build.characteristics=$(TARGET_AAPT_CHARACTERISTICS)
-
 ifeq ($(AB_OTA_UPDATER),true)
-ADDITIONAL_PRODUCT_PROPERTIES += ro.product.ab_ota_partitions=$(subst $(space),$(comma),$(sort $(AB_OTA_PARTITIONS)))
 ADDITIONAL_VENDOR_PROPERTIES += ro.vendor.build.ab_ota_partitions=$(subst $(space),$(comma),$(sort $(AB_OTA_PARTITIONS)))
-endif
-
-# Set this property for VTS to skip large page size tests on unsupported devices.
-ADDITIONAL_PRODUCT_PROPERTIES += \
-    ro.product.cpu.pagesize.max=$(TARGET_MAX_PAGE_SIZE_SUPPORTED)
-
-ifeq ($(PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO),true)
-ADDITIONAL_PRODUCT_PROPERTIES += ro.product.build.no_bionic_page_size_macro=true
 endif
 
 user_variant := $(filter user userdebug,$(TARGET_BUILD_VARIANT))
@@ -166,15 +139,7 @@ user_variant := $(filter user userdebug,$(TARGET_BUILD_VARIANT))
 config_enable_uffd_gc := \
   $(firstword $(OVERRIDE_ENABLE_UFFD_GC) $(PRODUCT_ENABLE_UFFD_GC) default)
 
-# This is a temporary system property that controls the ART module. The plan is
-# to remove it by Aug 2025, at which time Mainline updates of the ART module
-# will ignore it as well.
-# If the value is "default", it will be mangled by post_process_props.py.
-ADDITIONAL_PRODUCT_PROPERTIES += ro.dalvik.vm.enable_uffd_gc=$(config_enable_uffd_gc)
-
-ADDITIONAL_PRODUCT_PROPERTIES := $(strip $(ADDITIONAL_PRODUCT_PROPERTIES))
 ADDITIONAL_VENDOR_PROPERTIES := $(strip $(ADDITIONAL_VENDOR_PROPERTIES))
 
 .KATI_READONLY += \
-    ADDITIONAL_PRODUCT_PROPERTIES \
     ADDITIONAL_VENDOR_PROPERTIES

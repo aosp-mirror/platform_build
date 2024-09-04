@@ -53,7 +53,7 @@ public class FlagValueListTest {
         assertEquals(expected.length, flagValueList.size());
 
         for (int i = 0; i < flagValueList.size(); i++) {
-            assertEquals(expected[i], flagValueList.get(i));
+            assertEquals(expected[i], flagValueList.getBoolean(i));
         }
     }
 
@@ -68,10 +68,10 @@ public class FlagValueListTest {
 
         PackageTable.Node pNode = packageTable.get("com.android.aconfig.storage.test_1");
         FlagTable.Node fNode = flagTable.get(pNode.getPackageId(), "enabled_rw");
-        assertTrue(flagValueList.get(pNode.getBooleanStartIndex() + fNode.getFlagIndex()));
+        assertTrue(flagValueList.getBoolean(pNode.getBooleanStartIndex() + fNode.getFlagIndex()));
 
         pNode = packageTable.get("com.android.aconfig.storage.test_4");
         fNode = flagTable.get(pNode.getPackageId(), "enabled_fixed_ro");
-        assertTrue(flagValueList.get(pNode.getBooleanStartIndex() + fNode.getFlagIndex()));
+        assertTrue(flagValueList.getBoolean(pNode.getBooleanStartIndex() + fNode.getFlagIndex()));
     }
 }

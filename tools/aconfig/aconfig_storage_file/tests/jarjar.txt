@@ -1,0 +1,15 @@
+rule android.aconfig.storage.AconfigStorageException android.aconfig.storage.test.AconfigStorageException
+rule android.aconfig.storage.FlagTable android.aconfig.storage.test.FlagTable
+rule android.aconfig.storage.PackageTable android.aconfig.storage.test.PackageTable
+rule android.aconfig.storage.ByteBufferReader android.aconfig.storage.test.ByteBufferReader
+rule android.aconfig.storage.FlagType android.aconfig.storage.test.FlagType
+rule android.aconfig.storage.SipHasher13 android.aconfig.storage.test.SipHasher13
+rule android.aconfig.storage.FileType android.aconfig.storage.test.FileType
+rule android.aconfig.storage.FlagValueList android.aconfig.storage.test.FlagValueList
+rule android.aconfig.storage.TableUtils android.aconfig.storage.test.TableUtils
+
+
+rule android.aconfig.storage.FlagTable$* android.aconfig.storage.test.FlagTable$@1
+rule android.aconfig.storage.PackageTable$* android.aconfig.storage.test.PackageTable$@1
+rule android.aconfig.storage.FlagValueList$* android.aconfig.storage.test.FlagValueList@1
+rule android.aconfig.storage.SipHasher13$* android.aconfig.storage.test.SipHasher13@1
