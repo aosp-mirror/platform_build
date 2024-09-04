@@ -24,6 +24,7 @@ PRODUCT_PACKAGES += \
     SatelliteClient \
     selinux_policy_system_ext \
     system_ext_manifest.xml \
+    system_ext-build.prop \
 
 # Base modules when shipping api level is less than or equal to 34
 PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34 += \

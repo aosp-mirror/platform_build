@@ -80,7 +80,8 @@ def main():
 
   resource_file_spdxids = []
   for file in layoutlib_sbom[sbom_writers.PropNames.FILES]:
-    if file[sbom_writers.PropNames.FILE_NAME].startswith('data/res/'):
+    file_path = file[sbom_writers.PropNames.FILE_NAME]
+    if file_path.startswith('data/res/') or file_path.startswith('data/overlays/'):
       resource_file_spdxids.append(file[sbom_writers.PropNames.SPDXID])
 
   doc.relationships = [

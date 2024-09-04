@@ -71,14 +71,12 @@ $(call add_soong_config_var_value,ANDROID,library_linking_strategy,prefer_static
 endif
 endif
 
-# TODO(b/308187800): some internal modules set `prefer` to true on the prebuilt apex module,
-# and set that to false when `ANDROID.module_build_from_source` is true.
-# Set this soong config variable to true for now, and cleanup `prefer` as part of b/308187800
-$(call add_soong_config_var_value,ANDROID,module_build_from_source,true)
-
 # Enable SystemUI optimizations by default unless explicitly set.
 SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
+
+# Flag for enabling compose for Launcher.
+$(call soong_config_set,ANDROID,release_enable_compose_in_launcher,$(RELEASE_ENABLE_COMPOSE_IN_LAUNCHER))
 
 ifdef PRODUCT_AVF_ENABLED
 $(call add_soong_config_var_value,ANDROID,avf_enabled,$(PRODUCT_AVF_ENABLED))
@@ -184,3 +182,6 @@ $(call soong_config_set,bootclasspath,release_package_profiling_module,$(RELEASE
 ifdef BOARD_PERFSETUP_SCRIPT
   $(call soong_config_set,perf,board_perfsetup_script,$(notdir $(BOARD_PERFSETUP_SCRIPT)))
 endif
+
+# Add target_use_pan_display flag for hardware/libhardware:gralloc.default
+$(call soong_config_set_bool,gralloc,target_use_pan_display,$(if $(filter true,$(TARGET_USE_PAN_DISPLAY)),true,false))
