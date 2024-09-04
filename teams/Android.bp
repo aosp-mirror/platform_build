@@ -4414,8 +4414,29 @@ team {
 }
 
 team {
+    name: "trendy_team_android_media_solutions_playback",
+
+    // go/trendy/manage/engineers/6742515252559872
+    trendy_team_id: "6742515252559872",
+}
+
+team {
     name: "trendy_team_android_telemetry_client_infra",
 
     // go/trendy/manage/engineers/5403245077430272
     trendy_team_id: "5403245077430272",
+}
+
+team {
+    name: "trendy_team_pte_sysui",
+
+    // go/trendy/manage/engineers/5185897463382016
+    trendy_team_id: "5185897463382016",
+}
+
+team {
+    name: "trendy_team_pixel_troubleshooting_app",
+
+    // go/trendy/manage/engineers/5097003746426880
+    trendy_team_id: "5097003746426880",
 }
