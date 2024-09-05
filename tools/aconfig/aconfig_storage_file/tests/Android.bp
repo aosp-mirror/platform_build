@@ -30,9 +30,10 @@ android_test {
     static_libs: [
         "androidx.test.runner",
         "junit",
+        "aconfig_storage_file_java",
     ],
     test_config: "AndroidStorageJaveTest.xml",
-    certificate: "platform",
+    sdk_version: "test_current",
     data: [
         "package.map",
         "flag.map",
@@ -42,4 +43,5 @@ android_test {
     test_suites: [
         "general-tests",
     ],
+    jarjar_rules: "jarjar.txt",
 }

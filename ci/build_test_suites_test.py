@@ -32,6 +32,7 @@ import time
 from typing import Callable
 import unittest
 from unittest import mock
+from build_context import BuildContext
 import build_test_suites
 import ci_test_lib
 import optimized_targets
@@ -282,7 +283,7 @@ class BuildPlannerTest(unittest.TestCase):
     build_planner = self.create_build_planner(
         build_targets=build_targets,
         build_context=self.create_build_context(
-            enabled_build_features={self.get_target_flag('target_1')}
+            enabled_build_features=[{'name': self.get_target_flag('target_1')}]
         ),
     )
 
@@ -297,7 +298,7 @@ class BuildPlannerTest(unittest.TestCase):
     build_planner = self.create_build_planner(
         build_targets=build_targets,
         build_context=self.create_build_context(
-            enabled_build_features={self.get_target_flag('target_1')},
+            enabled_build_features=[{'name': self.get_target_flag('target_1')}]
         ),
         packaging_outputs=packaging_outputs,
     )
@@ -337,7 +338,7 @@ class BuildPlannerTest(unittest.TestCase):
         build_targets={build_target},
         build_context=self.create_build_context(
             test_context=self.get_test_context(build_target),
-            enabled_build_features={'test_target_unused_exclusion'},
+            enabled_build_features=[{'name': 'test_target_unused_exclusion'}],
         ),
     )
 
@@ -356,7 +357,7 @@ class BuildPlannerTest(unittest.TestCase):
         build_targets={build_target},
         build_context=self.create_build_context(
             test_context=test_context,
-            enabled_build_features={'test_target_unused_exclusion'},
+            enabled_build_features=[{'name': 'test_target_unused_exclusion'}],
         ),
     )
 
@@ -372,7 +373,7 @@ class BuildPlannerTest(unittest.TestCase):
         build_targets={build_target},
         build_context=self.create_build_context(
             test_context=test_context,
-            enabled_build_features={'test_target_unused_exclusion'},
+            enabled_build_features=[{'name': 'test_target_unused_exclusion'}],
         ),
     )
 
@@ -391,7 +392,7 @@ class BuildPlannerTest(unittest.TestCase):
         build_targets={build_target},
         build_context=self.create_build_context(
             test_context=test_context,
-            enabled_build_features={'test_target_unused_exclusion'},
+            enabled_build_features=[{'name': 'test_target_unused_exclusion'}],
         ),
     )
 
@@ -402,7 +403,7 @@ class BuildPlannerTest(unittest.TestCase):
   def create_build_planner(
       self,
       build_targets: set[str],
-      build_context: dict[str, any] = None,
+      build_context: BuildContext = None,
       args: argparse.Namespace = None,
       target_optimizations: dict[
           str, optimized_targets.OptimizedBuildTarget
@@ -426,15 +427,17 @@ class BuildPlannerTest(unittest.TestCase):
   def create_build_context(
       self,
       optimized_build_enabled: bool = True,
-      enabled_build_features: set[str] = set(),
+      enabled_build_features: list[dict[str, str]] = [],
       test_context: dict[str, any] = {},
-  ) -> dict[str, any]:
-    build_context = {}
-    build_context['enabledBuildFeatures'] = enabled_build_features
+  ) -> BuildContext:
+    build_context_dict = {}
+    build_context_dict['enabledBuildFeatures'] = enabled_build_features
     if optimized_build_enabled:
-      build_context['enabledBuildFeatures'].add('optimized_build')
-    build_context['testContext'] = test_context
-    return build_context
+      build_context_dict['enabledBuildFeatures'].append(
+          {'name': 'optimized_build'}
+      )
+    build_context_dict['testContext'] = test_context
+    return BuildContext(build_context_dict)
 
   def create_args(
       self, extra_build_targets: set[str] = set()
@@ -445,7 +448,7 @@ class BuildPlannerTest(unittest.TestCase):
 
   def create_target_optimizations(
       self,
-      build_context: dict[str, any],
+      build_context: BuildContext,
       build_targets: set[str],
       packaging_outputs: set[str] = set(),
   ):

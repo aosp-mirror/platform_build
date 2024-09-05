@@ -717,7 +717,7 @@ $(foreach kmd,$(BOARD_KERNEL_MODULE_DIRS), \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-vendor-ramdisk-charger-load,$(kmd))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-vendor-kernel-ramdisk-charger-load,$(kmd))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,ODM,$(if $(filter true,$(BOARD_USES_ODM_DLKMIMAGE)),$(TARGET_OUT_ODM_DLKM),$(TARGET_OUT_ODM)),odm,modules.load,,$(kmd))) \
-  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,SYSTEM,$(if $(filter true,$(BOARD_USES_SYSTEM_DLKMIMAGE)),$(TARGET_OUT_SYSTEM_DLKM),$(TARGET_OUT_SYSTEM)),system,modules.load,,$(kmd))) \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,SYSTEM,$(if $(filter true,$(BOARD_USES_SYSTEM_DLKMIMAGE)),$(TARGET_OUT_SYSTEM_DLKM),$(TARGET_OUT)),system,modules.load,,$(kmd))) \
   $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
     $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-recovery-as-boot-load,$(kmd))),\
     $(eval ALL_DEFAULT_INSTALLED_MODULES += $(call build-image-kernel-modules-dir,GENERIC_RAMDISK,$(TARGET_RAMDISK_OUT),,modules.load,$(GENERIC_RAMDISK_STRIPPED_MODULE_STAGING_DIR),$(kmd)))))
@@ -1267,9 +1267,8 @@ boototapackage_16k: $(BUILT_BOOT_OTA_PACKAGE_16K)
 
 endif
 
-
+# The value of RAMDISK_NODE_LIST is defined in system/core/rootdir/Android.bp.
 # This file contains /dev nodes description added to the generic ramdisk
-RAMDISK_NODE_LIST := $(PRODUCT_OUT)/ramdisk_node_list
 
 # We just build this directly to the install location.
 INSTALLED_RAMDISK_TARGET := $(BUILT_RAMDISK_TARGET)
@@ -3417,8 +3416,10 @@ endif  # PRODUCT_FSVERITY_GENERATE_METADATA
 # system image
 
 INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_OUT)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
+ifdef BUILDING_SYSTEM_IMAGE
 INTERNAL_SYSTEMIMAGE_FILES := $(sort $(filter $(TARGET_OUT)/%, \
     $(ALL_DEFAULT_INSTALLED_MODULES)))
+endif
 
 # Create symlink /system/vendor to /vendor if necessary.
 ifdef BOARD_USES_VENDORIMAGE
@@ -3675,10 +3676,10 @@ platform-java:
 # -----------------------------------------------------------------
 # data partition image
 INSTALLED_FILES_OUTSIDE_IMAGES := $(filter-out $(TARGET_OUT_DATA)/%, $(INSTALLED_FILES_OUTSIDE_IMAGES))
+ifdef BUILDING_USERDATA_IMAGE
 INTERNAL_USERDATAIMAGE_FILES := \
     $(filter $(TARGET_OUT_DATA)/%,$(ALL_DEFAULT_INSTALLED_MODULES))
 
-ifdef BUILDING_USERDATA_IMAGE
 userdataimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,userdata)
 BUILT_USERDATAIMAGE_TARGET := $(PRODUCT_OUT)/userdata.img
@@ -6811,14 +6812,22 @@ ifdef BOARD_PREBUILT_DTBOIMAGE
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(INSTALLED_DTBOIMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES/
 endif # BOARD_PREBUILT_DTBOIMAGE
-ifdef BUILT_KERNEL_16K_TARGET
+ifdef BOARD_KERNEL_PATH_16K
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(BUILT_KERNEL_16K_TARGET) $(zip_root)/PREBUILT_IMAGES/
-endif # BUILT_KERNEL_16K_TARGET
-ifdef BUILT_RAMDISK_16K_TARGET
+endif # BOARD_KERNEL_PATH_16K
+ifdef BOARD_KERNEL_MODULES_16K
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(BUILT_RAMDISK_16K_TARGET) $(zip_root)/PREBUILT_IMAGES/
-endif # BUILT_RAMDISK_16K_TARGET
+endif # BOARD_KERNEL_MODULES_16K
+ifdef BUILT_BOOTIMAGE_16K_TARGET
+	$(hide) mkdir -p $(zip_root)/IMAGES
+	$(hide) cp $(BUILT_BOOTIMAGE_16K_TARGET) $(zip_root)/IMAGES/
+endif # BUILT_BOOTIMAGE_16K_TARGET
+ifdef INSTALLED_DTBOIMAGE_16KB_TARGET
+	$(hide) mkdir -p $(zip_root)/IMAGES
+	$(hide) cp $(INSTALLED_DTBOIMAGE_16KB_TARGET) $(zip_root)/IMAGES/
+endif # INSTALLED_DTBOIMAGE_16KB_TARGET
 ifeq ($(BOARD_USES_PVMFWIMAGE),true)
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
 	$(hide) cp $(INSTALLED_PVMFWIMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES/
@@ -7889,7 +7898,7 @@ haiku-presubmit: $(SOONG_PRESUBMIT_FUZZ_PACKAGING_ARCH_MODULES) $(ALL_PRESUBMIT_
 $(call dist-for-goals,haiku-presubmit,$(SOONG_PRESUBMIT_FUZZ_PACKAGING_ARCH_MODULES))
 
 # -----------------------------------------------------------------
-# Extract platform fonts used in Layoutlib
+# Extract additional data files used in Layoutlib
 include $(BUILD_SYSTEM)/layoutlib_data.mk
 
 # -----------------------------------------------------------------
@@ -7915,9 +7924,10 @@ PACKED_IMAGE_ARCHIVE_TARGET := $(PACK_IMAGE_TARGET).gz
 $(PACKED_IMAGE_ARCHIVE_TARGET): $(PACK_IMAGE_TARGET) | $(GZIP)
 	$(GZIP) -fk $(PACK_IMAGE_TARGET)
 
-droidcore-unbundled: $(PACKED_IMAGE_ARCHIVE_TARGET)
-
 $(call dist-for-goals,dist_files,$(PACKED_IMAGE_ARCHIVE_TARGET))
+
+.PHONY: pack-image
+pack-image: $(PACK_IMAGE_TARGET)
 
 endif # PACK_DESKTOP_FILESYSTEM_IMAGES
 
@@ -7934,11 +7944,32 @@ PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET := $(PACK_RECOVERY_IMAGE_TARGET).gz
 $(PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET): $(PACK_RECOVERY_IMAGE_TARGET) | $(GZIP)
 	$(GZIP) -fk $(PACK_RECOVERY_IMAGE_TARGET)
 
-droidcore-unbundled: $(PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET)
-
 $(call dist-for-goals,dist_files,$(PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET))
 
+.PHONY: pack-recovery-image
+pack-recovery-image: $(PACK_RECOVERY_IMAGE_TARGET)
+
 endif # PACK_DESKTOP_RECOVERY_IMAGE
+
+# -----------------------------------------------------------------
+# Desktop pack update image hook.
+ifneq (,$(strip $(PACK_DESKTOP_UPDATE_IMAGE)))
+PACK_UPDATE_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_update_image.bin
+
+$(PACK_UPDATE_IMAGE_TARGET): $(IMAGES) $(PACK_IMAGE_SCRIPT)
+	$(PACK_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) --noarchive --update
+
+PACKED_UPDATE_IMAGE_ARCHIVE_TARGET := $(PACK_UPDATE_IMAGE_TARGET).gz
+
+$(PACKED_UPDATE_IMAGE_ARCHIVE_TARGET): $(PACK_UPDATE_IMAGE_TARGET) | $(GZIP)
+	$(GZIP) -fk $(PACK_UPDATE_IMAGE_TARGET)
+
+$(call dist-for-goals,dist_files,$(PACKED_UPDATE_IMAGE_ARCHIVE_TARGET))
+
+.PHONY: pack-update-image
+pack-update-image: $(PACK_UPDATE_IMAGE_TARGET)
+
+endif # PACK_DESKTOP_UPDATE_IMAGE
 
 # -----------------------------------------------------------------
 # OS Licensing
