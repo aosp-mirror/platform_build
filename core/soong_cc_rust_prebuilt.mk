@@ -38,10 +38,6 @@ ifndef LOCAL_UNINSTALLABLE_MODULE
   endif
 endif
 
-# Use the Soong output as the checkbuild target instead of LOCAL_BUILT_MODULE
-# to avoid checkbuilds making an extra copy of every module.
-LOCAL_CHECKED_MODULE := $(LOCAL_PREBUILT_MODULE_FILE)
-
 my_check_same_vndk_variants :=
 same_vndk_variants_stamp :=
 ifeq ($(LOCAL_CHECK_SAME_VNDK_VARIANTS),true)
@@ -61,7 +57,7 @@ ifeq ($(my_check_same_vndk_variants),true)
   # Note that because `checkbuild` doesn't check LOCAL_BUILT_MODULE for soong-built modules adding
   # the timestamp to LOCAL_BUILT_MODULE isn't enough. It is skipped when the vendor variant
   # isn't used at all and it may break in the downstream trees.
-  LOCAL_ADDITIONAL_CHECKED_MODULE := $(same_vndk_variants_stamp)
+  LOCAL_ADDITIONAL_CHECKED_MODULE += $(same_vndk_variants_stamp)
 endif
 
 #######################################
