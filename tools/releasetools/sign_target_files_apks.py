@@ -1131,9 +1131,9 @@ def WriteOtacerts(output_zip, filename, keys):
   common.ZipWriteStr(output_zip, filename, temp_file.getvalue())
 
 
-def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
+def ReplaceOtaKeys(input_tf_zip: zipfile.ZipFile, output_tf_zip, misc_info):
   try:
-    keylist = input_tf_zip.read("META/otakeys.txt").split()
+    keylist = input_tf_zip.read("META/otakeys.txt").decode().split()
   except KeyError:
     raise common.ExternalError("can't read META/otakeys.txt from input")
 
