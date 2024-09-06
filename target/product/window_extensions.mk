@@ -14,11 +14,14 @@
 # limitations under the License.
 #
 
-# /system_ext packages
-PRODUCT_PACKAGES += \
-    androidx.window.extensions \
-    androidx.window.sidecar
-
-# properties
+# Extension of window_extensions_base.mk to enable the activity embedding
+# feature for all apps by default. All large screen devices must inherit
+# this in build. Optional for other form factors.
+#
+# Indicated whether the Activity Embedding feature should be guarded by
+# Android 15 to avoid app compat impact.
+# If true (or not set), the feature is only enabled for apps with target
+# SDK of Android 15 or above.
+# If false, the feature is enabled for all apps.
 PRODUCT_PRODUCT_PROPERTIES += \
-    persist.wm.extensions.enabled=true
+    persist.wm.extensions.activity_embedding_guard_with_android_15=false
