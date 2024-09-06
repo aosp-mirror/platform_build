@@ -898,7 +898,7 @@ def LoadInfoDict(input_file, repacking=False):
       if key.endswith("selinux_fc"):
         fc_basename = os.path.basename(d[key])
         fc_config = os.path.join(input_file, "META", fc_basename)
-        assert os.path.exists(fc_config)
+        assert os.path.exists(fc_config), "{} does not exist".format(fc_config)
 
         d[key] = fc_config
 
@@ -3008,7 +3008,7 @@ def ZipWrite(zip_file, filename, arcname=None, perms=0o644,
     zipfile.ZIP64_LIMIT = saved_zip64_limit
 
 
-def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=None,
+def ZipWriteStr(zip_file: zipfile.ZipFile, zinfo_or_arcname, data, perms=None,
                 compress_type=None):
   """Wrap zipfile.writestr() function to work around the zip64 limit.
 

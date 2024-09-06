@@ -16,32 +16,42 @@
 
 package android.aconfig.storage;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class PackageTable {
 
     private Header mHeader;
-    private Map<String, Node> mNodeMap;
+    private ByteBufferReader mReader;
 
     public static PackageTable fromBytes(ByteBuffer bytes) {
         PackageTable packageTable = new PackageTable();
-        ByteBufferReader reader = new ByteBufferReader(bytes);
-        Header header = Header.fromBytes(reader);
-        packageTable.mHeader = header;
-        packageTable.mNodeMap = new HashMap(TableUtils.getTableSize(header.mNumPackages));
-        reader.position(header.mNodeOffset);
-        for (int i = 0; i < header.mNumPackages; i++) {
-            Node node = Node.fromBytes(reader);
-            packageTable.mNodeMap.put(node.mPackageName, node);
-        }
+        packageTable.mReader = new ByteBufferReader(bytes);
+        packageTable.mHeader = Header.fromBytes(packageTable.mReader);
+
         return packageTable;
     }
 
     public Node get(String packageName) {
-        return mNodeMap.get(packageName);
+
+        int numBuckets = (mHeader.mNodeOffset - mHeader.mBucketOffset) / 4;
+        int bucketIndex = TableUtils.getBucketIndex(packageName.getBytes(UTF_8), numBuckets);
+
+        mReader.position(mHeader.mBucketOffset + bucketIndex * 4);
+        int nodeIndex = mReader.readInt();
+
+        while (nodeIndex != -1) {
+            mReader.position(nodeIndex);
+            Node node = Node.fromBytes(mReader);
+            if (Objects.equals(packageName, node.mPackageName)) {
+                return node;
+            }
+            nodeIndex = node.mNextOffset;
+        }
+
+        throw new AconfigStorageException("get cannot find package: " + packageName);
     }
 
     public Header getHeader() {
