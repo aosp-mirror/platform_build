@@ -113,6 +113,7 @@ mod tests {
 use aconfig_storage_read_api::{Mmap, AconfigStorageError, StorageFileType, PackageReadContext, get_mapped_storage_file, get_boolean_flag_value, get_package_read_context};
 use std::path::Path;
 use std::io::Write;
+use std::sync::LazyLock;
 use log::{log, LevelFilter, Level};
 
 static STORAGE_MIGRATION_MARKER_FILE: &str =
@@ -123,36 +124,28 @@ static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 pub struct FlagProvider;
 
     /// flag value cache for disabled_rw
-lazy_static::lazy_static! {
-    static ref CACHED_disabled_rw: bool = flags_rust::GetServerConfigurableFlag(
+    static CACHED_disabled_rw: LazyLock<bool> = LazyLock::new(|| flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.aconfig_test",
         "com.android.aconfig.test.disabled_rw",
-        "false") == "true";
-}
+        "false") == "true");
 
     /// flag value cache for disabled_rw_exported
-lazy_static::lazy_static! {
-    static ref CACHED_disabled_rw_exported: bool = flags_rust::GetServerConfigurableFlag(
+    static CACHED_disabled_rw_exported: LazyLock<bool> = LazyLock::new(|| flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.aconfig_test",
         "com.android.aconfig.test.disabled_rw_exported",
-        "false") == "true";
-}
+        "false") == "true");
 
     /// flag value cache for disabled_rw_in_other_namespace
-lazy_static::lazy_static! {
-    static ref CACHED_disabled_rw_in_other_namespace: bool = flags_rust::GetServerConfigurableFlag(
+    static CACHED_disabled_rw_in_other_namespace: LazyLock<bool> = LazyLock::new(|| flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.other_namespace",
         "com.android.aconfig.test.disabled_rw_in_other_namespace",
-        "false") == "true";
-}
+        "false") == "true");
 
     /// flag value cache for enabled_rw
-lazy_static::lazy_static! {
-    static ref CACHED_enabled_rw: bool = flags_rust::GetServerConfigurableFlag(
+    static CACHED_enabled_rw: LazyLock<bool> = LazyLock::new(|| flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.aconfig_test",
         "com.android.aconfig.test.enabled_rw",
-        "true") == "true";
-}
+        "true") == "true");
 
 impl FlagProvider {
     /// query flag disabled_ro
@@ -264,6 +257,7 @@ pub fn enabled_rw() -> bool {
 use aconfig_storage_read_api::{Mmap, AconfigStorageError, StorageFileType, PackageReadContext, get_mapped_storage_file, get_boolean_flag_value, get_package_read_context};
 use std::path::Path;
 use std::io::Write;
+use std::sync::LazyLock;
 use log::{log, LevelFilter, Level};
 
 static STORAGE_MIGRATION_MARKER_FILE: &str =
@@ -273,285 +267,276 @@ static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 /// flag provider
 pub struct FlagProvider;
 
-lazy_static::lazy_static! {
-    static ref PACKAGE_OFFSET: Result<Option<u32>, AconfigStorageError> = unsafe {
-        get_mapped_storage_file("system", StorageFileType::PackageMap)
-        .and_then(|package_map| get_package_read_context(&package_map, "com.android.aconfig.test"))
-        .map(|context| context.map(|c| c.boolean_start_index))
-    };
+static PACKAGE_OFFSET: LazyLock<Result<Option<u32>, AconfigStorageError>> = LazyLock::new(|| unsafe {
+    get_mapped_storage_file("system", StorageFileType::PackageMap)
+    .and_then(|package_map| get_package_read_context(&package_map, "com.android.aconfig.test"))
+    .map(|context| context.map(|c| c.boolean_start_index))
+});
 
-    static ref FLAG_VAL_MAP: Result<Mmap, AconfigStorageError> = unsafe {
-        get_mapped_storage_file("system", StorageFileType::FlagVal)
-    };
-}
+static FLAG_VAL_MAP: LazyLock<Result<Mmap, AconfigStorageError>> = LazyLock::new(|| unsafe {
+    get_mapped_storage_file("system", StorageFileType::FlagVal)
+});
 
-    /// flag value cache for disabled_rw
-lazy_static::lazy_static! {
-    static ref CACHED_disabled_rw: bool = {
-        let result = flags_rust::GetServerConfigurableFlag(
-            "aconfig_flags.aconfig_test",
-            "com.android.aconfig.test.disabled_rw",
-            "false") == "true";
+/// flag value cache for disabled_rw
+static CACHED_disabled_rw: LazyLock<bool> = LazyLock::new(|| {
+    let result = flags_rust::GetServerConfigurableFlag(
+        "aconfig_flags.aconfig_test",
+        "com.android.aconfig.test.disabled_rw",
+        "false") == "true";
 
-        let use_new_storage_value = flags_rust::GetServerConfigurableFlag(
-            "aconfig_flags.core_experiments_team_internal",
-            "com.android.providers.settings.use_new_storage_value",
-            "false") == "true";
+    let use_new_storage_value = flags_rust::GetServerConfigurableFlag(
+        "aconfig_flags.core_experiments_team_internal",
+        "com.android.providers.settings.use_new_storage_value",
+        "false") == "true";
 
-        if Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() {
-            // This will be called multiple times. Subsequent calls after the first are noops.
-            logger::init(
-                logger::Config::default()
-                    .with_tag_on_device(MIGRATION_LOG_TAG)
-                    .with_max_level(LevelFilter::Info));
+    if Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() {
+        // This will be called multiple times. Subsequent calls after the first are noops.
+        logger::init(
+            logger::Config::default()
+                .with_tag_on_device(MIGRATION_LOG_TAG)
+                .with_max_level(LevelFilter::Info));
 
-            let aconfig_storage_result = FLAG_VAL_MAP
-                .as_ref()
-                .map_err(|err| format!("failed to get flag val map: {err}"))
-                .and_then(|flag_val_map| {
-                    PACKAGE_OFFSET
-                        .as_ref()
-                        .map_err(|err| format!("failed to get package read offset: {err}"))
-                        .and_then(|package_offset| {
-                            match package_offset {
-                                Some(offset) => {
-                                    get_boolean_flag_value(&flag_val_map, offset + 1)
-                                        .map_err(|err| format!("failed to get flag: {err}"))
-                                },
-                                None => Err("no context found for package 'com.android.aconfig.test'".to_string())
-                            }
-                        })
-                    });
+        let aconfig_storage_result = FLAG_VAL_MAP
+            .as_ref()
+            .map_err(|err| format!("failed to get flag val map: {err}"))
+            .and_then(|flag_val_map| {
+                PACKAGE_OFFSET
+                    .as_ref()
+                    .map_err(|err| format!("failed to get package read offset: {err}"))
+                    .and_then(|package_offset| {
+                        match package_offset {
+                            Some(offset) => {
+                                get_boolean_flag_value(&flag_val_map, offset + 1)
+                                    .map_err(|err| format!("failed to get flag: {err}"))
+                            },
+                            None => Err("no context found for package 'com.android.aconfig.test'".to_string())
+                        }
+                    })
+                });
 
-            match aconfig_storage_result {
-                Ok(storage_result) if storage_result == result => {
-                    if use_new_storage_value {
-                        return storage_result;
-                    } else {
-                        return result;
-                    }
-                },
-                Ok(storage_result) => {
-                    log!(Level::Error, "AconfigTestMission1: error: mismatch for flag 'disabled_rw'. Legacy storage was {result}, new storage was {storage_result}");
-                    if use_new_storage_value {
-                        return storage_result;
-                    } else {
-                        return result;
-                    }
-                },
-                Err(err) => {
-                    log!(Level::Error, "AconfigTestMission1: error: {err}");
-                    if use_new_storage_value {
-                        panic!("failed to read flag value: {err}");
-                    }
+        match aconfig_storage_result {
+            Ok(storage_result) if storage_result == result => {
+                if use_new_storage_value {
+                    return storage_result;
+                } else {
+                    return result;
+                }
+            },
+            Ok(storage_result) => {
+                log!(Level::Error, "AconfigTestMission1: error: mismatch for flag 'disabled_rw'. Legacy storage was {result}, new storage was {storage_result}");
+                if use_new_storage_value {
+                    return storage_result;
+                } else {
+                    return result;
+                }
+            },
+            Err(err) => {
+                log!(Level::Error, "AconfigTestMission1: error: {err}");
+                if use_new_storage_value {
+                    panic!("failed to read flag value: {err}");
                 }
             }
         }
+    }
 
-        result
-        };
-}
+    result
+});
 
-    /// flag value cache for disabled_rw_exported
-lazy_static::lazy_static! {
-    static ref CACHED_disabled_rw_exported: bool = {
-        let result = flags_rust::GetServerConfigurableFlag(
-            "aconfig_flags.aconfig_test",
-            "com.android.aconfig.test.disabled_rw_exported",
-            "false") == "true";
+/// flag value cache for disabled_rw_exported
+static CACHED_disabled_rw_exported: LazyLock<bool> = LazyLock::new(|| {
+    let result = flags_rust::GetServerConfigurableFlag(
+        "aconfig_flags.aconfig_test",
+        "com.android.aconfig.test.disabled_rw_exported",
+        "false") == "true";
 
-        let use_new_storage_value = flags_rust::GetServerConfigurableFlag(
-            "aconfig_flags.core_experiments_team_internal",
-            "com.android.providers.settings.use_new_storage_value",
-            "false") == "true";
+    let use_new_storage_value = flags_rust::GetServerConfigurableFlag(
+        "aconfig_flags.core_experiments_team_internal",
+        "com.android.providers.settings.use_new_storage_value",
+        "false") == "true";
 
-        if Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() {
-            // This will be called multiple times. Subsequent calls after the first are noops.
-            logger::init(
-                logger::Config::default()
-                    .with_tag_on_device(MIGRATION_LOG_TAG)
-                    .with_max_level(LevelFilter::Info));
+    if Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() {
+        // This will be called multiple times. Subsequent calls after the first are noops.
+        logger::init(
+            logger::Config::default()
+                .with_tag_on_device(MIGRATION_LOG_TAG)
+                .with_max_level(LevelFilter::Info));
 
-            let aconfig_storage_result = FLAG_VAL_MAP
-                .as_ref()
-                .map_err(|err| format!("failed to get flag val map: {err}"))
-                .and_then(|flag_val_map| {
-                    PACKAGE_OFFSET
-                        .as_ref()
-                        .map_err(|err| format!("failed to get package read offset: {err}"))
-                        .and_then(|package_offset| {
-                            match package_offset {
-                                Some(offset) => {
-                                    get_boolean_flag_value(&flag_val_map, offset + 2)
-                                        .map_err(|err| format!("failed to get flag: {err}"))
-                                },
-                                None => Err("no context found for package 'com.android.aconfig.test'".to_string())
-                            }
-                        })
-                    });
+        let aconfig_storage_result = FLAG_VAL_MAP
+            .as_ref()
+            .map_err(|err| format!("failed to get flag val map: {err}"))
+            .and_then(|flag_val_map| {
+                PACKAGE_OFFSET
+                    .as_ref()
+                    .map_err(|err| format!("failed to get package read offset: {err}"))
+                    .and_then(|package_offset| {
+                        match package_offset {
+                            Some(offset) => {
+                                get_boolean_flag_value(&flag_val_map, offset + 2)
+                                    .map_err(|err| format!("failed to get flag: {err}"))
+                            },
+                            None => Err("no context found for package 'com.android.aconfig.test'".to_string())
+                        }
+                    })
+                });
 
-            match aconfig_storage_result {
-                Ok(storage_result) if storage_result == result => {
-                    if use_new_storage_value {
-                        return storage_result;
-                    } else {
-                        return result;
-                    }
-                },
-                Ok(storage_result) => {
-                    log!(Level::Error, "AconfigTestMission1: error: mismatch for flag 'disabled_rw_exported'. Legacy storage was {result}, new storage was {storage_result}");
-                    if use_new_storage_value {
-                        return storage_result;
-                    } else {
-                        return result;
-                    }
-                },
-                Err(err) => {
-                    log!(Level::Error, "AconfigTestMission1: error: {err}");
-                    if use_new_storage_value {
-                        panic!("failed to read flag value: {err}");
-                    }
+        match aconfig_storage_result {
+            Ok(storage_result) if storage_result == result => {
+                if use_new_storage_value {
+                    return storage_result;
+                } else {
+                    return result;
+                }
+            },
+            Ok(storage_result) => {
+                log!(Level::Error, "AconfigTestMission1: error: mismatch for flag 'disabled_rw_exported'. Legacy storage was {result}, new storage was {storage_result}");
+                if use_new_storage_value {
+                    return storage_result;
+                } else {
+                    return result;
+                }
+            },
+            Err(err) => {
+                log!(Level::Error, "AconfigTestMission1: error: {err}");
+                if use_new_storage_value {
+                    panic!("failed to read flag value: {err}");
                 }
             }
         }
+    }
 
-        result
-        };
-}
+    result
+});
 
-    /// flag value cache for disabled_rw_in_other_namespace
-lazy_static::lazy_static! {
-    static ref CACHED_disabled_rw_in_other_namespace: bool = {
-        let result = flags_rust::GetServerConfigurableFlag(
-            "aconfig_flags.other_namespace",
-            "com.android.aconfig.test.disabled_rw_in_other_namespace",
-            "false") == "true";
+/// flag value cache for disabled_rw_in_other_namespace
+static CACHED_disabled_rw_in_other_namespace: LazyLock<bool> = LazyLock::new(|| {
+    let result = flags_rust::GetServerConfigurableFlag(
+        "aconfig_flags.other_namespace",
+        "com.android.aconfig.test.disabled_rw_in_other_namespace",
+        "false") == "true";
 
-        let use_new_storage_value = flags_rust::GetServerConfigurableFlag(
-            "aconfig_flags.core_experiments_team_internal",
-            "com.android.providers.settings.use_new_storage_value",
-            "false") == "true";
+    let use_new_storage_value = flags_rust::GetServerConfigurableFlag(
+        "aconfig_flags.core_experiments_team_internal",
+        "com.android.providers.settings.use_new_storage_value",
+        "false") == "true";
 
-        if Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() {
-            // This will be called multiple times. Subsequent calls after the first are noops.
-            logger::init(
-                logger::Config::default()
-                    .with_tag_on_device(MIGRATION_LOG_TAG)
-                    .with_max_level(LevelFilter::Info));
+    if Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() {
+        // This will be called multiple times. Subsequent calls after the first are noops.
+        logger::init(
+            logger::Config::default()
+                .with_tag_on_device(MIGRATION_LOG_TAG)
+                .with_max_level(LevelFilter::Info));
 
-            let aconfig_storage_result = FLAG_VAL_MAP
-                .as_ref()
-                .map_err(|err| format!("failed to get flag val map: {err}"))
-                .and_then(|flag_val_map| {
-                    PACKAGE_OFFSET
-                        .as_ref()
-                        .map_err(|err| format!("failed to get package read offset: {err}"))
-                        .and_then(|package_offset| {
-                            match package_offset {
-                                Some(offset) => {
-                                    get_boolean_flag_value(&flag_val_map, offset + 3)
-                                        .map_err(|err| format!("failed to get flag: {err}"))
-                                },
-                                None => Err("no context found for package 'com.android.aconfig.test'".to_string())
-                            }
-                        })
-                    });
+        let aconfig_storage_result = FLAG_VAL_MAP
+            .as_ref()
+            .map_err(|err| format!("failed to get flag val map: {err}"))
+            .and_then(|flag_val_map| {
+                PACKAGE_OFFSET
+                    .as_ref()
+                    .map_err(|err| format!("failed to get package read offset: {err}"))
+                    .and_then(|package_offset| {
+                        match package_offset {
+                            Some(offset) => {
+                                get_boolean_flag_value(&flag_val_map, offset + 3)
+                                    .map_err(|err| format!("failed to get flag: {err}"))
+                            },
+                            None => Err("no context found for package 'com.android.aconfig.test'".to_string())
+                        }
+                    })
+                });
 
-            match aconfig_storage_result {
-                Ok(storage_result) if storage_result == result => {
-                    if use_new_storage_value {
-                        return storage_result;
-                    } else {
-                        return result;
-                    }
-                },
-                Ok(storage_result) => {
-                    log!(Level::Error, "AconfigTestMission1: error: mismatch for flag 'disabled_rw_in_other_namespace'. Legacy storage was {result}, new storage was {storage_result}");
-                    if use_new_storage_value {
-                        return storage_result;
-                    } else {
-                        return result;
-                    }
-                },
-                Err(err) => {
-                    log!(Level::Error, "AconfigTestMission1: error: {err}");
-                    if use_new_storage_value {
-                        panic!("failed to read flag value: {err}");
-                    }
+        match aconfig_storage_result {
+            Ok(storage_result) if storage_result == result => {
+                if use_new_storage_value {
+                    return storage_result;
+                } else {
+                    return result;
+                }
+            },
+            Ok(storage_result) => {
+                log!(Level::Error, "AconfigTestMission1: error: mismatch for flag 'disabled_rw_in_other_namespace'. Legacy storage was {result}, new storage was {storage_result}");
+                if use_new_storage_value {
+                    return storage_result;
+                } else {
+                    return result;
+                }
+            },
+            Err(err) => {
+                log!(Level::Error, "AconfigTestMission1: error: {err}");
+                if use_new_storage_value {
+                    panic!("failed to read flag value: {err}");
                 }
             }
         }
+    }
 
-        result
-        };
-}
+    result
+});
 
-    /// flag value cache for enabled_rw
-lazy_static::lazy_static! {
-    static ref CACHED_enabled_rw: bool = {
-        let result = flags_rust::GetServerConfigurableFlag(
-            "aconfig_flags.aconfig_test",
-            "com.android.aconfig.test.enabled_rw",
-            "true") == "true";
 
-        let use_new_storage_value = flags_rust::GetServerConfigurableFlag(
-            "aconfig_flags.core_experiments_team_internal",
-            "com.android.providers.settings.use_new_storage_value",
-            "false") == "true";
+/// flag value cache for enabled_rw
+static CACHED_enabled_rw: LazyLock<bool> = LazyLock::new(|| {
+    let result = flags_rust::GetServerConfigurableFlag(
+        "aconfig_flags.aconfig_test",
+        "com.android.aconfig.test.enabled_rw",
+        "true") == "true";
 
-        if Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() {
-            // This will be called multiple times. Subsequent calls after the first are noops.
-            logger::init(
-                logger::Config::default()
-                    .with_tag_on_device(MIGRATION_LOG_TAG)
-                    .with_max_level(LevelFilter::Info));
+    let use_new_storage_value = flags_rust::GetServerConfigurableFlag(
+        "aconfig_flags.core_experiments_team_internal",
+        "com.android.providers.settings.use_new_storage_value",
+        "false") == "true";
 
-            let aconfig_storage_result = FLAG_VAL_MAP
-                .as_ref()
-                .map_err(|err| format!("failed to get flag val map: {err}"))
-                .and_then(|flag_val_map| {
-                    PACKAGE_OFFSET
-                        .as_ref()
-                        .map_err(|err| format!("failed to get package read offset: {err}"))
-                        .and_then(|package_offset| {
-                            match package_offset {
-                                Some(offset) => {
-                                    get_boolean_flag_value(&flag_val_map, offset + 8)
-                                        .map_err(|err| format!("failed to get flag: {err}"))
-                                },
-                                None => Err("no context found for package 'com.android.aconfig.test'".to_string())
-                            }
-                        })
-                    });
+    if Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() {
+        // This will be called multiple times. Subsequent calls after the first are noops.
+        logger::init(
+            logger::Config::default()
+                .with_tag_on_device(MIGRATION_LOG_TAG)
+                .with_max_level(LevelFilter::Info));
 
-            match aconfig_storage_result {
-                Ok(storage_result) if storage_result == result => {
-                    if use_new_storage_value {
-                        return storage_result;
-                    } else {
-                        return result;
-                    }
-                },
-                Ok(storage_result) => {
-                    log!(Level::Error, "AconfigTestMission1: error: mismatch for flag 'enabled_rw'. Legacy storage was {result}, new storage was {storage_result}");
-                    if use_new_storage_value {
-                        return storage_result;
-                    } else {
-                        return result;
-                    }
-                },
-                Err(err) => {
-                    log!(Level::Error, "AconfigTestMission1: error: {err}");
-                    if use_new_storage_value {
-                        panic!("failed to read flag value: {err}");
-                    }
+        let aconfig_storage_result = FLAG_VAL_MAP
+            .as_ref()
+            .map_err(|err| format!("failed to get flag val map: {err}"))
+            .and_then(|flag_val_map| {
+                PACKAGE_OFFSET
+                    .as_ref()
+                    .map_err(|err| format!("failed to get package read offset: {err}"))
+                    .and_then(|package_offset| {
+                        match package_offset {
+                            Some(offset) => {
+                                get_boolean_flag_value(&flag_val_map, offset + 8)
+                                    .map_err(|err| format!("failed to get flag: {err}"))
+                            },
+                            None => Err("no context found for package 'com.android.aconfig.test'".to_string())
+                        }
+                    })
+                });
+
+        match aconfig_storage_result {
+            Ok(storage_result) if storage_result == result => {
+                if use_new_storage_value {
+                    return storage_result;
+                } else {
+                    return result;
+                }
+            },
+            Ok(storage_result) => {
+                log!(Level::Error, "AconfigTestMission1: error: mismatch for flag 'enabled_rw'. Legacy storage was {result}, new storage was {storage_result}");
+                if use_new_storage_value {
+                    return storage_result;
+                } else {
+                    return result;
+                }
+            },
+            Err(err) => {
+                log!(Level::Error, "AconfigTestMission1: error: {err}");
+                if use_new_storage_value {
+                    panic!("failed to read flag value: {err}");
                 }
             }
         }
+    }
 
-        result
-        };
-}
+    result
+});
 
 impl FlagProvider {
 
@@ -1215,6 +1200,7 @@ pub fn reset_flags() {
 use aconfig_storage_read_api::{Mmap, AconfigStorageError, StorageFileType, PackageReadContext, get_mapped_storage_file, get_boolean_flag_value, get_package_read_context};
 use std::path::Path;
 use std::io::Write;
+use std::sync::LazyLock;
 use log::{log, LevelFilter, Level};
 
 static STORAGE_MIGRATION_MARKER_FILE: &str =
@@ -1225,28 +1211,22 @@ static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
 pub struct FlagProvider;
 
     /// flag value cache for disabled_rw_exported
-lazy_static::lazy_static! {
-    static ref CACHED_disabled_rw_exported: bool = flags_rust::GetServerConfigurableFlag(
+    static CACHED_disabled_rw_exported: LazyLock<bool> = LazyLock::new(|| flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.aconfig_test",
         "com.android.aconfig.test.disabled_rw_exported",
-        "false") == "true";
-}
+        "false") == "true");
 
     /// flag value cache for enabled_fixed_ro_exported
-lazy_static::lazy_static! {
-    static ref CACHED_enabled_fixed_ro_exported: bool = flags_rust::GetServerConfigurableFlag(
+    static CACHED_enabled_fixed_ro_exported: LazyLock<bool> = LazyLock::new(|| flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.aconfig_test",
         "com.android.aconfig.test.enabled_fixed_ro_exported",
-        "false") == "true";
-}
+        "false") == "true");
 
     /// flag value cache for enabled_ro_exported
-lazy_static::lazy_static! {
-    static ref CACHED_enabled_ro_exported: bool = flags_rust::GetServerConfigurableFlag(
+    static CACHED_enabled_ro_exported: LazyLock<bool> = LazyLock::new(|| flags_rust::GetServerConfigurableFlag(
         "aconfig_flags.aconfig_test",
         "com.android.aconfig.test.enabled_ro_exported",
-        "false") == "true";
-}
+        "false") == "true");
 
 impl FlagProvider {
     /// query flag disabled_rw_exported
@@ -1292,6 +1272,7 @@ pub fn enabled_ro_exported() -> bool {
 use aconfig_storage_read_api::{Mmap, AconfigStorageError, StorageFileType, PackageReadContext, get_mapped_storage_file, get_boolean_flag_value, get_package_read_context};
 use std::path::Path;
 use std::io::Write;
+use std::sync::LazyLock;
 use log::{log, LevelFilter, Level};
 
 static STORAGE_MIGRATION_MARKER_FILE: &str =
