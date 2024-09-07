@@ -811,6 +811,12 @@ ifeq ($(PRODUCT_FULL_TREBLE),true)
   BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED ?= true
 endif
 
+ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),36),)
+  ifneq ($(NEED_AIDL_NDK_PLATFORM_BACKEND),)
+    $(error Must not set NEED_AIDL_NDK_PLATFORM_BACKEND, but it is set to: $(NEED_AIDL_NDK_PLATFORM_BACKEND). Support will be removed.)
+  endif
+endif
+
 # Set BOARD_SYSTEMSDK_VERSIONS to the latest SystemSDK version starting from P-launching
 # devices if unset.
 ifndef BOARD_SYSTEMSDK_VERSIONS
@@ -1263,7 +1269,15 @@ ifeq ($(TARGET_PRODUCT_PROP),)
 TARGET_PRODUCT_PROP := $(wildcard $(TARGET_DEVICE_DIR)/product.prop)
 endif
 
-.KATI_READONLY := TARGET_SYSTEM_PROP TARGET_SYSTEM_EXT_PROP TARGET_PRODUCT_PROP
+ifeq ($(TARGET_ODM_PROP),)
+TARGET_ODM_PROP := $(wildcard $(TARGET_DEVICE_DIR)/odm.prop)
+endif
+
+.KATI_READONLY := \
+    TARGET_SYSTEM_PROP \
+    TARGET_SYSTEM_EXT_PROP \
+    TARGET_PRODUCT_PROP \
+    TARGET_ODM_PROP \
 
 include $(BUILD_SYSTEM)/sysprop_config.mk
 

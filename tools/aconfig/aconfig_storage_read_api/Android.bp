@@ -147,6 +147,7 @@ rust_ffi_shared {
     crate_name: "aconfig_storage_read_api_rust_jni",
     srcs: ["srcs/lib.rs"],
     rustlibs: [
+        "libaconfig_storage_file",
         "libaconfig_storage_read_api",
         "libanyhow",
         "libjni",
