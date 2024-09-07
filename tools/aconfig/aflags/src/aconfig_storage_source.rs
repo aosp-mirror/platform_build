@@ -62,7 +62,7 @@ fn convert(msg: ProtoFlagQueryReturnMessage) -> Result<Flag> {
         permission,
         value_picked_from,
         staged_value,
-        container: "-".to_string(),
+        container: msg.container.ok_or(anyhow!("missing container"))?,
 
         // TODO: remove once DeviceConfig is not in the CLI.
         namespace: "-".to_string(),
