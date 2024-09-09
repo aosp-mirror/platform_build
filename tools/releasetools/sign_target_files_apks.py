@@ -591,6 +591,7 @@ def RegenerateKernelPartitions(input_tf_zip: zipfile.ZipFile, output_tf_zip: zip
   else:
     common.UnzipToDir(input_tf_zip.filename, OPTIONS.input_tmp, files_to_unzip)
   unzip_dir = OPTIONS.input_tmp
+  os.makedirs(os.path.join(unzip_dir, "IMAGES"), exist_ok=True)
 
   boot_image = common.GetBootableImage(
       "IMAGES/boot.img", "boot.img", unzip_dir, "BOOT", misc_info)
