@@ -19,10 +19,10 @@ package com.android.checkflaggedapis
 
 import android.aconfig.Aconfig
 import com.android.tools.metalava.model.BaseItemVisitor
+import com.android.tools.metalava.model.CallableItem
 import com.android.tools.metalava.model.ClassItem
 import com.android.tools.metalava.model.FieldItem
 import com.android.tools.metalava.model.Item
-import com.android.tools.metalava.model.MethodItem
 import com.android.tools.metalava.model.text.ApiFile
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.ProgramResult
@@ -274,15 +274,15 @@ internal fun parseApiSignature(path: String, input: InputStream): Set<Pair<Symbo
           }
         }
 
-        override fun visitMethod(method: MethodItem) {
-          getFlagOrNull(method)?.let { flag ->
-            val methodName = buildString {
-              append(method.name())
+        override fun visitCallable(callable: CallableItem) {
+          getFlagOrNull(callable)?.let { flag ->
+            val callableSignature = buildString {
+              append(callable.name())
               append("(")
-              method.parameters().joinTo(this, separator = "") { it.type().internalName() }
+              callable.parameters().joinTo(this, separator = "") { it.type().internalName() }
               append(")")
             }
-            val symbol = Symbol.createMethod(method.containingClass().qualifiedName(), methodName)
+            val symbol = Symbol.createMethod(callable.containingClass().qualifiedName(), callableSignature)
             output.add(Pair(symbol, flag))
           }
         }

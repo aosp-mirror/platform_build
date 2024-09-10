@@ -13,7 +13,7 @@ define write-optional-json-bool
 $(if $(strip $(2)),'$(COMMA)$(strip $(1)): "$(strip $(2))"')
 endef
 
-SOONG_MODULE_INFO := $(SOONG_OUT_DIR)/module-info-$(TARGET_PRODUCT).json
+SOONG_MODULE_INFO := $(SOONG_OUT_DIR)/module-info-$(TARGET_PRODUCT)${COVERAGE_SUFFIX}.json
 
 $(MODULE_INFO_JSON): PRIVATE_SOONG_MODULE_INFO := $(SOONG_MODULE_INFO)
 $(MODULE_INFO_JSON): PRIVATE_MERGE_JSON_OBJECTS := $(HOST_OUT_EXECUTABLES)/merge_module_info_json

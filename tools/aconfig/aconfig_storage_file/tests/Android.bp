@@ -1,4 +1,3 @@
-
 cc_test {
     name: "aconfig_storage_file.test.cpp",
     team: "trendy_team_android_core_experiments",
@@ -20,4 +19,29 @@ cc_test {
         "device-tests",
         "general-tests",
     ],
+}
+
+android_test {
+    name: "aconfig_storage_file.test.java",
+    team: "trendy_team_android_core_experiments",
+    srcs: [
+        "srcs/**/*.java",
+    ],
+    static_libs: [
+        "androidx.test.runner",
+        "junit",
+        "aconfig_storage_file_java",
+    ],
+    test_config: "AndroidStorageJaveTest.xml",
+    sdk_version: "test_current",
+    data: [
+        "package.map",
+        "flag.map",
+        "flag.val",
+        "flag.info",
+    ],
+    test_suites: [
+        "general-tests",
+    ],
+    jarjar_rules: "jarjar.txt",
 }

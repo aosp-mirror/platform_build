@@ -50,6 +50,7 @@ impl std::fmt::Display for FlagPermission {
 enum ValuePickedFrom {
     Default,
     Server,
+    Local,
 }
 
 impl std::fmt::Display for ValuePickedFrom {
@@ -60,6 +61,7 @@ impl std::fmt::Display for ValuePickedFrom {
             match &self {
                 Self::Default => "default",
                 Self::Server => "server",
+                Self::Local => "local",
             }
         )
     }
@@ -286,7 +288,9 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
     let output = match cli.command {
         Command::List { use_new_storage: true, container } => {
-            list(FlagSourceType::AconfigStorage, container).map(Some)
+            list(FlagSourceType::AconfigStorage, container)
+                .map_err(|err| anyhow!("storage may not be enabled: {err}"))
+                .map(Some)
         }
         Command::List { use_new_storage: false, container } => {
             list(FlagSourceType::DeviceConfig, container).map(Some)

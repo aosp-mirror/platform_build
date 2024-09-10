@@ -76,11 +76,14 @@ namespace {cpp_namespace} \{
             : boolean_start_index_()
             {{ -endif }}
             , flag_value_file_(nullptr)
-            , read_from_new_storage_(false) \{
+            , read_from_new_storage_(false)
+            , use_new_storage_value(false) \{
 
             struct stat buffer;
             if (stat("/metadata/aconfig_test_missions/mission_1", &buffer) == 0) \{
                read_from_new_storage_ = true;
+            } else \{
+               return;
             }
 
             auto package_map_file = aconfig_storage::get_mapped_file(
@@ -115,6 +118,11 @@ namespace {cpp_namespace} \{
             // cache flag value file
             flag_value_file_ = std::unique_ptr<aconfig_storage::MappedStorageFile>(
                 *flag_value_file);
+
+            use_new_storage_value = server_configurable_flags::GetServerConfigurableFlag(
+                "aconfig_flags.core_experiments_team_internal",
+                "com.android.providers.settings.use_new_storage_value",
+                "false") == "true";
         }
         {{ -endif }}
         {{ -endif }}
@@ -133,7 +141,8 @@ namespace {cpp_namespace} \{
             {{ if allow_instrumentation- }}
             if (read_from_new_storage_) \{
                 if (!flag_value_file_) \{
-                   ALOGI("error: failed to get flag {item.flag_name}: flag value file is null");
+                    ALOGI("error: failed to get flag {item.flag_name}: flag value file is null");
+                    return cache_[{item.readwrite_idx}];
                 }
 
                 auto value = aconfig_storage::get_boolean_flag_value(
@@ -142,14 +151,19 @@ namespace {cpp_namespace} \{
 
                 if (!value.ok()) \{
                     ALOGI("error: failed to read flag value: %s", value.error().c_str());
+                    return cache_[{item.readwrite_idx}];
                 }
 
                 bool expected_value = cache_[{item.readwrite_idx}];
                 if (*value != expected_value) \{
                     ALOGI("error: {item.flag_name} value mismatch, new storage value is %s, old storage value is %s",
-                    *value, expected_value);
+                    *value ? "true" : "false", expected_value ? "true" : "false");
+                }
+
+                if (use_new_storage_value) \{
+                    return *value;
                 } else \{
-                    ALOGI("success: {item.flag_name} value matches");
+                    return expected_value;
                 }
             }
             {{ -endif }}
@@ -175,6 +189,7 @@ namespace {cpp_namespace} \{
         std::unique_ptr<aconfig_storage::MappedStorageFile> flag_value_file_;
 
         bool read_from_new_storage_;
+        bool use_new_storage_value;
     {{ -endif }}
     {{ -endif }}
 

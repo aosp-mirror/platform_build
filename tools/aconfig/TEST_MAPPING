@@ -98,6 +98,10 @@
     {
       // aconfig_storage file cpp integration tests
       "name": "aconfig_storage_file.test.cpp"
+    },
+    {
+      // aconfig_storage file java integration tests
+      "name": "aconfig_storage_file.test.java"
     }
   ],
   "postsubmit": [

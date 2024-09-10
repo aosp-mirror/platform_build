@@ -178,6 +178,7 @@ PRODUCT_PACKAGES += \
     libmedia \
     libmedia_jni \
     libmediandk \
+    libmonkey_jni \
     libmtp \
     libnetd_client \
     libnetlink \
@@ -280,6 +281,7 @@ PRODUCT_PACKAGES += \
     storaged \
     surfaceflinger \
     svc \
+    system-build.prop \
     task_profiles.json \
     tc \
     telecom \
@@ -403,7 +405,6 @@ PRODUCT_HOST_PACKAGES += \
     BugReport \
     adb \
     adevice \
-    art-tools \
     atest \
     bcc \
     bit \
@@ -434,6 +435,21 @@ PRODUCT_HOST_PACKAGES += \
     tz_version_host \
     tz_version_host_tzdata_apex \
 
+# For art-tools, if the dependencies have changed, please sync them to art/Android.bp as well.
+PRODUCT_HOST_PACKAGES += \
+    ahat \
+    dexdump \
+    hprof-conv
+# A subset of the tools are disabled when HOST_PREFER_32_BIT is defined as make reports that
+# they are not supported on host (b/129323791). This is likely due to art_apex disabling host
+# APEX builds when HOST_PREFER_32_BIT is set (b/120617876).
+ifneq ($(HOST_PREFER_32_BIT),true)
+PRODUCT_HOST_PACKAGES += \
+    dexlist \
+    oatdump
+endif
+
+
 PRODUCT_PACKAGES += init.usb.rc init.usb.configfs.rc
 
 PRODUCT_PACKAGES += etc_hosts
@@ -444,9 +460,13 @@ PRODUCT_VENDOR_PROPERTIES += ro.zygote?=zygote32
 PRODUCT_SYSTEM_PROPERTIES += debug.atrace.tags.enableflags=0
 PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
 
+# Include kernel configs.
+PRODUCT_PACKAGES += \
+    approved-ogki-builds.xml \
+    kernel-lifetimes.xml
+
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
-    adb_keys \
     adevice_fingerprint \
     arping \
     dmuserd \

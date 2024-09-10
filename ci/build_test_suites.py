@@ -20,14 +20,17 @@ import json
 import logging
 import os
 import pathlib
+import re
 import subprocess
 import sys
 from typing import Callable
+from build_context import BuildContext
 import optimized_targets
 
 
 REQUIRED_ENV_VARS = frozenset(['TARGET_PRODUCT', 'TARGET_RELEASE', 'TOP'])
 SOONG_UI_EXE_REL_PATH = 'build/soong/soong_ui.bash'
+LOG_PATH = 'logs/build_test_suites.log'
 
 
 class Error(Exception):
@@ -53,7 +56,7 @@ class BuildPlanner:
 
   def __init__(
       self,
-      build_context: dict[str, any],
+      build_context: BuildContext,
       args: argparse.Namespace,
       target_optimizations: dict[str, optimized_targets.OptimizedBuildTarget],
   ):
@@ -63,12 +66,17 @@ class BuildPlanner:
 
   def create_build_plan(self):
 
-    if 'optimized_build' not in self.build_context['enabled_build_features']:
+    if 'optimized_build' not in self.build_context.enabled_build_features:
       return BuildPlan(set(self.args.extra_targets), set())
 
     build_targets = set()
     packaging_functions = set()
     for target in self.args.extra_targets:
+      if self._unused_target_exclusion_enabled(
+          target
+      ) and not self.build_context.build_target_used(target):
+        continue
+
       target_optimizer_getter = self.target_optimizations.get(target, None)
       if not target_optimizer_getter:
         build_targets.add(target)
@@ -81,6 +89,12 @@ class BuildPlanner:
       packaging_functions.add(target_optimizer.package_outputs)
 
     return BuildPlan(build_targets, packaging_functions)
+
+  def _unused_target_exclusion_enabled(self, target: str) -> bool:
+    return (
+        f'{target}_unused_exclusion'
+        in self.build_context.enabled_build_features
+    )
 
 
 @dataclass(frozen=True)
@@ -100,7 +114,7 @@ def build_test_suites(argv: list[str]) -> int:
   """
   args = parse_args(argv)
   check_required_env()
-  build_context = load_build_context()
+  build_context = BuildContext(load_build_context())
   build_planner = BuildPlanner(
       build_context, args, optimized_targets.OPTIMIZED_BUILD_TARGETS
   )
@@ -154,7 +168,7 @@ def load_build_context():
 
 
 def empty_build_context():
-  return {'enabled_build_features': []}
+  return {'enabledBuildFeatures': []}
 
 
 def execute_build_plan(build_plan: BuildPlan):
@@ -181,4 +195,12 @@ def run_command(args: list[str], stdout=None):
 
 
 def main(argv):
+  dist_dir = os.environ.get('DIST_DIR')
+  if dist_dir:
+    log_file = pathlib.Path(dist_dir) / LOG_PATH
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s %(levelname)s %(message)s',
+        filename=log_file,
+    )
   sys.exit(build_test_suites(argv))

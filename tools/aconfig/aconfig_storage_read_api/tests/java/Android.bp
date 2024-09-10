@@ -1,7 +1,10 @@
 android_test {
     name: "aconfig_storage_read_api.test.java",
-    srcs: ["AconfigStorageReadAPITest.java"],
+    srcs: ["./**/*.java"],
     static_libs: [
+        "aconfig_device_paths_java",
+        "aconfig_storage_file_java",
+        "aconfig_storage_reader_java",
         "androidx.test.rules",
         "libaconfig_storage_read_api_java",
         "junit",

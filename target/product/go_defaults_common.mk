@@ -37,9 +37,9 @@ PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD := false
 # leave less information available via JDWP.
 PRODUCT_MINIMIZE_JAVA_DEBUG_INFO := true
 
-# Disable Scudo outside of eng builds to save RAM.
+# Use the low memory allocator outside of eng builds to save RSS.
 ifneq (,$(filter eng, $(TARGET_BUILD_VARIANT)))
-  PRODUCT_DISABLE_SCUDO := true
+  MALLOC_LOW_MEMORY := true
 endif
 
 # Add the system properties.
