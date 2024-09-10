@@ -43,14 +43,9 @@ within a product configuration .mk file, board config .mk file, or buildspec.mk.
 The path set when running builds now makes the `python` executable point to python 3,
 whereas on previous versions it pointed to python 2. If you still have python 2 scripts,
 you can change the shebang line to use `python2` explicitly. This only applies for
-scripts run directly from makefiles, or from soong genrules. This behavior can be
-temporarily overridden by setting the `BUILD_BROKEN_PYTHON_IS_PYTHON2` environment
-variable to `true`. It's only an environment variable and not a product config variable
-because product config sometimes calls python code.
+scripts run directly from makefiles, or from soong genrules.
 
-In addition, `python_*` soong modules no longer allow python 2. This can be temporarily
-overridden by setting the `BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES` product configuration
-variable to `true`.
+In addition, `python_*` soong modules no longer allow python 2.
 
 Python 2 is slated for complete removal in V.
 
