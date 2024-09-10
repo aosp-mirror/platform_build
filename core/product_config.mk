@@ -424,10 +424,12 @@ ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
   endif
 endif
 
-$(foreach pair,$(PRODUCT_APEX_BOOT_JARS), \
-  $(eval jar := $(call word-colon,2,$(pair))) \
-  $(if $(findstring $(jar), $(PRODUCT_BOOT_JARS)), \
-    $(error A jar in PRODUCT_APEX_BOOT_JARS must not be in PRODUCT_BOOT_JARS, but $(jar) is)))
+$(foreach apexpair,$(PRODUCT_APEX_BOOT_JARS), \
+  $(foreach platformpair,$(PRODUCT_BOOT_JARS), \
+    $(eval apexjar := $(call word-colon,2,$(apexpair))) \
+    $(eval platformjar := $(call word-colon,2,$(platformpair))) \
+    $(if $(filter $(apexjar), $(platformjar)), \
+      $(error A jar in PRODUCT_APEX_BOOT_JARS must not be in PRODUCT_BOOT_JARS, but $(apexjar) is))))
 
 ENFORCE_SYSTEM_CERTIFICATE := $(PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT)
 ENFORCE_SYSTEM_CERTIFICATE_ALLOW_LIST := $(PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_ALLOW_LIST)

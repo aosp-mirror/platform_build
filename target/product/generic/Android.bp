@@ -695,6 +695,7 @@ android_system_image {
                 "framework-graphics", // base_system
                 "framework-location", // base_system
                 "framework-minus-apex-install-dependencies", // base_system
+                "framework-connectivity-b", // base_system
                 "framework_compatibility_matrix.device.xml",
                 "generic_system_fonts", // ok
                 "hwservicemanager_compat_symlink_module", // base_system
