@@ -898,7 +898,7 @@ def LoadInfoDict(input_file, repacking=False):
       if key.endswith("selinux_fc"):
         fc_basename = os.path.basename(d[key])
         fc_config = os.path.join(input_file, "META", fc_basename)
-        assert os.path.exists(fc_config)
+        assert os.path.exists(fc_config), "{} does not exist".format(fc_config)
 
         d[key] = fc_config
 
@@ -907,9 +907,10 @@ def LoadInfoDict(input_file, repacking=False):
     d["root_fs_config"] = os.path.join(
         input_file, "META", "root_filesystem_config.txt")
 
+    partitions = ["system", "vendor", "system_ext", "product", "odm",
+                  "vendor_dlkm", "odm_dlkm", "system_dlkm"]
     # Redirect {partition}_base_fs_file for each of the named partitions.
-    for part_name in ["system", "vendor", "system_ext", "product", "odm",
-                      "vendor_dlkm", "odm_dlkm", "system_dlkm"]:
+    for part_name in partitions:
       key_name = part_name + "_base_fs_file"
       if key_name not in d:
         continue
@@ -921,6 +922,25 @@ def LoadInfoDict(input_file, repacking=False):
         logger.warning(
             "Failed to find %s base fs file: %s", part_name, base_fs_file)
         del d[key_name]
+
+    # Redirecting helper for optional properties like erofs_compress_hints
+    def redirect_file(prop, filename):
+      if prop not in d:
+        return
+      config_file = os.path.join(input_file, "META/" + filename)
+      if os.path.exists(config_file):
+        d[prop] = config_file
+      else:
+        logger.warning(
+            "Failed to find %s fro %s", filename, prop)
+        del d[prop]
+
+    # Redirect erofs_[default_]compress_hints files
+    redirect_file("erofs_default_compress_hints",
+                  "erofs_default_compress_hints.txt")
+    for part in partitions:
+      redirect_file(part + "_erofs_compress_hints",
+                    part + "_erofs_compress_hints.txt")
 
   def makeint(key):
     if key in d:
@@ -2434,12 +2454,23 @@ def GetMinSdkVersion(apk_name):
         "Failed to obtain minSdkVersion for {}: aapt2 return code {}:\n{}\n{}".format(
             apk_name, proc.returncode, stdoutdata, stderrdata))
 
+  is_split_apk = False
   for line in stdoutdata.split("\n"):
+    # See b/353837347 , split APKs do not have sdk version defined,
+    # so we default to 21 as split APKs are only supported since SDK
+    # 21.
+    if (re.search(r"split=[\"'].*[\"']", line)):
+      is_split_apk = True
     # Due to ag/24161708, looking for lines such as minSdkVersion:'23',minSdkVersion:'M'
     # or sdkVersion:'23', sdkVersion:'M'.
     m = re.match(r'(?:minSdkVersion|sdkVersion):\'([^\']*)\'', line)
     if m:
       return m.group(1)
+  if is_split_apk:
+    logger.info("%s is a split APK, it does not have minimum SDK version"
+                " defined. Defaulting to 21 because split APK isn't supported"
+                " before that.", apk_name)
+    return 21
   raise ExternalError("No minSdkVersion returned by aapt2 for apk: {}".format(apk_name))
 
 
@@ -2977,7 +3008,7 @@ def ZipWrite(zip_file, filename, arcname=None, perms=0o644,
     zipfile.ZIP64_LIMIT = saved_zip64_limit
 
 
-def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=None,
+def ZipWriteStr(zip_file: zipfile.ZipFile, zinfo_or_arcname, data, perms=None,
                 compress_type=None):
   """Wrap zipfile.writestr() function to work around the zip64 limit.
 
@@ -3207,7 +3238,9 @@ class File(object):
     return t
 
   def WriteToDir(self, d):
-    with open(os.path.join(d, self.name), "wb") as fp:
+    output_path = os.path.join(d, self.name)
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, "wb") as fp:
       fp.write(self.data)
 
   def AddToZip(self, z, compression=None):

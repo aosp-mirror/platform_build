@@ -29,16 +29,6 @@ full_classes_pre_proguard_jar := $(intermediates.COMMON)/classes-pre-proguard.ja
 full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
 
 
-# Use the Soong output as the checkbuild target instead of LOCAL_BUILT_MODULE
-# to avoid checkbuilds making an extra copy of every module.
-LOCAL_CHECKED_MODULE := $(LOCAL_PREBUILT_MODULE_FILE)
-LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_CLASSES_JAR)
-LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_HEADER_JAR)
-LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_FULL_MANIFEST_FILE)
-LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_DEXPREOPT_CONFIG)
-LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE)
-LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_DEX_JAR)
-
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
