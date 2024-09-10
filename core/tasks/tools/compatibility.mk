@@ -29,7 +29,9 @@
 special_mts_test_suites :=
 special_mts_test_suites += mcts
 special_mts_test_suites += $(mts_modules)
-ifneq ($(filter $(special_mts_test_suites),$(subst -, ,$(test_suite_name))),)
+ifneq ($(filter $(special_mts_test_suites),$(patsubst mcts-%,%,$(test_suite_name))),)
+	test_suite_subdir := android-mts
+else ifneq ($(filter $(special_mts_test_suites),$(patsubst mts-%,%,$(test_suite_name))),)
 	test_suite_subdir := android-mts
 else
 	test_suite_subdir := android-$(test_suite_name)
