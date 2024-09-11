@@ -52,14 +52,17 @@ class OptimizedBuildTarget(ABC):
     self.modules_to_build = {self.target}
     return {self.target}
 
-  def package_outputs(self):
+  def get_package_outputs_commands(self) -> list[list[str]]:
     features = self.build_context.enabled_build_features
     if self.get_enabled_flag() in features:
-      return self.package_outputs_impl()
+      return self.get_package_outputs_commands_impl()
 
-  def package_outputs_impl(self):
+    return []
+
+  def get_package_outputs_commands_impl(self) -> list[list[str]]:
     raise NotImplementedError(
-        f'package_outputs_impl not implemented in {type(self).__name__}'
+        'get_package_outputs_commands_impl not implemented in'
+        f' {type(self).__name__}'
     )
 
   def get_enabled_flag(self):
@@ -86,8 +89,8 @@ class NullOptimizer(OptimizedBuildTarget):
   def get_build_targets(self):
     return {self.target}
 
-  def package_outputs(self):
-    pass
+  def get_package_outputs_commands(self):
+    return []
 
 
 class ChangeInfo:
@@ -113,6 +116,7 @@ class ChangeInfo:
           changed_files.add(project_path + file_info.get('path'))
 
     return changed_files
+
 
 class GeneralTestsOptimizer(OptimizedBuildTarget):
   """general-tests optimizer
