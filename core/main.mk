@@ -305,6 +305,9 @@ endif
 
 $(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] finishing legacy Make module parsing ...)
 
+# Create necessary directories and symlinks in the root filesystem
+include system/core/rootdir/create_root_structure.mk
+
 # -------------------------------------------------------------------
 # All module makefiles have been included at this point.
 # -------------------------------------------------------------------
