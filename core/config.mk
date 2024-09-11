@@ -173,6 +173,7 @@ $(KATI_obsolete_var BOARD_PREBUILT_PVMFWIMAGE,pvmfw.bin is now built in AOSP and
 $(KATI_obsolete_var BUILDING_PVMFW_IMAGE,BUILDING_PVMFW_IMAGE is no longer used)
 $(KATI_obsolete_var BOARD_BUILD_SYSTEM_ROOT_IMAGE)
 $(KATI_obsolete_var FS_GET_STATS)
+$(KATI_obsolete_var BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -363,8 +364,7 @@ endif
 # configs, generally for cross-cutting features.
 
 # Build broken variables that should be treated as booleans
-_build_broken_bool_vars := \
-  BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES \
+_build_broken_bool_vars :=
 
 # Build broken variables that should be treated as lists
 _build_broken_list_vars := \
