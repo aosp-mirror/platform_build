@@ -18,7 +18,7 @@
 #
 
 # TODO: Should we do all of the images in $(IMAGES_TO_BUILD)?
-_FLAG_PARTITIONS := product system system_ext vendor
+_FLAG_PARTITIONS := product system vendor
 
 
 # -----------------------------------------------------------------
@@ -28,7 +28,6 @@ _FLAG_PARTITIONS := product system system_ext vendor
 # $(1): built aconfig flags file (out)
 # $(2): installed aconfig flags file (out)
 # $(3): the partition (in)
-# $(4): input aconfig files for the partition (in)
 define generate-partition-aconfig-flag-file
 $(eval $(strip $(1)): PRIVATE_OUT := $(strip $(1)))
 $(eval $(strip $(1)): PRIVATE_IN := $(strip $(4)))
@@ -36,11 +35,13 @@ $(strip $(1)): $(ACONFIG) $(strip $(4))
 	mkdir -p $$(dir $$(PRIVATE_OUT))
 	$$(if $$(PRIVATE_IN), \
 		$$(ACONFIG) dump --dedup --format protobuf --out $$(PRIVATE_OUT) \
-			--filter container:$$(strip $(3)) $$(addprefix --cache ,$$(PRIVATE_IN)), \
+			--filter container:$(strip $(3)) \
+			$$(addprefix --cache ,$$(PRIVATE_IN)), \
 		echo -n > $$(PRIVATE_OUT) \
 	)
 $(call copy-one-file, $(1), $(2))
 endef
+
 
 # Create a summary file of build flags for each partition
 # $(1): built aconfig flags file (out)
@@ -59,16 +60,22 @@ $(strip $(1)): $(ACONFIG) $(strip $(3))
 $(call copy-one-file, $(1), $(2))
 endef
 
-
 $(foreach partition, $(_FLAG_PARTITIONS), \
 	$(eval aconfig_flag_summaries_protobuf.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/aconfig_flags.pb) \
 	$(eval $(call generate-partition-aconfig-flag-file, \
-				$(TARGET_OUT_FLAGS)/$(partition)/aconfig_flags.pb, \
-				$(aconfig_flag_summaries_protobuf.$(partition)), \
-				$(partition), \
-				$(sort $(foreach m,$(call register-names-for-partition, $(partition)), \
+			$(TARGET_OUT_FLAGS)/$(partition)/aconfig_flags.pb, \
+			$(aconfig_flag_summaries_protobuf.$(partition)), \
+			$(partition), \
+			$(sort \
+				$(foreach m, $(call register-names-for-partition, $(partition)), \
 					$(ALL_MODULES.$(m).ACONFIG_FILES) \
-				)), \
+				) \
+				$(if $(filter system, $(partition)), \
+					$(foreach m, $(call register-names-for-partition, system_ext), \
+						$(ALL_MODULES.$(m).ACONFIG_FILES) \
+					) \
+				) \
+			) \
 	)) \
 )
 
@@ -175,4 +182,3 @@ $(foreach partition, $(_FLAG_PARTITIONS), \
 	$(eval aconfig_storage_flag_map.$(partition):=) \
 	$(eval aconfig_storage_flag_val.$(partition):=) \
 )
-
