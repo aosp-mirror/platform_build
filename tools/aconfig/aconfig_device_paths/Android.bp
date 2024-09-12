@@ -51,4 +51,8 @@ java_library {
     static_libs: [
         "libaconfig_java_proto_nano",
     ],
+    sdk_version: "core_platform",
+    apex_available: [
+        "//apex_available:platform",
+    ],
 }
