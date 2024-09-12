@@ -28,8 +28,7 @@ $(sts_sdk_zip): $(MERGE_ZIPS) $(ZIP2ZIP) $(compatibility_zip) $(sts_sdk_plugin_s
 	rm -f $@ $(STS_SDK_ZIP)_filtered
 	$(ZIP2ZIP) -i $(STS_SDK_ZIP) -o $(STS_SDK_ZIP)_filtered \
 		-x android-sts-sdk/tools/sts-tradefed-tests.jar \
-		'android-sts-sdk/tools/*:plugin/src/main/resources/sts-tradefed-tools/' \
-		'android-sts-sdk/jdk/**/*:plugin/src/main/resources/jdk/'
+		'android-sts-sdk/tools/*:sts-sdk/src/main/resources/sts-tradefed-tools/'
 	$(MERGE_ZIPS) $@ $(STS_SDK_ZIP)_filtered $(STS_SDK_PLUGIN_SKEL)
 	rm -f $(STS_SDK_ZIP)_filtered
 
