@@ -104,6 +104,33 @@ cc_library {
     afdo: true,
 }
 
+soong_config_module_type {
+    name: "aconfig_lib_cc_shared_link_defaults",
+    module_type: "cc_defaults",
+    config_namespace: "Aconfig",
+    bool_variables: [
+        "read_from_new_storage",
+    ],
+    properties: [
+        "shared_libs",
+    ],
+}
+
+soong_config_bool_variable {
+    name: "read_from_new_storage",
+}
+
+aconfig_lib_cc_shared_link_defaults {
+    name: "aconfig_lib_cc_shared_link.defaults",
+    soong_config_variables: {
+        read_from_new_storage: {
+            shared_libs: [
+                "libaconfig_storage_read_api_cc",
+            ],
+        },
+    },
+}
+
 cc_defaults {
     name: "aconfig_lib_cc_static_link.defaults",
     shared_libs: [
@@ -127,7 +154,9 @@ rust_ffi_shared {
 java_library {
     name: "libaconfig_storage_read_api_java",
     srcs: [
-        "srcs/**/*.java",
+        "srcs/android/aconfig/storage/AconfigStorageReadAPI.java",
+        "srcs/android/aconfig/storage/FlagReadContext.java",
+        "srcs/android/aconfig/storage/PackageReadContext.java",
     ],
     required: ["libaconfig_storage_read_api_rust_jni"],
     min_sdk_version: "UpsideDownCake",
@@ -135,4 +164,15 @@ java_library {
         "//apex_available:anyapex",
         "//apex_available:platform",
     ],
+}
+
+java_library {
+    name: "aconfig_storage_reader_java",
+    srcs: [
+        "srcs/android/aconfig/storage/StorageInternalReader.java",
+    ],
+    static_libs: [
+        "aconfig_storage_file_java",
+    ],
+    sdk_version: "core_current",
 }

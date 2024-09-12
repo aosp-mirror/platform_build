@@ -25,6 +25,9 @@
 #include <android-base/file.h>
 #include <android-base/result.h>
 
+#include "rust/cxx.h"
+#include "aconfig_storage/lib.rs.h"
+
 using namespace android::base;
 
 namespace api = aconfig_storage;
@@ -85,6 +88,23 @@ TEST_F(AconfigStorageTest, test_boolean_flag_value_update) {
     ASSERT_TRUE(value.ok());
     ASSERT_TRUE(*value);
   }
+
+  // load the file on disk and check has been updated
+  std::ifstream file(flag_val, std::ios::binary | std::ios::ate);
+  std::streamsize size = file.tellg();
+  file.seekg(0, std::ios::beg);
+
+  std::vector<uint8_t> buffer(size);
+  file.read(reinterpret_cast<char *>(buffer.data()), size);
+
+  auto content = rust::Slice<const uint8_t>(
+      buffer.data(), mapped_file->file_size);
+
+  for (int offset = 0; offset < 8; ++offset) {
+    auto value_cxx = get_boolean_flag_value_cxx(content, offset);
+    ASSERT_TRUE(value_cxx.query_success);
+    ASSERT_TRUE(value_cxx.flag_value);
+  }
 }
 
 /// Negative test to lock down the error when querying flag value out of range
@@ -112,14 +132,42 @@ TEST_F(AconfigStorageTest, test_flag_has_server_override_update) {
         *mapped_file, api::FlagValueType::Boolean, offset);
     ASSERT_TRUE(attribute.ok());
     ASSERT_TRUE(*attribute & api::FlagInfoBit::HasServerOverride);
+  }
 
-    update_result = api::set_flag_has_server_override(
+  // load the file on disk and check has been updated
+  std::ifstream file(flag_info, std::ios::binary | std::ios::ate);
+  std::streamsize size = file.tellg();
+  file.seekg(0, std::ios::beg);
+
+  std::vector<uint8_t> buffer(size);
+  file.read(reinterpret_cast<char *>(buffer.data()), size);
+
+  auto content = rust::Slice<const uint8_t>(
+      buffer.data(), mapped_file->file_size);
+
+  for (int offset = 0; offset < 8; ++offset) {
+    auto attribute = get_flag_attribute_cxx(content, api::FlagValueType::Boolean, offset);
+    ASSERT_TRUE(attribute.query_success);
+    ASSERT_TRUE(attribute.flag_attribute & api::FlagInfoBit::HasServerOverride);
+  }
+
+  for (int offset = 0; offset < 8; ++offset) {
+    auto update_result = api::set_flag_has_server_override(
         *mapped_file, api::FlagValueType::Boolean, offset, false);
     ASSERT_TRUE(update_result.ok());
-    attribute = api::get_flag_attribute(
+    auto attribute = api::get_flag_attribute(
         *mapped_file, api::FlagValueType::Boolean, offset);
     ASSERT_TRUE(attribute.ok());
     ASSERT_FALSE(*attribute & api::FlagInfoBit::HasServerOverride);
+  }
+
+  std::ifstream file2(flag_info, std::ios::binary);
+  buffer.clear();
+  file2.read(reinterpret_cast<char *>(buffer.data()), size);
+  for (int offset = 0; offset < 8; ++offset) {
+    auto attribute = get_flag_attribute_cxx(content, api::FlagValueType::Boolean, offset);
+    ASSERT_TRUE(attribute.query_success);
+    ASSERT_FALSE(attribute.flag_attribute & api::FlagInfoBit::HasServerOverride);
   }
 }
 
@@ -137,13 +185,41 @@ TEST_F(AconfigStorageTest, test_flag_has_local_override_update) {
         *mapped_file, api::FlagValueType::Boolean, offset);
     ASSERT_TRUE(attribute.ok());
     ASSERT_TRUE(*attribute & api::FlagInfoBit::HasLocalOverride);
+  }
 
-    update_result = api::set_flag_has_local_override(
+  // load the file on disk and check has been updated
+  std::ifstream file(flag_info, std::ios::binary | std::ios::ate);
+  std::streamsize size = file.tellg();
+  file.seekg(0, std::ios::beg);
+
+  std::vector<uint8_t> buffer(size);
+  file.read(reinterpret_cast<char *>(buffer.data()), size);
+
+  auto content = rust::Slice<const uint8_t>(
+      buffer.data(), mapped_file->file_size);
+
+  for (int offset = 0; offset < 8; ++offset) {
+    auto attribute = get_flag_attribute_cxx(content, api::FlagValueType::Boolean, offset);
+    ASSERT_TRUE(attribute.query_success);
+    ASSERT_TRUE(attribute.flag_attribute & api::FlagInfoBit::HasLocalOverride);
+  }
+
+  for (int offset = 0; offset < 8; ++offset) {
+    auto update_result = api::set_flag_has_local_override(
         *mapped_file, api::FlagValueType::Boolean, offset, false);
     ASSERT_TRUE(update_result.ok());
-    attribute = api::get_flag_attribute(
+    auto attribute = api::get_flag_attribute(
         *mapped_file, api::FlagValueType::Boolean, offset);
     ASSERT_TRUE(attribute.ok());
     ASSERT_FALSE(*attribute & api::FlagInfoBit::HasLocalOverride);
+  }
+
+  std::ifstream file2(flag_info, std::ios::binary);
+  buffer.clear();
+  file2.read(reinterpret_cast<char *>(buffer.data()), size);
+  for (int offset = 0; offset < 8; ++offset) {
+    auto attribute = get_flag_attribute_cxx(content, api::FlagValueType::Boolean, offset);
+    ASSERT_TRUE(attribute.query_success);
+    ASSERT_FALSE(attribute.flag_attribute & api::FlagInfoBit::HasLocalOverride);
   }
 }

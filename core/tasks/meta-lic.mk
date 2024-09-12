@@ -185,3 +185,9 @@ $(eval $(call declare-1p-copy-files,device/generic/goldfish,device_state_configu
 $(eval $(call declare-1p-copy-files,device/generic/goldfish,init.ranchu-core.sh))
 $(eval $(call declare-1p-copy-files,device/generic/goldfish,init.ranchu-net.sh))
 $(eval $(call declare-1p-copy-files,device/generic/goldfish,audio_policy_configuration.xml))
+
+# Moved here from packages/services/Car/Android.mk
+$(eval $(call declare-1p-copy-files,packages/services/Car,))
+
+# Moved here from hardware/libhardware_legacy/Android.mk
+$(eval $(call declare-1p-copy-files,hardware/libhardware_legacy,))

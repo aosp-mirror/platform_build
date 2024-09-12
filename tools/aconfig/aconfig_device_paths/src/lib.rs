@@ -30,9 +30,11 @@ fn read_partition_paths() -> Vec<PathBuf> {
         .collect()
 }
 
-/// Determine all paths that contain an aconfig protobuf file.
+/// Determines all paths that contain an aconfig protobuf file,
+/// filtering out nonexistent partition protobuf files.
 pub fn parsed_flags_proto_paths() -> Result<Vec<PathBuf>> {
-    let mut result: Vec<PathBuf> = read_partition_paths();
+    let mut result: Vec<PathBuf> =
+        read_partition_paths().into_iter().filter(|s| s.exists()).collect();
 
     for dir in fs::read_dir("/apex")? {
         let dir = dir?;
