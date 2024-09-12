@@ -1,13 +1,23 @@
 package {package_name};
+{{ -if not is_test_mode }}
 {{ if not library_exported- }}
 // TODO(b/303773055): Remove the annotation after access issue is resolved.
 import android.compat.annotation.UnsupportedAppUsage;
 {{ -endif }}
-{{ -if not is_test_mode }}
+
 {{ -if runtime_lookup_required }}
 import android.provider.DeviceConfig;
 import android.provider.DeviceConfig.Properties;
-{{ endif }}
+
+
+{{ -if allow_instrumentation }}
+import android.aconfig.storage.StorageInternalReader;
+import android.util.Log;
+
+import java.io.File;
+{{ -endif }}
+
+{{ -endif }}
 /** @hide */
 public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ -if runtime_lookup_required }}
@@ -20,14 +30,47 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
     private static boolean {flag.method_name} = {flag.default_value};
 {{ -endif }}
 {{ -endfor }}
+{{ -if allow_instrumentation }}
+    StorageInternalReader reader;
+    boolean readFromNewStorage;
+
+    private final static String TAG = "AconfigJavaCodegen";
+
+    public FeatureFlagsImpl() \{
+        File file = new File("/metadata/aconfig_test_missions/mission_1");
+        if (file.exists()) \{
+            readFromNewStorage = true;
+            reader = new StorageInternalReader("{container}", "{package_name}");
+        }
+    }
+{{ -endif }}
 {{ for namespace_with_flags in namespace_flags }}
     private void load_overrides_{namespace_with_flags.namespace}() \{
         try \{
+{{ -if allow_instrumentation }}
+            boolean val;
+{{ -endif }}
             Properties properties = DeviceConfig.getProperties("{namespace_with_flags.namespace}");
 {{ -for flag in namespace_with_flags.flags }}
 {{ -if flag.is_read_write }}
             {flag.method_name} =
-                properties.getBoolean("{flag.device_config_flag}", {flag.default_value});
+                properties.getBoolean(Flags.FLAG_{flag.flag_name_constant_suffix}, {flag.default_value});
+{{ -if allow_instrumentation }}
+            if (readFromNewStorage) \{
+                try \{
+                    val = reader.getBooleanFlagValue({flag.flag_offset});
+                    if (val == {flag.method_name}) \{
+                        Log.i(TAG, "success: {flag.method_name} value matches");
+                    } else \{
+                        Log.i(TAG, String.format(
+                            "error: {flag.method_name} value mismatch, new storage value is %s, old storage value is %s",
+                            val, {flag.method_name}));
+                    }
+                } catch (Exception e) \{
+                    Log.e(TAG,"error: failed to read flag value of {flag.method_name}");
+                }
+            }
+{{ -endif }}
 {{ -endif }}
 {{ -endfor }}
         } catch (NullPointerException e) \{
@@ -70,7 +113,6 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
     @Override
 {{ -if not library_exported }}
     @com.android.aconfig.annotations.AconfigFlagAccessor
-    @UnsupportedAppUsage
 {{ -endif }}
     public boolean {flag.method_name}() \{
         throw new UnsupportedOperationException(

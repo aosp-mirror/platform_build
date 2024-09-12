@@ -1,6 +1,7 @@
 FileName: /bin/file1.apk
 SPDXID: SPDXRef-file1
 FileChecksum: SHA1: 11111
+LicenseConcluded: NOASSERTION
 
 PackageName: Unbundled apk package
 SPDXID: SPDXRef-SOURCE-package1
@@ -8,5 +9,6 @@ PackageDownloadLocation: NONE
 FilesAnalyzed: false
 PackageVersion: build_finger_print
 PackageSupplier: Organization: Google
+PackageLicenseDeclared: NOASSERTION
 
 Relationship: SPDXRef-file1 GENERATED_FROM SPDXRef-SOURCE-package1
