@@ -1,18 +1,18 @@
 /*
- * Copyright (C) 2023 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright (C) 2023 The Android Open Source Project
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 use anyhow::Result;
 use serde::Serialize;
@@ -46,7 +46,6 @@ where
     let runtime_lookup_required =
         flag_elements.iter().any(|elem| elem.is_read_write) || library_exported;
     let container = (flag_elements.first().expect("zero template flags").container).to_string();
-
     let context = Context {
         flag_elements,
         namespace_flags,
@@ -508,62 +507,25 @@ mod tests {
             private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
         }"#;
 
-        let expect_featureflagsimpl_content = r#"
+        let expected_featureflagsmpl_content_0 = r#"
         package com.android.aconfig.test;
         // TODO(b/303773055): Remove the annotation after access issue is resolved.
         import android.compat.annotation.UnsupportedAppUsage;
         import android.provider.DeviceConfig;
         import android.provider.DeviceConfig.Properties;
+        "#;
+
+        let expected_featureflagsmpl_content_1 = r#"
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
-            private static boolean aconfig_test_is_cached = false;
-            private static boolean other_namespace_is_cached = false;
+            private static volatile boolean aconfig_test_is_cached = false;
+            private static volatile boolean other_namespace_is_cached = false;
             private static boolean disabledRw = false;
             private static boolean disabledRwExported = false;
             private static boolean disabledRwInOtherNamespace = false;
             private static boolean enabledRw = true;
-
-
-            private void load_overrides_aconfig_test() {
-                try {
-                    Properties properties = DeviceConfig.getProperties("aconfig_test");
-                    disabledRw =
-                        properties.getBoolean(Flags.FLAG_DISABLED_RW, false);
-                    disabledRwExported =
-                        properties.getBoolean(Flags.FLAG_DISABLED_RW_EXPORTED, false);
-                    enabledRw =
-                        properties.getBoolean(Flags.FLAG_ENABLED_RW, true);
-                } catch (NullPointerException e) {
-                    throw new RuntimeException(
-                        "Cannot read value from namespace aconfig_test "
-                        + "from DeviceConfig. It could be that the code using flag "
-                        + "executed before SettingsProvider initialization. Please use "
-                        + "fixed read-only flag by adding is_fixed_read_only: true in "
-                        + "flag declaration.",
-                        e
-                    );
-                }
-                aconfig_test_is_cached = true;
-            }
-
-            private void load_overrides_other_namespace() {
-                try {
-                    Properties properties = DeviceConfig.getProperties("other_namespace");
-                    disabledRwInOtherNamespace =
-                        properties.getBoolean(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE, false);
-                } catch (NullPointerException e) {
-                    throw new RuntimeException(
-                        "Cannot read value from namespace other_namespace "
-                        + "from DeviceConfig. It could be that the code using flag "
-                        + "executed before SettingsProvider initialization. Please use "
-                        + "fixed read-only flag by adding is_fixed_read_only: true in "
-                        + "flag declaration.",
-                        e
-                    );
-                }
-                other_namespace_is_cached = true;
-            }
-
+        "#;
+        let expected_featureflagsmpl_content_2 = r#"
             @Override
             @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
@@ -632,9 +594,230 @@ mod tests {
             }
         }
         "#;
+
+        let expect_featureflagsimpl_content_old = expected_featureflagsmpl_content_0.to_owned()
+            + expected_featureflagsmpl_content_1
+            + r#"
+            private void load_overrides_aconfig_test() {
+                try {
+                    Properties properties = DeviceConfig.getProperties("aconfig_test");
+                    disabledRw =
+                        properties.getBoolean(Flags.FLAG_DISABLED_RW, false);
+                    disabledRwExported =
+                        properties.getBoolean(Flags.FLAG_DISABLED_RW_EXPORTED, false);
+                    enabledRw =
+                        properties.getBoolean(Flags.FLAG_ENABLED_RW, true);
+                } catch (NullPointerException e) {
+                    throw new RuntimeException(
+                        "Cannot read value from namespace aconfig_test "
+                        + "from DeviceConfig. It could be that the code using flag "
+                        + "executed before SettingsProvider initialization. Please use "
+                        + "fixed read-only flag by adding is_fixed_read_only: true in "
+                        + "flag declaration.",
+                        e
+                    );
+                }
+                aconfig_test_is_cached = true;
+            }
+
+            private void load_overrides_other_namespace() {
+                try {
+                    Properties properties = DeviceConfig.getProperties("other_namespace");
+                    disabledRwInOtherNamespace =
+                        properties.getBoolean(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE, false);
+                } catch (NullPointerException e) {
+                    throw new RuntimeException(
+                        "Cannot read value from namespace other_namespace "
+                        + "from DeviceConfig. It could be that the code using flag "
+                        + "executed before SettingsProvider initialization. Please use "
+                        + "fixed read-only flag by adding is_fixed_read_only: true in "
+                        + "flag declaration.",
+                        e
+                    );
+                }
+                other_namespace_is_cached = true;
+            }"#
+            + expected_featureflagsmpl_content_2;
+
         let mut file_set = HashMap::from([
             ("com/android/aconfig/test/Flags.java", expect_flags_content.as_str()),
-            ("com/android/aconfig/test/FeatureFlagsImpl.java", expect_featureflagsimpl_content),
+            (
+                "com/android/aconfig/test/FeatureFlagsImpl.java",
+                &expect_featureflagsimpl_content_old,
+            ),
+            ("com/android/aconfig/test/FeatureFlags.java", EXPECTED_FEATUREFLAGS_COMMON_CONTENT),
+            (
+                "com/android/aconfig/test/CustomFeatureFlags.java",
+                EXPECTED_CUSTOMFEATUREFLAGS_CONTENT,
+            ),
+            (
+                "com/android/aconfig/test/FakeFeatureFlagsImpl.java",
+                EXPECTED_FAKEFEATUREFLAGSIMPL_CONTENT,
+            ),
+        ]);
+
+        for file in generated_files {
+            let file_path = file.path.to_str().unwrap();
+            assert!(file_set.contains_key(file_path), "Cannot find {}", file_path);
+            assert_eq!(
+                None,
+                crate::test::first_significant_code_diff(
+                    file_set.get(file_path).unwrap(),
+                    &String::from_utf8(file.contents).unwrap()
+                ),
+                "File {} content is not correct",
+                file_path
+            );
+            file_set.remove(file_path);
+        }
+
+        assert!(file_set.is_empty());
+
+        let parsed_flags = crate::test::parse_test_flags();
+        let mode = CodegenMode::Production;
+        let modified_parsed_flags =
+            crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
+        let flag_ids =
+            assign_flag_ids(crate::test::TEST_PACKAGE, modified_parsed_flags.iter()).unwrap();
+        let generated_files = generate_java_code(
+            crate::test::TEST_PACKAGE,
+            modified_parsed_flags.into_iter(),
+            mode,
+            flag_ids,
+            true,
+        )
+        .unwrap();
+
+        let expect_featureflagsimpl_content_new = expected_featureflagsmpl_content_0.to_owned()
+            + r#"
+            import android.aconfig.storage.StorageInternalReader;
+            import android.util.Log;
+            "#
+            + expected_featureflagsmpl_content_1
+            + r#"
+        StorageInternalReader reader;
+        boolean readFromNewStorage;
+
+        boolean useNewStorageValueAndDiscardOld = false;
+
+        private final static String TAG = "AconfigJavaCodegen";
+        private final static String SUCCESS_LOG = "success: %s value matches";
+        private final static String MISMATCH_LOG = "error: %s value mismatch, new storage value is %s, old storage value is %s";
+        private final static String ERROR_LOG = "error: failed to read flag value";
+
+        private void init() {
+            if (reader != null) return;
+            if (DeviceConfig.getBoolean("core_experiments_team_internal", "com.android.providers.settings.storage_test_mission_1", false)) {
+                readFromNewStorage = true;
+                try {
+                    reader = new StorageInternalReader("system", "com.android.aconfig.test");
+                } catch (Exception e) {
+                    reader = null;
+                }
+            }
+
+            useNewStorageValueAndDiscardOld =
+                DeviceConfig.getBoolean("core_experiments_team_internal", "com.android.providers.settings.use_new_storage_value", false);
+        }
+
+        private void load_overrides_aconfig_test() {
+            try {
+                Properties properties = DeviceConfig.getProperties("aconfig_test");
+                disabledRw =
+                    properties.getBoolean(Flags.FLAG_DISABLED_RW, false);
+                disabledRwExported =
+                    properties.getBoolean(Flags.FLAG_DISABLED_RW_EXPORTED, false);
+                enabledRw =
+                    properties.getBoolean(Flags.FLAG_ENABLED_RW, true);
+            } catch (NullPointerException e) {
+                throw new RuntimeException(
+                    "Cannot read value from namespace aconfig_test "
+                    + "from DeviceConfig. It could be that the code using flag "
+                    + "executed before SettingsProvider initialization. Please use "
+                    + "fixed read-only flag by adding is_fixed_read_only: true in "
+                    + "flag declaration.",
+                    e
+                );
+            }
+            aconfig_test_is_cached = true;
+            init();
+            if (readFromNewStorage && reader != null) {
+                boolean val;
+                try {
+                    val = reader.getBooleanFlagValue(1);
+                    if (val != disabledRw) {
+                        Log.w(TAG, String.format(MISMATCH_LOG, "disabledRw", val, disabledRw));
+                    }
+
+                    if (useNewStorageValueAndDiscardOld) {
+                        disabledRw = val;
+                    }
+
+                    val = reader.getBooleanFlagValue(2);
+                    if (val != disabledRwExported) {
+                        Log.w(TAG, String.format(MISMATCH_LOG, "disabledRwExported", val, disabledRwExported));
+                    }
+
+                    if (useNewStorageValueAndDiscardOld) {
+                        disabledRwExported = val;
+                    }
+
+                    val = reader.getBooleanFlagValue(8);
+                    if (val != enabledRw) {
+                        Log.w(TAG, String.format(MISMATCH_LOG, "enabledRw", val, enabledRw));
+                    }
+
+                    if (useNewStorageValueAndDiscardOld) {
+                        enabledRw = val;
+                    }
+
+                } catch (Exception e) {
+                    Log.e(TAG, ERROR_LOG, e);
+                }
+            }
+        }
+
+        private void load_overrides_other_namespace() {
+            try {
+                Properties properties = DeviceConfig.getProperties("other_namespace");
+                disabledRwInOtherNamespace =
+                    properties.getBoolean(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE, false);
+            } catch (NullPointerException e) {
+                throw new RuntimeException(
+                    "Cannot read value from namespace other_namespace "
+                    + "from DeviceConfig. It could be that the code using flag "
+                    + "executed before SettingsProvider initialization. Please use "
+                    + "fixed read-only flag by adding is_fixed_read_only: true in "
+                    + "flag declaration.",
+                    e
+                );
+            }
+            other_namespace_is_cached = true;
+            init();
+            if (readFromNewStorage && reader != null) {
+                boolean val;
+                try {
+                    val = reader.getBooleanFlagValue(3);
+                    if (val != disabledRwInOtherNamespace) {
+                        Log.w(TAG, String.format(MISMATCH_LOG, "disabledRwInOtherNamespace", val, disabledRwInOtherNamespace));
+                    }
+
+                    if (useNewStorageValueAndDiscardOld) {
+                        disabledRwInOtherNamespace = val;
+                    }
+
+                } catch (Exception e) {
+                    Log.e(TAG, ERROR_LOG, e);
+                }
+            }
+        }"# + expected_featureflagsmpl_content_2;
+
+        let mut file_set = HashMap::from([
+            ("com/android/aconfig/test/Flags.java", expect_flags_content.as_str()),
+            (
+                "com/android/aconfig/test/FeatureFlagsImpl.java",
+                &expect_featureflagsimpl_content_new,
+            ),
             ("com/android/aconfig/test/FeatureFlags.java", EXPECTED_FEATUREFLAGS_COMMON_CONTENT),
             (
                 "com/android/aconfig/test/CustomFeatureFlags.java",
@@ -677,7 +860,7 @@ mod tests {
             modified_parsed_flags.into_iter(),
             mode,
             flag_ids,
-            false,
+            true,
         )
         .unwrap();
 
@@ -720,7 +903,7 @@ mod tests {
         import android.provider.DeviceConfig.Properties;
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
-            private static boolean aconfig_test_is_cached = false;
+            private static volatile boolean aconfig_test_is_cached = false;
             private static boolean disabledRwExported = false;
             private static boolean enabledFixedRoExported = false;
             private static boolean enabledRoExported = false;
@@ -870,7 +1053,7 @@ mod tests {
             modified_parsed_flags.into_iter(),
             mode,
             flag_ids,
-            false,
+            true,
         )
         .unwrap();
 
@@ -991,7 +1174,7 @@ mod tests {
             modified_parsed_flags.into_iter(),
             mode,
             flag_ids,
-            false,
+            true,
         )
         .unwrap();
         let expect_featureflags_content = r#"

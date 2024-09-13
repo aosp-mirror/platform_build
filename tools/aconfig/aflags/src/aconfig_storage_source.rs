@@ -1,52 +1,125 @@
-use crate::{Flag, FlagPermission, FlagSource, FlagValue, ValuePickedFrom};
-use anyhow::{anyhow, Result};
-
-use std::fs::File;
-use std::io::Read;
+use crate::{Flag, FlagSource};
+use crate::{FlagPermission, FlagValue, ValuePickedFrom};
+use aconfigd_protos::{
+    ProtoFlagQueryReturnMessage, ProtoListStorageMessage, ProtoListStorageMessageMsg,
+    ProtoStorageRequestMessage, ProtoStorageRequestMessageMsg, ProtoStorageRequestMessages,
+    ProtoStorageReturnMessage, ProtoStorageReturnMessageMsg, ProtoStorageReturnMessages,
+};
+use anyhow::anyhow;
+use anyhow::Result;
+use protobuf::Message;
+use protobuf::SpecialFields;
+use std::io::{Read, Write};
+use std::net::Shutdown;
+use std::os::unix::net::UnixStream;
 
 pub struct AconfigStorageSource {}
 
-use aconfig_storage_file::protos::ProtoStorageFiles;
+fn convert(msg: ProtoFlagQueryReturnMessage) -> Result<Flag> {
+    let (value, value_picked_from) = match (
+        &msg.boot_flag_value,
+        msg.default_flag_value,
+        msg.local_flag_value,
+        msg.has_local_override,
+    ) {
+        (_, _, Some(local), Some(has_local)) if has_local => {
+            (FlagValue::try_from(local.as_str())?, ValuePickedFrom::Local)
+        }
+        (Some(boot), Some(default), _, _) => {
+            let value = FlagValue::try_from(boot.as_str())?;
+            if *boot == default {
+                (value, ValuePickedFrom::Default)
+            } else {
+                (value, ValuePickedFrom::Server)
+            }
+        }
+        _ => return Err(anyhow!("missing override")),
+    };
 
-static STORAGE_INFO_FILE_PATH: &str = "/metadata/aconfig/persistent_storage_file_records.pb";
+    let staged_value = match (msg.boot_flag_value, msg.server_flag_value, msg.has_server_override) {
+        (Some(boot), Some(server), _) if boot == server => None,
+        (Some(boot), Some(server), Some(has_server)) if boot != server && has_server => {
+            Some(FlagValue::try_from(server.as_str())?)
+        }
+        _ => None,
+    };
+
+    let permission = match msg.is_readwrite {
+        Some(is_readwrite) => {
+            if is_readwrite {
+                FlagPermission::ReadWrite
+            } else {
+                FlagPermission::ReadOnly
+            }
+        }
+        None => return Err(anyhow!("missing permission")),
+    };
+
+    Ok(Flag {
+        name: msg.flag_name.ok_or(anyhow!("missing flag name"))?,
+        package: msg.package_name.ok_or(anyhow!("missing package name"))?,
+        value,
+        permission,
+        value_picked_from,
+        staged_value,
+        container: "-".to_string(),
+
+        // TODO: remove once DeviceConfig is not in the CLI.
+        namespace: "-".to_string(),
+    })
+}
+
+fn read_from_socket() -> Result<Vec<ProtoFlagQueryReturnMessage>> {
+    let messages = ProtoStorageRequestMessages {
+        msgs: vec![ProtoStorageRequestMessage {
+            msg: Some(ProtoStorageRequestMessageMsg::ListStorageMessage(ProtoListStorageMessage {
+                msg: Some(ProtoListStorageMessageMsg::All(true)),
+                special_fields: SpecialFields::new(),
+            })),
+            special_fields: SpecialFields::new(),
+        }],
+        special_fields: SpecialFields::new(),
+    };
+
+    let mut socket = UnixStream::connect("/dev/socket/aconfigd")?;
+
+    let message_buffer = messages.write_to_bytes()?;
+    let mut message_length_buffer: [u8; 4] = [0; 4];
+    let message_size = &message_buffer.len();
+    message_length_buffer[0] = (message_size >> 24) as u8;
+    message_length_buffer[1] = (message_size >> 16) as u8;
+    message_length_buffer[2] = (message_size >> 8) as u8;
+    message_length_buffer[3] = *message_size as u8;
+    socket.write_all(&message_length_buffer)?;
+    socket.write_all(&message_buffer)?;
+    socket.shutdown(Shutdown::Write)?;
+
+    let mut response_length_buffer: [u8; 4] = [0; 4];
+    socket.read_exact(&mut response_length_buffer)?;
+    let response_length = u32::from_be_bytes(response_length_buffer) as usize;
+    let mut response_buffer = vec![0; response_length];
+    socket.read_exact(&mut response_buffer)?;
+
+    let response: ProtoStorageReturnMessages =
+        protobuf::Message::parse_from_bytes(&response_buffer)?;
+
+    match response.msgs.as_slice() {
+        [ProtoStorageReturnMessage {
+            msg: Some(ProtoStorageReturnMessageMsg::ListStorageMessage(list_storage_message)),
+            ..
+        }] => Ok(list_storage_message.flags.clone()),
+        _ => Err(anyhow!("unexpected response from aconfigd")),
+    }
+}
 
 impl FlagSource for AconfigStorageSource {
     fn list_flags() -> Result<Vec<Flag>> {
-        let mut result = Vec::new();
-
-        let mut file = File::open(STORAGE_INFO_FILE_PATH)?;
-        let mut bytes = Vec::new();
-        file.read_to_end(&mut bytes)?;
-        let storage_file_info: ProtoStorageFiles = protobuf::Message::parse_from_bytes(&bytes)?;
-
-        for file_info in storage_file_info.files {
-            let package_map =
-                file_info.package_map.ok_or(anyhow!("storage file is missing package map"))?;
-            let flag_map = file_info.flag_map.ok_or(anyhow!("storage file is missing flag map"))?;
-            let flag_val = file_info.flag_val.ok_or(anyhow!("storage file is missing flag val"))?;
-            let container =
-                file_info.container.ok_or(anyhow!("storage file is missing container"))?;
-
-            for listed_flag in aconfig_storage_file::list_flags(&package_map, &flag_map, &flag_val)?
-            {
-                result.push(Flag {
-                    name: listed_flag.flag_name,
-                    package: listed_flag.package_name,
-                    value: FlagValue::try_from(listed_flag.flag_value.as_str())?,
-                    container: container.to_string(),
-
-                    // TODO(b/324436145): delete namespace field once DeviceConfig isn't in CLI.
-                    namespace: "-".to_string(),
-
-                    // TODO(b/324436145): Populate with real values once API is available.
-                    staged_value: None,
-                    permission: FlagPermission::ReadOnly,
-                    value_picked_from: ValuePickedFrom::Default,
-                });
-            }
-        }
-
-        Ok(result)
+        read_from_socket()
+            .map(|query_messages| {
+                query_messages.iter().map(|message| convert(message.clone())).collect::<Vec<_>>()
+            })?
+            .into_iter()
+            .collect()
     }
 
     fn override_flag(_namespace: &str, _qualified_name: &str, _value: &str) -> Result<()> {

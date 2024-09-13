@@ -10,7 +10,9 @@ rust_defaults {
     srcs: ["src/main.rs"],
     rustlibs: [
         "libaconfig_device_paths",
+        "libaconfig_flags",
         "libaconfig_protos",
+        "libaconfigd_protos",
         "libaconfig_storage_read_api",
         "libaconfig_storage_file",
         "libanyhow",
@@ -23,6 +25,7 @@ rust_defaults {
 
 rust_binary {
     name: "aflags",
+    host_supported: true,
     defaults: ["aflags.defaults"],
 }
 

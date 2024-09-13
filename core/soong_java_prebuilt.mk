@@ -21,19 +21,6 @@ full_classes_pre_proguard_jar := $(intermediates.COMMON)/classes-pre-proguard.ja
 full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
 common_javalib.jar := $(intermediates.COMMON)/javalib.jar
 
-ifdef LOCAL_SOONG_AAR
-  LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_AAR)
-endif
-
-# Use the Soong output as the checkbuild target instead of LOCAL_BUILT_MODULE
-# to avoid checkbuilds making an extra copy of every module.
-LOCAL_CHECKED_MODULE := $(LOCAL_PREBUILT_MODULE_FILE)
-LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_HEADER_JAR)
-LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_FULL_MANIFEST_FILE)
-LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_DEXPREOPT_CONFIG)
-LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE)
-LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_DEX_JAR)
-
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
@@ -115,16 +102,14 @@ ifdef LOCAL_SOONG_DEX_JAR
     boot_jars := $(foreach pair,$(PRODUCT_BOOT_JARS), $(call word-colon,2,$(pair)))
     ifneq ($(filter $(LOCAL_MODULE),$(boot_jars)),) # is_boot_jar
       ifeq (true,$(WITH_DEXPREOPT))
-        # $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE_MODULE) contains modules that installs
-        # all of bootjars' dexpreopt files (.art, .oat, .vdex, ...)
+        # dex_bootjars singleton installs all of bootjars' dexpreopt files (.art, .oat, .vdex, ...)
+        # This includes both the primary and secondary arches.
         # Add them to the required list so they are installed alongside this module.
-        ALL_MODULES.$(my_register_name).REQUIRED_FROM_TARGET += \
-          $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE_MODULE) \
-          $(2ND_DEFAULT_DEX_PREOPT_INSTALLED_IMAGE_MODULE)
+        ALL_MODULES.$(my_register_name).REQUIRED_FROM_TARGET += dex_bootjars
         # Copy $(LOCAL_BUILT_MODULE) and its dependencies when installing boot.art
         # so that dependencies of $(LOCAL_BUILT_MODULE) (which may include
         # jacoco-report-classes.jar) are copied for every build.
-        $(foreach m,$(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE_MODULE) $(2ND_DEFAULT_DEX_PREOPT_INSTALLED_IMAGE_MODULE), \
+        $(foreach m,dex_bootjars, \
           $(eval $(call add-dependency,$(firstword $(call module-installed-files,$(m))),$(LOCAL_BUILT_MODULE))) \
         )
       endif

@@ -9,8 +9,10 @@ paste = "1.0.11"
 protobuf = "3.2.0"
 regex = "1.10.3"
 aconfig_protos = { path = "../aconfig_protos" }
+aconfigd_protos = { version = "0.1.0", path = "../../../../../system/server_configurable_flags/aconfigd"}
 nix = { version = "0.28.0", features = ["user"] }
 aconfig_storage_file = { version = "0.1.0", path = "../aconfig_storage_file" }
 aconfig_storage_read_api = { version = "0.1.0", path = "../aconfig_storage_read_api" }
 clap = {version = "4.5.2" }
 aconfig_device_paths = { version = "0.1.0", path = "../aconfig_device_paths" }
+aconfig_flags = { version = "0.1.0", path = "../aconfig_flags" }

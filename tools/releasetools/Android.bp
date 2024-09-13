@@ -96,6 +96,7 @@ python_defaults {
     ],
     libs: [
         "apex_manifest",
+        "releasetools_apex_utils",
         "releasetools_common",
     ],
     required: [
@@ -107,7 +108,7 @@ python_defaults {
 python_library_host {
     name: "ota_metadata_proto",
     srcs: [
-       "ota_metadata.proto",
+        "ota_metadata.proto",
     ],
     proto: {
         canonical_path_from_root: false,
@@ -117,7 +118,7 @@ python_library_host {
 cc_library_static {
     name: "ota_metadata_proto_cc",
     srcs: [
-       "ota_metadata.proto",
+        "ota_metadata.proto",
     ],
     host_supported: true,
     recovery_available: true,
@@ -144,7 +145,7 @@ java_library_static {
             static_libs: ["libprotobuf-java-nano"],
         },
     },
-    visibility: ["//frameworks/base:__subpackages__"]
+    visibility: ["//frameworks/base:__subpackages__"],
 }
 
 python_defaults {
@@ -367,6 +368,9 @@ python_binary_host {
     libs: [
         "ota_utils_lib",
     ],
+    required: [
+        "signapk",
+    ],
 }
 
 python_binary_host {
@@ -436,7 +440,7 @@ python_binary_host {
     name: "check_target_files_vintf",
     defaults: [
         "releasetools_binary_defaults",
-        "releasetools_check_target_files_vintf_defaults"
+        "releasetools_check_target_files_vintf_defaults",
     ],
 }
 
@@ -546,13 +550,15 @@ python_binary_host {
     defaults: ["releasetools_binary_defaults"],
     srcs: [
         "sign_target_files_apks.py",
-        "payload_signer.py",
-        "ota_signing_utils.py",
+        "ota_from_raw_img.py",
     ],
     libs: [
         "releasetools_add_img_to_target_files",
         "releasetools_apex_utils",
         "releasetools_common",
+        "ota_metadata_proto",
+        "ota_utils_lib",
+        "update_payload",
     ],
 }
 
@@ -632,7 +638,7 @@ python_defaults {
     data: [
         "testdata/**/*",
         ":com.android.apex.compressed.v1",
-        ":com.android.apex.vendor.foo.with_vintf"
+        ":com.android.apex.vendor.foo.with_vintf",
     ],
     target: {
         darwin: {

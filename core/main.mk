@@ -31,8 +31,7 @@ endif
 .KATI_READONLY := $(foreach n,$(SOONG_CONFIG_NAMESPACES),SOONG_CONFIG_$(n))
 .KATI_READONLY := $(foreach n,$(SOONG_CONFIG_NAMESPACES),$(foreach k,$(SOONG_CONFIG_$(n)),SOONG_CONFIG_$(n)_$(k)))
 
-include $(SOONG_MAKEVARS_MK)
-
+include $(SOONG_OUT_DIR)/make_vars-$(TARGET_PRODUCT)$(COVERAGE_SUFFIX).mk
 YACC :=$= $(BISON) -d
 
 include $(BUILD_SYSTEM)/clang/config.mk
@@ -276,16 +275,22 @@ FULL_BUILD := true
 # Include all of the makefiles in the system
 #
 
-subdir_makefiles := $(SOONG_OUT_DIR)/installs-$(TARGET_PRODUCT).mk $(SOONG_ANDROID_MK)
+subdir_makefiles := $(SOONG_OUT_DIR)/installs-$(TARGET_PRODUCT)$(COVERAGE_SUFFIX).mk $(SOONG_ANDROID_MK)
+
 # Android.mk files are only used on Linux builds, Mac only supports Android.bp
 ifeq ($(HOST_OS),linux)
   subdir_makefiles += $(file <$(OUT_DIR)/.module_paths/Android.mk.list)
 endif
-subdir_makefiles += $(SOONG_OUT_DIR)/late-$(TARGET_PRODUCT).mk
+
+subdir_makefiles += $(SOONG_OUT_DIR)/late-$(TARGET_PRODUCT)$(COVERAGE_SUFFIX).mk
+
 subdir_makefiles_total := $(words int $(subdir_makefiles) post finish)
 .KATI_READONLY := subdir_makefiles_total
 
 $(foreach mk,$(subdir_makefiles),$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] including $(mk) ...)$(eval include $(mk)))
+
+# Build bootloader.img/radio.img, and unpack the partitions.
+include $(BUILD_SYSTEM)/tasks/tools/update_bootloader_radio_image.mk
 
 # For an unbundled image, we can skip blueprint_tools because unbundled image
 # aims to remove a large number framework projects from the manifest, the
@@ -294,6 +299,9 @@ ifeq (,$(TARGET_BUILD_UNBUNDLED_IMAGE))
 droid_targets : blueprint_tools
 checkbuild: blueprint_tests
 endif
+
+# Create necessary directories and symlinks in the root filesystem
+include system/core/rootdir/create_root_structure.mk
 
 endif # dont_bother
 
@@ -688,8 +696,11 @@ $(foreach suite,general-tests device-tests vts tvts art-host-tests host-unit-tes
           $(eval my_testcases := $(HOST_OUT_TESTCASES)),\
           $(eval my_testcases := $$(COMPATIBILITY_TESTCASES_OUT_$(suite))))\
         $(eval target := $(my_testcases)/$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
-        $(eval link_target := ../../../$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
-        $(eval symlink := $(my_testcases)/$(m)/shared_libs/$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
+        $(eval prefix := ../../..)
+        $(if $(strip $(patsubst %x86,,$(COMPATIBILITY.$(suite).ARCH_DIRS.$(m)))), \
+          $(if $(strip $(patsubst %x86_64,,$(COMPATIBILITY.$(suite).ARCH_DIRS.$(m)))),$(eval prefix := ../..),),) \
+        $(eval link_target := $(prefix)/$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
+        $(eval symlink := $(COMPATIBILITY.$(suite).ARCH_DIRS.$(m))/shared_libs/$(notdir $(f)))\
         $(eval COMPATIBILITY.$(suite).SYMLINKS := \
           $$(COMPATIBILITY.$(suite).SYMLINKS) $(f):$(link_target):$(symlink))\
         $(if $(strip $(ALL_TARGETS.$(target).META_LIC)),,$(call declare-copy-target-license-metadata,$(target),$(f)))\
@@ -1855,80 +1866,18 @@ ifndef INSTALLED_RECOVERYIMAGE_TARGET
 filter_out_files += $(PRODUCT_OUT)/recovery/%
 endif
 
+# userdata.img
+ifndef BUILDING_USERDATA_IMAGE
+filter_out_files += $(PRODUCT_OUT)/data/%
+endif
+
 installed_files := $(sort $(filter-out $(filter_out_files),$(filter $(PRODUCT_OUT)/%,$(modules_to_install))))
 else
 installed_files := $(apps_only_installed_files)
 endif  # TARGET_BUILD_APPS
 
-# sbom-metadata.csv contains all raw data collected in Make for generating SBOM in generate-sbom.py.
-# There are multiple columns and each identifies the source of an installed file for a specific case.
-# The columns and their uses are described as below:
-#   installed_file: the file path on device, e.g. /product/app/Browser2/Browser2.apk
-#   module_path: the path of the module that generates the installed file, e.g. packages/apps/Browser2
-#   soong_module_type: Soong module type, e.g. android_app, cc_binary
-#   is_prebuilt_make_module: Y, if the installed file is from a prebuilt Make module, see prebuilt_internal.mk
-#   product_copy_files: the installed file is from variable PRODUCT_COPY_FILES, e.g. device/google/cuttlefish/shared/config/init.product.rc:product/etc/init/init.rc
-#   kernel_module_copy_files: the installed file is from variable KERNEL_MODULE_COPY_FILES, similar to product_copy_files
-#   is_platform_generated: this is an aggregated value including some small cases instead of adding more columns. It is set to Y if any case is Y
-#       is_build_prop: build.prop in each partition, see sysprop.mk.
-#       is_notice_file: NOTICE.xml.gz in each partition, see Makefile.
-#       is_dexpreopt_image_profile: see the usage of DEXPREOPT_IMAGE_PROFILE_BUILT_INSTALLED in Soong and Make
-#       is_product_system_other_avbkey: see INSTALLED_PRODUCT_SYSTEM_OTHER_AVBKEY_TARGET
-#       is_system_other_odex_marker: see INSTALLED_SYSTEM_OTHER_ODEX_MARKER
-#       is_event_log_tags_file: see variable event_log_tags_file in Makefile
-#       is_kernel_modules_blocklist: modules.blocklist created for _dlkm partitions, see macro build-image-kernel-modules-dir in Makefile.
-#       is_fsverity_build_manifest_apk: BuildManifest<part>.apk files for system and system_ext partition, see ALL_FSVERITY_BUILD_MANIFEST_APK in Makefile.
-#       is_linker_config: see SYSTEM_LINKER_CONFIG and vendor_linker_config_file in Makefile.
-#   build_output_path: the path of the built file, used to calculate checksum
-#   static_libraries/whole_static_libraries: list of module name of the static libraries the file links against, e.g. libclang_rt.builtins or libclang_rt.builtins_32
-#       Info of all static libraries of all installed files are collected in variable _all_static_libs that is used to list all the static library files in sbom-metadata.csv.
-#       See the second foreach loop in the rule of sbom-metadata.csv for the detailed info of static libraries collected in _all_static_libs.
-#   is_static_lib: whether the file is a static library
-
 metadata_list := $(OUT_DIR)/.module_paths/METADATA.list
 metadata_files := $(subst $(newline),$(space),$(file <$(metadata_list)))
-$(PRODUCT_OUT)/sbom-metadata.csv:
-	rm -f $@
-	echo 'installed_file,module_path,soong_module_type,is_prebuilt_make_module,product_copy_files,kernel_module_copy_files,is_platform_generated,build_output_path,static_libraries,whole_static_libraries,is_static_lib' >> $@
-	$(eval _all_static_libs :=)
-	$(foreach f,$(installed_files),\
-	  $(eval _module_name := $(ALL_INSTALLED_FILES.$f)) \
-	  $(eval _path_on_device := $(patsubst $(PRODUCT_OUT)/%,%,$f)) \
-	  $(eval _build_output_path := $(PRODUCT_OUT)/$(_path_on_device)) \
-	  $(eval _module_path := $(strip $(sort $(ALL_MODULES.$(_module_name).PATH)))) \
-	  $(eval _soong_module_type := $(strip $(sort $(ALL_MODULES.$(_module_name).SOONG_MODULE_TYPE)))) \
-	  $(eval _is_prebuilt_make_module := $(ALL_MODULES.$(_module_name).IS_PREBUILT_MAKE_MODULE)) \
-	  $(eval _product_copy_files := $(sort $(filter %:$(_path_on_device),$(product_copy_files_without_owner)))) \
-	  $(eval _kernel_module_copy_files := $(sort $(filter %$(_path_on_device),$(KERNEL_MODULE_COPY_FILES)))) \
-	  $(eval _is_build_prop := $(call is-build-prop,$f)) \
-	  $(eval _is_notice_file := $(call is-notice-file,$f)) \
-	  $(eval _is_dexpreopt_image_profile := $(if $(filter %:/$(_path_on_device),$(DEXPREOPT_IMAGE_PROFILE_BUILT_INSTALLED)),Y)) \
-	  $(eval _is_product_system_other_avbkey := $(if $(findstring $f,$(INSTALLED_PRODUCT_SYSTEM_OTHER_AVBKEY_TARGET)),Y)) \
-	  $(eval _is_event_log_tags_file := $(if $(findstring $f,$(event_log_tags_file)),Y)) \
-	  $(eval _is_system_other_odex_marker := $(if $(findstring $f,$(INSTALLED_SYSTEM_OTHER_ODEX_MARKER)),Y)) \
-	  $(eval _is_kernel_modules_blocklist := $(if $(findstring $f,$(ALL_KERNEL_MODULES_BLOCKLIST)),Y)) \
-	  $(eval _is_fsverity_build_manifest_apk := $(if $(findstring $f,$(ALL_FSVERITY_BUILD_MANIFEST_APK)),Y)) \
-	  $(eval _is_linker_config := $(if $(findstring $f,$(SYSTEM_LINKER_CONFIG) $(vendor_linker_config_file)),Y)) \
-	  $(eval _is_partition_compat_symlink := $(if $(findstring $f,$(PARTITION_COMPAT_SYMLINKS)),Y)) \
-	  $(eval _is_flags_file := $(if $(findstring $f, $(ALL_FLAGS_FILES)),Y)) \
-	  $(eval _is_rootdir_symlink := $(if $(findstring $f, $(ALL_ROOTDIR_SYMLINKS)),Y)) \
-	  $(eval _is_platform_generated := $(_is_build_prop)$(_is_notice_file)$(_is_dexpreopt_image_profile)$(_is_product_system_other_avbkey)$(_is_event_log_tags_file)$(_is_system_other_odex_marker)$(_is_kernel_modules_blocklist)$(_is_fsverity_build_manifest_apk)$(_is_linker_config)$(_is_partition_compat_symlink)$(_is_flags_file)$(_is_rootdir_symlink)) \
-	  $(eval _static_libs := $(ALL_INSTALLED_FILES.$f.STATIC_LIBRARIES)) \
-	  $(eval _whole_static_libs := $(ALL_INSTALLED_FILES.$f.WHOLE_STATIC_LIBRARIES)) \
-	  $(foreach l,$(_static_libs),$(eval _all_static_libs += $l:$(strip $(sort $(ALL_MODULES.$l.PATH))):$(strip $(sort $(ALL_MODULES.$l.SOONG_MODULE_TYPE))):$(ALL_STATIC_LIBRARIES.$l.BUILT_FILE))) \
-	  $(foreach l,$(_whole_static_libs),$(eval _all_static_libs += $l:$(strip $(sort $(ALL_MODULES.$l.PATH))):$(strip $(sort $(ALL_MODULES.$l.SOONG_MODULE_TYPE))):$(ALL_STATIC_LIBRARIES.$l.BUILT_FILE))) \
-	  echo '/$(_path_on_device),$(_module_path),$(_soong_module_type),$(_is_prebuilt_make_module),$(_product_copy_files),$(_kernel_module_copy_files),$(_is_platform_generated),$(_build_output_path),$(_static_libs),$(_whole_static_libs),' >> $@; \
-	)
-	$(foreach l,$(sort $(_all_static_libs)), \
-	  $(eval _lib_stem := $(call word-colon,1,$l)) \
-	  $(eval _module_path := $(call word-colon,2,$l)) \
-	  $(eval _soong_module_type := $(call word-colon,3,$l)) \
-	  $(eval _built_file := $(call word-colon,4,$l)) \
-	  $(eval _static_libs := $(ALL_STATIC_LIBRARIES.$l.STATIC_LIBRARIES)) \
-	  $(eval _whole_static_libs := $(ALL_STATIC_LIBRARIES.$l.WHOLE_STATIC_LIBRARIES)) \
-	  $(eval _is_static_lib := Y) \
-	  echo '$(_lib_stem).a,$(_module_path),$(_soong_module_type),,,,,$(_built_file),$(_static_libs),$(_whole_static_libs),$(_is_static_lib)' >> $@; \
-	)
 
 # Create metadata for compliance support in Soong
 .PHONY: make-compliance-metadata
@@ -1988,22 +1937,13 @@ $(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/make-modules.csv:
 $(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/installed_files.stamp: $(installed_files)
 	touch $@
 
-# (TODO: b/272358583 find another way of always rebuilding sbom.spdx)
 # Remove the always_dirty_file.txt whenever the makefile is evaluated
 $(shell rm -f $(PRODUCT_OUT)/always_dirty_file.txt)
 $(PRODUCT_OUT)/always_dirty_file.txt:
 	touch $@
 
 .PHONY: sbom
-ifeq ($(TARGET_BUILD_APPS),)
-sbom: $(PRODUCT_OUT)/sbom.spdx.json
-$(PRODUCT_OUT)/sbom.spdx.json: $(PRODUCT_OUT)/sbom.spdx
-$(PRODUCT_OUT)/sbom.spdx: $(PRODUCT_OUT)/sbom-metadata.csv $(GEN_SBOM) $(installed_files) $(metadata_list) $(metadata_files) $(PRODUCT_OUT)/always_dirty_file.txt
-	rm -rf $@
-	$(GEN_SBOM) --output_file $@ --metadata $(PRODUCT_OUT)/sbom-metadata.csv --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr "$(PRODUCT_MANUFACTURER)" --json
-
-$(call dist-for-goals,droid,$(PRODUCT_OUT)/sbom.spdx.json:sbom/sbom.spdx.json)
-else
+ifneq ($(TARGET_BUILD_APPS),)
 # Create build rules for generating SBOMs of unbundled APKs and APEXs
 # $1: sbom file
 # $2: sbom fragment file

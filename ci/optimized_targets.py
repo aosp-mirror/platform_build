@@ -14,6 +14,15 @@
 # limitations under the License.
 
 from abc import ABC
+import argparse
+import functools
+from build_context import BuildContext
+import json
+import logging
+import os
+from typing import Self
+
+import test_mapping_module_retriever
 
 
 class OptimizedBuildTarget(ABC):
@@ -24,15 +33,47 @@ class OptimizedBuildTarget(ABC):
   build.
   """
 
-  def __init__(self, build_context, args):
+  def __init__(
+      self,
+      target: str,
+      build_context: BuildContext,
+      args: argparse.Namespace,
+  ):
+    self.target = target
     self.build_context = build_context
     self.args = args
 
-  def get_build_targets(self):
-    pass
+  def get_build_targets(self) -> set[str]:
+    features = self.build_context.enabled_build_features
+    if self.get_enabled_flag() in features:
+      self.modules_to_build = self.get_build_targets_impl()
+      return self.modules_to_build
 
-  def package_outputs(self):
-    pass
+    self.modules_to_build = {self.target}
+    return {self.target}
+
+  def get_package_outputs_commands(self) -> list[list[str]]:
+    features = self.build_context.enabled_build_features
+    if self.get_enabled_flag() in features:
+      return self.get_package_outputs_commands_impl()
+
+    return []
+
+  def get_package_outputs_commands_impl(self) -> list[list[str]]:
+    raise NotImplementedError(
+        'get_package_outputs_commands_impl not implemented in'
+        f' {type(self).__name__}'
+    )
+
+  def get_enabled_flag(self):
+    raise NotImplementedError(
+        f'get_enabled_flag not implemented in {type(self).__name__}'
+    )
+
+  def get_build_targets_impl(self) -> set[str]:
+    raise NotImplementedError(
+        f'get_build_targets_impl not implemented in {type(self).__name__}'
+    )
 
 
 class NullOptimizer(OptimizedBuildTarget):
@@ -48,22 +89,101 @@ class NullOptimizer(OptimizedBuildTarget):
   def get_build_targets(self):
     return {self.target}
 
-  def package_outputs(self):
-    pass
+  def get_package_outputs_commands(self):
+    return []
 
 
-def get_target_optimizer(target, enabled_flag, build_context, optimizer):
-  if enabled_flag in build_context['enabled_build_features']:
-    return optimizer
+class ChangeInfo:
 
-  return NullOptimizer(target)
+  def __init__(self, change_info_file_path):
+    try:
+      with open(change_info_file_path) as change_info_file:
+        change_info_contents = json.load(change_info_file)
+    except json.decoder.JSONDecodeError:
+      logging.error(f'Failed to load CHANGE_INFO: {change_info_file_path}')
+      raise
+
+    self._change_info_contents = change_info_contents
+
+  def find_changed_files(self) -> set[str]:
+    changed_files = set()
+
+    for change in self._change_info_contents['changes']:
+      project_path = change.get('projectPath') + '/'
+
+      for revision in change.get('revisions'):
+        for file_info in revision.get('fileInfos'):
+          changed_files.add(project_path + file_info.get('path'))
+
+    return changed_files
 
 
-# To be written as:
-#    'target': lambda target, build_context, args: get_target_optimizer(
-#        target,
-#        'target_enabled_flag',
-#        build_context,
-#        TargetOptimizer(build_context, args),
-#    )
-OPTIMIZED_BUILD_TARGETS = dict()
+class GeneralTestsOptimizer(OptimizedBuildTarget):
+  """general-tests optimizer
+
+  TODO(b/358215235): Implement
+
+  This optimizer reads in the list of changed files from the file located in
+  env[CHANGE_INFO] and uses this list alongside the normal TEST MAPPING logic to
+  determine what test mapping modules will run for the given changes. It then
+  builds those modules and packages them in the same way general-tests.zip is
+  normally built.
+  """
+
+  # List of modules that are always required to be in general-tests.zip.
+  _REQUIRED_MODULES = frozenset(
+      ['cts-tradefed', 'vts-tradefed', 'compatibility-host-util']
+  )
+
+  def get_build_targets_impl(self) -> set[str]:
+    change_info_file_path = os.environ.get('CHANGE_INFO')
+    if not change_info_file_path:
+      logging.info(
+          'No CHANGE_INFO env var found, general-tests optimization disabled.'
+      )
+      return {'general-tests'}
+
+    test_infos = self.build_context.test_infos
+    test_mapping_test_groups = set()
+    for test_info in test_infos:
+      is_test_mapping = test_info.is_test_mapping
+      current_test_mapping_test_groups = test_info.test_mapping_test_groups
+      uses_general_tests = test_info.build_target_used('general-tests')
+
+      if uses_general_tests and not is_test_mapping:
+        logging.info(
+            'Test uses general-tests.zip but is not test-mapping, general-tests'
+            ' optimization disabled.'
+        )
+        return {'general-tests'}
+
+      if is_test_mapping:
+        test_mapping_test_groups.update(current_test_mapping_test_groups)
+
+    change_info = ChangeInfo(change_info_file_path)
+    changed_files = change_info.find_changed_files()
+
+    test_mappings = test_mapping_module_retriever.GetTestMappings(
+        changed_files, set()
+    )
+
+    modules_to_build = set(self._REQUIRED_MODULES)
+
+    modules_to_build.update(
+        test_mapping_module_retriever.FindAffectedModules(
+            test_mappings, changed_files, test_mapping_test_groups
+        )
+    )
+
+    return modules_to_build
+
+  def get_enabled_flag(self):
+    return 'general_tests_optimized'
+
+  @classmethod
+  def get_optimized_targets(cls) -> dict[str, OptimizedBuildTarget]:
+    return {'general-tests': functools.partial(cls)}
+
+
+OPTIMIZED_BUILD_TARGETS = {}
+OPTIMIZED_BUILD_TARGETS.update(GeneralTestsOptimizer.get_optimized_targets())

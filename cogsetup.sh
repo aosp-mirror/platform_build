@@ -57,7 +57,7 @@ function _setup_cog_env() {
   fi
   function repo {
     if [[ "${PWD}" == /google/cog/* ]]; then
-      echo "\e[01;31mERROR:\e[0mrepo command is disallowed within Cog workspaces."
+      echo -e "\e[01;31mERROR:\e[0mrepo command is disallowed within Cog workspaces."
       return 1
     fi
     ${ORIG_REPO_PATH} "$@"

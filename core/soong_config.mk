@@ -1,5 +1,5 @@
-SOONG_MAKEVARS_MK := $(SOONG_OUT_DIR)/make_vars-$(TARGET_PRODUCT).mk
-SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android-$(TARGET_PRODUCT).mk
+SOONG_MAKEVARS_MK := $(SOONG_OUT_DIR)/make_vars-$(TARGET_PRODUCT)$(COVERAGE_SUFFIX).mk
+SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android-$(TARGET_PRODUCT)$(COVERAGE_SUFFIX).mk
 
 include $(BUILD_SYSTEM)/art_config.mk
 include $(BUILD_SYSTEM)/dex_preopt_config.mk
@@ -26,7 +26,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
 $(shell mkdir -p $(dir $(SOONG_VARIABLES)))
 $(call json_start)
 
-$(call add_json_str,  Make_suffix, -$(TARGET_PRODUCT))
+$(call add_json_str,  Make_suffix, -$(TARGET_PRODUCT)$(COVERAGE_SUFFIX))
 
 $(call add_json_str,  BuildId,                           $(BUILD_ID))
 $(call add_json_str,  BuildFingerprintFile,              build_fingerprint.txt)
@@ -152,7 +152,6 @@ $(call add_json_list, DeviceKernelHeaders,               $(TARGET_DEVICE_KERNEL_
 $(call add_json_str,  VendorApiLevel,                    $(BOARD_API_LEVEL))
 $(call add_json_list, ExtraVndkVersions,                 $(PRODUCT_EXTRA_VNDK_VERSIONS))
 $(call add_json_list, DeviceSystemSdkVersions,           $(BOARD_SYSTEMSDK_VERSIONS))
-$(call add_json_str,  RecoverySnapshotVersion,           $(RECOVERY_SNAPSHOT_VERSION))
 $(call add_json_list, Platform_systemsdk_versions,       $(PLATFORM_SYSTEMSDK_VERSIONS))
 $(call add_json_bool, Malloc_low_memory,                 $(findstring true,$(MALLOC_SVELTE) $(MALLOC_LOW_MEMORY)))
 $(call add_json_bool, Malloc_zero_contents,              $(call invert_bool,$(filter false,$(MALLOC_ZERO_CONTENTS))))
@@ -167,8 +166,6 @@ $(call add_json_list, ModulesLoadedByPrivilegedModules,  $(PRODUCT_LOADED_BY_PRI
 $(call add_json_list, BootJars,                          $(PRODUCT_BOOT_JARS))
 $(call add_json_list, ApexBootJars,                      $(filter-out $(APEX_BOOT_JARS_EXCLUDED), $(PRODUCT_APEX_BOOT_JARS)))
 
-$(call add_json_bool, VndkSnapshotBuildArtifacts,        $(VNDK_SNAPSHOT_BUILD_ARTIFACTS))
-
 $(call add_json_map,  BuildFlags)
 $(foreach flag,$(_ALL_RELEASE_FLAGS),\
   $(call add_json_str,$(flag),$(_ALL_RELEASE_FLAGS.$(flag).VALUE)))
@@ -177,24 +174,6 @@ $(call add_json_map,  BuildFlagTypes)
 $(foreach flag,$(_ALL_RELEASE_FLAGS),\
   $(call add_json_str,$(flag),$(_ALL_RELEASE_FLAGS.$(flag).TYPE)))
 $(call end_json_map)
-
-$(call add_json_bool, DirectedVendorSnapshot,            $(DIRECTED_VENDOR_SNAPSHOT))
-$(call add_json_map,  VendorSnapshotModules)
-$(foreach module,$(VENDOR_SNAPSHOT_MODULES),\
-  $(call add_json_bool,$(module),true))
-$(call end_json_map)
-
-$(call add_json_bool, DirectedRecoverySnapshot,          $(DIRECTED_RECOVERY_SNAPSHOT))
-$(call add_json_map,  RecoverySnapshotModules)
-$(foreach module,$(RECOVERY_SNAPSHOT_MODULES),\
-  $(call add_json_bool,$(module),true))
-$(call end_json_map)
-
-$(call add_json_list, VendorSnapshotDirsIncluded,        $(VENDOR_SNAPSHOT_DIRS_INCLUDED))
-$(call add_json_list, VendorSnapshotDirsExcluded,        $(VENDOR_SNAPSHOT_DIRS_EXCLUDED))
-$(call add_json_list, RecoverySnapshotDirsIncluded,      $(RECOVERY_SNAPSHOT_DIRS_INCLUDED))
-$(call add_json_list, RecoverySnapshotDirsExcluded,      $(RECOVERY_SNAPSHOT_DIRS_EXCLUDED))
-$(call add_json_bool, HostFakeSnapshotEnabled,           $(HOST_FAKE_SNAPSHOT_ENABLE))
 
 $(call add_json_bool, MultitreeUpdateMeta,               $(filter true,$(TARGET_MULTITREE_UPDATE_META)))
 
@@ -227,6 +206,7 @@ $(call add_json_list, BoardSepolicyM4Defs,               $(BOARD_SEPOLICY_M4DEFS
 $(call add_json_str,  BoardSepolicyVers,                 $(BOARD_SEPOLICY_VERS))
 $(call add_json_str,  SystemExtSepolicyPrebuiltApiDir,   $(BOARD_SYSTEM_EXT_PREBUILT_DIR))
 $(call add_json_str,  ProductSepolicyPrebuiltApiDir,     $(BOARD_PRODUCT_PREBUILT_DIR))
+$(call add_json_str,  BoardPlatform,                     $(TARGET_BOARD_PLATFORM))
 
 $(call add_json_str,  PlatformSepolicyVersion,           $(PLATFORM_SEPOLICY_VERSION))
 $(call add_json_list, PlatformSepolicyCompatVersions,    $(PLATFORM_SEPOLICY_COMPAT_VERSIONS))
@@ -255,6 +235,12 @@ $(call add_json_list, ProductPublicSepolicyDirs,         $(PRODUCT_PUBLIC_SEPOLI
 $(call add_json_list, ProductPrivateSepolicyDirs,        $(PRODUCT_PRIVATE_SEPOLICY_DIRS))
 
 $(call add_json_list, TargetFSConfigGen,                 $(TARGET_FS_CONFIG_GEN))
+
+# Although USE_SOONG_DEFINED_SYSTEM_IMAGE determines whether to use the system image specified by
+# PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE, PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE is still used to compare
+# installed files between make and soong, regardless of the USE_SOONG_DEFINED_SYSTEM_IMAGE setting.
+$(call add_json_bool, UseSoongSystemImage,               $(filter true,$(USE_SOONG_DEFINED_SYSTEM_IMAGE)))
+$(call add_json_str,  ProductSoongDefinedSystemImage,    $(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE))
 
 $(call add_json_map, VendorVars)
 $(foreach namespace,$(sort $(SOONG_CONFIG_NAMESPACES)),\
@@ -306,7 +292,6 @@ $(call add_json_bool, BuildBrokenClangCFlags,              $(filter true,$(BUILD
 $(call add_json_bool, GenruleSandboxing,                   $(if $(GENRULE_SANDBOXING),$(filter true,$(GENRULE_SANDBOXING)),$(if $(filter true,$(BUILD_BROKEN_GENRULE_SANDBOXING)),,true)))
 $(call add_json_bool, BuildBrokenEnforceSyspropOwner,      $(filter true,$(BUILD_BROKEN_ENFORCE_SYSPROP_OWNER)))
 $(call add_json_bool, BuildBrokenTrebleSyspropNeverallow,  $(filter true,$(BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW)))
-$(call add_json_bool, BuildBrokenUsesSoongPython2Modules,  $(filter true,$(BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES)))
 $(call add_json_bool, BuildBrokenVendorPropertyNamespace,  $(filter true,$(BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE)))
 $(call add_json_bool, BuildBrokenIncorrectPartitionImages, $(filter true,$(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES)))
 $(call add_json_list, BuildBrokenInputDirModules,          $(BUILD_BROKEN_INPUT_DIR_MODULES))
@@ -360,6 +345,27 @@ $(call add_json_list, ProductDefaultWifiChannels, $(PRODUCT_DEFAULT_WIFI_CHANNEL
 $(call add_json_bool, BoardUseVbmetaDigestInFingerprint, $(filter true,$(BOARD_USE_VBMETA_DIGTEST_IN_FINGERPRINT)))
 
 $(call add_json_list, OemProperties, $(PRODUCT_OEM_PROPERTIES))
+
+$(call add_json_list, SystemPropFiles, $(TARGET_SYSTEM_PROP))
+$(call add_json_list, SystemExtPropFiles, $(TARGET_SYSTEM_EXT_PROP))
+$(call add_json_list, ProductPropFiles, $(TARGET_PRODUCT_PROP))
+$(call add_json_list, OdmPropFiles, $(TARGET_ODM_PROP))
+
+# Do not set ArtTargetIncludeDebugBuild into any value if PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD is not set,
+# to have the same behavior from runtime_libart.mk.
+ifneq ($(PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD),)
+$(call add_json_bool, ArtTargetIncludeDebugBuild, $(PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD))
+endif
+
+_config_enable_uffd_gc := \
+  $(firstword $(OVERRIDE_ENABLE_UFFD_GC) $(PRODUCT_ENABLE_UFFD_GC) default)
+$(call add_json_str, EnableUffdGc, $(_config_enable_uffd_gc))
+_config_enable_uffd_gc :=
+
+$(call add_json_list, DeviceFrameworkCompatibilityMatrixFile, $(DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE))
+$(call add_json_list, DeviceProductCompatibilityMatrixFile, $(DEVICE_PRODUCT_COMPATIBILITY_MATRIX_FILE))
+$(call add_json_list, BoardAvbSystemAddHashtreeFooterArgs, $(BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS))
+$(call add_json_bool, BoardAvbEnable, $(filter true,$(BOARD_AVB_ENABLE)))
 
 $(call json_end)
 
