@@ -745,10 +745,8 @@ mod tests {
                 boolean val;
                 try {
                     val = reader.getBooleanFlagValue(1);
-                    if (val == disabledRw) {
-                        Log.i(TAG, String.format(SUCCESS_LOG, "disabledRw"));
-                    } else {
-                        Log.i(TAG, String.format(MISMATCH_LOG, "disabledRw", val, disabledRw));
+                    if (val != disabledRw) {
+                        Log.w(TAG, String.format(MISMATCH_LOG, "disabledRw", val, disabledRw));
                     }
 
                     if (useNewStorageValueAndDiscardOld) {
@@ -756,10 +754,8 @@ mod tests {
                     }
 
                     val = reader.getBooleanFlagValue(2);
-                    if (val == disabledRwExported) {
-                        Log.i(TAG, String.format(SUCCESS_LOG, "disabledRwExported"));
-                    } else {
-                        Log.i(TAG, String.format(MISMATCH_LOG, "disabledRwExported", val, disabledRwExported));
+                    if (val != disabledRwExported) {
+                        Log.w(TAG, String.format(MISMATCH_LOG, "disabledRwExported", val, disabledRwExported));
                     }
 
                     if (useNewStorageValueAndDiscardOld) {
@@ -767,10 +763,8 @@ mod tests {
                     }
 
                     val = reader.getBooleanFlagValue(8);
-                    if (val == enabledRw) {
-                        Log.i(TAG, String.format(SUCCESS_LOG, "enabledRw"));
-                    } else {
-                        Log.i(TAG, String.format(MISMATCH_LOG, "enabledRw", val, enabledRw));
+                    if (val != enabledRw) {
+                        Log.w(TAG, String.format(MISMATCH_LOG, "enabledRw", val, enabledRw));
                     }
 
                     if (useNewStorageValueAndDiscardOld) {
@@ -804,10 +798,8 @@ mod tests {
                 boolean val;
                 try {
                     val = reader.getBooleanFlagValue(3);
-                    if (val == disabledRwInOtherNamespace) {
-                        Log.i(TAG, String.format(SUCCESS_LOG, "disabledRwInOtherNamespace"));
-                    } else {
-                        Log.i(TAG, String.format(MISMATCH_LOG, "disabledRwInOtherNamespace", val, disabledRwInOtherNamespace));
+                    if (val != disabledRwInOtherNamespace) {
+                        Log.w(TAG, String.format(MISMATCH_LOG, "disabledRwInOtherNamespace", val, disabledRwInOtherNamespace));
                     }
 
                     if (useNewStorageValueAndDiscardOld) {
