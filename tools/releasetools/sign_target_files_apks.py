@@ -184,6 +184,7 @@ import re
 import shutil
 import stat
 import sys
+import shlex
 import tempfile
 import zipfile
 from xml.etree import ElementTree
@@ -589,7 +590,7 @@ def GetOtaSigningArgs():
   if OPTIONS.payload_signer:
     args.extend(["--payload_signer=" + OPTIONS.payload_signer])
   if OPTIONS.payload_signer_args:
-    args.extend(["--payload_signer_args=" + OPTIONS.payload_signer_args])
+    args.extend(["--payload_signer_args=" + shlex.join(OPTIONS.payload_signer_args)])
   if OPTIONS.search_path:
     args.extend(["--search_path", OPTIONS.search_path])
   if OPTIONS.payload_signer_maximum_signature_size:
