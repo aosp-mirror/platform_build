@@ -236,6 +236,12 @@ $(call add_json_list, ProductPrivateSepolicyDirs,        $(PRODUCT_PRIVATE_SEPOL
 
 $(call add_json_list, TargetFSConfigGen,                 $(TARGET_FS_CONFIG_GEN))
 
+# Although USE_SOONG_DEFINED_SYSTEM_IMAGE determines whether to use the system image specified by
+# PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE, PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE is still used to compare
+# installed files between make and soong, regardless of the USE_SOONG_DEFINED_SYSTEM_IMAGE setting.
+$(call add_json_bool, UseSoongSystemImage,               $(filter true,$(USE_SOONG_DEFINED_SYSTEM_IMAGE)))
+$(call add_json_str,  ProductSoongDefinedSystemImage,    $(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE))
+
 $(call add_json_map, VendorVars)
 $(foreach namespace,$(sort $(SOONG_CONFIG_NAMESPACES)),\
   $(call add_json_map, $(namespace))\
@@ -286,7 +292,6 @@ $(call add_json_bool, BuildBrokenClangCFlags,              $(filter true,$(BUILD
 $(call add_json_bool, GenruleSandboxing,                   $(if $(GENRULE_SANDBOXING),$(filter true,$(GENRULE_SANDBOXING)),$(if $(filter true,$(BUILD_BROKEN_GENRULE_SANDBOXING)),,true)))
 $(call add_json_bool, BuildBrokenEnforceSyspropOwner,      $(filter true,$(BUILD_BROKEN_ENFORCE_SYSPROP_OWNER)))
 $(call add_json_bool, BuildBrokenTrebleSyspropNeverallow,  $(filter true,$(BUILD_BROKEN_TREBLE_SYSPROP_NEVERALLOW)))
-$(call add_json_bool, BuildBrokenUsesSoongPython2Modules,  $(filter true,$(BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES)))
 $(call add_json_bool, BuildBrokenVendorPropertyNamespace,  $(filter true,$(BUILD_BROKEN_VENDOR_PROPERTY_NAMESPACE)))
 $(call add_json_bool, BuildBrokenIncorrectPartitionImages, $(filter true,$(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES)))
 $(call add_json_list, BuildBrokenInputDirModules,          $(BUILD_BROKEN_INPUT_DIR_MODULES))

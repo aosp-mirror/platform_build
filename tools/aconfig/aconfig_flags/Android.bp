@@ -1,0 +1,46 @@
+/*
+ * Copyright (C) 2024 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+rust_library {
+    name: "libaconfig_flags",
+    crate_name: "aconfig_flags",
+    srcs: [
+        "src/lib.rs",
+    ],
+    rustlibs: [
+        "libaconfig_flags_rust",
+    ],
+    host_supported: true,
+}
+
+aconfig_declarations {
+    name: "aconfig_flags",
+    package: "com.android.aconfig.flags",
+    container: "system",
+    srcs: ["flags.aconfig"],
+}
+
+rust_aconfig_library {
+    name: "libaconfig_flags_rust",
+    crate_name: "aconfig_flags_rust",
+    aconfig_declarations: "aconfig_flags",
+    host_supported: true,
+}
+
+cc_aconfig_library {
+    name: "libaconfig_flags_cc",
+    aconfig_declarations: "aconfig_flags",
+}
