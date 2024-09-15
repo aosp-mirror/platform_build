@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019 The Android Open Source Project
+# Copyright (C) 2024 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,15 +14,20 @@
 # limitations under the License.
 #
 
-# This makefile contains the system_ext partition contents for
-# media-capable devices (non-wearables). Only add something here
-# if it definitely doesn't belong on wearables. Otherwise, choose
-# base_system_ext.mk.
-$(call inherit-product, $(SRC_TARGET_DIR)/product/base_system_ext.mk)
+# The base version of window_extensions.mk to be included on all non-wearable
+# devices. Devices that don't support multi-window can choose to drop this.
+#
+# Note: by default the Activity Embedding feature is guarded by app's
+# targetSDK on Android 15 to avoid app compat impact.
+#
+# Large screen devices must inherit window_extensions.mk to enable the
+# Activity Embedding feature for all apps.
 
 # /system_ext packages
 PRODUCT_PACKAGES += \
-    vndk_apex_snapshot_package \
+    androidx.window.extensions \
+    androidx.window.sidecar
 
-# Window Extensions
-$(call inherit-product, $(SRC_TARGET_DIR)/product/window_extensions_base.mk)
+# properties
+PRODUCT_PRODUCT_PROPERTIES += \
+    persist.wm.extensions.enabled=true
