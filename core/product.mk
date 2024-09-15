@@ -493,6 +493,9 @@ _product_single_value_vars += PRODUCT_16K_DEVELOPER_OPTION
 # by this flag.
 _product_single_value_vars += PRODUCT_NOT_DEBUGGABLE_IN_USERDEBUG
 
+# If set, the default value of the versionName of apps will include the build number.
+_product_single_value_vars += PRODUCT_BUILD_APPS_WITH_BUILD_NUMBER
+
 # If set, build would generate system image from Soong-defined module.
 _product_single_value_vars += PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE
 

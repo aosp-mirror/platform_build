@@ -9,13 +9,6 @@ function apply_droidstubs_hack() {
     fi
 }
 
-function apply_resources_sdk_int_fix() {
-    if ! grep -q 'public static final int RESOURCES_SDK_INT = SDK_INT;' "$top/frameworks/base/core/java/android/os/Build.java" ; then
-        local base_git_root="$(readlink -f $top/frameworks/base)"
-        patch --strip=1 --no-backup-if-mismatch --directory="$base_git_root" --input=../../build/make/tools/finalization/frameworks_base.apply_resource_sdk_int.diff
-    fi
-}
-
 function finalize_bionic_ndk() {
     # Adding __ANDROID_API_<>__.
     # If this hasn't done then it's not used and not really needed. Still, let's check and add this.
@@ -41,7 +34,8 @@ function finalize_modules_utils() {
     echo "    /** Checks if the device is running on a release version of Android $FINAL_PLATFORM_CODENAME or newer */
     @ChecksSdkIntAtLeast(api = $FINAL_PLATFORM_SDK_VERSION /* BUILD_VERSION_CODES.$FINAL_PLATFORM_CODENAME */)
     public static boolean isAtLeast${FINAL_PLATFORM_CODENAME:0:1}() {
-        return SDK_INT >= $FINAL_PLATFORM_SDK_VERSION;
+        return SDK_INT >= $FINAL_PLATFORM_SDK_VERSION ||
+                (SDK_INT == $(($FINAL_PLATFORM_SDK_VERSION - 1)) && isAtLeastPreReleaseCodename(\"$FINAL_PLATFORM_CODENAME\"));
     }" > "$tmpfile"
 
     local javaFuncRegex='\/\*\*[^{]*isAtLeast'"${shortCodename}"'() {[^{}]*}'
@@ -55,7 +49,11 @@ function finalize_modules_utils() {
            d}' $javaSdkLevel
 
     echo "// Checks if the device is running on release version of Android ${FINAL_PLATFORM_CODENAME:0:1} or newer.
-inline bool IsAtLeast${FINAL_PLATFORM_CODENAME:0:1}() { return android_get_device_api_level() >= $FINAL_PLATFORM_SDK_VERSION; }" > "$tmpfile"
+inline bool IsAtLeast${FINAL_PLATFORM_CODENAME:0:1}() {
+  return android_get_device_api_level() >= $FINAL_PLATFORM_SDK_VERSION ||
+         (android_get_device_api_level() == $(($FINAL_PLATFORM_SDK_VERSION - 1)) &&
+          detail::IsAtLeastPreReleaseCodename(\"$FINAL_PLATFORM_CODENAME\"));
+}" > "$tmpfile"
 
     local cppFuncRegex='\/\/[^{]*IsAtLeast'"${shortCodename}"'() {[^{}]*}'
     local cppFuncReplace="N;N;N;N;N;N; s/$cppFuncRegex/$methodPlaceholder/; /$cppFuncRegex/!{P;D};"
@@ -123,14 +121,18 @@ function finalize_sdk_resources() {
     sed -i -e 's/Pkg\.Revision.*/Pkg\.Revision=${PLATFORM_SDK_VERSION}.0.0/g' $build_tools_source
 
     # build/soong
-    local codename_version="\"${FINAL_PLATFORM_CODENAME}\": ${FINAL_PLATFORM_SDK_VERSION}"
+    local codename_version="\"${FINAL_PLATFORM_CODENAME}\":     ${FINAL_PLATFORM_SDK_VERSION}"
     if ! grep -q "$codename_version" "$top/build/soong/android/api_levels.go" ; then
         sed -i -e "/:.*$((${FINAL_PLATFORM_SDK_VERSION}-1)),/a \\\t\t$codename_version," "$top/build/soong/android/api_levels.go"
     fi
 
     # cts
-    echo ${FINAL_PLATFORM_VERSION} > "$top/cts/tests/tests/os/assets/platform_releases.txt"
-    sed -i -e "s/EXPECTED_SDK = $((${FINAL_PLATFORM_SDK_VERSION}-1))/EXPECTED_SDK = ${FINAL_PLATFORM_SDK_VERSION}/g" "$top/cts/tests/tests/os/src/android/os/cts/BuildVersionTest.java"
+    if ! grep -q "${FINAL_PLATFORM_VERSION}" "$top/cts/tests/tests/os/assets/platform_releases.txt" ; then
+        echo ${FINAL_PLATFORM_VERSION} >> "$top/cts/tests/tests/os/assets/platform_releases.txt"
+    fi
+    if ! grep -q "$((${FINAL_PLATFORM_SDK_VERSION}-1)), ${FINAL_PLATFORM_VERSION}" "$top/cts/tests/tests/os/src/android/os/cts/BuildVersionTest.java" ; then
+        sed -i -e "s/.*EXPECTED_SDKS = List.of(.*$((${FINAL_PLATFORM_SDK_VERSION}-1))/&, $FINAL_PLATFORM_SDK_VERSION/" "$top/cts/tests/tests/os/src/android/os/cts/BuildVersionTest.java"
+    fi
 
     # libcore
     sed -i "s%$SDK_CODENAME%$SDK_VERSION%g" "$top/libcore/dalvik/src/main/java/dalvik/annotation/compat/VersionCodes.java"
@@ -153,7 +155,6 @@ function finalize_sdk_resources() {
 
     # frameworks/base
     sed -i "s%$SDK_CODENAME%$SDK_VERSION%g" "$top/frameworks/base/core/java/android/os/Build.java"
-    apply_resources_sdk_int_fix
     sed -i -e "/=.*$((${FINAL_PLATFORM_SDK_VERSION}-1)),/a \\    SDK_${FINAL_PLATFORM_CODENAME_JAVA} = ${FINAL_PLATFORM_SDK_VERSION}," "$top/frameworks/base/tools/aapt/SdkConstants.h"
     sed -i -e "/=.*$((${FINAL_PLATFORM_SDK_VERSION}-1)),/a \\  SDK_${FINAL_PLATFORM_CODENAME_JAVA} = ${FINAL_PLATFORM_SDK_VERSION}," "$top/frameworks/base/tools/aapt2/SdkConstants.h"
 
