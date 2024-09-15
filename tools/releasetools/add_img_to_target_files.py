@@ -464,6 +464,7 @@ def AddDtbo(output_zip):
   dtbo_prebuilt_path = os.path.join(
       OPTIONS.input_tmp, "PREBUILT_IMAGES", "dtbo.img")
   assert os.path.exists(dtbo_prebuilt_path)
+  os.makedirs(os.path.dirname(img.name), exist_ok=True)
   shutil.copy(dtbo_prebuilt_path, img.name)
 
   # AVB-sign the image as needed.
