@@ -90,10 +90,8 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ -if flag.is_read_write }}
 
                 val = reader.getBooleanFlagValue({flag.flag_offset});
-                if (val == {flag.method_name}) \{
-                    Log.i(TAG, String.format(SUCCESS_LOG, "{flag.method_name}"));
-                } else \{
-                    Log.i(TAG, String.format(MISMATCH_LOG, "{flag.method_name}", val, {flag.method_name}));
+                if (val != {flag.method_name}) \{
+                    Log.w(TAG, String.format(MISMATCH_LOG, "{flag.method_name}", val, {flag.method_name}));
                 }
 
                 if (useNewStorageValueAndDiscardOld) \{
