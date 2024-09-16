@@ -105,9 +105,6 @@ def main(argv):
 
     if args.package_key:
       logger.info("Signing payload...")
-      # TODO: remove OPTIONS when no longer used as fallback in payload_signer
-      common.OPTIONS.payload_signer_args = None
-      common.OPTIONS.payload_signer_maximum_signature_size = None
       signer = PayloadSigner(args.package_key, args.private_key_suffix,
                              key_passwords[args.package_key],
                              payload_signer=args.payload_signer,
