@@ -41,6 +41,7 @@ pub mod sip_hasher13;
 pub mod test_utils;
 
 use anyhow::anyhow;
+use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 use std::fs::File;
 use std::hash::Hasher;
@@ -107,7 +108,7 @@ impl TryFrom<u8> for StorageFileType {
 
 /// Flag type enum as stored by storage file
 /// ONLY APPEND, NEVER REMOVE FOR BACKWARD COMPATIBILITY. THE MAX IS U16.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum StoredFlagType {
     ReadWriteBoolean = 0,
     ReadOnlyBoolean = 1,
