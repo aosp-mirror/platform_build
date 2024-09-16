@@ -21,5 +21,5 @@ export TARGET_RELEASE=trunk_staging
 export TARGET_BUILD_VARIANT=eng
 
 build/soong/bin/m dist \
-    code_metadata
+    all_teams
 
