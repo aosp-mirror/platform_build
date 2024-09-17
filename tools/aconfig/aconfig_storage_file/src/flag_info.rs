@@ -20,10 +20,11 @@
 use crate::{read_str_from_bytes, read_u32_from_bytes, read_u8_from_bytes};
 use crate::{AconfigStorageError, StorageFileType};
 use anyhow::anyhow;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// Flag info header struct
-#[derive(PartialEq)]
+#[derive(PartialEq, Serialize, Deserialize)]
 pub struct FlagInfoHeader {
     pub version: u32,
     pub container: String,
@@ -89,7 +90,7 @@ impl FlagInfoHeader {
 }
 
 /// bit field for flag info
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum FlagInfoBit {
     HasServerOverride = 1 << 0,
     IsReadWrite = 1 << 1,
@@ -97,7 +98,7 @@ pub enum FlagInfoBit {
 }
 
 /// Flag info node struct
-#[derive(PartialEq, Clone)]
+#[derive(PartialEq, Clone, Serialize, Deserialize)]
 pub struct FlagInfoNode {
     pub attributes: u8,
 }
@@ -138,7 +139,7 @@ impl FlagInfoNode {
 }
 
 /// Flag info list struct
-#[derive(PartialEq)]
+#[derive(PartialEq, Serialize, Deserialize)]
 pub struct FlagInfoList {
     pub header: FlagInfoHeader,
     pub nodes: Vec<FlagInfoNode>,

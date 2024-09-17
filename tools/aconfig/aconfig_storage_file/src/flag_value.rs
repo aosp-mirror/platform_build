@@ -20,10 +20,11 @@
 use crate::{read_str_from_bytes, read_u32_from_bytes, read_u8_from_bytes};
 use crate::{AconfigStorageError, StorageFileType};
 use anyhow::anyhow;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// Flag value header struct
-#[derive(PartialEq)]
+#[derive(PartialEq, Serialize, Deserialize)]
 pub struct FlagValueHeader {
     pub version: u32,
     pub container: String,
@@ -89,7 +90,7 @@ impl FlagValueHeader {
 }
 
 /// Flag value list struct
-#[derive(PartialEq)]
+#[derive(PartialEq, Serialize, Deserialize)]
 pub struct FlagValueList {
     pub header: FlagValueHeader,
     pub booleans: Vec<bool>,
