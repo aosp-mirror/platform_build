@@ -79,8 +79,18 @@ pub fn parse_flags(
             .read_to_string(&mut contents)
             .with_context(|| format!("failed to read {}", input.source))?;
 
-        let flag_declarations = aconfig_protos::flag_declarations::try_from_text_proto(&contents)
-            .with_context(|| input.error_context())?;
+        let mut flag_declarations =
+            aconfig_protos::flag_declarations::try_from_text_proto(&contents)
+                .with_context(|| input.error_context())?;
+
+        // system_ext flags should be treated as system flags as we are combining /system_ext
+        // and /system as one container
+        // TODO: remove this logic when we start enforcing that system_ext cannot be set as
+        // container in aconfig declaration files.
+        if flag_declarations.container() == "system_ext" {
+            flag_declarations.set_container(String::from("system"));
+        }
+
         ensure!(
             package == flag_declarations.package(),
             "failed to parse {}: expected package {}, got {}",
