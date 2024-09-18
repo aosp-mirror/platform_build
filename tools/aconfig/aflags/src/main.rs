@@ -116,9 +116,10 @@ impl Flag {
     }
 
     fn display_staged_value(&self) -> String {
-        match self.staged_value {
-            Some(v) => format!("(->{})", v),
-            None => "-".to_string(),
+        match (&self.permission, self.staged_value) {
+            (FlagPermission::ReadOnly, _) => "-".to_string(),
+            (FlagPermission::ReadWrite, None) => "-".to_string(),
+            (FlagPermission::ReadWrite, Some(v)) => format!("(->{})", v),
         }
     }
 }
