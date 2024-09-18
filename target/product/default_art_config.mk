@@ -174,6 +174,11 @@ ifeq ($(RELEASE_PACKAGE_PROFILING_MODULE),true)
 
 endif
 
+ifneq (,$(RELEASE_RANGING_STACK))
+    PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS += \
+        com.android.uwb:service-ranging
+endif
+
 # Overrides the (apex, jar) pairs above when determining the on-device location. The format is:
 # <old_apex>:<old_jar>:<new_apex>:<new_jar>
 PRODUCT_CONFIGURED_JAR_LOCATION_OVERRIDES := \
