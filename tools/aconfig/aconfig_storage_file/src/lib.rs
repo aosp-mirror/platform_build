@@ -58,7 +58,7 @@ use crate::AconfigStorageError::{
 };
 
 /// Storage file version
-pub const FILE_VERSION: u32 = 1;
+pub const FILE_VERSION: u32 = 2;
 
 /// Good hash table prime number
 pub(crate) const HASH_PRIMES: [u32; 29] = [
@@ -251,6 +251,16 @@ pub fn read_u32_from_bytes(buf: &[u8], head: &mut usize) -> Result<u32, AconfigS
             BytesParseFail(anyhow!("fail to parse u32 from bytes: {}", errmsg))
         })?);
     *head += 4;
+    Ok(val)
+}
+
+// Read and parse bytes as u64
+pub fn read_u64_from_bytes(buf: &[u8], head: &mut usize) -> Result<u64, AconfigStorageError> {
+    let val =
+        u64::from_le_bytes(buf[*head..*head + 8].try_into().map_err(|errmsg| {
+            BytesParseFail(anyhow!("fail to parse u64 from bytes: {}", errmsg))
+        })?);
+    *head += 8;
     Ok(val)
 }
 
