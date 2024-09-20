@@ -187,3 +187,8 @@ $(call soong_config_set_bool,gralloc,target_use_pan_display,$(if $(filter true,$
 
 # Add use_camera_v4l2_hal flag for hardware/libhardware/modules/camera/3_4:camera.v4l2
 $(call soong_config_set_bool,camera,use_camera_v4l2_hal,$(if $(filter true,$(USE_CAMERA_V4L2_HAL)),true,false))
+
+# Add audioserver_multilib flag for hardware/interfaces/soundtrigger/2.0/default:android.hardware.soundtrigger@2.0-impl
+ifneq ($(strip $(AUDIOSERVER_MULTILIB)),)
+  $(call soong_config_set,soundtrigger,audioserver_multilib,$(AUDIOSERVER_MULTILIB))
+endif
