@@ -1,0 +1,6 @@
+flag_value {
+    package: "com.android.aconfig.second_test"
+    name: "testing_flag"
+    state: DISABLED
+    permission: READ_WRITE
+}

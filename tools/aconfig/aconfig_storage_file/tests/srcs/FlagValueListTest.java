@@ -36,7 +36,7 @@ public class FlagValueListTest {
         FlagValueList flagValueList =
                 FlagValueList.fromBytes(TestDataUtils.getTestFlagValByteBuffer());
         FlagValueList.Header header = flagValueList.getHeader();
-        assertEquals(1, header.getVersion());
+        assertEquals(2, header.getVersion());
         assertEquals("mockup", header.getContainer());
         assertEquals(FileType.FLAG_VAL, header.getFileType());
         assertEquals(35, header.getFileSize());
