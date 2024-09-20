@@ -197,6 +197,19 @@ class DaemonManagerTest(unittest.TestCase):
     mock_output.side_effect = OSError('Unknown OSError')
     self.assert_run_simple_daemon_success()
 
+  @mock.patch('os.execv')
+  def test_monitor_daemon_reboot_triggered(self, mock_execv):
+    binary_file = tempfile.NamedTemporaryFile(
+        dir=self.working_dir.name, delete=False
+    )
+
+    dm = daemon_manager.DaemonManager(
+        binary_file.name, daemon_target=long_running_daemon
+    )
+    dm.start()
+    dm.monitor_daemon(reboot_timeout=0.5)
+    mock_execv.assert_called_once()
+
   def test_stop_success(self):
     dm = daemon_manager.DaemonManager(
         TEST_BINARY_FILE, daemon_target=long_running_daemon
@@ -231,6 +244,52 @@ class DaemonManagerTest(unittest.TestCase):
 
     self.assert_no_subprocess_running()
     self.assertTrue(dm.pid_file_path.exists())
+
+  @mock.patch('os.execv')
+  def test_reboot_success(self, mock_execv):
+    binary_file = tempfile.NamedTemporaryFile(
+        dir=self.working_dir.name, delete=False
+    )
+
+    dm = daemon_manager.DaemonManager(
+        binary_file.name, daemon_target=long_running_daemon
+    )
+    dm.start()
+    dm.reboot()
+
+    # Verifies the old process is stopped
+    self.assert_no_subprocess_running()
+    self.assertFalse(dm.pid_file_path.exists())
+
+    mock_execv.assert_called_once()
+
+  @mock.patch('os.execv')
+  def test_reboot_binary_no_longer_exists(self, mock_execv):
+    dm = daemon_manager.DaemonManager(
+        TEST_BINARY_FILE, daemon_target=long_running_daemon
+    )
+    dm.start()
+
+    with self.assertRaises(SystemExit) as cm:
+      dm.reboot()
+      mock_execv.assert_not_called()
+      self.assertEqual(cm.exception.code, 0)
+
+  @mock.patch('os.execv')
+  def test_reboot_failed(self, mock_execv):
+    mock_execv.side_effect = OSError('Unknown OSError')
+    binary_file = tempfile.NamedTemporaryFile(
+        dir=self.working_dir.name, delete=False
+    )
+
+    dm = daemon_manager.DaemonManager(
+        binary_file.name, daemon_target=long_running_daemon
+    )
+    dm.start()
+
+    with self.assertRaises(SystemExit) as cm:
+      dm.reboot()
+      self.assertEqual(cm.exception.code, 1)
 
   def assert_run_simple_daemon_success(self):
     damone_output_file = tempfile.NamedTemporaryFile(
