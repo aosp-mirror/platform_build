@@ -276,7 +276,8 @@ class BuildPlannerTest(unittest.TestCase):
 
     build_plan = build_planner.create_build_plan()
 
-    self.assertEqual(len(build_plan.packaging_commands), 0)
+    for packaging_command in self.run_packaging_commands(build_plan):
+      self.assertEqual(len(packaging_command), 0)
 
   def test_build_optimization_on_optimizes_target(self):
     build_targets = {'target_1', 'target_2'}
@@ -306,7 +307,7 @@ class BuildPlannerTest(unittest.TestCase):
 
     build_plan = build_planner.create_build_plan()
 
-    self.assertIn([f'packaging {optimized_target_name}'], build_plan.packaging_commands)
+    self.assertIn(packaging_commands, self.run_packaging_commands(build_plan))
 
   def test_individual_build_optimization_off_doesnt_optimize(self):
     build_targets = {'target_1', 'target_2'}
@@ -328,7 +329,8 @@ class BuildPlannerTest(unittest.TestCase):
 
     build_plan = build_planner.create_build_plan()
 
-    self.assertFalse(build_plan.packaging_commands)
+    for packaging_command in self.run_packaging_commands(build_plan):
+      self.assertEqual(len(packaging_command), 0)
 
   def test_target_output_used_target_built(self):
     build_target = 'test_target'
@@ -484,6 +486,12 @@ class BuildPlannerTest(unittest.TestCase):
             },
         ],
     }
+
+  def run_packaging_commands(self, build_plan: build_test_suites.BuildPlan):
+    return [
+        packaging_command_getter()
+        for packaging_command_getter in build_plan.packaging_commands_getters
+    ]
 
 
 def wait_until(
