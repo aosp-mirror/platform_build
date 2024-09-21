@@ -283,39 +283,23 @@ public:
     virtual ~flag_provider_interface() = default;
 
     virtual bool disabled_ro() = 0;
-
-    virtual void disabled_ro(bool val) = 0;
-
     virtual bool disabled_rw() = 0;
-
-    virtual void disabled_rw(bool val) = 0;
-
     virtual bool disabled_rw_exported() = 0;
-
-    virtual void disabled_rw_exported(bool val) = 0;
-
     virtual bool disabled_rw_in_other_namespace() = 0;
-
-    virtual void disabled_rw_in_other_namespace(bool val) = 0;
-
     virtual bool enabled_fixed_ro() = 0;
-
-    virtual void enabled_fixed_ro(bool val) = 0;
-
     virtual bool enabled_fixed_ro_exported() = 0;
-
-    virtual void enabled_fixed_ro_exported(bool val) = 0;
-
     virtual bool enabled_ro() = 0;
-
-    virtual void enabled_ro(bool val) = 0;
-
     virtual bool enabled_ro_exported() = 0;
-
-    virtual void enabled_ro_exported(bool val) = 0;
-
     virtual bool enabled_rw() = 0;
 
+    virtual void disabled_ro(bool val) = 0;
+    virtual void disabled_rw(bool val) = 0;
+    virtual void disabled_rw_exported(bool val) = 0;
+    virtual void disabled_rw_in_other_namespace(bool val) = 0;
+    virtual void enabled_fixed_ro(bool val) = 0;
+    virtual void enabled_fixed_ro_exported(bool val) = 0;
+    virtual void enabled_ro(bool val) = 0;
+    virtual void enabled_ro_exported(bool val) = 0;
     virtual void enabled_rw(bool val) = 0;
 
     virtual void reset_flags() {}

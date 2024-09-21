@@ -121,13 +121,13 @@ class OptimizedBuildTarget(ABC):
     process_result = subprocess.run(
         args=[
             f'{src_top / self._SOONG_UI_BASH_PATH}',
-            '--dumpvar-mode',
-            '--abs',
-            soong_vars,
+            '--dumpvars-mode',
+            f'--abs-vars={" ".join(soong_vars)}',
         ],
         env=os.environ,
         check=False,
         capture_output=True,
+        text=True,
     )
     if not process_result.returncode == 0:
       logging.error('soong dumpvars command failed! stderr:')
@@ -142,7 +142,7 @@ class OptimizedBuildTarget(ABC):
     try:
       return {
           line.split('=')[0]: line.split('=')[1].strip("'")
-          for line in process_result.stdout.split('\n')
+          for line in process_result.stdout.strip().split('\n')
       }
     except IndexError as e:
       raise RuntimeError(
@@ -214,10 +214,13 @@ class GeneralTestsOptimizer(OptimizedBuildTarget):
   normally built.
   """
 
-  # List of modules that are always required to be in general-tests.zip.
-  _REQUIRED_MODULES = frozenset(
-      ['cts-tradefed', 'vts-tradefed', 'compatibility-host-util']
-  )
+  # List of modules that are built alongside general-tests as dependencies.
+  _REQUIRED_MODULES = frozenset([
+      'cts-tradefed',
+      'vts-tradefed',
+      'compatibility-host-util',
+      'general-tests-shared-libs',
+  ])
 
   def get_build_targets_impl(self) -> set[str]:
     change_info_file_path = os.environ.get('CHANGE_INFO')
@@ -286,6 +289,10 @@ class GeneralTestsOptimizer(OptimizedBuildTarget):
     host_config_files = []
     target_config_files = []
     for module in self.modules_to_build:
+      # The required modules are handled separately, no need to package.
+      if module in self._REQUIRED_MODULES:
+        continue
+
       host_path = host_out_testcases / module
       if os.path.exists(host_path):
         host_paths.append(host_path)
@@ -303,6 +310,7 @@ class GeneralTestsOptimizer(OptimizedBuildTarget):
 
     zip_commands.extend(
         self._get_zip_test_configs_zips_commands(
+            src_top,
             dist_dir,
             host_out,
             product_out,
@@ -311,27 +319,27 @@ class GeneralTestsOptimizer(OptimizedBuildTarget):
         )
     )
 
-    zip_command = self._base_zip_command(
-        host_out, dist_dir, 'general-tests.zip'
-    )
+    zip_command = self._base_zip_command(src_top, dist_dir, 'general-tests.zip')
 
     # Add host testcases.
-    zip_command.extend(
-        self._generate_zip_options_for_items(
-            prefix='host',
-            relative_root=f'{src_top / soong_host_out}',
-            directories=host_paths,
-        )
-    )
+    if host_paths:
+      zip_command.extend(
+          self._generate_zip_options_for_items(
+              prefix='host',
+              relative_root=f'{src_top / soong_host_out}',
+              directories=host_paths,
+          )
+      )
 
     # Add target testcases.
-    zip_command.extend(
-        self._generate_zip_options_for_items(
-            prefix='target',
-            relative_root=f'{src_top / product_out}',
-            directories=target_paths,
-        )
-    )
+    if target_paths:
+      zip_command.extend(
+          self._generate_zip_options_for_items(
+              prefix='target',
+              relative_root=f'{src_top / product_out}',
+              directories=target_paths,
+          )
+      )
 
     # TODO(lucafarsi): Push this logic into a general-tests-minimal build command
     # Add necessary tools. These are also hardcoded in general-tests.mk.
@@ -365,6 +373,7 @@ class GeneralTestsOptimizer(OptimizedBuildTarget):
 
   def _get_zip_test_configs_zips_commands(
       self,
+      src_top: pathlib.Path,
       dist_dir: pathlib.Path,
       host_out: pathlib.Path,
       product_out: pathlib.Path,
@@ -428,7 +437,7 @@ class GeneralTestsOptimizer(OptimizedBuildTarget):
     zip_commands = []
 
     tests_config_zip_command = self._base_zip_command(
-        host_out, dist_dir, 'general-tests_configs.zip'
+        src_top, dist_dir, 'general-tests_configs.zip'
     )
     tests_config_zip_command.extend(
         self._generate_zip_options_for_items(
@@ -442,16 +451,14 @@ class GeneralTestsOptimizer(OptimizedBuildTarget):
         self._generate_zip_options_for_items(
             prefix='target',
             relative_root=str(product_out),
-            list_files=[
-                f"{product_out / 'target_general-tests_list'}"
-            ],
+            list_files=[f"{product_out / 'target_general-tests_list'}"],
         ),
     )
 
     zip_commands.append(tests_config_zip_command)
 
     tests_list_zip_command = self._base_zip_command(
-        host_out, dist_dir, 'general-tests_list.zip'
+        src_top, dist_dir, 'general-tests_list.zip'
     )
     tests_list_zip_command.extend(
         self._generate_zip_options_for_items(
