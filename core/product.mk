@@ -499,6 +499,10 @@ _product_single_value_vars += PRODUCT_BUILD_APPS_WITH_BUILD_NUMBER
 # If set, build would generate system image from Soong-defined module.
 _product_single_value_vars += PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE
 
+# List of stub libraries specific to the product that are already present in the system image and
+# should be included in the system_linker_config.
+_product_list_vars += PRODUCT_EXTRA_STUB_LIBRARIES
+
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
 
