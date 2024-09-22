@@ -26,30 +26,33 @@ use tempfile::NamedTempFile;
 
 pub fn create_test_package_table() -> PackageTable {
     let header = PackageTableHeader {
-        version: 1,
+        version: 2,
         container: String::from("mockup"),
         file_type: StorageFileType::PackageMap as u8,
-        file_size: 209,
+        file_size: 233,
         num_packages: 3,
         bucket_offset: 31,
         node_offset: 59,
     };
-    let buckets: Vec<Option<u32>> = vec![Some(59), None, None, Some(109), None, None, None];
+    let buckets: Vec<Option<u32>> = vec![Some(59), None, None, Some(117), None, None, None];
     let first_node = PackageTableNode {
         package_name: String::from("com.android.aconfig.storage.test_2"),
         package_id: 1,
+        fingerprint: 0,
         boolean_start_index: 3,
         next_offset: None,
     };
     let second_node = PackageTableNode {
         package_name: String::from("com.android.aconfig.storage.test_1"),
         package_id: 0,
+        fingerprint: 0,
         boolean_start_index: 0,
-        next_offset: Some(159),
+        next_offset: Some(175),
     };
     let third_node = PackageTableNode {
         package_name: String::from("com.android.aconfig.storage.test_4"),
         package_id: 2,
+        fingerprint: 0,
         boolean_start_index: 6,
         next_offset: None,
     };
@@ -78,7 +81,7 @@ impl FlagTableNode {
 
 pub fn create_test_flag_table() -> FlagTable {
     let header = FlagTableHeader {
-        version: 1,
+        version: 2,
         container: String::from("mockup"),
         file_type: StorageFileType::FlagMap as u8,
         file_size: 321,
@@ -120,7 +123,7 @@ pub fn create_test_flag_table() -> FlagTable {
 
 pub fn create_test_flag_value_list() -> FlagValueList {
     let header = FlagValueHeader {
-        version: 1,
+        version: 2,
         container: String::from("mockup"),
         file_type: StorageFileType::FlagVal as u8,
         file_size: 35,
@@ -133,7 +136,7 @@ pub fn create_test_flag_value_list() -> FlagValueList {
 
 pub fn create_test_flag_info_list() -> FlagInfoList {
     let header = FlagInfoHeader {
-        version: 1,
+        version: 2,
         container: String::from("mockup"),
         file_type: StorageFileType::FlagInfo as u8,
         file_size: 35,

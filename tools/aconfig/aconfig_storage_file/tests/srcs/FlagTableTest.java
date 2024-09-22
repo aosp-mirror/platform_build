@@ -33,7 +33,7 @@ public class FlagTableTest {
     public void testFlagTable_rightHeader() throws Exception {
         FlagTable flagTable = FlagTable.fromBytes(TestDataUtils.getTestFlagMapByteBuffer());
         FlagTable.Header header = flagTable.getHeader();
-        assertEquals(1, header.getVersion());
+        assertEquals(2, header.getVersion());
         assertEquals("mockup", header.getContainer());
         assertEquals(FileType.FLAG_MAP, header.getFileType());
         assertEquals(321, header.getFileSize());

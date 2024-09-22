@@ -56,3 +56,16 @@ java_library {
         "//apex_available:platform",
     ],
 }
+
+genrule {
+    name: "libaconfig_java_host_device_paths_src",
+    srcs: ["src/HostDeviceProtosTemplate.java"],
+    out: ["HostDeviceProtos.java"],
+    tool_files: ["partition_aconfig_flags_paths.txt"],
+    cmd: "sed -e '/TEMPLATE/{r$(location partition_aconfig_flags_paths.txt)' -e 'd}' $(in) > $(out)",
+}
+
+java_library_host {
+    name: "aconfig_host_device_paths_java",
+    srcs: [":libaconfig_java_host_device_paths_src"],
+}
