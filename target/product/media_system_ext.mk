@@ -26,3 +26,8 @@ PRODUCT_PACKAGES += \
 
 # Window Extensions
 $(call inherit-product, $(SRC_TARGET_DIR)/product/window_extensions_base.mk)
+
+# AppFunction Extensions
+ifneq (,$(RELEASE_APPFUNCTION_SIDECAR))
+    $(call inherit-product, $(SRC_TARGET_DIR)/product/app_function_extensions.mk)
+endif

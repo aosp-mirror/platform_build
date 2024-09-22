@@ -1964,7 +1964,7 @@ target_system_dlkm_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE_SYST
 installed_system_dlkm_notice_xml_gz := $(TARGET_OUT_SYSTEM_DLKM)/etc/NOTICE.xml.gz
 
 ALL_INSTALLED_NOTICE_FILES := \
-  $(installed_notice_html_or_xml_gz) \
+  $(if $(USE_SOONG_DEFINED_SYSTEM_IMAGE),,$(installed_notice_html_or_xml_gz)) \
   $(installed_vendor_notice_xml_gz) \
   $(installed_product_notice_xml_gz) \
   $(installed_system_ext_notice_xml_gz) \
@@ -2051,7 +2051,9 @@ endif
 
 endif # PRODUCT_NOTICE_SPLIT
 
+ifneq ($(USE_SOONG_DEFINED_SYSTEM_IMAGE),true)
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
+endif
 
 need_vendor_notice:=false
 ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
@@ -3511,6 +3513,8 @@ $(SYSTEM_LINKER_CONFIG): $(INTERNAL_SYSTEMIMAGE_FILES) $(SYSTEM_LINKER_CONFIG_SO
 		--output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT)"
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config append --source $@ --output $@ --key requireLibs \
 		--value "$(foreach lib,$(LLNDK_MOVED_TO_APEX_LIBRARIES), $(lib).so)"
+	$(HOST_OUT_EXECUTABLES)/conv_linker_config append --source $@ --output $@ --key provideLibs \
+		--value "$(foreach lib,$(PRODUCT_EXTRA_STUB_LIBRARIES), $(lib).so)"
 
 $(call declare-1p-target,$(SYSTEM_LINKER_CONFIG),)
 $(call declare-license-deps,$(SYSTEM_LINKER_CONFIG),$(INTERNAL_SYSTEMIMAGE_FILES) $(SYSTEM_LINKER_CONFIG_SOURCE))

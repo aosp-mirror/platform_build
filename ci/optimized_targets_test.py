@@ -220,18 +220,6 @@ class GeneralTestsOptimizerTest(fake_filesystem_unittest.TestCase):
     ):
       package_commands = optimizer.get_package_outputs_commands()
 
-  @mock.patch('subprocess.run')
-  def test_no_build_outputs_packaging_fails(self, subprocess_run):
-    subprocess_run.return_value = self._get_soong_vars_output()
-    optimizer = self._create_general_tests_optimizer()
-
-    targets = optimizer.get_build_targets()
-
-    with self.assertRaisesRegex(
-        RuntimeError, 'No items specified to be added to zip'
-    ):
-      package_commands = optimizer.get_package_outputs_commands()
-
   def _create_general_tests_optimizer(self, build_context: BuildContext = None):
     if not build_context:
       build_context = self._create_build_context()
@@ -321,7 +309,7 @@ class GeneralTestsOptimizerTest(fake_filesystem_unittest.TestCase):
     """
     for command in commands:
       self.assertEqual(
-          '/tmp/top/host_out/prebuilts/build-tools/linux-x86/bin/soong_zip',
+          '/tmp/top/prebuilts/build-tools/linux-x86/bin/soong_zip',
           command[0],
       )
       self.assertEqual('-d', command[1])

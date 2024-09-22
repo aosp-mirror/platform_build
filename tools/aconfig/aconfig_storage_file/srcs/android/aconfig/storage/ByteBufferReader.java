@@ -37,6 +37,10 @@ public class ByteBufferReader {
         return Short.toUnsignedInt(mByteBuffer.getShort());
     }
 
+    public long readLong() {
+        return mByteBuffer.getLong();
+    }
+
     public int readInt() {
         return this.mByteBuffer.getInt();
     }
