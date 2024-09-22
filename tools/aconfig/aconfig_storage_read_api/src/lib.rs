@@ -507,9 +507,9 @@ mod tests {
     #[test]
     // this test point locks down flag storage file version number query api
     fn test_storage_version_query() {
-        assert_eq!(get_storage_file_version("./tests/package.map").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./tests/flag.map").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./tests/flag.val").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./tests/flag.info").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./tests/package.map").unwrap(), 2);
+        assert_eq!(get_storage_file_version("./tests/flag.map").unwrap(), 2);
+        assert_eq!(get_storage_file_version("./tests/flag.val").unwrap(), 2);
+        assert_eq!(get_storage_file_version("./tests/flag.info").unwrap(), 2);
     }
 }

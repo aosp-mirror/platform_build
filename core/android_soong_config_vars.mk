@@ -175,6 +175,17 @@ endif
 # Required as platform_bootclasspath is using this namespace
 $(call soong_config_set,bootclasspath,release_crashrecovery_module,$(RELEASE_CRASHRECOVERY_MODULE))
 
+# Add uprobestats build flag to soong
+$(call soong_config_set,ANDROID,release_uprobestats_module,$(RELEASE_UPROBESTATS_MODULE))
+# Add uprobestats file move flags to soong, for both platform and module
+ifeq (true,$(RELEASE_UPROBESTATS_FILE_MOVE))
+  $(call soong_config_set,ANDROID,uprobestats_files_in_module,true)
+  $(call soong_config_set,ANDROID,uprobestats_files_in_platform,false)
+else
+  $(call soong_config_set,ANDROID,uprobestats_files_in_module,false)
+  $(call soong_config_set,ANDROID,uprobestats_files_in_platform,true)
+endif
+
 # Enable Profiling module. Also used by platform_bootclasspath.
 $(call soong_config_set,ANDROID,release_package_profiling_module,$(RELEASE_PACKAGE_PROFILING_MODULE))
 $(call soong_config_set,bootclasspath,release_package_profiling_module,$(RELEASE_PACKAGE_PROFILING_MODULE))
@@ -187,3 +198,6 @@ endif
 
 # Add target_use_pan_display flag for hardware/libhardware:gralloc.default
 $(call soong_config_set_bool,gralloc,target_use_pan_display,$(if $(filter true,$(TARGET_USE_PAN_DISPLAY)),true,false))
+
+# Add use_camera_v4l2_hal flag for hardware/libhardware/modules/camera/3_4:camera.v4l2
+$(call soong_config_set_bool,camera,use_camera_v4l2_hal,$(if $(filter true,$(USE_CAMERA_V4L2_HAL)),true,false))

@@ -48,6 +48,7 @@ impl PackageTableNodeWrapper {
         let node = PackageTableNode {
             package_name: String::from(package.package_name),
             package_id: package.package_id,
+            fingerprint: package.fingerprint,
             boolean_start_index: package.boolean_start_index,
             next_offset: None,
         };
