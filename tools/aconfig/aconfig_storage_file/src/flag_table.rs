@@ -23,10 +23,11 @@ use crate::{
 };
 use crate::{AconfigStorageError, StorageFileType, StoredFlagType};
 use anyhow::anyhow;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// Flag table header struct
-#[derive(PartialEq)]
+#[derive(PartialEq, Serialize, Deserialize)]
 pub struct FlagTableHeader {
     pub version: u32,
     pub container: String,
@@ -95,7 +96,7 @@ impl FlagTableHeader {
 }
 
 /// Flag table node struct
-#[derive(PartialEq, Clone)]
+#[derive(PartialEq, Clone, Serialize, Deserialize)]
 pub struct FlagTableNode {
     pub package_id: u32,
     pub flag_name: String,
@@ -154,7 +155,7 @@ impl FlagTableNode {
     }
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Serialize, Deserialize)]
 pub struct FlagTable {
     pub header: FlagTableHeader,
     pub buckets: Vec<Option<u32>>,
@@ -252,7 +253,7 @@ mod tests {
         let bytes = &flag_table.into_bytes();
         let mut head = 0;
         let version = read_u32_from_bytes(bytes, &mut head).unwrap();
-        assert_eq!(version, 1);
+        assert_eq!(version, 2);
     }
 
     #[test]

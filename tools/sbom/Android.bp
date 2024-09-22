@@ -109,3 +109,17 @@ python_binary_host {
         "sbom_lib",
     ],
 }
+
+python_binary_host {
+    name: "gen_notice_xml",
+    srcs: [
+        "gen_notice_xml.py",
+    ],
+    version: {
+        py3: {
+            embedded_launcher: true,
+        },
+    },
+    libs: [
+    ],
+}

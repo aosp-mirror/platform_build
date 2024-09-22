@@ -200,9 +200,9 @@ mod aconfig_storage_rust_test {
 
     #[test]
     fn test_storage_version_query() {
-        assert_eq!(get_storage_file_version("./package.map").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./flag.map").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./flag.val").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./flag.info").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./package.map").unwrap(), 2);
+        assert_eq!(get_storage_file_version("./flag.map").unwrap(), 2);
+        assert_eq!(get_storage_file_version("./flag.val").unwrap(), 2);
+        assert_eq!(get_storage_file_version("./flag.info").unwrap(), 2);
     }
 }

@@ -1,0 +1,12 @@
+package: "com.android.aconfig.second_test"
+container: "system"
+
+flag {
+    name: "testing_flag"
+    namespace: "another_namespace"
+    description: "This is a flag for testing."
+    bug: "123"
+    metadata {
+        purpose: PURPOSE_UNSPECIFIED
+    }
+}
