@@ -80,16 +80,16 @@ class AconfigStorageTest : public ::testing::Test {
 TEST_F(AconfigStorageTest, test_storage_version_query) {
   auto version = api::get_storage_file_version(package_map);
   ASSERT_TRUE(version.ok());
-  ASSERT_EQ(*version, 2);
+  ASSERT_EQ(*version, 1);
   version = api::get_storage_file_version(flag_map);
   ASSERT_TRUE(version.ok());
-  ASSERT_EQ(*version, 2);
+  ASSERT_EQ(*version, 1);
   version = api::get_storage_file_version(flag_val);
   ASSERT_TRUE(version.ok());
-  ASSERT_EQ(*version, 2);
+  ASSERT_EQ(*version, 1);
   version = api::get_storage_file_version(flag_info);
   ASSERT_TRUE(version.ok());
-  ASSERT_EQ(*version, 2);
+  ASSERT_EQ(*version, 1);
 }
 
 /// Negative test to lock down the error when mapping none exist storage files
