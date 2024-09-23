@@ -55,6 +55,7 @@ class DaemonManager:
   def start(self):
     """Writes the pidfile and starts the daemon proces."""
     try:
+      self._stop_any_existing_instance()
       self._write_pid_to_pidfile()
       self._start_daemon_process()
     except Exception as e:
@@ -70,6 +71,22 @@ class DaemonManager:
       self._remove_pidfile()
     except Exception as e:
       logging.exception("Failed to stop daemon manager with error %s", e)
+
+  def _stop_any_existing_instance(self):
+    if not self.pid_file_path.exists():
+      logging.debug("No existing instances.")
+      return
+
+    ex_pid = self._read_pid_from_pidfile()
+
+    if ex_pid:
+      logging.info("Found another instance with pid %d.", ex_pid)
+      self._terminate_process(ex_pid)
+      self._remove_pidfile()
+
+  def _read_pid_from_pidfile(self):
+    with open(self.pid_file_path, "r") as f:
+      return int(f.read().strip())
 
   def _write_pid_to_pidfile(self):
     """Creates a pidfile and writes the current pid to the file.

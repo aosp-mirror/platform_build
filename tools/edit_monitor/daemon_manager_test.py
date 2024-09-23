@@ -33,7 +33,7 @@ TEST_PID_FILE_PATH = (
 )
 
 
-def example_daemon(output_file):
+def simple_daemon(output_file):
   with open(output_file, 'w') as f:
     f.write('running daemon target')
 
@@ -69,29 +69,62 @@ class DaemonManagerTest(unittest.TestCase):
     tempfile.tempdir = self.original_tempdir
     super().tearDown()
 
-  def test_start_success(self):
-    damone_output_file = tempfile.NamedTemporaryFile(
-        dir=self.working_dir.name, delete=False
+  def test_start_success_with_no_existing_instance(self):
+    self.assert_run_simple_daemon_success()
+
+  def test_start_success_with_existing_instance_running(self):
+    # Create a long running subprocess
+    p = multiprocessing.Process(target=long_running_daemon)
+    p.start()
+
+    # Create a pidfile with the subprocess pid
+    pid_file_path_dir = pathlib.Path(self.working_dir.name).joinpath(
+        'edit_monitor'
     )
-    dm = daemon_manager.DaemonManager(
-        TEST_BINARY_FILE,
-        daemon_target=example_daemon,
-        daemon_args=(damone_output_file.name,),
+    pid_file_path_dir.mkdir(parents=True, exist_ok=True)
+    with open(pid_file_path_dir.joinpath(TEST_PID_FILE_PATH), 'w') as f:
+      f.write(str(p.pid))
+
+    self.assert_run_simple_daemon_success()
+    p.terminate()
+
+  def test_start_success_with_existing_instance_already_dead(self):
+    # Create a pidfile with pid that does not exist.
+    pid_file_path_dir = pathlib.Path(self.working_dir.name).joinpath(
+        'edit_monitor'
     )
+    pid_file_path_dir.mkdir(parents=True, exist_ok=True)
+    with open(pid_file_path_dir.joinpath(TEST_PID_FILE_PATH), 'w') as f:
+      f.write('123456')
+
+    self.assert_run_simple_daemon_success()
+
+  def test_start_success_with_existing_instance_from_different_binary(self):
+    # First start an instance based on "some_binary_path"
+    existing_dm = daemon_manager.DaemonManager(
+        "some_binary_path",
+        daemon_target=long_running_daemon,
+    )
+    existing_dm.start()
+
+    self.assert_run_simple_daemon_success()
+    existing_dm.stop()
+
+  @mock.patch('os.kill')
+  def test_start_failed_to_kill_existing_instance(self, mock_kill):
+    mock_kill.side_effect = OSError('Unknown OSError')
+    pid_file_path_dir = pathlib.Path(self.working_dir.name).joinpath(
+        'edit_monitor'
+    )
+    pid_file_path_dir.mkdir(parents=True, exist_ok=True)
+    with open(pid_file_path_dir.joinpath(TEST_PID_FILE_PATH), 'w') as f:
+      f.write('123456')
+
+    dm = daemon_manager.DaemonManager(TEST_BINARY_FILE)
     dm.start()
-    dm.daemon_process.join()
 
-    # Verifies the expected pid file is created.
-    expected_pid_file_path = pathlib.Path(self.working_dir.name).joinpath(
-        'edit_monitor', TEST_PID_FILE_PATH
-    )
-    self.assertEqual(dm.pid_file_path, expected_pid_file_path)
-    self.assertTrue(expected_pid_file_path.exists())
-
-    # Verifies the daemon process is executed successfully.
-    with open(damone_output_file.name, 'r') as f:
-      contents = f.read()
-      self.assertEqual(contents, 'running daemon target')
+    # Verify no daemon process is started.
+    self.assertIsNone(dm.daemon_process)
 
   def test_start_failed_to_write_pidfile(self):
     pid_file_path_dir = pathlib.Path(self.working_dir.name).joinpath(
@@ -150,6 +183,29 @@ class DaemonManagerTest(unittest.TestCase):
 
     self.assert_no_subprocess_running()
     self.assertTrue(dm.pid_file_path.exists())
+
+  def assert_run_simple_daemon_success(self):
+    damone_output_file = tempfile.NamedTemporaryFile(
+        dir=self.working_dir.name, delete=False
+    )
+    dm = daemon_manager.DaemonManager(
+        TEST_BINARY_FILE,
+        daemon_target=simple_daemon,
+        daemon_args=(damone_output_file.name,),
+    )
+    dm.start()
+    dm.daemon_process.join()
+
+    # Verifies the expected pid file is created.
+    expected_pid_file_path = pathlib.Path(self.working_dir.name).joinpath(
+        'edit_monitor', TEST_PID_FILE_PATH
+    )
+    self.assertTrue(expected_pid_file_path.exists())
+
+    # Verify the daemon process is executed successfully.
+    with open(damone_output_file.name, 'r') as f:
+      contents = f.read()
+      self.assertEqual(contents, 'running daemon target')
 
   def assert_no_subprocess_running(self):
     child_pids = self._get_child_processes(os.getpid())
