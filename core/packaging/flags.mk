@@ -97,42 +97,54 @@ $(eval $(call generate-global-aconfig-flag-file, \
 # $(1): built aconfig flags storage package map file (out)
 # $(2): built aconfig flags storage flag map file (out)
 # $(3): built aconfig flags storage flag val file (out)
-# $(4): installed aconfig flags storage package map file (out)
-# $(5): installed aconfig flags storage flag map file (out)
-# $(6): installed aconfig flags storage flag value file (out)
-# $(7): input aconfig files for the partition (in)
-# $(8): partition name
+# $(4): built aconfig flags storage flag info file (out)
+# $(5): installed aconfig flags storage package map file (out)
+# $(6): installed aconfig flags storage flag map file (out)
+# $(7): installed aconfig flags storage flag value file (out)
+# $(8): installed aconfig flags storage flag info file (out)
+# $(9): input aconfig files for the partition (in)
+# $(10): partition name
 define generate-partition-aconfig-storage-file
 $(eval $(strip $(1)): PRIVATE_OUT := $(strip $(1)))
-$(eval $(strip $(1)): PRIVATE_IN := $(strip $(7)))
-$(strip $(1)): $(ACONFIG) $(strip $(7))
+$(eval $(strip $(1)): PRIVATE_IN := $(strip $(9)))
+$(strip $(1)): $(ACONFIG) $(strip $(9))
 	mkdir -p $$(dir $$(PRIVATE_OUT))
 	$$(if $$(PRIVATE_IN), \
-		$$(ACONFIG) create-storage --container $(8) --file package_map --out $$(PRIVATE_OUT) \
+		$$(ACONFIG) create-storage --container $(10) --file package_map --out $$(PRIVATE_OUT) \
 			$$(addprefix --cache ,$$(PRIVATE_IN)), \
 	)
 	touch $$(PRIVATE_OUT)
 $(eval $(strip $(2)): PRIVATE_OUT := $(strip $(2)))
-$(eval $(strip $(2)): PRIVATE_IN := $(strip $(7)))
-$(strip $(2)): $(ACONFIG) $(strip $(7))
+$(eval $(strip $(2)): PRIVATE_IN := $(strip $(9)))
+$(strip $(2)): $(ACONFIG) $(strip $(9))
 	mkdir -p $$(dir $$(PRIVATE_OUT))
 	$$(if $$(PRIVATE_IN), \
-		$$(ACONFIG) create-storage --container $(8) --file flag_map --out $$(PRIVATE_OUT) \
+		$$(ACONFIG) create-storage --container $(10) --file flag_map --out $$(PRIVATE_OUT) \
 			$$(addprefix --cache ,$$(PRIVATE_IN)), \
 	)
 	touch $$(PRIVATE_OUT)
 $(eval $(strip $(3)): PRIVATE_OUT := $(strip $(3)))
-$(eval $(strip $(3)): PRIVATE_IN := $(strip $(7)))
-$(strip $(3)): $(ACONFIG) $(strip $(7))
+$(eval $(strip $(3)): PRIVATE_IN := $(strip $(9)))
+$(strip $(3)): $(ACONFIG) $(strip $(9))
 	mkdir -p $$(dir $$(PRIVATE_OUT))
 	$$(if $$(PRIVATE_IN), \
-		$$(ACONFIG) create-storage --container $(8) --file flag_val --out $$(PRIVATE_OUT) \
+		$$(ACONFIG) create-storage --container $(10) --file flag_val --out $$(PRIVATE_OUT) \
 		$$(addprefix --cache ,$$(PRIVATE_IN)), \
 	)
 	touch $$(PRIVATE_OUT)
-$(call copy-one-file, $(strip $(1)), $(4))
-$(call copy-one-file, $(strip $(2)), $(5))
-$(call copy-one-file, $(strip $(3)), $(6))
+$(eval $(strip $(4)): PRIVATE_OUT := $(strip $(4)))
+$(eval $(strip $(4)): PRIVATE_IN := $(strip $(9)))
+$(strip $(4)): $(ACONFIG) $(strip $(9))
+	mkdir -p $$(dir $$(PRIVATE_OUT))
+	$$(if $$(PRIVATE_IN), \
+		$$(ACONFIG) create-storage --container $(10) --file flag_info --out $$(PRIVATE_OUT) \
+		$$(addprefix --cache ,$$(PRIVATE_IN)), \
+	)
+	touch $$(PRIVATE_OUT)
+$(call copy-one-file, $(strip $(1)), $(5))
+$(call copy-one-file, $(strip $(2)), $(6))
+$(call copy-one-file, $(strip $(3)), $(7))
+$(call copy-one-file, $(strip $(4)), $(8))
 endef
 
 ifeq ($(RELEASE_CREATE_ACONFIG_STORAGE_FILE),true)
@@ -140,13 +152,16 @@ $(foreach partition, $(_FLAG_PARTITIONS), \
 	$(eval aconfig_storage_package_map.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/aconfig/package.map) \
 	$(eval aconfig_storage_flag_map.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/aconfig/flag.map) \
 	$(eval aconfig_storage_flag_val.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/aconfig/flag.val) \
+	$(eval aconfig_storage_flag_info.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/aconfig/flag.info) \
 	$(eval $(call generate-partition-aconfig-storage-file, \
 				$(TARGET_OUT_FLAGS)/$(partition)/package.map, \
 				$(TARGET_OUT_FLAGS)/$(partition)/flag.map, \
 				$(TARGET_OUT_FLAGS)/$(partition)/flag.val, \
+				$(TARGET_OUT_FLAGS)/$(partition)/flag.info, \
 				$(aconfig_storage_package_map.$(partition)), \
 				$(aconfig_storage_flag_map.$(partition)), \
 				$(aconfig_storage_flag_val.$(partition)), \
+				$(aconfig_storage_flag_info.$(partition)), \
 				$(aconfig_flag_summaries_protobuf.$(partition)), \
 				$(partition), \
 	)) \
@@ -162,6 +177,7 @@ required_flags_files := \
 			$(aconfig_storage_package_map.$(partition)) \
 			$(aconfig_storage_flag_map.$(partition)) \
 			$(aconfig_storage_flag_val.$(partition)) \
+			$(aconfig_storage_flag_info.$(partition)) \
 		))
 
 ALL_DEFAULT_INSTALLED_MODULES += $(required_flags_files)
@@ -181,4 +197,5 @@ $(foreach partition, $(_FLAG_PARTITIONS), \
 	$(eval aconfig_storage_package_map.$(partition):=) \
 	$(eval aconfig_storage_flag_map.$(partition):=) \
 	$(eval aconfig_storage_flag_val.$(partition):=) \
+	$(eval aconfig_storage_flag_info.$(partition):=) \
 )
