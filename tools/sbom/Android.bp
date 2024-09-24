@@ -33,6 +33,13 @@ python_binary_host {
     ],
 }
 
+python_library_host {
+    name: "compliance_metadata",
+    srcs: [
+        "compliance_metadata.py",
+    ],
+}
+
 python_binary_host {
     name: "gen_sbom",
     srcs: [
@@ -44,6 +51,7 @@ python_binary_host {
         },
     },
     libs: [
+        "compliance_metadata",
         "metadata_file_proto_py",
         "libprotobuf-python",
         "sbom_lib",
