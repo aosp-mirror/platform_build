@@ -35,12 +35,18 @@ public class PackageTable {
     }
 
     public Node get(String packageName) {
-
         int numBuckets = (mHeader.mNodeOffset - mHeader.mBucketOffset) / 4;
         int bucketIndex = TableUtils.getBucketIndex(packageName.getBytes(UTF_8), numBuckets);
-
-        mReader.position(mHeader.mBucketOffset + bucketIndex * 4);
+        int newPosition = mHeader.mBucketOffset + bucketIndex * 4;
+        if (newPosition >= mHeader.mNodeOffset) {
+            return null;
+        }
+        mReader.position(newPosition);
         int nodeIndex = mReader.readInt();
+
+        if (nodeIndex < mHeader.mNodeOffset || nodeIndex >= mHeader.mFileSize) {
+            return null;
+        }
 
         while (nodeIndex != -1) {
             mReader.position(nodeIndex);
@@ -51,7 +57,7 @@ public class PackageTable {
             nodeIndex = node.mNextOffset;
         }
 
-        throw new AconfigStorageException("get cannot find package: " + packageName);
+        return null;
     }
 
     public Header getHeader() {
