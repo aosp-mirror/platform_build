@@ -253,7 +253,7 @@ mod tests {
         let bytes = &flag_table.into_bytes();
         let mut head = 0;
         let version = read_u32_from_bytes(bytes, &mut head).unwrap();
-        assert_eq!(version, 2);
+        assert_eq!(version, 1);
     }
 
     #[test]
