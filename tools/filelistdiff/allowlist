@@ -41,6 +41,7 @@ bin/uprobestats
 etc/aconfig/flag.map
 etc/aconfig/flag.val
 etc/aconfig/package.map
+etc/aconfig/flag.info
 etc/bpf/uprobestats/BitmapAllocation.o
 etc/bpf/uprobestats/GenericInstrumentation.o
 etc/bpf/uprobestats/ProcessManagement.o
