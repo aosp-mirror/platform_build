@@ -4,12 +4,7 @@ framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.
 framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.odex.fsv_meta
 framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.vdex
 framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.vdex.fsv_meta
-lib/libcups.so
-lib/libjni_deviceAsWebcam.so
-lib/libprintspooler_jni.so
 lib/libvendorsupport.so
-lib/libwfds.so
-lib/libyuv.so
 
 # b/351258461
 init.environ.rc
