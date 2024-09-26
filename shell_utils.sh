@@ -109,16 +109,11 @@ function setup_cog_symlink() {
 
   local link_destination="${HOME}/.cog/android-build-out"
 
-  # if there's a local out/ dir, prompt the user to remove it.
-  # fail out if they say no.
-  local answer
+  # remove existing out/ dir if it exists
   if [[ -d "$out_dir" ]]; then
-    echo "Detected existing out/ directory in the Cog workspace which is not supported. Can we repair your workspace by removing it and creating the symlink to ~/.cog/android-build-out instead? (y/N): "
-    read -r answer
-    if [[ $answer =~ ^[Yy]$ ]]; then
-      rm -rf "$out_dir"
-    else
-      echo "Exiting due to unsupported out/ directory."
+    echo "Detected existing out/ directory in the Cog workspace which is not supported. Repairing workspace by removing it and creating the symlink to ~/.cog/android-build-out"
+    if ! rm -rf "$out_dir"; then
+      echo "Failed to remove existing out/ directory: $out_dir" >&2
       kill -INT $$ # exits the script without exiting the user's shell
     fi
   fi
