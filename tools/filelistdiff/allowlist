@@ -6,7 +6,7 @@ framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.
 framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.vdex.fsv_meta
 lib/libvendorsupport.so
 
-# b/351258461
+# b/353429422
 init.environ.rc
 
 # Known diffs only in the Soong system image
