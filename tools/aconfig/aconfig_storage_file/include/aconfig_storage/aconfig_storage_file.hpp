@@ -32,6 +32,7 @@ struct FlagValueAndInfoSummary {
   bool is_readwrite;
   bool has_server_override;
   bool has_local_override;
+  bool has_boot_local_override;
 };
 
 /// List all flag values with their flag info
