@@ -12,6 +12,3 @@ init.environ.rc
 # Known diffs only in the Soong system image
 lib/libhidcommand_jni.so
 lib/libuinputcommand_jni.so
-
-# Known diffs in internal source
-etc/aconfig/flag.info
