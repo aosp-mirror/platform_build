@@ -1899,7 +1899,6 @@ $(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/make-metadata.csv:
 	  $(eval _kernel_module_copy_files := $(sort $(filter %$(_path_on_device),$(KERNEL_MODULE_COPY_FILES)))) \
 	  $(eval _is_build_prop := $(call is-build-prop,$f)) \
 	  $(eval _is_notice_file := $(call is-notice-file,$f)) \
-	  $(eval _is_dexpreopt_image_profile := $(if $(filter %:/$(_path_on_device),$(DEXPREOPT_IMAGE_PROFILE_BUILT_INSTALLED)),Y)) \
 	  $(eval _is_product_system_other_avbkey := $(if $(findstring $f,$(INSTALLED_PRODUCT_SYSTEM_OTHER_AVBKEY_TARGET)),Y)) \
 	  $(eval _is_event_log_tags_file := $(if $(findstring $f,$(event_log_tags_file)),Y)) \
 	  $(eval _is_system_other_odex_marker := $(if $(findstring $f,$(INSTALLED_SYSTEM_OTHER_ODEX_MARKER)),Y)) \
@@ -1909,7 +1908,7 @@ $(SOONG_OUT_DIR)/compliance-metadata/$(TARGET_PRODUCT)/make-metadata.csv:
 	  $(eval _is_partition_compat_symlink := $(if $(findstring $f,$(PARTITION_COMPAT_SYMLINKS)),Y)) \
 	  $(eval _is_flags_file := $(if $(findstring $f, $(ALL_FLAGS_FILES)),Y)) \
 	  $(eval _is_rootdir_symlink := $(if $(findstring $f, $(ALL_ROOTDIR_SYMLINKS)),Y)) \
-	  $(eval _is_platform_generated := $(_is_build_prop)$(_is_notice_file)$(_is_dexpreopt_image_profile)$(_is_product_system_other_avbkey)$(_is_event_log_tags_file)$(_is_system_other_odex_marker)$(_is_kernel_modules_blocklist)$(_is_fsverity_build_manifest_apk)$(_is_linker_config)$(_is_partition_compat_symlink)$(_is_flags_file)$(_is_rootdir_symlink)) \
+	  $(eval _is_platform_generated := $(_is_build_prop)$(_is_notice_file)$(_is_product_system_other_avbkey)$(_is_event_log_tags_file)$(_is_system_other_odex_marker)$(_is_kernel_modules_blocklist)$(_is_fsverity_build_manifest_apk)$(_is_linker_config)$(_is_partition_compat_symlink)$(_is_flags_file)$(_is_rootdir_symlink)) \
 	  $(eval _static_libs := $(if $(_is_soong_module),,$(ALL_INSTALLED_FILES.$f.STATIC_LIBRARIES))) \
 	  $(eval _whole_static_libs := $(if $(_is_soong_module),,$(ALL_INSTALLED_FILES.$f.WHOLE_STATIC_LIBRARIES))) \
 	  $(eval _license_text := $(if $(filter $(_build_output_path),$(ALL_NON_MODULES)),$(ALL_NON_MODULES.$(_build_output_path).NOTICES))) \
