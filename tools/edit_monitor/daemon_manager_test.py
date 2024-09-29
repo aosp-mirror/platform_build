@@ -43,6 +43,25 @@ def long_running_daemon():
     time.sleep(1)
 
 
+def memory_consume_daemon_target(size_mb):
+  try:
+    size_bytes = size_mb * 1024 * 1024
+    dummy_data = bytearray(size_bytes)
+    time.sleep(10)
+  except MemoryError:
+    print(f'Process failed to allocate {size_mb} MB of memory.')
+
+
+def cpu_consume_daemon_target(target_usage_percent):
+  while True:
+    start_time = time.time()
+    while time.time() - start_time < target_usage_percent / 100:
+      pass  # Busy loop to consume CPU
+
+    # Sleep to reduce CPU usage
+    time.sleep(1 - target_usage_percent / 100)
+
+
 class DaemonManagerTest(unittest.TestCase):
 
   @classmethod
@@ -102,7 +121,7 @@ class DaemonManagerTest(unittest.TestCase):
   def test_start_success_with_existing_instance_from_different_binary(self):
     # First start an instance based on "some_binary_path"
     existing_dm = daemon_manager.DaemonManager(
-        "some_binary_path",
+        'some_binary_path',
         daemon_target=long_running_daemon,
     )
     existing_dm.start()
@@ -149,6 +168,35 @@ class DaemonManagerTest(unittest.TestCase):
     # Verifies no daemon process is started.
     self.assertIsNone(dm.daemon_process)
 
+  def test_monitor_daemon_subprocess_killed_high_memory_usage(self):
+    dm = daemon_manager.DaemonManager(
+        TEST_BINARY_FILE,
+        daemon_target=memory_consume_daemon_target,
+        daemon_args=(2,),
+    )
+    dm.start()
+    dm.monitor_daemon(interval=1, memory_threshold=2)
+
+    self.assertTrue(dm.max_memory_usage >= 2)
+    self.assert_no_subprocess_running()
+
+  def test_monitor_daemon_subprocess_killed_high_cpu_usage(self):
+    dm = daemon_manager.DaemonManager(
+        TEST_BINARY_FILE,
+        daemon_target=cpu_consume_daemon_target,
+        daemon_args=(20,),
+    )
+    dm.start()
+    dm.monitor_daemon(interval=1, cpu_threshold=20)
+
+    self.assertTrue(dm.max_cpu_usage >= 20)
+    self.assert_no_subprocess_running()
+
+  @mock.patch('subprocess.check_output')
+  def test_monitor_daemon_failed_does_not_matter(self, mock_output):
+    mock_output.side_effect = OSError('Unknown OSError')
+    self.assert_run_simple_daemon_success()
+
   def test_stop_success(self):
     dm = daemon_manager.DaemonManager(
         TEST_BINARY_FILE, daemon_target=long_running_daemon
@@ -194,7 +242,7 @@ class DaemonManagerTest(unittest.TestCase):
         daemon_args=(damone_output_file.name,),
     )
     dm.start()
-    dm.daemon_process.join()
+    dm.monitor_daemon(interval=1)
 
     # Verifies the expected pid file is created.
     expected_pid_file_path = pathlib.Path(self.working_dir.name).joinpath(
