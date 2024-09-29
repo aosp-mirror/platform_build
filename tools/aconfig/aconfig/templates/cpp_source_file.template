@@ -2,7 +2,7 @@
 
 {{ if allow_instrumentation }}
 {{ if readwrite- }}
-#include <sys/stat.h>
+#include <unistd.h>
 #include "aconfig_storage/aconfig_storage_read_api.hpp"
 #include <android/log.h>
 #define LOG_TAG "aconfig_cpp_codegen"
@@ -78,8 +78,7 @@ namespace {cpp_namespace} \{
             , flag_value_file_(nullptr)
             , read_from_new_storage_(false) \{
 
-            struct stat buffer;
-            if (stat("/metadata/aconfig/boot/enable_only_new_storage", &buffer) == 0) \{
+            if (access("/metadata/aconfig/boot/enable_only_new_storage", F_OK) == 0) \{
                read_from_new_storage_ = true;
             }
 
