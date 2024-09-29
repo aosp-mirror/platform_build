@@ -19,3 +19,26 @@ package {
     default_applicable_licenses: ["Android-Apache-2.0"],
     default_team: "trendy_team_adte",
 }
+
+python_library_host {
+    name: "edit_monitor_lib",
+    pkg_path: "edit_monitor",
+    srcs: [
+        "daemon_manager.py",
+    ],
+}
+
+python_test_host {
+    name: "daemon_manager_test",
+    main: "daemon_manager_test.py",
+    pkg_path: "edit_monitor",
+    srcs: [
+        "daemon_manager_test.py",
+    ],
+    libs: [
+        "edit_monitor_lib",
+    ],
+    test_options: {
+        unit_test: true,
+    },
+}

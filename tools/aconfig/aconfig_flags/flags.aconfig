@@ -7,3 +7,10 @@ flag {
   bug: "312235596"
   description: "When enabled, aconfig flags are read from the new aconfig storage only."
 }
+
+flag {
+  name: "enable_aconfigd_from_mainline"
+  namespace: "core_experiments_team_internal"
+  bug: "369808805"
+  description: "When enabled, launch aconfigd from config infra module."
+}
