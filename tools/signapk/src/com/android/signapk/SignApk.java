@@ -302,7 +302,6 @@ class SignApk {
             final KeyStore keyStore, final String keyName)
             throws CertificateException, KeyStoreException, NoSuchAlgorithmException,
                     UnrecoverableKeyException, UnrecoverableEntryException {
-        final Key key = keyStore.getKey(keyName, readPassword(keyName));
         final PrivateKeyEntry privateKeyEntry = (PrivateKeyEntry) keyStore.getEntry(keyName, null);
         if (privateKeyEntry == null) {
         throw new Error(
