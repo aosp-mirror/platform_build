@@ -795,6 +795,7 @@ android_system_image {
                 "libui", // base_system
                 "libusbhost", // base_system
                 "libutils", // base_system
+                "libvendorsupport", // llndk library
                 "libvintf_jni", // base_system
                 "libvulkan", // base_system
                 "libwebviewchromium_loader", // media_system
