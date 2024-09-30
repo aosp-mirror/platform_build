@@ -577,6 +577,7 @@ android_system_image {
                 "ContactsProvider", // base_system
                 "CredentialManager", // handheld_system
                 "DeviceAsWebcam", // handheld_system
+                "DeviceDiagnostics", // handheld_system - internal
                 "DocumentsUI", // handheld_system
                 "DownloadProvider", // base_system
                 "DownloadProviderUi", // handheld_system
@@ -693,6 +694,7 @@ android_system_image {
                 "android.system.virtualizationservice-ndk",
                 "libgsi",
                 "servicemanager",
+                "uprobestats", // base_system - internal
             ],
         },
         both: {
@@ -765,6 +767,7 @@ android_system_image {
                 "libmedia_jni", // base_system
                 "libmediandk", // base_system
                 "libminui", // generic_system
+                "libmonkey_jni", // base_system - internal
                 "libmtp", // base_system
                 "libnetd_client", // base_system
                 "libnetlink", // base_system
@@ -793,6 +796,7 @@ android_system_image {
                 "libstdc++", // base_system
                 "libsysutils", // base_system
                 "libui", // base_system
+                "libuprobestats_client", // base_system - internal
                 "libusbhost", // base_system
                 "libutils", // base_system
                 "libvintf_jni", // base_system
