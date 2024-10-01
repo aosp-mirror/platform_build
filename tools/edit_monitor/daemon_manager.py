@@ -20,11 +20,16 @@ import os
 import pathlib
 import signal
 import subprocess
+import sys
 import tempfile
 import time
 
 
 DEFAULT_PROCESS_TERMINATION_TIMEOUT_SECONDS = 1
+DEFAULT_MONITOR_INTERVAL_SECONDS = 5
+DEFAULT_MEMORY_USAGE_THRESHOLD = 2000
+DEFAULT_CPU_USAGE_THRESHOLD = 200
+DEFAULT_REBOOT_TIMEOUT_SECONDS = 60 * 60 * 24
 
 
 def default_daemon_target():
@@ -48,6 +53,9 @@ class DaemonManager:
     self.pid = os.getpid()
     self.daemon_process = None
 
+    self.max_memory_usage = 0
+    self.max_cpu_usage = 0
+
     pid_file_dir = pathlib.Path(tempfile.gettempdir()).joinpath("edit_monitor")
     pid_file_dir.mkdir(parents=True, exist_ok=True)
     self.pid_file_path = self._get_pid_file_path(pid_file_dir)
@@ -61,6 +69,53 @@ class DaemonManager:
     except Exception as e:
       logging.exception("Failed to start daemon manager with error %s", e)
 
+  def monitor_daemon(
+      self,
+      interval: int = DEFAULT_MONITOR_INTERVAL_SECONDS,
+      memory_threshold: float = DEFAULT_MEMORY_USAGE_THRESHOLD,
+      cpu_threshold: float = DEFAULT_CPU_USAGE_THRESHOLD,
+      reboot_timeout: int = DEFAULT_REBOOT_TIMEOUT_SECONDS,
+  ):
+    """Monits the daemon process status.
+
+    Periodically check the CPU/Memory usage of the daemon process as long as the
+    process is still running and kill the process if the resource usage is above
+    given thresholds.
+    """
+    logging.info("start monitoring daemon process %d.", self.daemon_process.pid)
+    reboot_time = time.time() + reboot_timeout
+    while self.daemon_process.is_alive():
+      if time.time() > reboot_time:
+        self.reboot()
+      try:
+        memory_usage = self._get_process_memory_percent(self.daemon_process.pid)
+        self.max_memory_usage = max(self.max_memory_usage, memory_usage)
+
+        cpu_usage = self._get_process_cpu_percent(self.daemon_process.pid)
+        self.max_cpu_usage = max(self.max_cpu_usage, cpu_usage)
+
+        time.sleep(interval)
+      except Exception as e:
+        # Logging the error and continue.
+        logging.warning("Failed to monitor daemon process with error: %s", e)
+
+      if (
+          self.max_memory_usage >= memory_threshold
+          or self.max_cpu_usage >= cpu_threshold
+      ):
+        logging.error(
+            "Daemon process is consuming too much resource, killing..."
+        ),
+        self._terminate_process(self.daemon_process.pid)
+
+    logging.info(
+        "Daemon process %d terminated. Max memory usage: %f, Max cpu"
+        " usage: %f.",
+        self.daemon_process.pid,
+        self.max_memory_usage,
+        self.max_cpu_usage,
+    )
+
   def stop(self):
     """Stops the daemon process and removes the pidfile."""
 
@@ -69,8 +124,31 @@ class DaemonManager:
       if self.daemon_process and self.daemon_process.is_alive():
         self._terminate_process(self.daemon_process.pid)
       self._remove_pidfile()
+      logging.debug("Successfully stopped daemon manager.")
     except Exception as e:
       logging.exception("Failed to stop daemon manager with error %s", e)
+
+  def reboot(self):
+    """Reboots the current process.
+
+    Stops the current daemon manager and reboots the entire process based on
+    the binary file. Exits directly If the binary file no longer exists.
+    """
+    logging.debug("Rebooting process based on binary %s.", self.binary_path)
+
+    # Stop the current daemon manager first.
+    self.stop()
+
+    # If the binary no longer exists, exit directly.
+    if not os.path.exists(self.binary_path):
+      logging.info("binary %s no longer exists, exiting.", self.binary_path)
+      sys.exit(0)
+
+    try:
+      os.execv(self.binary_path, sys.argv)
+    except OSError as e:
+      logging.exception("Failed to reboot process with error: %s.", e)
+      sys.exit(1)  # Indicate an error occurred
 
   def _stop_any_existing_instance(self):
     if not self.pid_file_path.exists():
@@ -180,3 +258,45 @@ class DaemonManager:
     logging.info("pid_file_path: %s", pid_file_path)
 
     return pid_file_path
+
+  def _get_process_memory_percent(self, pid: int) -> float:
+    try:
+      with open(f"/proc/{pid}/stat", "r") as f:
+        stat_data = f.readline().split()
+        # RSS is the 24th field in /proc/[pid]/stat
+        rss_pages = int(stat_data[23])
+        return rss_pages * 4 / 1024  # Covert to MB
+    except (FileNotFoundError, IndexError, ValueError, IOError) as e:
+      logging.exception("Failed to get memory usage.")
+      raise e
+
+  def _get_process_cpu_percent(self, pid: int, interval: int = 1) -> float:
+    try:
+      total_start_time = self._get_total_cpu_time(pid)
+      with open("/proc/uptime", "r") as f:
+        uptime_start = float(f.readline().split()[0])
+
+      time.sleep(interval)
+
+      total_end_time = self._get_total_cpu_time(pid)
+      with open("/proc/uptime", "r") as f:
+        uptime_end = float(f.readline().split()[0])
+
+      return (
+          (total_end_time - total_start_time)
+          / (uptime_end - uptime_start)
+          * 100
+      )
+    except (FileNotFoundError, IndexError, ValueError, IOError) as e:
+      logging.exception("Failed to get CPU usage.")
+      raise e
+
+  def _get_total_cpu_time(self, pid: int) -> float:
+    with open(f"/proc/{str(pid)}/stat", "r") as f:
+      stats = f.readline().split()
+      # utime is the 14th field in /proc/[pid]/stat measured in clock ticks.
+      utime = int(stats[13])
+      # stime is the 15th field in /proc/[pid]/stat measured in clock ticks.
+      stime = int(stats[14])
+      return (utime + stime) / os.sysconf(os.sysconf_names["SC_CLK_TCK"])
+
