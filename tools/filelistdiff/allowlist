@@ -9,7 +9,3 @@ framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.
 init.environ.rc
 # b/338342381
 etc/NOTICE.xml.gz
-
-# Known diffs only in the Soong system image
-lib/libhidcommand_jni.so
-lib/libuinputcommand_jni.so

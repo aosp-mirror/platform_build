@@ -330,17 +330,19 @@ ifneq ($(call module-in-vendor-or-product),)
   ifneq ($(LOCAL_IN_VENDOR),)
     # Vendor modules have LOCAL_IN_VENDOR
     my_cflags += -D__ANDROID_VENDOR__
-
-    ifeq ($(BOARD_API_LEVEL),)
-      # TODO(b/314036847): This is a fallback for UDC targets.
-      # This must be a build failure when UDC is no longer built from this source tree.
-      my_cflags += -D__ANDROID_VENDOR_API__=$(PLATFORM_SDK_VERSION)
-    else
-      my_cflags += -D__ANDROID_VENDOR_API__=$(BOARD_API_LEVEL)
-    endif
   else ifneq ($(LOCAL_IN_PRODUCT),)
     # Product modules have LOCAL_IN_PRODUCT
     my_cflags += -D__ANDROID_PRODUCT__
+  endif
+
+  # Define __ANDROID_VENDOR_API__ for both product and vendor variants because
+  # they both use the same LLNDK libraries.
+  ifeq ($(BOARD_API_LEVEL),)
+    # TODO(b/314036847): This is a fallback for UDC targets.
+    # This must be a build failure when UDC is no longer built from this source tree.
+    my_cflags += -D__ANDROID_VENDOR_API__=$(PLATFORM_SDK_VERSION)
+  else
+    my_cflags += -D__ANDROID_VENDOR_API__=$(BOARD_API_LEVEL)
   endif
 endif
 
