@@ -34,23 +34,24 @@ def find_unique_items(kati_installed_files, soong_installed_files, allowlist, sy
     unique_in_soong = set(filter(is_unknown_diff, soong_files - kati_files))
 
     if unique_in_kati:
-        print(f'{COLOR_ERROR}Please add following modules into system image module {system_module_name}.{COLOR_NORMAL}')
-        print(f'{COLOR_WARNING}KATI only module(s):{COLOR_NORMAL}')
+        print('')
+        print(f'{COLOR_ERROR}Missing required modules in {system_module_name} module.{COLOR_NORMAL}')
+        print(f'To resolve this issue, please add the modules to the Android.bp file for the {system_module_name} to install the following KATI only installed files.')
+        print(f'You can find the correct Android.bp file using the command "gomod {system_module_name}".')
+        print(f'{COLOR_WARNING}KATI only installed file(s):{COLOR_NORMAL}')
         for item in sorted(unique_in_kati):
-            print(item)
+            print('  '+item)
 
     if unique_in_soong:
-        if unique_in_kati:
-            print('')
-
-        print(f'{COLOR_ERROR}Please add following modules into build/make/target/product/base_system.mk.{COLOR_NORMAL}')
-        print(f'{COLOR_WARNING}Soong only module(s):{COLOR_NORMAL}')
+        print('')
+        print(f'{COLOR_ERROR}Missing packages in base_system.mk.{COLOR_NORMAL}')
+        print('Please add packages into build/make/target/product/base_system.mk or build/make/tools/filelistdiff/allowlist to install or skip the following Soong only installed files.')
+        print(f'{COLOR_WARNING}Soong only installed file(s):{COLOR_NORMAL}')
         for item in sorted(unique_in_soong):
-            print(item)
+            print('  '+item)
 
     if unique_in_kati or unique_in_soong:
         print('')
-        print(f'{COLOR_ERROR}FAILED: System image from KATI and SOONG differs from installed file list.{COLOR_NORMAL}')
         sys.exit(1)
 
 
