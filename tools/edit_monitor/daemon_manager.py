@@ -20,6 +20,7 @@ import os
 import pathlib
 import signal
 import subprocess
+import sys
 import tempfile
 import time
 
@@ -27,7 +28,8 @@ import time
 DEFAULT_PROCESS_TERMINATION_TIMEOUT_SECONDS = 1
 DEFAULT_MONITOR_INTERVAL_SECONDS = 5
 DEFAULT_MEMORY_USAGE_THRESHOLD = 2000
-DEFAULT_CPU_USAGE_THRESHOLD = 10
+DEFAULT_CPU_USAGE_THRESHOLD = 200
+DEFAULT_REBOOT_TIMEOUT_SECONDS = 60 * 60 * 24
 
 
 def default_daemon_target():
@@ -72,6 +74,7 @@ class DaemonManager:
       interval: int = DEFAULT_MONITOR_INTERVAL_SECONDS,
       memory_threshold: float = DEFAULT_MEMORY_USAGE_THRESHOLD,
       cpu_threshold: float = DEFAULT_CPU_USAGE_THRESHOLD,
+      reboot_timeout: int = DEFAULT_REBOOT_TIMEOUT_SECONDS,
   ):
     """Monits the daemon process status.
 
@@ -80,8 +83,10 @@ class DaemonManager:
     given thresholds.
     """
     logging.info("start monitoring daemon process %d.", self.daemon_process.pid)
-
+    reboot_time = time.time() + reboot_timeout
     while self.daemon_process.is_alive():
+      if time.time() > reboot_time:
+        self.reboot()
       try:
         memory_usage = self._get_process_memory_percent(self.daemon_process.pid)
         self.max_memory_usage = max(self.max_memory_usage, memory_usage)
@@ -119,8 +124,31 @@ class DaemonManager:
       if self.daemon_process and self.daemon_process.is_alive():
         self._terminate_process(self.daemon_process.pid)
       self._remove_pidfile()
+      logging.debug("Successfully stopped daemon manager.")
     except Exception as e:
       logging.exception("Failed to stop daemon manager with error %s", e)
+
+  def reboot(self):
+    """Reboots the current process.
+
+    Stops the current daemon manager and reboots the entire process based on
+    the binary file. Exits directly If the binary file no longer exists.
+    """
+    logging.debug("Rebooting process based on binary %s.", self.binary_path)
+
+    # Stop the current daemon manager first.
+    self.stop()
+
+    # If the binary no longer exists, exit directly.
+    if not os.path.exists(self.binary_path):
+      logging.info("binary %s no longer exists, exiting.", self.binary_path)
+      sys.exit(0)
+
+    try:
+      os.execv(self.binary_path, sys.argv)
+    except OSError as e:
+      logging.exception("Failed to reboot process with error: %s.", e)
+      sys.exit(1)  # Indicate an error occurred
 
   def _stop_any_existing_instance(self):
     if not self.pid_file_path.exists():
