@@ -209,3 +209,12 @@ $(call soong_config_set_bool,camera,use_camera_v4l2_hal,$(if $(filter true,$(USE
 ifneq ($(strip $(AUDIOSERVER_MULTILIB)),)
   $(call soong_config_set,soundtrigger,audioserver_multilib,$(AUDIOSERVER_MULTILIB))
 endif
+
+# Add sim_count, disable_rild_oem_hook, and use_aosp_rild flag for ril related modules
+$(call soong_config_set,ril,sim_count,$(SIM_COUNT))
+ifneq ($(DISABLE_RILD_OEM_HOOK), false)
+  $(call soong_config_set_bool,ril,disable_rild_oem_hook,true)
+endif
+ifneq ($(ENABLE_VENDOR_RIL_SERVICE), true)
+  $(call soong_config_set_bool,ril,use_aosp_rild,true)
+endif
