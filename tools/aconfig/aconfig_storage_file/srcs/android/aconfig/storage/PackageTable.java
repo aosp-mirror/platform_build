@@ -50,7 +50,7 @@ public class PackageTable {
 
         while (nodeIndex != -1) {
             mReader.position(nodeIndex);
-            Node node = Node.fromBytes(mReader);
+            Node node = Node.fromBytes(mReader, mHeader.mVersion);
             if (Objects.equals(packageName, node.mPackageName)) {
                 return node;
             }
@@ -74,7 +74,7 @@ public class PackageTable {
         private int mBucketOffset;
         private int mNodeOffset;
 
-        public static Header fromBytes(ByteBufferReader reader) {
+        private static Header fromBytes(ByteBufferReader reader) {
             Header header = new Header();
             header.mVersion = reader.readInt();
             header.mContainer = reader.readString();
@@ -127,7 +127,29 @@ public class PackageTable {
         private int mBooleanStartIndex;
         private int mNextOffset;
 
-        public static Node fromBytes(ByteBufferReader reader) {
+        private static Node fromBytes(ByteBufferReader reader, int version) {
+            switch (version) {
+                case 1:
+                    return fromBytesV1(reader);
+                case 2:
+                    return fromBytesV2(reader);
+                default:
+                    // Do we want to throw here?
+                    return new Node();
+            }
+        }
+
+        private static Node fromBytesV1(ByteBufferReader reader) {
+            Node node = new Node();
+            node.mPackageName = reader.readString();
+            node.mPackageId = reader.readInt();
+            node.mBooleanStartIndex = reader.readInt();
+            node.mNextOffset = reader.readInt();
+            node.mNextOffset = node.mNextOffset == 0 ? -1 : node.mNextOffset;
+            return node;
+        }
+
+        private static Node fromBytesV2(ByteBufferReader reader) {
             Node node = new Node();
             node.mPackageName = reader.readString();
             node.mPackageId = reader.readInt();
