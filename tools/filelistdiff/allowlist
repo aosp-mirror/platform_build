@@ -1,49 +1,11 @@
 # Known diffs only in the KATI system image
-etc/NOTICE.xml.gz
 framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.odex
 framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.odex.fsv_meta
 framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.vdex
 framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.vdex.fsv_meta
-lib/aaudio-aidl-cpp.so
-lib/android.hardware.biometrics.fingerprint@2.1.so
-lib/android.hardware.radio.config@1.0.so
-lib/android.hardware.radio.deprecated@1.0.so
-lib/android.hardware.radio@1.0.so
-lib/android.hardware.radio@1.1.so
-lib/android.hardware.radio@1.2.so
-lib/android.hardware.radio@1.3.so
-lib/android.hardware.radio@1.4.so
-lib/android.hardware.secure_element@1.0.so
-lib/com.android.media.aaudio-aconfig-cc.so
-lib/heapprofd_client.so
-lib/heapprofd_client_api.so
-lib/libaaudio.so
-lib/libaaudio_internal.so
-lib/libalarm_jni.so
-lib/libamidi.so
-lib/libcups.so
-lib/libjni_deviceAsWebcam.so
-lib/libprintspooler_jni.so
-lib/libvendorsupport.so
-lib/libwfds.so
-lib/libyuv.so
 
-# b/351258461
-adb_keys
+# Known diffs that are installed in either system image with the configuration
+# b/353429422
 init.environ.rc
-
-# Known diffs only in the Soong system image
-lib/libhidcommand_jni.so
-lib/libuinputcommand_jni.so
-
-# Known diffs in internal source
-bin/uprobestats
-etc/aconfig/flag.map
-etc/aconfig/flag.val
-etc/aconfig/package.map
-etc/bpf/uprobestats/BitmapAllocation.o
-etc/bpf/uprobestats/GenericInstrumentation.o
-etc/init/UprobeStats.rc
-lib/libuprobestats_client.so
-lib64/libuprobestats_client.so
-priv-app/DeviceDiagnostics/DeviceDiagnostics.apk
+# b/338342381
+etc/NOTICE.xml.gz
