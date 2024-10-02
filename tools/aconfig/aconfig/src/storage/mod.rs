@@ -88,6 +88,7 @@ pub fn generate_storage_file<'a, I>(
     container: &str,
     parsed_flags_vec_iter: I,
     file: &StorageFileType,
+    version: u32,
 ) -> Result<Vec<u8>>
 where
     I: Iterator<Item = &'a ProtoParsedFlags>,
@@ -96,19 +97,19 @@ where
 
     match file {
         StorageFileType::PackageMap => {
-            let package_table = create_package_table(container, &packages)?;
+            let package_table = create_package_table(container, &packages, version)?;
             Ok(package_table.into_bytes())
         }
         StorageFileType::FlagMap => {
-            let flag_table = create_flag_table(container, &packages)?;
+            let flag_table = create_flag_table(container, &packages, version)?;
             Ok(flag_table.into_bytes())
         }
         StorageFileType::FlagVal => {
-            let flag_value = create_flag_value(container, &packages)?;
+            let flag_value = create_flag_value(container, &packages, version)?;
             Ok(flag_value.into_bytes())
         }
         StorageFileType::FlagInfo => {
-            let flag_info = create_flag_info(container, &packages)?;
+            let flag_info = create_flag_info(container, &packages, version)?;
             Ok(flag_info.into_bytes())
         }
     }

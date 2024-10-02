@@ -18,7 +18,7 @@ use crate::flag_info::{FlagInfoHeader, FlagInfoList, FlagInfoNode};
 use crate::flag_table::{FlagTable, FlagTableHeader, FlagTableNode};
 use crate::flag_value::{FlagValueHeader, FlagValueList};
 use crate::package_table::{PackageTable, PackageTableHeader, PackageTableNode};
-use crate::{AconfigStorageError, StorageFileType, StoredFlagType};
+use crate::{AconfigStorageError, StorageFileType, StoredFlagType, DEFAULT_FILE_VERSION};
 
 use anyhow::anyhow;
 use std::io::Write;
@@ -26,7 +26,7 @@ use tempfile::NamedTempFile;
 
 pub fn create_test_package_table() -> PackageTable {
     let header = PackageTableHeader {
-        version: 1,
+        version: DEFAULT_FILE_VERSION,
         container: String::from("mockup"),
         file_type: StorageFileType::PackageMap as u8,
         file_size: 209,
@@ -78,7 +78,7 @@ impl FlagTableNode {
 
 pub fn create_test_flag_table() -> FlagTable {
     let header = FlagTableHeader {
-        version: 1,
+        version: DEFAULT_FILE_VERSION,
         container: String::from("mockup"),
         file_type: StorageFileType::FlagMap as u8,
         file_size: 321,
@@ -120,7 +120,7 @@ pub fn create_test_flag_table() -> FlagTable {
 
 pub fn create_test_flag_value_list() -> FlagValueList {
     let header = FlagValueHeader {
-        version: 1,
+        version: DEFAULT_FILE_VERSION,
         container: String::from("mockup"),
         file_type: StorageFileType::FlagVal as u8,
         file_size: 35,
@@ -133,7 +133,7 @@ pub fn create_test_flag_value_list() -> FlagValueList {
 
 pub fn create_test_flag_info_list() -> FlagInfoList {
     let header = FlagInfoHeader {
-        version: 1,
+        version: DEFAULT_FILE_VERSION,
         container: String::from("mockup"),
         file_type: StorageFileType::FlagInfo as u8,
         file_size: 35,
