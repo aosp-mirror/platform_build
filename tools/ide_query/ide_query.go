@@ -363,6 +363,7 @@ func getJavaInputs(env Env, modulesByPath map[string]string, modules map[string]
 				Id:              name,
 				SourceFilePaths: mod.Srcs,
 				GeneratedFiles:  genFiles(env, paths),
+				DependencyIds:   mod.Deps,
 			}
 
 			for _, d := range mod.Deps {
