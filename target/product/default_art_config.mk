@@ -114,6 +114,12 @@ ifeq ($(RELEASE_PACKAGE_PROFILING_MODULE),true)
 
 endif
 
+ifneq (,$(RELEASE_RANGING_STACK))
+    PRODUCT_APEX_BOOT_JARS += \
+        com.android.uwb:framework-ranging \
+    $(call soong_config_set,bootclasspath,release_ranging_stack,true)
+endif
+
 # List of system_server classpath jars delivered via apex.
 # Keep the list sorted by module names and then library names.
 # Note: For modules available in Q, DO NOT add new entries here.
@@ -167,6 +173,11 @@ ifeq ($(RELEASE_PACKAGE_PROFILING_MODULE),true)
     PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS += \
         com.android.profiling:service-profiling \
 
+endif
+
+ifneq (,$(RELEASE_RANGING_STACK))
+    PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS += \
+        com.android.uwb:service-ranging
 endif
 
 # Overrides the (apex, jar) pairs above when determining the on-device location. The format is:
