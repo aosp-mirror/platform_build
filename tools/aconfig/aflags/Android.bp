@@ -20,6 +20,10 @@ rust_defaults {
         "libnix",
         "libprotobuf",
         "libregex",
+        // TODO: b/371021174 remove this fake dependency once we find a proper strategy to
+        // deal with test aconfig libs are not present in storage because they are never used
+        // by the actual build
+        "libaconfig_test_rust_library",
     ],
 }
 
