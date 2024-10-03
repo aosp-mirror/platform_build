@@ -16,9 +16,10 @@
 
 //! package table query module defines the package table file read from mapped bytes
 
-use crate::{AconfigStorageError, FILE_VERSION};
+use crate::AconfigStorageError;
 use aconfig_storage_file::{
     package_table::PackageTableHeader, package_table::PackageTableNode, read_u32_from_bytes,
+    MAX_SUPPORTED_FILE_VERSION,
 };
 use anyhow::anyhow;
 
@@ -35,11 +36,11 @@ pub fn find_package_read_context(
     package: &str,
 ) -> Result<Option<PackageReadContext>, AconfigStorageError> {
     let interpreted_header = PackageTableHeader::from_bytes(buf)?;
-    if interpreted_header.version > FILE_VERSION {
+    if interpreted_header.version > MAX_SUPPORTED_FILE_VERSION {
         return Err(AconfigStorageError::HigherStorageFileVersion(anyhow!(
             "Cannot read storage file with a higher version of {} with lib version {}",
             interpreted_header.version,
-            FILE_VERSION
+            MAX_SUPPORTED_FILE_VERSION
         )));
     }
 
@@ -55,7 +56,8 @@ pub fn find_package_read_context(
     }
 
     loop {
-        let interpreted_node = PackageTableNode::from_bytes(&buf[package_node_offset..])?;
+        let interpreted_node =
+            PackageTableNode::from_bytes(&buf[package_node_offset..], interpreted_header.version)?;
         if interpreted_node.package_name == package {
             return Ok(Some(PackageReadContext {
                 package_id: interpreted_node.package_id,
@@ -118,7 +120,7 @@ mod tests {
     // this test point locks down query error when file has a higher version
     fn test_higher_version_storage_file() {
         let mut table = create_test_package_table();
-        table.header.version = crate::FILE_VERSION + 1;
+        table.header.version = MAX_SUPPORTED_FILE_VERSION + 1;
         let package_table = table.into_bytes();
         let error =
             find_package_read_context(&package_table[..], "com.android.aconfig.storage.test_1")
@@ -127,8 +129,8 @@ mod tests {
             format!("{:?}", error),
             format!(
                 "HigherStorageFileVersion(Cannot read storage file with a higher version of {} with lib version {})",
-                crate::FILE_VERSION + 1,
-                crate::FILE_VERSION
+                MAX_SUPPORTED_FILE_VERSION + 1,
+                MAX_SUPPORTED_FILE_VERSION
             )
         );
     }
