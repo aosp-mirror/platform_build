@@ -19,13 +19,12 @@ use crate::storage::FlagPackage;
 use aconfig_protos::ProtoFlagPermission;
 use aconfig_storage_file::{
     get_table_size, FlagTable, FlagTableHeader, FlagTableNode, StorageFileType, StoredFlagType,
-    FILE_VERSION,
 };
 use anyhow::{anyhow, Result};
 
-fn new_header(container: &str, num_flags: u32) -> FlagTableHeader {
+fn new_header(container: &str, num_flags: u32, version: u32) -> FlagTableHeader {
     FlagTableHeader {
-        version: FILE_VERSION,
+        version,
         container: String::from(container),
         file_type: StorageFileType::FlagMap as u8,
         file_size: 0,
@@ -86,12 +85,16 @@ impl FlagTableNodeWrapper {
     }
 }
 
-pub fn create_flag_table(container: &str, packages: &[FlagPackage]) -> Result<FlagTable> {
+pub fn create_flag_table(
+    container: &str,
+    packages: &[FlagPackage],
+    version: u32,
+) -> Result<FlagTable> {
     // create table
     let num_flags = packages.iter().map(|pkg| pkg.boolean_flags.len() as u32).sum();
     let num_buckets = get_table_size(num_flags)?;
 
-    let mut header = new_header(container, num_flags);
+    let mut header = new_header(container, num_flags, version);
     let mut buckets = vec![None; num_buckets as usize];
     let mut node_wrappers = packages
         .iter()
@@ -138,13 +141,15 @@ pub fn create_flag_table(container: &str, packages: &[FlagPackage]) -> Result<Fl
 
 #[cfg(test)]
 mod tests {
+    use aconfig_storage_file::DEFAULT_FILE_VERSION;
+
     use super::*;
     use crate::storage::{group_flags_by_package, tests::parse_all_test_flags};
 
     fn create_test_flag_table_from_source() -> Result<FlagTable> {
         let caches = parse_all_test_flags();
         let packages = group_flags_by_package(caches.iter());
-        create_flag_table("mockup", &packages)
+        create_flag_table("mockup", &packages, DEFAULT_FILE_VERSION)
     }
 
     #[test]
