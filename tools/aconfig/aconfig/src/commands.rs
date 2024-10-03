@@ -280,10 +280,11 @@ pub fn create_storage(
     caches: Vec<Input>,
     container: &str,
     file: &StorageFileType,
+    version: u32,
 ) -> Result<Vec<u8>> {
     let parsed_flags_vec: Vec<ProtoParsedFlags> =
         caches.into_iter().map(|mut input| input.try_parse_flags()).collect::<Result<Vec<_>>>()?;
-    generate_storage_file(container, parsed_flags_vec.iter(), file)
+    generate_storage_file(container, parsed_flags_vec.iter(), file, version)
 }
 
 pub fn create_device_config_defaults(mut input: Input) -> Result<Vec<u8>> {
