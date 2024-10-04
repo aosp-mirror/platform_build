@@ -234,6 +234,7 @@ rust_aconfig_library {
     name: "libaconfig_test_rust_library",
     crate_name: "aconfig_test_rust_library",
     aconfig_declarations: "aconfig.test.flags",
+    host_supported: true,
 }
 
 rust_test {
