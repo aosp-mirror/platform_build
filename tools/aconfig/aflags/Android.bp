@@ -12,7 +12,7 @@ rust_defaults {
         "libaconfig_device_paths",
         "libaconfig_flags",
         "libaconfig_protos",
-        "libaconfigd_protos",
+        "libaconfigd_protos_rust",
         "libaconfig_storage_read_api",
         "libaconfig_storage_file",
         "libanyhow",
