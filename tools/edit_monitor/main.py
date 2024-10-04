@@ -63,6 +63,9 @@ def configure_logging():
   logging.basicConfig(
       filename=log_path, level=logging.DEBUG, format=log_fmt, datefmt=date_fmt
   )
+  # Filter out logs from inotify_buff to prevent log pollution.
+  logging.getLogger('watchdog.observers.inotify_buffer').addFilter(
+      lambda record: record.filename != 'inotify_buffer.py')
   print(f'logging to file {log_path}')
 
 
