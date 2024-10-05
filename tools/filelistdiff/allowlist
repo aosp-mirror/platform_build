@@ -1,9 +1,3 @@
-# Known diffs only in the KATI system image
-framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.odex
-framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.odex.fsv_meta
-framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.vdex
-framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.vdex.fsv_meta
-
 # Known diffs that are installed in either system image with the configuration
 # b/353429422
 init.environ.rc
