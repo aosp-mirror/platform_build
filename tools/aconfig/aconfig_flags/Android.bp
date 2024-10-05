@@ -44,3 +44,8 @@ cc_aconfig_library {
     name: "libaconfig_flags_cc",
     aconfig_declarations: "aconfig_flags",
 }
+
+java_aconfig_library {
+    name: "aconfig_flags_java",
+    aconfig_declarations: "aconfig_flags",
+}
