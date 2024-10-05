@@ -17,14 +17,12 @@
 use crate::commands::assign_flag_ids;
 use crate::storage::FlagPackage;
 use aconfig_protos::ProtoFlagPermission;
-use aconfig_storage_file::{
-    FlagInfoHeader, FlagInfoList, FlagInfoNode, StorageFileType, FILE_VERSION,
-};
+use aconfig_storage_file::{FlagInfoHeader, FlagInfoList, FlagInfoNode, StorageFileType};
 use anyhow::{anyhow, Result};
 
-fn new_header(container: &str, num_flags: u32) -> FlagInfoHeader {
+fn new_header(container: &str, num_flags: u32, version: u32) -> FlagInfoHeader {
     FlagInfoHeader {
-        version: FILE_VERSION,
+        version,
         container: String::from(container),
         file_type: StorageFileType::FlagInfo as u8,
         file_size: 0,
@@ -33,7 +31,11 @@ fn new_header(container: &str, num_flags: u32) -> FlagInfoHeader {
     }
 }
 
-pub fn create_flag_info(container: &str, packages: &[FlagPackage]) -> Result<FlagInfoList> {
+pub fn create_flag_info(
+    container: &str,
+    packages: &[FlagPackage],
+    version: u32,
+) -> Result<FlagInfoList> {
     // create list
     let num_flags = packages.iter().map(|pkg| pkg.boolean_flags.len() as u32).sum();
 
@@ -51,7 +53,7 @@ pub fn create_flag_info(container: &str, packages: &[FlagPackage]) -> Result<Fla
     }
 
     let mut list = FlagInfoList {
-        header: new_header(container, num_flags),
+        header: new_header(container, num_flags, version),
         nodes: is_flag_rw.iter().map(|&rw| FlagInfoNode::create(rw)).collect(),
     };
 
@@ -67,11 +69,12 @@ pub fn create_flag_info(container: &str, packages: &[FlagPackage]) -> Result<Fla
 mod tests {
     use super::*;
     use crate::storage::{group_flags_by_package, tests::parse_all_test_flags};
+    use aconfig_storage_file::DEFAULT_FILE_VERSION;
 
     pub fn create_test_flag_info_list_from_source() -> Result<FlagInfoList> {
         let caches = parse_all_test_flags();
         let packages = group_flags_by_package(caches.iter());
-        create_flag_info("mockup", &packages)
+        create_flag_info("mockup", &packages, DEFAULT_FILE_VERSION)
     }
 
     #[test]

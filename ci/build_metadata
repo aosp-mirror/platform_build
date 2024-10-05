@@ -20,6 +20,9 @@ export TARGET_PRODUCT=aosp_arm64
 export TARGET_RELEASE=trunk_staging
 export TARGET_BUILD_VARIANT=eng
 
-build/soong/bin/m dist \
+TARGETS=(
     all_teams
+    release_config_metadata
+)
 
+build/soong/bin/m dist ${TARGETS[@]}
