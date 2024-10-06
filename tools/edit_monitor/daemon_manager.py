@@ -20,6 +20,7 @@ import os
 import pathlib
 import signal
 import subprocess
+import sys
 import tempfile
 import time
 
@@ -27,7 +28,9 @@ import time
 DEFAULT_PROCESS_TERMINATION_TIMEOUT_SECONDS = 1
 DEFAULT_MONITOR_INTERVAL_SECONDS = 5
 DEFAULT_MEMORY_USAGE_THRESHOLD = 2000
-DEFAULT_CPU_USAGE_THRESHOLD = 10
+DEFAULT_CPU_USAGE_THRESHOLD = 200
+DEFAULT_REBOOT_TIMEOUT_SECONDS = 60 * 60 * 24
+BLOCK_SIGN_FILE = "edit_monitor_block_sign"
 
 
 def default_daemon_target():
@@ -57,21 +60,26 @@ class DaemonManager:
     pid_file_dir = pathlib.Path(tempfile.gettempdir()).joinpath("edit_monitor")
     pid_file_dir.mkdir(parents=True, exist_ok=True)
     self.pid_file_path = self._get_pid_file_path(pid_file_dir)
+    self.block_sign = pathlib.Path(tempfile.gettempdir()).joinpath(
+        BLOCK_SIGN_FILE
+    )
 
   def start(self):
     """Writes the pidfile and starts the daemon proces."""
-    try:
-      self._stop_any_existing_instance()
-      self._write_pid_to_pidfile()
-      self._start_daemon_process()
-    except Exception as e:
-      logging.exception("Failed to start daemon manager with error %s", e)
+    if self.block_sign.exists():
+      logging.warning("Block sign found, exiting...")
+      return
+
+    self._stop_any_existing_instance()
+    self._write_pid_to_pidfile()
+    self._start_daemon_process()
 
   def monitor_daemon(
       self,
       interval: int = DEFAULT_MONITOR_INTERVAL_SECONDS,
       memory_threshold: float = DEFAULT_MEMORY_USAGE_THRESHOLD,
       cpu_threshold: float = DEFAULT_CPU_USAGE_THRESHOLD,
+      reboot_timeout: int = DEFAULT_REBOOT_TIMEOUT_SECONDS,
   ):
     """Monits the daemon process status.
 
@@ -79,9 +87,14 @@ class DaemonManager:
     process is still running and kill the process if the resource usage is above
     given thresholds.
     """
-    logging.info("start monitoring daemon process %d.", self.daemon_process.pid)
+    if not self.daemon_process:
+      return
 
+    logging.info("start monitoring daemon process %d.", self.daemon_process.pid)
+    reboot_time = time.time() + reboot_timeout
     while self.daemon_process.is_alive():
+      if time.time() > reboot_time:
+        self.reboot()
       try:
         memory_usage = self._get_process_memory_percent(self.daemon_process.pid)
         self.max_memory_usage = max(self.max_memory_usage, memory_usage)
@@ -119,8 +132,58 @@ class DaemonManager:
       if self.daemon_process and self.daemon_process.is_alive():
         self._terminate_process(self.daemon_process.pid)
       self._remove_pidfile()
+      logging.debug("Successfully stopped daemon manager.")
     except Exception as e:
       logging.exception("Failed to stop daemon manager with error %s", e)
+
+  def reboot(self):
+    """Reboots the current process.
+
+    Stops the current daemon manager and reboots the entire process based on
+    the binary file. Exits directly If the binary file no longer exists.
+    """
+    logging.debug("Rebooting process based on binary %s.", self.binary_path)
+
+    # Stop the current daemon manager first.
+    self.stop()
+
+    # If the binary no longer exists, exit directly.
+    if not os.path.exists(self.binary_path):
+      logging.info("binary %s no longer exists, exiting.", self.binary_path)
+      sys.exit(0)
+
+    try:
+      os.execv(self.binary_path, sys.argv)
+    except OSError as e:
+      logging.exception("Failed to reboot process with error: %s.", e)
+      sys.exit(1)  # Indicate an error occurred
+
+  def cleanup(self):
+    """Wipes out all edit monitor instances in the system.
+
+    Stops all the existing edit monitor instances and place a block sign
+    to prevent any edit monitor process to start. This method is only used
+    in emergency case when there's something goes wrong with the edit monitor
+    that requires immediate cleanup to prevent damanger to the system.
+    """
+    logging.debug("Start cleaning up all existing instances.")
+
+    try:
+      # First places a block sign to prevent any edit monitor process to start.
+      self.block_sign.touch()
+    except (FileNotFoundError, PermissionError, OSError):
+      logging.exception("Failed to place the block sign")
+
+    # Finds and kills all the existing instances of edit monitor.
+    existing_instances_pids = self._find_all_instances_pids()
+    for pid in existing_instances_pids:
+      logging.info(
+          "Found existing edit monitor instance with pid %d, killing...", pid
+      )
+      try:
+        self._terminate_process(pid)
+      except Exception:
+        logging.exception("Failed to terminate process %d", pid)
 
   def _stop_any_existing_instance(self):
     if not self.pid_file_path.exists():
@@ -272,3 +335,15 @@ class DaemonManager:
       stime = int(stats[14])
       return (utime + stime) / os.sysconf(os.sysconf_names["SC_CLK_TCK"])
 
+  def _find_all_instances_pids(self) -> list[int]:
+    pids = []
+
+    for file in os.listdir(self.pid_file_path.parent):
+      if file.endswith(".lock"):
+        try:
+          with open(self.pid_file_path.parent.joinpath(file), "r") as f:
+            pids.append(int(f.read().strip()))
+        except (FileNotFoundError, IOError, ValueError, TypeError):
+          logging.exception("Failed to get pid from file path: %s", file)
+
+    return pids
