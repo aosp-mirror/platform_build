@@ -27,6 +27,7 @@ import unittest
 from unittest import mock
 from edit_monitor import daemon_manager
 
+
 TEST_BINARY_FILE = '/path/to/test_binary'
 TEST_PID_FILE_PATH = (
     '587239c2d1050afdf54512e2d799f3b929f86b43575eb3c7b4bab105dd9bd25e.lock'
@@ -92,20 +93,10 @@ class DaemonManagerTest(unittest.TestCase):
     self.assert_run_simple_daemon_success()
 
   def test_start_success_with_existing_instance_running(self):
-    # Create a long running subprocess
-    p = multiprocessing.Process(target=long_running_daemon)
-    p.start()
-
-    # Create a pidfile with the subprocess pid
-    pid_file_path_dir = pathlib.Path(self.working_dir.name).joinpath(
-        'edit_monitor'
-    )
-    pid_file_path_dir.mkdir(parents=True, exist_ok=True)
-    with open(pid_file_path_dir.joinpath(TEST_PID_FILE_PATH), 'w') as f:
-      f.write(str(p.pid))
+    # Create a running daemon subprocess
+    p = self._create_fake_deamon_process()
 
     self.assert_run_simple_daemon_success()
-    p.terminate()
 
   def test_start_success_with_existing_instance_already_dead(self):
     # Create a pidfile with pid that does not exist.
@@ -129,6 +120,17 @@ class DaemonManagerTest(unittest.TestCase):
     self.assert_run_simple_daemon_success()
     existing_dm.stop()
 
+  def test_start_return_directly_if_block_sign_exists(self):
+    # Creates the block sign.
+    pathlib.Path(self.working_dir.name).joinpath(
+        daemon_manager.BLOCK_SIGN_FILE
+    ).touch()
+
+    dm = daemon_manager.DaemonManager(TEST_BINARY_FILE)
+    dm.start()
+    # Verify no daemon process is started.
+    self.assertIsNone(dm.daemon_process)
+
   @mock.patch('os.kill')
   def test_start_failed_to_kill_existing_instance(self, mock_kill):
     mock_kill.side_effect = OSError('Unknown OSError')
@@ -139,11 +141,9 @@ class DaemonManagerTest(unittest.TestCase):
     with open(pid_file_path_dir.joinpath(TEST_PID_FILE_PATH), 'w') as f:
       f.write('123456')
 
-    dm = daemon_manager.DaemonManager(TEST_BINARY_FILE)
-    dm.start()
-
-    # Verify no daemon process is started.
-    self.assertIsNone(dm.daemon_process)
+    with self.assertRaises(OSError) as error:
+      dm = daemon_manager.DaemonManager(TEST_BINARY_FILE)
+      dm.start()
 
   def test_start_failed_to_write_pidfile(self):
     pid_file_path_dir = pathlib.Path(self.working_dir.name).joinpath(
@@ -153,20 +153,16 @@ class DaemonManagerTest(unittest.TestCase):
     # Makes the directory read-only so write pidfile will fail.
     os.chmod(pid_file_path_dir, 0o555)
 
-    dm = daemon_manager.DaemonManager(TEST_BINARY_FILE)
-    dm.start()
-
-    # Verifies no daemon process is started.
-    self.assertIsNone(dm.daemon_process)
+    with self.assertRaises(PermissionError) as error:
+      dm = daemon_manager.DaemonManager(TEST_BINARY_FILE)
+      dm.start()
 
   def test_start_failed_to_start_daemon_process(self):
-    dm = daemon_manager.DaemonManager(
-        TEST_BINARY_FILE, daemon_target='wrong_target', daemon_args=(1)
-    )
-    dm.start()
-
-    # Verifies no daemon process is started.
-    self.assertIsNone(dm.daemon_process)
+    with self.assertRaises(TypeError) as error:
+      dm = daemon_manager.DaemonManager(
+          TEST_BINARY_FILE, daemon_target='wrong_target', daemon_args=(1)
+      )
+      dm.start()
 
   def test_monitor_daemon_subprocess_killed_high_memory_usage(self):
     dm = daemon_manager.DaemonManager(
@@ -196,6 +192,19 @@ class DaemonManagerTest(unittest.TestCase):
   def test_monitor_daemon_failed_does_not_matter(self, mock_output):
     mock_output.side_effect = OSError('Unknown OSError')
     self.assert_run_simple_daemon_success()
+
+  @mock.patch('os.execv')
+  def test_monitor_daemon_reboot_triggered(self, mock_execv):
+    binary_file = tempfile.NamedTemporaryFile(
+        dir=self.working_dir.name, delete=False
+    )
+
+    dm = daemon_manager.DaemonManager(
+        binary_file.name, daemon_target=long_running_daemon
+    )
+    dm.start()
+    dm.monitor_daemon(reboot_timeout=0.5)
+    mock_execv.assert_called_once()
 
   def test_stop_success(self):
     dm = daemon_manager.DaemonManager(
@@ -232,6 +241,52 @@ class DaemonManagerTest(unittest.TestCase):
     self.assert_no_subprocess_running()
     self.assertTrue(dm.pid_file_path.exists())
 
+  @mock.patch('os.execv')
+  def test_reboot_success(self, mock_execv):
+    binary_file = tempfile.NamedTemporaryFile(
+        dir=self.working_dir.name, delete=False
+    )
+
+    dm = daemon_manager.DaemonManager(
+        binary_file.name, daemon_target=long_running_daemon
+    )
+    dm.start()
+    dm.reboot()
+
+    # Verifies the old process is stopped
+    self.assert_no_subprocess_running()
+    self.assertFalse(dm.pid_file_path.exists())
+
+    mock_execv.assert_called_once()
+
+  @mock.patch('os.execv')
+  def test_reboot_binary_no_longer_exists(self, mock_execv):
+    dm = daemon_manager.DaemonManager(
+        TEST_BINARY_FILE, daemon_target=long_running_daemon
+    )
+    dm.start()
+
+    with self.assertRaises(SystemExit) as cm:
+      dm.reboot()
+      mock_execv.assert_not_called()
+      self.assertEqual(cm.exception.code, 0)
+
+  @mock.patch('os.execv')
+  def test_reboot_failed(self, mock_execv):
+    mock_execv.side_effect = OSError('Unknown OSError')
+    binary_file = tempfile.NamedTemporaryFile(
+        dir=self.working_dir.name, delete=False
+    )
+
+    dm = daemon_manager.DaemonManager(
+        binary_file.name, daemon_target=long_running_daemon
+    )
+    dm.start()
+
+    with self.assertRaises(SystemExit) as cm:
+      dm.reboot()
+      self.assertEqual(cm.exception.code, 1)
+
   def assert_run_simple_daemon_success(self):
     damone_output_file = tempfile.NamedTemporaryFile(
         dir=self.working_dir.name, delete=False
@@ -262,7 +317,7 @@ class DaemonManagerTest(unittest.TestCase):
           self._is_process_alive(child_pid), f'process {child_pid} still alive'
       )
 
-  def _get_child_processes(self, parent_pid):
+  def _get_child_processes(self, parent_pid: int) -> list[int]:
     try:
       output = subprocess.check_output(
           ['ps', '-o', 'pid,ppid', '--no-headers'], text=True
@@ -277,7 +332,7 @@ class DaemonManagerTest(unittest.TestCase):
     except subprocess.CalledProcessError as e:
       self.fail(f'failed to get child process, error: {e}')
 
-  def _is_process_alive(self, pid):
+  def _is_process_alive(self, pid: int) -> bool:
     try:
       output = subprocess.check_output(
           ['ps', '-p', str(pid), '-o', 'state='], text=True
@@ -295,6 +350,22 @@ class DaemonManagerTest(unittest.TestCase):
       except ProcessLookupError:
         # process already terminated
         pass
+
+  def _create_fake_deamon_process(
+      self, name: str = ''
+  ) -> multiprocessing.Process:
+    # Create a long running subprocess
+    p = multiprocessing.Process(target=long_running_daemon)
+    p.start()
+
+    # Create the pidfile with the subprocess pid
+    pid_file_path_dir = pathlib.Path(self.working_dir.name).joinpath(
+        'edit_monitor'
+    )
+    pid_file_path_dir.mkdir(parents=True, exist_ok=True)
+    with open(pid_file_path_dir.joinpath(name + 'pid.lock'), 'w') as f:
+      f.write(str(p.pid))
+    return p
 
 
 if __name__ == '__main__':
