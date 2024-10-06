@@ -46,7 +46,7 @@ pub use aconfig_storage_file::{AconfigStorageError, FlagValueType, StorageFileTy
 pub use flag_table_query::FlagReadContext;
 pub use package_table_query::PackageReadContext;
 
-use aconfig_storage_file::{read_u32_from_bytes, FILE_VERSION};
+use aconfig_storage_file::read_u32_from_bytes;
 use flag_info_query::find_flag_attribute;
 use flag_table_query::find_flag_read_context;
 use flag_value_query::find_boolean_flag_value;
