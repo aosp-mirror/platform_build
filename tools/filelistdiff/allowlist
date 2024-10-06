@@ -1,22 +1,11 @@
 # Known diffs only in the KATI system image
-etc/NOTICE.xml.gz
 framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.odex
 framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.odex.fsv_meta
 framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.vdex
 framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.vdex.fsv_meta
-lib/libcups.so
-lib/libjni_deviceAsWebcam.so
-lib/libprintspooler_jni.so
-lib/libvendorsupport.so
-lib/libwfds.so
-lib/libyuv.so
 
-# b/351258461
+# Known diffs that are installed in either system image with the configuration
+# b/353429422
 init.environ.rc
-
-# Known diffs only in the Soong system image
-lib/libhidcommand_jni.so
-lib/libuinputcommand_jni.so
-
-# Known diffs in internal source
-etc/aconfig/flag.info
+# b/338342381
+etc/NOTICE.xml.gz
