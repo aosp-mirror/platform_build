@@ -7950,9 +7950,14 @@ endif # PACK_DESKTOP_FILESYSTEM_IMAGES
 # Desktop pack recovery image hook.
 ifneq (,$(strip $(PACK_DESKTOP_RECOVERY_IMAGE)))
 PACK_RECOVERY_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_recovery_image.bin
+PACK_RECOVERY_IMAGE_ARGS := --noarchive --recovery
+
+ifneq (,$(strip $(PACK_RECOVERY_IMAGE_EXPERIMENTAL)))
+PACK_RECOVERY_IMAGE_ARGS += --experimental
+endif # PACK_RECOVERY_IMAGE_EXPERIMENTAL
 
 $(PACK_RECOVERY_IMAGE_TARGET): $(IMAGES) $(PACK_IMAGE_SCRIPT)
-	$(PACK_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) --noarchive --recovery
+	$(PACK_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) $(PACK_RECOVERY_IMAGE_ARGS)
 
 PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET := $(PACK_RECOVERY_IMAGE_TARGET).gz
 
@@ -7985,6 +7990,28 @@ $(call dist-for-goals,dist_files,$(PACKED_UPDATE_IMAGE_ARCHIVE_TARGET))
 pack-update-image: $(PACK_UPDATE_IMAGE_TARGET)
 
 endif # PACK_DESKTOP_UPDATE_IMAGE
+
+PACK_MIGRATION_IMAGE_SCRIPT := $(HOST_OUT_EXECUTABLES)/pack_migration_image
+
+# -----------------------------------------------------------------
+# Desktop pack migration image hook.
+ifeq ($(ANDROID_DESKTOP_MIGRATION_IMAGE),true)
+PACK_MIGRATION_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_migration_image.bin
+
+$(PACK_MIGRATION_IMAGE_TARGET): $(IMAGES) $(PACK_MIGRATION_IMAGE_SCRIPT)
+	$(PACK_MIGRATION_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) --noarchive
+
+PACKED_MIGRATION_IMAGE_ARCHIVE_TARGET := $(PACK_MIGRATION_IMAGE_TARGET).gz
+
+$(PACKED_MIGRATION_IMAGE_ARCHIVE_TARGET): $(PACK_MIGRATION_IMAGE_TARGET) | $(GZIP)
+	$(GZIP) -fk $(PACK_MIGRATION_IMAGE_TARGET)
+
+$(call dist-for-goals,dist_files,$(PACKED_MIGRATION_IMAGE_ARCHIVE_TARGET))
+
+.PHONY: pack-migration-image
+pack-migration-image: $(PACK_MIGRATION_IMAGE_TARGET)
+
+endif # ANDROID_DESKTOP_MIGRATION_IMAGE
 
 # -----------------------------------------------------------------
 # OS Licensing

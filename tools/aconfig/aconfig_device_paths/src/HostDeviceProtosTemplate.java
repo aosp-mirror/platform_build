@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 /**
  * A host lib that can read all aconfig proto file paths on a given device.
+ * This lib is only available on device with root access (userdebug/eng).
  */
 public class HostDeviceProtos {
     /**
@@ -39,8 +40,13 @@ public class HostDeviceProtos {
         TEMPLATE
     };
 
+    static final String[] MAINLINE_PATHS = {
+        MAINLINE_T
+    };
+
     private static final String APEX_DIR = "/apex";
-    private static final String RECURSIVELY_LIST_APEX_DIR_COMMAND = "shell find /apex | grep aconfig_flags";
+    private static final String RECURSIVELY_LIST_APEX_DIR_COMMAND =
+        "shell su 0 find /apex | grep aconfig_flags";
     private static final String APEX_ACONFIG_PATH_SUFFIX = "/etc/aconfig_flags.pb";
 
 
@@ -53,7 +59,8 @@ public class HostDeviceProtos {
         String adbCommandOutput = adbCommandExecutor.executeAdbCommand(
             RECURSIVELY_LIST_APEX_DIR_COMMAND);
 
-        if (adbCommandOutput == null) {
+        if (adbCommandOutput == null || adbCommandOutput.isEmpty()) {
+            paths.addAll(Arrays.asList(MAINLINE_PATHS));
             return paths;
         }
 
