@@ -3567,14 +3567,24 @@ ifneq ($(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE),)
 file_list_diff := $(HOST_OUT_EXECUTABLES)/file_list_diff$(HOST_EXECUTABLE_SUFFIX)
 system_file_diff_timestamp := $(systemimage_intermediates)/file_diff.timestamp
 
+# The build configuration to build the REL version may have more files to allow.
+# Use allowlist_next in addition to the allowlist in this case.
+system_file_diff_allowlist_next :=
+ifeq (REL,$(PLATFORM_VERSION_CODENAME))
+system_file_diff_allowlist_next := $(ALL_MODULES.system_image_diff_allowlist_next.INSTALLED)
+$(system_file_diff_timestamp): PRIVATE_ALLOWLIST_NEXT := $(system_file_diff_allowlist_next)
+endif
 $(system_file_diff_timestamp): \
 	    $(systemimage_intermediates)/file_list.txt \
 	    $(ALL_MODULES.$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE).FILESYSTEM_FILELIST) \
 	    $(ALL_MODULES.system_image_diff_allowlist.INSTALLED) \
+	    $(system_file_diff_allowlist_next) \
 	    $(file_list_diff)
 	$(file_list_diff) $(systemimage_intermediates)/file_list.txt \
 	  $(ALL_MODULES.$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE).FILESYSTEM_FILELIST) \
-	  $(ALL_MODULES.system_image_diff_allowlist.INSTALLED) $(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE)
+	  $(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE) \
+	  --allowlists $(ALL_MODULES.system_image_diff_allowlist.INSTALLED) \
+	  $(PRIVATE_ALLOWLIST_NEXT)
 	touch $@
 
 $(BUILT_SYSTEMIMAGE): $(system_file_diff_timestamp)
@@ -7990,6 +8000,28 @@ $(call dist-for-goals,dist_files,$(PACKED_UPDATE_IMAGE_ARCHIVE_TARGET))
 pack-update-image: $(PACK_UPDATE_IMAGE_TARGET)
 
 endif # PACK_DESKTOP_UPDATE_IMAGE
+
+PACK_MIGRATION_IMAGE_SCRIPT := $(HOST_OUT_EXECUTABLES)/pack_migration_image
+
+# -----------------------------------------------------------------
+# Desktop pack migration image hook.
+ifeq ($(ANDROID_DESKTOP_MIGRATION_IMAGE),true)
+PACK_MIGRATION_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_migration_image.bin
+
+$(PACK_MIGRATION_IMAGE_TARGET): $(IMAGES) $(PACK_MIGRATION_IMAGE_SCRIPT)
+	$(PACK_MIGRATION_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) --noarchive
+
+PACKED_MIGRATION_IMAGE_ARCHIVE_TARGET := $(PACK_MIGRATION_IMAGE_TARGET).gz
+
+$(PACKED_MIGRATION_IMAGE_ARCHIVE_TARGET): $(PACK_MIGRATION_IMAGE_TARGET) | $(GZIP)
+	$(GZIP) -fk $(PACK_MIGRATION_IMAGE_TARGET)
+
+$(call dist-for-goals,dist_files,$(PACKED_MIGRATION_IMAGE_ARCHIVE_TARGET))
+
+.PHONY: pack-migration-image
+pack-migration-image: $(PACK_MIGRATION_IMAGE_TARGET)
+
+endif # ANDROID_DESKTOP_MIGRATION_IMAGE
 
 # -----------------------------------------------------------------
 # OS Licensing
