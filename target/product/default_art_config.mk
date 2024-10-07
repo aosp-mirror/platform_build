@@ -76,6 +76,7 @@ PRODUCT_APEX_BOOT_JARS := \
     com.android.mediaprovider:framework-mediaprovider \
     com.android.mediaprovider:framework-pdf \
     com.android.mediaprovider:framework-pdf-v \
+    com.android.mediaprovider:framework-photopicker \
     com.android.ondevicepersonalization:framework-ondevicepersonalization \
     com.android.os.statsd:framework-statsd \
     com.android.permission:framework-permission \
@@ -111,6 +112,12 @@ ifeq ($(RELEASE_PACKAGE_PROFILING_MODULE),true)
     PRODUCT_APEX_BOOT_JARS += \
         com.android.profiling:framework-profiling \
 
+endif
+
+ifneq (,$(RELEASE_RANGING_STACK))
+    PRODUCT_APEX_BOOT_JARS += \
+        com.android.uwb:framework-ranging \
+    $(call soong_config_set,bootclasspath,release_ranging_stack,true)
 endif
 
 # List of system_server classpath jars delivered via apex.
@@ -166,6 +173,11 @@ ifeq ($(RELEASE_PACKAGE_PROFILING_MODULE),true)
     PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS += \
         com.android.profiling:service-profiling \
 
+endif
+
+ifneq (,$(RELEASE_RANGING_STACK))
+    PRODUCT_APEX_STANDALONE_SYSTEM_SERVER_JARS += \
+        com.android.uwb:service-ranging
 endif
 
 # Overrides the (apex, jar) pairs above when determining the on-device location. The format is:

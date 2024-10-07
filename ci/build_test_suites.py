@@ -20,10 +20,10 @@ import json
 import logging
 import os
 import pathlib
-import re
 import subprocess
 import sys
 from typing import Callable
+from build_context import BuildContext
 import optimized_targets
 
 
@@ -53,18 +53,9 @@ class BuildPlanner:
   any output zip files needed by the build.
   """
 
-  _DOWNLOAD_OPTS = {
-      'test-config-only-zip',
-      'test-zip-file-filter',
-      'extra-host-shared-lib-zip',
-      'sandbox-tests-zips',
-      'additional-files-filter',
-      'cts-package-name',
-  }
-
   def __init__(
       self,
-      build_context: dict[str, any],
+      build_context: BuildContext,
       args: argparse.Namespace,
       target_optimizations: dict[str, optimized_targets.OptimizedBuildTarget],
   ):
@@ -74,18 +65,15 @@ class BuildPlanner:
 
   def create_build_plan(self):
 
-    if 'optimized_build' not in self.build_context.get(
-        'enabledBuildFeatures', []
-    ):
+    if 'optimized_build' not in self.build_context.enabled_build_features:
       return BuildPlan(set(self.args.extra_targets), set())
 
     build_targets = set()
-    packaging_functions = set()
-    self.file_download_options = self._aggregate_file_download_options()
+    packaging_commands_getters = []
     for target in self.args.extra_targets:
       if self._unused_target_exclusion_enabled(
           target
-      ) and not self._build_target_used(target):
+      ) and not self.build_context.build_target_used(target):
         continue
 
       target_optimizer_getter = self.target_optimizations.get(target, None)
@@ -97,44 +85,23 @@ class BuildPlanner:
           target, self.build_context, self.args
       )
       build_targets.update(target_optimizer.get_build_targets())
-      packaging_functions.add(target_optimizer.package_outputs)
+      packaging_commands_getters.append(
+          target_optimizer.get_package_outputs_commands
+      )
 
-    return BuildPlan(build_targets, packaging_functions)
+    return BuildPlan(build_targets, packaging_commands_getters)
 
   def _unused_target_exclusion_enabled(self, target: str) -> bool:
-    return f'{target}_unused_exclusion' in self.build_context.get(
-        'enabledBuildFeatures', []
+    return (
+        f'{target}_unused_exclusion'
+        in self.build_context.enabled_build_features
     )
-
-  def _build_target_used(self, target: str) -> bool:
-    """Determines whether this target's outputs are used by the test configurations listed in the build context."""
-    # For all of a targets' outputs, check if any of the regexes used by tests
-    # to download artifacts would match it. If any of them do then this target
-    # is necessary.
-    regex = r'\b(%s)\b' % re.escape(target)
-    return any(re.search(regex, opt) for opt in self.file_download_options)
-
-  def _aggregate_file_download_options(self) -> set[str]:
-    """Lists out all test config options to specify targets to download.
-
-    These come in the form of regexes.
-    """
-    all_options = set()
-    for test_info in self._get_test_infos():
-      for opt in test_info.get('extraOptions', []):
-        # check the known list of options for downloading files.
-        if opt.get('key') in self._DOWNLOAD_OPTS:
-          all_options.update(opt.get('values', []))
-    return all_options
-
-  def _get_test_infos(self):
-    return self.build_context.get('testContext', dict()).get('testInfos', [])
 
 
 @dataclass(frozen=True)
 class BuildPlan:
   build_targets: set[str]
-  packaging_functions: set[Callable[..., None]]
+  packaging_commands_getters: list[Callable[[], list[list[str]]]]
 
 
 def build_test_suites(argv: list[str]) -> int:
@@ -148,7 +115,7 @@ def build_test_suites(argv: list[str]) -> int:
   """
   args = parse_args(argv)
   check_required_env()
-  build_context = load_build_context()
+  build_context = BuildContext(load_build_context())
   build_planner = BuildPlanner(
       build_context, args, optimized_targets.OPTIMIZED_BUILD_TARGETS
   )
@@ -216,8 +183,12 @@ def execute_build_plan(build_plan: BuildPlan):
   except subprocess.CalledProcessError as e:
     raise BuildFailureError(e.returncode) from e
 
-  for packaging_function in build_plan.packaging_functions:
-    packaging_function()
+  for packaging_commands_getter in build_plan.packaging_commands_getters:
+    try:
+      for packaging_command in packaging_commands_getter():
+        run_command(packaging_command)
+    except subprocess.CalledProcessError as e:
+      raise BuildFailureError(e.returncode) from e
 
 
 def get_top() -> pathlib.Path:

@@ -37,26 +37,33 @@ pub mod flag_table;
 pub mod flag_value;
 pub mod package_table;
 pub mod protos;
+pub mod sip_hasher13;
 pub mod test_utils;
 
 use anyhow::anyhow;
+use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
-use std::collections::hash_map::DefaultHasher;
 use std::fs::File;
-use std::hash::{Hash, Hasher};
+use std::hash::Hasher;
 use std::io::Read;
 
 pub use crate::flag_info::{FlagInfoBit, FlagInfoHeader, FlagInfoList, FlagInfoNode};
 pub use crate::flag_table::{FlagTable, FlagTableHeader, FlagTableNode};
 pub use crate::flag_value::{FlagValueHeader, FlagValueList};
 pub use crate::package_table::{PackageTable, PackageTableHeader, PackageTableNode};
+pub use crate::sip_hasher13::SipHasher13;
 
 use crate::AconfigStorageError::{
     BytesParseFail, HashTableSizeLimit, InvalidFlagValueType, InvalidStoredFlagType,
 };
 
-/// Storage file version
-pub const FILE_VERSION: u32 = 1;
+/// The max storage file version from which we can safely read/write. May be
+/// experimental.
+pub const MAX_SUPPORTED_FILE_VERSION: u32 = 2;
+
+/// The newest fully-released version. Unless otherwise specified, this is the
+/// version we will write.
+pub const DEFAULT_FILE_VERSION: u32 = 1;
 
 /// Good hash table prime number
 pub(crate) const HASH_PRIMES: [u32; 29] = [
@@ -106,7 +113,7 @@ impl TryFrom<u8> for StorageFileType {
 
 /// Flag type enum as stored by storage file
 /// ONLY APPEND, NEVER REMOVE FOR BACKWARD COMPATIBILITY. THE MAX IS U16.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum StoredFlagType {
     ReadWriteBoolean = 0,
     ReadOnlyBoolean = 1,
@@ -211,10 +218,12 @@ pub fn get_table_size(entries: u32) -> Result<u32, AconfigStorageError> {
 }
 
 /// Get the corresponding bucket index given the key and number of buckets
-pub(crate) fn get_bucket_index<T: Hash>(val: &T, num_buckets: u32) -> u32 {
-    let mut s = DefaultHasher::new();
-    val.hash(&mut s);
-    (s.finish() % num_buckets as u64) as u32
+pub(crate) fn get_bucket_index(val: &[u8], num_buckets: u32) -> u32 {
+    let mut s = SipHasher13::new();
+    s.write(val);
+    s.write_u8(0xff);
+    let ret = (s.finish() % num_buckets as u64) as u32;
+    ret
 }
 
 /// Read and parse bytes as u8
@@ -240,6 +249,11 @@ pub(crate) fn read_u16_from_bytes(
     Ok(val)
 }
 
+/// Read and parse the first 4 bytes of buf as u32.
+pub fn read_u32_from_start_of_bytes(buf: &[u8]) -> Result<u32, AconfigStorageError> {
+    read_u32_from_bytes(buf, &mut 0)
+}
+
 /// Read and parse bytes as u32
 pub fn read_u32_from_bytes(buf: &[u8], head: &mut usize) -> Result<u32, AconfigStorageError> {
     let val =
@@ -247,6 +261,16 @@ pub fn read_u32_from_bytes(buf: &[u8], head: &mut usize) -> Result<u32, AconfigS
             BytesParseFail(anyhow!("fail to parse u32 from bytes: {}", errmsg))
         })?);
     *head += 4;
+    Ok(val)
+}
+
+// Read and parse bytes as u64
+pub fn read_u64_from_bytes(buf: &[u8], head: &mut usize) -> Result<u64, AconfigStorageError> {
+    let val =
+        u64::from_le_bytes(buf[*head..*head + 8].try_into().map_err(|errmsg| {
+            BytesParseFail(anyhow!("fail to parse u64 from bytes: {}", errmsg))
+        })?);
+    *head += 8;
     Ok(val)
 }
 

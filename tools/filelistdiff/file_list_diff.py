@@ -19,13 +19,16 @@ COLOR_WARNING = '\033[93m'
 COLOR_ERROR = '\033[91m'
 COLOR_NORMAL = '\033[0m'
 
-def find_unique_items(kati_installed_files, soong_installed_files, allowlist, system_module_name):
+def find_unique_items(kati_installed_files, soong_installed_files, system_module_name, allowlists):
     with open(kati_installed_files, 'r') as kati_list_file, \
-            open(soong_installed_files, 'r') as soong_list_file, \
-            open(allowlist, 'r') as allowlist_file:
+            open(soong_installed_files, 'r') as soong_list_file:
         kati_files = set(kati_list_file.read().split())
         soong_files = set(soong_list_file.read().split())
-        allowed_files = set(filter(lambda x: len(x), map(lambda x: x.lstrip().split('#',1)[0].rstrip() , allowlist_file.read().split('\n'))))
+
+    allowed_files = set()
+    for allowlist in allowlists:
+        with open(allowlist, 'r') as allowlist_file:
+            allowed_files.update(set(filter(lambda x: len(x), map(lambda x: x.lstrip().split('#',1)[0].rstrip() , allowlist_file.read().split('\n')))))
 
     def is_unknown_diff(filepath):
         return not filepath in allowed_files
@@ -34,23 +37,24 @@ def find_unique_items(kati_installed_files, soong_installed_files, allowlist, sy
     unique_in_soong = set(filter(is_unknown_diff, soong_files - kati_files))
 
     if unique_in_kati:
-        print(f'{COLOR_ERROR}Please add following modules into system image module {system_module_name}.{COLOR_NORMAL}')
-        print(f'{COLOR_WARNING}KATI only module(s):{COLOR_NORMAL}')
+        print('')
+        print(f'{COLOR_ERROR}Missing required modules in {system_module_name} module.{COLOR_NORMAL}')
+        print(f'To resolve this issue, please add the modules to the Android.bp file for the {system_module_name} to install the following KATI only installed files.')
+        print(f'You can find the correct Android.bp file using the command "gomod {system_module_name}".')
+        print(f'{COLOR_WARNING}KATI only installed file(s):{COLOR_NORMAL}')
         for item in sorted(unique_in_kati):
-            print(item)
+            print('  '+item)
 
     if unique_in_soong:
-        if unique_in_kati:
-            print('')
-
-        print(f'{COLOR_ERROR}Please add following modules into build/make/target/product/base_system.mk.{COLOR_NORMAL}')
-        print(f'{COLOR_WARNING}Soong only module(s):{COLOR_NORMAL}')
+        print('')
+        print(f'{COLOR_ERROR}Missing packages in base_system.mk.{COLOR_NORMAL}')
+        print('Please add packages into build/make/target/product/base_system.mk or build/make/tools/filelistdiff/allowlist to install or skip the following Soong only installed files.')
+        print(f'{COLOR_WARNING}Soong only installed file(s):{COLOR_NORMAL}')
         for item in sorted(unique_in_soong):
-            print(item)
+            print('  '+item)
 
     if unique_in_kati or unique_in_soong:
         print('')
-        print(f'{COLOR_ERROR}FAILED: System image from KATI and SOONG differs from installed file list.{COLOR_NORMAL}')
         sys.exit(1)
 
 
@@ -59,8 +63,8 @@ if __name__ == '__main__':
 
     parser.add_argument('kati_installed_file_list')
     parser.add_argument('soong_installed_file_list')
-    parser.add_argument('allowlist')
     parser.add_argument('system_module_name')
+    parser.add_argument('--allowlists', nargs='+')
     args = parser.parse_args()
 
-    find_unique_items(args.kati_installed_file_list, args.soong_installed_file_list, args.allowlist, args.system_module_name)
+    find_unique_items(args.kati_installed_file_list, args.soong_installed_file_list, args.system_module_name, args.allowlists)

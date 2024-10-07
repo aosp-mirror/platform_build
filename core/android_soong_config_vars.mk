@@ -30,9 +30,20 @@ $(call add_soong_config_var,ANDROID,BOARD_USES_ODMIMAGE)
 $(call soong_config_set_bool,ANDROID,BOARD_USES_RECOVERY_AS_BOOT,$(BOARD_USES_RECOVERY_AS_BOOT))
 $(call soong_config_set_bool,ANDROID,BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT,$(BOARD_MOVE_GSI_AVB_KEYS_TO_VENDOR_BOOT))
 $(call add_soong_config_var,ANDROID,CHECK_DEV_TYPE_VIOLATIONS)
+ifneq (,$(BOARD_SYSTEM_EXT_PREBUILT_DIR))
+$(call soong_config_set_bool,ANDROID,HAS_BOARD_SYSTEM_EXT_PREBUILT_DIR,true)
+else
+$(call soong_config_set_bool,ANDROID,HAS_BOARD_SYSTEM_EXT_PREBUILT_DIR,false)
+endif
+ifneq (,$(BOARD_PRODUCT_PREBUILT_DIR))
+$(call soong_config_set_bool,ANDROID,HAS_BOARD_PRODUCT_PREBUILT_DIR,true)
+else
+$(call soong_config_set_bool,ANDROID,HAS_BOARD_PRODUCT_PREBUILT_DIR,false)
+endif
 $(call add_soong_config_var,ANDROID,PLATFORM_SEPOLICY_VERSION)
 $(call add_soong_config_var,ANDROID,PLATFORM_SEPOLICY_COMPAT_VERSIONS)
 $(call add_soong_config_var,ANDROID,PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT)
+$(call soong_config_set_bool,ANDROID,RELEASE_BOARD_API_LEVEL_FROZEN,$(RELEASE_BOARD_API_LEVEL_FROZEN))
 $(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_DRMSERVER)
 $(call add_soong_config_var,ANDROID,TARGET_ENABLE_MEDIADRM_64)
 $(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_MEDIASERVER)
@@ -46,6 +57,8 @@ $(call soong_config_set_bool,ANDROID,SANITIZE_TARGET_SYSTEM_ENABLED,$(if $(filte
 $(call soong_config_set_bool,ANDROID,GCOV_COVERAGE,$(NATIVE_COVERAGE))
 $(call soong_config_set_bool,ANDROID,CLANG_COVERAGE,$(CLANG_COVERAGE))
 $(call soong_config_set,ANDROID,SCUDO_ALLOCATION_RING_BUFFER_SIZE,$(PRODUCT_SCUDO_ALLOCATION_RING_BUFFER_SIZE))
+
+$(call soong_config_set_bool,ANDROID,EMMA_INSTRUMENT,$(if $(filter true,$(EMMA_INSTRUMENT)),true,false))
 
 # PRODUCT_PRECOMPILED_SEPOLICY defaults to true. Explicitly check if it's "false" or not.
 $(call soong_config_set_bool,ANDROID,PRODUCT_PRECOMPILED_SEPOLICY,$(if $(filter false,$(PRODUCT_PRECOMPILED_SEPOLICY)),false,true))
@@ -74,6 +87,9 @@ endif
 # Enable SystemUI optimizations by default unless explicitly set.
 SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
+
+# Flag to use baseline profile for SystemUI.
+$(call soong_config_set,ANDROID,release_systemui_use_speed_profile,$(RELEASE_SYSTEMUI_USE_SPEED_PROFILE))
 
 # Flag for enabling compose for Launcher.
 $(call soong_config_set,ANDROID,release_enable_compose_in_launcher,$(RELEASE_ENABLE_COMPOSE_IN_LAUNCHER))
@@ -173,6 +189,17 @@ endif
 # Required as platform_bootclasspath is using this namespace
 $(call soong_config_set,bootclasspath,release_crashrecovery_module,$(RELEASE_CRASHRECOVERY_MODULE))
 
+# Add uprobestats build flag to soong
+$(call soong_config_set,ANDROID,release_uprobestats_module,$(RELEASE_UPROBESTATS_MODULE))
+# Add uprobestats file move flags to soong, for both platform and module
+ifeq (true,$(RELEASE_UPROBESTATS_FILE_MOVE))
+  $(call soong_config_set,ANDROID,uprobestats_files_in_module,true)
+  $(call soong_config_set,ANDROID,uprobestats_files_in_platform,false)
+else
+  $(call soong_config_set,ANDROID,uprobestats_files_in_module,false)
+  $(call soong_config_set,ANDROID,uprobestats_files_in_platform,true)
+endif
+
 # Enable Profiling module. Also used by platform_bootclasspath.
 $(call soong_config_set,ANDROID,release_package_profiling_module,$(RELEASE_PACKAGE_PROFILING_MODULE))
 $(call soong_config_set,bootclasspath,release_package_profiling_module,$(RELEASE_PACKAGE_PROFILING_MODULE))
@@ -185,3 +212,23 @@ endif
 
 # Add target_use_pan_display flag for hardware/libhardware:gralloc.default
 $(call soong_config_set_bool,gralloc,target_use_pan_display,$(if $(filter true,$(TARGET_USE_PAN_DISPLAY)),true,false))
+
+# Add use_camera_v4l2_hal flag for hardware/libhardware/modules/camera/3_4:camera.v4l2
+$(call soong_config_set_bool,camera,use_camera_v4l2_hal,$(if $(filter true,$(USE_CAMERA_V4L2_HAL)),true,false))
+
+# Add audioserver_multilib flag for hardware/interfaces/soundtrigger/2.0/default:android.hardware.soundtrigger@2.0-impl
+ifneq ($(strip $(AUDIOSERVER_MULTILIB)),)
+  $(call soong_config_set,soundtrigger,audioserver_multilib,$(AUDIOSERVER_MULTILIB))
+endif
+
+# Add sim_count, disable_rild_oem_hook, and use_aosp_rild flag for ril related modules
+$(call soong_config_set,ril,sim_count,$(SIM_COUNT))
+ifneq ($(DISABLE_RILD_OEM_HOOK), false)
+  $(call soong_config_set_bool,ril,disable_rild_oem_hook,true)
+endif
+ifneq ($(ENABLE_VENDOR_RIL_SERVICE), true)
+  $(call soong_config_set_bool,ril,use_aosp_rild,true)
+endif
+
+# Export target_board_platform to soong for hardware/google/graphics/common/libmemtrack:memtrack.$(TARGET_BOARD_PLATFORM)
+$(call soong_config_set,ANDROID,target_board_platform,$(TARGET_BOARD_PLATFORM))

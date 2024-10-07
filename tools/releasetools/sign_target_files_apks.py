@@ -184,14 +184,17 @@ import re
 import shutil
 import stat
 import sys
+import shlex
 import tempfile
 import zipfile
 from xml.etree import ElementTree
 
 import add_img_to_target_files
+import ota_from_raw_img
 import apex_utils
 import common
 import payload_signer
+import update_payload
 from payload_signer import SignOtaPackage, PAYLOAD_BIN
 
 
@@ -221,6 +224,7 @@ OPTIONS.vendor_otatools = None
 OPTIONS.allow_gsi_debug_sepolicy = False
 OPTIONS.override_apk_keys = None
 OPTIONS.override_apex_keys = None
+OPTIONS.input_tmp = None
 
 
 AVB_FOOTER_ARGS_BY_PARTITION = {
@@ -579,7 +583,104 @@ def IsBuildPropFile(filename):
         filename.endswith("/prop.default")
 
 
-def ProcessTargetFiles(input_tf_zip: zipfile.ZipFile, output_tf_zip, misc_info,
+def GetOtaSigningArgs():
+  args = []
+  if OPTIONS.package_key:
+    args.extend(["--package_key", OPTIONS.package_key])
+  if OPTIONS.payload_signer:
+    args.extend(["--payload_signer=" + OPTIONS.payload_signer])
+  if OPTIONS.payload_signer_args:
+    args.extend(["--payload_signer_args=" + shlex.join(OPTIONS.payload_signer_args)])
+  if OPTIONS.search_path:
+    args.extend(["--search_path", OPTIONS.search_path])
+  if OPTIONS.payload_signer_maximum_signature_size:
+    args.extend(["--payload_signer_maximum_signature_size",
+                OPTIONS.payload_signer_maximum_signature_size])
+  if OPTIONS.private_key_suffix:
+    args.extend(["--private_key_suffix", OPTIONS.private_key_suffix])
+  return args
+
+
+def RegenerateKernelPartitions(input_tf_zip: zipfile.ZipFile, output_tf_zip: zipfile.ZipFile, misc_info):
+  """Re-generate boot and dtbo partitions using new signing configuration"""
+  files_to_unzip = [
+      "PREBUILT_IMAGES/*", "BOOTABLE_IMAGES/*.img", "*/boot_16k.img", "*/dtbo_16k.img"]
+  if OPTIONS.input_tmp is None:
+    OPTIONS.input_tmp = common.UnzipTemp(input_tf_zip.filename, files_to_unzip)
+  else:
+    common.UnzipToDir(input_tf_zip.filename, OPTIONS.input_tmp, files_to_unzip)
+  unzip_dir = OPTIONS.input_tmp
+  os.makedirs(os.path.join(unzip_dir, "IMAGES"), exist_ok=True)
+
+  boot_image = common.GetBootableImage(
+      "IMAGES/boot.img", "boot.img", unzip_dir, "BOOT", misc_info)
+  if boot_image:
+    boot_image.WriteToDir(unzip_dir)
+    boot_image = os.path.join(unzip_dir, boot_image.name)
+    common.ZipWrite(output_tf_zip, boot_image, "IMAGES/boot.img",
+                    compress_type=zipfile.ZIP_STORED)
+  if misc_info.get("has_dtbo") == "true":
+    add_img_to_target_files.AddDtbo(output_tf_zip)
+  return unzip_dir
+
+
+def RegenerateBootOTA(input_tf_zip: zipfile.ZipFile, filename, input_ota):
+  with input_tf_zip.open(filename, "r") as in_fp:
+    payload = update_payload.Payload(in_fp)
+  is_incremental = any([part.HasField('old_partition_info')
+                        for part in payload.manifest.partitions])
+  is_boot_ota = filename.startswith(
+      "VENDOR/boot_otas/") or filename.startswith("SYSTEM/boot_otas/")
+  if not is_boot_ota:
+    return
+  is_4k_boot_ota = filename in [
+      "VENDOR/boot_otas/boot_ota_4k.zip", "SYSTEM/boot_otas/boot_ota_4k.zip"]
+  # Only 4K boot image is re-generated, so if 16K boot ota isn't incremental,
+  # we do not need to re-generate
+  if not is_4k_boot_ota and not is_incremental:
+    return
+
+  timestamp = str(payload.manifest.max_timestamp)
+  partitions = [part.partition_name for part in payload.manifest.partitions]
+  unzip_dir = OPTIONS.input_tmp
+  signed_boot_image = os.path.join(unzip_dir, "IMAGES", "boot.img")
+  if not os.path.exists(signed_boot_image):
+    logger.warn("Need to re-generate boot OTA {} but failed to get signed boot image. 16K dev option will be impacted, after rolling back to 4K user would need to sideload/flash their device to continue receiving OTAs.")
+    return
+  signed_dtbo_image = os.path.join(unzip_dir, "IMAGES", "dtbo.img")
+  if "dtbo" in partitions and not os.path.exists(signed_dtbo_image):
+    raise ValueError(
+        "Boot OTA {} has dtbo partition, but no dtbo image found in target files.".format(filename))
+  if is_incremental:
+    signed_16k_boot_image = os.path.join(
+        unzip_dir, "IMAGES", "boot_16k.img")
+    signed_16k_dtbo_image = os.path.join(
+        unzip_dir, "IMAGES", "dtbo_16k.img")
+    if is_4k_boot_ota:
+      if os.path.exists(signed_16k_boot_image):
+        signed_boot_image = signed_16k_boot_image + ":" + signed_boot_image
+      if os.path.exists(signed_16k_dtbo_image):
+        signed_dtbo_image = signed_16k_dtbo_image + ":" + signed_dtbo_image
+    else:
+      if os.path.exists(signed_16k_boot_image):
+        signed_boot_image += ":" + signed_16k_boot_image
+      if os.path.exists(signed_16k_dtbo_image):
+        signed_dtbo_image += ":" + signed_16k_dtbo_image
+
+  args = ["ota_from_raw_img",
+          "--max_timestamp", timestamp, "--output", input_ota.name]
+  args.extend(GetOtaSigningArgs())
+  if "dtbo" in partitions:
+    args.extend(["--partition_name", "boot,dtbo",
+                signed_boot_image, signed_dtbo_image])
+  else:
+    args.extend(["--partition_name", "boot", signed_boot_image])
+  logger.info(
+      "Re-generating boot OTA {} using cmd {}".format(filename, args))
+  ota_from_raw_img.main(args)
+
+
+def ProcessTargetFiles(input_tf_zip: zipfile.ZipFile, output_tf_zip: zipfile.ZipFile, misc_info,
                        apk_keys, apex_keys, key_passwords,
                        platform_api_level, codename_to_api_level_map,
                        compressed_extension):
@@ -593,6 +694,16 @@ def ProcessTargetFiles(input_tf_zip: zipfile.ZipFile, output_tf_zip, misc_info,
     # Sets this to zero for targets without APK files.
     maxsize = 0
 
+  # Replace the AVB signing keys, if any.
+  ReplaceAvbSigningKeys(misc_info)
+  OPTIONS.info_dict = misc_info
+
+  # Rewrite the props in AVB signing args.
+  if misc_info.get('avb_enable') == 'true':
+    RewriteAvbProps(misc_info)
+
+  RegenerateKernelPartitions(input_tf_zip, output_tf_zip, misc_info)
+
   for info in input_tf_zip.infolist():
     filename = info.filename
     if filename.startswith("IMAGES/"):
@@ -603,10 +714,10 @@ def ProcessTargetFiles(input_tf_zip: zipfile.ZipFile, output_tf_zip, misc_info,
     if filename.startswith("OTA/") and filename.endswith(".img"):
       continue
 
-    data = input_tf_zip.read(filename)
-    out_info = copy.copy(info)
     (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
         filename, compressed_extension, OPTIONS.skip_apks_with_path_prefix)
+    data = input_tf_zip.read(filename)
+    out_info = copy.copy(info)
 
     if is_apk and should_be_skipped:
       # Copy skipped APKs verbatim.
@@ -670,9 +781,8 @@ def ProcessTargetFiles(input_tf_zip: zipfile.ZipFile, output_tf_zip, misc_info,
     elif filename.endswith(".zip") and IsEntryOtaPackage(input_tf_zip, filename):
       logger.info("Re-signing OTA package {}".format(filename))
       with tempfile.NamedTemporaryFile() as input_ota, tempfile.NamedTemporaryFile() as output_ota:
-        with input_tf_zip.open(filename, "r") as in_fp:
-          shutil.copyfileobj(in_fp, input_ota)
-          input_ota.flush()
+        RegenerateBootOTA(input_tf_zip, filename, input_ota)
+
         SignOtaPackage(input_ota.name, output_ota.name)
         common.ZipWrite(output_tf_zip, output_ota.name, filename,
                         compress_type=zipfile.ZIP_STORED)
@@ -811,17 +921,18 @@ def ProcessTargetFiles(input_tf_zip: zipfile.ZipFile, output_tf_zip, misc_info,
         common.ZipWrite(output_tf_zip, image.name, filename)
     # A non-APK file; copy it verbatim.
     else:
-      common.ZipWriteStr(output_tf_zip, out_info, data)
+      try:
+        entry = output_tf_zip.getinfo(filename)
+        if output_tf_zip.read(entry) != data:
+          logger.warn(
+              "Output zip contains duplicate entries for %s with different contents", filename)
+        continue
+      except KeyError:
+        common.ZipWriteStr(output_tf_zip, out_info, data)
 
   if OPTIONS.replace_ota_keys:
     ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info)
 
-  # Replace the AVB signing keys, if any.
-  ReplaceAvbSigningKeys(misc_info)
-
-  # Rewrite the props in AVB signing args.
-  if misc_info.get('avb_enable') == 'true':
-    RewriteAvbProps(misc_info)
 
   # Write back misc_info with the latest values.
   ReplaceMiscInfoTxt(input_tf_zip, output_tf_zip, misc_info)
@@ -1066,9 +1177,9 @@ def WriteOtacerts(output_zip, filename, keys):
   common.ZipWriteStr(output_zip, filename, temp_file.getvalue())
 
 
-def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
+def ReplaceOtaKeys(input_tf_zip: zipfile.ZipFile, output_tf_zip, misc_info):
   try:
-    keylist = input_tf_zip.read("META/otakeys.txt").split()
+    keylist = input_tf_zip.read("META/otakeys.txt").decode().split()
   except KeyError:
     raise common.ExternalError("can't read META/otakeys.txt from input")
 

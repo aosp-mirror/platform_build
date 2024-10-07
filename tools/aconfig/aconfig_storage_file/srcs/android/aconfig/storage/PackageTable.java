@@ -16,32 +16,48 @@
 
 package android.aconfig.storage;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class PackageTable {
 
     private Header mHeader;
-    private Map<String, Node> mNodeMap;
+    private ByteBufferReader mReader;
 
     public static PackageTable fromBytes(ByteBuffer bytes) {
         PackageTable packageTable = new PackageTable();
-        ByteBufferReader reader = new ByteBufferReader(bytes);
-        Header header = Header.fromBytes(reader);
-        packageTable.mHeader = header;
-        packageTable.mNodeMap = new HashMap(TableUtils.getTableSize(header.mNumPackages));
-        reader.position(header.mNodeOffset);
-        for (int i = 0; i < header.mNumPackages; i++) {
-            Node node = Node.fromBytes(reader);
-            packageTable.mNodeMap.put(node.mPackageName, node);
-        }
+        packageTable.mReader = new ByteBufferReader(bytes);
+        packageTable.mHeader = Header.fromBytes(packageTable.mReader);
+
         return packageTable;
     }
 
     public Node get(String packageName) {
-        return mNodeMap.get(packageName);
+        int numBuckets = (mHeader.mNodeOffset - mHeader.mBucketOffset) / 4;
+        int bucketIndex = TableUtils.getBucketIndex(packageName.getBytes(UTF_8), numBuckets);
+        int newPosition = mHeader.mBucketOffset + bucketIndex * 4;
+        if (newPosition >= mHeader.mNodeOffset) {
+            return null;
+        }
+        mReader.position(newPosition);
+        int nodeIndex = mReader.readInt();
+
+        if (nodeIndex < mHeader.mNodeOffset || nodeIndex >= mHeader.mFileSize) {
+            return null;
+        }
+
+        while (nodeIndex != -1) {
+            mReader.position(nodeIndex);
+            Node node = Node.fromBytes(mReader, mHeader.mVersion);
+            if (Objects.equals(packageName, node.mPackageName)) {
+                return node;
+            }
+            nodeIndex = node.mNextOffset;
+        }
+
+        return null;
     }
 
     public Header getHeader() {
@@ -58,7 +74,7 @@ public class PackageTable {
         private int mBucketOffset;
         private int mNodeOffset;
 
-        public static Header fromBytes(ByteBufferReader reader) {
+        private static Header fromBytes(ByteBufferReader reader) {
             Header header = new Header();
             header.mVersion = reader.readInt();
             header.mContainer = reader.readString();
@@ -111,7 +127,29 @@ public class PackageTable {
         private int mBooleanStartIndex;
         private int mNextOffset;
 
-        public static Node fromBytes(ByteBufferReader reader) {
+        private static Node fromBytes(ByteBufferReader reader, int version) {
+            switch (version) {
+                case 1:
+                    return fromBytesV1(reader);
+                case 2:
+                    return fromBytesV2(reader);
+                default:
+                    // Do we want to throw here?
+                    return new Node();
+            }
+        }
+
+        private static Node fromBytesV1(ByteBufferReader reader) {
+            Node node = new Node();
+            node.mPackageName = reader.readString();
+            node.mPackageId = reader.readInt();
+            node.mBooleanStartIndex = reader.readInt();
+            node.mNextOffset = reader.readInt();
+            node.mNextOffset = node.mNextOffset == 0 ? -1 : node.mNextOffset;
+            return node;
+        }
+
+        private static Node fromBytesV2(ByteBufferReader reader) {
             Node node = new Node();
             node.mPackageName = reader.readString();
             node.mPackageId = reader.readInt();

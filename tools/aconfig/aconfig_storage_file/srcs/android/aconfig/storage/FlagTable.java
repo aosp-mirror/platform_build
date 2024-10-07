@@ -16,41 +16,57 @@
 
 package android.aconfig.storage;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class FlagTable {
 
     private Header mHeader;
-    private Map<String, Node> mNodeMap;
+    private ByteBufferReader mReader;
 
     public static FlagTable fromBytes(ByteBuffer bytes) {
         FlagTable flagTable = new FlagTable();
-        ByteBufferReader reader = new ByteBufferReader(bytes);
-        Header header = Header.fromBytes(reader);
-        flagTable.mHeader = header;
-        flagTable.mNodeMap = new HashMap(TableUtils.getTableSize(header.mNumFlags));
-        reader.position(header.mNodeOffset);
-        for (int i = 0; i < header.mNumFlags; i++) {
-            Node node = Node.fromBytes(reader);
-            flagTable.mNodeMap.put(makeKey(node.mPackageId, node.mFlagName), node);
-        }
+        flagTable.mReader = new ByteBufferReader(bytes);
+        flagTable.mHeader = Header.fromBytes(flagTable.mReader);
+
         return flagTable;
     }
 
     public Node get(int packageId, String flagName) {
-        return mNodeMap.get(makeKey(packageId, flagName));
+        int numBuckets = (mHeader.mNodeOffset - mHeader.mBucketOffset) / 4;
+        int bucketIndex = TableUtils.getBucketIndex(makeKey(packageId, flagName), numBuckets);
+        int newPosition = mHeader.mBucketOffset + bucketIndex * 4;
+        if (newPosition >= mHeader.mNodeOffset) {
+            return null;
+        }
+
+        mReader.position(newPosition);
+        int nodeIndex = mReader.readInt();
+        if (nodeIndex < mHeader.mNodeOffset || nodeIndex >= mHeader.mFileSize) {
+            return null;
+        }
+
+        while (nodeIndex != -1) {
+            mReader.position(nodeIndex);
+            Node node = Node.fromBytes(mReader);
+            if (Objects.equals(flagName, node.mFlagName) && packageId == node.mPackageId) {
+                return node;
+            }
+            nodeIndex = node.mNextOffset;
+        }
+
+        return null;
     }
 
     public Header getHeader() {
         return mHeader;
     }
 
-    private static String makeKey(int packageId, String flagName) {
+    private static byte[] makeKey(int packageId, String flagName) {
         StringBuilder ret = new StringBuilder();
-        return ret.append(packageId).append('/').append(flagName).toString();
+        return ret.append(packageId).append('/').append(flagName).toString().getBytes(UTF_8);
     }
 
     public static class Header {

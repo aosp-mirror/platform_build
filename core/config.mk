@@ -173,6 +173,7 @@ $(KATI_obsolete_var BOARD_PREBUILT_PVMFWIMAGE,pvmfw.bin is now built in AOSP and
 $(KATI_obsolete_var BUILDING_PVMFW_IMAGE,BUILDING_PVMFW_IMAGE is no longer used)
 $(KATI_obsolete_var BOARD_BUILD_SYSTEM_ROOT_IMAGE)
 $(KATI_obsolete_var FS_GET_STATS)
+$(KATI_obsolete_var BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -363,8 +364,7 @@ endif
 # configs, generally for cross-cutting features.
 
 # Build broken variables that should be treated as booleans
-_build_broken_bool_vars := \
-  BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES \
+_build_broken_bool_vars :=
 
 # Build broken variables that should be treated as lists
 _build_broken_list_vars := \
@@ -809,6 +809,12 @@ requirements :=
 # by default for full treble products.
 ifeq ($(PRODUCT_FULL_TREBLE),true)
   BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED ?= true
+endif
+
+ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),36),)
+  ifneq ($(NEED_AIDL_NDK_PLATFORM_BACKEND),)
+    $(error Must not set NEED_AIDL_NDK_PLATFORM_BACKEND, but it is set to: $(NEED_AIDL_NDK_PLATFORM_BACKEND). Support will be removed.)
+  endif
 endif
 
 # Set BOARD_SYSTEMSDK_VERSIONS to the latest SystemSDK version starting from P-launching
@@ -1263,7 +1269,15 @@ ifeq ($(TARGET_PRODUCT_PROP),)
 TARGET_PRODUCT_PROP := $(wildcard $(TARGET_DEVICE_DIR)/product.prop)
 endif
 
-.KATI_READONLY := TARGET_SYSTEM_PROP TARGET_SYSTEM_EXT_PROP TARGET_PRODUCT_PROP
+ifeq ($(TARGET_ODM_PROP),)
+TARGET_ODM_PROP := $(wildcard $(TARGET_DEVICE_DIR)/odm.prop)
+endif
+
+.KATI_READONLY := \
+    TARGET_SYSTEM_PROP \
+    TARGET_SYSTEM_EXT_PROP \
+    TARGET_PRODUCT_PROP \
+    TARGET_ODM_PROP \
 
 include $(BUILD_SYSTEM)/sysprop_config.mk
 
@@ -1271,8 +1285,15 @@ include $(BUILD_SYSTEM)/sysprop_config.mk
 # consistency with those defined in BoardConfig.mk files.
 include $(BUILD_SYSTEM)/android_soong_config_vars.mk
 
-SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.$(TARGET_PRODUCT).variables
-SOONG_EXTRA_VARIABLES := $(SOONG_OUT_DIR)/soong.$(TARGET_PRODUCT).extra.variables
+# EMMA_INSTRUMENT is set to true when coverage is enabled. Creates a suffix to
+# differeciate the coverage version of ninja files. This will save 5 minutes of
+# build time used to regenerate ninja.
+ifeq (true,$(EMMA_INSTRUMENT))
+COVERAGE_SUFFIX := .coverage
+endif
+
+SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.$(TARGET_PRODUCT)$(COVERAGE_SUFFIX).variables
+SOONG_EXTRA_VARIABLES := $(SOONG_OUT_DIR)/soong.$(TARGET_PRODUCT)$(COVERAGE_SUFFIX).extra.variables
 
 ifeq ($(CALLED_FROM_SETUP),true)
 include $(BUILD_SYSTEM)/ninja_config.mk
