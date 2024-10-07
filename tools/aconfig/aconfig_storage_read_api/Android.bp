@@ -36,10 +36,10 @@ rust_test_host {
         "librand",
     ],
     data: [
-        "tests/package.map",
-        "tests/flag.map",
-        "tests/flag.val",
-        "tests/flag.info",
+        "tests/data/v1/package.map",
+        "tests/data/v1/flag.map",
+        "tests/data/v1/flag.val",
+        "tests/data/v1/flag.info",
     ],
 }
 
