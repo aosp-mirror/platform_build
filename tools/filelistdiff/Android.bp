@@ -25,3 +25,8 @@ prebuilt_etc_host {
     name: "system_image_diff_allowlist",
     src: "allowlist",
 }
+
+prebuilt_etc_host {
+    name: "system_image_diff_allowlist_next",
+    src: "allowlist_next",
+}
