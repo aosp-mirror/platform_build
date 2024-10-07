@@ -37,3 +37,7 @@ otacerts_zip {
     relative_install_path: "security",
     filename: "otacerts.zip",
 }
+
+adb_keys {
+    name: "adb_keys",
+}
