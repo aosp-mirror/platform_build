@@ -16,7 +16,7 @@
 
 // the signapk tool (a .jar application used to sign packages)
 // ============================================================
-java_library_host {
+java_binary_host {
     name: "signapk",
     srcs: ["src/**/*.java"],
     manifest: "SignApk.mf",
