@@ -19,13 +19,16 @@ COLOR_WARNING = '\033[93m'
 COLOR_ERROR = '\033[91m'
 COLOR_NORMAL = '\033[0m'
 
-def find_unique_items(kati_installed_files, soong_installed_files, allowlist, system_module_name):
+def find_unique_items(kati_installed_files, soong_installed_files, system_module_name, allowlists):
     with open(kati_installed_files, 'r') as kati_list_file, \
-            open(soong_installed_files, 'r') as soong_list_file, \
-            open(allowlist, 'r') as allowlist_file:
+            open(soong_installed_files, 'r') as soong_list_file:
         kati_files = set(kati_list_file.read().split())
         soong_files = set(soong_list_file.read().split())
-        allowed_files = set(filter(lambda x: len(x), map(lambda x: x.lstrip().split('#',1)[0].rstrip() , allowlist_file.read().split('\n'))))
+
+    allowed_files = set()
+    for allowlist in allowlists:
+        with open(allowlist, 'r') as allowlist_file:
+            allowed_files.update(set(filter(lambda x: len(x), map(lambda x: x.lstrip().split('#',1)[0].rstrip() , allowlist_file.read().split('\n')))))
 
     def is_unknown_diff(filepath):
         return not filepath in allowed_files
@@ -60,8 +63,8 @@ if __name__ == '__main__':
 
     parser.add_argument('kati_installed_file_list')
     parser.add_argument('soong_installed_file_list')
-    parser.add_argument('allowlist')
     parser.add_argument('system_module_name')
+    parser.add_argument('--allowlists', nargs='+')
     args = parser.parse_args()
 
-    find_unique_items(args.kati_installed_file_list, args.soong_installed_file_list, args.allowlist, args.system_module_name)
+    find_unique_items(args.kati_installed_file_list, args.soong_installed_file_list, args.system_module_name, args.allowlists)
