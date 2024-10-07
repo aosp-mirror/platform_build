@@ -284,9 +284,9 @@ endif
 ifneq ($(filter memtag_stack,$(my_sanitize)),)
   my_cflags += -fsanitize=memtag-stack
   my_ldflags += -fsanitize=memtag-stack
-  my_cflags += -Xclang -target-feature -Xclang +mte
-  my_ldflags += -Xclang -target-feature -Xclang +mte
-  my_asflags += -Xclang -target-feature -Xclang +mte
+  my_cflags += -march=armv8a+memtag
+  my_ldflags += -march=armv8a+memtag
+  my_asflags += -march=armv8a+memtag
   my_sanitize := $(filter-out memtag_stack,$(my_sanitize))
 endif
 

@@ -45,7 +45,8 @@ class AconfigStorageTest : public ::testing::Test {
   }
 
   void SetUp() override {
-    auto const test_dir = android::base::GetExecutableDirectory();
+    auto const test_base_dir = android::base::GetExecutableDirectory();
+    auto const test_dir = test_base_dir + "/data/v1";
     storage_dir = std::string(root_dir.path);
     auto maps_dir = storage_dir + "/maps";
     auto boot_dir = storage_dir + "/boot";
