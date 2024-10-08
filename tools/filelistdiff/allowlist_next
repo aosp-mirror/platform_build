@@ -7,9 +7,3 @@ framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.
 framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.odex.fsv_meta
 framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.vdex
 framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.vdex.fsv_meta
-
-# Soong only installed files
-etc/aconfig/flag.info
-etc/aconfig/flag.map
-etc/aconfig/flag.val
-etc/aconfig/package.map
