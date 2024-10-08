@@ -52,3 +52,15 @@ python_test_host {
         unit_test: true,
     },
 }
+
+python_binary_host {
+    name: "edit_monitor",
+    pkg_path: "edit_monitor",
+    srcs: [
+        "main.py",
+    ],
+    libs: [
+        "edit_monitor_lib",
+    ],
+    main: "main.py",
+}
