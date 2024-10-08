@@ -4010,6 +4010,21 @@ INTERNAL_PRODUCTIMAGE_FILES := \
     $(filter $(TARGET_OUT_PRODUCT)/%,\
       $(ALL_DEFAULT_INSTALLED_MODULES))
 
+# Install product/etc/linker.config.pb with PRODUCT_PRODUCT_LINKER_CONFIG_FRAGMENTS
+product_linker_config_file := $(TARGET_OUT_PRODUCT)/etc/linker.config.pb
+$(product_linker_config_file): private_linker_config_fragments := $(PRODUCT_PRODUCT_LINKER_CONFIG_FRAGMENTS)
+$(product_linker_config_file): $(INTERNAL_PRODUCTIMAGE_FILES) | $(HOST_OUT_EXECUTABLES)/conv_linker_config
+	@echo Creating linker config: $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	$(HOST_OUT_EXECUTABLES)/conv_linker_config proto \
+		--source $(call normalize-path-list,$(private_linker_config_fragments)) \
+		--output $@
+$(call define declare-1p-target,$(product_linker_config_file),)
+INTERNAL_PRODUCTIMAGE_FILES += $(product_linker_config_file)
+ALL_DEFAULT_INSTALLED_MODULES += $(product_linker_config_file)
+
+
 INSTALLED_FILES_FILE_PRODUCT := $(PRODUCT_OUT)/installed-files-product.txt
 INSTALLED_FILES_JSON_PRODUCT := $(INSTALLED_FILES_FILE_PRODUCT:.txt=.json)
 $(INSTALLED_FILES_FILE_PRODUCT): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_PRODUCT)
