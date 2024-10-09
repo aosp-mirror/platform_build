@@ -316,6 +316,8 @@ $(call add_json_list, AfdoProfiles,                $(ALL_AFDO_PROFILES))
 
 $(call add_json_str,  ProductManufacturer, $(PRODUCT_MANUFACTURER))
 $(call add_json_str,  ProductBrand,        $(PRODUCT_BRAND))
+$(call add_json_str,  ProductDevice,       $(PRODUCT_DEVICE))
+$(call add_json_str,  ProductModel,        $(PRODUCT_MODEL))
 
 $(call add_json_str, ReleaseVersion,    $(_RELEASE_VERSION))
 $(call add_json_list, ReleaseAconfigValueSets,    $(RELEASE_ACONFIG_VALUE_SETS))
