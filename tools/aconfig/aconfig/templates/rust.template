@@ -51,7 +51,10 @@ static CACHED_{flag.name}: LazyLock<bool> = LazyLock::new(|| \{
                                 get_boolean_flag_value(&flag_val_map, offset + {flag.flag_offset})
                                     .map_err(|err| format!("failed to get flag: \{err}"))
                             },
-                            None => Err("no context found for package '{package}'".to_string())
+                            None => \{
+                                 log!(Level::Error, "no context found for package {package}");
+                                 Ok({flag.default_value})
+                            }
                         }
                     })
                 });
