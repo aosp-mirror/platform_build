@@ -31,10 +31,14 @@ def find_unique_items(kati_installed_files, soong_installed_files, system_module
             allowed_files.update(set(filter(lambda x: len(x), map(lambda x: x.lstrip().split('#',1)[0].rstrip() , allowlist_file.read().split('\n')))))
 
     def is_unknown_diff(filepath):
-        return not filepath in allowed_files
+        return filepath not in allowed_files
+
+    def is_unnecessary_allowlist(filepath):
+        return filepath not in kati_files.symmetric_difference(soong_files)
 
     unique_in_kati = set(filter(is_unknown_diff, kati_files - soong_files))
     unique_in_soong = set(filter(is_unknown_diff, soong_files - kati_files))
+    unnecessary_allowlists = set(filter(is_unnecessary_allowlist, allowed_files))
 
     if unique_in_kati:
         print('')
@@ -53,7 +57,15 @@ def find_unique_items(kati_installed_files, soong_installed_files, system_module
         for item in sorted(unique_in_soong):
             print('  '+item)
 
-    if unique_in_kati or unique_in_soong:
+    if unnecessary_allowlists:
+        print('')
+        print(f'{COLOR_ERROR}Unnecessary files in allowlist.{COLOR_NORMAL}')
+        print('Please remove these entries from build/make/tools/filelistdiff/allowlist')
+        for item in sorted(unnecessary_allowlists):
+            print('  '+item)
+
+
+    if unique_in_kati or unique_in_soong or unnecessary_allowlists:
         print('')
         sys.exit(1)
 
