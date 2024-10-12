@@ -228,3 +228,11 @@ $(call soong_config_set,ANDROID,target_board_platform,$(TARGET_BOARD_PLATFORM))
 # Export board_uses_scaler_m2m1shot and board_uses_align_restriction to soong for hardware/google/graphics/common/libscaler:libexynosscaler
 $(call soong_config_set_bool,google_graphics,board_uses_scaler_m2m1shot,$(if $(filter true,$(BOARD_USES_SCALER_M2M1SHOT)),true,false))
 $(call soong_config_set_bool,google_graphics,board_uses_align_restriction,$(if $(filter true,$(BOARD_USES_ALIGN_RESTRICTION)),true,false))
+
+# Export video_codec variables to soong for exynos modules
+$(call soong_config_set,video_codec,target_soc_name,$(TARGET_SOC_NAME))
+$(call soong_config_set_bool,video_codec,board_use_codec2_hidl_1_2,$(if $(filter true,$(BOARD_USE_CODEC2_HIDL_1_2)),true,false))
+$(call soong_config_set_bool,video_codec,board_support_mfc_enc_bt2020,$(if $(filter true,$(BOARD_SUPPORT_MFC_ENC_BT2020)),true,false))
+$(call soong_config_set_bool,video_codec,board_support_flexible_p010,$(if $(filter true,$(BOARD_SUPPORT_FLEXIBLE_P010)),true,false))
+$(call soong_config_set,video_codec,board_support_mfc_version,$(BOARD_SUPPORT_MFC_VERSION))
+$(call soong_config_set_bool,video_codec,board_use_codec2_aidl,$(if $(BOARD_USE_CODEC2_AIDL),true,false))
