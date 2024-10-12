@@ -318,6 +318,11 @@ android_system_image {
         ],
         libs: [":framework-res{.export-package.apk}"],
     },
+    type: "erofs",
+    erofs: {
+        compressor: "lz4hc,9",
+        compress_hints: "erofs_compress_hints.txt",
+    },
     build_logtags: true,
     gen_aconfig_flags_pb: true,
 
@@ -405,7 +410,6 @@ android_system_image {
         "init.zygote32.rc",
         "init.zygote64.rc",
         "init.zygote64_32.rc",
-        "init_first_stage", // for boot partition
         "initial-package-stopped-states.xml",
         "input",
         "installd",
@@ -419,7 +423,6 @@ android_system_image {
         "ld.mc",
         "llkd", // base_system
         "lmkd", // base_system
-        "local_time.default", // handheld_vendo
         "locksettings", // base_system
         "logcat", // base_system
         "logd", // base_system
@@ -481,7 +484,6 @@ android_system_image {
         "sm", // base_system
         "snapshotctl", // base_system
         "snapuserd", // base_system
-        "snapuserd_ramdisk", // ramdisk
         "storaged", // base_system
         "surfaceflinger", // base_system
         "svc", // base_system
@@ -607,7 +609,6 @@ android_system_image {
                 "PacProcessor", // handheld_system
                 "PackageInstaller", // base_system
                 "PartnerBookmarksProvider", // generic_system
-                "PhotoTable", // full_base
                 "PrintRecommendationService", // handheld_system
                 "PrintSpooler", // handheld_system
                 "ProxyHandler", // handheld_system
