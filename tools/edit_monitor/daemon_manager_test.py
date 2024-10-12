@@ -131,6 +131,13 @@ class DaemonManagerTest(unittest.TestCase):
     # Verify no daemon process is started.
     self.assertIsNone(dm.daemon_process)
 
+  def test_start_return_directly_if_in_cog_env(self):
+    dm = daemon_manager.DaemonManager(
+        '/google/cog/cloud/user/workspace/edit_monitor')
+    dm.start()
+    # Verify no daemon process is started.
+    self.assertIsNone(dm.daemon_process)
+
   @mock.patch('os.kill')
   def test_start_failed_to_kill_existing_instance(self, mock_kill):
     mock_kill.side_effect = OSError('Unknown OSError')
