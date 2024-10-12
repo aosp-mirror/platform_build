@@ -15,3 +15,12 @@
 ifeq ($(USES_DEVICE_GOOGLE_ZUMA),true)
     -include vendor/google_devices/zuma/prebuilts/misc_bins/update_bootloader_radio_image.mk
 endif
+ifeq ($(USES_DEVICE_GOOGLE_ZUMAPRO),true)
+    -include vendor/google_devices/zumapro/prebuilts/misc_bins/update_bootloader_radio_image.mk
+endif
+ifeq ($(USES_DEVICE_GOOGLE_LAGUNA),true)
+    -include vendor/google_devices/laguna/prebuilts/misc_bins/update_bootloader_radio_image.mk
+endif
+ifeq ($(USES_DEVICE_GOOGLE_MALIBU),true)
+    -include vendor/google_devices/malibu/prebuilts/misc_bins/update_bootloader_radio_image.mk
+endif
