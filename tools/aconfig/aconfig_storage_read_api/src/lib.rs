@@ -412,10 +412,10 @@ mod tests {
         let flag_map = storage_dir.clone() + "/maps/mockup.flag.map";
         let flag_val = storage_dir.clone() + "/boot/mockup.val";
         let flag_info = storage_dir.clone() + "/boot/mockup.info";
-        fs::copy("./tests/package.map", &package_map).unwrap();
-        fs::copy("./tests/flag.map", &flag_map).unwrap();
-        fs::copy("./tests/flag.val", &flag_val).unwrap();
-        fs::copy("./tests/flag.info", &flag_info).unwrap();
+        fs::copy("./tests/data/v1/package.map", &package_map).unwrap();
+        fs::copy("./tests/data/v1/flag.map", &flag_map).unwrap();
+        fs::copy("./tests/data/v1/flag.val", &flag_val).unwrap();
+        fs::copy("./tests/data/v1/flag.info", &flag_info).unwrap();
 
         return storage_dir;
     }
@@ -507,9 +507,9 @@ mod tests {
     #[test]
     // this test point locks down flag storage file version number query api
     fn test_storage_version_query() {
-        assert_eq!(get_storage_file_version("./tests/package.map").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./tests/flag.map").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./tests/flag.val").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./tests/flag.info").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./tests/data/v1/package.map").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./tests/data/v1/flag.map").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./tests/data/v1/flag.val").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./tests/data/v1/flag.info").unwrap(), 1);
     }
 }

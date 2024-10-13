@@ -70,6 +70,10 @@ class DaemonManager:
       logging.warning("Block sign found, exiting...")
       return
 
+    if self.binary_path.startswith('/google/cog/'):
+      logging.warning("Edit monitor for cog is not supported, exiting...")
+      return
+
     self._stop_any_existing_instance()
     self._write_pid_to_pidfile()
     self._start_daemon_process()

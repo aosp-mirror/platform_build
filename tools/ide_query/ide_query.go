@@ -341,6 +341,8 @@ func getJavaInputs(env Env, modulesByPath map[string]string, modules map[string]
 			Id:              moduleName,
 			Language:        pb.Language_LANGUAGE_JAVA,
 			SourceFilePaths: m.Srcs,
+			GeneratedFiles:  genFiles(env, m),
+			DependencyIds:   m.Deps,
 		}
 		unitsById[u.Id] = u
 
@@ -355,14 +357,10 @@ func getJavaInputs(env Env, modulesByPath map[string]string, modules map[string]
 				continue
 			}
 
-			var paths []string
-			paths = append(paths, mod.Srcs...)
-			paths = append(paths, mod.SrcJars...)
-			paths = append(paths, mod.Jars...)
 			unitsById[name] = &pb.BuildableUnit{
 				Id:              name,
 				SourceFilePaths: mod.Srcs,
-				GeneratedFiles:  genFiles(env, paths),
+				GeneratedFiles:  genFiles(env, mod),
 				DependencyIds:   mod.Deps,
 			}
 
@@ -380,8 +378,13 @@ func getJavaInputs(env Env, modulesByPath map[string]string, modules map[string]
 }
 
 // genFiles returns the generated files (paths that start with outDir/) for the
-// given paths. Generated files that do not exist are ignored.
-func genFiles(env Env, paths []string) []*pb.GeneratedFile {
+// given module. Generated files that do not exist are ignored.
+func genFiles(env Env, mod *javaModule) []*pb.GeneratedFile {
+	var paths []string
+	paths = append(paths, mod.Srcs...)
+	paths = append(paths, mod.SrcJars...)
+	paths = append(paths, mod.Jars...)
+
 	prefix := env.OutDir + "/"
 	var ret []*pb.GeneratedFile
 	for _, p := range paths {
