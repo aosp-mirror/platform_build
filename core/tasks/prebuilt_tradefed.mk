@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2018 The Android Open Source Project
+# Copyright (C) 2020 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,16 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-#
-# Allow projects to define their own globally-available variables.
-#
+ifeq (,$(wildcard tools/tradefederation/core))
+.PHONY: tradefed-core
+tradefed-core: tradefed atest_tradefed.sh
+.PHONY: tradefed-all
+tradefed-all: tradefed atest_tradefed.sh
 
-#
-# Include definitions for prebuilt SDK, if present.
-#
--include prebuilts/sdk/current/definitions.mk
-
-# SDV-specific config.
--include system/software_defined_vehicle/platform/config.mk
+$(call dist-for-goals, tradefed, $(HOST_OUT)/etc/tradefed.zip)
+endif

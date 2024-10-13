@@ -26,10 +26,10 @@ mod aconfig_storage_rust_test {
         let flag_map = storage_dir.clone() + "/maps/mockup.flag.map";
         let flag_val = storage_dir.clone() + "/boot/mockup.val";
         let flag_info = storage_dir.clone() + "/boot/mockup.info";
-        fs::copy("./package.map", package_map).unwrap();
-        fs::copy("./flag.map", flag_map).unwrap();
-        fs::copy("./flag.val", flag_val).unwrap();
-        fs::copy("./flag.info", flag_info).unwrap();
+        fs::copy("./data/v1/package.map", package_map).unwrap();
+        fs::copy("./data/v1/flag.map", flag_map).unwrap();
+        fs::copy("./data/v1/flag.val", flag_val).unwrap();
+        fs::copy("./data/v1/flag.info", flag_info).unwrap();
 
         storage_dir
     }
@@ -200,9 +200,9 @@ mod aconfig_storage_rust_test {
 
     #[test]
     fn test_storage_version_query() {
-        assert_eq!(get_storage_file_version("./package.map").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./flag.map").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./flag.val").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./flag.info").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./data/v1/package.map").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./data/v1/flag.map").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./data/v1/flag.val").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./data/v1/flag.info").unwrap(), 1);
     }
 }
