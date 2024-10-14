@@ -224,6 +224,7 @@ else
       $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)/BoardConfig.mk \
       device/generic/goldfish/board/$(TARGET_DEVICE)/BoardConfig.mk \
       device/google/cuttlefish/board/$(TARGET_DEVICE)/BoardConfig.mk \
+      vendor/google/products/cuttlefish/pixel_watch/board/$(TARGET_DEVICE)/BoardConfig.mk \
       $(shell test -d device && find -L device -maxdepth 4 -path '*/$(TARGET_DEVICE)/BoardConfig.mk') \
       $(shell test -d vendor && find -L vendor -maxdepth 4 -path '*/$(TARGET_DEVICE)/BoardConfig.mk') \
     )))
