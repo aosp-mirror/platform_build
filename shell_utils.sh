@@ -178,11 +178,11 @@ function _wrap_build()
         echo -n "${color_failed}#### failed to build some targets "
     fi
     if [ $hours -gt 0 ] ; then
-        printf "(%02g:%02g:%02g (hh:mm:ss))" $hours $mins $secs
+        printf "(%02d:%02d:%02d (hh:mm:ss))" $hours $mins $secs
     elif [ $mins -gt 0 ] ; then
-        printf "(%02g:%02g (mm:ss))" $mins $secs
+        printf "(%02d:%02d (mm:ss))" $mins $secs
     elif [ $secs -gt 0 ] ; then
-        printf "(%s seconds)" $secs
+        printf "(%d seconds)" $secs
     fi
     echo " ####${color_reset}"
     echo
