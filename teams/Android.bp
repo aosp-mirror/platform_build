@@ -4461,3 +4461,10 @@ team {
     // go/trendy/manage/engineers/6027181500497920
     trendy_team_id: "6027181500497920",
 }
+
+team {
+    name: "trendy_team_automotive_cast",
+
+    // go/trendy/manage/engineers/5293683026264064
+    trendy_team_id: "5293683026264064",
+}
