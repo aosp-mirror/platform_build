@@ -121,20 +121,3 @@ LOCAL_LICENSE_CONDITIONS := notice
 LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
 LOCAL_REQUIRED_MODULES := $(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),com.android.vndk.v$(vndk_ver))
 include $(BUILD_PHONY_PACKAGE)
-
-#####################################################################
-# Define Phony module to install LLNDK modules which are installed in
-# the system image
-include $(CLEAR_VARS)
-LOCAL_MODULE := llndk_in_system
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-LOCAL_LICENSE_CONDITIONS := notice
-LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-
-# Filter LLNDK libs moved to APEX to avoid pulling them into /system/LIB
-LOCAL_REQUIRED_MODULES := \
-    $(filter-out $(LLNDK_MOVED_TO_APEX_LIBRARIES),$(LLNDK_LIBRARIES)) \
-    llndk.libraries.txt
-
-
-include $(BUILD_PHONY_PACKAGE)
