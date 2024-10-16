@@ -109,15 +109,3 @@ $(check-abi-dump-list-timestamp):
 	$(if $(added_vndk_abi_dumps)$(added_platform_abi_dumps),exit 1)
 	$(hide) mkdir -p $(dir $@)
 	$(hide) touch $@
-
-#####################################################################
-# VNDK package and snapshot.
-
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := vndk_apex_snapshot_package
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0
-LOCAL_LICENSE_CONDITIONS := notice
-LOCAL_NOTICE_FILE := build/soong/licenses/LICENSE
-LOCAL_REQUIRED_MODULES := $(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),com.android.vndk.v$(vndk_ver))
-include $(BUILD_PHONY_PACKAGE)
