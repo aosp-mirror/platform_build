@@ -20,10 +20,6 @@
 # base_system_ext.mk.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base_system_ext.mk)
 
-# /system_ext packages
-PRODUCT_PACKAGES += \
-    vndk_apex_snapshot_package \
-
 # Window Extensions
 $(call inherit-product, $(SRC_TARGET_DIR)/product/window_extensions_base.mk)
 
