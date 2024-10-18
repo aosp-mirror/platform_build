@@ -28,7 +28,7 @@ use crate::StorageFileType;
 /// The memory mapped file may have undefined behavior if there are writes to this
 /// file after being mapped. Ensure no writes can happen to this file while this
 /// mapping stays alive.
-unsafe fn map_file(file_path: &str) -> Result<Mmap, AconfigStorageError> {
+pub unsafe fn map_file(file_path: &str) -> Result<Mmap, AconfigStorageError> {
     let file = File::open(file_path)
         .map_err(|errmsg| FileReadFail(anyhow!("Failed to open file {}: {}", file_path, errmsg)))?;
     unsafe {
