@@ -51,8 +51,7 @@ fn cli() -> Command {
         .subcommand(
             Command::new("create-cache")
                 .arg(Arg::new("package").long("package").required(true))
-                // TODO(b/312769710): Make this argument required.
-                .arg(Arg::new("container").long("container"))
+                .arg(Arg::new("container").long("container").required(true))
                 .arg(Arg::new("declarations").long("declarations").action(ArgAction::Append))
                 .arg(Arg::new("values").long("values").action(ArgAction::Append))
                 .arg(
