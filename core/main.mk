@@ -981,7 +981,9 @@ endef
 # Returns modules included automatically as a result of certain BoardConfig
 # variables being set.
 define auto-included-modules
-  llndk_in_system \
+  $(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),com.android.vndk.v$(vndk_ver)) \
+  $(filter-out $(LLNDK_MOVED_TO_APEX_LIBRARIES),$(LLNDK_LIBRARIES)) \
+  llndk.libraries.txt \
   $(if $(DEVICE_MANIFEST_FILE),vendor_manifest.xml) \
   $(if $(DEVICE_MANIFEST_SKUS),$(foreach sku, $(DEVICE_MANIFEST_SKUS),vendor_manifest_$(sku).xml)) \
   $(if $(ODM_MANIFEST_FILES),odm_manifest.xml) \
