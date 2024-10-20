@@ -102,6 +102,7 @@ python_library_host {
         "optimized_targets.py",
         "test_mapping_module_retriever.py",
         "build_context.py",
+        "test_discovery_agent.py",
     ],
 }
 
