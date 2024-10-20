@@ -44,6 +44,7 @@ pub mod package_table_query;
 
 pub use aconfig_storage_file::{AconfigStorageError, FlagValueType, StorageFileType};
 pub use flag_table_query::FlagReadContext;
+pub use mapped_file::map_file;
 pub use package_table_query::PackageReadContext;
 
 use aconfig_storage_file::read_u32_from_bytes;
