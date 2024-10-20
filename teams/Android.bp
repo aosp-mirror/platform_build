@@ -4454,3 +4454,24 @@ team {
     // go/trendy/manage/engineers/5121440647577600
     trendy_team_id: "5121440647577600",
 }
+
+team {
+    name: "trendy_team_ravenwood",
+
+    // go/trendy/manage/engineers/6027181500497920
+    trendy_team_id: "6027181500497920",
+}
+
+team {
+    name: "trendy_team_automotive_cast",
+
+    // go/trendy/manage/engineers/5293683026264064
+    trendy_team_id: "5293683026264064",
+}
+
+team {
+    name: "trendy_team_wear_standalone_kids",
+
+    // go/trendy/manage/engineers/6303298703949824
+    trendy_team_id: "6303298703949824",
+}

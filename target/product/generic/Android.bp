@@ -76,6 +76,49 @@ android_symlinks = [
         target: "/product/etc/security/adb_keys",
         name: "adb_keys",
     },
+    // For Treble Generic System Image (GSI), system-as-root GSI needs to work on both devices with
+    // and without /odm partition. Those symlinks are for devices without /odm partition. For
+    // devices with /odm partition, mount odm.img under /odm will hide those symlinks.
+    {
+        target: "/vendor/odm/app",
+        name: "odm/app",
+    },
+    {
+        target: "/vendor/odm/bin",
+        name: "odm/bin",
+    },
+    {
+        target: "/vendor/odm/etc",
+        name: "odm/etc",
+    },
+    {
+        target: "/vendor/odm/firmware",
+        name: "odm/firmware",
+    },
+    {
+        target: "/vendor/odm/framework",
+        name: "odm/framework",
+    },
+    {
+        target: "/vendor/odm/lib",
+        name: "odm/lib",
+    },
+    {
+        target: "/vendor/odm/lib64",
+        name: "odm/lib64",
+    },
+    {
+        target: "/vendor/odm/overlay",
+        name: "odm/overlay",
+    },
+    {
+        target: "/vendor/odm/priv-app",
+        name: "odm/priv-app",
+    },
+    {
+        target: "/vendor/odm/usr",
+        name: "odm/usr",
+    },
 ]
 
 filegroup {
