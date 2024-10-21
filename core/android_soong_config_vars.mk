@@ -238,3 +238,8 @@ $(call soong_config_set_bool,video_codec,board_support_mfc_enc_bt2020,$(if $(fil
 $(call soong_config_set_bool,video_codec,board_support_flexible_p010,$(if $(filter true,$(BOARD_SUPPORT_FLEXIBLE_P010)),true,false))
 $(call soong_config_set,video_codec,board_support_mfc_version,$(BOARD_SUPPORT_MFC_VERSION))
 $(call soong_config_set_bool,video_codec,board_use_codec2_aidl,$(if $(BOARD_USE_CODEC2_AIDL),true,false))
+$(call soong_config_set,video_codec,board_gpu_type,$(BOARD_GPU_TYPE))
+$(call soong_config_set_bool,video_codec,board_use_small_secure_memory,$(if $(filter true,$(BOARD_USE_SMALL_SECURE_MEMORY)),true,false))
+ifneq ($(BOARD_USE_MAX_SECURE_RESOURCE),)
+  $(call soong_config_set,video_codec,board_use_max_secure_resource,$(BOARD_USE_MAX_SECURE_RESOURCE))
+endif
