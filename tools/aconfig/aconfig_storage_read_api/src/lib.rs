@@ -115,13 +115,13 @@ pub fn get_flag_read_context(
 
 /// Get the boolean flag value.
 ///
-/// \input file: mapped flag file
+/// \input file: a byte slice, can be either &Mmap or &MapMut
 /// \input index: boolean flag offset
 ///
 /// \return
 /// If the provide offset is valid, it returns the boolean flag value, otherwise it
 /// returns the error message.
-pub fn get_boolean_flag_value(file: &Mmap, index: u32) -> Result<bool, AconfigStorageError> {
+pub fn get_boolean_flag_value(file: &[u8], index: u32) -> Result<bool, AconfigStorageError> {
     find_boolean_flag_value(file, index)
 }
 
@@ -149,7 +149,7 @@ pub fn get_storage_file_version(file_path: &str) -> Result<u32, AconfigStorageEr
 
 /// Get the flag attribute.
 ///
-/// \input file: mapped flag info file
+/// \input file: a byte slice, can be either &Mmap or &MapMut
 /// \input flag_type: flag value type
 /// \input flag_index: flag index
 ///
@@ -157,7 +157,7 @@ pub fn get_storage_file_version(file_path: &str) -> Result<u32, AconfigStorageEr
 /// If the provide offset is valid, it returns the flag attribute bitfiled, otherwise it
 /// returns the error message.
 pub fn get_flag_attribute(
-    file: &Mmap,
+    file: &[u8],
     flag_type: FlagValueType,
     flag_index: u32,
 ) -> Result<u8, AconfigStorageError> {
