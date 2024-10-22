@@ -16,6 +16,11 @@ rust_defaults {
         "libaconfig_storage_file",
         "libaconfig_storage_read_api",
     ],
+    min_sdk_version: "34",
+    apex_available: [
+        "//apex_available:anyapex",
+        "//apex_available:platform",
+    ],
 }
 
 rust_library {
