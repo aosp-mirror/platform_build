@@ -1644,6 +1644,7 @@ endif # my_use_clang_lld
 ifeq ($(call module-in-vendor-or-product),true)
   my_target_global_c_includes :=
   my_target_global_c_system_includes := $(TARGET_OUT_HEADERS)
+  my_target_global_cflags += -nostdlibinc
 else ifdef LOCAL_SDK_VERSION
   my_target_global_c_includes :=
   my_target_global_c_system_includes := $(my_ndk_stl_include_path)
