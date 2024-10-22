@@ -786,6 +786,7 @@ android_system_image {
                 "libbinder_ndk",
                 "libbinder_rpc_unstable",
                 "libcamera2ndk",
+                "libcgrouprc", // llndk library
                 "libclang_rt.asan",
                 "libcompiler_rt",
                 "libcutils", // used by many libs
