@@ -3488,12 +3488,14 @@ endef
 #   $(2): The partition's staging directory
 #   $(3): Files to include in the partition
 define write-partition-file-list
+$(1): PRIVATE_FILES := $(subst $(2)/,,$(filter $(2)/%,$(3)))
+$(1): PRIVATE_EXTRA_INSTALL_ZIPS := $(call relevant-extra-install-zips,$(filter $(2)/%,$(3)))
 $(1): $$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(foreach p,$(call relevant-extra-install-zips,$(filter $(2)/%,$(3))),$(call word-colon,3,$(p)))
 	@echo Writing $$@
 	rm -f $$@
 	echo -n > $$@
-	$$(foreach f,$(subst $(2)/,,$(filter $(2)/%,$(3))),echo "$$(f)" >> $$@$$(newline))
-	$$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(2) $(call relevant-extra-install-zips,$(filter $(2)/%,$(3))) >> $$@
+	$$(foreach f,$$(PRIVATE_FILES),echo "$$(f)" >> $$@$$(newline))
+	$$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(2) $$(PRIVATE_EXTRA_INSTALL_ZIPS) >> $$@
 endef
 
 # -----------------------------------------------------------------
