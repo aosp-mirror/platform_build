@@ -426,6 +426,11 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_list, ProductPackages, $(PRODUCT_PACKAGES))
   $(call add_json_list, ProductPackagesDebug, $(PRODUCT_PACKAGES_DEBUG))
 
+  $(call add_json_map, ProductCopyFiles)
+  $(foreach pair,$(PRODUCT_COPY_FILES),\
+    $(call add_json_str,$(word 1,$(subst :, ,$(pair))),$(word 2,$(subst :, ,$(pair)))))
+  $(call end_json_map)
+
 $(call end_json_map)
 
 $(call json_end)
