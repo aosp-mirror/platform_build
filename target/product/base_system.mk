@@ -205,7 +205,6 @@ PRODUCT_PACKAGES += \
     libstdc++ \
     libsysutils \
     libui \
-    libuprobestats_client \
     libusbhost \
     libutils \
     libvintf_jni \
@@ -289,6 +288,7 @@ PRODUCT_PACKAGES += \
     tombstoned \
     traced \
     traced_probes \
+    tradeinmode \
     tune2fs \
     uiautomator \
     uinput \
@@ -318,6 +318,7 @@ ifeq ($(RELEASE_UPROBESTATS_MODULE),true)
 else
     PRODUCT_PACKAGES += \
         uprobestats \
+        libuprobestats_client \
 
 endif
 
