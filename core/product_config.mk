@@ -602,7 +602,12 @@ else
     # Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
     # In this case, the VSR API level is the minimum of the PRODUCT_SHIPPING_API_LEVEL
     # and RELEASE_BOARD_API_LEVEL
-    VSR_VENDOR_API_LEVEL := $(call math_min,$(VSR_VENDOR_API_LEVEL),$(RELEASE_BOARD_API_LEVEL))
+    board_api_level := $(RELEASE_BOARD_API_LEVEL)
+    ifdef BOARD_API_LEVEL_PROP_OVERRIDE
+      board_api_level := $(BOARD_API_LEVEL_PROP_OVERRIDE)
+    endif
+    VSR_VENDOR_API_LEVEL := $(call math_min,$(VSR_VENDOR_API_LEVEL),$(board_api_level))
+    board_api_level :=
   endif
 endif
 .KATI_READONLY := VSR_VENDOR_API_LEVEL
