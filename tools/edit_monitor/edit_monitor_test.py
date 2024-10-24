@@ -253,7 +253,7 @@ class EditMonitorTest(unittest.TestCase):
     # Start edit monitor in a subprocess.
     p = multiprocessing.Process(
         target=edit_monitor.start,
-        args=(str(self.root_monitoring_path.resolve()), 0.5, 5, cclient, sender),
+        args=(str(self.root_monitoring_path.resolve()), False, 0.5, 5, cclient, sender),
     )
     p.daemon = True
     p.start()
