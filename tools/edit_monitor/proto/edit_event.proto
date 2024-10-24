@@ -36,8 +36,6 @@ message EditEvent {
   // Event that logs errors happened in the edit monitor.
   message EditMonitorErrorEvent {
     ErrorType error_type = 1;
-    string error_msg = 2;
-    string stack_trace = 3;
   }
 
   // ------------------------
