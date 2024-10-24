@@ -133,8 +133,12 @@ class DaemonManager:
 
     logging.debug("in daemon manager cleanup.")
     try:
-      if self.daemon_process and self.daemon_process.is_alive():
-        self._terminate_process(self.daemon_process.pid)
+      if self.daemon_process:
+        # The daemon process might already in termination process,
+        # wait some time before kill it explicitly.
+        self._wait_for_process_terminate(self.daemon_process.pid, 1)
+        if self.daemon_process.is_alive():
+          self._terminate_process(self.daemon_process.pid)
       self._remove_pidfile()
       logging.debug("Successfully stopped daemon manager.")
     except Exception as e:
@@ -227,6 +231,7 @@ class DaemonManager:
     p = multiprocessing.Process(
         target=self.daemon_target, args=self.daemon_args
     )
+    p.daemon = True
     p.start()
 
     logging.info("Start subprocess with PID %d", p.pid)
