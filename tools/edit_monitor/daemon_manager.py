@@ -13,17 +13,22 @@
 # limitations under the License.
 
 
+import getpass
 import hashlib
 import logging
 import multiprocessing
 import os
 import pathlib
+import platform
 import signal
 import subprocess
 import sys
 import tempfile
 import time
 
+from atest.metrics import clearcut_client
+from atest.proto import clientanalytics_pb2
+from proto import edit_event_pb2
 
 DEFAULT_PROCESS_TERMINATION_TIMEOUT_SECONDS = 1
 DEFAULT_MONITOR_INTERVAL_SECONDS = 5
@@ -31,6 +36,9 @@ DEFAULT_MEMORY_USAGE_THRESHOLD = 2000
 DEFAULT_CPU_USAGE_THRESHOLD = 200
 DEFAULT_REBOOT_TIMEOUT_SECONDS = 60 * 60 * 24
 BLOCK_SIGN_FILE = "edit_monitor_block_sign"
+# Enum of the Clearcut log source defined under
+# /google3/wireless/android/play/playlog/proto/log_source_enum.proto
+LOG_SOURCE = 2524
 
 
 def default_daemon_target():
@@ -46,11 +54,16 @@ class DaemonManager:
       binary_path: str,
       daemon_target: callable = default_daemon_target,
       daemon_args: tuple = (),
+      cclient: clearcut_client.Clearcut | None = None,
   ):
     self.binary_path = binary_path
     self.daemon_target = daemon_target
     self.daemon_args = daemon_args
+    self.cclient = cclient or clearcut_client.Clearcut(LOG_SOURCE)
 
+    self.user_name = getpass.getuser()
+    self.host_name = platform.node()
+    self.source_root = os.environ.get("ANDROID_BUILD_TOP", "")
     self.pid = os.getpid()
     self.daemon_process = None
 
@@ -70,13 +83,20 @@ class DaemonManager:
       logging.warning("Block sign found, exiting...")
       return
 
-    if self.binary_path.startswith('/google/cog/'):
+    if self.binary_path.startswith("/google/cog/"):
       logging.warning("Edit monitor for cog is not supported, exiting...")
       return
 
-    self._stop_any_existing_instance()
-    self._write_pid_to_pidfile()
-    self._start_daemon_process()
+    try:
+      self._stop_any_existing_instance()
+      self._write_pid_to_pidfile()
+      self._start_daemon_process()
+    except Exception as e:
+      logging.exception("Failed to start daemon manager with error %s", e)
+      self._send_error_event_to_clearcut(
+          edit_event_pb2.EditEvent.FAILED_TO_START_EDIT_MONITOR
+      )
+      raise e
 
   def monitor_daemon(
       self,
@@ -118,6 +138,9 @@ class DaemonManager:
         logging.error(
             "Daemon process is consuming too much resource, killing..."
         ),
+        self._send_error_event_to_clearcut(
+            edit_event_pb2.EditEvent.KILLED_DUE_TO_EXCEEDED_RESOURCE_USAGE
+        )
         self._terminate_process(self.daemon_process.pid)
 
     logging.info(
@@ -143,6 +166,12 @@ class DaemonManager:
       logging.debug("Successfully stopped daemon manager.")
     except Exception as e:
       logging.exception("Failed to stop daemon manager with error %s", e)
+      self._send_error_event_to_clearcut(
+          edit_event_pb2.EditEvent.FAILED_TO_STOP_EDIT_MONITOR
+      )
+      sys.exit(1)
+    finally:
+      self.cclient.flush_events()
 
   def reboot(self):
     """Reboots the current process.
@@ -164,6 +193,9 @@ class DaemonManager:
       os.execv(self.binary_path, sys.argv)
     except OSError as e:
       logging.exception("Failed to reboot process with error: %s.", e)
+      self._send_error_event_to_clearcut(
+          edit_event_pb2.EditEvent.FAILED_TO_REBOOT_EDIT_MONITOR
+      )
       sys.exit(1)  # Indicate an error occurred
 
   def cleanup(self):
@@ -175,6 +207,7 @@ class DaemonManager:
     that requires immediate cleanup to prevent damanger to the system.
     """
     logging.debug("Start cleaning up all existing instances.")
+    self._send_error_event_to_clearcut(edit_event_pb2.EditEvent.FORCE_CLEANUP)
 
     try:
       # First places a block sign to prevent any edit monitor process to start.
@@ -356,3 +389,18 @@ class DaemonManager:
           logging.exception("Failed to get pid from file path: %s", file)
 
     return pids
+
+  def _send_error_event_to_clearcut(self, error_type):
+    edit_monitor_error_event_proto = edit_event_pb2.EditEvent(
+        user_name=self.user_name,
+        host_name=self.host_name,
+        source_root=self.source_root,
+    )
+    edit_monitor_error_event_proto.edit_monitor_error_event.CopyFrom(
+        edit_event_pb2.EditEvent.EditMonitorErrorEvent(error_type=error_type)
+    )
+    log_event = clientanalytics_pb2.LogEvent(
+        event_time_ms=int(time.time() * 1000),
+        source_extension=edit_monitor_error_event_proto.SerializeToString(),
+    )
+    self.cclient.log(log_event)
