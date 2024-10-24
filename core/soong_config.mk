@@ -185,6 +185,7 @@ $(call add_json_str,  VendorPath,                        $(TARGET_COPY_OUT_VENDO
 $(call add_json_bool, BuildingVendorImage,               $(BUILDING_VENDOR_IMAGE))
 $(call add_json_str,  OdmPath,                           $(TARGET_COPY_OUT_ODM))
 $(call add_json_str,  ProductPath,                       $(TARGET_COPY_OUT_PRODUCT))
+$(call add_json_bool, BuildingProductImage,              $(BUILDING_PRODUCT_IMAGE))
 $(call add_json_str,  SystemExtPath,                     $(TARGET_COPY_OUT_SYSTEM_EXT))
 $(call add_json_bool, MinimizeJavaDebugInfo,             $(filter true,$(PRODUCT_MINIMIZE_JAVA_DEBUG_INFO)))
 
@@ -424,6 +425,11 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
 
   $(call add_json_list, ProductPackages, $(PRODUCT_PACKAGES))
   $(call add_json_list, ProductPackagesDebug, $(PRODUCT_PACKAGES_DEBUG))
+
+  $(call add_json_map, ProductCopyFiles)
+  $(foreach pair,$(PRODUCT_COPY_FILES),\
+    $(call add_json_str,$(word 1,$(subst :, ,$(pair))),$(word 2,$(subst :, ,$(pair)))))
+  $(call end_json_map)
 
 $(call end_json_map)
 
