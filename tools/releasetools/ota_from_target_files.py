@@ -264,6 +264,10 @@ A/B OTA specific options
 
   --compression_factor
       Specify the maximum block size to be compressed at once during OTA. supported options: 4k, 8k, 16k, 32k, 64k, 128k, 256k
+
+  --full_ota_partitions
+      Specify list of partitions should be updated in full OTA fashion, even if
+      an incremental OTA is about to be generated
 """
 
 from __future__ import print_function
@@ -283,7 +287,7 @@ import common
 import ota_utils
 import payload_signer
 from ota_utils import (VABC_COMPRESSION_PARAM_SUPPORT, FinalizeMetadata, GetPackageMetadata,
-                       PayloadGenerator, SECURITY_PATCH_LEVEL_PROP_NAME, ExtractTargetFiles, CopyTargetFilesDir)
+                       PayloadGenerator, SECURITY_PATCH_LEVEL_PROP_NAME, ExtractTargetFiles, CopyTargetFilesDir, TARGET_FILES_IMAGES_SUBDIR)
 from common import DoesInputFileContain, IsSparseImage
 import target_files_diff
 from non_ab_ota import GenerateNonAbOtaPackage
@@ -337,6 +341,7 @@ OPTIONS.security_patch_level = None
 OPTIONS.max_threads = None
 OPTIONS.vabc_cow_version = None
 OPTIONS.compression_factor = None
+OPTIONS.full_ota_partitions = None
 
 
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
@@ -892,6 +897,14 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
 
   if source_file is not None:
     source_file = ExtractTargetFiles(source_file)
+    if OPTIONS.full_ota_partitions:
+      for partition in OPTIONS.full_ota_partitions:
+        for subdir in TARGET_FILES_IMAGES_SUBDIR:
+          image_path = os.path.join(source_file, subdir, partition + ".img")
+          if os.path.exists(image_path):
+            logger.info(
+                "Ignoring source image %s for partition %s because it is configured to use full OTA", image_path, partition)
+            os.remove(image_path)
     assert "ab_partitions" in OPTIONS.source_info_dict, \
         "META/ab_partitions.txt is required for ab_update."
     assert "ab_partitions" in OPTIONS.target_info_dict, \
@@ -1193,7 +1206,7 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
 
 def main(argv):
 
-  def option_handler(o, a):
+  def option_handler(o, a: str):
     if o in ("-i", "--incremental_from"):
       OPTIONS.incremental_source = a
     elif o == "--full_radio":
@@ -1320,6 +1333,9 @@ def main(argv):
       else:
         raise ValueError("Cannot parse value %r for option %r - only "
                          "integers are allowed." % (a, o))
+    elif o == "--full_ota_partitions":
+      OPTIONS.full_ota_partitions = set(
+          a.strip().strip("\"").strip("'").split(","))
     else:
       return False
     return True
@@ -1370,6 +1386,7 @@ def main(argv):
                                  "max_threads=",
                                  "vabc_cow_version=",
                                  "compression_factor=",
+                                 "full_ota_partitions=",
                              ], extra_option_handler=[option_handler, payload_signer.signer_options])
   common.InitLogging()
 

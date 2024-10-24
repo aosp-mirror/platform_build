@@ -205,7 +205,6 @@ PRODUCT_PACKAGES += \
     libstdc++ \
     libsysutils \
     libui \
-    libuprobestats_client \
     libusbhost \
     libutils \
     libvintf_jni \
@@ -289,11 +288,11 @@ PRODUCT_PACKAGES += \
     tombstoned \
     traced \
     traced_probes \
+    tradeinmode \
     tune2fs \
     uiautomator \
     uinput \
     uncrypt \
-    uprobestats \
     usbd \
     vdc \
     vintf \
@@ -308,6 +307,18 @@ PRODUCT_PACKAGES += \
 ifeq ($(RELEASE_CRASHRECOVERY_MODULE),true)
   PRODUCT_PACKAGES += \
         com.android.crashrecovery \
+
+endif
+
+# When we release uprobestats module
+ifeq ($(RELEASE_UPROBESTATS_MODULE),true)
+    PRODUCT_PACKAGES += \
+        com.android.uprobestats \
+
+else
+    PRODUCT_PACKAGES += \
+        uprobestats \
+        libuprobestats_client \
 
 endif
 
@@ -345,6 +356,11 @@ endif
 ifeq ($(RELEASE_USE_WEBVIEW_BOOTSTRAP_MODULE),true)
     PRODUCT_PACKAGES += \
         com.android.webview.bootstrap
+endif
+
+ifneq (,$(RELEASE_RANGING_STACK))
+    PRODUCT_PACKAGES += \
+        com.android.ranging
 endif
 
 # VINTF data for system image
@@ -500,6 +516,10 @@ PRODUCT_PACKAGES_DEBUG := \
     unwind_info \
     unwind_reg_info \
     unwind_symbols \
+
+# For Remotely Provisioned Certificate Processor
+PRODUCT_SYSTEM_PROPERTIES += \
+    remote_provisioning.use_cert_processor=false
 
 # The set of packages whose code can be loaded by the system server.
 PRODUCT_SYSTEM_SERVER_APPS += \

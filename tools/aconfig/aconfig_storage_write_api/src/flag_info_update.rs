@@ -18,7 +18,7 @@
 
 use aconfig_storage_file::{
     read_u8_from_bytes, AconfigStorageError, FlagInfoBit, FlagInfoHeader, FlagValueType,
-    FILE_VERSION,
+    MAX_SUPPORTED_FILE_VERSION,
 };
 use anyhow::anyhow;
 
@@ -28,11 +28,11 @@ fn get_flag_info_offset(
     flag_index: u32,
 ) -> Result<usize, AconfigStorageError> {
     let interpreted_header = FlagInfoHeader::from_bytes(buf)?;
-    if interpreted_header.version > FILE_VERSION {
+    if interpreted_header.version > MAX_SUPPORTED_FILE_VERSION {
         return Err(AconfigStorageError::HigherStorageFileVersion(anyhow!(
             "Cannot write to storage file with a higher version of {} with lib version {}",
             interpreted_header.version,
-            FILE_VERSION
+            MAX_SUPPORTED_FILE_VERSION
         )));
     }
 

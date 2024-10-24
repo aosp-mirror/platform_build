@@ -390,20 +390,6 @@ _product_single_value_vars += PRODUCT_OTA_FORCE_NON_AB_PACKAGE
 # If set, Java module in product partition cannot use hidden APIs.
 _product_single_value_vars += PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
 
-# If set, only java_sdk_library can be used at inter-partition dependency.
-# Note: Build error if BOARD_VNDK_VERSION is not set while
-#       PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY is true, because
-#       PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY has no meaning if
-#       BOARD_VNDK_VERSION is not set.
-# Note: When PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE is not set, there are
-#       no restrictions at dependency between system and product partition.
-_product_single_value_vars += PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY
-
-# Allowlist for PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY option.
-# Listed modules are allowed at inter-partition dependency even if it isn't
-# a java_sdk_library module.
-_product_list_vars += PRODUCT_INTER_PARTITION_JAVA_LIBRARY_ALLOWLIST
-
 # Install a copy of the debug policy to the system_ext partition, and allow
 # init-second-stage to load debug policy from system_ext.
 # This option is only meant to be set by compliance GSI targets.
@@ -436,8 +422,9 @@ _product_single_value_vars += PRODUCT_MEMCG_V2_FORCE_ENABLED
 # If true, the cgroup v2 hierarchy will be split into apps/system subtrees
 _product_single_value_vars += PRODUCT_CGROUP_V2_SYS_APP_ISOLATION_ENABLED
 
-# List of .json files to be merged/compiled into vendor/etc/linker.config.pb
+# List of .json files to be merged/compiled into vendor/etc/linker.config.pb and product/etc/linker.config.pb
 _product_list_vars += PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS
+_product_list_vars += PRODUCT_PRODUCT_LINKER_CONFIG_FRAGMENTS
 
 # Whether to use userfaultfd GC.
 # Possible values are:
@@ -498,6 +485,10 @@ _product_single_value_vars += PRODUCT_BUILD_APPS_WITH_BUILD_NUMBER
 
 # If set, build would generate system image from Soong-defined module.
 _product_single_value_vars += PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE
+
+# List of stub libraries specific to the product that are already present in the system image and
+# should be included in the system_linker_config.
+_product_list_vars += PRODUCT_EXTRA_STUB_LIBRARIES
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)

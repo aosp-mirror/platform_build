@@ -173,6 +173,7 @@ $(KATI_obsolete_var BOARD_PREBUILT_PVMFWIMAGE,pvmfw.bin is now built in AOSP and
 $(KATI_obsolete_var BUILDING_PVMFW_IMAGE,BUILDING_PVMFW_IMAGE is no longer used)
 $(KATI_obsolete_var BOARD_BUILD_SYSTEM_ROOT_IMAGE)
 $(KATI_obsolete_var FS_GET_STATS)
+$(KATI_obsolete_var BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -363,8 +364,7 @@ endif
 # configs, generally for cross-cutting features.
 
 # Build broken variables that should be treated as booleans
-_build_broken_bool_vars := \
-  BUILD_BROKEN_USES_SOONG_PYTHON2_MODULES \
+_build_broken_bool_vars :=
 
 # Build broken variables that should be treated as lists
 _build_broken_list_vars := \
@@ -431,13 +431,6 @@ else
   TARGET_MAX_PAGE_SIZE_SUPPORTED := 16384
 endif
 .KATI_READONLY := TARGET_MAX_PAGE_SIZE_SUPPORTED
-
-ifdef PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE
-  TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE := $(PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE)
-else
-  TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE := false
-endif
-.KATI_READONLY := TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE
 
 # Boolean variable determining if AOSP relies on bionic's PAGE_SIZE macro.
 ifdef PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO
@@ -816,6 +809,18 @@ ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),36),)
     $(error Must not set NEED_AIDL_NDK_PLATFORM_BACKEND, but it is set to: $(NEED_AIDL_NDK_PLATFORM_BACKEND). Support will be removed.)
   endif
 endif
+
+ifdef PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE
+  TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE := $(PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE)
+else ifeq (true,$(TARGET_BUILD_UNBUNDLED))
+  # unbundled builds may not have updated build sources
+  TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE := false
+else ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),36),)
+  TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE := true
+else
+  TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE := false
+endif
+.KATI_READONLY := TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE
 
 # Set BOARD_SYSTEMSDK_VERSIONS to the latest SystemSDK version starting from P-launching
 # devices if unset.

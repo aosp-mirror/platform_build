@@ -1,9 +1,10 @@
 filegroup {
     name: "read_api_test_storage_files",
-    srcs: ["package.map",
-        "flag.map",
-        "flag.val",
-        "flag.info"
+    srcs: [
+        "data/v1/package.map",
+        "data/v1/flag.map",
+        "data/v1/flag.val",
+        "data/v1/flag.info",
     ],
 }
 

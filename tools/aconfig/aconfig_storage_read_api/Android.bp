@@ -36,10 +36,10 @@ rust_test_host {
         "librand",
     ],
     data: [
-        "tests/package.map",
-        "tests/flag.map",
-        "tests/flag.val",
-        "tests/flag.info",
+        "tests/data/v1/package.map",
+        "tests/data/v1/flag.map",
+        "tests/data/v1/flag.val",
+        "tests/data/v1/flag.info",
     ],
 }
 
@@ -107,31 +107,12 @@ cc_library {
     afdo: true,
 }
 
-soong_config_module_type {
-    name: "aconfig_lib_cc_shared_link_defaults",
-    module_type: "cc_defaults",
-    config_namespace: "Aconfig",
-    bool_variables: [
-        "read_from_new_storage",
-    ],
-    properties: [
-        "shared_libs",
-    ],
-}
-
-soong_config_bool_variable {
-    name: "read_from_new_storage",
-}
-
-aconfig_lib_cc_shared_link_defaults {
+cc_defaults {
     name: "aconfig_lib_cc_shared_link.defaults",
-    soong_config_variables: {
-        read_from_new_storage: {
-            shared_libs: [
-                "libaconfig_storage_read_api_cc",
-            ],
-        },
-    },
+    shared_libs: select(release_flag("RELEASE_READ_FROM_NEW_STORAGE"), {
+        true: ["libaconfig_storage_read_api_cc"],
+        default: [],
+    }),
 }
 
 cc_defaults {
