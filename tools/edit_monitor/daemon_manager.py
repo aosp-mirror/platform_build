@@ -154,7 +154,7 @@ class DaemonManager:
   def stop(self):
     """Stops the daemon process and removes the pidfile."""
 
-    logging.debug("in daemon manager cleanup.")
+    logging.info("in daemon manager cleanup.")
     try:
       if self.daemon_process:
         # The daemon process might already in termination process,
@@ -163,7 +163,7 @@ class DaemonManager:
         if self.daemon_process.is_alive():
           self._terminate_process(self.daemon_process.pid)
       self._remove_pidfile()
-      logging.debug("Successfully stopped daemon manager.")
+      logging.info("Successfully stopped daemon manager.")
     except Exception as e:
       logging.exception("Failed to stop daemon manager with error %s", e)
       self._send_error_event_to_clearcut(
@@ -179,7 +179,7 @@ class DaemonManager:
     Stops the current daemon manager and reboots the entire process based on
     the binary file. Exits directly If the binary file no longer exists.
     """
-    logging.debug("Rebooting process based on binary %s.", self.binary_path)
+    logging.info("Rebooting process based on binary %s.", self.binary_path)
 
     # Stop the current daemon manager first.
     self.stop()

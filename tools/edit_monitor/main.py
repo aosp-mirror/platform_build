@@ -57,17 +57,27 @@ def create_arg_parser():
       ),
   )
 
+  parser.add_argument(
+      '--verbose',
+      action='store_true',
+      help=(
+          'Log verbose info in the log file for debugging purpose.'
+      ),
+  )
+
   return parser
 
 
-def configure_logging():
+def configure_logging(verbose=False):
   root_logging_dir = tempfile.mkdtemp(prefix='edit_monitor_')
   _, log_path = tempfile.mkstemp(dir=root_logging_dir, suffix='.log')
 
   log_fmt = '%(asctime)s %(filename)s:%(lineno)s:%(levelname)s: %(message)s'
   date_fmt = '%Y-%m-%d %H:%M:%S'
+  log_level = logging.DEBUG if verbose else logging.INFO
+
   logging.basicConfig(
-      filename=log_path, level=logging.DEBUG, format=log_fmt, datefmt=date_fmt
+      filename=log_path, level=log_level, format=log_fmt, datefmt=date_fmt
   )
   # Filter out logs from inotify_buff to prevent log pollution.
   logging.getLogger('watchdog.observers.inotify_buffer').addFilter(
@@ -82,6 +92,7 @@ def term_signal_handler(_signal_number, _frame):
 
 def main(argv: list[str]):
   args = create_arg_parser().parse_args(argv[1:])
+  configure_logging(args.verbose)
   if args.dry_run:
     logging.info('This is a dry run.')
   dm = daemon_manager.DaemonManager(
@@ -104,5 +115,4 @@ def main(argv: list[str]):
 
 if __name__ == '__main__':
   signal.signal(signal.SIGTERM, term_signal_handler)
-  configure_logging()
   main(sys.argv)
