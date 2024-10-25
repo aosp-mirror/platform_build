@@ -60,3 +60,10 @@ pub(crate) fn load() -> Result<Vec<Flag>> {
     }
     Ok(result)
 }
+
+pub(crate) fn list_containers() -> Result<Vec<String>> {
+    Ok(aconfig_device_paths::parsed_flags_proto_paths()?
+        .into_iter()
+        .map(|p| infer_container(&p))
+        .collect())
+}
