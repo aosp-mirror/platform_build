@@ -293,11 +293,19 @@ func getCCInputs(ctx context.Context, env Env, filePaths []string) ([]*pb.Analys
 // If a file is covered by multiple modules, the first module is returned.
 func findJavaModules(paths []string, modules map[string]*javaModule) map[string]string {
 	ret := make(map[string]string)
-	for name, module := range modules {
+	// A file may be part of multiple modules. To make the result deterministic,
+	// check the modules in sorted order.
+	keys := make([]string, 0, len(modules))
+	for name := range modules {
+		keys = append(keys, name)
+	}
+	slices.Sort(keys)
+	for _, name := range keys {
 		if strings.HasSuffix(name, ".impl") {
 			continue
 		}
 
+		module := modules[name]
 		for i, p := range paths {
 			if slices.Contains(module.Srcs, p) {
 				ret[p] = name

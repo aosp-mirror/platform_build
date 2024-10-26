@@ -42,6 +42,12 @@ $(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_MEDIASERVER)
 
 $(call add_soong_config_var,ANDROID,ADDITIONAL_M4DEFS,$(if $(BOARD_SEPOLICY_M4DEFS),$(addprefix -D,$(BOARD_SEPOLICY_M4DEFS))))
 
+# For bootable/recovery
+RECOVERY_API_VERSION := 3
+RECOVERY_FSTAB_VERSION := 2
+$(call soong_config_set, recovery, recovery_api_version, $(RECOVERY_API_VERSION))
+$(call soong_config_set, recovery, recovery_fstab_version, $(RECOVERY_FSTAB_VERSION))
+
 # For Sanitizers
 $(call soong_config_set_bool,ANDROID,ASAN_ENABLED,$(if $(filter address,$(SANITIZE_TARGET)),true,false))
 $(call soong_config_set_bool,ANDROID,HWASAN_ENABLED,$(if $(filter hwaddress,$(SANITIZE_TARGET)),true,false))
