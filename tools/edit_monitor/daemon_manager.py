@@ -30,9 +30,9 @@ from atest.metrics import clearcut_client
 from atest.proto import clientanalytics_pb2
 from proto import edit_event_pb2
 
-DEFAULT_PROCESS_TERMINATION_TIMEOUT_SECONDS = 1
+DEFAULT_PROCESS_TERMINATION_TIMEOUT_SECONDS = 5
 DEFAULT_MONITOR_INTERVAL_SECONDS = 5
-DEFAULT_MEMORY_USAGE_THRESHOLD = 2000
+DEFAULT_MEMORY_USAGE_THRESHOLD = 2 * 1024  # 2GB
 DEFAULT_CPU_USAGE_THRESHOLD = 200
 DEFAULT_REBOOT_TIMEOUT_SECONDS = 60 * 60 * 24
 BLOCK_SIGN_FILE = "edit_monitor_block_sign"
@@ -154,7 +154,7 @@ class DaemonManager:
   def stop(self):
     """Stops the daemon process and removes the pidfile."""
 
-    logging.debug("in daemon manager cleanup.")
+    logging.info("in daemon manager cleanup.")
     try:
       if self.daemon_process:
         # The daemon process might already in termination process,
@@ -163,7 +163,7 @@ class DaemonManager:
         if self.daemon_process.is_alive():
           self._terminate_process(self.daemon_process.pid)
       self._remove_pidfile()
-      logging.debug("Successfully stopped daemon manager.")
+      logging.info("Successfully stopped daemon manager.")
     except Exception as e:
       logging.exception("Failed to stop daemon manager with error %s", e)
       self._send_error_event_to_clearcut(
@@ -179,7 +179,7 @@ class DaemonManager:
     Stops the current daemon manager and reboots the entire process based on
     the binary file. Exits directly If the binary file no longer exists.
     """
-    logging.debug("Rebooting process based on binary %s.", self.binary_path)
+    logging.info("Rebooting process based on binary %s.", self.binary_path)
 
     # Stop the current daemon manager first.
     self.stop()
@@ -337,36 +337,28 @@ class DaemonManager:
     return pid_file_path
 
   def _get_process_memory_percent(self, pid: int) -> float:
-    try:
-      with open(f"/proc/{pid}/stat", "r") as f:
-        stat_data = f.readline().split()
-        # RSS is the 24th field in /proc/[pid]/stat
-        rss_pages = int(stat_data[23])
-        return rss_pages * 4 / 1024  # Covert to MB
-    except (FileNotFoundError, IndexError, ValueError, IOError) as e:
-      logging.exception("Failed to get memory usage.")
-      raise e
+    with open(f"/proc/{pid}/stat", "r") as f:
+      stat_data = f.readline().split()
+      # RSS is the 24th field in /proc/[pid]/stat
+      rss_pages = int(stat_data[23])
+      return rss_pages * 4 / 1024  # Covert to MB
 
   def _get_process_cpu_percent(self, pid: int, interval: int = 1) -> float:
-    try:
-      total_start_time = self._get_total_cpu_time(pid)
-      with open("/proc/uptime", "r") as f:
-        uptime_start = float(f.readline().split()[0])
+    total_start_time = self._get_total_cpu_time(pid)
+    with open("/proc/uptime", "r") as f:
+      uptime_start = float(f.readline().split()[0])
 
-      time.sleep(interval)
+    time.sleep(interval)
 
-      total_end_time = self._get_total_cpu_time(pid)
-      with open("/proc/uptime", "r") as f:
-        uptime_end = float(f.readline().split()[0])
+    total_end_time = self._get_total_cpu_time(pid)
+    with open("/proc/uptime", "r") as f:
+      uptime_end = float(f.readline().split()[0])
 
-      return (
-          (total_end_time - total_start_time)
-          / (uptime_end - uptime_start)
-          * 100
-      )
-    except (FileNotFoundError, IndexError, ValueError, IOError) as e:
-      logging.exception("Failed to get CPU usage.")
-      raise e
+    return (
+        (total_end_time - total_start_time)
+        / (uptime_end - uptime_start)
+        * 100
+    )
 
   def _get_total_cpu_time(self, pid: int) -> float:
     with open(f"/proc/{str(pid)}/stat", "r") as f:
