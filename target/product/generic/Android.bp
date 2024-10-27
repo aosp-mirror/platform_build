@@ -536,6 +536,7 @@ android_system_image {
         "tombstoned", // base_system
         "traced", // base_system
         "traced_probes", // base_system
+        "tradeinmode", // base_system
         "tune2fs", // base_system
         "uiautomator", // base_system
         "uinput", // base_system
@@ -786,6 +787,7 @@ android_system_image {
                 "libbinder_ndk",
                 "libbinder_rpc_unstable",
                 "libcamera2ndk",
+                "libcgrouprc", // llndk library
                 "libclang_rt.asan",
                 "libcompiler_rt",
                 "libcutils", // used by many libs
