@@ -718,7 +718,9 @@ android_system_image {
                 "true": [
                     "com.android.crashrecovery", // base_system (RELEASE_CRASHRECOVERY_MODULE)
                 ],
-                default: [],
+                default: [
+                    "framework-platformcrashrecovery", // base_system
+                ],
             }) + select(soong_config_variable("ANDROID", "release_package_profiling_module"), {
                 "true": [
                     "com.android.profiling", // base_system (RELEASE_PACKAGE_PROFILING_MODULE)
