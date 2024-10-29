@@ -432,13 +432,6 @@ else
 endif
 .KATI_READONLY := TARGET_MAX_PAGE_SIZE_SUPPORTED
 
-ifdef PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE
-  TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE := $(PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE)
-else
-  TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE := false
-endif
-.KATI_READONLY := TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE
-
 # Boolean variable determining if AOSP relies on bionic's PAGE_SIZE macro.
 ifdef PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO
   TARGET_NO_BIONIC_PAGE_SIZE_MACRO := $(PRODUCT_NO_BIONIC_PAGE_SIZE_MACRO)
@@ -817,6 +810,18 @@ ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),36),)
   endif
 endif
 
+ifdef PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE
+  TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE := $(PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE)
+else ifeq (true,$(TARGET_BUILD_UNBUNDLED))
+  # unbundled builds may not have updated build sources
+  TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE := false
+else ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),36),)
+  TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE := true
+else
+  TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE := false
+endif
+.KATI_READONLY := TARGET_CHECK_PREBUILT_MAX_PAGE_SIZE
+
 # Set BOARD_SYSTEMSDK_VERSIONS to the latest SystemSDK version starting from P-launching
 # devices if unset.
 ifndef BOARD_SYSTEMSDK_VERSIONS
@@ -839,12 +844,6 @@ endif
 .KATI_READONLY := BOARD_CURRENT_API_LEVEL_FOR_VENDOR_MODULES
 
 ifdef PRODUCT_SHIPPING_API_LEVEL
-  board_api_level := $(firstword $(BOARD_API_LEVEL) $(BOARD_SHIPPING_API_LEVEL))
-  ifneq (,$(board_api_level))
-    min_systemsdk_version := $(call math_min,$(board_api_level),$(PRODUCT_SHIPPING_API_LEVEL))
-  else
-    min_systemsdk_version := $(PRODUCT_SHIPPING_API_LEVEL)
-  endif
   ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),29),)
     ifneq ($(BOARD_OTA_FRAMEWORK_VBMETA_VERSION_OVERRIDE),)
       $(error When PRODUCT_SHIPPING_API_LEVEL >= 29, BOARD_OTA_FRAMEWORK_VBMETA_VERSION_OVERRIDE cannot be set)
