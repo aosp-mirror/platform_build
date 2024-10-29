@@ -308,6 +308,10 @@ ifeq ($(RELEASE_CRASHRECOVERY_MODULE),true)
   PRODUCT_PACKAGES += \
         com.android.crashrecovery \
 
+else
+  PRODUCT_PACKAGES += \
+    framework-platformcrashrecovery \
+
 endif
 
 # When we release uprobestats module
