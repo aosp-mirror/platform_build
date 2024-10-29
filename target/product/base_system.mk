@@ -274,7 +274,6 @@ PRODUCT_PACKAGES += \
     Shell \
     shell_and_utilities_system \
     sm \
-    snapshotctl \
     snapuserd \
     storaged \
     surfaceflinger \
@@ -491,6 +490,7 @@ PRODUCT_PACKAGES_DEBUG := \
     record_binder \
     servicedispatcher \
     showmap \
+    snapshotctl \
     sqlite3 \
     ss \
     start_with_lockagent \
