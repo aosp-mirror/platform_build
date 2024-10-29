@@ -74,6 +74,21 @@ python_test_host {
     },
 }
 
+python_test_host {
+    name: "edit_monitor_integration_test",
+    main: "edit_monitor_integration_test.py",
+    pkg_path: "testdata",
+    srcs: [
+        "edit_monitor_integration_test.py",
+    ],
+    test_options: {
+        unit_test: true,
+    },
+    data: [
+        ":edit_monitor",
+    ],
+}
+
 python_binary_host {
     name: "edit_monitor",
     pkg_path: "edit_monitor",
