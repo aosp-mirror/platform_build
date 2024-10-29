@@ -27,6 +27,7 @@ _board_strip_readonly_list += BOARD_INSTALLER_CMDLINE
 _board_strip_readonly_list += BOARD_KERNEL_CMDLINE
 _board_strip_readonly_list += BOARD_BOOT_HEADER_VERSION
 _board_strip_readonly_list += BOARD_BOOTCONFIG
+_board_strip_readonly_list += BOARD_BOOTCONFIG_FILE
 _board_strip_readonly_list += BOARD_KERNEL_BASE
 _board_strip_readonly_list += BOARD_USES_GENERIC_AUDIO
 _board_strip_readonly_list += BOARD_USES_RECOVERY_AS_BOOT
@@ -311,9 +312,10 @@ endif
 .KATI_READONLY := $(_board_strip_readonly_list)
 
 INTERNAL_KERNEL_CMDLINE := $(BOARD_KERNEL_CMDLINE)
-ifneq (,$(BOARD_BOOTCONFIG))
+ifneq (,$(BOARD_BOOTCONFIG)$(BOARD_BOOTCONFIG_FILE))
   INTERNAL_KERNEL_CMDLINE += bootconfig
   INTERNAL_BOOTCONFIG := $(BOARD_BOOTCONFIG)
+  INTERNAL_BOOTCONFIG_FILE := $(BOARD_BOOTCONFIG_FILE)
 endif
 
 ifneq ($(filter %64,$(TARGET_ARCH)),)

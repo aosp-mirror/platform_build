@@ -362,7 +362,6 @@ function addcompletions()
       packages/modules/adb/adb.bash
       system/core/fastboot/fastboot.bash
       tools/asuite/asuite.sh
-      prebuilts/bazel/common/bazel-complete.bash
     )
     # Completion can be disabled selectively to allow users to use non-standard completion.
     # e.g.

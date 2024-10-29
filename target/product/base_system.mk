@@ -287,6 +287,7 @@ PRODUCT_PACKAGES += \
     tombstoned \
     traced \
     traced_probes \
+    tradeinmode \
     tune2fs \
     uiautomator \
     uinput \
@@ -503,6 +504,10 @@ PRODUCT_PACKAGES_DEBUG := \
     unwind_info \
     unwind_reg_info \
     unwind_symbols \
+
+# For Remotely Provisioned Certificate Processor
+PRODUCT_SYSTEM_PROPERTIES += \
+    remote_provisioning.use_cert_processor=false
 
 # The set of packages whose code can be loaded by the system server.
 PRODUCT_SYSTEM_SERVER_APPS += \

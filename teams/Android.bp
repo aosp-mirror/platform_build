@@ -13,6 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// DON'T ADD NEW RULES HERE. For more details refer to
+// go/new-android-ownership-model
+
 package {
     default_applicable_licenses: ["Android-Apache-2.0"],
 }
@@ -4454,3 +4457,34 @@ team {
     // go/trendy/manage/engineers/5121440647577600
     trendy_team_id: "5121440647577600",
 }
+
+team {
+    name: "trendy_team_ravenwood",
+
+    // go/trendy/manage/engineers/6027181500497920
+    trendy_team_id: "6027181500497920",
+}
+
+team {
+    name: "trendy_team_automotive_cast",
+
+    // go/trendy/manage/engineers/5293683026264064
+    trendy_team_id: "5293683026264064",
+}
+
+team {
+    name: "trendy_team_wear_standalone_kids",
+
+    // go/trendy/manage/engineers/6303298703949824
+    trendy_team_id: "6303298703949824",
+}
+
+team {
+    name: "trendy_team_desktop_stats",
+
+    // go/trendy/manage/engineers/5440764114206720
+    trendy_team_id: "5440764114206720",
+}
+
+// DON'T ADD NEW RULES HERE. For more details refer to
+// go/new-android-ownership-model

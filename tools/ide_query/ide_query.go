@@ -293,11 +293,19 @@ func getCCInputs(ctx context.Context, env Env, filePaths []string) ([]*pb.Analys
 // If a file is covered by multiple modules, the first module is returned.
 func findJavaModules(paths []string, modules map[string]*javaModule) map[string]string {
 	ret := make(map[string]string)
-	for name, module := range modules {
+	// A file may be part of multiple modules. To make the result deterministic,
+	// check the modules in sorted order.
+	keys := make([]string, 0, len(modules))
+	for name := range modules {
+		keys = append(keys, name)
+	}
+	slices.Sort(keys)
+	for _, name := range keys {
 		if strings.HasSuffix(name, ".impl") {
 			continue
 		}
 
+		module := modules[name]
 		for i, p := range paths {
 			if slices.Contains(module.Srcs, p) {
 				ret[p] = name
@@ -341,6 +349,8 @@ func getJavaInputs(env Env, modulesByPath map[string]string, modules map[string]
 			Id:              moduleName,
 			Language:        pb.Language_LANGUAGE_JAVA,
 			SourceFilePaths: m.Srcs,
+			GeneratedFiles:  genFiles(env, m),
+			DependencyIds:   m.Deps,
 		}
 		unitsById[u.Id] = u
 
@@ -355,14 +365,10 @@ func getJavaInputs(env Env, modulesByPath map[string]string, modules map[string]
 				continue
 			}
 
-			var paths []string
-			paths = append(paths, mod.Srcs...)
-			paths = append(paths, mod.SrcJars...)
-			paths = append(paths, mod.Jars...)
 			unitsById[name] = &pb.BuildableUnit{
 				Id:              name,
 				SourceFilePaths: mod.Srcs,
-				GeneratedFiles:  genFiles(env, paths),
+				GeneratedFiles:  genFiles(env, mod),
 				DependencyIds:   mod.Deps,
 			}
 
@@ -380,8 +386,13 @@ func getJavaInputs(env Env, modulesByPath map[string]string, modules map[string]
 }
 
 // genFiles returns the generated files (paths that start with outDir/) for the
-// given paths. Generated files that do not exist are ignored.
-func genFiles(env Env, paths []string) []*pb.GeneratedFile {
+// given module. Generated files that do not exist are ignored.
+func genFiles(env Env, mod *javaModule) []*pb.GeneratedFile {
+	var paths []string
+	paths = append(paths, mod.Srcs...)
+	paths = append(paths, mod.SrcJars...)
+	paths = append(paths, mod.Jars...)
+
 	prefix := env.OutDir + "/"
 	var ret []*pb.GeneratedFile
 	for _, p := range paths {

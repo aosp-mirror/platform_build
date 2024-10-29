@@ -35,6 +35,12 @@ python_library_host {
     pkg_path: "edit_monitor",
     srcs: [
         "daemon_manager.py",
+        "edit_monitor.py",
+    ],
+    libs: [
+        "asuite_cc_client",
+        "edit_event_proto",
+        "watchdog",
     ],
 }
 
@@ -51,6 +57,36 @@ python_test_host {
     test_options: {
         unit_test: true,
     },
+}
+
+python_test_host {
+    name: "edit_monitor_test",
+    main: "edit_monitor_test.py",
+    pkg_path: "edit_monitor",
+    srcs: [
+        "edit_monitor_test.py",
+    ],
+    libs: [
+        "edit_monitor_lib",
+    ],
+    test_options: {
+        unit_test: true,
+    },
+}
+
+python_test_host {
+    name: "edit_monitor_integration_test",
+    main: "edit_monitor_integration_test.py",
+    pkg_path: "testdata",
+    srcs: [
+        "edit_monitor_integration_test.py",
+    ],
+    test_options: {
+        unit_test: true,
+    },
+    data: [
+        ":edit_monitor",
+    ],
 }
 
 python_binary_host {

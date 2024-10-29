@@ -1676,12 +1676,13 @@ ifdef INTERNAL_KERNEL_CMDLINE
   INTERNAL_VENDOR_BOOTIMAGE_ARGS += --vendor_cmdline "$(INTERNAL_KERNEL_CMDLINE)"
 endif
 
-ifdef INTERNAL_BOOTCONFIG
+ifneq (, $(INTERNAL_BOOTCONFIG)$(INTERNAL_BOOTCONFIG_FILE))
   INTERNAL_VENDOR_BOOTCONFIG_TARGET := $(PRODUCT_OUT)/vendor-bootconfig.img
   $(INTERNAL_VENDOR_BOOTCONFIG_TARGET):
 	rm -f $@
 	$(foreach param,$(INTERNAL_BOOTCONFIG), \
 	 printf "%s\n" $(param) >> $@;)
+	cat $(INTERNAL_BOOTCONFIG_FILE) >> $@
   INTERNAL_VENDOR_BOOTIMAGE_ARGS += --vendor_bootconfig $(INTERNAL_VENDOR_BOOTCONFIG_TARGET)
 endif
 
@@ -3488,12 +3489,14 @@ endef
 #   $(2): The partition's staging directory
 #   $(3): Files to include in the partition
 define write-partition-file-list
+$(1): PRIVATE_FILES := $(subst $(2)/,,$(filter $(2)/%,$(3)))
+$(1): PRIVATE_EXTRA_INSTALL_ZIPS := $(call relevant-extra-install-zips,$(filter $(2)/%,$(3)))
 $(1): $$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(foreach p,$(call relevant-extra-install-zips,$(filter $(2)/%,$(3))),$(call word-colon,3,$(p)))
 	@echo Writing $$@
 	rm -f $$@
 	echo -n > $$@
-	$$(foreach f,$(subst $(2)/,,$(filter $(2)/%,$(3))),echo "$$(f)" >> $$@$$(newline))
-	$$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(2) $(call relevant-extra-install-zips,$(filter $(2)/%,$(3))) >> $$@
+	$$(foreach f,$$(PRIVATE_FILES),echo "$$(f)" >> $$@$$(newline))
+	$$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(2) $$(PRIVATE_EXTRA_INSTALL_ZIPS) >> $$@
 endef
 
 # -----------------------------------------------------------------
@@ -4009,6 +4012,21 @@ ifdef BUILDING_PRODUCT_IMAGE
 INTERNAL_PRODUCTIMAGE_FILES := \
     $(filter $(TARGET_OUT_PRODUCT)/%,\
       $(ALL_DEFAULT_INSTALLED_MODULES))
+
+# Install product/etc/linker.config.pb with PRODUCT_PRODUCT_LINKER_CONFIG_FRAGMENTS
+product_linker_config_file := $(TARGET_OUT_PRODUCT)/etc/linker.config.pb
+$(product_linker_config_file): private_linker_config_fragments := $(PRODUCT_PRODUCT_LINKER_CONFIG_FRAGMENTS)
+$(product_linker_config_file): $(INTERNAL_PRODUCTIMAGE_FILES) | $(HOST_OUT_EXECUTABLES)/conv_linker_config
+	@echo Creating linker config: $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	$(HOST_OUT_EXECUTABLES)/conv_linker_config proto \
+		--source $(call normalize-path-list,$(private_linker_config_fragments)) \
+		--output $@
+$(call define declare-1p-target,$(product_linker_config_file),)
+INTERNAL_PRODUCTIMAGE_FILES += $(product_linker_config_file)
+ALL_DEFAULT_INSTALLED_MODULES += $(product_linker_config_file)
+
 
 INSTALLED_FILES_FILE_PRODUCT := $(PRODUCT_OUT)/installed-files-product.txt
 INSTALLED_FILES_JSON_PRODUCT := $(INSTALLED_FILES_FILE_PRODUCT:.txt=.json)
@@ -7985,9 +8003,14 @@ endif # PACK_DESKTOP_RECOVERY_IMAGE
 # Desktop pack update image hook.
 ifneq (,$(strip $(PACK_DESKTOP_UPDATE_IMAGE)))
 PACK_UPDATE_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_update_image.bin
+PACK_UPDATE_IMAGE_ARGS := --noarchive --update
+
+ifneq (,$(strip $(PACK_UPDATE_IMAGE_EXPERIMENTAL)))
+PACK_UPDATE_IMAGE_ARGS += --experimental
+endif # PACK_UPDATE_IMAGE_EXPERIMENTAL
 
 $(PACK_UPDATE_IMAGE_TARGET): $(IMAGES) $(PACK_IMAGE_SCRIPT)
-	$(PACK_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) --noarchive --update
+	$(PACK_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) $(PACK_UPDATE_IMAGE_ARGS)
 
 PACKED_UPDATE_IMAGE_ARCHIVE_TARGET := $(PACK_UPDATE_IMAGE_TARGET).gz
 
