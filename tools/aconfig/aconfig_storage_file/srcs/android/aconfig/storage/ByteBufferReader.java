@@ -41,6 +41,10 @@ public class ByteBufferReader {
         return this.mByteBuffer.getInt();
     }
 
+    public long readLong() {
+        return this.mByteBuffer.getLong();
+    }
+
     public String readString() {
         int length = readInt();
         byte[] bytes = new byte[length];
