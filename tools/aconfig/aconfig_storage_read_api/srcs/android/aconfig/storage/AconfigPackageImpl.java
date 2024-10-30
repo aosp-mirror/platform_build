@@ -39,12 +39,12 @@ public class AconfigPackageImpl {
 
     /** @hide */
     public static AconfigPackageImpl load(
-            String packageGroupName, String packageName, StorageFileProvider fileProvider) {
-        if (packageGroupName == null) {
+            String container, String packageName, StorageFileProvider fileProvider) {
+        if (container == null) {
             return null;
         }
         AconfigPackageImpl aPackage = new AconfigPackageImpl();
-        if (!aPackage.init(packageGroupName, packageName, fileProvider)) {
+        if (!aPackage.init(container, packageName, fileProvider)) {
             return null;
         }
         return aPackage;
@@ -75,9 +75,9 @@ public class AconfigPackageImpl {
     }
 
     private boolean init(
-            String packageGroupName, String packageName, StorageFileProvider fileProvider) {
+            String containerName, String packageName, StorageFileProvider fileProvider) {
         StrictMode.ThreadPolicy oldPolicy = StrictMode.allowThreadDiskReads();
-        String container = packageGroupName;
+        String container = containerName;
         try {
             // for devices don't have new storage directly return
             if (!fileProvider.containerFileExists(null)) {
