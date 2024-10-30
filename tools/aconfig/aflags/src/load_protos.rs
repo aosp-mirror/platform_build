@@ -51,7 +51,10 @@ pub(crate) fn load() -> Result<Vec<Flag>> {
 
     let paths = aconfig_device_paths::parsed_flags_proto_paths()?;
     for path in paths {
-        let bytes = fs::read(path.clone())?;
+        let Ok(bytes) = fs::read(&path) else {
+            eprintln!("warning: failed to read {:?}", path);
+            continue;
+        };
         let parsed_flags: ProtoParsedFlags = protobuf::Message::parse_from_bytes(&bytes)?;
         for flag in parsed_flags.parsed_flag {
             // TODO(b/334954748): enforce one-container-per-flag invariant.
