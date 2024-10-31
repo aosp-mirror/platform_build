@@ -16,9 +16,10 @@
 
 //! flag table query module defines the flag table file read from mapped bytes
 
-use crate::{AconfigStorageError, FILE_VERSION};
+use crate::AconfigStorageError;
 use aconfig_storage_file::{
     flag_table::FlagTableHeader, flag_table::FlagTableNode, read_u32_from_bytes, StoredFlagType,
+    MAX_SUPPORTED_FILE_VERSION,
 };
 use anyhow::anyhow;
 
@@ -36,11 +37,11 @@ pub fn find_flag_read_context(
     flag: &str,
 ) -> Result<Option<FlagReadContext>, AconfigStorageError> {
     let interpreted_header = FlagTableHeader::from_bytes(buf)?;
-    if interpreted_header.version > crate::FILE_VERSION {
+    if interpreted_header.version > MAX_SUPPORTED_FILE_VERSION {
         return Err(AconfigStorageError::HigherStorageFileVersion(anyhow!(
             "Cannot read storage file with a higher version of {} with lib version {}",
             interpreted_header.version,
-            FILE_VERSION
+            MAX_SUPPORTED_FILE_VERSION
         )));
     }
 
@@ -111,15 +112,15 @@ mod tests {
     // this test point locks down query error when file has a higher version
     fn test_higher_version_storage_file() {
         let mut table = create_test_flag_table();
-        table.header.version = crate::FILE_VERSION + 1;
+        table.header.version = MAX_SUPPORTED_FILE_VERSION + 1;
         let flag_table = table.into_bytes();
         let error = find_flag_read_context(&flag_table[..], 0, "enabled_ro").unwrap_err();
         assert_eq!(
             format!("{:?}", error),
             format!(
                 "HigherStorageFileVersion(Cannot read storage file with a higher version of {} with lib version {})",
-                crate::FILE_VERSION + 1,
-                crate::FILE_VERSION
+                MAX_SUPPORTED_FILE_VERSION + 1,
+                MAX_SUPPORTED_FILE_VERSION
             )
         );
     }

@@ -22,3 +22,28 @@ android_test {
     ],
     team: "trendy_team_android_core_experiments",
 }
+
+android_test {
+    name: "aconfig_storage_package",
+    team: "trendy_team_android_core_experiments",
+    srcs: [
+        "AconfigPackageImplTest.java",
+        "StorageFileProviderTest.java",
+        "TestDataUtils.java",
+    ],
+    static_libs: [
+        "androidx.test.runner",
+        "junit",
+        "aconfig_storage_reader_java",
+    ],
+    test_config: "AndroidStorageJaveTest.xml",
+    manifest: "AndroidPackageTestManifest.xml",
+    sdk_version: "test_current",
+    data: [
+        ":read_api_test_storage_files",
+    ],
+    test_suites: [
+        "general-tests",
+    ],
+    jarjar_rules: "jarjar.txt",
+}

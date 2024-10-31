@@ -46,3 +46,18 @@ install_symlink {
     installed_location: "etc/init/config",
     symlink_target: "/system/system_ext/etc/init/config",
 }
+
+// init.gsi.rc, GSI-specific init script.
+prebuilt_etc {
+    name: "init.gsi.rc",
+    src: "init.gsi.rc",
+    system_ext_specific: true,
+    relative_install_path: "init",
+}
+
+prebuilt_etc {
+    name: "init.vndk-nodef.rc",
+    src: "init.vndk-nodef.rc",
+    system_ext_specific: true,
+    relative_install_path: "gsi",
+}

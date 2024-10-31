@@ -5,6 +5,10 @@ public final class Log {
         return 0;
     }
 
+    public static int w(String tag, String msg) {
+        return 0;
+    }
+
     public static int e(String tag, String msg) {
         return 0;
     }
