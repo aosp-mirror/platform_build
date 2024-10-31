@@ -352,6 +352,7 @@ $(call add_json_list, SystemPropFiles, $(TARGET_SYSTEM_PROP))
 $(call add_json_list, SystemExtPropFiles, $(TARGET_SYSTEM_EXT_PROP))
 $(call add_json_list, ProductPropFiles, $(TARGET_PRODUCT_PROP))
 $(call add_json_list, OdmPropFiles, $(TARGET_ODM_PROP))
+$(call add_json_list, VendorPropFiles, $(TARGET_VENDOR_PROP))
 
 $(call add_json_str, ExtraAllowedDepsTxt, $(EXTRA_ALLOWED_DEPS_TXT))
 
