@@ -17,6 +17,7 @@
 package android.aconfig.storage.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import android.aconfig.storage.FileType;
 import android.aconfig.storage.PackageTable;
@@ -66,5 +67,9 @@ public class PackageTableTest {
         assertEquals(159, node1.getNextOffset());
         assertEquals(-1, node2.getNextOffset());
         assertEquals(-1, node4.getNextOffset());
+
+        assertFalse(node1.hasPackageFingerprint());
+        assertFalse(node2.hasPackageFingerprint());
+        assertFalse(node4.hasPackageFingerprint());
     }
 }
