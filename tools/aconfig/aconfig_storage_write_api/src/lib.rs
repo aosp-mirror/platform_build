@@ -24,15 +24,10 @@ pub mod mapped_file;
 #[cfg(test)]
 mod test_utils;
 
-use aconfig_storage_file::{
-    AconfigStorageError, FlagInfoHeader, FlagInfoList, FlagInfoNode, FlagTable, FlagValueType,
-    PackageTable, StorageFileType, StoredFlagType, FILE_VERSION,
-};
+use aconfig_storage_file::{AconfigStorageError, FlagValueType};
 
 use anyhow::anyhow;
 use memmap2::MmapMut;
-use std::fs::File;
-use std::io::{Read, Write};
 
 /// Get read write mapped storage files.
 ///
@@ -104,86 +99,6 @@ pub fn set_flag_has_local_override(
     })
 }
 
-/// Read in storage file as bytes
-fn read_file_to_bytes(file_path: &str) -> Result<Vec<u8>, AconfigStorageError> {
-    let mut file = File::open(file_path).map_err(|errmsg| {
-        AconfigStorageError::FileReadFail(anyhow!("Failed to open file {}: {}", file_path, errmsg))
-    })?;
-    let mut buffer = Vec::new();
-    file.read_to_end(&mut buffer).map_err(|errmsg| {
-        AconfigStorageError::FileReadFail(anyhow!(
-            "Failed to read bytes from file {}: {}",
-            file_path,
-            errmsg
-        ))
-    })?;
-    Ok(buffer)
-}
-
-/// Create flag info file given package map file and flag map file
-/// \input package_map: package map file
-/// \input flag_map: flag map file
-/// \output flag_info_out: created flag info file
-pub fn create_flag_info(
-    package_map: &str,
-    flag_map: &str,
-    flag_info_out: &str,
-) -> Result<(), AconfigStorageError> {
-    let package_table = PackageTable::from_bytes(&read_file_to_bytes(package_map)?)?;
-    let flag_table = FlagTable::from_bytes(&read_file_to_bytes(flag_map)?)?;
-
-    if package_table.header.container != flag_table.header.container {
-        return Err(AconfigStorageError::FileCreationFail(anyhow!(
-            "container for package map {} and flag map {} does not match",
-            package_table.header.container,
-            flag_table.header.container,
-        )));
-    }
-
-    let mut package_start_index = vec![0; package_table.header.num_packages as usize];
-    for node in package_table.nodes.iter() {
-        package_start_index[node.package_id as usize] = node.boolean_start_index;
-    }
-
-    let mut is_flag_rw = vec![false; flag_table.header.num_flags as usize];
-    for node in flag_table.nodes.iter() {
-        let flag_index = package_start_index[node.package_id as usize] + node.flag_index as u32;
-        is_flag_rw[flag_index as usize] = node.flag_type == StoredFlagType::ReadWriteBoolean;
-    }
-
-    let mut list = FlagInfoList {
-        header: FlagInfoHeader {
-            version: FILE_VERSION,
-            container: flag_table.header.container,
-            file_type: StorageFileType::FlagInfo as u8,
-            file_size: 0,
-            num_flags: flag_table.header.num_flags,
-            boolean_flag_offset: 0,
-        },
-        nodes: is_flag_rw.iter().map(|&rw| FlagInfoNode::create(rw)).collect(),
-    };
-
-    list.header.boolean_flag_offset = list.header.into_bytes().len() as u32;
-    list.header.file_size = list.into_bytes().len() as u32;
-
-    let mut file = File::create(flag_info_out).map_err(|errmsg| {
-        AconfigStorageError::FileCreationFail(anyhow!(
-            "fail to create file {}: {}",
-            flag_info_out,
-            errmsg
-        ))
-    })?;
-    file.write_all(&list.into_bytes()).map_err(|errmsg| {
-        AconfigStorageError::FileCreationFail(anyhow!(
-            "fail to write to file {}: {}",
-            flag_info_out,
-            errmsg
-        ))
-    })?;
-
-    Ok(())
-}
-
 // *************************************** //
 // CC INTERLOP
 // *************************************** //
@@ -212,12 +127,6 @@ mod ffi {
         pub error_message: String,
     }
 
-    // Flag info file creation return for cc interlop
-    pub struct FlagInfoCreationCXX {
-        pub success: bool,
-        pub error_message: String,
-    }
-
     // Rust export to c++
     extern "Rust" {
         pub fn update_boolean_flag_value_cxx(
@@ -239,12 +148,6 @@ mod ffi {
             offset: u32,
             value: bool,
         ) -> FlagHasLocalOverrideUpdateCXX;
-
-        pub fn create_flag_info_cxx(
-            package_map: &str,
-            flag_map: &str,
-            flag_info_out: &str,
-        ) -> FlagInfoCreationCXX;
     }
 }
 
@@ -329,34 +232,15 @@ pub(crate) fn update_flag_has_local_override_cxx(
     }
 }
 
-/// Create flag info file cc interlop
-pub(crate) fn create_flag_info_cxx(
-    package_map: &str,
-    flag_map: &str,
-    flag_info_out: &str,
-) -> ffi::FlagInfoCreationCXX {
-    match create_flag_info(package_map, flag_map, flag_info_out) {
-        Ok(()) => ffi::FlagInfoCreationCXX { success: true, error_message: String::from("") },
-        Err(errmsg) => {
-            ffi::FlagInfoCreationCXX { success: false, error_message: format!("{:?}", errmsg) }
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::test_utils::copy_to_temp_file;
-    use aconfig_storage_file::test_utils::{
-        create_test_flag_info_list, create_test_flag_table, create_test_package_table,
-        write_bytes_to_temp_file,
-    };
     use aconfig_storage_file::FlagInfoBit;
     use aconfig_storage_read_api::flag_info_query::find_flag_attribute;
     use aconfig_storage_read_api::flag_value_query::find_boolean_flag_value;
     use std::fs::File;
     use std::io::Read;
-    use tempfile::NamedTempFile;
 
     fn get_boolean_flag_value_at_offset(file: &str, offset: u32) -> bool {
         let mut f = File::open(&file).unwrap();
@@ -438,32 +322,5 @@ mod tests {
                 assert!((attribute & (FlagInfoBit::HasLocalOverride as u8)) == 0);
             }
         }
-    }
-
-    fn create_empty_temp_file() -> Result<NamedTempFile, AconfigStorageError> {
-        let file = NamedTempFile::new().map_err(|_| {
-            AconfigStorageError::FileCreationFail(anyhow!("Failed to create temp file"))
-        })?;
-        Ok(file)
-    }
-
-    #[test]
-    // this test point locks down the flag info creation
-    fn test_create_flag_info() {
-        let package_table =
-            write_bytes_to_temp_file(&create_test_package_table().into_bytes()).unwrap();
-        let flag_table = write_bytes_to_temp_file(&create_test_flag_table().into_bytes()).unwrap();
-        let flag_info = create_empty_temp_file().unwrap();
-
-        let package_table_path = package_table.path().display().to_string();
-        let flag_table_path = flag_table.path().display().to_string();
-        let flag_info_path = flag_info.path().display().to_string();
-
-        assert!(create_flag_info(&package_table_path, &flag_table_path, &flag_info_path).is_ok());
-
-        let flag_info =
-            FlagInfoList::from_bytes(&read_file_to_bytes(&flag_info_path).unwrap()).unwrap();
-        let expected_flag_info = create_test_flag_info_list();
-        assert_eq!(flag_info, expected_flag_info);
     }
 }

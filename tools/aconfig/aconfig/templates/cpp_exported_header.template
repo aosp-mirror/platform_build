@@ -27,12 +27,13 @@ public:
     {{ -for item in class_elements}}
     virtual bool {item.flag_name}() = 0;
 
-    {{ -if is_test_mode }}
-    virtual void {item.flag_name}(bool val) = 0;
-    {{ -endif }}
     {{ -endfor }}
 
     {{ -if is_test_mode }}
+    {{ -for item in class_elements}}
+    virtual void {item.flag_name}(bool val) = 0;
+    {{ -endfor }}
+
     virtual void reset_flags() \{}
     {{ -endif }}
 };

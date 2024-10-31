@@ -5,15 +5,15 @@ use std::io::Write;
 use std::sync::LazyLock;
 use log::\{log, LevelFilter, Level};
 
-static STORAGE_MIGRATION_MARKER_FILE: &str =
-    "/metadata/aconfig_test_missions/mission_1";
-static MIGRATION_LOG_TAG: &str = "AconfigTestMission1";
-
 /// flag provider
 pub struct FlagProvider;
 
 {{ if has_readwrite- }}
 {{ if allow_instrumentation }}
+static READ_FROM_NEW_STORAGE: LazyLock<bool> = LazyLock::new(|| unsafe \{
+    Path::new("/metadata/aconfig/boot/enable_only_new_storage").exists()
+});
+
 static PACKAGE_OFFSET: LazyLock<Result<Option<u32>, AconfigStorageError>> = LazyLock::new(|| unsafe \{
     get_mapped_storage_file("{container}", StorageFileType::PackageMap)
     .and_then(|package_map| get_package_read_context(&package_map, "{package}"))
@@ -30,24 +30,15 @@ static FLAG_VAL_MAP: LazyLock<Result<Mmap, AconfigStorageError>> = LazyLock::new
 /// flag value cache for {flag.name}
 {{ if allow_instrumentation }}
 static CACHED_{flag.name}: LazyLock<bool> = LazyLock::new(|| \{
-    let result = flags_rust::GetServerConfigurableFlag(
-        "aconfig_flags.{flag.device_config_namespace}",
-        "{flag.device_config_flag}",
-        "{flag.default_value}") == "true";
 
-    let use_new_storage_value = flags_rust::GetServerConfigurableFlag(
-        "aconfig_flags.core_experiments_team_internal",
-        "com.android.providers.settings.use_new_storage_value",
-        "false") == "true";
-
-    if Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() \{
+    if *READ_FROM_NEW_STORAGE \{
         // This will be called multiple times. Subsequent calls after the first are noops.
         logger::init(
             logger::Config::default()
-                .with_tag_on_device(MIGRATION_LOG_TAG)
+                .with_tag_on_device("aconfig_rust_codegen")
                 .with_max_level(LevelFilter::Info));
 
-        let aconfig_storage_result = FLAG_VAL_MAP
+        let flag_value_result = FLAG_VAL_MAP
             .as_ref()
             .map_err(|err| format!("failed to get flag val map: \{err}"))
             .and_then(|flag_val_map| \{
@@ -60,38 +51,31 @@ static CACHED_{flag.name}: LazyLock<bool> = LazyLock::new(|| \{
                                 get_boolean_flag_value(&flag_val_map, offset + {flag.flag_offset})
                                     .map_err(|err| format!("failed to get flag: \{err}"))
                             },
-                            None => Err("no context found for package '{package}'".to_string())
+                            None => \{
+                                 log!(Level::Error, "no context found for package {package}");
+                                 Ok({flag.default_value})
+                            }
                         }
                     })
                 });
 
-        match aconfig_storage_result \{
-            Ok(storage_result) if storage_result == result => \{
-                if use_new_storage_value \{
-                    return storage_result;
-                } else \{
-                    return result;
-                }
-            },
-            Ok(storage_result) => \{
-                log!(Level::Error, "AconfigTestMission1: error: mismatch for flag '{flag.name}'. Legacy storage was \{result}, new storage was \{storage_result}");
-                if use_new_storage_value \{
-                    return storage_result;
-                } else \{
-                    return result;
-                }
+        match flag_value_result \{
+            Ok(flag_value) => \{
+                return flag_value;
             },
             Err(err) => \{
-                log!(Level::Error, "AconfigTestMission1: error: \{err}");
-                if use_new_storage_value \{
-                    panic!("failed to read flag value: \{err}");
-                }
+                log!(Level::Error, "aconfig_rust_codegen: error: \{err}");
+                panic!("failed to read flag value: \{err}");
             }
         }
+    } else \{
+        flags_rust::GetServerConfigurableFlag(
+            "aconfig_flags.{flag.device_config_namespace}",
+            "{flag.device_config_flag}",
+            "{flag.default_value}") == "true"
     }
 
-    result
-    });
+});
 {{ else }}
 static CACHED_{flag.name}: LazyLock<bool> = LazyLock::new(|| flags_rust::GetServerConfigurableFlag(
     "aconfig_flags.{flag.device_config_namespace}",
@@ -123,72 +107,11 @@ pub static PROVIDER: FlagProvider = FlagProvider;
 {{ for flag in template_flags }}
 /// query flag {flag.name}
 #[inline(always)]
-{{ -if flag.readwrite }}
 pub fn {flag.name}() -> bool \{
+{{ -if flag.readwrite }}
     PROVIDER.{flag.name}()
 {{ -else }}
-pub fn {flag.name}() -> bool \{
-    {{ if not allow_instrumentation }}
     {flag.default_value}
-    {{ else }}
-
-    let result = {flag.default_value};
-    if !Path::new(STORAGE_MIGRATION_MARKER_FILE).exists() \{
-        return result;
-    }
-
-    // This will be called multiple times. Subsequent calls after the first
-    // are noops.
-    logger::init(
-        logger::Config::default()
-            .with_tag_on_device(MIGRATION_LOG_TAG)
-            .with_max_level(LevelFilter::Info),
-    );
-
-    unsafe \{
-        let package_map = match get_mapped_storage_file("{flag.container}", StorageFileType::PackageMap) \{
-            Ok(file) => file,
-            Err(err) => \{
-                log!(Level::Error, "AconfigTestMission1: error: failed to read flag '{flag.name}': \{err}");
-                return result;
-            }
-        };
-
-        let package_read_context = match get_package_read_context(&package_map, "{package}") \{
-            Ok(Some(context)) => context,
-            Ok(None) => \{
-                log!(Level::Error, "AconfigTestMission1: error: failed to read flag '{flag.name}': did not get context");
-                return result;
-            },
-            Err(err) => \{
-                log!(Level::Error, "AconfigTestMission1: error: failed to read flag '{flag.name}': \{err}");
-                return result;
-            }
-        };
-        let flag_val_map = match get_mapped_storage_file("{flag.container}", StorageFileType::FlagVal) \{
-            Ok(val_map) => val_map,
-            Err(err) => \{
-                log!(Level::Error, "AconfigTestMission1: error: failed to read flag '{flag.name}': \{err}");
-                return result;
-            }
-        };
-        let value = match get_boolean_flag_value(&flag_val_map, {flag.flag_offset} + package_read_context.boolean_start_index) \{
-            Ok(val) => val,
-            Err(err) => \{
-                log!(Level::Error, "AconfigTestMission1: error: failed to read flag '{flag.name}': \{err}");
-                return result;
-            }
-        };
-
-        if result != value \{
-            log!(Level::Error, "AconfigTestMission1: error: flag mismatch for '{flag.name}'. Legacy storage was \{result}, new storage was \{value}");
-        } else \{
-            let default_value = {flag.default_value};
-        }
-    }
-
-    result
-    {{ endif }}
 {{ -endif }}
 }
 {{ endfor }}
