@@ -17,7 +17,8 @@
 use anyhow::{bail, ensure, Context, Result};
 use itertools::Itertools;
 use protobuf::Message;
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
+use std::hash::Hasher;
 use std::io::Read;
 use std::path::PathBuf;
 
@@ -31,6 +32,7 @@ use aconfig_protos::{
     ParsedFlagExt, ProtoFlagMetadata, ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag,
     ProtoParsedFlags, ProtoTracepoint,
 };
+use aconfig_storage_file::sip_hasher13::SipHasher13;
 use aconfig_storage_file::StorageFileType;
 
 pub struct Input {
@@ -77,8 +79,18 @@ pub fn parse_flags(
             .read_to_string(&mut contents)
             .with_context(|| format!("failed to read {}", input.source))?;
 
-        let flag_declarations = aconfig_protos::flag_declarations::try_from_text_proto(&contents)
-            .with_context(|| input.error_context())?;
+        let mut flag_declarations =
+            aconfig_protos::flag_declarations::try_from_text_proto(&contents)
+                .with_context(|| input.error_context())?;
+
+        // system_ext flags should be treated as system flags as we are combining /system_ext
+        // and /system as one container
+        // TODO: remove this logic when we start enforcing that system_ext cannot be set as
+        // container in aconfig declaration files.
+        if flag_declarations.container() == "system_ext" {
+            flag_declarations.set_container(String::from("system"));
+        }
+
         ensure!(
             package == flag_declarations.package(),
             "failed to parse {}: expected package {}, got {}",
@@ -268,10 +280,11 @@ pub fn create_storage(
     caches: Vec<Input>,
     container: &str,
     file: &StorageFileType,
+    version: u32,
 ) -> Result<Vec<u8>> {
     let parsed_flags_vec: Vec<ProtoParsedFlags> =
         caches.into_iter().map(|mut input| input.try_parse_flags()).collect::<Result<Vec<_>>>()?;
-    generate_storage_file(container, parsed_flags_vec.iter(), file)
+    generate_storage_file(container, parsed_flags_vec.iter(), file, version)
 }
 
 pub fn create_device_config_defaults(mut input: Input) -> Result<Vec<u8>> {
@@ -410,10 +423,41 @@ where
     Ok(flag_ids)
 }
 
+#[allow(dead_code)] // TODO: b/316357686 - Use fingerprint in codegen to
+                    // protect hardcoded offset reads.
+pub fn compute_flag_offsets_fingerprint(flags_map: &HashMap<String, u16>) -> Result<u64> {
+    let mut hasher = SipHasher13::new();
+
+    // Need to sort to ensure the data is added to the hasher in the same order
+    // each run.
+    let sorted_map: BTreeMap<&String, &u16> = flags_map.iter().collect();
+
+    for (flag, offset) in sorted_map {
+        // See https://docs.rs/siphasher/latest/siphasher/#note for use of write
+        // over write_i16. Similarly, use to_be_bytes rather than to_ne_bytes to
+        // ensure consistency.
+        hasher.write(flag.as_bytes());
+        hasher.write(&offset.to_be_bytes());
+    }
+    Ok(hasher.finish())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use aconfig_protos::ProtoFlagPurpose;
+
+    #[test]
+    fn test_offset_fingerprint() {
+        let parsed_flags = crate::test::parse_test_flags();
+        let package = find_unique_package(&parsed_flags.parsed_flag).unwrap().to_string();
+        let flag_ids = assign_flag_ids(&package, parsed_flags.parsed_flag.iter()).unwrap();
+        let expected_fingerprint = 10709892481002252132u64;
+
+        let hash_result = compute_flag_offsets_fingerprint(&flag_ids);
+
+        assert_eq!(hash_result.unwrap(), expected_fingerprint);
+    }
 
     #[test]
     fn test_parse_flags() {
