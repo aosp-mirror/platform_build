@@ -137,6 +137,7 @@ struct FlagElement {
     pub default_value: bool,
     pub device_config_namespace: String,
     pub device_config_flag: String,
+    pub flag_name: String,
     pub flag_name_constant_suffix: String,
     pub flag_offset: u16,
     pub is_read_write: bool,
@@ -156,6 +157,7 @@ fn create_flag_element(
         default_value: pf.state() == ProtoFlagState::ENABLED,
         device_config_namespace: pf.namespace().to_string(),
         device_config_flag,
+        flag_name: pf.name().to_string(),
         flag_name_constant_suffix: pf.name().to_ascii_uppercase(),
         flag_offset: *flag_offsets.get(pf.name()).expect("didnt find package offset :("),
         is_read_write: pf.permission() == ProtoFlagPermission::READ_WRITE,
@@ -507,25 +509,84 @@ mod tests {
             private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
         }"#;
 
-        let expected_featureflagsmpl_content_0 = r#"
+        let expected_featureflagsmpl_content = r#"
         package com.android.aconfig.test;
         // TODO(b/303773055): Remove the annotation after access issue is resolved.
         import android.compat.annotation.UnsupportedAppUsage;
         import android.provider.DeviceConfig;
         import android.provider.DeviceConfig.Properties;
-        "#;
+        import android.aconfig.storage.StorageInternalReader;
+        import java.nio.file.Files;
+        import java.nio.file.Paths;
 
-        let expected_featureflagsmpl_content_1 = r#"
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
+            private static final boolean isReadFromNew = Files.exists(Paths.get("/metadata/aconfig/boot/enable_only_new_storage"));
+            private static volatile boolean isCached = false;
             private static volatile boolean aconfig_test_is_cached = false;
             private static volatile boolean other_namespace_is_cached = false;
             private static boolean disabledRw = false;
             private static boolean disabledRwExported = false;
             private static boolean disabledRwInOtherNamespace = false;
             private static boolean enabledRw = true;
-        "#;
-        let expected_featureflagsmpl_content_2 = r#"
+            private void init() {
+                StorageInternalReader reader = null;
+                boolean foundPackage = true;
+                try {
+                    reader = new StorageInternalReader("system", "com.android.aconfig.test");
+                } catch (Exception e) {
+                    foundPackage = false;
+                }
+                disabledRw = foundPackage ? reader.getBooleanFlagValue(1) : false;
+                disabledRwExported = foundPackage ? reader.getBooleanFlagValue(2) : false;
+                enabledRw = foundPackage ? reader.getBooleanFlagValue(8) : true;
+                disabledRwInOtherNamespace = foundPackage ? reader.getBooleanFlagValue(3) : false;
+                isCached = true;
+            }
+            private void load_overrides_aconfig_test() {
+                try {
+                    Properties properties = DeviceConfig.getProperties("aconfig_test");
+                    disabledRw =
+                        properties.getBoolean(Flags.FLAG_DISABLED_RW, false);
+                    disabledRwExported =
+                        properties.getBoolean(Flags.FLAG_DISABLED_RW_EXPORTED, false);
+                    enabledRw =
+                        properties.getBoolean(Flags.FLAG_ENABLED_RW, true);
+                } catch (NullPointerException e) {
+                    throw new RuntimeException(
+                        "Cannot read value from namespace aconfig_test "
+                        + "from DeviceConfig. It could be that the code using flag "
+                        + "executed before SettingsProvider initialization. Please use "
+                        + "fixed read-only flag by adding is_fixed_read_only: true in "
+                        + "flag declaration.",
+                        e
+                    );
+                } catch (SecurityException e) {
+                    // for isolated process case, skip loading flag value from the storage, use the default
+                }
+                aconfig_test_is_cached = true;
+            }
+
+            private void load_overrides_other_namespace() {
+                try {
+                    Properties properties = DeviceConfig.getProperties("other_namespace");
+                    disabledRwInOtherNamespace =
+                        properties.getBoolean(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE, false);
+                } catch (NullPointerException e) {
+                    throw new RuntimeException(
+                        "Cannot read value from namespace other_namespace "
+                        + "from DeviceConfig. It could be that the code using flag "
+                        + "executed before SettingsProvider initialization. Please use "
+                        + "fixed read-only flag by adding is_fixed_read_only: true in "
+                        + "flag declaration.",
+                        e
+                    );
+                } catch (SecurityException e) {
+                    // for isolated process case, skip loading flag value from the storage, use the default
+                }
+                other_namespace_is_cached = true;
+            }
+
             @Override
             @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
@@ -536,8 +597,14 @@ mod tests {
             @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean disabledRw() {
-                if (!aconfig_test_is_cached) {
-                    load_overrides_aconfig_test();
+                if (isReadFromNew) {
+                    if (!isCached) {
+                        init();
+                    }
+                } else {
+                    if (!aconfig_test_is_cached) {
+                        load_overrides_aconfig_test();
+                    }
                 }
                 return disabledRw;
             }
@@ -545,8 +612,14 @@ mod tests {
             @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean disabledRwExported() {
-                if (!aconfig_test_is_cached) {
-                    load_overrides_aconfig_test();
+                if (isReadFromNew) {
+                    if (!isCached) {
+                        init();
+                    }
+                } else {
+                    if (!aconfig_test_is_cached) {
+                        load_overrides_aconfig_test();
+                    }
                 }
                 return disabledRwExported;
             }
@@ -554,8 +627,14 @@ mod tests {
             @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean disabledRwInOtherNamespace() {
-                if (!other_namespace_is_cached) {
-                    load_overrides_other_namespace();
+                if (isReadFromNew) {
+                    if (!isCached) {
+                        init();
+                    }
+                } else {
+                    if (!other_namespace_is_cached) {
+                        load_overrides_other_namespace();
+                    }
                 }
                 return disabledRwInOtherNamespace;
             }
@@ -587,245 +666,23 @@ mod tests {
             @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean enabledRw() {
-                if (!aconfig_test_is_cached) {
-                    load_overrides_aconfig_test();
+                if (isReadFromNew) {
+                    if (!isCached) {
+                        init();
+                    }
+                } else {
+                    if (!aconfig_test_is_cached) {
+                        load_overrides_aconfig_test();
+                    }
                 }
                 return enabledRw;
             }
         }
         "#;
 
-        let expect_featureflagsimpl_content_old = expected_featureflagsmpl_content_0.to_owned()
-            + expected_featureflagsmpl_content_1
-            + r#"
-            private void load_overrides_aconfig_test() {
-                try {
-                    Properties properties = DeviceConfig.getProperties("aconfig_test");
-                    disabledRw =
-                        properties.getBoolean(Flags.FLAG_DISABLED_RW, false);
-                    disabledRwExported =
-                        properties.getBoolean(Flags.FLAG_DISABLED_RW_EXPORTED, false);
-                    enabledRw =
-                        properties.getBoolean(Flags.FLAG_ENABLED_RW, true);
-                } catch (NullPointerException e) {
-                    throw new RuntimeException(
-                        "Cannot read value from namespace aconfig_test "
-                        + "from DeviceConfig. It could be that the code using flag "
-                        + "executed before SettingsProvider initialization. Please use "
-                        + "fixed read-only flag by adding is_fixed_read_only: true in "
-                        + "flag declaration.",
-                        e
-                    );
-                }
-                aconfig_test_is_cached = true;
-            }
-
-            private void load_overrides_other_namespace() {
-                try {
-                    Properties properties = DeviceConfig.getProperties("other_namespace");
-                    disabledRwInOtherNamespace =
-                        properties.getBoolean(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE, false);
-                } catch (NullPointerException e) {
-                    throw new RuntimeException(
-                        "Cannot read value from namespace other_namespace "
-                        + "from DeviceConfig. It could be that the code using flag "
-                        + "executed before SettingsProvider initialization. Please use "
-                        + "fixed read-only flag by adding is_fixed_read_only: true in "
-                        + "flag declaration.",
-                        e
-                    );
-                }
-                other_namespace_is_cached = true;
-            }"#
-            + expected_featureflagsmpl_content_2;
-
         let mut file_set = HashMap::from([
             ("com/android/aconfig/test/Flags.java", expect_flags_content.as_str()),
-            (
-                "com/android/aconfig/test/FeatureFlagsImpl.java",
-                &expect_featureflagsimpl_content_old,
-            ),
-            ("com/android/aconfig/test/FeatureFlags.java", EXPECTED_FEATUREFLAGS_COMMON_CONTENT),
-            (
-                "com/android/aconfig/test/CustomFeatureFlags.java",
-                EXPECTED_CUSTOMFEATUREFLAGS_CONTENT,
-            ),
-            (
-                "com/android/aconfig/test/FakeFeatureFlagsImpl.java",
-                EXPECTED_FAKEFEATUREFLAGSIMPL_CONTENT,
-            ),
-        ]);
-
-        for file in generated_files {
-            let file_path = file.path.to_str().unwrap();
-            assert!(file_set.contains_key(file_path), "Cannot find {}", file_path);
-            assert_eq!(
-                None,
-                crate::test::first_significant_code_diff(
-                    file_set.get(file_path).unwrap(),
-                    &String::from_utf8(file.contents).unwrap()
-                ),
-                "File {} content is not correct",
-                file_path
-            );
-            file_set.remove(file_path);
-        }
-
-        assert!(file_set.is_empty());
-
-        let parsed_flags = crate::test::parse_test_flags();
-        let mode = CodegenMode::Production;
-        let modified_parsed_flags =
-            crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
-        let flag_ids =
-            assign_flag_ids(crate::test::TEST_PACKAGE, modified_parsed_flags.iter()).unwrap();
-        let generated_files = generate_java_code(
-            crate::test::TEST_PACKAGE,
-            modified_parsed_flags.into_iter(),
-            mode,
-            flag_ids,
-            true,
-        )
-        .unwrap();
-
-        let expect_featureflagsimpl_content_new = expected_featureflagsmpl_content_0.to_owned()
-            + r#"
-            import android.aconfig.storage.StorageInternalReader;
-            import android.util.Log;
-            "#
-            + expected_featureflagsmpl_content_1
-            + r#"
-        StorageInternalReader reader;
-        boolean readFromNewStorage;
-
-        boolean useNewStorageValueAndDiscardOld = false;
-
-        private final static String TAG = "AconfigJavaCodegen";
-        private final static String SUCCESS_LOG = "success: %s value matches";
-        private final static String MISMATCH_LOG = "error: %s value mismatch, new storage value is %s, old storage value is %s";
-        private final static String ERROR_LOG = "error: failed to read flag value";
-
-        private void init() {
-            if (reader != null) return;
-            if (DeviceConfig.getBoolean("core_experiments_team_internal", "com.android.providers.settings.storage_test_mission_1", false)) {
-                readFromNewStorage = true;
-                try {
-                    reader = new StorageInternalReader("system", "com.android.aconfig.test");
-                } catch (Exception e) {
-                    reader = null;
-                }
-            }
-
-            useNewStorageValueAndDiscardOld =
-                DeviceConfig.getBoolean("core_experiments_team_internal", "com.android.providers.settings.use_new_storage_value", false);
-        }
-
-        private void load_overrides_aconfig_test() {
-            try {
-                Properties properties = DeviceConfig.getProperties("aconfig_test");
-                disabledRw =
-                    properties.getBoolean(Flags.FLAG_DISABLED_RW, false);
-                disabledRwExported =
-                    properties.getBoolean(Flags.FLAG_DISABLED_RW_EXPORTED, false);
-                enabledRw =
-                    properties.getBoolean(Flags.FLAG_ENABLED_RW, true);
-            } catch (NullPointerException e) {
-                throw new RuntimeException(
-                    "Cannot read value from namespace aconfig_test "
-                    + "from DeviceConfig. It could be that the code using flag "
-                    + "executed before SettingsProvider initialization. Please use "
-                    + "fixed read-only flag by adding is_fixed_read_only: true in "
-                    + "flag declaration.",
-                    e
-                );
-            }
-            aconfig_test_is_cached = true;
-            init();
-            if (readFromNewStorage && reader != null) {
-                boolean val;
-                try {
-                    val = reader.getBooleanFlagValue(1);
-                    if (val == disabledRw) {
-                        Log.i(TAG, String.format(SUCCESS_LOG, "disabledRw"));
-                    } else {
-                        Log.i(TAG, String.format(MISMATCH_LOG, "disabledRw", val, disabledRw));
-                    }
-
-                    if (useNewStorageValueAndDiscardOld) {
-                        disabledRw = val;
-                    }
-
-                    val = reader.getBooleanFlagValue(2);
-                    if (val == disabledRwExported) {
-                        Log.i(TAG, String.format(SUCCESS_LOG, "disabledRwExported"));
-                    } else {
-                        Log.i(TAG, String.format(MISMATCH_LOG, "disabledRwExported", val, disabledRwExported));
-                    }
-
-                    if (useNewStorageValueAndDiscardOld) {
-                        disabledRwExported = val;
-                    }
-
-                    val = reader.getBooleanFlagValue(8);
-                    if (val == enabledRw) {
-                        Log.i(TAG, String.format(SUCCESS_LOG, "enabledRw"));
-                    } else {
-                        Log.i(TAG, String.format(MISMATCH_LOG, "enabledRw", val, enabledRw));
-                    }
-
-                    if (useNewStorageValueAndDiscardOld) {
-                        enabledRw = val;
-                    }
-
-                } catch (Exception e) {
-                    Log.e(TAG, ERROR_LOG, e);
-                }
-            }
-        }
-
-        private void load_overrides_other_namespace() {
-            try {
-                Properties properties = DeviceConfig.getProperties("other_namespace");
-                disabledRwInOtherNamespace =
-                    properties.getBoolean(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE, false);
-            } catch (NullPointerException e) {
-                throw new RuntimeException(
-                    "Cannot read value from namespace other_namespace "
-                    + "from DeviceConfig. It could be that the code using flag "
-                    + "executed before SettingsProvider initialization. Please use "
-                    + "fixed read-only flag by adding is_fixed_read_only: true in "
-                    + "flag declaration.",
-                    e
-                );
-            }
-            other_namespace_is_cached = true;
-            init();
-            if (readFromNewStorage && reader != null) {
-                boolean val;
-                try {
-                    val = reader.getBooleanFlagValue(3);
-                    if (val == disabledRwInOtherNamespace) {
-                        Log.i(TAG, String.format(SUCCESS_LOG, "disabledRwInOtherNamespace"));
-                    } else {
-                        Log.i(TAG, String.format(MISMATCH_LOG, "disabledRwInOtherNamespace", val, disabledRwInOtherNamespace));
-                    }
-
-                    if (useNewStorageValueAndDiscardOld) {
-                        disabledRwInOtherNamespace = val;
-                    }
-
-                } catch (Exception e) {
-                    Log.e(TAG, ERROR_LOG, e);
-                }
-            }
-        }"# + expected_featureflagsmpl_content_2;
-
-        let mut file_set = HashMap::from([
-            ("com/android/aconfig/test/Flags.java", expect_flags_content.as_str()),
-            (
-                "com/android/aconfig/test/FeatureFlagsImpl.java",
-                &expect_featureflagsimpl_content_new,
-            ),
+            ("com/android/aconfig/test/FeatureFlagsImpl.java", expected_featureflagsmpl_content),
             ("com/android/aconfig/test/FeatureFlags.java", EXPECTED_FEATUREFLAGS_COMMON_CONTENT),
             (
                 "com/android/aconfig/test/CustomFeatureFlags.java",
@@ -916,7 +773,6 @@ mod tests {
             private static boolean enabledFixedRoExported = false;
             private static boolean enabledRoExported = false;
 
-
             private void load_overrides_aconfig_test() {
                 try {
                     Properties properties = DeviceConfig.getProperties("aconfig_test");
@@ -935,27 +791,29 @@ mod tests {
                         + "flag declaration.",
                         e
                     );
+                } catch (SecurityException e) {
+                    // for isolated process case, skip loading flag value from the storage, use the default
                 }
                 aconfig_test_is_cached = true;
             }
             @Override
             public boolean disabledRwExported() {
                 if (!aconfig_test_is_cached) {
-                    load_overrides_aconfig_test();
+                        load_overrides_aconfig_test();
                 }
                 return disabledRwExported;
             }
             @Override
             public boolean enabledFixedRoExported() {
                 if (!aconfig_test_is_cached) {
-                    load_overrides_aconfig_test();
+                        load_overrides_aconfig_test();
                 }
                 return enabledFixedRoExported;
             }
             @Override
             public boolean enabledRoExported() {
                 if (!aconfig_test_is_cached) {
-                    load_overrides_aconfig_test();
+                        load_overrides_aconfig_test();
                 }
                 return enabledRoExported;
             }

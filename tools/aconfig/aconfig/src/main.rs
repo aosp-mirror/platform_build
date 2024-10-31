@@ -16,6 +16,8 @@
 
 //! `aconfig` is a build time tool to manage build time configurations, such as feature flags.
 
+use aconfig_storage_file::DEFAULT_FILE_VERSION;
+use aconfig_storage_file::MAX_SUPPORTED_FILE_VERSION;
 use anyhow::{anyhow, bail, Context, Result};
 use clap::{builder::ArgAction, builder::EnumValueParser, Arg, ArgMatches, Command};
 use core::any::Any;
@@ -49,8 +51,7 @@ fn cli() -> Command {
         .subcommand(
             Command::new("create-cache")
                 .arg(Arg::new("package").long("package").required(true))
-                // TODO(b/312769710): Make this argument required.
-                .arg(Arg::new("container").long("container"))
+                .arg(Arg::new("container").long("container").required(true))
                 .arg(Arg::new("declarations").long("declarations").action(ArgAction::Append))
                 .arg(Arg::new("values").long("values").action(ArgAction::Append))
                 .arg(
@@ -159,7 +160,13 @@ fn cli() -> Command {
                         .value_parser(|s: &str| StorageFileType::try_from(s)),
                 )
                 .arg(Arg::new("cache").long("cache").action(ArgAction::Append).required(true))
-                .arg(Arg::new("out").long("out").required(true)),
+                .arg(Arg::new("out").long("out").required(true))
+                .arg(
+                    Arg::new("version")
+                        .long("version")
+                        .required(false)
+                        .value_parser(|s: &str| s.parse::<u32>()),
+                ),
         )
 }
 
@@ -309,12 +316,18 @@ fn main() -> Result<()> {
             write_output_to_file_or_stdout(path, &output)?;
         }
         Some(("create-storage", sub_matches)) => {
+            let version =
+                get_optional_arg::<u32>(sub_matches, "version").unwrap_or(&DEFAULT_FILE_VERSION);
+            if *version > MAX_SUPPORTED_FILE_VERSION {
+                bail!("Invalid version selected ({})", version);
+            }
             let file = get_required_arg::<StorageFileType>(sub_matches, "file")
                 .context("Invalid storage file selection")?;
             let cache = open_zero_or_more_files(sub_matches, "cache")?;
             let container = get_required_arg::<String>(sub_matches, "container")?;
             let path = get_required_arg::<String>(sub_matches, "out")?;
-            let output = commands::create_storage(cache, container, file)
+
+            let output = commands::create_storage(cache, container, file, *version)
                 .context("failed to create storage files")?;
             write_output_to_file_or_stdout(path, &output)?;
         }
