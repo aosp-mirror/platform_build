@@ -73,6 +73,8 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
                 + "flag declaration.",
                 e
             );
+        } catch (SecurityException e) \{
+            // for isolated process case, skip loading flag value from the storage, use the default
         }
         {namespace_with_flags.namespace}_is_cached = true;
     }

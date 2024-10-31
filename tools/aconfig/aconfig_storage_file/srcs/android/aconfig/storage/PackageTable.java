@@ -124,8 +124,10 @@ public class PackageTable {
 
         private String mPackageName;
         private int mPackageId;
+        private long mPackageFingerprint;
         private int mBooleanStartIndex;
         private int mNextOffset;
+        private boolean mHasPackageFingerprint;
 
         private static Node fromBytes(ByteBufferReader reader, int version) {
             switch (version) {
@@ -153,9 +155,11 @@ public class PackageTable {
             Node node = new Node();
             node.mPackageName = reader.readString();
             node.mPackageId = reader.readInt();
+            node.mPackageFingerprint = reader.readLong();
             node.mBooleanStartIndex = reader.readInt();
             node.mNextOffset = reader.readInt();
             node.mNextOffset = node.mNextOffset == 0 ? -1 : node.mNextOffset;
+            node.mHasPackageFingerprint = true;
             return node;
         }
 
@@ -189,12 +193,20 @@ public class PackageTable {
             return mPackageId;
         }
 
+        public long getPackageFingerprint() {
+            return mPackageFingerprint;
+        }
+
         public int getBooleanStartIndex() {
             return mBooleanStartIndex;
         }
 
         public int getNextOffset() {
             return mNextOffset;
+        }
+
+        public boolean hasPackageFingerprint() {
+            return mHasPackageFingerprint;
         }
     }
 }
