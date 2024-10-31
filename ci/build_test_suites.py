@@ -20,7 +20,6 @@ import json
 import logging
 import os
 import pathlib
-import re
 import subprocess
 import sys
 from typing import Callable
@@ -70,7 +69,7 @@ class BuildPlanner:
       return BuildPlan(set(self.args.extra_targets), set())
 
     build_targets = set()
-    packaging_functions = set()
+    packaging_commands_getters = []
     for target in self.args.extra_targets:
       if self._unused_target_exclusion_enabled(
           target
@@ -86,9 +85,11 @@ class BuildPlanner:
           target, self.build_context, self.args
       )
       build_targets.update(target_optimizer.get_build_targets())
-      packaging_functions.add(target_optimizer.package_outputs)
+      packaging_commands_getters.append(
+          target_optimizer.get_package_outputs_commands
+      )
 
-    return BuildPlan(build_targets, packaging_functions)
+    return BuildPlan(build_targets, packaging_commands_getters)
 
   def _unused_target_exclusion_enabled(self, target: str) -> bool:
     return (
@@ -100,7 +101,7 @@ class BuildPlanner:
 @dataclass(frozen=True)
 class BuildPlan:
   build_targets: set[str]
-  packaging_functions: set[Callable[..., None]]
+  packaging_commands_getters: list[Callable[[], list[list[str]]]]
 
 
 def build_test_suites(argv: list[str]) -> int:
@@ -182,8 +183,12 @@ def execute_build_plan(build_plan: BuildPlan):
   except subprocess.CalledProcessError as e:
     raise BuildFailureError(e.returncode) from e
 
-  for packaging_function in build_plan.packaging_functions:
-    packaging_function()
+  for packaging_commands_getter in build_plan.packaging_commands_getters:
+    try:
+      for packaging_command in packaging_commands_getter():
+        run_command(packaging_command)
+    except subprocess.CalledProcessError as e:
+      raise BuildFailureError(e.returncode) from e
 
 
 def get_top() -> pathlib.Path:

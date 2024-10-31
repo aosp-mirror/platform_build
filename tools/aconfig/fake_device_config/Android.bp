@@ -15,9 +15,7 @@
 java_library {
     name: "fake_device_config",
     srcs: [
-        "src/android/util/Log.java",
-        "src/android/provider/DeviceConfig.java",
-        "src/android/os/StrictMode.java",
+        "src/**/*.java",
     ],
     sdk_version: "none",
     system_modules: "core-all-system-modules",
