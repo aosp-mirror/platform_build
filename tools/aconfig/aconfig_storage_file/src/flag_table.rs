@@ -220,12 +220,15 @@ impl FlagTable {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::create_test_flag_table;
+    use crate::{
+        test_utils::create_test_flag_table, DEFAULT_FILE_VERSION, MAX_SUPPORTED_FILE_VERSION,
+    };
 
-    #[test]
     // this test point locks down the table serialization
-    fn test_serialization() {
-        let flag_table = create_test_flag_table();
+    // TODO: b/376108268 - Use parameterized tests.
+    #[test]
+    fn test_serialization_default() {
+        let flag_table = create_test_flag_table(DEFAULT_FILE_VERSION);
 
         let header: &FlagTableHeader = &flag_table.header;
         let reinterpreted_header = FlagTableHeader::from_bytes(&header.into_bytes());
@@ -246,20 +249,42 @@ mod tests {
     }
 
     #[test]
-    // this test point locks down that version number should be at the top of serialized
-    // bytes
-    fn test_version_number() {
-        let flag_table = create_test_flag_table();
-        let bytes = &flag_table.into_bytes();
-        let mut head = 0;
-        let version = read_u32_from_bytes(bytes, &mut head).unwrap();
-        assert_eq!(version, 1);
+    fn test_serialization_max() {
+        let flag_table = create_test_flag_table(MAX_SUPPORTED_FILE_VERSION);
+
+        let header: &FlagTableHeader = &flag_table.header;
+        let reinterpreted_header = FlagTableHeader::from_bytes(&header.into_bytes());
+        assert!(reinterpreted_header.is_ok());
+        assert_eq!(header, &reinterpreted_header.unwrap());
+
+        let nodes: &Vec<FlagTableNode> = &flag_table.nodes;
+        for node in nodes.iter() {
+            let reinterpreted_node = FlagTableNode::from_bytes(&node.into_bytes()).unwrap();
+            assert_eq!(node, &reinterpreted_node);
+        }
+
+        let flag_table_bytes = flag_table.into_bytes();
+        let reinterpreted_table = FlagTable::from_bytes(&flag_table_bytes);
+        assert!(reinterpreted_table.is_ok());
+        assert_eq!(&flag_table, &reinterpreted_table.unwrap());
+        assert_eq!(flag_table_bytes.len() as u32, header.file_size);
     }
 
+    // this test point locks down that version number should be at the top of serialized
+    // bytes
     #[test]
+    fn test_version_number() {
+        let flag_table = create_test_flag_table(DEFAULT_FILE_VERSION);
+        let bytes = &flag_table.into_bytes();
+        let mut head = 0;
+        let version_from_file = read_u32_from_bytes(bytes, &mut head).unwrap();
+        assert_eq!(version_from_file, DEFAULT_FILE_VERSION);
+    }
+
     // this test point locks down file type check
+    #[test]
     fn test_file_type_check() {
-        let mut flag_table = create_test_flag_table();
+        let mut flag_table = create_test_flag_table(DEFAULT_FILE_VERSION);
         flag_table.header.file_type = 123u8;
         let error = FlagTable::from_bytes(&flag_table.into_bytes()).unwrap_err();
         assert_eq!(
