@@ -368,6 +368,9 @@ python_binary_host {
     libs: [
         "ota_utils_lib",
     ],
+    required: [
+        "signapk",
+    ],
 }
 
 python_binary_host {
@@ -634,6 +637,8 @@ python_defaults {
     ],
     data: [
         "testdata/**/*",
+    ],
+    device_common_data: [
         ":com.android.apex.compressed.v1",
         ":com.android.apex.vendor.foo.with_vintf",
     ],

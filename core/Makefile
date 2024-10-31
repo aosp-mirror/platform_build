@@ -1676,12 +1676,13 @@ ifdef INTERNAL_KERNEL_CMDLINE
   INTERNAL_VENDOR_BOOTIMAGE_ARGS += --vendor_cmdline "$(INTERNAL_KERNEL_CMDLINE)"
 endif
 
-ifdef INTERNAL_BOOTCONFIG
+ifneq (, $(INTERNAL_BOOTCONFIG)$(INTERNAL_BOOTCONFIG_FILE))
   INTERNAL_VENDOR_BOOTCONFIG_TARGET := $(PRODUCT_OUT)/vendor-bootconfig.img
   $(INTERNAL_VENDOR_BOOTCONFIG_TARGET):
 	rm -f $@
 	$(foreach param,$(INTERNAL_BOOTCONFIG), \
 	 printf "%s\n" $(param) >> $@;)
+	cat $(INTERNAL_BOOTCONFIG_FILE) >> $@
   INTERNAL_VENDOR_BOOTIMAGE_ARGS += --vendor_bootconfig $(INTERNAL_VENDOR_BOOTCONFIG_TARGET)
 endif
 
@@ -1964,7 +1965,7 @@ target_system_dlkm_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE_SYST
 installed_system_dlkm_notice_xml_gz := $(TARGET_OUT_SYSTEM_DLKM)/etc/NOTICE.xml.gz
 
 ALL_INSTALLED_NOTICE_FILES := \
-  $(installed_notice_html_or_xml_gz) \
+  $(if $(USE_SOONG_DEFINED_SYSTEM_IMAGE),,$(installed_notice_html_or_xml_gz)) \
   $(installed_vendor_notice_xml_gz) \
   $(installed_product_notice_xml_gz) \
   $(installed_system_ext_notice_xml_gz) \
@@ -2051,7 +2052,9 @@ endif
 
 endif # PRODUCT_NOTICE_SPLIT
 
+ifneq ($(USE_SOONG_DEFINED_SYSTEM_IMAGE),true)
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
+endif
 
 need_vendor_notice:=false
 ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
@@ -3486,12 +3489,14 @@ endef
 #   $(2): The partition's staging directory
 #   $(3): Files to include in the partition
 define write-partition-file-list
+$(1): PRIVATE_FILES := $(subst $(2)/,,$(filter $(2)/%,$(3)))
+$(1): PRIVATE_EXTRA_INSTALL_ZIPS := $(call relevant-extra-install-zips,$(filter $(2)/%,$(3)))
 $(1): $$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(foreach p,$(call relevant-extra-install-zips,$(filter $(2)/%,$(3))),$(call word-colon,3,$(p)))
 	@echo Writing $$@
 	rm -f $$@
 	echo -n > $$@
-	$$(foreach f,$(subst $(2)/,,$(filter $(2)/%,$(3))),echo "$$(f)" >> $$@$$(newline))
-	$$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(2) $(call relevant-extra-install-zips,$(filter $(2)/%,$(3))) >> $$@
+	$$(foreach f,$$(PRIVATE_FILES),echo "$$(f)" >> $$@$$(newline))
+	$$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(2) $$(PRIVATE_EXTRA_INSTALL_ZIPS) >> $$@
 endef
 
 # -----------------------------------------------------------------
@@ -3511,6 +3516,8 @@ $(SYSTEM_LINKER_CONFIG): $(INTERNAL_SYSTEMIMAGE_FILES) $(SYSTEM_LINKER_CONFIG_SO
 		--output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT)"
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config append --source $@ --output $@ --key requireLibs \
 		--value "$(foreach lib,$(LLNDK_MOVED_TO_APEX_LIBRARIES), $(lib).so)"
+	$(HOST_OUT_EXECUTABLES)/conv_linker_config append --source $@ --output $@ --key provideLibs \
+		--value "$(foreach lib,$(PRODUCT_EXTRA_STUB_LIBRARIES), $(lib).so)"
 
 $(call declare-1p-target,$(SYSTEM_LINKER_CONFIG),)
 $(call declare-license-deps,$(SYSTEM_LINKER_CONFIG),$(INTERNAL_SYSTEMIMAGE_FILES) $(SYSTEM_LINKER_CONFIG_SOURCE))
@@ -3563,14 +3570,24 @@ ifneq ($(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE),)
 file_list_diff := $(HOST_OUT_EXECUTABLES)/file_list_diff$(HOST_EXECUTABLE_SUFFIX)
 system_file_diff_timestamp := $(systemimage_intermediates)/file_diff.timestamp
 
+# The build configuration to build the REL version may have more files to allow.
+# Use allowlist_next in addition to the allowlist in this case.
+system_file_diff_allowlist_next :=
+ifeq (REL,$(PLATFORM_VERSION_CODENAME))
+system_file_diff_allowlist_next := $(ALL_MODULES.system_image_diff_allowlist_next.INSTALLED)
+$(system_file_diff_timestamp): PRIVATE_ALLOWLIST_NEXT := $(system_file_diff_allowlist_next)
+endif
 $(system_file_diff_timestamp): \
 	    $(systemimage_intermediates)/file_list.txt \
 	    $(ALL_MODULES.$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE).FILESYSTEM_FILELIST) \
 	    $(ALL_MODULES.system_image_diff_allowlist.INSTALLED) \
+	    $(system_file_diff_allowlist_next) \
 	    $(file_list_diff)
 	$(file_list_diff) $(systemimage_intermediates)/file_list.txt \
 	  $(ALL_MODULES.$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE).FILESYSTEM_FILELIST) \
-	  $(ALL_MODULES.system_image_diff_allowlist.INSTALLED) $(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE)
+	  $(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE) \
+	  --allowlists $(ALL_MODULES.system_image_diff_allowlist.INSTALLED) \
+	  $(PRIVATE_ALLOWLIST_NEXT)
 	touch $@
 
 $(BUILT_SYSTEMIMAGE): $(system_file_diff_timestamp)
@@ -3588,10 +3605,10 @@ ifeq ($(USE_SOONG_DEFINED_SYSTEM_IMAGE),true)
 ifeq ($(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE),)
 $(error PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE must be set if USE_SOONG_DEFINED_SYSTEM_IMAGE is true)
 endif
-soong_defined_system_image := $(call intermediates-dir-for,ETC,$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE))/$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE)
-$(BUILT_SYSTEMIMAGE): $(INSTALLED_FILES_FILE) $(systemimage_intermediates)/file_list.txt $(soong_defined_system_image)
-$(eval $(call copy-one-file, $(soong_defined_system_image), $(BUILT_SYSTEMIMAGE)))
-soong_defined_system_image :=
+SOONG_DEFINED_SYSTEM_IMAGE_PATH := $(call intermediates-dir-for,ETC,$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE))/$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE)
+SOONG_DEFINED_SYSTEM_IMAGE_BASE := $(dir $(ALL_MODULES.$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE).FILESYSTEM_FILELIST))
+$(BUILT_SYSTEMIMAGE): $(INSTALLED_FILES_FILE) $(systemimage_intermediates)/file_list.txt $(SOONG_DEFINED_SYSTEM_IMAGE_PATH)
+$(eval $(call copy-one-file, $(SOONG_DEFINED_SYSTEM_IMAGE_PATH), $(BUILT_SYSTEMIMAGE)))
 else
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE) $(systemimage_intermediates)/file_list.txt
 	$(call build-systemimage-target,$@)
@@ -3995,6 +4012,21 @@ ifdef BUILDING_PRODUCT_IMAGE
 INTERNAL_PRODUCTIMAGE_FILES := \
     $(filter $(TARGET_OUT_PRODUCT)/%,\
       $(ALL_DEFAULT_INSTALLED_MODULES))
+
+# Install product/etc/linker.config.pb with PRODUCT_PRODUCT_LINKER_CONFIG_FRAGMENTS
+product_linker_config_file := $(TARGET_OUT_PRODUCT)/etc/linker.config.pb
+$(product_linker_config_file): private_linker_config_fragments := $(PRODUCT_PRODUCT_LINKER_CONFIG_FRAGMENTS)
+$(product_linker_config_file): $(INTERNAL_PRODUCTIMAGE_FILES) | $(HOST_OUT_EXECUTABLES)/conv_linker_config
+	@echo Creating linker config: $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	$(HOST_OUT_EXECUTABLES)/conv_linker_config proto \
+		--source $(call normalize-path-list,$(private_linker_config_fragments)) \
+		--output $@
+$(call define declare-1p-target,$(product_linker_config_file),)
+INTERNAL_PRODUCTIMAGE_FILES += $(product_linker_config_file)
+ALL_DEFAULT_INSTALLED_MODULES += $(product_linker_config_file)
+
 
 INSTALLED_FILES_FILE_PRODUCT := $(PRODUCT_OUT)/installed-files-product.txt
 INSTALLED_FILES_JSON_PRODUCT := $(INSTALLED_FILES_FILE_PRODUCT:.txt=.json)
@@ -6134,6 +6166,9 @@ $(BUILT_TARGET_FILES_PACKAGE): zip_root := $(intermediates)/$(name)
 $(BUILT_TARGET_FILES_DIR): zip_root := $(intermediates)/$(name)
 $(BUILT_TARGET_FILES_DIR): intermediates := $(intermediates)
 
+ifneq ($(SOONG_DEFINED_SYSTEM_IMAGE_PATH),)
+  $(BUILT_TARGET_FILES_DIR): $(SOONG_DEFINED_SYSTEM_IMAGE_PATH)
+endif
 
 # $(1): Directory to copy
 # $(2): Location to copy it to
@@ -6462,8 +6497,11 @@ $(BUILT_TARGET_FILES_DIR): \
 	    $(INSTALLED_RAMDISK_TARGET) \
 	    $(INSTALLED_DTBIMAGE_TARGET) \
 	    $(INSTALLED_2NDBOOTLOADER_TARGET) \
+	    $(INSTALLED_VENDOR_KERNEL_RAMDISK_TARGET) \
 	    $(BUILT_RAMDISK_16K_TARGET) \
 	    $(BUILT_KERNEL_16K_TARGET) \
+	    $(BUILT_BOOTIMAGE_16K_TARGET) \
+	    $(INSTALLED_DTBOIMAGE_16KB_TARGET) \
 	    $(BOARD_PREBUILT_DTBOIMAGE) \
 	    $(BOARD_PREBUILT_RECOVERY_DTBOIMAGE) \
 	    $(BOARD_RECOVERY_ACPIO) \
@@ -6617,8 +6655,13 @@ endif
 endif # INSTALLED_VENDOR_BOOTIMAGE_TARGET
 ifdef BUILDING_SYSTEM_IMAGE
 	@# Contents of the system image
+ifneq ($(SOONG_DEFINED_SYSTEM_IMAGE_PATH),)
+	$(hide) $(call package_files-copy-root, \
+	    $(SOONG_DEFINED_SYSTEM_IMAGE_BASE)/root/system,$(zip_root)/SYSTEM)
+else
 	$(hide) $(call package_files-copy-root, \
 	    $(SYSTEMIMAGE_SOURCE_DIR),$(zip_root)/SYSTEM)
+endif
 else ifdef INSTALLED_BUILD_PROP_TARGET
 	@# Copy the system build.prop even if not building a system image
 	@# because add_img_to_target_files may need it to build other partition
@@ -7935,9 +7978,14 @@ endif # PACK_DESKTOP_FILESYSTEM_IMAGES
 # Desktop pack recovery image hook.
 ifneq (,$(strip $(PACK_DESKTOP_RECOVERY_IMAGE)))
 PACK_RECOVERY_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_recovery_image.bin
+PACK_RECOVERY_IMAGE_ARGS := --noarchive --recovery
+
+ifneq (,$(strip $(PACK_RECOVERY_IMAGE_EXPERIMENTAL)))
+PACK_RECOVERY_IMAGE_ARGS += --experimental
+endif # PACK_RECOVERY_IMAGE_EXPERIMENTAL
 
 $(PACK_RECOVERY_IMAGE_TARGET): $(IMAGES) $(PACK_IMAGE_SCRIPT)
-	$(PACK_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) --noarchive --recovery
+	$(PACK_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) $(PACK_RECOVERY_IMAGE_ARGS)
 
 PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET := $(PACK_RECOVERY_IMAGE_TARGET).gz
 
@@ -7955,9 +8003,14 @@ endif # PACK_DESKTOP_RECOVERY_IMAGE
 # Desktop pack update image hook.
 ifneq (,$(strip $(PACK_DESKTOP_UPDATE_IMAGE)))
 PACK_UPDATE_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_update_image.bin
+PACK_UPDATE_IMAGE_ARGS := --noarchive --update
+
+ifneq (,$(strip $(PACK_UPDATE_IMAGE_EXPERIMENTAL)))
+PACK_UPDATE_IMAGE_ARGS += --experimental
+endif # PACK_UPDATE_IMAGE_EXPERIMENTAL
 
 $(PACK_UPDATE_IMAGE_TARGET): $(IMAGES) $(PACK_IMAGE_SCRIPT)
-	$(PACK_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) --noarchive --update
+	$(PACK_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) $(PACK_UPDATE_IMAGE_ARGS)
 
 PACKED_UPDATE_IMAGE_ARCHIVE_TARGET := $(PACK_UPDATE_IMAGE_TARGET).gz
 
@@ -7970,6 +8023,28 @@ $(call dist-for-goals,dist_files,$(PACKED_UPDATE_IMAGE_ARCHIVE_TARGET))
 pack-update-image: $(PACK_UPDATE_IMAGE_TARGET)
 
 endif # PACK_DESKTOP_UPDATE_IMAGE
+
+PACK_MIGRATION_IMAGE_SCRIPT := $(HOST_OUT_EXECUTABLES)/pack_migration_image
+
+# -----------------------------------------------------------------
+# Desktop pack migration image hook.
+ifeq ($(ANDROID_DESKTOP_MIGRATION_IMAGE),true)
+PACK_MIGRATION_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_migration_image.bin
+
+$(PACK_MIGRATION_IMAGE_TARGET): $(IMAGES) $(PACK_MIGRATION_IMAGE_SCRIPT)
+	$(PACK_MIGRATION_IMAGE_SCRIPT) --out_dir $(PRODUCT_OUT) --noarchive
+
+PACKED_MIGRATION_IMAGE_ARCHIVE_TARGET := $(PACK_MIGRATION_IMAGE_TARGET).gz
+
+$(PACKED_MIGRATION_IMAGE_ARCHIVE_TARGET): $(PACK_MIGRATION_IMAGE_TARGET) | $(GZIP)
+	$(GZIP) -fk $(PACK_MIGRATION_IMAGE_TARGET)
+
+$(call dist-for-goals,dist_files,$(PACKED_MIGRATION_IMAGE_ARCHIVE_TARGET))
+
+.PHONY: pack-migration-image
+pack-migration-image: $(PACK_MIGRATION_IMAGE_TARGET)
+
+endif # ANDROID_DESKTOP_MIGRATION_IMAGE
 
 # -----------------------------------------------------------------
 # OS Licensing
