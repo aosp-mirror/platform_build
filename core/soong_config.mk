@@ -428,12 +428,35 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_list, ProductPackages, $(PRODUCT_PACKAGES))
   $(call add_json_list, ProductPackagesDebug, $(PRODUCT_PACKAGES_DEBUG))
 
+  # Used to generate /vendor/linker.config.pb
+  $(call add_json_list, VendorLinkerConfigSrcs, $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS))
+
   $(call add_json_map, ProductCopyFiles)
   $(foreach pair,$(PRODUCT_COPY_FILES),\
     $(call add_json_str,$(word 1,$(subst :, ,$(pair))),$(word 2,$(subst :, ,$(pair)))))
   $(call end_json_map)
 
 $(call end_json_map)
+
+# For converting vintf_data
+$(call add_json_list, DeviceMatrixFile, $(DEVICE_MATRIX_FILE))
+$(call add_json_list, ProductManifestFiles, $(PRODUCT_MANIFEST_FILES))
+$(call add_json_list, SystemManifestFile, $(DEVICE_FRAMEWORK_MANIFEST_FILE))
+SYSTEM_EXT_HWSERVICE_FILES :=
+ifeq ($(PRODUCT_HIDL_ENABLED),true)
+  ifneq ($(filter hwservicemanager,$(PRODUCT_PACKAGES)),)
+    SYSTEM_EXT_HWSERVICE_FILES += system/hwservicemanager/hwservicemanager_no_max.xml
+  else
+    $(error If PRODUCT_HIDL_ENABLED is set, hwservicemanager must be added to PRODUCT_PACKAGES explicitly)
+  endif
+else
+  ifneq ($(filter hwservicemanager,$(PRODUCT_PACKAGES)),)
+    SYSTEM_EXT_HWSERVICE_FILES += system/hwservicemanager/hwservicemanager.xml
+  else ifneq ($(filter hwservicemanager,$(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34)),)
+    SYSTEM_EXT_HWSERVICE_FILES += system/hwservicemanager/hwservicemanager.xml
+  endif
+endif
+$(call add_json_list, SystemExtManifestFiles, $(SYSTEM_EXT_MANIFEST_FILES) $(SYSTEM_EXT_HWSERVICE_FILES))
 
 $(call json_end)
 
