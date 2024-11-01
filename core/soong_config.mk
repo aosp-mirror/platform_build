@@ -430,6 +430,7 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
 
   # Used to generate /vendor/linker.config.pb
   $(call add_json_list, VendorLinkerConfigSrcs, $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS))
+  $(call add_json_list, ProductLinkerConfigSrcs, $(PRODUCT_PRODUCT_LINKER_CONFIG_FRAGMENTS))
 
   $(call add_json_map, ProductCopyFiles)
   $(foreach pair,$(PRODUCT_COPY_FILES),\
