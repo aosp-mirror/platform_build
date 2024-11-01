@@ -81,6 +81,8 @@ class DaemonManagerTest(unittest.TestCase):
     # Sets the tempdir under the working dir so any temp files created during
     # tests will be cleaned.
     tempfile.tempdir = self.working_dir.name
+    self.patch = mock.patch.dict(os.environ, {'ENABLE_EDIT_MONITOR': 'true'})
+    self.patch.start()
 
   def tearDown(self):
     # Cleans up any child processes left by the tests.
@@ -88,6 +90,7 @@ class DaemonManagerTest(unittest.TestCase):
     self.working_dir.cleanup()
     # Restores tempdir.
     tempfile.tempdir = self.original_tempdir
+    self.patch.stop()
     super().tearDown()
 
   def test_start_success_with_no_existing_instance(self):
@@ -129,6 +132,15 @@ class DaemonManagerTest(unittest.TestCase):
 
     dm = daemon_manager.DaemonManager(TEST_BINARY_FILE)
     dm.start()
+
+    # Verify no daemon process is started.
+    self.assertIsNone(dm.daemon_process)
+
+  @mock.patch.dict(os.environ, {'ENABLE_EDIT_MONITOR': 'false'}, clear=True)
+  def test_start_return_directly_if_disabled(self):
+    dm = daemon_manager.DaemonManager(TEST_BINARY_FILE)
+    dm.start()
+
     # Verify no daemon process is started.
     self.assertIsNone(dm.daemon_process)
 
@@ -137,6 +149,7 @@ class DaemonManagerTest(unittest.TestCase):
         '/google/cog/cloud/user/workspace/edit_monitor'
     )
     dm.start()
+
     # Verify no daemon process is started.
     self.assertIsNone(dm.daemon_process)
 
