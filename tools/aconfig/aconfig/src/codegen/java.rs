@@ -501,7 +501,7 @@ mod tests {
             modified_parsed_flags.into_iter(),
             mode,
             flag_ids,
-            false,
+            true,
         )
         .unwrap();
         let expect_flags_content = EXPECTED_FLAG_COMMON_CONTENT.to_string()
@@ -561,6 +561,8 @@ mod tests {
                         + "flag declaration.",
                         e
                     );
+                } catch (SecurityException e) {
+                    // for isolated process case, skip loading flag value from the storage, use the default
                 }
                 aconfig_test_is_cached = true;
             }
@@ -579,6 +581,8 @@ mod tests {
                         + "flag declaration.",
                         e
                     );
+                } catch (SecurityException e) {
+                    // for isolated process case, skip loading flag value from the storage, use the default
                 }
                 other_namespace_is_cached = true;
             }
@@ -787,6 +791,8 @@ mod tests {
                         + "flag declaration.",
                         e
                     );
+                } catch (SecurityException e) {
+                    // for isolated process case, skip loading flag value from the storage, use the default
                 }
                 aconfig_test_is_cached = true;
             }
