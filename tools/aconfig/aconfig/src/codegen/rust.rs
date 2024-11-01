@@ -297,7 +297,7 @@ static CACHED_disabled_rw: LazyLock<bool> = LazyLock::new(|| {
                             },
                             None => {
                                 log!(Level::Error, "no context found for package com.android.aconfig.test");
-                                Ok(false)
+                                Err(format!("failed to flag package com.android.aconfig.test"))
                             }
                         }
                     })
@@ -309,7 +309,7 @@ static CACHED_disabled_rw: LazyLock<bool> = LazyLock::new(|| {
             },
             Err(err) => {
                 log!(Level::Error, "aconfig_rust_codegen: error: {err}");
-                panic!("failed to read flag value: {err}");
+                return false;
             }
         }
     } else {
@@ -344,7 +344,7 @@ static CACHED_disabled_rw_exported: LazyLock<bool> = LazyLock::new(|| {
                             },
                             None => {
                                 log!(Level::Error, "no context found for package com.android.aconfig.test");
-                                Ok(false)
+                                Err(format!("failed to flag package com.android.aconfig.test"))
                             }
                         }
                     })
@@ -356,7 +356,7 @@ static CACHED_disabled_rw_exported: LazyLock<bool> = LazyLock::new(|| {
             },
             Err(err) => {
                 log!(Level::Error, "aconfig_rust_codegen: error: {err}");
-                panic!("failed to read flag value: {err}");
+                return false;
             }
         }
     } else {
@@ -391,7 +391,7 @@ static CACHED_disabled_rw_in_other_namespace: LazyLock<bool> = LazyLock::new(|| 
                             },
                             None => {
                                 log!(Level::Error, "no context found for package com.android.aconfig.test");
-                                Ok(false)
+                                Err(format!("failed to flag package com.android.aconfig.test"))
                             }
                         }
                     })
@@ -403,7 +403,7 @@ static CACHED_disabled_rw_in_other_namespace: LazyLock<bool> = LazyLock::new(|| 
             },
             Err(err) => {
                 log!(Level::Error, "aconfig_rust_codegen: error: {err}");
-                panic!("failed to read flag value: {err}");
+                return false;
             }
         }
     } else {
@@ -439,7 +439,7 @@ static CACHED_enabled_rw: LazyLock<bool> = LazyLock::new(|| {
                             },
                             None => {
                                 log!(Level::Error, "no context found for package com.android.aconfig.test");
-                                Ok(true)
+                                Err(format!("failed to flag package com.android.aconfig.test"))
                             }
                         }
                     })
@@ -451,7 +451,7 @@ static CACHED_enabled_rw: LazyLock<bool> = LazyLock::new(|| {
             },
             Err(err) => {
                 log!(Level::Error, "aconfig_rust_codegen: error: {err}");
-                panic!("failed to read flag value: {err}");
+                return true;
             }
         }
     } else {

@@ -47,6 +47,10 @@ public class ByteBufferReader {
 
     public String readString() {
         int length = readInt();
+        if (length > 1024) {
+            throw new AconfigStorageException(
+                    "String length exceeds maximum allowed size (1024 bytes): " + length);
+        }
         byte[] bytes = new byte[length];
         mByteBuffer.get(bytes, 0, length);
         return new String(bytes, StandardCharsets.UTF_8);
