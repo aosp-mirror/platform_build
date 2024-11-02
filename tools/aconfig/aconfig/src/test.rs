@@ -295,6 +295,24 @@ parsed_flag {
         aconfig_protos::parsed_flags::try_from_binary_proto(&bytes).unwrap()
     }
 
+    pub fn parse_second_package_flags() -> ProtoParsedFlags {
+        let bytes = crate::commands::parse_flags(
+            "com.android.aconfig.second_test",
+            Some("system"),
+            vec![Input {
+                source: "tests/test_second_package.aconfig".to_string(),
+                reader: Box::new(include_bytes!("../tests/test_second_package.aconfig").as_slice()),
+            }],
+            vec![Input {
+                source: "tests/third.values".to_string(),
+                reader: Box::new(include_bytes!("../tests/third.values").as_slice()),
+            }],
+            crate::commands::DEFAULT_FLAG_PERMISSION,
+        )
+        .unwrap();
+        aconfig_protos::parsed_flags::try_from_binary_proto(&bytes).unwrap()
+    }
+
     pub fn first_significant_code_diff(a: &str, b: &str) -> Option<String> {
         let a = a.lines().map(|line| line.trim_start()).filter(|line| !line.is_empty());
         let b = b.lines().map(|line| line.trim_start()).filter(|line| !line.is_empty());
