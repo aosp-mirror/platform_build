@@ -428,6 +428,10 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_list, ProductPackages, $(PRODUCT_PACKAGES))
   $(call add_json_list, ProductPackagesDebug, $(PRODUCT_PACKAGES_DEBUG))
 
+  # Used to generate /vendor/linker.config.pb
+  $(call add_json_list, VendorLinkerConfigSrcs, $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS))
+  $(call add_json_list, ProductLinkerConfigSrcs, $(PRODUCT_PRODUCT_LINKER_CONFIG_FRAGMENTS))
+
   $(call add_json_map, ProductCopyFiles)
   $(foreach pair,$(PRODUCT_COPY_FILES),\
     $(call add_json_str,$(word 1,$(subst :, ,$(pair))),$(word 2,$(subst :, ,$(pair)))))
@@ -454,6 +458,8 @@ else
   endif
 endif
 $(call add_json_list, SystemExtManifestFiles, $(SYSTEM_EXT_MANIFEST_FILES) $(SYSTEM_EXT_HWSERVICE_FILES))
+$(call add_json_list, DeviceManifestFiles, $(DEVICE_MANIFEST_FILE))
+$(call add_json_list, OdmManifestFiles, $(ODM_MANIFEST_FILES))
 
 $(call json_end)
 
