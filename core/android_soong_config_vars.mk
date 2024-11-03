@@ -108,6 +108,10 @@ ifdef PRODUCT_AVF_MICRODROID_GUEST_GKI_VERSION
 $(call add_soong_config_var_value,ANDROID,avf_microdroid_guest_gki_version,$(PRODUCT_AVF_MICRODROID_GUEST_GKI_VERSION))
 endif
 
+ifdef TARGET_BOOTS_16K
+$(call soong_config_set_bool,ANDROID,target_boots_16k,$(filter true,$(TARGET_BOOTS_16K)))
+endif
+
 ifdef PRODUCT_MEMCG_V2_FORCE_ENABLED
 $(call add_soong_config_var_value,ANDROID,memcg_v2_force_enabled,$(PRODUCT_MEMCG_V2_FORCE_ENABLED))
 endif
@@ -242,10 +246,27 @@ $(call soong_config_set,video_codec,target_soc_name,$(TARGET_SOC_NAME))
 $(call soong_config_set_bool,video_codec,board_use_codec2_hidl_1_2,$(if $(filter true,$(BOARD_USE_CODEC2_HIDL_1_2)),true,false))
 $(call soong_config_set_bool,video_codec,board_support_mfc_enc_bt2020,$(if $(filter true,$(BOARD_SUPPORT_MFC_ENC_BT2020)),true,false))
 $(call soong_config_set_bool,video_codec,board_support_flexible_p010,$(if $(filter true,$(BOARD_SUPPORT_FLEXIBLE_P010)),true,false))
-$(call soong_config_set,video_codec,board_support_mfc_version,$(BOARD_SUPPORT_MFC_VERSION))
 $(call soong_config_set_bool,video_codec,board_use_codec2_aidl,$(if $(BOARD_USE_CODEC2_AIDL),true,false))
 $(call soong_config_set,video_codec,board_gpu_type,$(BOARD_GPU_TYPE))
 $(call soong_config_set_bool,video_codec,board_use_small_secure_memory,$(if $(filter true,$(BOARD_USE_SMALL_SECURE_MEMORY)),true,false))
-ifneq ($(BOARD_USE_MAX_SECURE_RESOURCE),)
+ifdef BOARD_SUPPORT_MFC_VERSION
+  $(call soong_config_set,video_codec,board_support_mfc_version,$(BOARD_SUPPORT_MFC_VERSION))
+endif
+ifdef BOARD_USE_MAX_SECURE_RESOURCE
   $(call soong_config_set,video_codec,board_use_max_secure_resource,$(BOARD_USE_MAX_SECURE_RESOURCE))
+endif
+
+# Export related variables to soong for hardware/google/graphics/common/libacryl:libacryl
+ifdef BOARD_LIBACRYL_DEFAULT_COMPOSITOR
+  $(call soong_config_set,acryl,libacryl_default_compositor,$(BOARD_LIBACRYL_DEFAULT_COMPOSITOR))
+endif
+ifdef BOARD_LIBACRYL_DEFAULT_SCALER
+  $(call soong_config_set,acryl,libacryl_default_scaler,$(BOARD_LIBACRYL_DEFAULT_SCALER))
+endif
+ifdef BOARD_LIBACRYL_DEFAULT_BLTER
+  $(call soong_config_set,acryl,libacryl_default_blter,$(BOARD_LIBACRYL_DEFAULT_BLTER))
+endif
+ifdef BOARD_LIBACRYL_G2D_HDR_PLUGIN
+  #BOARD_LIBACRYL_G2D_HDR_PLUGIN is set in each board config
+  $(call soong_config_set_bool,acryl,libacryl_use_g2d_hdr_plugin,true)
 endif
