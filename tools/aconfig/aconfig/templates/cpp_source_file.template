@@ -92,17 +92,21 @@ namespace {cpp_namespace} \{
                  aconfig_storage::StorageFileType::package_map);
             if (!package_map_file.ok()) \{
                 ALOGE("error: failed to get package map file: %s", package_map_file.error().c_str());
+                package_exists_in_storage_ = false;
+                return;
             }
 
             auto context = aconfig_storage::get_package_read_context(
                 **package_map_file, "{package}");
             if (!context.ok()) \{
                 ALOGE("error: failed to get package read context: %s", context.error().c_str());
+                package_exists_in_storage_ = false;
+                return;
             }
 
             if (!(context->package_exists)) \{
-               package_exists_in_storage_ = false;
-               return;
+                package_exists_in_storage_ = false;
+                return;
             }
 
             // cache package boolean flag start index
@@ -116,6 +120,8 @@ namespace {cpp_namespace} \{
                 aconfig_storage::StorageFileType::flag_val);
             if (!flag_value_file.ok()) \{
                 ALOGE("error: failed to get flag value file: %s", flag_value_file.error().c_str());
+                package_exists_in_storage_ = false;
+                return;
             }
 
             // cache flag value file
