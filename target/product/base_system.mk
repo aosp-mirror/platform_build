@@ -274,7 +274,6 @@ PRODUCT_PACKAGES += \
     Shell \
     shell_and_utilities_system \
     sm \
-    snapshotctl \
     snapuserd \
     storaged \
     surfaceflinger \
@@ -492,6 +491,7 @@ PRODUCT_PACKAGES_DEBUG := \
     record_binder \
     servicedispatcher \
     showmap \
+    snapshotctl \
     sqlite3 \
     ss \
     start_with_lockagent \
@@ -504,10 +504,6 @@ PRODUCT_PACKAGES_DEBUG := \
     unwind_info \
     unwind_reg_info \
     unwind_symbols \
-
-# For Remotely Provisioned Certificate Processor
-PRODUCT_SYSTEM_PROPERTIES += \
-    remote_provisioning.use_cert_processor=false
 
 # The set of packages whose code can be loaded by the system server.
 PRODUCT_SYSTEM_SERVER_APPS += \

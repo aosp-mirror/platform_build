@@ -253,6 +253,14 @@ fn list(source_type: FlagSourceType, container: Option<String>) -> Result<String
         FlagSourceType::DeviceConfig => DeviceConfigSource::list_flags()?,
         FlagSourceType::AconfigStorage => AconfigStorageSource::list_flags()?,
     };
+
+    if let Some(ref c) = container {
+        ensure!(
+            load_protos::list_containers()?.contains(c),
+            format!("container '{}' not found", &c)
+        );
+    }
+
     let flags = (Filter { container }).apply(&flags_unfiltered);
     let padding_info = PaddingInfo {
         longest_flag_col: flags.iter().map(|f| f.qualified_name().len()).max().unwrap_or(0),
@@ -298,7 +306,7 @@ fn main() -> Result<()> {
         Command::List { container } => {
             if aconfig_flags::auto_generated::enable_only_new_storage() {
                 list(FlagSourceType::AconfigStorage, container)
-                    .map_err(|err| anyhow!("storage may not be enabled: {err}"))
+                    .map_err(|err| anyhow!("could not list flags: {err}"))
                     .map(Some)
             } else {
                 list(FlagSourceType::DeviceConfig, container).map(Some)
