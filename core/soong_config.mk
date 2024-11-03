@@ -185,6 +185,7 @@ $(call add_json_bool, Uml,                               $(filter true,$(TARGET_
 $(call add_json_str,  VendorPath,                        $(TARGET_COPY_OUT_VENDOR))
 $(call add_json_bool, BuildingVendorImage,               $(BUILDING_VENDOR_IMAGE))
 $(call add_json_str,  OdmPath,                           $(TARGET_COPY_OUT_ODM))
+$(call add_json_bool, BuildingOdmImage,                  $(BUILDING_ODM_IMAGE))
 $(call add_json_str,  ProductPath,                       $(TARGET_COPY_OUT_PRODUCT))
 $(call add_json_bool, BuildingProductImage,              $(BUILDING_PRODUCT_IMAGE))
 $(call add_json_str,  SystemExtPath,                     $(TARGET_COPY_OUT_SYSTEM_EXT))
