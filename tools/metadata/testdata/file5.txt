@@ -1,4 +1,0 @@
-
- 
-foo
-Android.bp12345"a.java
