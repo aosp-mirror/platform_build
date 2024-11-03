@@ -43,6 +43,7 @@ $(call add_json_list, PRODUCT_VENDOR_PROPERTIES,         $(call collapse-prop-pa
 $(call add_json_list, PRODUCT_PRODUCT_PROPERTIES,        $(call collapse-prop-pairs,PRODUCT_PRODUCT_PROPERTIES))
 $(call add_json_list, PRODUCT_ODM_PROPERTIES,            $(call collapse-prop-pairs,PRODUCT_ODM_PROPERTIES))
 $(call add_json_list, PRODUCT_PROPERTY_OVERRIDES,        $(call collapse-prop-pairs,PRODUCT_PROPERTY_OVERRIDES))
+$(call add_json_list, PRODUCT_DEFAULT_PROPERTY_OVERRIDES,        $(call collapse-prop-pairs,PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
 
 $(call add_json_str, BootloaderBoardName, $(TARGET_BOOTLOADER_BOARD_NAME))
 
