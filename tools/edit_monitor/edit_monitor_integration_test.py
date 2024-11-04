@@ -15,7 +15,6 @@
 """Integration tests for Edit Monitor."""
 
 import glob
-from importlib import resources
 import logging
 import os
 import pathlib
@@ -26,6 +25,9 @@ import sys
 import tempfile
 import time
 import unittest
+
+from importlib import resources
+from unittest import mock
 
 
 class EditMonitorIntegrationTest(unittest.TestCase):
@@ -46,8 +48,11 @@ class EditMonitorIntegrationTest(unittest.TestCase):
     )
     self.root_monitoring_path.mkdir()
     self.edit_monitor_binary_path = self._import_executable("edit_monitor")
+    self.patch = mock.patch.dict(os.environ, {'ENABLE_EDIT_MONITOR': 'true'})
+    self.patch.start()
 
   def tearDown(self):
+    self.patch.stop()
     self.working_dir.cleanup()
     super().tearDown()
 

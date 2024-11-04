@@ -28,6 +28,7 @@ import time
 
 from atest.metrics import clearcut_client
 from atest.proto import clientanalytics_pb2
+from edit_monitor import utils
 from proto import edit_event_pb2
 
 DEFAULT_PROCESS_TERMINATION_TIMEOUT_SECONDS = 5
@@ -79,6 +80,15 @@ class DaemonManager:
 
   def start(self):
     """Writes the pidfile and starts the daemon proces."""
+    if not utils.is_feature_enabled(
+        "edit_monitor",
+        self.user_name,
+        "ENABLE_EDIT_MONITOR",
+        "EDIT_MONITOR_ROLLOUT_PERCENTAGE",
+    ):
+      logging.warning("Edit monitor is disabled, exiting...")
+      return
+
     if self.block_sign.exists():
       logging.warning("Block sign found, exiting...")
       return

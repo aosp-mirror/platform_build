@@ -40,7 +40,7 @@ public class StorageFileProvider {
     private final String mBootPath;
 
     /** @hide */
-    public StorageFileProvider getDefaultProvider() {
+    public static StorageFileProvider getDefaultProvider() {
         return new StorageFileProvider(DEFAULT_MAP_PATH, DEFAULT_BOOT_PATH);
     }
 
