@@ -71,6 +71,8 @@ PRODUCT_PACKAGES += \
     passwd_odm \
     passwd_vendor \
     selinux_policy_nonsystem \
+    selinux_policy_vendor \
+    selinux_policy_odm \
     shell_and_utilities_vendor \
     odm-build.prop \
 
