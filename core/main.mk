@@ -83,6 +83,8 @@ $(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
 -include test/cts-root/tools/build/config.mk
 # WVTS-specific config.
 -include test/wvts/tools/build/config.mk
+# DTS-specific config.
+-include test/dts/tools/build/config.mk
 
 
 # Clean rules
