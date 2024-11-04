@@ -17,12 +17,12 @@
 use crate::commands::assign_flag_ids;
 use crate::storage::FlagPackage;
 use aconfig_protos::ProtoFlagState;
-use aconfig_storage_file::{FlagValueHeader, FlagValueList, StorageFileType, FILE_VERSION};
+use aconfig_storage_file::{FlagValueHeader, FlagValueList, StorageFileType};
 use anyhow::{anyhow, Result};
 
-fn new_header(container: &str, num_flags: u32) -> FlagValueHeader {
+fn new_header(container: &str, num_flags: u32, version: u32) -> FlagValueHeader {
     FlagValueHeader {
-        version: FILE_VERSION,
+        version,
         container: String::from(container),
         file_type: StorageFileType::FlagVal as u8,
         file_size: 0,
@@ -31,12 +31,16 @@ fn new_header(container: &str, num_flags: u32) -> FlagValueHeader {
     }
 }
 
-pub fn create_flag_value(container: &str, packages: &[FlagPackage]) -> Result<FlagValueList> {
+pub fn create_flag_value(
+    container: &str,
+    packages: &[FlagPackage],
+    version: u32,
+) -> Result<FlagValueList> {
     // create list
     let num_flags = packages.iter().map(|pkg| pkg.boolean_flags.len() as u32).sum();
 
     let mut list = FlagValueList {
-        header: new_header(container, num_flags),
+        header: new_header(container, num_flags, version),
         booleans: vec![false; num_flags as usize],
     };
 
@@ -61,13 +65,15 @@ pub fn create_flag_value(container: &str, packages: &[FlagPackage]) -> Result<Fl
 
 #[cfg(test)]
 mod tests {
+    use aconfig_storage_file::DEFAULT_FILE_VERSION;
+
     use super::*;
     use crate::storage::{group_flags_by_package, tests::parse_all_test_flags};
 
     pub fn create_test_flag_value_list_from_source() -> Result<FlagValueList> {
         let caches = parse_all_test_flags();
         let packages = group_flags_by_package(caches.iter());
-        create_flag_value("mockup", &packages)
+        create_flag_value("mockup", &packages, DEFAULT_FILE_VERSION)
     }
 
     #[test]

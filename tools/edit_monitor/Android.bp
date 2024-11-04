@@ -1,0 +1,118 @@
+// Copyright 2024 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Set of error prone rules to ensure code quality
+// PackageLocation check requires the androidCompatible=false otherwise it does not do anything.
+
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+    default_team: "trendy_team_adte",
+}
+
+python_library_host {
+    name: "edit_event_proto",
+    srcs: [
+        "proto/edit_event.proto",
+    ],
+    proto: {
+        canonical_path_from_root: false,
+    },
+}
+
+python_library_host {
+    name: "edit_monitor_lib",
+    pkg_path: "edit_monitor",
+    srcs: [
+        "daemon_manager.py",
+        "edit_monitor.py",
+        "utils.py",
+    ],
+    libs: [
+        "asuite_cc_client",
+        "edit_event_proto",
+        "watchdog",
+    ],
+}
+
+python_test_host {
+    name: "daemon_manager_test",
+    main: "daemon_manager_test.py",
+    pkg_path: "edit_monitor",
+    srcs: [
+        "daemon_manager_test.py",
+    ],
+    libs: [
+        "edit_monitor_lib",
+    ],
+    test_options: {
+        unit_test: true,
+    },
+}
+
+python_test_host {
+    name: "edit_monitor_test",
+    main: "edit_monitor_test.py",
+    pkg_path: "edit_monitor",
+    srcs: [
+        "edit_monitor_test.py",
+    ],
+    libs: [
+        "edit_monitor_lib",
+    ],
+    test_options: {
+        unit_test: true,
+    },
+}
+
+python_test_host {
+    name: "edit_monitor_utils_test",
+    main: "utils_test.py",
+    pkg_path: "edit_monitor",
+    srcs: [
+        "utils_test.py",
+    ],
+    libs: [
+        "edit_monitor_lib",
+    ],
+    test_options: {
+        unit_test: true,
+    },
+}
+
+python_test_host {
+    name: "edit_monitor_integration_test",
+    main: "edit_monitor_integration_test.py",
+    pkg_path: "testdata",
+    srcs: [
+        "edit_monitor_integration_test.py",
+    ],
+    test_options: {
+        unit_test: true,
+    },
+    data: [
+        ":edit_monitor",
+    ],
+}
+
+python_binary_host {
+    name: "edit_monitor",
+    pkg_path: "edit_monitor",
+    srcs: [
+        "main.py",
+    ],
+    libs: [
+        "edit_monitor_lib",
+    ],
+    main: "main.py",
+}
