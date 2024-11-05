@@ -53,7 +53,7 @@ public class StorageFileProvider {
     /** @hide */
     public boolean containerFileExists(String container) {
         if (container == null) {
-            return Files.exists(Paths.get(DEFAULT_MAP_PATH));
+            return Files.exists(Paths.get(mMapPath));
         }
         return Files.exists(Paths.get(mMapPath, container + PMAP_FILE_EXT));
     }
