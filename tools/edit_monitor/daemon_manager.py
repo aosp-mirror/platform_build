@@ -84,7 +84,7 @@ class DaemonManager:
         "edit_monitor",
         self.user_name,
         "ENABLE_EDIT_MONITOR",
-        "EDIT_MONITOR_ROLLOUT_PERCENTAGE",
+        10,
     ):
       logging.warning("Edit monitor is disabled, exiting...")
       return
