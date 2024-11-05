@@ -34,6 +34,7 @@ PLACEHOLDER_MODULE = '{MODULE}'
 PLACEHOLDER_PACKAGE = '{PACKAGE}'
 PLACEHOLDER_RUNNER = '{RUNNER}'
 PLACEHOLDER_TEST_TYPE = '{TEST_TYPE}'
+PLACEHOLDER_EXTRA_TEST_RUNNER_CONFIGS = '{EXTRA_TEST_RUNNER_CONFIGS}'
 
 
 def main(argv):
@@ -59,6 +60,7 @@ def main(argv):
       "instrumentation_test_config_template",
       help="Path to the instrumentation test config template.")
   parser.add_argument("--extra-configs", default="")
+  parser.add_argument("--extra-test-runner-configs", default="")
   args = parser.parse_args(argv)
 
   target_config = args.target_config
@@ -66,6 +68,7 @@ def main(argv):
   empty_config = args.empty_config
   instrumentation_test_config_template = args.instrumentation_test_config_template
   extra_configs = '\n'.join(args.extra_configs.split('\\n'))
+  extra_test_runner_configs = '\n'.join(args.extra_test_runner_configs.split('\\n'))
 
   module = os.path.splitext(os.path.basename(target_config))[0]
 
@@ -131,6 +134,7 @@ def main(argv):
     config = config.replace(PLACEHOLDER_PACKAGE, package)
     config = config.replace(PLACEHOLDER_TEST_TYPE, test_type)
     config = config.replace(PLACEHOLDER_EXTRA_CONFIGS, extra_configs)
+    config = config.replace(PLACEHOLDER_EXTRA_TEST_RUNNER_CONFIGS, extra_test_runner_configs)
     config = config.replace(PLACEHOLDER_RUNNER, runner)
     with open(target_config, 'w') as config_file:
       config_file.write(config)

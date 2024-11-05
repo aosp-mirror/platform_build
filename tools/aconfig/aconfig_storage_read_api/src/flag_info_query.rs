@@ -16,8 +16,10 @@
 
 //! flag value query module defines the flag value file read from mapped bytes
 
-use crate::{AconfigStorageError, FILE_VERSION};
-use aconfig_storage_file::{flag_info::FlagInfoHeader, read_u8_from_bytes, FlagValueType};
+use crate::AconfigStorageError;
+use aconfig_storage_file::{
+    flag_info::FlagInfoHeader, read_u8_from_bytes, FlagValueType, MAX_SUPPORTED_FILE_VERSION,
+};
 use anyhow::anyhow;
 
 /// Get flag attribute bitfield
@@ -27,11 +29,11 @@ pub fn find_flag_attribute(
     flag_index: u32,
 ) -> Result<u8, AconfigStorageError> {
     let interpreted_header = FlagInfoHeader::from_bytes(buf)?;
-    if interpreted_header.version > crate::FILE_VERSION {
+    if interpreted_header.version > MAX_SUPPORTED_FILE_VERSION {
         return Err(AconfigStorageError::HigherStorageFileVersion(anyhow!(
             "Cannot read storage file with a higher version of {} with lib version {}",
             interpreted_header.version,
-            FILE_VERSION
+            MAX_SUPPORTED_FILE_VERSION
         )));
     }
 
@@ -108,15 +110,15 @@ mod tests {
     // this test point locks down query error when file has a higher version
     fn test_higher_version_storage_file() {
         let mut info_list = create_test_flag_info_list();
-        info_list.header.version = crate::FILE_VERSION + 1;
+        info_list.header.version = MAX_SUPPORTED_FILE_VERSION + 1;
         let flag_info = info_list.into_bytes();
         let error = find_flag_attribute(&flag_info[..], FlagValueType::Boolean, 4).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
             format!(
                 "HigherStorageFileVersion(Cannot read storage file with a higher version of {} with lib version {})",
-                crate::FILE_VERSION + 1,
-                crate::FILE_VERSION
+                MAX_SUPPORTED_FILE_VERSION + 1,
+                MAX_SUPPORTED_FILE_VERSION
             )
         );
     }

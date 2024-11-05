@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package tools.asuite.edit_monitor;
+
+message EditEvent {
+  enum EditType {
+    UNSUPPORTED_TYPE = 0;
+    CREATE = 1;
+    MODIFY = 2;
+    DELETE = 3;
+    MOVE = 4;
+  }
+
+  enum ErrorType {
+    UNKNOWN_ERROR = 0;
+    FAILED_TO_START_EDIT_MONITOR = 1;
+    FAILED_TO_STOP_EDIT_MONITOR = 2;
+    FAILED_TO_REBOOT_EDIT_MONITOR = 3;
+    KILLED_DUE_TO_EXCEEDED_RESOURCE_USAGE = 4;
+    FORCE_CLEANUP = 5;
+  }
+
+  // Event that logs a single edit
+  message SingleEditEvent {
+    // Full path of the file that edited.
+    string file_path = 1;
+    // Type of the edit.
+    EditType edit_type = 2;
+  }
+
+  // Event that logs aggregated info for a set of edits.
+  message AggregatedEditEvent {
+    int32 num_edits = 1;
+  }
+
+  // Event that logs errors happened in the edit monitor.
+  message EditMonitorErrorEvent {
+    ErrorType error_type = 1;
+  }
+
+  // ------------------------
+  // FIELDS FOR EditEvent
+  // ------------------------
+  // Internal user name.
+  string user_name = 1;
+  // The root of Android source.
+  string source_root = 2;
+  // Name of the host workstation.
+  string host_name = 3;
+
+  oneof event {
+    SingleEditEvent single_edit_event = 4;
+    AggregatedEditEvent aggregated_edit_event = 5;
+    EditMonitorErrorEvent edit_monitor_error_event = 6;
+  }
+}

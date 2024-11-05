@@ -18,8 +18,11 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/launch_with_ven
 
 PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.compression.enabled=true
 PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.userspace.snapshots.enabled=true
-PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.io_uring.enabled=true
 PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.batch_writes=true
+
+# Optional assignment. On low memory devices, disabling io_uring can relieve cpu and memory
+# pressure during an OTA.
+PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.io_uring.enabled?=true
 
 # Enabling this property, will improve OTA install time
 # but will use an additional CPU core

@@ -150,6 +150,7 @@ $(call add_json_bool, ArtUseReadBarrier,                 $(call invert_bool,$(fi
 $(call add_json_str,  BtConfigIncludeDir,                $(BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR))
 $(call add_json_list, DeviceKernelHeaders,               $(TARGET_DEVICE_KERNEL_HEADERS) $(TARGET_BOARD_KERNEL_HEADERS) $(TARGET_PRODUCT_KERNEL_HEADERS))
 $(call add_json_str,  VendorApiLevel,                    $(BOARD_API_LEVEL))
+$(call add_json_str,  VendorApiLevelPropOverride,        $(BOARD_API_LEVEL_PROP_OVERRIDE))
 $(call add_json_list, ExtraVndkVersions,                 $(PRODUCT_EXTRA_VNDK_VERSIONS))
 $(call add_json_list, DeviceSystemSdkVersions,           $(BOARD_SYSTEMSDK_VERSIONS))
 $(call add_json_list, Platform_systemsdk_versions,       $(PLATFORM_SYSTEMSDK_VERSIONS))
@@ -182,8 +183,11 @@ $(call add_json_bool, Enforce_vintf_manifest,            $(filter true,$(PRODUCT
 
 $(call add_json_bool, Uml,                               $(filter true,$(TARGET_USER_MODE_LINUX)))
 $(call add_json_str,  VendorPath,                        $(TARGET_COPY_OUT_VENDOR))
+$(call add_json_bool, BuildingVendorImage,               $(BUILDING_VENDOR_IMAGE))
 $(call add_json_str,  OdmPath,                           $(TARGET_COPY_OUT_ODM))
+$(call add_json_bool, BuildingOdmImage,                  $(BUILDING_ODM_IMAGE))
 $(call add_json_str,  ProductPath,                       $(TARGET_COPY_OUT_PRODUCT))
+$(call add_json_bool, BuildingProductImage,              $(BUILDING_PRODUCT_IMAGE))
 $(call add_json_str,  SystemExtPath,                     $(TARGET_COPY_OUT_SYSTEM_EXT))
 $(call add_json_bool, MinimizeJavaDebugInfo,             $(filter true,$(PRODUCT_MINIMIZE_JAVA_DEBUG_INFO)))
 
@@ -265,9 +269,6 @@ $(call end_json_map)
 $(call add_json_bool, EnforceProductPartitionInterface,  $(filter true,$(PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE)))
 $(call add_json_str,  DeviceCurrentApiLevelForVendorModules,  $(BOARD_CURRENT_API_LEVEL_FOR_VENDOR_MODULES))
 
-$(call add_json_bool, EnforceInterPartitionJavaSdkLibrary, $(filter true,$(PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY)))
-$(call add_json_list, InterPartitionJavaLibraryAllowList, $(PRODUCT_INTER_PARTITION_JAVA_LIBRARY_ALLOWLIST))
-
 $(call add_json_bool, CompressedApex, $(filter true,$(PRODUCT_COMPRESSED_APEX)))
 
 ifndef APEX_BUILD_FOR_PRE_S_DEVICES
@@ -319,6 +320,8 @@ $(call add_json_list, AfdoProfiles,                $(ALL_AFDO_PROFILES))
 
 $(call add_json_str,  ProductManufacturer, $(PRODUCT_MANUFACTURER))
 $(call add_json_str,  ProductBrand,        $(PRODUCT_BRAND))
+$(call add_json_str,  ProductDevice,       $(PRODUCT_DEVICE))
+$(call add_json_str,  ProductModel,        $(PRODUCT_MODEL))
 
 $(call add_json_str, ReleaseVersion,    $(_RELEASE_VERSION))
 $(call add_json_list, ReleaseAconfigValueSets,    $(RELEASE_ACONFIG_VALUE_SETS))
@@ -350,6 +353,9 @@ $(call add_json_list, SystemPropFiles, $(TARGET_SYSTEM_PROP))
 $(call add_json_list, SystemExtPropFiles, $(TARGET_SYSTEM_EXT_PROP))
 $(call add_json_list, ProductPropFiles, $(TARGET_PRODUCT_PROP))
 $(call add_json_list, OdmPropFiles, $(TARGET_ODM_PROP))
+$(call add_json_list, VendorPropFiles, $(TARGET_VENDOR_PROP))
+
+$(call add_json_str, ExtraAllowedDepsTxt, $(EXTRA_ALLOWED_DEPS_TXT))
 
 # Do not set ArtTargetIncludeDebugBuild into any value if PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD is not set,
 # to have the same behavior from runtime_libart.mk.
@@ -366,6 +372,99 @@ $(call add_json_list, DeviceFrameworkCompatibilityMatrixFile, $(DEVICE_FRAMEWORK
 $(call add_json_list, DeviceProductCompatibilityMatrixFile, $(DEVICE_PRODUCT_COMPATIBILITY_MATRIX_FILE))
 $(call add_json_list, BoardAvbSystemAddHashtreeFooterArgs, $(BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS))
 $(call add_json_bool, BoardAvbEnable, $(filter true,$(BOARD_AVB_ENABLE)))
+
+$(call add_json_str, AdbKeys, $(PRODUCT_ADB_KEYS))
+
+$(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
+  $(call add_json_str,  ProductDirectory,    $(dir $(INTERNAL_PRODUCT)))
+
+  $(call add_json_map,PartitionQualifiedVariables)
+  $(foreach image_type,SYSTEM VENDOR CACHE USERDATA PRODUCT SYSTEM_EXT OEM ODM VENDOR_DLKM ODM_DLKM SYSTEM_DLKM, \
+    $(call add_json_map,$(call to-lower,$(image_type))) \
+    $(call add_json_bool, BuildingImage, $(filter true,$(BUILDING_$(image_type)_IMAGE))) \
+    $(call add_json_str, BoardErofsCompressor, $(BOARD_$(image_type)IMAGE_EROFS_COMPRESSOR)) \
+    $(call add_json_str, BoardErofsCompressHints, $(BOARD_$(image_type)IMAGE_EROFS_COMPRESS_HINTS)) \
+    $(call add_json_str, BoardErofsPclusterSize, $(BOARD_$(image_type)IMAGE_EROFS_PCLUSTER_SIZE)) \
+    $(call add_json_str, BoardExtfsInodeCount, $(BOARD_$(image_type)IMAGE_EXTFS_INODE_COUNT)) \
+    $(call add_json_str, BoardExtfsRsvPct, $(BOARD_$(image_type)IMAGE_EXTFS_RSV_PCT)) \
+    $(call add_json_str, BoardF2fsSloadCompressFlags, $(BOARD_$(image_type)IMAGE_F2FS_SLOAD_COMPRESS_FLAGS)) \
+    $(call add_json_str, BoardFileSystemCompress, $(BOARD_$(image_type)IMAGE_FILE_SYSTEM_COMPRESS)) \
+    $(call add_json_str, BoardFileSystemType, $(BOARD_$(image_type)IMAGE_FILE_SYSTEM_TYPE)) \
+    $(call add_json_str, BoardJournalSize, $(BOARD_$(image_type)IMAGE_JOURNAL_SIZE)) \
+    $(call add_json_str, BoardPartitionReservedSize, $(BOARD_$(image_type)IMAGE_PARTITION_RESERVED_SIZE)) \
+    $(call add_json_str, BoardPartitionSize, $(BOARD_$(image_type)IMAGE_PARTITION_SIZE)) \
+    $(call add_json_str, BoardSquashfsBlockSize, $(BOARD_$(image_type)IMAGE_SQUASHFS_BLOCK_SIZE)) \
+    $(call add_json_str, BoardSquashfsCompressor, $(BOARD_$(image_type)IMAGE_SQUASHFS_COMPRESSOR)) \
+    $(call add_json_str, BoardSquashfsCompressorOpt, $(BOARD_$(image_type)IMAGE_SQUASHFS_COMPRESSOR_OPT)) \
+    $(call add_json_str, BoardSquashfsDisable4kAlign, $(BOARD_$(image_type)IMAGE_SQUASHFS_DISABLE_4K_ALIGN)) \
+    $(call add_json_str, ProductBaseFsPath, $(PRODUCT_$(image_type)_BASE_FS_PATH)) \
+    $(call add_json_str, ProductHeadroom, $(PRODUCT_$(image_type)_HEADROOM)) \
+    $(call add_json_str, ProductVerityPartition, $(PRODUCT_$(image_type)_VERITY_PARTITION)) \
+    $(call end_json_map) \
+  )
+  $(call end_json_map)
+
+  $(call add_json_bool, TargetUserimagesUseExt2, $(filter true,$(TARGET_USERIMAGES_USE_EXT2)))
+  $(call add_json_bool, TargetUserimagesUseExt3, $(filter true,$(TARGET_USERIMAGES_USE_EXT3)))
+  $(call add_json_bool, TargetUserimagesUseExt4, $(filter true,$(TARGET_USERIMAGES_USE_EXT4)))
+
+  $(call add_json_bool, TargetUserimagesSparseExtDisabled, $(filter true,$(TARGET_USERIMAGES_SPARSE_EXT_DISABLED)))
+  $(call add_json_bool, TargetUserimagesSparseErofsDisabled, $(filter true,$(TARGET_USERIMAGES_SPARSE_EROFS_DISABLED)))
+  $(call add_json_bool, TargetUserimagesSparseSquashfsDisabled, $(filter true,$(TARGET_USERIMAGES_SPARSE_SQUASHFS_DISABLED)))
+  $(call add_json_bool, TargetUserimagesSparseF2fsDisabled, $(filter true,$(TARGET_USERIMAGES_SPARSE_F2FS_DISABLED)))
+
+  $(call add_json_str, BoardErofsCompressor, $(BOARD_EROFS_COMPRESSOR))
+  $(call add_json_str, BoardErofsCompressorHints, $(BOARD_EROFS_COMPRESS_HINTS))
+  $(call add_json_str, BoardErofsPclusterSize, $(BOARD_EROFS_PCLUSTER_SIZE))
+  $(call add_json_str, BoardErofsShareDupBlocks, $(BOARD_EROFS_SHARE_DUP_BLOCKS))
+  $(call add_json_str, BoardErofsUseLegacyCompression, $(BOARD_EROFS_USE_LEGACY_COMPRESSION))
+  $(call add_json_str, BoardExt4ShareDupBlocks, $(BOARD_EXT4_SHARE_DUP_BLOCKS))
+  $(call add_json_str, BoardFlashLogicalBlockSize, $(BOARD_FLASH_LOGICAL_BLOCK_SIZE))
+  $(call add_json_str, BoardFlashEraseBlockSize, $(BOARD_FLASH_ERASE_BLOCK_SIZE))
+
+  $(call add_json_bool, BoardUsesRecoveryAsBoot, $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)))
+  $(call add_json_bool, ProductUseDynamicPartitionSize, $(filter true,$(PRODUCT_USE_DYNAMIC_PARTITION_SIZE)))
+  $(call add_json_bool, CopyImagesForTargetFilesZip, $(filter true,$(COPY_IMAGES_FOR_TARGET_FILES_ZIP)))
+
+  $(call add_json_list, ProductPackages, $(PRODUCT_PACKAGES))
+  $(call add_json_list, ProductPackagesDebug, $(PRODUCT_PACKAGES_DEBUG))
+
+  # Used to generate /vendor/linker.config.pb
+  $(call add_json_list, VendorLinkerConfigSrcs, $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS))
+  $(call add_json_list, ProductLinkerConfigSrcs, $(PRODUCT_PRODUCT_LINKER_CONFIG_FRAGMENTS))
+
+  # Used to generate _dlkm partitions
+  $(call add_json_bool, BuildingSystemDlkmImage,               $(BUILDING_SYSTEM_DLKM_IMAGE))
+  $(call add_json_list, SystemKernelModules, $(BOARD_SYSTEM_KERNEL_MODULES))
+
+  $(call add_json_map, ProductCopyFiles)
+  $(foreach pair,$(PRODUCT_COPY_FILES),\
+    $(call add_json_str,$(word 1,$(subst :, ,$(pair))),$(word 2,$(subst :, ,$(pair)))))
+  $(call end_json_map)
+
+$(call end_json_map)
+
+# For converting vintf_data
+$(call add_json_list, DeviceMatrixFile, $(DEVICE_MATRIX_FILE))
+$(call add_json_list, ProductManifestFiles, $(PRODUCT_MANIFEST_FILES))
+$(call add_json_list, SystemManifestFile, $(DEVICE_FRAMEWORK_MANIFEST_FILE))
+SYSTEM_EXT_HWSERVICE_FILES :=
+ifeq ($(PRODUCT_HIDL_ENABLED),true)
+  ifneq ($(filter hwservicemanager,$(PRODUCT_PACKAGES)),)
+    SYSTEM_EXT_HWSERVICE_FILES += system/hwservicemanager/hwservicemanager_no_max.xml
+  else
+    $(error If PRODUCT_HIDL_ENABLED is set, hwservicemanager must be added to PRODUCT_PACKAGES explicitly)
+  endif
+else
+  ifneq ($(filter hwservicemanager,$(PRODUCT_PACKAGES)),)
+    SYSTEM_EXT_HWSERVICE_FILES += system/hwservicemanager/hwservicemanager.xml
+  else ifneq ($(filter hwservicemanager,$(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34)),)
+    SYSTEM_EXT_HWSERVICE_FILES += system/hwservicemanager/hwservicemanager.xml
+  endif
+endif
+$(call add_json_list, SystemExtManifestFiles, $(SYSTEM_EXT_MANIFEST_FILES) $(SYSTEM_EXT_HWSERVICE_FILES))
+$(call add_json_list, DeviceManifestFiles, $(DEVICE_MANIFEST_FILE))
+$(call add_json_list, OdmManifestFiles, $(ODM_MANIFEST_FILES))
 
 $(call json_end)
 

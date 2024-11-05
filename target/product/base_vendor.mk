@@ -17,7 +17,6 @@
 # Base modules and settings for recovery.
 PRODUCT_PACKAGES += \
     adbd.recovery \
-    android.hardware.health@2.0-impl-default.recovery \
     build_flag_vendor \
     cgroups.recovery.json \
     charger.recovery \
@@ -72,6 +71,8 @@ PRODUCT_PACKAGES += \
     passwd_odm \
     passwd_vendor \
     selinux_policy_nonsystem \
+    selinux_policy_vendor \
+    selinux_policy_odm \
     shell_and_utilities_vendor \
     odm-build.prop \
 

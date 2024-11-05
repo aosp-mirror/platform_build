@@ -2,11 +2,11 @@
 
 {{ if allow_instrumentation }}
 {{ if readwrite- }}
-#include <sys/stat.h>
+#include <unistd.h>
 #include "aconfig_storage/aconfig_storage_read_api.hpp"
 #include <android/log.h>
 #define LOG_TAG "aconfig_cpp_codegen"
-#define ALOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
+#define ALOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 {{ -endif }}
 {{ endif }}
 
@@ -77,12 +77,13 @@ namespace {cpp_namespace} \{
             {{ -endif }}
             , flag_value_file_(nullptr)
             , read_from_new_storage_(false)
-            , use_new_storage_value(false) \{
+            , package_exists_in_storage_(true) \{
 
-            struct stat buffer;
-            if (stat("/metadata/aconfig_test_missions/mission_1", &buffer) == 0) \{
+            if (access("/metadata/aconfig/boot/enable_only_new_storage", F_OK) == 0) \{
                read_from_new_storage_ = true;
-            } else \{
+            }
+
+            if (!read_from_new_storage_) \{
                return;
             }
 
@@ -90,14 +91,21 @@ namespace {cpp_namespace} \{
                  "{container}",
                  aconfig_storage::StorageFileType::package_map);
             if (!package_map_file.ok()) \{
-                ALOGI("error: failed to get package map file: %s", package_map_file.error().c_str());
+                ALOGE("error: failed to get package map file: %s", package_map_file.error().c_str());
+                package_exists_in_storage_ = false;
                 return;
             }
 
             auto context = aconfig_storage::get_package_read_context(
                 **package_map_file, "{package}");
             if (!context.ok()) \{
-                ALOGI("error: failed to get package read context: %s", context.error().c_str());
+                ALOGE("error: failed to get package read context: %s", context.error().c_str());
+                package_exists_in_storage_ = false;
+                return;
+            }
+
+            if (!(context->package_exists)) \{
+                package_exists_in_storage_ = false;
                 return;
             }
 
@@ -111,7 +119,8 @@ namespace {cpp_namespace} \{
                 "{container}",
                 aconfig_storage::StorageFileType::flag_val);
             if (!flag_value_file.ok()) \{
-                ALOGI("error: failed to get flag value file: %s", flag_value_file.error().c_str());
+                ALOGE("error: failed to get flag value file: %s", flag_value_file.error().c_str());
+                package_exists_in_storage_ = false;
                 return;
             }
 
@@ -119,10 +128,6 @@ namespace {cpp_namespace} \{
             flag_value_file_ = std::unique_ptr<aconfig_storage::MappedStorageFile>(
                 *flag_value_file);
 
-            use_new_storage_value = server_configurable_flags::GetServerConfigurableFlag(
-                "aconfig_flags.core_experiments_team_internal",
-                "com.android.providers.settings.use_new_storage_value",
-                "false") == "true";
         }
         {{ -endif }}
         {{ -endif }}
@@ -131,44 +136,34 @@ namespace {cpp_namespace} \{
         virtual bool {item.flag_name}() override \{
             {{ -if item.readwrite }}
             if (cache_[{item.readwrite_idx}] == -1) \{
+            {{ if allow_instrumentation- }}
+                if (read_from_new_storage_) \{
+                    if (!package_exists_in_storage_) \{
+                       return {item.default_value};
+                    }
+
+                    auto value = aconfig_storage::get_boolean_flag_value(
+                        *flag_value_file_,
+                        boolean_start_index_ + {item.flag_offset});
+
+                    if (!value.ok()) \{
+                        ALOGE("error: failed to read flag value: %s", value.error().c_str());
+                    }
+
+                    cache_[{item.readwrite_idx}] = *value;
+                } else \{
+                    cache_[{item.readwrite_idx}] = server_configurable_flags::GetServerConfigurableFlag(
+                        "aconfig_flags.{item.device_config_namespace}",
+                        "{item.device_config_flag}",
+                        "{item.default_value}") == "true";
+                }
+            {{ -else- }}
                 cache_[{item.readwrite_idx}] = server_configurable_flags::GetServerConfigurableFlag(
                     "aconfig_flags.{item.device_config_namespace}",
                     "{item.device_config_flag}",
                     "{item.default_value}") == "true";
-            }
-
-
-            {{ if allow_instrumentation- }}
-            if (read_from_new_storage_) \{
-                if (!flag_value_file_) \{
-                    ALOGI("error: failed to get flag {item.flag_name}: flag value file is null");
-                    return cache_[{item.readwrite_idx}];
-                }
-
-                auto value = aconfig_storage::get_boolean_flag_value(
-                    *flag_value_file_,
-                    boolean_start_index_ + {item.flag_offset});
-
-                if (!value.ok()) \{
-                    ALOGI("error: failed to read flag value: %s", value.error().c_str());
-                    return cache_[{item.readwrite_idx}];
-                }
-
-                bool expected_value = cache_[{item.readwrite_idx}];
-                if (*value != expected_value) \{
-                    ALOGI("error: {item.flag_name} value mismatch, new storage value is %s, old storage value is %s",
-                    *value ? "true" : "false", expected_value ? "true" : "false");
-                }
-
-                if (use_new_storage_value) \{
-                    return *value;
-                } else \{
-                    return expected_value;
-                }
-            }
             {{ -endif }}
-
-
+            }
             return cache_[{item.readwrite_idx}];
             {{ -else }}
             {{ -if item.is_fixed_read_only }}
@@ -189,7 +184,8 @@ namespace {cpp_namespace} \{
         std::unique_ptr<aconfig_storage::MappedStorageFile> flag_value_file_;
 
         bool read_from_new_storage_;
-        bool use_new_storage_value;
+
+        bool package_exists_in_storage_;
     {{ -endif }}
     {{ -endif }}
 
