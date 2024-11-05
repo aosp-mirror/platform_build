@@ -51,29 +51,6 @@ $(call declare-0p-target,$(INSTALLED_ANDROID_INFO_TXT_TARGET))
 
 # Copy compatibility metadata to the device.
 
-# Device Manifest
-ifdef DEVICE_MANIFEST_FILE
-# $(DEVICE_MANIFEST_FILE) can be a list of files
-include $(CLEAR_VARS)
-LOCAL_MODULE        := vendor_manifest.xml
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0 legacy_not_a_contribution
-LOCAL_LICENSE_CONDITIONS := by_exception_only not_allowed notice
-LOCAL_MODULE_STEM   := manifest.xml
-LOCAL_MODULE_CLASS  := ETC
-LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)/etc/vintf
-
-GEN := $(local-generated-sources-dir)/manifest.xml
-$(GEN): PRIVATE_DEVICE_MANIFEST_FILE := $(DEVICE_MANIFEST_FILE)
-$(GEN): $(DEVICE_MANIFEST_FILE) $(HOST_OUT_EXECUTABLES)/assemble_vintf
-	BOARD_SEPOLICY_VERS=$(BOARD_SEPOLICY_VERS) \
-	PRODUCT_ENFORCE_VINTF_MANIFEST=$(PRODUCT_ENFORCE_VINTF_MANIFEST) \
-	$(HOST_OUT_EXECUTABLES)/assemble_vintf -o $@ \
-		-i $(call normalize-path-list,$(PRIVATE_DEVICE_MANIFEST_FILE))
-
-LOCAL_PREBUILT_MODULE_FILE := $(GEN)
-include $(BUILD_PREBUILT)
-endif
-
 # DEVICE_MANIFEST_SKUS: a list of SKUS where DEVICE_MANIFEST_<sku>_FILES is defined.
 ifdef DEVICE_MANIFEST_SKUS
 
@@ -111,30 +88,6 @@ $(foreach sku, $(DEVICE_MANIFEST_SKUS), $(eval $(call _add_device_sku_manifest,$
 _add_device_sku_manifest :=
 
 endif # DEVICE_MANIFEST_SKUS
-
-# ODM manifest
-ifdef ODM_MANIFEST_FILES
-# ODM_MANIFEST_FILES is a list of files that is combined and installed as the default ODM manifest.
-include $(CLEAR_VARS)
-LOCAL_MODULE := odm_manifest.xml
-LOCAL_LICENSE_KINDS := SPDX-license-identifier-Apache-2.0 legacy_not_a_contribution
-LOCAL_LICENSE_CONDITIONS := by_exception_only not_allowed notice
-LOCAL_MODULE_STEM := manifest.xml
-LOCAL_MODULE_CLASS := ETC
-LOCAL_MODULE_RELATIVE_PATH := vintf
-LOCAL_ODM_MODULE := true
-
-GEN := $(local-generated-sources-dir)/manifest.xml
-$(GEN): PRIVATE_SRC_FILES := $(ODM_MANIFEST_FILES)
-$(GEN): $(ODM_MANIFEST_FILES) $(HOST_OUT_EXECUTABLES)/assemble_vintf
-	# Set VINTF_IGNORE_TARGET_FCM_VERSION to true because it should only be in device manifest.
-	VINTF_IGNORE_TARGET_FCM_VERSION=true \
-	$(HOST_OUT_EXECUTABLES)/assemble_vintf -o $@ \
-		-i $(call normalize-path-list,$(PRIVATE_SRC_FILES))
-
-LOCAL_PREBUILT_MODULE_FILE := $(GEN)
-include $(BUILD_PREBUILT)
-endif # ODM_MANIFEST_FILES
 
 # ODM_MANIFEST_SKUS: a list of SKUS where ODM_MANIFEST_<sku>_FILES are defined.
 ifdef ODM_MANIFEST_SKUS

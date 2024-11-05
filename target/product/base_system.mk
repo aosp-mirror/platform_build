@@ -205,7 +205,6 @@ PRODUCT_PACKAGES += \
     libstdc++ \
     libsysutils \
     libui \
-    libuprobestats_client \
     libusbhost \
     libutils \
     libvintf_jni \
@@ -276,7 +275,6 @@ PRODUCT_PACKAGES += \
     Shell \
     shell_and_utilities_system \
     sm \
-    snapshotctl \
     snapuserd \
     storaged \
     surfaceflinger \
@@ -289,6 +287,7 @@ PRODUCT_PACKAGES += \
     tombstoned \
     traced \
     traced_probes \
+    tradeinmode \
     tune2fs \
     uiautomator \
     uinput \
@@ -308,6 +307,10 @@ ifeq ($(RELEASE_CRASHRECOVERY_MODULE),true)
   PRODUCT_PACKAGES += \
         com.android.crashrecovery \
 
+else
+  PRODUCT_PACKAGES += \
+    framework-platformcrashrecovery \
+
 endif
 
 # When we release uprobestats module
@@ -318,6 +321,7 @@ ifeq ($(RELEASE_UPROBESTATS_MODULE),true)
 else
     PRODUCT_PACKAGES += \
         uprobestats \
+        libuprobestats_client \
 
 endif
 
@@ -436,6 +440,7 @@ PRODUCT_HOST_PACKAGES += \
     lpdump \
     mke2fs \
     mkfs.erofs \
+    pbtombstone \
     resize2fs \
     sgdisk \
     sqlite3 \
@@ -503,6 +508,7 @@ PRODUCT_PACKAGES_DEBUG := \
     record_binder \
     servicedispatcher \
     showmap \
+    snapshotctl \
     sqlite3 \
     ss \
     start_with_lockagent \

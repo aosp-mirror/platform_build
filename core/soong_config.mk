@@ -150,6 +150,7 @@ $(call add_json_bool, ArtUseReadBarrier,                 $(call invert_bool,$(fi
 $(call add_json_str,  BtConfigIncludeDir,                $(BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR))
 $(call add_json_list, DeviceKernelHeaders,               $(TARGET_DEVICE_KERNEL_HEADERS) $(TARGET_BOARD_KERNEL_HEADERS) $(TARGET_PRODUCT_KERNEL_HEADERS))
 $(call add_json_str,  VendorApiLevel,                    $(BOARD_API_LEVEL))
+$(call add_json_str,  VendorApiLevelPropOverride,        $(BOARD_API_LEVEL_PROP_OVERRIDE))
 $(call add_json_list, ExtraVndkVersions,                 $(PRODUCT_EXTRA_VNDK_VERSIONS))
 $(call add_json_list, DeviceSystemSdkVersions,           $(BOARD_SYSTEMSDK_VERSIONS))
 $(call add_json_list, Platform_systemsdk_versions,       $(PLATFORM_SYSTEMSDK_VERSIONS))
@@ -182,8 +183,11 @@ $(call add_json_bool, Enforce_vintf_manifest,            $(filter true,$(PRODUCT
 
 $(call add_json_bool, Uml,                               $(filter true,$(TARGET_USER_MODE_LINUX)))
 $(call add_json_str,  VendorPath,                        $(TARGET_COPY_OUT_VENDOR))
+$(call add_json_bool, BuildingVendorImage,               $(BUILDING_VENDOR_IMAGE))
 $(call add_json_str,  OdmPath,                           $(TARGET_COPY_OUT_ODM))
+$(call add_json_bool, BuildingOdmImage,                  $(BUILDING_ODM_IMAGE))
 $(call add_json_str,  ProductPath,                       $(TARGET_COPY_OUT_PRODUCT))
+$(call add_json_bool, BuildingProductImage,              $(BUILDING_PRODUCT_IMAGE))
 $(call add_json_str,  SystemExtPath,                     $(TARGET_COPY_OUT_SYSTEM_EXT))
 $(call add_json_bool, MinimizeJavaDebugInfo,             $(filter true,$(PRODUCT_MINIMIZE_JAVA_DEBUG_INFO)))
 
@@ -316,6 +320,8 @@ $(call add_json_list, AfdoProfiles,                $(ALL_AFDO_PROFILES))
 
 $(call add_json_str,  ProductManufacturer, $(PRODUCT_MANUFACTURER))
 $(call add_json_str,  ProductBrand,        $(PRODUCT_BRAND))
+$(call add_json_str,  ProductDevice,       $(PRODUCT_DEVICE))
+$(call add_json_str,  ProductModel,        $(PRODUCT_MODEL))
 
 $(call add_json_str, ReleaseVersion,    $(_RELEASE_VERSION))
 $(call add_json_list, ReleaseAconfigValueSets,    $(RELEASE_ACONFIG_VALUE_SETS))
@@ -347,6 +353,7 @@ $(call add_json_list, SystemPropFiles, $(TARGET_SYSTEM_PROP))
 $(call add_json_list, SystemExtPropFiles, $(TARGET_SYSTEM_EXT_PROP))
 $(call add_json_list, ProductPropFiles, $(TARGET_PRODUCT_PROP))
 $(call add_json_list, OdmPropFiles, $(TARGET_ODM_PROP))
+$(call add_json_list, VendorPropFiles, $(TARGET_VENDOR_PROP))
 
 $(call add_json_str, ExtraAllowedDepsTxt, $(EXTRA_ALLOWED_DEPS_TXT))
 
@@ -365,6 +372,8 @@ $(call add_json_list, DeviceFrameworkCompatibilityMatrixFile, $(DEVICE_FRAMEWORK
 $(call add_json_list, DeviceProductCompatibilityMatrixFile, $(DEVICE_PRODUCT_COMPATIBILITY_MATRIX_FILE))
 $(call add_json_list, BoardAvbSystemAddHashtreeFooterArgs, $(BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS))
 $(call add_json_bool, BoardAvbEnable, $(filter true,$(BOARD_AVB_ENABLE)))
+
+$(call add_json_str, AdbKeys, $(PRODUCT_ADB_KEYS))
 
 $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_str,  ProductDirectory,    $(dir $(INTERNAL_PRODUCT)))
@@ -420,7 +429,42 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_list, ProductPackages, $(PRODUCT_PACKAGES))
   $(call add_json_list, ProductPackagesDebug, $(PRODUCT_PACKAGES_DEBUG))
 
+  # Used to generate /vendor/linker.config.pb
+  $(call add_json_list, VendorLinkerConfigSrcs, $(PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS))
+  $(call add_json_list, ProductLinkerConfigSrcs, $(PRODUCT_PRODUCT_LINKER_CONFIG_FRAGMENTS))
+
+  # Used to generate _dlkm partitions
+  $(call add_json_bool, BuildingSystemDlkmImage,               $(BUILDING_SYSTEM_DLKM_IMAGE))
+  $(call add_json_list, SystemKernelModules, $(BOARD_SYSTEM_KERNEL_MODULES))
+
+  $(call add_json_map, ProductCopyFiles)
+  $(foreach pair,$(PRODUCT_COPY_FILES),\
+    $(call add_json_str,$(word 1,$(subst :, ,$(pair))),$(word 2,$(subst :, ,$(pair)))))
+  $(call end_json_map)
+
 $(call end_json_map)
+
+# For converting vintf_data
+$(call add_json_list, DeviceMatrixFile, $(DEVICE_MATRIX_FILE))
+$(call add_json_list, ProductManifestFiles, $(PRODUCT_MANIFEST_FILES))
+$(call add_json_list, SystemManifestFile, $(DEVICE_FRAMEWORK_MANIFEST_FILE))
+SYSTEM_EXT_HWSERVICE_FILES :=
+ifeq ($(PRODUCT_HIDL_ENABLED),true)
+  ifneq ($(filter hwservicemanager,$(PRODUCT_PACKAGES)),)
+    SYSTEM_EXT_HWSERVICE_FILES += system/hwservicemanager/hwservicemanager_no_max.xml
+  else
+    $(error If PRODUCT_HIDL_ENABLED is set, hwservicemanager must be added to PRODUCT_PACKAGES explicitly)
+  endif
+else
+  ifneq ($(filter hwservicemanager,$(PRODUCT_PACKAGES)),)
+    SYSTEM_EXT_HWSERVICE_FILES += system/hwservicemanager/hwservicemanager.xml
+  else ifneq ($(filter hwservicemanager,$(PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34)),)
+    SYSTEM_EXT_HWSERVICE_FILES += system/hwservicemanager/hwservicemanager.xml
+  endif
+endif
+$(call add_json_list, SystemExtManifestFiles, $(SYSTEM_EXT_MANIFEST_FILES) $(SYSTEM_EXT_HWSERVICE_FILES))
+$(call add_json_list, DeviceManifestFiles, $(DEVICE_MANIFEST_FILE))
+$(call add_json_list, OdmManifestFiles, $(ODM_MANIFEST_FILES))
 
 $(call json_end)
 

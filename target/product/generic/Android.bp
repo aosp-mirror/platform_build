@@ -72,6 +72,53 @@ android_symlinks = [
         target: "/storage/self/primary",
         name: "sdcard",
     },
+    {
+        target: "/product/etc/security/adb_keys",
+        name: "adb_keys",
+    },
+    // For Treble Generic System Image (GSI), system-as-root GSI needs to work on both devices with
+    // and without /odm partition. Those symlinks are for devices without /odm partition. For
+    // devices with /odm partition, mount odm.img under /odm will hide those symlinks.
+    {
+        target: "/vendor/odm/app",
+        name: "odm/app",
+    },
+    {
+        target: "/vendor/odm/bin",
+        name: "odm/bin",
+    },
+    {
+        target: "/vendor/odm/etc",
+        name: "odm/etc",
+    },
+    {
+        target: "/vendor/odm/firmware",
+        name: "odm/firmware",
+    },
+    {
+        target: "/vendor/odm/framework",
+        name: "odm/framework",
+    },
+    {
+        target: "/vendor/odm/lib",
+        name: "odm/lib",
+    },
+    {
+        target: "/vendor/odm/lib64",
+        name: "odm/lib64",
+    },
+    {
+        target: "/vendor/odm/overlay",
+        name: "odm/overlay",
+    },
+    {
+        target: "/vendor/odm/priv-app",
+        name: "odm/priv-app",
+    },
+    {
+        target: "/vendor/odm/usr",
+        name: "odm/usr",
+    },
 ]
 
 filegroup {
@@ -314,6 +361,11 @@ android_system_image {
         ],
         libs: [":framework-res{.export-package.apk}"],
     },
+    type: "erofs",
+    erofs: {
+        compressor: "lz4hc,9",
+        compress_hints: "erofs_compress_hints.txt",
+    },
     build_logtags: true,
     gen_aconfig_flags_pb: true,
 
@@ -333,7 +385,6 @@ android_system_image {
         "android.software.webview.prebuilt.xml", // media_system
         "android.software.window_magnification.prebuilt.xml", // handheld_system
         "android.system.suspend-service",
-        "prebuilt_vintf_manifest",
         "apexd",
         "appops",
         "approved-ogki-builds.xml", // base_system
@@ -401,7 +452,6 @@ android_system_image {
         "init.zygote32.rc",
         "init.zygote64.rc",
         "init.zygote64_32.rc",
-        "init_first_stage", // for boot partition
         "initial-package-stopped-states.xml",
         "input",
         "installd",
@@ -415,7 +465,6 @@ android_system_image {
         "ld.mc",
         "llkd", // base_system
         "lmkd", // base_system
-        "local_time.default", // handheld_vendo
         "locksettings", // base_system
         "logcat", // base_system
         "logd", // base_system
@@ -477,16 +526,17 @@ android_system_image {
         "sm", // base_system
         "snapshotctl", // base_system
         "snapuserd", // base_system
-        "snapuserd_ramdisk", // ramdisk
         "storaged", // base_system
         "surfaceflinger", // base_system
         "svc", // base_system
+        "system_manifest.xml", // base_system
         "task_profiles.json", // base_system
         "tc", // base_system
         "telecom", // base_system
         "tombstoned", // base_system
         "traced", // base_system
         "traced_probes", // base_system
+        "tradeinmode", // base_system
         "tune2fs", // base_system
         "uiautomator", // base_system
         "uinput", // base_system
@@ -603,7 +653,6 @@ android_system_image {
                 "PacProcessor", // handheld_system
                 "PackageInstaller", // base_system
                 "PartnerBookmarksProvider", // generic_system
-                "PhotoTable", // full_base
                 "PrintRecommendationService", // handheld_system
                 "PrintSpooler", // handheld_system
                 "ProxyHandler", // handheld_system
@@ -669,7 +718,9 @@ android_system_image {
                 "true": [
                     "com.android.crashrecovery", // base_system (RELEASE_CRASHRECOVERY_MODULE)
                 ],
-                default: [],
+                default: [
+                    "framework-platformcrashrecovery", // base_system
+                ],
             }) + select(soong_config_variable("ANDROID", "release_package_profiling_module"), {
                 "true": [
                     "com.android.profiling", // base_system (RELEASE_PACKAGE_PROFILING_MODULE)
@@ -738,6 +789,7 @@ android_system_image {
                 "libbinder_ndk",
                 "libbinder_rpc_unstable",
                 "libcamera2ndk",
+                "libcgrouprc", // llndk library
                 "libclang_rt.asan",
                 "libcompiler_rt",
                 "libcutils", // used by many libs
@@ -815,12 +867,4 @@ android_system_image {
             }),
         },
     },
-}
-
-prebuilt_etc {
-    name: "prebuilt_vintf_manifest",
-    src: "manifest.xml",
-    filename: "manifest.xml",
-    relative_install_path: "vintf",
-    no_full_install: true,
 }

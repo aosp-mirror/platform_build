@@ -637,6 +637,8 @@ python_defaults {
     ],
     data: [
         "testdata/**/*",
+    ],
+    device_common_data: [
         ":com.android.apex.compressed.v1",
         ":com.android.apex.vendor.foo.with_vintf",
     ],
