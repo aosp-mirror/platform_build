@@ -192,13 +192,3 @@ java_library {
     system_modules: "core-all-system-modules",
     host_supported: true,
 }
-
-filegroup {
-    name: "com.android.configinfrastructure.flags-file",
-    srcs: [
-        "flag.aconfig",
-    ],
-    visibility: [
-        "//frameworks/base",
-    ],
-}
