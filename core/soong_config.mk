@@ -441,6 +441,10 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_bool, BuildingSystemDlkmImage,               $(BUILDING_SYSTEM_DLKM_IMAGE))
   $(call add_json_list, SystemKernelModules, $(BOARD_SYSTEM_KERNEL_MODULES))
 
+  # Used to generate /vendor/build.prop
+  $(call add_json_list, BoardInfoFiles, $(if $(TARGET_BOARD_INFO_FILES),$(TARGET_BOARD_INFO_FILES),$(firstword $(TARGET_BOARD_INFO_FILE) $(wildcard $(TARGET_DEVICE_DIR)/board-info.txt))))
+  $(call add_json_str, BootLoaderBoardName, $(TARGET_BOOTLOADER_BOARD_NAME))
+
   $(call add_json_map, ProductCopyFiles)
   $(foreach pair,$(PRODUCT_COPY_FILES),\
     $(call add_json_str,$(word 1,$(subst :, ,$(pair))),$(word 2,$(subst :, ,$(pair)))))
