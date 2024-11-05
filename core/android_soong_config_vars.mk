@@ -270,3 +270,13 @@ ifdef BOARD_LIBACRYL_G2D_HDR_PLUGIN
   #BOARD_LIBACRYL_G2D_HDR_PLUGIN is set in each board config
   $(call soong_config_set_bool,acryl,libacryl_use_g2d_hdr_plugin,true)
 endif
+
+# Export related variables to soong for hardware/google/graphics/common/BoardConfigCFlags.mk
+$(call soong_config_set_bool,google_graphics,hwc_no_support_skip_validate,$(if $(filter true,$(HWC_NO_SUPPORT_SKIP_VALIDATE)),true,false))
+$(call soong_config_set_bool,google_graphics,hwc_support_color_transform,$(if $(filter true,$(HWC_SUPPORT_COLOR_TRANSFORM)),true,false))
+$(call soong_config_set_bool,google_graphics,hwc_support_render_intent,$(if $(filter true,$(HWC_SUPPORT_RENDER_INTENT)),true,false))
+$(call soong_config_set_bool,google_graphics,board_uses_virtual_display,$(if $(filter true,$(BOARD_USES_VIRTUAL_DISPLAY)),true,false))
+$(call soong_config_set_bool,google_graphics,board_uses_dt,$(if $(filter true,$(BOARD_USES_DT)),true,false))
+$(call soong_config_set_bool,google_graphics,board_uses_decon_64bit_address,$(if $(filter true,$(BOARD_USES_DECON_64BIT_ADDRESS)),true,false))
+$(call soong_config_set_bool,google_graphics,board_uses_hdrui_gles_conversion,$(if $(filter true,$(BOARD_USES_HDRUI_GLES_CONVERSION)),true,false))
+$(call soong_config_set_bool,google_graphics,uses_idisplay_intf_sec,$(if $(filter true,$(USES_IDISPLAY_INTF_SEC)),true,false))
