@@ -21,7 +21,7 @@ def is_feature_enabled(
     feature_name: str,
     user_name: str,
     enable_flag: str = None,
-    rollout_flag: str = None,
+    rollout_percent: int = 100,
 ) -> bool:
   """Determine whether the given feature is enabled.
 
@@ -46,26 +46,8 @@ def is_feature_enabled(
       logging.info("feature: %s is enabled", feature_name)
       return True
 
-  if not rollout_flag:
-    return True
-
   hash_object = hashlib.sha256()
   hash_object.update((user_name + feature_name).encode("utf-8"))
   hash_number = int(hash_object.hexdigest(), 16) % 100
 
-  roll_out_percentage = os.environ.get(rollout_flag, "0")
-  try:
-    percentage = int(roll_out_percentage)
-    if percentage < 0 or percentage > 100:
-      logging.warning(
-          "Rollout percentage: %s out of range, disable the feature.",
-          roll_out_percentage,
-      )
-      return False
-    return hash_number < percentage
-  except ValueError:
-    logging.warning(
-        "Invalid rollout percentage: %s, disable the feature.",
-        roll_out_percentage,
-    )
-    return False
+  return hash_number < rollout_percent
