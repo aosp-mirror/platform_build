@@ -7,7 +7,7 @@ rule android.aconfig.storage.SipHasher13 android.aconfig.storage.test.SipHasher1
 rule android.aconfig.storage.FileType android.aconfig.storage.test.FileType
 rule android.aconfig.storage.FlagValueList android.aconfig.storage.test.FlagValueList
 rule android.aconfig.storage.TableUtils android.aconfig.storage.test.TableUtils
-rule android.aconfig.storage.Package android.aconfig.storage.test.Package
+rule android.aconfig.storage.AconfigPackageImpl android.aconfig.storage.test.AconfigPackageImpl
 rule android.aconfig.storage.StorageFileProvider android.aconfig.storage.test.StorageFileProvider
 
 
