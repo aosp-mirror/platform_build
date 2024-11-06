@@ -96,6 +96,7 @@ PRODUCT_PACKAGES += \
     enhanced-confirmation.xml \
     ExtShared \
     flags_health_check \
+    framework-connectivity-b \
     framework-graphics \
     framework-location \
     framework-minus-apex \
