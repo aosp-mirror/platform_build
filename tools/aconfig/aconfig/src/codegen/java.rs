@@ -513,6 +513,7 @@ mod tests {
         package com.android.aconfig.test;
         // TODO(b/303773055): Remove the annotation after access issue is resolved.
         import android.compat.annotation.UnsupportedAppUsage;
+        import android.os.Binder;
         import android.provider.DeviceConfig;
         import android.provider.DeviceConfig.Properties;
         import android.aconfig.storage.StorageInternalReader;
@@ -544,6 +545,7 @@ mod tests {
                 isCached = true;
             }
             private void load_overrides_aconfig_test() {
+                final long ident = Binder.clearCallingIdentity();
                 try {
                     Properties properties = DeviceConfig.getProperties("aconfig_test");
                     disabledRw =
@@ -563,11 +565,14 @@ mod tests {
                     );
                 } catch (SecurityException e) {
                     // for isolated process case, skip loading flag value from the storage, use the default
+                } finally {
+                    Binder.restoreCallingIdentity(ident);
                 }
                 aconfig_test_is_cached = true;
             }
 
             private void load_overrides_other_namespace() {
+                final long ident = Binder.clearCallingIdentity();
                 try {
                     Properties properties = DeviceConfig.getProperties("other_namespace");
                     disabledRwInOtherNamespace =
@@ -583,6 +588,8 @@ mod tests {
                     );
                 } catch (SecurityException e) {
                     // for isolated process case, skip loading flag value from the storage, use the default
+                } finally {
+                    Binder.restoreCallingIdentity(ident);
                 }
                 other_namespace_is_cached = true;
             }
@@ -764,6 +771,7 @@ mod tests {
 
         let expect_feature_flags_impl_content = r#"
         package com.android.aconfig.test;
+        import android.os.Binder;
         import android.provider.DeviceConfig;
         import android.provider.DeviceConfig.Properties;
         /** @hide */
@@ -774,6 +782,7 @@ mod tests {
             private static boolean enabledRoExported = false;
 
             private void load_overrides_aconfig_test() {
+                final long ident = Binder.clearCallingIdentity();
                 try {
                     Properties properties = DeviceConfig.getProperties("aconfig_test");
                     disabledRwExported =
@@ -793,6 +802,8 @@ mod tests {
                     );
                 } catch (SecurityException e) {
                     // for isolated process case, skip loading flag value from the storage, use the default
+                } finally {
+                    Binder.restoreCallingIdentity(ident);
                 }
                 aconfig_test_is_cached = true;
             }
