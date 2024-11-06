@@ -53,7 +53,7 @@ static CACHED_{flag.name}: LazyLock<bool> = LazyLock::new(|| \{
                             },
                             None => \{
                                  log!(Level::Error, "no context found for package {package}");
-                                 Ok({flag.default_value})
+                                 Err(format!("failed to flag package {package}"))
                             }
                         }
                     })
@@ -65,7 +65,7 @@ static CACHED_{flag.name}: LazyLock<bool> = LazyLock::new(|| \{
             },
             Err(err) => \{
                 log!(Level::Error, "aconfig_rust_codegen: error: \{err}");
-                panic!("failed to read flag value: \{err}");
+                return {flag.default_value};
             }
         }
     } else \{

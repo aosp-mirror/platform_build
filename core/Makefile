@@ -5298,7 +5298,7 @@ $(vintffm_log): $(HOST_OUT_EXECUTABLES)/vintffm $(check_vintf_system_deps) $(APE
 	  --dirmap /system_ext:$(TARGET_OUT_SYSTEM_EXT) \
 	  --dirmap /product:$(TARGET_OUT_PRODUCT) \
 	  --dirmap /apex:$(APEX_OUT) \
-	  $(VINTF_FRAMEWORK_MANIFEST_FROZEN_DIR) > $@ 2>&1 ) || ( cat $@ && exit 1 )
+	  system/libhidl/vintfdata/frozen > $@ 2>&1 ) || ( cat $@ && exit 1 )
 
 $(call declare-1p-target,$(vintffm_log))
 
@@ -7976,7 +7976,7 @@ endif # PACK_DESKTOP_FILESYSTEM_IMAGES
 
 # -----------------------------------------------------------------
 # Desktop pack recovery image hook.
-ifneq (,$(strip $(PACK_DESKTOP_RECOVERY_IMAGE)))
+ifeq ($(BOARD_USES_DESKTOP_RECOVERY_IMAGE),true)
 PACK_RECOVERY_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_recovery_image.bin
 PACK_RECOVERY_IMAGE_ARGS := --noarchive --recovery
 
@@ -7997,11 +7997,11 @@ $(call dist-for-goals,dist_files,$(PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET))
 .PHONY: pack-recovery-image
 pack-recovery-image: $(PACK_RECOVERY_IMAGE_TARGET)
 
-endif # PACK_DESKTOP_RECOVERY_IMAGE
+endif # BOARD_USES_DESKTOP_RECOVERY_IMAGE
 
 # -----------------------------------------------------------------
 # Desktop pack update image hook.
-ifneq (,$(strip $(PACK_DESKTOP_UPDATE_IMAGE)))
+ifeq ($(BOARD_USES_DESKTOP_UPDATE_IMAGE),true)
 PACK_UPDATE_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_update_image.bin
 PACK_UPDATE_IMAGE_ARGS := --noarchive --update
 
@@ -8022,7 +8022,7 @@ $(call dist-for-goals,dist_files,$(PACKED_UPDATE_IMAGE_ARCHIVE_TARGET))
 .PHONY: pack-update-image
 pack-update-image: $(PACK_UPDATE_IMAGE_TARGET)
 
-endif # PACK_DESKTOP_UPDATE_IMAGE
+endif # BOARD_USES_DESKTOP_UPDATE_IMAGE
 
 PACK_MIGRATION_IMAGE_SCRIPT := $(HOST_OUT_EXECUTABLES)/pack_migration_image
 

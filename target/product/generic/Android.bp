@@ -385,7 +385,6 @@ android_system_image {
         "android.software.webview.prebuilt.xml", // media_system
         "android.software.window_magnification.prebuilt.xml", // handheld_system
         "android.system.suspend-service",
-        "prebuilt_vintf_manifest",
         "apexd",
         "appops",
         "approved-ogki-builds.xml", // base_system
@@ -530,6 +529,7 @@ android_system_image {
         "storaged", // base_system
         "surfaceflinger", // base_system
         "svc", // base_system
+        "system_manifest.xml", // base_system
         "task_profiles.json", // base_system
         "tc", // base_system
         "telecom", // base_system
@@ -561,6 +561,11 @@ android_system_image {
     }) + select(soong_config_variable("ANDROID", "release_package_profiling_module"), {
         "true": [
             "trace_redactor", // base_system (RELEASE_PACKAGE_PROFILING_MODULE)
+        ],
+        default: [],
+    }) + select(release_flag("RELEASE_MEMORY_MANAGEMENT_DAEMON"), {
+        true: [
+            "mm_daemon", // base_system (RELEASE_MEMORY_MANAGEMENT_DAEMON)
         ],
         default: [],
     }) + select(product_variable("debuggable"), {
@@ -862,12 +867,4 @@ android_system_image {
             }),
         },
     },
-}
-
-prebuilt_etc {
-    name: "prebuilt_vintf_manifest",
-    src: "manifest.xml",
-    filename: "manifest.xml",
-    relative_install_path: "vintf",
-    no_full_install: true,
 }
