@@ -379,7 +379,6 @@ android_system_image {
     deps: [
         "abx",
         "aconfigd",
-        "aconfigd-system",
         "aflags",
         "am",
         "android.software.credentials.prebuilt.xml", // generic_system
