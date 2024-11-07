@@ -43,53 +43,73 @@ public class AconfigPackageImplTest {
 
     @Test
     public void testLoad_onlyPackageName() throws Exception {
-        AconfigPackageImpl p = new AconfigPackageImpl();
-        p.load("com.android.aconfig.storage.test_1", pr);
+        AconfigPackageImpl p = AconfigPackageImpl.load("com.android.aconfig.storage.test_1", pr);
         assertNotNull(p);
     }
 
     @Test
     public void testLoad_groupNameFingerprint() throws Exception {
-        AconfigPackageImpl p = new AconfigPackageImpl();
-        p.load("mockup", "com.android.aconfig.storage.test_1", pr);
+        AconfigPackageImpl p =
+                AconfigPackageImpl.load("mockup", "com.android.aconfig.storage.test_1", pr);
         assertNotNull(p);
     }
 
     @Test
     public void testLoad_error() throws Exception {
-        AconfigPackageImpl p = new AconfigPackageImpl();
+        AconfigPackageImpl p;
+        AconfigStorageException e =
+                assertThrows(
+                        AconfigStorageException.class,
+                        () ->
+                                AconfigPackageImpl.load(
+                                        "mockup", "com.android.aconfig.storage.test_10", pr));
         // cannot find package
-        assertEquals(
-                AconfigPackageImpl.ERROR_PACKAGE_NOT_FOUND,
-                p.load("mockup", "com.android.aconfig.storage.test_10", pr));
+        assertEquals(AconfigStorageException.ERROR_PACKAGE_NOT_FOUND, e.getErrorCode());
         // cannot find package
-        assertEquals(
-                AconfigPackageImpl.ERROR_PACKAGE_NOT_FOUND,
-                p.load("com.android.aconfig.storage.test_10", pr));
+        e =
+                assertThrows(
+                        AconfigStorageException.class,
+                        () -> AconfigPackageImpl.load("com.android.aconfig.storage.test_10", pr));
+        assertEquals(AconfigStorageException.ERROR_PACKAGE_NOT_FOUND, e.getErrorCode());
         // cannot find container
-        assertEquals(
-                AconfigPackageImpl.ERROR_CONTAINER_NOT_FOUND,
-                p.load(null, "com.android.aconfig.storage.test_1", pr));
-        assertEquals(
-                AconfigPackageImpl.ERROR_CONTAINER_NOT_FOUND,
-                p.load("test", "com.android.aconfig.storage.test_1", pr));
+        e =
+                assertThrows(
+                        AconfigStorageException.class,
+                        () ->
+                                AconfigPackageImpl.load(
+                                        null, "com.android.aconfig.storage.test_1", pr));
+        assertEquals(AconfigStorageException.ERROR_CONTAINER_NOT_FOUND, e.getErrorCode());
+        e =
+                assertThrows(
+                        AconfigStorageException.class,
+                        () ->
+                                AconfigPackageImpl.load(
+                                        "test", "com.android.aconfig.storage.test_1", pr));
+        assertEquals(AconfigStorageException.ERROR_CONTAINER_NOT_FOUND, e.getErrorCode());
 
         // new storage doesn't exist
         pr = new StorageFileProvider("fake/path/", "fake/path/");
-        assertEquals(
-                AconfigPackageImpl.ERROR_NEW_STORAGE_SYSTEM_NOT_FOUND, p.load("fake_package", pr));
+        e =
+                assertThrows(
+                        AconfigStorageException.class,
+                        () -> AconfigPackageImpl.load("fake_package", pr));
+        assertEquals(AconfigStorageException.ERROR_STORAGE_SYSTEM_NOT_FOUND, e.getErrorCode());
 
         // file read issue
         pr = new StorageFileProvider(TestDataUtils.TESTDATA_PATH, "fake/path/");
-        assertThrows(
-                AconfigStorageException.class,
-                () -> p.load("mockup", "com.android.aconfig.storage.test_1", pr));
+        e =
+                assertThrows(
+                        AconfigStorageException.class,
+                        () ->
+                                AconfigPackageImpl.load(
+                                        "mockup", "com.android.aconfig.storage.test_1", pr));
+        assertEquals(AconfigStorageException.ERROR_CANNOT_READ_STORAGE_FILE, e.getErrorCode());
     }
 
     @Test
     public void testGetBooleanFlagValue_flagName() throws Exception {
-        AconfigPackageImpl p = new AconfigPackageImpl();
-        p.load("mockup", "com.android.aconfig.storage.test_1", pr);
+        AconfigPackageImpl p =
+                AconfigPackageImpl.load("mockup", "com.android.aconfig.storage.test_1", pr);
         assertFalse(p.getBooleanFlagValue("disabled_rw", true));
         assertTrue(p.getBooleanFlagValue("enabled_ro", false));
         assertTrue(p.getBooleanFlagValue("enabled_rw", false));
@@ -98,8 +118,8 @@ public class AconfigPackageImplTest {
 
     @Test
     public void testGetBooleanFlagValue_index() throws Exception {
-        AconfigPackageImpl p = new AconfigPackageImpl();
-        p.load("mockup", "com.android.aconfig.storage.test_1", pr);
+        AconfigPackageImpl p =
+                AconfigPackageImpl.load("mockup", "com.android.aconfig.storage.test_1", pr);
         assertFalse(p.getBooleanFlagValue(0));
         assertTrue(p.getBooleanFlagValue(1));
         assertTrue(p.getBooleanFlagValue(2));
@@ -107,8 +127,8 @@ public class AconfigPackageImplTest {
 
     @Test
     public void testHasPackageFingerprint() throws Exception {
-        AconfigPackageImpl p = new AconfigPackageImpl();
-        p.load("mockup", "com.android.aconfig.storage.test_1", pr);
+        AconfigPackageImpl p =
+                AconfigPackageImpl.load("mockup", "com.android.aconfig.storage.test_1", pr);
         assertFalse(p.hasPackageFingerprint());
     }
 }

@@ -27,29 +27,26 @@ public class AconfigPackageImpl {
     private PackageTable.Node mPNode;
 
     /** @hide */
-    public static final int ERROR_NEW_STORAGE_SYSTEM_NOT_FOUND = 1;
+    private AconfigPackageImpl() {}
 
     /** @hide */
-    public static final int ERROR_PACKAGE_NOT_FOUND = 2;
-
-    /** @hide */
-    public static final int ERROR_CONTAINER_NOT_FOUND = 3;
-
-    /** @hide */
-    public AconfigPackageImpl() {}
-
-    /** @hide */
-    public int load(String packageName, StorageFileProvider fileProvider) {
-        return init(null, packageName, fileProvider);
+    public static AconfigPackageImpl load(String packageName, StorageFileProvider fileProvider) {
+        AconfigPackageImpl impl = new AconfigPackageImpl();
+        impl.init(null, packageName, fileProvider);
+        return impl;
     }
 
     /** @hide */
-    public int load(String container, String packageName, StorageFileProvider fileProvider) {
+    public static AconfigPackageImpl load(
+            String container, String packageName, StorageFileProvider fileProvider) {
         if (container == null) {
-            return ERROR_CONTAINER_NOT_FOUND;
+            throw new AconfigStorageException(
+                    AconfigStorageException.ERROR_CONTAINER_NOT_FOUND,
+                    "container null cannot be found on the device");
         }
-
-        return init(container, packageName, fileProvider);
+        AconfigPackageImpl impl = new AconfigPackageImpl();
+        impl.init(container, packageName, fileProvider);
+        return impl;
     }
 
     /** @hide */
@@ -76,13 +73,15 @@ public class AconfigPackageImpl {
         return mPNode.hasPackageFingerprint();
     }
 
-    private int init(String containerName, String packageName, StorageFileProvider fileProvider) {
+    private void init(String containerName, String packageName, StorageFileProvider fileProvider) {
         StrictMode.ThreadPolicy oldPolicy = StrictMode.allowThreadDiskReads();
         String container = containerName;
         try {
             // for devices don't have new storage directly return
             if (!fileProvider.containerFileExists(null)) {
-                return ERROR_NEW_STORAGE_SYSTEM_NOT_FOUND;
+                throw new AconfigStorageException(
+                        AconfigStorageException.ERROR_STORAGE_SYSTEM_NOT_FOUND,
+                        "aconfig storage cannot be found on the device");
             }
             PackageTable.Node pNode = null;
 
@@ -107,7 +106,9 @@ public class AconfigPackageImpl {
                 }
             } else {
                 if (!fileProvider.containerFileExists(container)) {
-                    return ERROR_CONTAINER_NOT_FOUND;
+                    throw new AconfigStorageException(
+                            AconfigStorageException.ERROR_CONTAINER_NOT_FOUND,
+                            "container " + container + " cannot be found on the device");
                 }
                 pNode = fileProvider.getPackageTable(container).get(packageName);
             }
@@ -115,7 +116,13 @@ public class AconfigPackageImpl {
             if (pNode == null) {
                 // for the case package is not found in all container, return instead of throwing
                 // error
-                return ERROR_PACKAGE_NOT_FOUND;
+                throw new AconfigStorageException(
+                        AconfigStorageException.ERROR_PACKAGE_NOT_FOUND,
+                        "package "
+                                + packageName
+                                + " in container "
+                                + container
+                                + " cannot be found on the device");
             }
 
             mFlagTable = fileProvider.getFlagTable(container);
@@ -126,6 +133,5 @@ public class AconfigPackageImpl {
         } finally {
             StrictMode.setThreadPolicy(oldPolicy);
         }
-        return 0;
     }
 }
