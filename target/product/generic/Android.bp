@@ -563,6 +563,11 @@ android_system_image {
             "trace_redactor", // base_system (RELEASE_PACKAGE_PROFILING_MODULE)
         ],
         default: [],
+    }) + select(release_flag("RELEASE_MEMORY_MANAGEMENT_DAEMON"), {
+        true: [
+            "mm_daemon", // base_system (RELEASE_MEMORY_MANAGEMENT_DAEMON)
+        ],
+        default: [],
     }) + select(product_variable("debuggable"), {
         true: [
             "adevice_fingerprint",
@@ -696,6 +701,7 @@ android_system_image {
                 "framework-graphics", // base_system
                 "framework-location", // base_system
                 "framework-minus-apex-install-dependencies", // base_system
+                "framework-connectivity-b", // base_system
                 "framework_compatibility_matrix.device.xml",
                 "generic_system_fonts", // ok
                 "hwservicemanager_compat_symlink_module", // base_system
@@ -731,6 +737,11 @@ android_system_image {
                     "AvatarPicker", // generic_system (RELEASE_AVATAR_PICKER_APP)
                 ],
                 default: [],
+            }) + select(release_flag("RELEASE_UPROBESTATS_MODULE"), {
+                true: [
+                    "com.android.uprobestats", // base_system (RELEASE_UPROBESTATS_MODULE)
+                ],
+                default: [],
             }),
         },
         prefer32: {
@@ -745,8 +756,12 @@ android_system_image {
                 "android.system.virtualizationservice-ndk",
                 "libgsi",
                 "servicemanager",
-                "uprobestats", // base_system - internal
-            ],
+            ] + select(release_flag("RELEASE_UPROBESTATS_MODULE"), {
+                true: [],
+                default: [
+                    "uprobestats", // base_system internal
+                ],
+            }),
         },
         both: {
             deps: [
@@ -848,7 +863,6 @@ android_system_image {
                 "libstdc++", // base_system
                 "libsysutils", // base_system
                 "libui", // base_system
-                "libuprobestats_client", // base_system - internal
                 "libusbhost", // base_system
                 "libutils", // base_system
                 "libvendorsupport", // llndk library
@@ -864,6 +878,11 @@ android_system_image {
             }) + select(soong_config_variable("ANDROID", "TARGET_DYNAMIC_64_32_MEDIASERVER"), {
                 "true": ["mediaserver"],
                 default: [],
+            }) + select(release_flag("RELEASE_UPROBESTATS_MODULE"), {
+                true: [],
+                default: [
+                    "libuprobestats_client", // base_system internal
+                ],
             }),
         },
     },

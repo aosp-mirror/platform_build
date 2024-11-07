@@ -71,6 +71,11 @@ endif
 # The default value of ART_BUILD_HOST_DEBUG is true
 $(call soong_config_set_bool,art_module,art_build_host_debug,$(if $(filter false,$(ART_BUILD_HOST_DEBUG)),false,true))
 
+# For chre
+$(call soong_config_set_bool,chre,chre_daemon_lama_enabled,$(if $(filter true,$(CHRE_DAEMON_LPMA_ENABLED)),true,false))
+$(call soong_config_set_bool,chre,chre_dedicated_transport_channel_enabled,$(if $(filter true,$(CHRE_DEDICATED_TRANSPORT_CHANNEL_ENABLED)),true,false))
+$(call soong_config_set_bool,chre,chre_log_atom_extension_enabled,$(if $(filter true,$(CHRE_LOG_ATOM_EXTENSION_ENABLED)),true,false))
+
 ifdef TARGET_BOARD_AUTO
   $(call add_soong_config_var_value, ANDROID, target_board_auto, $(TARGET_BOARD_AUTO))
 endif
@@ -280,3 +285,11 @@ $(call soong_config_set_bool,google_graphics,board_uses_dt,$(if $(filter true,$(
 $(call soong_config_set_bool,google_graphics,board_uses_decon_64bit_address,$(if $(filter true,$(BOARD_USES_DECON_64BIT_ADDRESS)),true,false))
 $(call soong_config_set_bool,google_graphics,board_uses_hdrui_gles_conversion,$(if $(filter true,$(BOARD_USES_HDRUI_GLES_CONVERSION)),true,false))
 $(call soong_config_set_bool,google_graphics,uses_idisplay_intf_sec,$(if $(filter true,$(USES_IDISPLAY_INTF_SEC)),true,false))
+
+# Variables for fs_config
+$(call soong_config_set_bool,fs_config,vendor,$(if $(BOARD_USES_VENDORIMAGE)$(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE),true,false))
+$(call soong_config_set_bool,fs_config,oem,$(if $(BOARD_USES_OEMIMAGE)$(BOARD_OEMIMAGE_FILE_SYSTEM_TYPE),true,false))
+$(call soong_config_set_bool,fs_config,odm,$(if $(BOARD_USES_ODMIMAGE)$(BOARD_ODMIMAGE_FILE_SYSTEM_TYPE),true,false))
+$(call soong_config_set_bool,fs_config,vendor_dlkm,$(if $(BOARD_USES_VENDOR_DLKMIMAGE)$(BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE),true,false))
+$(call soong_config_set_bool,fs_config,odm_dlkm,$(if $(BOARD_USES_ODM_DLKMIMAGE)$(BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE),true,false))
+$(call soong_config_set_bool,fs_config,system_dlkm,$(if $(BOARD_USES_SYSTEM_DLKMIMAGE)$(BOARD_SYSTEM_DLKMIMAGE_FILE_SYSTEM_TYPE),true,false))

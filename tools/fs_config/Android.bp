@@ -277,6 +277,7 @@ genrule_defaults {
     out: ["out"],
 }
 
+// system
 genrule {
     name: "fs_config_dirs_system_gen",
     defaults: ["fs_config_defaults"],
@@ -307,6 +308,7 @@ prebuilt_etc {
     src: ":fs_config_files_system_gen",
 }
 
+// system_ext
 genrule {
     name: "fs_config_dirs_system_ext_gen",
     defaults: ["fs_config_defaults"],
@@ -337,6 +339,7 @@ prebuilt_etc {
     system_ext_specific: true,
 }
 
+// product
 genrule {
     name: "fs_config_dirs_product_gen",
     defaults: ["fs_config_defaults"],
@@ -367,6 +370,7 @@ prebuilt_etc {
     product_specific: true,
 }
 
+// vendor
 genrule {
     name: "fs_config_dirs_vendor_gen",
     defaults: ["fs_config_defaults"],
@@ -397,6 +401,7 @@ prebuilt_etc {
     vendor: true,
 }
 
+// odm
 genrule {
     name: "fs_config_dirs_odm_gen",
     defaults: ["fs_config_defaults"],
@@ -427,4 +432,214 @@ prebuilt_etc {
     device_specific: true,
 }
 
-// TODO(jiyong): add fs_config for oem, system_dlkm, vendor_dlkm, odm_dlkm partitions
+// system_dlkm
+genrule {
+    name: "fs_config_dirs_system_dlkm_gen",
+    defaults: ["fs_config_defaults"],
+    cmd: fs_config_cmd_dirs +
+        "--partition system_dlkm " +
+        "$(locations :target_fs_config_gen)",
+}
+
+prebuilt_etc {
+    name: "fs_config_dirs_system_dlkm",
+    filename: "fs_config_dirs",
+    src: ":fs_config_dirs_system_dlkm_gen",
+    system_dlkm_specific: true,
+}
+
+genrule {
+    name: "fs_config_files_system_dlkm_gen",
+    defaults: ["fs_config_defaults"],
+    cmd: fs_config_cmd_files +
+        "--partition system_dlkm " +
+        "$(locations :target_fs_config_gen)",
+}
+
+prebuilt_etc {
+    name: "fs_config_files_system_dlkm",
+    filename: "fs_config_files",
+    src: ":fs_config_files_system_dlkm_gen",
+    system_dlkm_specific: true,
+}
+
+// vendor_dlkm
+genrule {
+    name: "fs_config_dirs_vendor_dlkm_gen",
+    defaults: ["fs_config_defaults"],
+    cmd: fs_config_cmd_dirs +
+        "--partition vendor_dlkm " +
+        "$(locations :target_fs_config_gen)",
+}
+
+prebuilt_etc {
+    name: "fs_config_dirs_vendor_dlkm",
+    filename: "fs_config_dirs",
+    src: ":fs_config_dirs_vendor_dlkm_gen",
+    vendor_dlkm_specific: true,
+}
+
+genrule {
+    name: "fs_config_files_vendor_dlkm_gen",
+    defaults: ["fs_config_defaults"],
+    cmd: fs_config_cmd_files +
+        "--partition vendor_dlkm " +
+        "$(locations :target_fs_config_gen)",
+}
+
+prebuilt_etc {
+    name: "fs_config_files_vendor_dlkm",
+    filename: "fs_config_files",
+    src: ":fs_config_files_vendor_dlkm_gen",
+    vendor_dlkm_specific: true,
+}
+
+// odm_dlkm
+genrule {
+    name: "fs_config_dirs_odm_dlkm_gen",
+    defaults: ["fs_config_defaults"],
+    cmd: fs_config_cmd_dirs +
+        "--partition odm_dlkm " +
+        "$(locations :target_fs_config_gen)",
+}
+
+prebuilt_etc {
+    name: "fs_config_dirs_odm_dlkm",
+    filename: "fs_config_dirs",
+    src: ":fs_config_dirs_odm_dlkm_gen",
+    odm_dlkm_specific: true,
+}
+
+genrule {
+    name: "fs_config_files_odm_dlkm_gen",
+    defaults: ["fs_config_defaults"],
+    cmd: fs_config_cmd_files +
+        "--partition odm_dlkm " +
+        "$(locations :target_fs_config_gen)",
+}
+
+prebuilt_etc {
+    name: "fs_config_files_odm_dlkm",
+    filename: "fs_config_files",
+    src: ":fs_config_files_odm_dlkm_gen",
+    odm_dlkm_specific: true,
+}
+
+// oem
+genrule {
+    name: "fs_config_dirs_oem_gen",
+    defaults: ["fs_config_defaults"],
+    cmd: fs_config_cmd_dirs +
+        "--partition oem " +
+        "$(locations :target_fs_config_gen)",
+}
+
+prebuilt_etc {
+    name: "fs_config_dirs_oem",
+    filename: "fs_config_dirs",
+    src: ":fs_config_dirs_oem_gen",
+    oem_specific: true,
+}
+
+genrule {
+    name: "fs_config_files_oem_gen",
+    defaults: ["fs_config_defaults"],
+    cmd: fs_config_cmd_files +
+        "--partition oem " +
+        "$(locations :target_fs_config_gen)",
+}
+
+prebuilt_etc {
+    name: "fs_config_files_oem",
+    filename: "fs_config_files",
+    src: ":fs_config_files_oem_gen",
+    oem_specific: true,
+}
+
+// Generate the <p>/etc/fs_config_dirs binary files for each partition.
+// Add fs_config_dirs to PRODUCT_PACKAGES in the device make file to enable.
+phony {
+    name: "fs_config_dirs",
+    required: [
+        "fs_config_dirs_system",
+        "fs_config_dirs_system_ext",
+        "fs_config_dirs_product",
+        "fs_config_dirs_nonsystem",
+    ],
+}
+
+// Generate the <p>/etc/fs_config_files binary files for each partition.
+// Add fs_config_files to PRODUCT_PACKAGES in the device make file to enable.
+phony {
+    name: "fs_config_files",
+    required: [
+        "fs_config_files_system",
+        "fs_config_files_system_ext",
+        "fs_config_files_product",
+        "fs_config_files_nonsystem",
+    ],
+}
+
+// Generate the <p>/etc/fs_config_dirs binary files for all enabled partitions
+// excluding /system, /system_ext and /product. Add fs_config_dirs_nonsystem to
+// PRODUCT_PACKAGES in the device make file to enable.
+phony {
+    name: "fs_config_dirs_nonsystem",
+    required: [] +
+        select(soong_config_variable("fs_config", "vendor"), {
+            true: ["fs_config_dirs_vendor"],
+            default: [],
+        }) +
+        select(soong_config_variable("fs_config", "oem"), {
+            true: ["fs_config_dirs_oem"],
+            default: [],
+        }) +
+        select(soong_config_variable("fs_config", "odm"), {
+            true: ["fs_config_dirs_odm"],
+            default: [],
+        }) +
+        select(soong_config_variable("fs_config", "vendor_dlkm"), {
+            true: ["fs_config_dirs_vendor_dlkm"],
+            default: [],
+        }) +
+        select(soong_config_variable("fs_config", "odm_dlkm"), {
+            true: ["fs_config_dirs_odm_dlkm"],
+            default: [],
+        }) +
+        select(soong_config_variable("fs_config", "system_dlkm"), {
+            true: ["fs_config_dirs_system_dlkm"],
+            default: [],
+        }),
+}
+
+// Generate the <p>/etc/fs_config_files binary files for all enabled partitions
+// excluding /system, /system_ext and /product. Add fs_config_files_nonsystem to
+// PRODUCT_PACKAGES in the device make file to enable.
+phony {
+    name: "fs_config_files_nonsystem",
+    required: [] +
+        select(soong_config_variable("fs_config", "vendor"), {
+            true: ["fs_config_files_vendor"],
+            default: [],
+        }) +
+        select(soong_config_variable("fs_config", "oem"), {
+            true: ["fs_config_files_oem"],
+            default: [],
+        }) +
+        select(soong_config_variable("fs_config", "odm"), {
+            true: ["fs_config_files_odm"],
+            default: [],
+        }) +
+        select(soong_config_variable("fs_config", "vendor_dlkm"), {
+            true: ["fs_config_files_vendor_dlkm"],
+            default: [],
+        }) +
+        select(soong_config_variable("fs_config", "odm_dlkm"), {
+            true: ["fs_config_files_odm_dlkm"],
+            default: [],
+        }) +
+        select(soong_config_variable("fs_config", "system_dlkm"), {
+            true: ["fs_config_files_system_dlkm"],
+            default: [],
+        }),
+}
