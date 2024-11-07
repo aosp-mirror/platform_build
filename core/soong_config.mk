@@ -440,6 +440,14 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   # Used to generate _dlkm partitions
   $(call add_json_bool, BuildingSystemDlkmImage,               $(BUILDING_SYSTEM_DLKM_IMAGE))
   $(call add_json_list, SystemKernelModules, $(BOARD_SYSTEM_KERNEL_MODULES))
+  $(call add_json_str, SystemKernelBlocklistFile, $(BOARD_SYSTEM_KERNEL_MODULES_BLOCKLIST_FILE))
+  $(call add_json_list, SystemKernelLoadModules, $(BOARD_SYSTEM_KERNEL_MODULES_LOAD))
+  $(call add_json_bool, BuildingVendorDlkmImage,               $(BUILDING_VENDOR_DLKM_IMAGE))
+  $(call add_json_list, VendorKernelModules, $(BOARD_VENDOR_KERNEL_MODULES))
+  $(call add_json_str, VendorKernelBlocklistFile, $(BOARD_VENDOR_KERNEL_MODULES_BLOCKLIST_FILE))
+  $(call add_json_bool, BuildingOdmDlkmImage,               $(BUILDING_ODM_DLKM_IMAGE))
+  $(call add_json_list, OdmKernelModules, $(BOARD_ODM_KERNEL_MODULES))
+  $(call add_json_str, OdmKernelBlocklistFile, $(BOARD_ODM_KERNEL_MODULES_BLOCKLIST_FILE))
 
   # Used to generate /vendor/build.prop
   $(call add_json_list, BoardInfoFiles, $(if $(TARGET_BOARD_INFO_FILES),$(TARGET_BOARD_INFO_FILES),$(firstword $(TARGET_BOARD_INFO_FILE) $(wildcard $(TARGET_DEVICE_DIR)/board-info.txt))))
