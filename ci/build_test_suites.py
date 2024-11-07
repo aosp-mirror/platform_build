@@ -25,6 +25,7 @@ import sys
 from typing import Callable
 from build_context import BuildContext
 import optimized_targets
+import metrics_agent
 
 
 REQUIRED_ENV_VARS = frozenset(['TARGET_PRODUCT', 'TARGET_RELEASE', 'TOP'])
@@ -113,19 +114,27 @@ def build_test_suites(argv: list[str]) -> int:
   Returns:
     The exit code of the build.
   """
-  args = parse_args(argv)
-  check_required_env()
-  build_context = BuildContext(load_build_context())
-  build_planner = BuildPlanner(
-      build_context, args, optimized_targets.OPTIMIZED_BUILD_TARGETS
-  )
-  build_plan = build_planner.create_build_plan()
+  get_metrics_agent().analysis_start()
+  try:
+    args = parse_args(argv)
+    check_required_env()
+    build_context = BuildContext(load_build_context())
+    build_planner = BuildPlanner(
+        build_context, args, optimized_targets.OPTIMIZED_BUILD_TARGETS
+    )
+    build_plan = build_planner.create_build_plan()
+  except:
+    raise
+  finally:
+    get_metrics_agent().analysis_end()
 
   try:
     execute_build_plan(build_plan)
   except BuildFailureError as e:
     logging.error('Build command failed! Check build_log for details.')
     return e.return_code
+  finally:
+    get_metrics_agent().end_reporting()
 
   return 0
 
@@ -183,12 +192,15 @@ def execute_build_plan(build_plan: BuildPlan):
   except subprocess.CalledProcessError as e:
     raise BuildFailureError(e.returncode) from e
 
-  for packaging_commands_getter in build_plan.packaging_commands_getters:
-    try:
+  get_metrics_agent().packaging_start()
+  try:
+    for packaging_commands_getter in build_plan.packaging_commands_getters:
       for packaging_command in packaging_commands_getter():
         run_command(packaging_command)
-    except subprocess.CalledProcessError as e:
-      raise BuildFailureError(e.returncode) from e
+  except subprocess.CalledProcessError as e:
+    raise BuildFailureError(e.returncode) from e
+  finally:
+    get_metrics_agent().packaging_end()
 
 
 def get_top() -> pathlib.Path:
@@ -197,6 +209,10 @@ def get_top() -> pathlib.Path:
 
 def run_command(args: list[str], stdout=None):
   subprocess.run(args=args, check=True, stdout=stdout)
+
+
+def get_metrics_agent():
+  return metrics_agent.MetricsAgent.instance()
 
 
 def main(argv):

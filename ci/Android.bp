@@ -123,6 +123,9 @@ python_library_host {
         "metrics_agent.py",
         "buildbot.py",
     ],
+    libs: [
+        "soong-metrics-proto-py",
+    ],
 }
 
 python_library_host {
