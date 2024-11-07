@@ -228,10 +228,14 @@ pub(crate) fn get_bucket_index(val: &[u8], num_buckets: u32) -> u32 {
 
 /// Read and parse bytes as u8
 pub fn read_u8_from_bytes(buf: &[u8], head: &mut usize) -> Result<u8, AconfigStorageError> {
-    let val =
-        u8::from_le_bytes(buf[*head..*head + 1].try_into().map_err(|errmsg| {
-            BytesParseFail(anyhow!("fail to parse u8 from bytes: {}", errmsg))
-        })?);
+    let val = u8::from_le_bytes(
+        buf.get(*head..*head + 1)
+            .ok_or(AconfigStorageError::BytesParseFail(anyhow!(
+                "fail to parse u8 from bytes: access out of bounds"
+            )))?
+            .try_into()
+            .map_err(|errmsg| BytesParseFail(anyhow!("fail to parse u8 from bytes: {}", errmsg)))?,
+    );
     *head += 1;
     Ok(val)
 }
@@ -241,10 +245,16 @@ pub(crate) fn read_u16_from_bytes(
     buf: &[u8],
     head: &mut usize,
 ) -> Result<u16, AconfigStorageError> {
-    let val =
-        u16::from_le_bytes(buf[*head..*head + 2].try_into().map_err(|errmsg| {
-            BytesParseFail(anyhow!("fail to parse u16 from bytes: {}", errmsg))
-        })?);
+    let val = u16::from_le_bytes(
+        buf.get(*head..*head + 2)
+            .ok_or(AconfigStorageError::BytesParseFail(anyhow!(
+                "fail to parse u16 from bytes: access out of bounds"
+            )))?
+            .try_into()
+            .map_err(|errmsg| {
+                BytesParseFail(anyhow!("fail to parse u16 from bytes: {}", errmsg))
+            })?,
+    );
     *head += 2;
     Ok(val)
 }
@@ -256,20 +266,32 @@ pub fn read_u32_from_start_of_bytes(buf: &[u8]) -> Result<u32, AconfigStorageErr
 
 /// Read and parse bytes as u32
 pub fn read_u32_from_bytes(buf: &[u8], head: &mut usize) -> Result<u32, AconfigStorageError> {
-    let val =
-        u32::from_le_bytes(buf[*head..*head + 4].try_into().map_err(|errmsg| {
-            BytesParseFail(anyhow!("fail to parse u32 from bytes: {}", errmsg))
-        })?);
+    let val = u32::from_le_bytes(
+        buf.get(*head..*head + 4)
+            .ok_or(AconfigStorageError::BytesParseFail(anyhow!(
+                "fail to parse u32 from bytes: access out of bounds"
+            )))?
+            .try_into()
+            .map_err(|errmsg| {
+                BytesParseFail(anyhow!("fail to parse u32 from bytes: {}", errmsg))
+            })?,
+    );
     *head += 4;
     Ok(val)
 }
 
 // Read and parse bytes as u64
 pub fn read_u64_from_bytes(buf: &[u8], head: &mut usize) -> Result<u64, AconfigStorageError> {
-    let val =
-        u64::from_le_bytes(buf[*head..*head + 8].try_into().map_err(|errmsg| {
-            BytesParseFail(anyhow!("fail to parse u64 from bytes: {}", errmsg))
-        })?);
+    let val = u64::from_le_bytes(
+        buf.get(*head..*head + 8)
+            .ok_or(AconfigStorageError::BytesParseFail(anyhow!(
+                "fail to parse u64 from bytes: access out of bounds"
+            )))?
+            .try_into()
+            .map_err(|errmsg| {
+                BytesParseFail(anyhow!("fail to parse u64 from bytes: {}", errmsg))
+            })?,
+    );
     *head += 8;
     Ok(val)
 }
@@ -280,8 +302,21 @@ pub(crate) fn read_str_from_bytes(
     head: &mut usize,
 ) -> Result<String, AconfigStorageError> {
     let num_bytes = read_u32_from_bytes(buf, head)? as usize;
-    let val = String::from_utf8(buf[*head..*head + num_bytes].to_vec())
-        .map_err(|errmsg| BytesParseFail(anyhow!("fail to parse string from bytes: {}", errmsg)))?;
+    // TODO(opg): Document this limitation and check it when creating files.
+    if num_bytes > 1024 {
+        return Err(AconfigStorageError::BytesParseFail(anyhow!(
+            "fail to parse string from bytes, string is too long (found {}, max is 1024)",
+            num_bytes
+        )));
+    }
+    let val = String::from_utf8(
+        buf.get(*head..*head + num_bytes)
+            .ok_or(AconfigStorageError::BytesParseFail(anyhow!(
+                "fail to parse string from bytes: access out of bounds"
+            )))?
+            .to_vec(),
+    )
+    .map_err(|errmsg| BytesParseFail(anyhow!("fail to parse string from bytes: {}", errmsg)))?;
     *head += num_bytes;
     Ok(val)
 }
@@ -531,6 +566,34 @@ mod tests {
         create_test_flag_info_list, create_test_flag_table, create_test_flag_value_list,
         create_test_package_table, write_bytes_to_temp_file,
     };
+
+    #[test]
+    fn test_list_flags_with_missing_files_error() {
+        let flag_list_error = list_flags("does", "not", "exist").unwrap_err();
+        assert_eq!(
+            format!("{:?}", flag_list_error),
+            format!(
+                "FileReadFail(Failed to open file does: No such file or directory (os error 2))"
+            )
+        );
+    }
+
+    #[test]
+    fn test_list_flags_with_invalid_files_error() {
+        let invalid_bytes: [u8; 3] = [0; 3];
+        let package_table = write_bytes_to_temp_file(&invalid_bytes).unwrap();
+        let flag_table = write_bytes_to_temp_file(&invalid_bytes).unwrap();
+        let flag_value_list = write_bytes_to_temp_file(&invalid_bytes).unwrap();
+        let package_table_path = package_table.path().display().to_string();
+        let flag_table_path = flag_table.path().display().to_string();
+        let flag_value_list_path = flag_value_list.path().display().to_string();
+        let flag_list_error =
+            list_flags(&package_table_path, &flag_table_path, &flag_value_list_path).unwrap_err();
+        assert_eq!(
+            format!("{:?}", flag_list_error),
+            format!("BytesParseFail(fail to parse u32 from bytes: access out of bounds)")
+        );
+    }
 
     #[test]
     // this test point locks down the flag list api
