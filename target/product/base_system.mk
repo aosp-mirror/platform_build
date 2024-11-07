@@ -96,6 +96,7 @@ PRODUCT_PACKAGES += \
     enhanced-confirmation.xml \
     ExtShared \
     flags_health_check \
+    framework-connectivity-b \
     framework-graphics \
     framework-location \
     framework-minus-apex \
@@ -212,6 +213,7 @@ PRODUCT_PACKAGES += \
     libwilhelm \
     linker \
     llkd \
+    llndk_libs \
     lmkd \
     LocalTransport \
     locksettings \
@@ -364,6 +366,11 @@ endif
 ifneq (,$(RELEASE_RANGING_STACK))
     PRODUCT_PACKAGES += \
         com.android.ranging
+endif
+
+ifeq ($(RELEASE_MEMORY_MANAGEMENT_DAEMON),true)
+  PRODUCT_PACKAGES += \
+        mm_daemon
 endif
 
 # VINTF data for system image
