@@ -305,9 +305,6 @@ endif
 # Create necessary directories and symlinks in the root filesystem
 include system/core/rootdir/create_root_structure.mk
 
-# Rules to create android-info.txt and device sku manifest files
-include build/make/target/board/android-info.mk
-
 endif # dont_bother
 
 ifndef subdir_makefiles_total
