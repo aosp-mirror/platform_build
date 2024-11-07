@@ -20,12 +20,14 @@ import json
 import logging
 import os
 import pathlib
+import re
 import subprocess
 import sys
 from typing import Callable
 from build_context import BuildContext
 import optimized_targets
 import metrics_agent
+import test_discovery_agent
 
 
 REQUIRED_ENV_VARS = frozenset(['TARGET_PRODUCT', 'TARGET_RELEASE', 'TOP'])
@@ -71,7 +73,24 @@ class BuildPlanner:
 
     build_targets = set()
     packaging_commands_getters = []
+    test_discovery_zip_regexes = set()
+    optimization_rationale = ''
+    try:
+      # Do not use these regexes for now, only run this to collect data on what
+      # would be optimized.
+      test_discovery_zip_regexes = self._get_test_discovery_zip_regexes()
+      logging.info(f'Discovered test discovery regexes: {test_discovery_zip_regexes}')
+    except test_discovery_agent.TestDiscoveryError as e:
+      optimization_rationale = e.message
+      logging.warning(f'Unable to perform test discovery: {optimization_rationale}')
     for target in self.args.extra_targets:
+      if optimization_rationale:
+        get_metrics_agent().report_unoptimized_target(target, optimization_rationale)
+      else:
+        regex = r'\b(%s)\b' % re.escape(target)
+        if any(re.search(regex, opt) for opt in test_discovery_zip_regexes):
+          get_metrics_agent().report_optimized_target(target)
+
       if self._unused_target_exclusion_enabled(
           target
       ) and not self.build_context.build_target_used(target):
@@ -98,6 +117,34 @@ class BuildPlanner:
         in self.build_context.enabled_build_features
     )
 
+  def _get_test_discovery_zip_regexes(self) -> set[str]:
+    build_target_regexes = set()
+    for test_info in self.build_context.test_infos:
+      tf_command = self._build_tf_command(test_info)
+      discovery_agent = test_discovery_agent.TestDiscoveryAgent(tradefed_args=tf_command)
+      for regex in discovery_agent.discover_test_zip_regexes():
+        build_target_regexes.add(regex)
+    return build_target_regexes
+
+
+  def _build_tf_command(self, test_info) -> list[str]:
+    command = [test_info.command]
+    for extra_option in test_info.extra_options:
+      if not extra_option.get('key'):
+        continue
+      arg_key = '--' + extra_option.get('key')
+      if arg_key == '--build-id':
+        command.append(arg_key)
+        command.append(os.environ.get('BUILD_NUMBER'))
+        continue
+      if extra_option.get('values'):
+        for value in extra_option.get('values'):
+          command.append(arg_key)
+          command.append(value)
+      else:
+        command.append(arg_key)
+
+    return command
 
 @dataclass(frozen=True)
 class BuildPlan:
