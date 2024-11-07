@@ -305,6 +305,9 @@ endif
 # Create necessary directories and symlinks in the root filesystem
 include system/core/rootdir/create_root_structure.mk
 
+# Rules to create android-info.txt and device sku manifest files
+include build/make/target/board/android-info.mk
+
 endif # dont_bother
 
 ifndef subdir_makefiles_total
@@ -984,7 +987,6 @@ endef
 # variables being set.
 define auto-included-modules
   $(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),com.android.vndk.v$(vndk_ver)) \
-  $(filter-out $(LLNDK_MOVED_TO_APEX_LIBRARIES),$(LLNDK_LIBRARIES)) \
   llndk.libraries.txt \
   $(if $(DEVICE_MANIFEST_SKUS),$(foreach sku, $(DEVICE_MANIFEST_SKUS),vendor_manifest_$(sku).xml)) \
   $(if $(ODM_MANIFEST_FILES),odm_manifest.xml) \

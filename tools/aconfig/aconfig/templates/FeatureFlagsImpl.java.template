@@ -7,6 +7,7 @@ import android.compat.annotation.UnsupportedAppUsage;
 {{ -endif }}
 
 {{ -if runtime_lookup_required }}
+import android.os.Binder;
 import android.provider.DeviceConfig;
 import android.provider.DeviceConfig.Properties;
 
@@ -57,6 +58,7 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
 
 {{ for namespace_with_flags in namespace_flags }}
     private void load_overrides_{namespace_with_flags.namespace}() \{
+        final long ident = Binder.clearCallingIdentity();
         try \{
             Properties properties = DeviceConfig.getProperties("{namespace_with_flags.namespace}");
 {{ -for flag in namespace_with_flags.flags }}
@@ -76,6 +78,8 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
             );
         } catch (SecurityException e) \{
             // for isolated process case, skip loading flag value from the storage, use the default
+        } finally \{
+            Binder.restoreCallingIdentity(ident);
         }
         {namespace_with_flags.namespace}_is_cached = true;
     }
@@ -121,6 +125,7 @@ import android.compat.annotation.UnsupportedAppUsage;
 {{ -endif }}
 
 {{ -if runtime_lookup_required }}
+import android.os.Binder;
 import android.provider.DeviceConfig;
 import android.provider.DeviceConfig.Properties;
 {{ -endif }}
@@ -138,6 +143,7 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ -endfor }}
 {{ for namespace_with_flags in namespace_flags }}
     private void load_overrides_{namespace_with_flags.namespace}() \{
+        final long ident = Binder.clearCallingIdentity();
         try \{
             Properties properties = DeviceConfig.getProperties("{namespace_with_flags.namespace}");
 {{ -for flag in namespace_with_flags.flags }}
@@ -155,6 +161,8 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
                 + "flag declaration.",
                 e
             );
+        } finally \{
+            Binder.restoreCallingIdentity(ident);
         }
         {namespace_with_flags.namespace}_is_cached = true;
 }
