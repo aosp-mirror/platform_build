@@ -105,7 +105,9 @@ public class StorageFileProvider {
             return channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
         } catch (Exception e) {
             throw new AconfigStorageException(
-                    String.format("Fail to mmap storage file %s", file), e);
+                    AconfigStorageException.ERROR_CANNOT_READ_STORAGE_FILE,
+                    String.format("Fail to mmap storage file %s", file),
+                    e);
         } finally {
             quietlyDispose(channel);
         }
