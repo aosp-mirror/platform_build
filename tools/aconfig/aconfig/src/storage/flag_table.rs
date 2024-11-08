@@ -157,7 +157,8 @@ mod tests {
     fn test_table_contents() {
         let flag_table = create_test_flag_table_from_source();
         assert!(flag_table.is_ok());
-        let expected_flag_table = aconfig_storage_file::test_utils::create_test_flag_table();
+        let expected_flag_table =
+            aconfig_storage_file::test_utils::create_test_flag_table(DEFAULT_FILE_VERSION);
         assert_eq!(flag_table.unwrap(), expected_flag_table);
     }
 }

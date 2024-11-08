@@ -18,6 +18,7 @@ package android.aconfig.storage.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import android.aconfig.storage.FileType;
 import android.aconfig.storage.PackageTable;
@@ -32,7 +33,7 @@ public class PackageTableTest {
     @Test
     public void testPackageTable_rightHeader() throws Exception {
         PackageTable packageTable =
-                PackageTable.fromBytes(TestDataUtils.getTestPackageMapByteBuffer());
+                PackageTable.fromBytes(TestDataUtils.getTestPackageMapByteBuffer(1));
         PackageTable.Header header = packageTable.getHeader();
         assertEquals(1, header.getVersion());
         assertEquals("mockup", header.getContainer());
@@ -44,9 +45,23 @@ public class PackageTableTest {
     }
 
     @Test
+    public void testPackageTable_rightHeader_v2() throws Exception {
+        PackageTable packageTable =
+                PackageTable.fromBytes(TestDataUtils.getTestPackageMapByteBuffer(2));
+        PackageTable.Header header = packageTable.getHeader();
+        assertEquals(2, header.getVersion());
+        assertEquals("mockup", header.getContainer());
+        assertEquals(FileType.PACKAGE_MAP, header.getFileType());
+        assertEquals(233, header.getFileSize());
+        assertEquals(3, header.getNumPackages());
+        assertEquals(31, header.getBucketOffset());
+        assertEquals(59, header.getNodeOffset());
+    }
+
+    @Test
     public void testPackageTable_rightNode() throws Exception {
         PackageTable packageTable =
-                PackageTable.fromBytes(TestDataUtils.getTestPackageMapByteBuffer());
+                PackageTable.fromBytes(TestDataUtils.getTestPackageMapByteBuffer(1));
 
         PackageTable.Node node1 = packageTable.get("com.android.aconfig.storage.test_1");
         PackageTable.Node node2 = packageTable.get("com.android.aconfig.storage.test_2");
@@ -71,5 +86,35 @@ public class PackageTableTest {
         assertFalse(node1.hasPackageFingerprint());
         assertFalse(node2.hasPackageFingerprint());
         assertFalse(node4.hasPackageFingerprint());
+    }
+
+    @Test
+    public void testPackageTable_rightNode_v2() throws Exception {
+        PackageTable packageTable =
+                PackageTable.fromBytes(TestDataUtils.getTestPackageMapByteBuffer(2));
+
+        PackageTable.Node node1 = packageTable.get("com.android.aconfig.storage.test_1");
+        PackageTable.Node node2 = packageTable.get("com.android.aconfig.storage.test_2");
+        PackageTable.Node node4 = packageTable.get("com.android.aconfig.storage.test_4");
+
+        assertEquals("com.android.aconfig.storage.test_1", node1.getPackageName());
+        assertEquals("com.android.aconfig.storage.test_2", node2.getPackageName());
+        assertEquals("com.android.aconfig.storage.test_4", node4.getPackageName());
+
+        assertEquals(0, node1.getPackageId());
+        assertEquals(1, node2.getPackageId());
+        assertEquals(2, node4.getPackageId());
+
+        assertEquals(0, node1.getBooleanStartIndex());
+        assertEquals(3, node2.getBooleanStartIndex());
+        assertEquals(6, node4.getBooleanStartIndex());
+
+        assertEquals(175, node1.getNextOffset());
+        assertEquals(-1, node2.getNextOffset());
+        assertEquals(-1, node4.getNextOffset());
+
+        assertTrue(node1.hasPackageFingerprint());
+        assertTrue(node2.hasPackageFingerprint());
+        assertTrue(node4.hasPackageFingerprint());
     }
 }
