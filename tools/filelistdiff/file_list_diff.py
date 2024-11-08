@@ -76,7 +76,7 @@ if __name__ == '__main__':
     parser.add_argument('kati_installed_file_list')
     parser.add_argument('soong_installed_file_list')
     parser.add_argument('system_module_name')
-    parser.add_argument('--allowlists', nargs='+')
+    parser.add_argument('--allowlists', nargs='*', default=[])
     args = parser.parse_args()
 
     find_unique_items(args.kati_installed_file_list, args.soong_installed_file_list, args.system_module_name, args.allowlists)
