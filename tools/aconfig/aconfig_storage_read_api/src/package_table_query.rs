@@ -74,12 +74,12 @@ pub fn find_package_read_context(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::test_utils::create_test_package_table;
+    use aconfig_storage_file::{test_utils::create_test_package_table, DEFAULT_FILE_VERSION};
 
     #[test]
     // this test point locks down table query
     fn test_package_query() {
-        let package_table = create_test_package_table().into_bytes();
+        let package_table = create_test_package_table(DEFAULT_FILE_VERSION).into_bytes();
         let package_context =
             find_package_read_context(&package_table[..], "com.android.aconfig.storage.test_1")
                 .unwrap()
@@ -104,7 +104,7 @@ mod tests {
     // this test point locks down table query of a non exist package
     fn test_not_existed_package_query() {
         // this will land at an empty bucket
-        let package_table = create_test_package_table().into_bytes();
+        let package_table = create_test_package_table(DEFAULT_FILE_VERSION).into_bytes();
         let package_context =
             find_package_read_context(&package_table[..], "com.android.aconfig.storage.test_3")
                 .unwrap();
@@ -119,7 +119,7 @@ mod tests {
     #[test]
     // this test point locks down query error when file has a higher version
     fn test_higher_version_storage_file() {
-        let mut table = create_test_package_table();
+        let mut table = create_test_package_table(DEFAULT_FILE_VERSION);
         table.header.version = MAX_SUPPORTED_FILE_VERSION + 1;
         let package_table = table.into_bytes();
         let error =

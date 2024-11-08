@@ -21,10 +21,10 @@
     </target_preparer>
     <target_preparer class="com.android.compatibility.common.tradefed.targetprep.FilePusher">
         <option name="cleanup" value="true" />
-        <option name="push" value="package.map->/data/local/tmp/aconfig_storage_package/testdata/mockup.package.map" />
-        <option name="push" value="flag.map->/data/local/tmp/aconfig_storage_package/testdata/mockup.flag.map" />
-        <option name="push" value="flag.val->/data/local/tmp/aconfig_storage_package/testdata/mockup.val" />
-        <option name="push" value="flag.info->/data/local/tmp/aconfig_storage_package/testdata/mockup.info" />
+        <option name="push" value="package_v1.map->/data/local/tmp/aconfig_storage_package/testdata/mockup.package.map" />
+        <option name="push" value="flag_v1.map->/data/local/tmp/aconfig_storage_package/testdata/mockup.flag.map" />
+        <option name="push" value="flag_v1.val->/data/local/tmp/aconfig_storage_package/testdata/mockup.val" />
+        <option name="push" value="flag_v1.info->/data/local/tmp/aconfig_storage_package/testdata/mockup.info" />
         <option name="post-push" value="chmod +r /data/local/tmp/aconfig_storage_package/testdata/" />
     </target_preparer>
     <test class="com.android.tradefed.testtype.AndroidJUnitTest" >
