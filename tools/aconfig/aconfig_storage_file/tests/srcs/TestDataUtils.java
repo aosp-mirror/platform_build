@@ -21,28 +21,28 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public final class TestDataUtils {
-    private static final String TEST_PACKAGE_MAP_PATH = "package.map";
-    private static final String TEST_FLAG_MAP_PATH = "flag.map";
-    private static final String TEST_FLAG_VAL_PATH = "flag.val";
-    private static final String TEST_FLAG_INFO_PATH = "flag.info";
+    private static final String TEST_PACKAGE_MAP_PATH = "package_v%d.map";
+    private static final String TEST_FLAG_MAP_PATH = "flag_v%d.map";
+    private static final String TEST_FLAG_VAL_PATH = "flag_v%d.val";
+    private static final String TEST_FLAG_INFO_PATH = "flag_v%d.info";
 
     private static final String TESTDATA_PATH =
             "/data/local/tmp/aconfig_storage_file_test_java/testdata/";
 
-    public static ByteBuffer getTestPackageMapByteBuffer() throws Exception {
-        return readFile(TESTDATA_PATH + TEST_PACKAGE_MAP_PATH);
+    public static ByteBuffer getTestPackageMapByteBuffer(int version) throws Exception {
+        return readFile(TESTDATA_PATH + String.format(TEST_PACKAGE_MAP_PATH, version));
     }
 
-    public static ByteBuffer getTestFlagMapByteBuffer() throws Exception {
-        return readFile(TESTDATA_PATH + TEST_FLAG_MAP_PATH);
+    public static ByteBuffer getTestFlagMapByteBuffer(int version) throws Exception {
+        return readFile(TESTDATA_PATH + String.format(TEST_FLAG_MAP_PATH, version));
     }
 
-    public static ByteBuffer getTestFlagValByteBuffer() throws Exception {
-        return readFile(TESTDATA_PATH + TEST_FLAG_VAL_PATH);
+    public static ByteBuffer getTestFlagValByteBuffer(int version) throws Exception {
+        return readFile(TESTDATA_PATH + String.format(TEST_FLAG_VAL_PATH, version));
     }
 
-    public static ByteBuffer getTestFlagInfoByteBuffer() throws Exception {
-        return readFile(TESTDATA_PATH + TEST_FLAG_INFO_PATH);
+    public static ByteBuffer getTestFlagInfoByteBuffer(int version) throws Exception {
+        return readFile(TESTDATA_PATH + String.format(TEST_FLAG_INFO_PATH, version));
     }
 
     private static ByteBuffer readFile(String fileName) throws Exception {
