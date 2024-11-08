@@ -18,5 +18,5 @@
 
 # /system_ext packages
 PRODUCT_PACKAGES += \
-    com.google.android.appfunctions.sidecar \
-    appfunctions.sidecar.xml
+    com.android.extensions.appfunctions \
+    appfunctions.extension.xml
