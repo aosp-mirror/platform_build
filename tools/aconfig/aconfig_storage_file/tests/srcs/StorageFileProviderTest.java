@@ -17,7 +17,6 @@
 package android.aconfig.storage.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -38,43 +37,31 @@ import java.util.List;
 public class StorageFileProviderTest {
 
     @Test
-    public void testContainerFileExists() throws Exception {
-        StorageFileProvider p =
-                new StorageFileProvider(TestDataUtils.TESTDATA_PATH, TestDataUtils.TESTDATA_PATH);
-        assertTrue(p.containerFileExists(null));
-        assertTrue(p.containerFileExists("mockup"));
-        assertFalse(p.containerFileExists("fake"));
-    }
-
-    @Test
     public void testListpackageMapFiles() throws Exception {
         StorageFileProvider p =
                 new StorageFileProvider(TestDataUtils.TESTDATA_PATH, TestDataUtils.TESTDATA_PATH);
-        // throw new Exception(Environment.getExternalStorageDirectory().getAbsolutePath());
         List<Path> file = p.listPackageMapFiles();
-        assertEquals(1, file.size());
-        assertTrue(
-                file.get(0)
-                        .equals(
-                                Paths.get(
-                                        TestDataUtils.TESTDATA_PATH,
-                                        TestDataUtils.TEST_PACKAGE_MAP_PATH)));
+        assertEquals(2, file.size());
+
+        p = new StorageFileProvider("fake/path/", "fake/path/");
+        file = p.listPackageMapFiles();
+        assertTrue(file.isEmpty());
     }
 
     @Test
     public void testLoadFiles() throws Exception {
         StorageFileProvider p =
                 new StorageFileProvider(TestDataUtils.TESTDATA_PATH, TestDataUtils.TESTDATA_PATH);
-        PackageTable pt = p.getPackageTable("mockup");
+        PackageTable pt = p.getPackageTable("mock.v1");
         assertNotNull(pt);
         pt =
                 StorageFileProvider.getPackageTable(
                         Paths.get(
-                                TestDataUtils.TESTDATA_PATH, TestDataUtils.TEST_PACKAGE_MAP_PATH));
+                                TestDataUtils.TESTDATA_PATH, "mock.v1.package.map"));
         assertNotNull(pt);
-        FlagTable f = p.getFlagTable("mockup");
+        FlagTable f = p.getFlagTable("mock.v1");
         assertNotNull(f);
-        FlagValueList v = p.getFlagValueList("mockup");
+        FlagValueList v = p.getFlagValueList("mock.v1");
         assertNotNull(v);
     }
 }
