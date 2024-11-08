@@ -692,7 +692,7 @@ endif
 
 BOARD_KERNEL_MODULE_DIRS += top
 
-# Default to not generating modules.dep for kernel modules on system
+# Default to not generating modules.load for kernel modules on system
 # side. We should only load these modules if they are depended by vendor
 # side modules.
 ifeq ($(BOARD_SYSTEM_KERNEL_MODULES_LOAD),)
