@@ -692,7 +692,7 @@ endif
 
 BOARD_KERNEL_MODULE_DIRS += top
 
-# Default to not generating modules.dep for kernel modules on system
+# Default to not generating modules.load for kernel modules on system
 # side. We should only load these modules if they are depended by vendor
 # side modules.
 ifeq ($(BOARD_SYSTEM_KERNEL_MODULES_LOAD),)
@@ -6381,6 +6381,10 @@ ifdef BUILDING_VENDOR_BOOT_IMAGE
   ifeq (true,$(BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT))
     $(BUILT_TARGET_FILES_DIR): $(INTERNAL_RECOVERY_RAMDISK_FILES_TIMESTAMP)
   endif
+endif
+
+ifdef BUILDING_VENDOR_KERNEL_BOOT_IMAGE
+  $(BUILT_TARGET_FILES_DIR): $(INTERNAL_VENDOR_KERNEL_RAMDISK_FILES)
 endif
 
 ifdef BUILDING_RECOVERY_IMAGE
