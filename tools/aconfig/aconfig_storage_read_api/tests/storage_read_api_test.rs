@@ -9,7 +9,7 @@ mod aconfig_storage_rust_test {
     use rand::Rng;
     use std::fs;
 
-    fn create_test_storage_files() -> String {
+    fn create_test_storage_files(version: u32) -> String {
         let mut rng = rand::thread_rng();
         let number: u32 = rng.gen();
         let storage_dir = String::from("/tmp/") + &number.to_string();
@@ -26,17 +26,17 @@ mod aconfig_storage_rust_test {
         let flag_map = storage_dir.clone() + "/maps/mockup.flag.map";
         let flag_val = storage_dir.clone() + "/boot/mockup.val";
         let flag_info = storage_dir.clone() + "/boot/mockup.info";
-        fs::copy("./data/v1/package.map", package_map).unwrap();
-        fs::copy("./data/v1/flag.map", flag_map).unwrap();
-        fs::copy("./data/v1/flag.val", flag_val).unwrap();
-        fs::copy("./data/v1/flag.info", flag_info).unwrap();
+        fs::copy(format!("./data/v{0}/package_v{0}.map", version), package_map).unwrap();
+        fs::copy(format!("./data/v{0}/flag_v{0}.map", version), flag_map).unwrap();
+        fs::copy(format!("./data/v{}/flag_v{0}.val", version), flag_val).unwrap();
+        fs::copy(format!("./data/v{}/flag_v{0}.info", version), flag_info).unwrap();
 
         storage_dir
     }
 
     #[test]
-    fn test_unavailable_stoarge() {
-        let storage_dir = create_test_storage_files();
+    fn test_unavailable_storage() {
+        let storage_dir = create_test_storage_files(1);
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
         let err = unsafe {
@@ -53,7 +53,7 @@ mod aconfig_storage_rust_test {
 
     #[test]
     fn test_package_context_query() {
-        let storage_dir = create_test_storage_files();
+        let storage_dir = create_test_storage_files(1);
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
         let package_mapped_file = unsafe {
@@ -84,7 +84,7 @@ mod aconfig_storage_rust_test {
 
     #[test]
     fn test_none_exist_package_context_query() {
-        let storage_dir = create_test_storage_files();
+        let storage_dir = create_test_storage_files(1);
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
         let package_mapped_file = unsafe {
@@ -99,7 +99,7 @@ mod aconfig_storage_rust_test {
 
     #[test]
     fn test_flag_context_query() {
-        let storage_dir = create_test_storage_files();
+        let storage_dir = create_test_storage_files(1);
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
         let flag_mapped_file =
@@ -125,7 +125,7 @@ mod aconfig_storage_rust_test {
 
     #[test]
     fn test_none_exist_flag_context_query() {
-        let storage_dir = create_test_storage_files();
+        let storage_dir = create_test_storage_files(1);
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
         let flag_mapped_file =
@@ -141,7 +141,7 @@ mod aconfig_storage_rust_test {
 
     #[test]
     fn test_boolean_flag_value_query() {
-        let storage_dir = create_test_storage_files();
+        let storage_dir = create_test_storage_files(1);
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
         let flag_value_file =
@@ -155,7 +155,7 @@ mod aconfig_storage_rust_test {
 
     #[test]
     fn test_invalid_boolean_flag_value_query() {
-        let storage_dir = create_test_storage_files();
+        let storage_dir = create_test_storage_files(1);
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
         let flag_value_file =
@@ -169,7 +169,7 @@ mod aconfig_storage_rust_test {
 
     #[test]
     fn test_flag_info_query() {
-        let storage_dir = create_test_storage_files();
+        let storage_dir = create_test_storage_files(1);
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
         let flag_info_file =
@@ -186,7 +186,7 @@ mod aconfig_storage_rust_test {
 
     #[test]
     fn test_invalid_boolean_flag_info_query() {
-        let storage_dir = create_test_storage_files();
+        let storage_dir = create_test_storage_files(1);
         // SAFETY:
         // The safety here is ensured as the test process will not write to temp storage file
         let flag_info_file =
@@ -199,10 +199,18 @@ mod aconfig_storage_rust_test {
     }
 
     #[test]
-    fn test_storage_version_query() {
-        assert_eq!(get_storage_file_version("./data/v1/package.map").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./data/v1/flag.map").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./data/v1/flag.val").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./data/v1/flag.info").unwrap(), 1);
+    fn test_storage_version_query_v1() {
+        assert_eq!(get_storage_file_version("./data/v1/package_v1.map").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./data/v1/flag_v1.map").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./data/v1/flag_v1.val").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./data/v1/flag_v1.info").unwrap(), 1);
+    }
+
+    #[test]
+    fn test_storage_version_query_v2() {
+        assert_eq!(get_storage_file_version("./data/v2/package_v2.map").unwrap(), 2);
+        assert_eq!(get_storage_file_version("./data/v2/flag_v2.map").unwrap(), 2);
+        assert_eq!(get_storage_file_version("./data/v2/flag_v2.val").unwrap(), 2);
+        assert_eq!(get_storage_file_version("./data/v2/flag_v2.info").unwrap(), 2);
     }
 }
