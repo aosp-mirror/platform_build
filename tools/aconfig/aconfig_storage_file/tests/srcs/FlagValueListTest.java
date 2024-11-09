@@ -34,7 +34,7 @@ public class FlagValueListTest {
     @Test
     public void testFlagValueList_rightHeader() throws Exception {
         FlagValueList flagValueList =
-                FlagValueList.fromBytes(TestDataUtils.getTestFlagValByteBuffer());
+                FlagValueList.fromBytes(TestDataUtils.getTestFlagValByteBuffer(1));
         FlagValueList.Header header = flagValueList.getHeader();
         assertEquals(1, header.getVersion());
         assertEquals("mockup", header.getContainer());
@@ -47,7 +47,7 @@ public class FlagValueListTest {
     @Test
     public void testFlagValueList_rightNode() throws Exception {
         FlagValueList flagValueList =
-                FlagValueList.fromBytes(TestDataUtils.getTestFlagValByteBuffer());
+                FlagValueList.fromBytes(TestDataUtils.getTestFlagValByteBuffer(1));
 
         boolean[] expected = new boolean[] {false, true, true, false, true, true, true, true};
         assertEquals(expected.length, flagValueList.size());
@@ -60,11 +60,11 @@ public class FlagValueListTest {
     @Test
     public void testFlagValueList_getValue() throws Exception {
         PackageTable packageTable =
-                PackageTable.fromBytes(TestDataUtils.getTestPackageMapByteBuffer());
-        FlagTable flagTable = FlagTable.fromBytes(TestDataUtils.getTestFlagMapByteBuffer());
+                PackageTable.fromBytes(TestDataUtils.getTestPackageMapByteBuffer(1));
+        FlagTable flagTable = FlagTable.fromBytes(TestDataUtils.getTestFlagMapByteBuffer(1));
 
         FlagValueList flagValueList =
-                FlagValueList.fromBytes(TestDataUtils.getTestFlagValByteBuffer());
+                FlagValueList.fromBytes(TestDataUtils.getTestFlagValByteBuffer(1));
 
         PackageTable.Node pNode = packageTable.get("com.android.aconfig.storage.test_1");
         FlagTable.Node fNode = flagTable.get(pNode.getPackageId(), "enabled_rw");

@@ -83,7 +83,7 @@ mod tests {
         let flag_info_list = create_test_flag_info_list_from_source();
         assert!(flag_info_list.is_ok());
         let expected_flag_info_list =
-            aconfig_storage_file::test_utils::create_test_flag_info_list();
+            aconfig_storage_file::test_utils::create_test_flag_info_list(DEFAULT_FILE_VERSION);
         assert_eq!(flag_info_list.unwrap(), expected_flag_info_list);
     }
 }

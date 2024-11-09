@@ -48,12 +48,12 @@ pub fn find_boolean_flag_value(buf: &[u8], flag_index: u32) -> Result<bool, Acon
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::test_utils::create_test_flag_value_list;
+    use aconfig_storage_file::{test_utils::create_test_flag_value_list, DEFAULT_FILE_VERSION};
 
     #[test]
     // this test point locks down flag value query
     fn test_flag_value_query() {
-        let flag_value_list = create_test_flag_value_list().into_bytes();
+        let flag_value_list = create_test_flag_value_list(DEFAULT_FILE_VERSION).into_bytes();
         let baseline: Vec<bool> = vec![false, true, true, false, true, true, true, true];
         for (offset, expected_value) in baseline.into_iter().enumerate() {
             let flag_value = find_boolean_flag_value(&flag_value_list[..], offset as u32).unwrap();
@@ -64,7 +64,7 @@ mod tests {
     #[test]
     // this test point locks down query beyond the end of boolean section
     fn test_boolean_out_of_range() {
-        let flag_value_list = create_test_flag_value_list().into_bytes();
+        let flag_value_list = create_test_flag_value_list(DEFAULT_FILE_VERSION).into_bytes();
         let error = find_boolean_flag_value(&flag_value_list[..], 8).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
@@ -75,7 +75,7 @@ mod tests {
     #[test]
     // this test point locks down query error when file has a higher version
     fn test_higher_version_storage_file() {
-        let mut value_list = create_test_flag_value_list();
+        let mut value_list = create_test_flag_value_list(DEFAULT_FILE_VERSION);
         value_list.header.version = MAX_SUPPORTED_FILE_VERSION + 1;
         let flag_value = value_list.into_bytes();
         let error = find_boolean_flag_value(&flag_value[..], 4).unwrap_err();

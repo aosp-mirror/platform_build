@@ -599,10 +599,15 @@ mod tests {
     // this test point locks down the flag list api
     fn test_list_flag() {
         let package_table =
-            write_bytes_to_temp_file(&create_test_package_table().into_bytes()).unwrap();
-        let flag_table = write_bytes_to_temp_file(&create_test_flag_table().into_bytes()).unwrap();
-        let flag_value_list =
-            write_bytes_to_temp_file(&create_test_flag_value_list().into_bytes()).unwrap();
+            write_bytes_to_temp_file(&create_test_package_table(DEFAULT_FILE_VERSION).into_bytes())
+                .unwrap();
+        let flag_table =
+            write_bytes_to_temp_file(&create_test_flag_table(DEFAULT_FILE_VERSION).into_bytes())
+                .unwrap();
+        let flag_value_list = write_bytes_to_temp_file(
+            &create_test_flag_value_list(DEFAULT_FILE_VERSION).into_bytes(),
+        )
+        .unwrap();
 
         let package_table_path = package_table.path().display().to_string();
         let flag_table_path = flag_table.path().display().to_string();
@@ -667,12 +672,19 @@ mod tests {
     // this test point locks down the flag list with info api
     fn test_list_flag_with_info() {
         let package_table =
-            write_bytes_to_temp_file(&create_test_package_table().into_bytes()).unwrap();
-        let flag_table = write_bytes_to_temp_file(&create_test_flag_table().into_bytes()).unwrap();
-        let flag_value_list =
-            write_bytes_to_temp_file(&create_test_flag_value_list().into_bytes()).unwrap();
-        let flag_info_list =
-            write_bytes_to_temp_file(&create_test_flag_info_list().into_bytes()).unwrap();
+            write_bytes_to_temp_file(&create_test_package_table(DEFAULT_FILE_VERSION).into_bytes())
+                .unwrap();
+        let flag_table =
+            write_bytes_to_temp_file(&create_test_flag_table(DEFAULT_FILE_VERSION).into_bytes())
+                .unwrap();
+        let flag_value_list = write_bytes_to_temp_file(
+            &create_test_flag_value_list(DEFAULT_FILE_VERSION).into_bytes(),
+        )
+        .unwrap();
+        let flag_info_list = write_bytes_to_temp_file(
+            &create_test_flag_info_list(DEFAULT_FILE_VERSION).into_bytes(),
+        )
+        .unwrap();
 
         let package_table_path = package_table.path().display().to_string();
         let flag_table_path = flag_table.path().display().to_string();
