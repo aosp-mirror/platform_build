@@ -275,10 +275,6 @@ $(call add_json_str,  DeviceCurrentApiLevelForVendorModules,  $(BOARD_CURRENT_AP
 
 $(call add_json_bool, CompressedApex, $(filter true,$(PRODUCT_COMPRESSED_APEX)))
 
-ifndef APEX_BUILD_FOR_PRE_S_DEVICES
-$(call add_json_bool, TrimmedApex, $(filter true,$(PRODUCT_TRIMMED_APEX)))
-endif
-
 $(call add_json_bool, BoardUsesRecoveryAsBoot, $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)))
 
 $(call add_json_list, BoardKernelBinaries, $(BOARD_KERNEL_BINARIES))

@@ -83,7 +83,7 @@ class DaemonManager:
     if not utils.is_feature_enabled(
         "edit_monitor",
         self.user_name,
-        "ENABLE_EDIT_MONITOR",
+        "ENABLE_ANDROID_EDIT_MONITOR",
         10,
     ):
       logging.warning("Edit monitor is disabled, exiting...")
