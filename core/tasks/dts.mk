@@ -1,4 +1,3 @@
-#
 # Copyright (C) 2024 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +11,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-# This file contains the trunk-stable flags that should be exported to all
-# Android targets.
+# Desktop test suite
+ifneq ($(wildcard test/dts/tools/dts-tradefed/README),)
+test_suite_name := dts
+test_suite_tradefed := dts-tradefed
+test_suite_readme := test/dts/tools/dts-tradefed/README
+test_suite_tools := $(HOST_OUT_JAVA_LIBRARIES)/ats_console_deploy.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/ats_olc_server_local_mode_deploy.jar
 
-# Control libbinder client caching
-$(call soong_config_set, libbinder, release_libbinder_client_cache, $(RELEASE_LIBBINDER_CLIENT_CACHE))
+include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
 
-# Use the configured release of sqlite
-$(call soong_config_set, libsqlite3, release_package_libsqlite3, $(RELEASE_PACKAGE_LIBSQLITE3))
-
-# Use the configured MessageQueue implementation
-$(call soong_config_set, messagequeue, release_package_messagequeue_implementation, $(RELEASE_PACKAGE_MESSAGEQUEUE_IMPLEMENTATION))
+.PHONY: dts
+dts: $(compatibility_zip) $(compatibility_tests_list_zip)
+$(call dist-for-goals, dts, $(compatibility_zip) $(compatibility_tests_list_zip))
+endif
