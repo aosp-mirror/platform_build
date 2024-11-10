@@ -32,6 +32,7 @@ use aconfig_storage_file::StorageFileType;
 pub struct FlagPackage<'a> {
     pub package_name: &'a str,
     pub package_id: u32,
+    pub fingerprint: u64,
     pub flag_names: HashSet<&'a str>,
     pub boolean_flags: Vec<&'a ProtoParsedFlag>,
     // The index of the first boolean flag in this aconfig package among all boolean
@@ -44,6 +45,7 @@ impl<'a> FlagPackage<'a> {
         FlagPackage {
             package_name,
             package_id,
+            fingerprint: 0,
             flag_names: HashSet::new(),
             boolean_flags: vec![],
             boolean_start_index: 0,
@@ -79,6 +81,8 @@ where
     for p in packages.iter_mut() {
         p.boolean_start_index = boolean_start_index;
         boolean_start_index += p.boolean_flags.len() as u32;
+
+        // TODO: b/316357686 - Calculate fingerprint and add to package.
     }
 
     packages

@@ -19,8 +19,6 @@ package android.aconfig.storage;
 import android.os.StrictMode;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 /** @hide */
 public class AconfigPackageImpl {
@@ -29,25 +27,26 @@ public class AconfigPackageImpl {
     private PackageTable.Node mPNode;
 
     /** @hide */
+    private AconfigPackageImpl() {}
+
+    /** @hide */
     public static AconfigPackageImpl load(String packageName, StorageFileProvider fileProvider) {
-        AconfigPackageImpl aPackage = new AconfigPackageImpl();
-        if (!aPackage.init(null, packageName, fileProvider)) {
-            return null;
-        }
-        return aPackage;
+        AconfigPackageImpl impl = new AconfigPackageImpl();
+        impl.init(null, packageName, fileProvider);
+        return impl;
     }
 
     /** @hide */
     public static AconfigPackageImpl load(
             String container, String packageName, StorageFileProvider fileProvider) {
         if (container == null) {
-            return null;
+            throw new AconfigStorageException(
+                    AconfigStorageException.ERROR_CONTAINER_NOT_FOUND,
+                    "container null cannot be found on the device");
         }
-        AconfigPackageImpl aPackage = new AconfigPackageImpl();
-        if (!aPackage.init(container, packageName, fileProvider)) {
-            return null;
-        }
-        return aPackage;
+        AconfigPackageImpl impl = new AconfigPackageImpl();
+        impl.init(container, packageName, fileProvider);
+        return impl;
     }
 
     /** @hide */
@@ -74,61 +73,65 @@ public class AconfigPackageImpl {
         return mPNode.hasPackageFingerprint();
     }
 
-    private boolean init(
-            String containerName, String packageName, StorageFileProvider fileProvider) {
+    private void init(String containerName, String packageName, StorageFileProvider fileProvider) {
         StrictMode.ThreadPolicy oldPolicy = StrictMode.allowThreadDiskReads();
         String container = containerName;
         try {
             // for devices don't have new storage directly return
             if (!fileProvider.containerFileExists(null)) {
-                return false;
+                throw new AconfigStorageException(
+                        AconfigStorageException.ERROR_STORAGE_SYSTEM_NOT_FOUND,
+                        "aconfig storage cannot be found on the device");
             }
             PackageTable.Node pNode = null;
 
             if (container == null) {
-                PackageTable pTable = null;
-                // check if device has flag files on the system partition
-                // if the device has then search system partition first
+                // Check if the device has flag files on the system partition.
+                // If the device does, search the system partition first.
                 container = "system";
                 if (fileProvider.containerFileExists(container)) {
-                    pTable = fileProvider.getPackageTable(container);
-                    pNode = pTable.get(packageName);
-                }
-                List<Path> mapFiles = new ArrayList<>();
-                if (pNode == null) {
-                    mapFiles = fileProvider.listPackageMapFiles();
-                    if (mapFiles.isEmpty()) return false;
+                    pNode = fileProvider.getPackageTable(container).get(packageName);
                 }
 
-                for (Path p : mapFiles) {
-                    pTable = StorageFileProvider.getPackageTable(p);
-                    pNode = pTable.get(packageName);
-                    if (pNode != null) {
-                        container = pTable.getHeader().getContainer();
-                        break;
+                if (pNode == null) {
+                    // Search all package map files if not found in the system partition.
+                    for (Path p : fileProvider.listPackageMapFiles()) {
+                        PackageTable pTable = StorageFileProvider.getPackageTable(p);
+                        pNode = pTable.get(packageName);
+                        if (pNode != null) {
+                            container = pTable.getHeader().getContainer();
+                            break;
+                        }
                     }
                 }
             } else {
+                if (!fileProvider.containerFileExists(container)) {
+                    throw new AconfigStorageException(
+                            AconfigStorageException.ERROR_CONTAINER_NOT_FOUND,
+                            "container " + container + " cannot be found on the device");
+                }
                 pNode = fileProvider.getPackageTable(container).get(packageName);
             }
 
             if (pNode == null) {
                 // for the case package is not found in all container, return instead of throwing
                 // error
-                return false;
+                throw new AconfigStorageException(
+                        AconfigStorageException.ERROR_PACKAGE_NOT_FOUND,
+                        "package "
+                                + packageName
+                                + " in container "
+                                + container
+                                + " cannot be found on the device");
             }
 
             mFlagTable = fileProvider.getFlagTable(container);
             mFlagValueList = fileProvider.getFlagValueList(container);
             mPNode = pNode;
         } catch (Exception e) {
-            throw new AconfigStorageException(
-                    String.format(
-                            "cannot load package %s, from container %s", packageName, container),
-                    e);
+            throw e;
         } finally {
             StrictMode.setThreadPolicy(oldPolicy);
         }
-        return true;
     }
 }

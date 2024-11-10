@@ -48,7 +48,8 @@ class EditMonitorIntegrationTest(unittest.TestCase):
     )
     self.root_monitoring_path.mkdir()
     self.edit_monitor_binary_path = self._import_executable("edit_monitor")
-    self.patch = mock.patch.dict(os.environ, {'ENABLE_EDIT_MONITOR': 'true'})
+    self.patch = mock.patch.dict(
+        os.environ, {'ENABLE_ANDROID_EDIT_MONITOR': 'true'})
     self.patch.start()
 
   def tearDown(self):

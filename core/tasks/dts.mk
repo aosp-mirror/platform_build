@@ -1,5 +1,3 @@
-#!/bin/bash -e
-
 # Copyright (C) 2024 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,15 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This script is used to generate the ide_query.out file.
-#
-# The ide_query.out file is a pre-computed result of running ide_query.sh
-# on a set of files. This allows the prober to run its tests without running
-# ide_query.sh. The prober doesn't check-out the full source code, so it
-# can't run ide_query.sh itself.
+# Desktop test suite
+ifneq ($(wildcard test/dts/tools/dts-tradefed/README),)
+test_suite_name := dts
+test_suite_tradefed := dts-tradefed
+test_suite_readme := test/dts/tools/dts-tradefed/README
+test_suite_tools := $(HOST_OUT_JAVA_LIBRARIES)/ats_console_deploy.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/ats_olc_server_local_mode_deploy.jar
 
-files_to_build=(
-  build/make/tools/ide_query/prober_scripts/cpp/general.cc
-)
+include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
 
-build/make/tools/ide_query/ide_query.sh --lunch_target=aosp_arm-trunk_staging-eng ${files_to_build[@]} > build/make/tools/ide_query/prober_scripts/ide_query.out
+.PHONY: dts
+dts: $(compatibility_zip) $(compatibility_tests_list_zip)
+$(call dist-for-goals, dts, $(compatibility_zip) $(compatibility_tests_list_zip))
+endif
