@@ -47,6 +47,7 @@ impl PackageTableNodeWrapper {
         let node = PackageTableNode {
             package_name: String::from(package.package_name),
             package_id: package.package_id,
+            fingerprint: package.fingerprint,
             boolean_start_index: package.boolean_start_index,
             next_offset: None,
         };
@@ -127,7 +128,8 @@ mod tests {
     fn test_table_contents() {
         let package_table = create_test_package_table_from_source();
         assert!(package_table.is_ok());
-        let expected_package_table = aconfig_storage_file::test_utils::create_test_package_table();
+        let expected_package_table =
+            aconfig_storage_file::test_utils::create_test_package_table(DEFAULT_FILE_VERSION);
         assert_eq!(package_table.unwrap(), expected_package_table);
     }
 }

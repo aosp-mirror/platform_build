@@ -81,7 +81,8 @@ class DaemonManagerTest(unittest.TestCase):
     # Sets the tempdir under the working dir so any temp files created during
     # tests will be cleaned.
     tempfile.tempdir = self.working_dir.name
-    self.patch = mock.patch.dict(os.environ, {'ENABLE_EDIT_MONITOR': 'true'})
+    self.patch = mock.patch.dict(
+        os.environ, {'ENABLE_ANDROID_EDIT_MONITOR': 'true'})
     self.patch.start()
 
   def tearDown(self):
@@ -136,7 +137,7 @@ class DaemonManagerTest(unittest.TestCase):
     # Verify no daemon process is started.
     self.assertIsNone(dm.daemon_process)
 
-  @mock.patch.dict(os.environ, {'ENABLE_EDIT_MONITOR': 'false'}, clear=True)
+  @mock.patch.dict(os.environ, {'ENABLE_ANDROID_EDIT_MONITOR': 'false'}, clear=True)
   def test_start_return_directly_if_disabled(self):
     dm = daemon_manager.DaemonManager(TEST_BINARY_FILE)
     dm.start()

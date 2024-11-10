@@ -53,7 +53,7 @@ public class StorageFileProvider {
     /** @hide */
     public boolean containerFileExists(String container) {
         if (container == null) {
-            return Files.exists(Paths.get(DEFAULT_MAP_PATH));
+            return Files.exists(Paths.get(mMapPath));
         }
         return Files.exists(Paths.get(mMapPath, container + PMAP_FILE_EXT));
     }
@@ -105,7 +105,9 @@ public class StorageFileProvider {
             return channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
         } catch (Exception e) {
             throw new AconfigStorageException(
-                    String.format("Fail to mmap storage file %s", file), e);
+                    AconfigStorageException.ERROR_CANNOT_READ_STORAGE_FILE,
+                    String.format("Fail to mmap storage file %s", file),
+                    e);
         } finally {
             quietlyDispose(channel);
         }
