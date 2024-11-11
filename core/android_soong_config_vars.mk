@@ -204,6 +204,19 @@ endif
 # Required as platform_bootclasspath is using this namespace
 $(call soong_config_set,bootclasspath,release_crashrecovery_module,$(RELEASE_CRASHRECOVERY_MODULE))
 
+
+# Add ondeviceintelligence module build flag to soong
+ifeq (true,$(RELEASE_ONDEVICE_INTELLIGENCE_MODULE))
+    $(call soong_config_set,ANDROID,release_ondevice_intelligence_module,true)
+    # Required as platform_bootclasspath is using this namespace
+    $(call soong_config_set,bootclasspath,release_ondevice_intelligence_module,true)
+
+else
+    $(call soong_config_set,ANDROID,release_ondevice_intelligence_platform,true)
+    $(call soong_config_set,bootclasspath,release_ondevice_intelligence_platform,true)
+
+endif
+
 # Add uprobestats build flag to soong
 $(call soong_config_set,ANDROID,release_uprobestats_module,$(RELEASE_UPROBESTATS_MODULE))
 # Add uprobestats file move flags to soong, for both platform and module
