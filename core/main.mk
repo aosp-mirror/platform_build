@@ -268,6 +268,9 @@ $(shell $(call echo-error,$(LOCAL_MODULE_MAKEFILE),$(LOCAL_MODULE): $(1)))
 $(error done)
 endef
 
+# Rules to create android-info.txt and device sku manifest files
+include build/make/target/board/android-info.mk
+
 subdir_makefiles_inc := .
 FULL_BUILD :=
 
