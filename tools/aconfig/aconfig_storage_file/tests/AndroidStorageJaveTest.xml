@@ -21,14 +21,15 @@
     </target_preparer>
     <target_preparer class="com.android.compatibility.common.tradefed.targetprep.FilePusher">
         <option name="cleanup" value="true" />
-        <option name="push" value="package_v1.map->/data/local/tmp/aconfig_storage_file_test_java/testdata/package_v1.map" />
-        <option name="push" value="flag_v1.map->/data/local/tmp/aconfig_storage_file_test_java/testdata/flag_v1.map" />
-        <option name="push" value="flag_v1.val->/data/local/tmp/aconfig_storage_file_test_java/testdata/flag_v1.val" />
-        <option name="push" value="flag_v1.info->/data/local/tmp/aconfig_storage_file_test_java/testdata/flag_v1.info" />
-        <option name="push" value="package_v2.map->/data/local/tmp/aconfig_storage_file_test_java/testdata/package_v2.map" />
-        <option name="push" value="flag_v2.map->/data/local/tmp/aconfig_storage_file_test_java/testdata/flag_v2.map" />
-        <option name="push" value="flag_v2.val->/data/local/tmp/aconfig_storage_file_test_java/testdata/flag_v2.val" />
-        <option name="push" value="flag_v2.info->/data/local/tmp/aconfig_storage_file_test_java/testdata/flag_v2.info" />
+        <option name="push" value="package_v1.map->/data/local/tmp/aconfig_storage_file_test_java/testdata/mock.v1.package.map" />
+        <option name="push" value="flag_v1.map->/data/local/tmp/aconfig_storage_file_test_java/testdata/mock.v1.flag.map" />
+        <option name="push" value="flag_v1.val->/data/local/tmp/aconfig_storage_file_test_java/testdata/mock.v1.val" />
+        <option name="push" value="flag_v1.info->/data/local/tmp/aconfig_storage_file_test_java/testdata/mock.v1.info" />
+        <option name="push" value="package_v2.map->/data/local/tmp/aconfig_storage_file_test_java/testdata/mock.v2.package.map" />
+        <option name="push" value="flag_v2.map->/data/local/tmp/aconfig_storage_file_test_java/testdata/mock.v2.flag.map" />
+        <option name="push" value="flag_v2.val->/data/local/tmp/aconfig_storage_file_test_java/testdata/mock.v2.val" />
+        <option name="push" value="flag_v2.info->/data/local/tmp/aconfig_storage_file_test_java/testdata/mock.v2.info" />
+        <option name="post-push" value="chmod +r /data/local/tmp/aconfig_storage_file_test_java/testdata/" />
     </target_preparer>
     <test class="com.android.tradefed.testtype.AndroidJUnitTest" >
         <option name="package" value="android.aconfig.storage.test" />
