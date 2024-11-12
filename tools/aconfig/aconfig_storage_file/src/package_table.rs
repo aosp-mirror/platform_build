@@ -100,6 +100,7 @@ impl PackageTableHeader {
 pub struct PackageTableNode {
     pub package_name: String,
     pub package_id: u32,
+    pub fingerprint: u64,
     // The index of the first boolean flag in this aconfig package among all boolean
     // flags in this container.
     pub boolean_start_index: u32,
@@ -111,8 +112,12 @@ impl fmt::Debug for PackageTableNode {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         writeln!(
             f,
-            "Package: {}, Id: {}, Boolean flag start index: {}, Next: {:?}",
-            self.package_name, self.package_id, self.boolean_start_index, self.next_offset
+            "Package: {}, Id: {}, Fingerprint: {}, Boolean flag start index: {}, Next: {:?}",
+            self.package_name,
+            self.package_id,
+            self.fingerprint,
+            self.boolean_start_index,
+            self.next_offset
         )?;
         Ok(())
     }
@@ -146,9 +151,7 @@ impl PackageTableNode {
         result.extend_from_slice(&(name_bytes.len() as u32).to_le_bytes());
         result.extend_from_slice(name_bytes);
         result.extend_from_slice(&self.package_id.to_le_bytes());
-        // V2 storage files have a fingerprint. Current struct (v1) does not, so
-        // we write 0.
-        result.extend_from_slice(&0u64.to_le_bytes());
+        result.extend_from_slice(&self.fingerprint.to_le_bytes());
         result.extend_from_slice(&self.boolean_start_index.to_le_bytes());
         result.extend_from_slice(&self.next_offset.unwrap_or(0).to_le_bytes());
         result
@@ -172,13 +175,15 @@ impl PackageTableNode {
         let mut head = 0;
         let package_name = read_str_from_bytes(bytes, &mut head)?;
         let package_id = read_u32_from_bytes(bytes, &mut head)?;
+        // v1 does not have fingerprint, so just set to 0.
+        let fingerprint: u64 = 0;
         let boolean_start_index = read_u32_from_bytes(bytes, &mut head)?;
         let next_offset = match read_u32_from_bytes(bytes, &mut head)? {
             0 => None,
             val => Some(val),
         };
 
-        let node = Self { package_name, package_id, boolean_start_index, next_offset };
+        let node = Self { package_name, package_id, fingerprint, boolean_start_index, next_offset };
         Ok(node)
     }
 
@@ -186,18 +191,14 @@ impl PackageTableNode {
         let mut head = 0;
         let package_name = read_str_from_bytes(bytes, &mut head)?;
         let package_id = read_u32_from_bytes(bytes, &mut head)?;
-
-        // Fingerprint is unused in the current struct (v1), but we need to read
-        // the bytes if the storage file type is v2 or else the subsequent
-        // fields will be inaccurate.
-        let _fingerprint = read_u64_from_bytes(bytes, &mut head)?;
+        let fingerprint = read_u64_from_bytes(bytes, &mut head)?;
         let boolean_start_index = read_u32_from_bytes(bytes, &mut head)?;
         let next_offset = match read_u32_from_bytes(bytes, &mut head)? {
             0 => None,
             val => Some(val),
         };
 
-        let node = Self { package_name, package_id, boolean_start_index, next_offset };
+        let node = Self { package_name, package_id, fingerprint, boolean_start_index, next_offset };
         Ok(node)
     }
 
@@ -281,13 +282,37 @@ impl PackageTable {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::read_u32_from_start_of_bytes;
-    use crate::{test_utils::create_test_package_table, DEFAULT_FILE_VERSION};
+    use crate::test_utils::create_test_package_table;
+    use crate::{read_u32_from_start_of_bytes, DEFAULT_FILE_VERSION, MAX_SUPPORTED_FILE_VERSION};
 
     #[test]
     // this test point locks down the table serialization
-    fn test_serialization() {
-        let package_table = create_test_package_table();
+    // TODO: b/376108268 - Use parameterized tests.
+    fn test_serialization_default() {
+        let package_table = create_test_package_table(DEFAULT_FILE_VERSION);
+        let header: &PackageTableHeader = &package_table.header;
+        let reinterpreted_header = PackageTableHeader::from_bytes(&header.into_bytes());
+        assert!(reinterpreted_header.is_ok());
+        assert_eq!(header, &reinterpreted_header.unwrap());
+
+        let nodes: &Vec<PackageTableNode> = &package_table.nodes;
+        for node in nodes.iter() {
+            let reinterpreted_node =
+                PackageTableNode::from_bytes(&node.into_bytes(header.version), header.version)
+                    .unwrap();
+            assert_eq!(node, &reinterpreted_node);
+        }
+
+        let package_table_bytes = package_table.into_bytes();
+        let reinterpreted_table = PackageTable::from_bytes(&package_table_bytes);
+        assert!(reinterpreted_table.is_ok());
+        assert_eq!(&package_table, &reinterpreted_table.unwrap());
+        assert_eq!(package_table_bytes.len() as u32, header.file_size);
+    }
+
+    #[test]
+    fn test_serialization_max() {
+        let package_table = create_test_package_table(MAX_SUPPORTED_FILE_VERSION);
         let header: &PackageTableHeader = &package_table.header;
         let reinterpreted_header = PackageTableHeader::from_bytes(&header.into_bytes());
         assert!(reinterpreted_header.is_ok());
@@ -312,44 +337,36 @@ mod tests {
     // this test point locks down that version number should be at the top of serialized
     // bytes
     fn test_version_number() {
-        let package_table = create_test_package_table();
+        let package_table = create_test_package_table(DEFAULT_FILE_VERSION);
         let bytes = &package_table.into_bytes();
-        let version = read_u32_from_start_of_bytes(bytes).unwrap();
-        assert_eq!(version, DEFAULT_FILE_VERSION);
+        let unpacked_version = read_u32_from_start_of_bytes(bytes).unwrap();
+        assert_eq!(unpacked_version, DEFAULT_FILE_VERSION);
     }
 
     #[test]
-    fn test_round_trip_v1() {
-        let table_v1: PackageTable = create_test_package_table();
-        let table_bytes_v1 = table_v1.into_bytes();
+    fn test_round_trip_default() {
+        let table: PackageTable = create_test_package_table(DEFAULT_FILE_VERSION);
+        let table_bytes = table.into_bytes();
 
-        // Will automatically read from version 2 as the version code is encoded
-        // into the bytes.
-        let reinterpreted_table = PackageTable::from_bytes(&table_bytes_v1).unwrap();
+        let reinterpreted_table = PackageTable::from_bytes(&table_bytes).unwrap();
 
-        assert_eq!(table_v1, reinterpreted_table);
+        assert_eq!(table, reinterpreted_table);
     }
 
     #[test]
-    fn test_round_trip_v2() {
-        // Have to fake v2 because though we will set the version to v2
-        // and write the bytes as v2, we don't have the ability to actually set
-        // the fingerprint yet.
-        let mut fake_table_v2 = create_test_package_table();
-        fake_table_v2.header.version = 2;
-        let table_bytes_v2 = fake_table_v2.into_bytes();
+    fn test_round_trip_max() {
+        let table: PackageTable = create_test_package_table(MAX_SUPPORTED_FILE_VERSION);
+        let table_bytes = table.into_bytes();
 
-        // Will automatically read from version 2 as the version code is encoded
-        // into the bytes.
-        let reinterpreted_table = PackageTable::from_bytes(&table_bytes_v2).unwrap();
+        let reinterpreted_table = PackageTable::from_bytes(&table_bytes).unwrap();
 
-        assert_eq!(fake_table_v2, reinterpreted_table);
+        assert_eq!(table, reinterpreted_table);
     }
 
     #[test]
     // this test point locks down file type check
     fn test_file_type_check() {
-        let mut package_table = create_test_package_table();
+        let mut package_table = create_test_package_table(DEFAULT_FILE_VERSION);
         package_table.header.file_type = 123u8;
         let error = PackageTable::from_bytes(&package_table.into_bytes()).unwrap_err();
         assert_eq!(
