@@ -35,11 +35,11 @@
     <target_preparer class="com.android.tradefed.targetprep.PushFilePreparer">
         <option name="cleanup" value="true" />
         <option name="abort-on-push-failure" value="true" />
-        <option name="push-file" key="package.map"
+        <option name="push-file" key="package_v1.map"
                 value="/data/local/tmp/aconfig_java_api_test/maps/mockup.package.map" />
-        <option name="push-file" key="flag.map"
+        <option name="push-file" key="flag_v1.map"
                 value="/data/local/tmp/aconfig_java_api_test/maps/mockup.flag.map" />
-        <option name="push-file" key="flag.val"
+        <option name="push-file" key="flag_v1.val"
                 value="/data/local/tmp/aconfig_java_api_test/boot/mockup.val" />
     </target_preparer>
 

@@ -18,6 +18,7 @@
 PRODUCT_PACKAGES += \
     abx \
     aconfigd \
+    aconfigd-system \
     adbd_system_api \
     aflags \
     am \
@@ -212,6 +213,7 @@ PRODUCT_PACKAGES += \
     libwilhelm \
     linker \
     llkd \
+    llndk_libs \
     lmkd \
     LocalTransport \
     locksettings \

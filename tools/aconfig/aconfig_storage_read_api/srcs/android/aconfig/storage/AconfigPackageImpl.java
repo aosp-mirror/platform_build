@@ -25,107 +25,98 @@ public class AconfigPackageImpl {
     private FlagTable mFlagTable;
     private FlagValueList mFlagValueList;
     private PackageTable.Node mPNode;
+    private final int mPackageId;
+    private final int mBooleanStartIndex;
 
-    /** @hide */
-    public static final int ERROR_NEW_STORAGE_SYSTEM_NOT_FOUND = 1;
-
-    /** @hide */
-    public static final int ERROR_PACKAGE_NOT_FOUND = 2;
-
-    /** @hide */
-    public static final int ERROR_CONTAINER_NOT_FOUND = 3;
-
-    /** @hide */
-    public AconfigPackageImpl() {}
-
-    /** @hide */
-    public int load(String packageName, StorageFileProvider fileProvider) {
-        return init(null, packageName, fileProvider);
+    private AconfigPackageImpl(
+            FlagTable flagTable,
+            FlagValueList flagValueList,
+            int packageId,
+            int booleanStartIndex) {
+        this.mFlagTable = flagTable;
+        this.mFlagValueList = flagValueList;
+        this.mPackageId = packageId;
+        this.mBooleanStartIndex = booleanStartIndex;
     }
 
-    /** @hide */
-    public int load(String container, String packageName, StorageFileProvider fileProvider) {
-        if (container == null) {
-            return ERROR_CONTAINER_NOT_FOUND;
-        }
-
-        return init(container, packageName, fileProvider);
-    }
-
-    /** @hide */
-    public boolean getBooleanFlagValue(String flagName, boolean defaultValue) {
-        FlagTable.Node fNode = mFlagTable.get(mPNode.getPackageId(), flagName);
-        // no such flag in this package
-        if (fNode == null) return defaultValue;
-        int index = fNode.getFlagIndex() + mPNode.getBooleanStartIndex();
-        return mFlagValueList.getBoolean(index);
-    }
-
-    /** @hide */
-    public boolean getBooleanFlagValue(int index) {
-        return mFlagValueList.getBoolean(index + mPNode.getBooleanStartIndex());
-    }
-
-    /** @hide */
-    public long getPackageFingerprint() {
-        return mPNode.getPackageFingerprint();
-    }
-
-    /** @hide */
-    public boolean hasPackageFingerprint() {
-        return mPNode.hasPackageFingerprint();
-    }
-
-    private int init(String containerName, String packageName, StorageFileProvider fileProvider) {
+    public static AconfigPackageImpl load(String packageName, StorageFileProvider fileProvider) {
         StrictMode.ThreadPolicy oldPolicy = StrictMode.allowThreadDiskReads();
-        String container = containerName;
+        PackageTable.Node pNode = null;
         try {
-            // for devices don't have new storage directly return
-            if (!fileProvider.containerFileExists(null)) {
-                return ERROR_NEW_STORAGE_SYSTEM_NOT_FOUND;
-            }
-            PackageTable.Node pNode = null;
-
-            if (container == null) {
-                // Check if the device has flag files on the system partition.
-                // If the device does, search the system partition first.
-                container = "system";
-                if (fileProvider.containerFileExists(container)) {
-                    pNode = fileProvider.getPackageTable(container).get(packageName);
-                }
-
-                if (pNode == null) {
-                    // Search all package map files if not found in the system partition.
-                    for (Path p : fileProvider.listPackageMapFiles()) {
-                        PackageTable pTable = StorageFileProvider.getPackageTable(p);
-                        pNode = pTable.get(packageName);
-                        if (pNode != null) {
-                            container = pTable.getHeader().getContainer();
-                            break;
-                        }
-                    }
-                }
-            } else {
-                if (!fileProvider.containerFileExists(container)) {
-                    return ERROR_CONTAINER_NOT_FOUND;
-                }
-                pNode = fileProvider.getPackageTable(container).get(packageName);
-            }
-
-            if (pNode == null) {
-                // for the case package is not found in all container, return instead of throwing
-                // error
-                return ERROR_PACKAGE_NOT_FOUND;
-            }
-
-            mFlagTable = fileProvider.getFlagTable(container);
-            mFlagValueList = fileProvider.getFlagValueList(container);
-            mPNode = pNode;
+            // First try to find the package in the "system" container.
+            pNode = fileProvider.getPackageTable("system").get(packageName);
         } catch (Exception e) {
+            //
+        }
+        try {
+            if (pNode != null) {
+                return new AconfigPackageImpl(
+                        fileProvider.getFlagTable("system"),
+                        fileProvider.getFlagValueList("system"),
+                        pNode.getPackageId(),
+                        pNode.getBooleanStartIndex());
+            }
+
+            // If not found in "system", search all package map files.
+            for (Path p : fileProvider.listPackageMapFiles()) {
+                PackageTable pTable = fileProvider.getPackageTable(p);
+                pNode = pTable.get(packageName);
+                if (pNode != null) {
+                    return new AconfigPackageImpl(
+                            fileProvider.getFlagTable(pTable.getHeader().getContainer()),
+                            fileProvider.getFlagValueList(pTable.getHeader().getContainer()),
+                            pNode.getPackageId(),
+                            pNode.getBooleanStartIndex());
+                }
+            }
+        } catch (AconfigStorageException e) {
+            // Consider logging the exception.
             throw e;
         } finally {
             StrictMode.setThreadPolicy(oldPolicy);
         }
-        return 0;
+        // Package not found.
+        throw new AconfigStorageException(
+                AconfigStorageException.ERROR_PACKAGE_NOT_FOUND,
+                "Package " + packageName + " not found.");
+    }
+
+    public static AconfigPackageImpl load(
+            String container, String packageName, StorageFileProvider fileProvider) {
+
+        StrictMode.ThreadPolicy oldPolicy = StrictMode.allowThreadDiskReads();
+        try {
+            PackageTable.Node pNode = fileProvider.getPackageTable(container).get(packageName);
+            if (pNode != null) {
+                return new AconfigPackageImpl(
+                        fileProvider.getFlagTable(container),
+                        fileProvider.getFlagValueList(container),
+                        pNode.getPackageId(),
+                        pNode.getBooleanStartIndex());
+            }
+        } catch (AconfigStorageException e) {
+            // Consider logging the exception.
+            throw e;
+        } finally {
+            StrictMode.setThreadPolicy(oldPolicy);
+        }
+
+        throw new AconfigStorageException(
+                AconfigStorageException.ERROR_PACKAGE_NOT_FOUND,
+                "package "
+                        + packageName
+                        + " in container "
+                        + container
+                        + " cannot be found on the device");
+    }
+
+    public boolean getBooleanFlagValue(String flagName, boolean defaultValue) {
+        FlagTable.Node fNode = mFlagTable.get(mPackageId, flagName);
+        if (fNode == null) return defaultValue;
+        return mFlagValueList.getBoolean(fNode.getFlagIndex() + mBooleanStartIndex);
+    }
+
+    public boolean getBooleanFlagValue(int index) {
+        return mFlagValueList.getBoolean(index + mBooleanStartIndex);
     }
 }
