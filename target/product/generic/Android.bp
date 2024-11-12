@@ -348,7 +348,10 @@ android_system_image {
     dirs: android_rootdirs,
     symlinks: android_symlinks,
     file_contexts: ":plat_file_contexts",
-    linker_config_src: ":system_linker_config_json_file",
+    linkerconfig: {
+        gen_linker_config: true,
+        linker_config_srcs: [":system_linker_config_json_file"],
+    },
     fsverity: {
         inputs: [
             "etc/boot-image.prof",
@@ -379,6 +382,7 @@ android_system_image {
     deps: [
         "abx",
         "aconfigd",
+        "aconfigd-system",
         "aflags",
         "am",
         "android.software.credentials.prebuilt.xml", // generic_system
