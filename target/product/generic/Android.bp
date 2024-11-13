@@ -749,6 +749,11 @@ android_filesystem_defaults {
                     "AvatarPicker", // generic_system (RELEASE_AVATAR_PICKER_APP)
                 ],
                 default: [],
+            }) + select(release_flag("RELEASE_UPROBESTATS_MODULE"), {
+                true: [
+                    "com.android.uprobestats", // base_system (RELEASE_UPROBESTATS_MODULE)
+                ],
+                default: [],
             }),
         },
         prefer32: {
@@ -763,7 +768,12 @@ android_filesystem_defaults {
                 "android.system.virtualizationservice-ndk",
                 "libgsi",
                 "servicemanager",
-            ],
+            ] + select(release_flag("RELEASE_UPROBESTATS_MODULE"), {
+                true: [],
+                default: [
+                    "uprobestats", // base_system internal
+                ],
+            }),
         },
         both: {
             deps: [
@@ -836,6 +846,7 @@ android_filesystem_defaults {
                 "libmedia_jni", // base_system
                 "libmediandk", // base_system
                 "libminui", // generic_system
+                "libmonkey_jni", // base_system - internal
                 "libmtp", // base_system
                 "libnetd_client", // base_system
                 "libnetlink", // base_system
@@ -879,6 +890,11 @@ android_filesystem_defaults {
             }) + select(soong_config_variable("ANDROID", "TARGET_DYNAMIC_64_32_MEDIASERVER"), {
                 "true": ["mediaserver"],
                 default: [],
+            }) + select(release_flag("RELEASE_UPROBESTATS_MODULE"), {
+                true: [],
+                default: [
+                    "libuprobestats_client", // base_system internal
+                ],
             }),
         },
     },
