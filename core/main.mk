@@ -281,7 +281,17 @@ subdir_makefiles := $(SOONG_OUT_DIR)/installs-$(TARGET_PRODUCT)$(COVERAGE_SUFFIX
 
 # Android.mk files are only used on Linux builds, Mac only supports Android.bp
 ifeq ($(HOST_OS),linux)
-  subdir_makefiles += $(file <$(OUT_DIR)/.module_paths/Android.mk.list)
+  ifeq ($(PRODUCT_IGNORE_ALL_ANDROIDMK),true)
+    allowed_androidmk_files :=
+    ifdef PRODUCT_ANDROIDMK_ALLOWLIST_FILE
+      -include $(PRODUCT_ANDROIDMK_ALLOWLIST_FILE)
+    endif
+    allowed_androidmk_files += $(PRODUCT_ALLOWED_ANDROIDMK_FILES)
+    subdir_makefiles += $(filter $(allowed_androidmk_files),$(file <$(OUT_DIR)/.module_paths/Android.mk.list))
+    allowed_androidmk_files :=
+  else
+    subdir_makefiles += $(file <$(OUT_DIR)/.module_paths/Android.mk.list)
+  endif
 endif
 
 subdir_makefiles += $(SOONG_OUT_DIR)/late-$(TARGET_PRODUCT)$(COVERAGE_SUFFIX).mk
@@ -304,9 +314,6 @@ endif
 
 # Create necessary directories and symlinks in the root filesystem
 include system/core/rootdir/create_root_structure.mk
-
-# Rules to create android-info.txt and device sku manifest files
-include build/make/target/board/android-info.mk
 
 endif # dont_bother
 
