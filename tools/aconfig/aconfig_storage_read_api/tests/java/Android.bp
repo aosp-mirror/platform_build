@@ -28,7 +28,6 @@ android_test {
     team: "trendy_team_android_core_experiments",
     srcs: [
         "AconfigPackageImplTest.java",
-        "StorageFileProviderTest.java",
         "TestDataUtils.java",
     ],
     static_libs: [
