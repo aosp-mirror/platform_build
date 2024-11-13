@@ -60,6 +60,25 @@ $(strip $(1)): $(ACONFIG) $(strip $(3))
 $(call copy-one-file, $(1), $(2))
 endef
 
+$(foreach partition, $(_FLAG_PARTITIONS), \
+	$(eval aconfig_flag_summaries_protobuf.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/aconfig_flags.pb) \
+	$(eval $(call generate-partition-aconfig-flag-file, \
+			$(TARGET_OUT_FLAGS)/$(partition)/aconfig_flags.pb, \
+			$(aconfig_flag_summaries_protobuf.$(partition)), \
+			$(partition), \
+			$(sort \
+				$(foreach m, $(call register-names-for-partition, $(partition)), \
+					$(ALL_MODULES.$(m).ACONFIG_FILES) \
+				) \
+				$(if $(filter system, $(partition)), \
+					$(foreach m, $(call register-names-for-partition, system_ext), \
+						$(ALL_MODULES.$(m).ACONFIG_FILES) \
+					) \
+				) \
+			) \
+	)) \
+)
+
 # Collect the on-device flags into a single file, similar to all_aconfig_declarations.
 required_aconfig_flags_files := \
 		$(sort $(foreach partition, $(filter $(IMAGES_TO_BUILD), $(_FLAG_PARTITIONS)), \
@@ -129,25 +148,6 @@ $(call copy-one-file, $(strip $(4)), $(8))
 endef
 
 ifeq ($(RELEASE_CREATE_ACONFIG_STORAGE_FILE),true)
-$(foreach partition, $(_FLAG_PARTITIONS), \
-	$(eval aconfig_flag_summaries_protobuf.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/aconfig_flags.pb) \
-	$(eval $(call generate-partition-aconfig-flag-file, \
-			$(TARGET_OUT_FLAGS)/$(partition)/aconfig_flags.pb, \
-			$(aconfig_flag_summaries_protobuf.$(partition)), \
-			$(partition), \
-			$(sort \
-				$(foreach m, $(call register-names-for-partition, $(partition)), \
-					$(ALL_MODULES.$(m).ACONFIG_FILES) \
-				) \
-				$(if $(filter system, $(partition)), \
-					$(foreach m, $(call register-names-for-partition, system_ext), \
-						$(ALL_MODULES.$(m).ACONFIG_FILES) \
-					) \
-				) \
-			) \
-	)) \
-)
-
 $(foreach partition, $(_FLAG_PARTITIONS), \
 	$(eval aconfig_storage_package_map.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/aconfig/package.map) \
 	$(eval aconfig_storage_flag_map.$(partition) := $(PRODUCT_OUT)/$(partition)/etc/aconfig/flag.map) \
