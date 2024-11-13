@@ -180,6 +180,7 @@ PRODUCT_PACKAGES += \
     libmedia \
     libmedia_jni \
     libmediandk \
+    libmonkey_jni \
     libmtp \
     libnetd_client \
     libnetlink \
@@ -206,6 +207,7 @@ PRODUCT_PACKAGES += \
     libstdc++ \
     libsysutils \
     libui \
+    libuprobestats_client \
     libusbhost \
     libutils \
     libvintf_jni \
@@ -294,7 +296,6 @@ PRODUCT_PACKAGES += \
     uiautomator \
     uinput \
     uncrypt \
-    uprobestats \
     usbd \
     vdc \
     vintf \
@@ -309,6 +310,17 @@ PRODUCT_PACKAGES += \
 ifeq ($(RELEASE_CRASHRECOVERY_MODULE),true)
   PRODUCT_PACKAGES += \
         com.android.crashrecovery \
+
+endif
+
+# When we release uprobestats module
+ifeq ($(RELEASE_UPROBESTATS_MODULE),true)
+    PRODUCT_PACKAGES += \
+        com.android.uprobestats \
+
+else
+    PRODUCT_PACKAGES += \
+        uprobestats \
 
 endif
 

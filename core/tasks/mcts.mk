@@ -15,13 +15,24 @@
 ifneq ($(wildcard test/mts/README.md),)
 
 mcts_test_suites :=
-mcts_test_suites += mcts
+mcts_all_test_suites :=
+mcts_all_test_suites += mcts
 
 $(foreach module, $(mts_modules), $(eval mcts_test_suites += mcts-$(module)))
 
 $(foreach suite, $(mcts_test_suites), \
 	$(eval test_suite_name := $(suite)) \
 	$(eval test_suite_tradefed := mts-tradefed) \
+	$(eval test_suite_readme := test/mts/README.md) \
+	$(eval include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk) \
+	$(eval .PHONY: $(suite)) \
+	$(eval $(suite): $(compatibility_zip)) \
+	$(eval $(call dist-for-goals, $(suite), $(compatibility_zip))) \
+)
+
+$(foreach suite, $(mcts_all_test_suites), \
+	$(eval test_suite_name := $(suite)) \
+	$(eval test_suite_tradefed := mcts-tradefed) \
 	$(eval test_suite_readme := test/mts/README.md) \
 	$(eval include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk) \
 	$(eval .PHONY: $(suite)) \
