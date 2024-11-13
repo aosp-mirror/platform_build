@@ -1267,6 +1267,37 @@ boototapackage_16k: $(BUILT_BOOT_OTA_PACKAGE_16K)
 
 endif
 
+# Returns a list of EXTRA_INSTALL_ZIPS trios whose primary file is contained within $(1)
+# The trios will contain the primary installed file : the directory to unzip the zip to : the zip
+define relevant-extra-install-zips
+$(strip $(foreach p,$(EXTRA_INSTALL_ZIPS), \
+  $(if $(filter $(call word-colon,1,$(p)),$(1)), \
+    $(p))))
+endef
+
+# Writes a text file that contains all of the files that will be inside a partition.
+# All the file paths will be relative to the partition's staging directory.
+# It will also take into account files inside zips listed in EXTRA_INSTALL_ZIPS.
+#
+# Arguments:
+#   $(1): Output file
+#   $(2): The partition's staging directory
+#   $(3): Files to include in the partition
+define write-partition-file-list
+$(1): PRIVATE_FILES := $(subst $(2)/,,$(filter $(2)/%,$(3)))
+$(1): PRIVATE_EXTRA_INSTALL_ZIPS := $(call relevant-extra-install-zips,$(filter $(2)/%,$(3)))
+$(1): $$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(foreach p,$(call relevant-extra-install-zips,$(filter $(2)/%,$(3))),$(call word-colon,3,$(p)))
+	@echo Writing $$@
+	rm -f $$@
+	echo -n > $$@
+	$$(foreach f,$$(PRIVATE_FILES),echo "$$(f)" >> $$@$$(newline))
+	$$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(2) $$(PRIVATE_EXTRA_INSTALL_ZIPS) >> $$@
+endef
+
+
+ramdisk_intermediates :=$= $(call intermediates-dir-for,PACKAGING,ramdisk)
+$(eval $(call write-partition-file-list,$(ramdisk_intermediates)/file_list.txt,$(TARGET_RAMDISK_OUT),$(INTERNAL_RAMDISK_FILES)))
+
 # The value of RAMDISK_NODE_LIST is defined in system/core/rootdir/Android.bp.
 # This file contains /dev nodes description added to the generic ramdisk
 
@@ -3471,33 +3502,6 @@ ifneq (,$(filter address, $(SANITIZE_TARGET)))
 endif
 
 FULL_SYSTEMIMAGE_DEPS += $(INTERNAL_ROOT_FILES) $(INSTALLED_FILES_FILE_ROOT)
-
-# Returns a list of EXTRA_INSTALL_ZIPS trios whose primary file is contained within $(1)
-# The trios will contain the primary installed file : the directory to unzip the zip to : the zip
-define relevant-extra-install-zips
-$(strip $(foreach p,$(EXTRA_INSTALL_ZIPS), \
-  $(if $(filter $(call word-colon,1,$(p)),$(1)), \
-    $(p))))
-endef
-
-# Writes a text file that contains all of the files that will be inside a partition.
-# All the file paths will be relative to the partition's staging directory.
-# It will also take into account files inside zips listed in EXTRA_INSTALL_ZIPS.
-#
-# Arguments:
-#   $(1): Output file
-#   $(2): The partition's staging directory
-#   $(3): Files to include in the partition
-define write-partition-file-list
-$(1): PRIVATE_FILES := $(subst $(2)/,,$(filter $(2)/%,$(3)))
-$(1): PRIVATE_EXTRA_INSTALL_ZIPS := $(call relevant-extra-install-zips,$(filter $(2)/%,$(3)))
-$(1): $$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(foreach p,$(call relevant-extra-install-zips,$(filter $(2)/%,$(3))),$(call word-colon,3,$(p)))
-	@echo Writing $$@
-	rm -f $$@
-	echo -n > $$@
-	$$(foreach f,$$(PRIVATE_FILES),echo "$$(f)" >> $$@$$(newline))
-	$$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(2) $$(PRIVATE_EXTRA_INSTALL_ZIPS) >> $$@
-endef
 
 # -----------------------------------------------------------------
 ifdef BUILDING_SYSTEM_IMAGE
