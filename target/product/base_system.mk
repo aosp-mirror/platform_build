@@ -18,6 +18,7 @@
 PRODUCT_PACKAGES += \
     abx \
     aconfigd \
+    aconfigd-system \
     adbd_system_api \
     aflags \
     am \

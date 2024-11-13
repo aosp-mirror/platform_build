@@ -209,3 +209,7 @@ def main(argv):
         filename=log_file,
     )
   sys.exit(build_test_suites(argv))
+
+
+if __name__ == '__main__':
+  main(sys.argv[1:])
