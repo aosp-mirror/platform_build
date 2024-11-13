@@ -30,8 +30,18 @@ $(keyboards): $(KEYBOARD_TEMP)/%.kcm: frameworks/base/data/keyboards/%.kcm
 	$(hide) mkdir -p $(dir $@)
 	$(hide) cp -vf $< $@
 
-# List of all data files - font files, font configuration files, key character map files
-LAYOUTLIB_FILES := $(fonts_device) $(font_config) $(keyboards)
+HYPHEN_TEMP := $(call intermediates-dir-for,PACKAGING,hyphen,HOST,COMMON)
+
+# The hyphenation pattern files needed to support text hyphenation
+hyphen := $(filter $(TARGET_OUT)/usr/hyphen-data/%.hyb, $(INTERNAL_SYSTEMIMAGE_FILES))
+hyphen := $(addprefix $(HYPHEN_TEMP)/, $(notdir $(hyphen)))
+
+$(hyphen): $(HYPHEN_TEMP)/%: $(TARGET_OUT)/usr/hyphen-data/%
+	$(hide) mkdir -p $(dir $@)
+	$(hide) cp -vf $< $@
+
+# List of all data files - font files, font configuration files, key character map files, hyphenation pattern files
+LAYOUTLIB_FILES := $(fonts_device) $(font_config) $(keyboards) $(hyphen)
 
 .PHONY: layoutlib layoutlib-tests
 layoutlib layoutlib-tests: $(LAYOUTLIB_FILES)
@@ -39,6 +49,7 @@ layoutlib layoutlib-tests: $(LAYOUTLIB_FILES)
 $(call dist-for-goals, layoutlib, $(foreach m,$(fonts_device), $(m):layoutlib_native/fonts/$(notdir $(m))))
 $(call dist-for-goals, layoutlib, $(foreach m,$(font_config), $(m):layoutlib_native/fonts/$(notdir $(m))))
 $(call dist-for-goals, layoutlib, $(foreach m,$(keyboards), $(m):layoutlib_native/keyboards/$(notdir $(m))))
+$(call dist-for-goals, layoutlib, $(foreach m,$(hyphen), $(m):layoutlib_native/hyphen-data/$(notdir $(m))))
 
 FONT_TEMP :=
 font_config :=
