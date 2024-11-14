@@ -217,7 +217,7 @@ class DaemonManagerTest(unittest.TestCase):
     self.assert_no_subprocess_running()
     self._assert_error_event_logged(
         fake_cclient,
-        edit_event_pb2.EditEvent.KILLED_DUE_TO_EXCEEDED_RESOURCE_USAGE,
+        edit_event_pb2.EditEvent.KILLED_DUE_TO_EXCEEDED_MEMORY_USAGE,
     )
 
   def test_monitor_daemon_subprocess_killed_high_cpu_usage(self):
@@ -235,7 +235,7 @@ class DaemonManagerTest(unittest.TestCase):
     self.assert_no_subprocess_running()
     self._assert_error_event_logged(
         fake_cclient,
-        edit_event_pb2.EditEvent.KILLED_DUE_TO_EXCEEDED_RESOURCE_USAGE,
+        edit_event_pb2.EditEvent.KILLED_DUE_TO_EXCEEDED_CPU_USAGE,
     )
 
   @mock.patch('subprocess.check_output')
