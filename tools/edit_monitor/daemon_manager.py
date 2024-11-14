@@ -33,7 +33,7 @@ from proto import edit_event_pb2
 
 DEFAULT_PROCESS_TERMINATION_TIMEOUT_SECONDS = 5
 DEFAULT_MONITOR_INTERVAL_SECONDS = 5
-DEFAULT_MEMORY_USAGE_THRESHOLD = 2 * 1024  # 2GB
+DEFAULT_MEMORY_USAGE_THRESHOLD = 3 * 1024  # 3GB
 DEFAULT_CPU_USAGE_THRESHOLD = 200
 DEFAULT_REBOOT_TIMEOUT_SECONDS = 60 * 60 * 24
 BLOCK_SIGN_FILE = "edit_monitor_block_sign"
@@ -141,17 +141,11 @@ class DaemonManager:
         # Logging the error and continue.
         logging.warning("Failed to monitor daemon process with error: %s", e)
 
-      if (
-          self.max_memory_usage >= memory_threshold
-          or self.max_cpu_usage >= cpu_threshold
-      ):
-        logging.error(
-            "Daemon process is consuming too much resource, killing..."
-        ),
-        self._send_error_event_to_clearcut(
-            edit_event_pb2.EditEvent.KILLED_DUE_TO_EXCEEDED_RESOURCE_USAGE
-        )
-        self._terminate_process(self.daemon_process.pid)
+      if self.max_memory_usage >= memory_threshold:
+        self._handle_resource_exhausted_error("memory")
+
+      if self.max_cpu_usage >= cpu_threshold:
+        self._handle_resource_exhausted_error("cpu")
 
     logging.info(
         "Daemon process %d terminated. Max memory usage: %f, Max cpu"
@@ -391,6 +385,20 @@ class DaemonManager:
           logging.exception("Failed to get pid from file path: %s", file)
 
     return pids
+
+  def _handle_resource_exhausted_error(self, resource_type:str):
+    if resource_type == "memory":
+      self._send_error_event_to_clearcut(
+          edit_event_pb2.EditEvent.KILLED_DUE_TO_EXCEEDED_MEMORY_USAGE
+      )
+    else:
+      self._send_error_event_to_clearcut(
+          edit_event_pb2.EditEvent.KILLED_DUE_TO_EXCEEDED_CPU_USAGE
+      )
+    logging.error(
+        "Daemon process is consuming too much %s, killing...", resource_type
+    ),
+    self._terminate_process(self.daemon_process.pid)
 
   def _send_error_event_to_clearcut(self, error_type):
     edit_monitor_error_event_proto = edit_event_pb2.EditEvent(
