@@ -163,6 +163,7 @@ mod tests {
                         reader: Box::new(value_content),
                     }],
                     crate::commands::DEFAULT_FLAG_PERMISSION,
+                    true,
                 )
                 .unwrap();
                 aconfig_protos::parsed_flags::try_from_binary_proto(&bytes).unwrap()
