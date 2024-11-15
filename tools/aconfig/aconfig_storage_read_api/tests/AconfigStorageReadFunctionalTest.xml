@@ -26,7 +26,7 @@
     </target_preparer>
 
     <target_preparer class="com.android.tradefed.targetprep.TestAppInstallSetup">
-        <option name="test-file-name" value="aconfig_storage_read_api.test.java.apk" />
+        <option name="test-file-name" value="aconfig_storage_read_functional.apk" />
     </target_preparer>
 
     <target_preparer class="com.android.tradefed.targetprep.DisableSELinuxTargetPreparer" />
@@ -45,7 +45,7 @@
 
     <test class="com.android.tradefed.testtype.AndroidJUnitTest" >
         <option name="runner" value="androidx.test.runner.AndroidJUnitRunner" />
-        <option name="package" value="android.aconfig_storage.test" />
+        <option name="package" value="android.aconfig.storage.test" />
         <option name="runtime-hint" value="1m" />
     </test>
 </configuration>
