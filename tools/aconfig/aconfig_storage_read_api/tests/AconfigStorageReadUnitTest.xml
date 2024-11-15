@@ -17,15 +17,15 @@
 <configuration description="Test aconfig storage java tests">
     <target_preparer class="com.android.tradefed.targetprep.suite.SuiteApkInstaller">
         <option name="cleanup-apks" value="true" />
-        <option name="test-file-name" value="aconfig_storage_package.apk" />
+        <option name="test-file-name" value="aconfig_storage_read_unit.apk" />
     </target_preparer>
     <target_preparer class="com.android.compatibility.common.tradefed.targetprep.FilePusher">
         <option name="cleanup" value="true" />
-        <option name="push" value="package_v1.map->/data/local/tmp/aconfig_storage_package/testdata/mockup.package.map" />
-        <option name="push" value="flag_v1.map->/data/local/tmp/aconfig_storage_package/testdata/mockup.flag.map" />
-        <option name="push" value="flag_v1.val->/data/local/tmp/aconfig_storage_package/testdata/mockup.val" />
-        <option name="push" value="flag_v1.info->/data/local/tmp/aconfig_storage_package/testdata/mockup.info" />
-        <option name="post-push" value="chmod +r /data/local/tmp/aconfig_storage_package/testdata/" />
+        <option name="push" value="package_v2.map->/data/local/tmp/aconfig_storage_read_unit/testdata/mockup.package.map" />
+        <option name="push" value="flag_v2.map->/data/local/tmp/aconfig_storage_read_unit/testdata/mockup.flag.map" />
+        <option name="push" value="flag_v2.val->/data/local/tmp/aconfig_storage_read_unit/testdata/mockup.val" />
+        <option name="push" value="flag_v2.info->/data/local/tmp/aconfig_storage_read_unit/testdata/mockup.info" />
+        <option name="post-push" value="chmod +r /data/local/tmp/aconfig_storage_read_unit/testdata/" />
     </target_preparer>
     <test class="com.android.tradefed.testtype.AndroidJUnitTest" >
         <option name="package" value="android.aconfig.storage.test" />
