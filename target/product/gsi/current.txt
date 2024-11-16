@@ -24,7 +24,7 @@ LLNDK: libvulkan.so
 VNDK-SP: android.hardware.common-V2-ndk.so
 VNDK-SP: android.hardware.common.fmq-V1-ndk.so
 VNDK-SP: android.hardware.graphics.allocator-V2-ndk.so
-VNDK-SP: android.hardware.graphics.common-V5-ndk.so
+VNDK-SP: android.hardware.graphics.common-V6-ndk.so
 VNDK-SP: android.hardware.graphics.common@1.0.so
 VNDK-SP: android.hardware.graphics.common@1.1.so
 VNDK-SP: android.hardware.graphics.common@1.2.so

@@ -22,6 +22,7 @@ pub mod package_table;
 use anyhow::Result;
 use std::collections::{HashMap, HashSet};
 
+use crate::commands::compute_flags_fingerprint;
 use crate::storage::{
     flag_info::create_flag_info, flag_table::create_flag_table, flag_value::create_flag_value,
     package_table::create_package_table,
@@ -59,7 +60,7 @@ impl<'a> FlagPackage<'a> {
     }
 }
 
-pub fn group_flags_by_package<'a, I>(parsed_flags_vec_iter: I) -> Vec<FlagPackage<'a>>
+pub fn group_flags_by_package<'a, I>(parsed_flags_vec_iter: I, version: u32) -> Vec<FlagPackage<'a>>
 where
     I: Iterator<Item = &'a ProtoParsedFlags>,
 {
@@ -76,13 +77,18 @@ where
         }
     }
 
-    // cacluate boolean flag start index for each package
+    // Calculate boolean flag start index for each package
     let mut boolean_start_index = 0;
     for p in packages.iter_mut() {
         p.boolean_start_index = boolean_start_index;
         boolean_start_index += p.boolean_flags.len() as u32;
 
-        // TODO: b/316357686 - Calculate fingerprint and add to package.
+        if version > 2 {
+            let mut flag_names_vec =
+                p.flag_names.clone().into_iter().map(String::from).collect::<Vec<_>>();
+            let fingerprint = compute_flags_fingerprint(&mut flag_names_vec);
+            p.fingerprint = fingerprint;
+        }
     }
 
     packages
@@ -97,7 +103,7 @@ pub fn generate_storage_file<'a, I>(
 where
     I: Iterator<Item = &'a ProtoParsedFlags>,
 {
-    let packages = group_flags_by_package(parsed_flags_vec_iter);
+    let packages = group_flags_by_package(parsed_flags_vec_iter, version);
 
     match file {
         StorageFileType::PackageMap => {
@@ -121,6 +127,8 @@ where
 
 #[cfg(test)]
 mod tests {
+    use aconfig_storage_file::DEFAULT_FILE_VERSION;
+
     use super::*;
     use crate::Input;
 
@@ -163,6 +171,7 @@ mod tests {
                         reader: Box::new(value_content),
                     }],
                     crate::commands::DEFAULT_FLAG_PERMISSION,
+                    true,
                 )
                 .unwrap();
                 aconfig_protos::parsed_flags::try_from_binary_proto(&bytes).unwrap()
@@ -173,7 +182,7 @@ mod tests {
     #[test]
     fn test_flag_package() {
         let caches = parse_all_test_flags();
-        let packages = group_flags_by_package(caches.iter());
+        let packages = group_flags_by_package(caches.iter(), DEFAULT_FILE_VERSION);
 
         for pkg in packages.iter() {
             let pkg_name = pkg.package_name;
