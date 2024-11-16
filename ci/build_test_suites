@@ -1,4 +1,4 @@
-#!prebuilts/build-tools/linux-x86/bin/py3-cmd -B
+#!/usr/bin/env bash
 #
 # Copyright 2024, The Android Open Source Project
 #
@@ -14,7 +14,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import build_test_suites
-import sys
-
-build_test_suites.main(sys.argv[1:])
+build/soong/soong_ui.bash --make-mode build_test_suites || exit $?
+$(build/soong/soong_ui.bash --dumpvar-mode HOST_OUT)/bin/build_test_suites $@ || exit $?
