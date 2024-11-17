@@ -154,13 +154,13 @@ java_library {
 java_library {
     name: "aconfig_storage_reader_java",
     srcs: [
-        "srcs/android/aconfig/storage/AconfigPackageImpl.java",
-        "srcs/android/aconfig/storage/StorageFileProvider.java",
         "srcs/android/aconfig/storage/StorageInternalReader.java",
+        "srcs/android/os/flagging/PlatformAconfigPackageInternal.java",
     ],
     libs: [
         "unsupportedappusage",
         "strict_mode_stub",
+        "aconfig_storage_stub",
     ],
     static_libs: [
         "aconfig_storage_file_java",
@@ -177,9 +177,8 @@ java_library {
 java_library {
     name: "aconfig_storage_reader_java_none",
     srcs: [
-        "srcs/android/aconfig/storage/AconfigPackageImpl.java",
-        "srcs/android/aconfig/storage/StorageFileProvider.java",
         "srcs/android/aconfig/storage/StorageInternalReader.java",
+        "srcs/android/os/flagging/PlatformAconfigPackageInternal.java",
     ],
     libs: [
         "unsupportedappusage-sdk-none",
