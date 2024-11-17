@@ -31,7 +31,7 @@ public class FlagTableTest {
 
     @Test
     public void testFlagTable_rightHeader() throws Exception {
-        FlagTable flagTable = FlagTable.fromBytes(TestDataUtils.getTestFlagMapByteBuffer());
+        FlagTable flagTable = FlagTable.fromBytes(TestDataUtils.getTestFlagMapByteBuffer(1));
         FlagTable.Header header = flagTable.getHeader();
         assertEquals(1, header.getVersion());
         assertEquals("mockup", header.getContainer());
@@ -44,7 +44,7 @@ public class FlagTableTest {
 
     @Test
     public void testFlagTable_rightNode() throws Exception {
-        FlagTable flagTable = FlagTable.fromBytes(TestDataUtils.getTestFlagMapByteBuffer());
+        FlagTable flagTable = FlagTable.fromBytes(TestDataUtils.getTestFlagMapByteBuffer(1));
 
         FlagTable.Node node1 = flagTable.get(0, "enabled_ro");
         FlagTable.Node node2 = flagTable.get(0, "enabled_rw");
