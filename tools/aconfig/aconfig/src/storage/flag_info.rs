@@ -73,7 +73,7 @@ mod tests {
 
     pub fn create_test_flag_info_list_from_source() -> Result<FlagInfoList> {
         let caches = parse_all_test_flags();
-        let packages = group_flags_by_package(caches.iter());
+        let packages = group_flags_by_package(caches.iter(), DEFAULT_FILE_VERSION);
         create_flag_info("mockup", &packages, DEFAULT_FILE_VERSION)
     }
 

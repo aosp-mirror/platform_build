@@ -302,22 +302,12 @@ ALL_DEFAULT_INSTALLED_MODULES += \
 
 INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET := $(TARGET_OUT_SYSTEM_EXT)/etc/build.prop
 
-# ----------------------------------------------------------------
-# ramdisk/boot/etc/build.prop
-#
-
 RAMDISK_BUILD_PROP_REL_PATH := system/etc/ramdisk/build.prop
+ifeq (true,$(BOARD_USES_RECOVERY_AS_BOOT))
+INSTALLED_RAMDISK_BUILD_PROP_TARGET := $(TARGET_RECOVERY_ROOT_OUT)/first_stage_ramdisk/$(RAMDISK_BUILD_PROP_REL_PATH)
+else
 INSTALLED_RAMDISK_BUILD_PROP_TARGET := $(TARGET_RAMDISK_OUT)/$(RAMDISK_BUILD_PROP_REL_PATH)
-$(eval $(call build-properties,\
-    bootimage,\
-    $(INSTALLED_RAMDISK_BUILD_PROP_TARGET),\
-    $(empty),\
-    $(empty),\
-    $(empty),\
-    $(empty),\
-    $(empty)))
-
-$(eval $(call declare-1p-target,$(INSTALLED_RAMDISK_BUILD_PROP_TARGET)))
+endif
 
 ALL_INSTALLED_BUILD_PROP_FILES := \
   $(INSTALLED_BUILD_PROP_TARGET) \

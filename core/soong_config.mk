@@ -397,6 +397,10 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
     $(call add_json_str, BoardSquashfsCompressor, $(BOARD_$(image_type)IMAGE_SQUASHFS_COMPRESSOR)) \
     $(call add_json_str, BoardSquashfsCompressorOpt, $(BOARD_$(image_type)IMAGE_SQUASHFS_COMPRESSOR_OPT)) \
     $(call add_json_str, BoardSquashfsDisable4kAlign, $(BOARD_$(image_type)IMAGE_SQUASHFS_DISABLE_4K_ALIGN)) \
+    $(call add_json_str, BoardAvbKeyPath, $(BOARD_AVB_$(image_type)_KEY_PATH)) \
+    $(call add_json_str, BoardAvbAlgorithm, $(BOARD_AVB_$(image_type)_ALGORITHM)) \
+    $(call add_json_str, BoardAvbRollbackIndex, $(BOARD_AVB_$(image_type)_ROLLBACK_INDEX)) \
+    $(call add_json_str, BoardAvbRollbackIndexLocation, $(BOARD_AVB_$(image_type)_ROLLBACK_INDEX_LOCATION)) \
     $(call add_json_str, ProductBaseFsPath, $(PRODUCT_$(image_type)_BASE_FS_PATH)) \
     $(call add_json_str, ProductHeadroom, $(PRODUCT_$(image_type)_HEADROOM)) \
     $(call add_json_str, ProductVerityPartition, $(PRODUCT_$(image_type)_VERITY_PARTITION)) \
@@ -422,6 +426,20 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_str, BoardFlashLogicalBlockSize, $(BOARD_FLASH_LOGICAL_BLOCK_SIZE))
   $(call add_json_str, BoardFlashEraseBlockSize, $(BOARD_FLASH_ERASE_BLOCK_SIZE))
   $(call add_json_bool, BuildingVbmetaImage, $(BUILDING_VBMETA_IMAGE))
+
+  # boot image stuff
+  $(call add_json_bool, BuildingRamdiskImage, $(filter true,$(BUILDING_RAMDISK_IMAGE)))
+  $(call add_json_bool, ProductBuildBootImage, $(filter true,$(PRODUCT_BUILD_BOOT_IMAGE)))
+  $(call add_json_bool, ProductBuildInitBootImage, $(filter true,$(PRODUCT_BUILD_INIT_BOOT_IMAGE)))
+  $(call add_json_bool, BoardUsesRecoveryAsBoot, $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)))
+  $(call add_json_str, BoardPrebuiltBootimage, $(BOARD_PREBUILT_BOOT_IMAGE))
+  $(call add_json_str, BoardPrebuiltInitBootimage, $(BOARD_PREBUILT_INIT_BOOT_IMAGE))
+  $(call add_json_str, BoardBootimagePartitionSize, $(BOARD_BOOTIMAGE_PARTITION_SIZE))
+  $(call add_json_str, BoardInitBootimagePartitionSize, $(BOARD_INIT_BOOTIMAGE_PARTITION_SIZE))
+  $(call add_json_str, BoardBootHeaderVersion, $(BOARD_BOOT_HEADER_VERSION))
+  $(call add_json_str, TargetKernelPath, $(TARGET_KERNEL_PATH))
+
+  # Avb (android verified boot) stuff
   $(call add_json_bool, BoardAvbEnable, $(filter true,$(BOARD_AVB_ENABLE)))
   $(call add_json_str, BoardAvbAlgorithm, $(BOARD_AVB_ALGORITHM))
   $(call add_json_str, BoardAvbKeyPath, $(BOARD_AVB_KEY_PATH))
@@ -437,7 +455,6 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
     $(call end_json_map))
   $(call end_json_map)
 
-  $(call add_json_bool, BoardUsesRecoveryAsBoot, $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)))
   $(call add_json_bool, ProductUseDynamicPartitionSize, $(filter true,$(PRODUCT_USE_DYNAMIC_PARTITION_SIZE)))
   $(call add_json_bool, CopyImagesForTargetFilesZip, $(filter true,$(COPY_IMAGES_FOR_TARGET_FILES_ZIP)))
 
@@ -451,15 +468,20 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   # Used to generate _dlkm partitions
   $(call add_json_bool, BuildingSystemDlkmImage,               $(BUILDING_SYSTEM_DLKM_IMAGE))
   $(call add_json_list, SystemKernelModules, $(BOARD_SYSTEM_KERNEL_MODULES))
+  $(call add_json_str, SystemKernelBlocklistFile, $(BOARD_SYSTEM_KERNEL_MODULES_BLOCKLIST_FILE))
+  $(call add_json_list, SystemKernelLoadModules, $(BOARD_SYSTEM_KERNEL_MODULES_LOAD))
+  $(call add_json_bool, BuildingVendorDlkmImage,               $(BUILDING_VENDOR_DLKM_IMAGE))
+  $(call add_json_list, VendorKernelModules, $(BOARD_VENDOR_KERNEL_MODULES))
+  $(call add_json_str, VendorKernelBlocklistFile, $(BOARD_VENDOR_KERNEL_MODULES_BLOCKLIST_FILE))
+  $(call add_json_bool, BuildingOdmDlkmImage,               $(BUILDING_ODM_DLKM_IMAGE))
+  $(call add_json_list, OdmKernelModules, $(BOARD_ODM_KERNEL_MODULES))
+  $(call add_json_str, OdmKernelBlocklistFile, $(BOARD_ODM_KERNEL_MODULES_BLOCKLIST_FILE))
 
   # Used to generate /vendor/build.prop
   $(call add_json_list, BoardInfoFiles, $(if $(TARGET_BOARD_INFO_FILES),$(TARGET_BOARD_INFO_FILES),$(firstword $(TARGET_BOARD_INFO_FILE) $(wildcard $(TARGET_DEVICE_DIR)/board-info.txt))))
   $(call add_json_str, BootLoaderBoardName, $(TARGET_BOOTLOADER_BOARD_NAME))
 
-  $(call add_json_map, ProductCopyFiles)
-  $(foreach pair,$(PRODUCT_COPY_FILES),\
-    $(call add_json_str,$(word 1,$(subst :, ,$(pair))),$(word 2,$(subst :, ,$(pair)))))
-  $(call end_json_map)
+  $(call add_json_list, ProductCopyFiles, $(PRODUCT_COPY_FILES))
 
 $(call end_json_map)
 

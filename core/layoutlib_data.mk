@@ -30,8 +30,18 @@ $(keyboards): $(KEYBOARD_TEMP)/%.kcm: frameworks/base/data/keyboards/%.kcm
 	$(hide) mkdir -p $(dir $@)
 	$(hide) cp -vf $< $@
 
-# List of all data files - font files, font configuration files, key character map files
-LAYOUTLIB_FILES := $(fonts_device) $(font_config) $(keyboards)
+HYPHEN_TEMP := $(call intermediates-dir-for,PACKAGING,hyphen,HOST,COMMON)
+
+# The hyphenation pattern files needed to support text hyphenation
+hyphen := $(filter $(TARGET_OUT)/usr/hyphen-data/%.hyb, $(INTERNAL_SYSTEMIMAGE_FILES))
+hyphen := $(addprefix $(HYPHEN_TEMP)/, $(notdir $(hyphen)))
+
+$(hyphen): $(HYPHEN_TEMP)/%: $(TARGET_OUT)/usr/hyphen-data/%
+	$(hide) mkdir -p $(dir $@)
+	$(hide) cp -vf $< $@
+
+# List of all data files - font files, font configuration files, key character map files, hyphenation pattern files
+LAYOUTLIB_FILES := $(fonts_device) $(font_config) $(keyboards) $(hyphen)
 
 .PHONY: layoutlib layoutlib-tests
 layoutlib layoutlib-tests: $(LAYOUTLIB_FILES)
@@ -39,6 +49,7 @@ layoutlib layoutlib-tests: $(LAYOUTLIB_FILES)
 $(call dist-for-goals, layoutlib, $(foreach m,$(fonts_device), $(m):layoutlib_native/fonts/$(notdir $(m))))
 $(call dist-for-goals, layoutlib, $(foreach m,$(font_config), $(m):layoutlib_native/fonts/$(notdir $(m))))
 $(call dist-for-goals, layoutlib, $(foreach m,$(keyboards), $(m):layoutlib_native/keyboards/$(notdir $(m))))
+$(call dist-for-goals, layoutlib, $(foreach m,$(hyphen), $(m):layoutlib_native/hyphen-data/$(notdir $(m))))
 
 FONT_TEMP :=
 font_config :=
@@ -94,6 +105,7 @@ LAYOUTLIB_SBOM := $(call intermediates-dir-for,PACKAGING,layoutlib-sbom,HOST)
 _layoutlib_font_config_files := $(sort $(wildcard frameworks/base/data/fonts/*.xml))
 _layoutlib_fonts_files := $(filter $(TARGET_OUT)/fonts/%.ttf $(TARGET_OUT)/fonts/%.ttc $(TARGET_OUT)/fonts/%.otf, $(INTERNAL_SYSTEMIMAGE_FILES))
 _layoutlib_keyboard_files := $(sort $(wildcard frameworks/base/data/keyboards/*.kcm))
+_layoutlib_hyphen_files := $(filter $(TARGET_OUT)/usr/hyphen-data/%.hyb, $(INTERNAL_SYSTEMIMAGE_FILES))
 
 # Find out files disted with layoutlib in Soong.
 ### Filter out static libraries for Windows and files already handled in make.
@@ -121,6 +133,13 @@ $(LAYOUTLIB_SBOM)/sbom-metadata.csv:
 
 	$(foreach f,$(_layoutlib_keyboard_files), \
 	  echo data/keyboards/$(notdir $f),frameworks/base/data/keyboards,prebuilt_etc,,,,,$f,,, >> $@; \
+	)
+
+	$(foreach f,$(_layoutlib_hyphen_files), \
+	  $(eval _module_name := $(ALL_INSTALLED_FILES.$f)) \
+	  $(eval _module_path := $(strip $(sort $(ALL_MODULES.$(_module_name).PATH)))) \
+	  $(eval _soong_module_type := $(strip $(sort $(ALL_MODULES.$(_module_name).SOONG_MODULE_TYPE)))) \
+	  echo data/hyphen-data/$(notdir $f),$(_module_path),$(_soong_module_type),,,,,$f,,, >> $@; \
 	)
 
 	$(foreach f,$(_layoutlib_files_disted_by_soong), \
@@ -151,7 +170,7 @@ $(LAYOUTLIB_SBOM)/sbom-metadata.csv:
 
 .PHONY: layoutlib-sbom
 layoutlib-sbom: $(LAYOUTLIB_SBOM)/layoutlib.spdx.json
-$(LAYOUTLIB_SBOM)/layoutlib.spdx.json: $(PRODUCT_OUT)/always_dirty_file.txt $(GEN_SBOM) $(LAYOUTLIB_SBOM)/sbom-metadata.csv $(_layoutlib_font_config_files) $(_layoutlib_fonts_files) $(LAYOUTLIB_BUILD_PROP)/layoutlib-build.prop $(_layoutlib_keyboard_files) $(LAYOUTLIB_RES_FILES) $(EMULATED_OVERLAYS_FILES) $(DEVICE_OVERLAYS_FILES)
+$(LAYOUTLIB_SBOM)/layoutlib.spdx.json: $(PRODUCT_OUT)/always_dirty_file.txt $(GEN_SBOM) $(LAYOUTLIB_SBOM)/sbom-metadata.csv $(_layoutlib_font_config_files) $(_layoutlib_fonts_files) $(LAYOUTLIB_BUILD_PROP)/layoutlib-build.prop $(_layoutlib_keyboard_files) $(_layoutlib_hyphen_files) $(LAYOUTLIB_RES_FILES) $(EMULATED_OVERLAYS_FILES) $(DEVICE_OVERLAYS_FILES)
 	rm -rf $@
 	$(GEN_SBOM) --output_file $@ --metadata $(LAYOUTLIB_SBOM)/sbom-metadata.csv --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr "$(PRODUCT_MANUFACTURER)" --module_name "layoutlib" --json
 

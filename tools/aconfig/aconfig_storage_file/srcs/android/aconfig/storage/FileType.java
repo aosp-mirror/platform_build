@@ -42,4 +42,20 @@ public enum FileType {
                 return null;
         }
     }
+
+    @Override
+    public String toString() {
+        switch (type) {
+            case 0:
+                return "PACKAGE_MAP";
+            case 1:
+                return "FLAG_MAP";
+            case 2:
+                return "FLAG_VAL";
+            case 3:
+                return "FLAG_INFO";
+            default:
+                return "unrecognized type";
+        }
+    }
 }
