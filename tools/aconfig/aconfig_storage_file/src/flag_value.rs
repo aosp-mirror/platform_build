@@ -132,12 +132,32 @@ impl FlagValueList {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::create_test_flag_value_list;
+    use crate::{
+        test_utils::create_test_flag_value_list, DEFAULT_FILE_VERSION, MAX_SUPPORTED_FILE_VERSION,
+    };
 
     #[test]
     // this test point locks down the value list serialization
-    fn test_serialization() {
-        let flag_value_list = create_test_flag_value_list();
+    // TODO: b/376108268 - Use parameterized tests.
+    fn test_serialization_default() {
+        let flag_value_list = create_test_flag_value_list(DEFAULT_FILE_VERSION);
+
+        let header: &FlagValueHeader = &flag_value_list.header;
+        let reinterpreted_header = FlagValueHeader::from_bytes(&header.into_bytes());
+        assert!(reinterpreted_header.is_ok());
+        assert_eq!(header, &reinterpreted_header.unwrap());
+
+        let flag_value_bytes = flag_value_list.into_bytes();
+        let reinterpreted_value_list = FlagValueList::from_bytes(&flag_value_bytes);
+        assert!(reinterpreted_value_list.is_ok());
+        assert_eq!(&flag_value_list, &reinterpreted_value_list.unwrap());
+        assert_eq!(flag_value_bytes.len() as u32, header.file_size);
+    }
+
+    #[test]
+    // this test point locks down the value list serialization
+    fn test_serialization_max() {
+        let flag_value_list = create_test_flag_value_list(MAX_SUPPORTED_FILE_VERSION);
 
         let header: &FlagValueHeader = &flag_value_list.header;
         let reinterpreted_header = FlagValueHeader::from_bytes(&header.into_bytes());
@@ -155,17 +175,17 @@ mod tests {
     // this test point locks down that version number should be at the top of serialized
     // bytes
     fn test_version_number() {
-        let flag_value_list = create_test_flag_value_list();
+        let flag_value_list = create_test_flag_value_list(DEFAULT_FILE_VERSION);
         let bytes = &flag_value_list.into_bytes();
         let mut head = 0;
-        let version = read_u32_from_bytes(bytes, &mut head).unwrap();
-        assert_eq!(version, 1);
+        let version_from_file = read_u32_from_bytes(bytes, &mut head).unwrap();
+        assert_eq!(version_from_file, DEFAULT_FILE_VERSION);
     }
 
     #[test]
     // this test point locks down file type check
     fn test_file_type_check() {
-        let mut flag_value_list = create_test_flag_value_list();
+        let mut flag_value_list = create_test_flag_value_list(DEFAULT_FILE_VERSION);
         flag_value_list.header.file_type = 123u8;
         let error = FlagValueList::from_bytes(&flag_value_list.into_bytes()).unwrap_err();
         assert_eq!(
