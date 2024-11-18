@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -36,20 +37,15 @@ import java.util.List;
 public class StorageFileProviderTest {
 
     @Test
-    public void testlistContainers() throws Exception {
+    public void testListpackageMapFiles() throws Exception {
         StorageFileProvider p =
                 new StorageFileProvider(TestDataUtils.TESTDATA_PATH, TestDataUtils.TESTDATA_PATH);
-        String[] excludes = {};
-        List<String> containers = p.listContainers(excludes);
-        assertEquals(2, containers.size());
-
-        excludes = new String[] {"mock.v1"};
-        containers = p.listContainers(excludes);
-        assertEquals(1, containers.size());
+        List<Path> file = p.listPackageMapFiles();
+        assertEquals(2, file.size());
 
         p = new StorageFileProvider("fake/path/", "fake/path/");
-        containers = p.listContainers(excludes);
-        assertTrue(containers.isEmpty());
+        file = p.listPackageMapFiles();
+        assertTrue(file.isEmpty());
     }
 
     @Test
@@ -60,7 +56,8 @@ public class StorageFileProviderTest {
         assertNotNull(pt);
         pt =
                 StorageFileProvider.getPackageTable(
-                        Paths.get(TestDataUtils.TESTDATA_PATH, "mock.v1.package.map"));
+                        Paths.get(
+                                TestDataUtils.TESTDATA_PATH, "mock.v1.package.map"));
         assertNotNull(pt);
         FlagTable f = p.getFlagTable("mock.v1");
         assertNotNull(f);
