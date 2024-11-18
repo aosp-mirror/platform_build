@@ -26,10 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /** @hide */
 public class StorageFileProvider {
@@ -55,20 +52,13 @@ public class StorageFileProvider {
     }
 
     /** @hide */
-    public List<String> listContainers(String[] excludes) {
-        List<String> result = new ArrayList<>();
-        Set<String> set = new HashSet<>(Arrays.asList(excludes));
-
+    public List<Path> listPackageMapFiles() {
+        List<Path> result = new ArrayList<>();
         try {
             DirectoryStream<Path> stream =
                     Files.newDirectoryStream(Paths.get(mMapPath), "*" + PMAP_FILE_EXT);
             for (Path entry : stream) {
-                String fileName = entry.getFileName().toString();
-                String container =
-                        fileName.substring(0, fileName.length() - PMAP_FILE_EXT.length());
-                if (!set.contains(container)) {
-                    result.add(container);
-                }
+                result.add(entry);
             }
         } catch (NoSuchFileException e) {
             return result;
@@ -87,23 +77,22 @@ public class StorageFileProvider {
 
     /** @hide */
     public FlagTable getFlagTable(String container) {
-        return FlagTable.fromBytes(
-                mapStorageFile(Paths.get(mMapPath, container + FMAP_FILE_EXT), FileType.FLAG_MAP));
+        return FlagTable.fromBytes(mapStorageFile(Paths.get(mMapPath, container + FMAP_FILE_EXT)));
     }
 
     /** @hide */
     public FlagValueList getFlagValueList(String container) {
         return FlagValueList.fromBytes(
-                mapStorageFile(Paths.get(mBootPath, container + VAL_FILE_EXT), FileType.FLAG_VAL));
+                mapStorageFile(Paths.get(mBootPath, container + VAL_FILE_EXT)));
     }
 
     /** @hide */
     public static PackageTable getPackageTable(Path path) {
-        return PackageTable.fromBytes(mapStorageFile(path, FileType.PACKAGE_MAP));
+        return PackageTable.fromBytes(mapStorageFile(path));
     }
 
     // Map a storage file given file path
-    private static MappedByteBuffer mapStorageFile(Path file, FileType type) {
+    private static MappedByteBuffer mapStorageFile(Path file) {
         FileChannel channel = null;
         try {
             channel = FileChannel.open(file, StandardOpenOption.READ);
@@ -111,7 +100,7 @@ public class StorageFileProvider {
         } catch (Exception e) {
             throw new AconfigStorageException(
                     AconfigStorageException.ERROR_CANNOT_READ_STORAGE_FILE,
-                    String.format("Fail to mmap storage %s file %s", type.toString(), file),
+                    String.format("Fail to mmap storage file %s", file),
                     e);
         } finally {
             quietlyDispose(channel);
