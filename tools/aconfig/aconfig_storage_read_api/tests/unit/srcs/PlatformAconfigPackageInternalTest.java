@@ -61,31 +61,31 @@ public class PlatformAconfigPackageInternalTest {
 
         assertEquals(
                 AconfigStorageException.ERROR_PACKAGE_NOT_FOUND,
-                ((AconfigStorageException) p.getException()).getErrorCode());
+                p.getException().getErrorCode());
 
         // cannot find container
         p = PlatformAconfigPackageInternal.load(null, "com.android.aconfig.storage.test_1", pr);
         assertEquals(
                 AconfigStorageException.ERROR_CANNOT_READ_STORAGE_FILE,
-                ((AconfigStorageException) p.getException()).getErrorCode());
+                p.getException().getErrorCode());
         p = PlatformAconfigPackageInternal.load("test", "com.android.aconfig.storage.test_1", pr);
         assertEquals(
                 AconfigStorageException.ERROR_CANNOT_READ_STORAGE_FILE,
-                ((AconfigStorageException) p.getException()).getErrorCode());
+                p.getException().getErrorCode());
 
         // new storage doesn't exist
         pr = new StorageFileProvider("fake/path/", "fake/path/");
         p = PlatformAconfigPackageInternal.load("mockup", "com.android.aconfig.storage.test_1", pr);
         assertEquals(
                 AconfigStorageException.ERROR_CANNOT_READ_STORAGE_FILE,
-                ((AconfigStorageException) p.getException()).getErrorCode());
+                p.getException().getErrorCode());
 
         // file read issue
         pr = new StorageFileProvider(TESTDATA_PATH, "fake/path/");
         p = PlatformAconfigPackageInternal.load("mockup", "com.android.aconfig.storage.test_1", pr);
         assertEquals(
                 AconfigStorageException.ERROR_CANNOT_READ_STORAGE_FILE,
-                ((AconfigStorageException) p.getException()).getErrorCode());
+                p.getException().getErrorCode());
     }
 
     @Test
@@ -117,7 +117,7 @@ public class PlatformAconfigPackageInternalTest {
 
         assertEquals(
                 AconfigStorageException.ERROR_PACKAGE_NOT_FOUND,
-                ((AconfigStorageException) p.getException()).getErrorCode());
+                p.getException().getErrorCode());
 
         // cannot find container
         p =
@@ -125,20 +125,20 @@ public class PlatformAconfigPackageInternalTest {
                         null, "com.android.aconfig.storage.test_1", fingerprint, pr);
         assertEquals(
                 AconfigStorageException.ERROR_CANNOT_READ_STORAGE_FILE,
-                ((AconfigStorageException) p.getException()).getErrorCode());
+                p.getException().getErrorCode());
         p =
                 PlatformAconfigPackageInternal.load(
                         "test", "com.android.aconfig.storage.test_1", fingerprint, pr);
         assertEquals(
                 AconfigStorageException.ERROR_CANNOT_READ_STORAGE_FILE,
-                ((AconfigStorageException) p.getException()).getErrorCode());
+                p.getException().getErrorCode());
         // fingerprint doesn't match
         p =
                 PlatformAconfigPackageInternal.load(
                         "mockup", "com.android.aconfig.storage.test_1", fingerprint + 1, pr);
         assertEquals(
                 // AconfigStorageException.ERROR_FILE_FINGERPRINT_MISMATCH,
-                5, ((AconfigStorageException) p.getException()).getErrorCode());
+                5, p.getException().getErrorCode());
 
         // new storage doesn't exist
         pr = new StorageFileProvider("fake/path/", "fake/path/");
@@ -147,7 +147,7 @@ public class PlatformAconfigPackageInternalTest {
                         "mockup", "com.android.aconfig.storage.test_1", fingerprint, pr);
         assertEquals(
                 AconfigStorageException.ERROR_CANNOT_READ_STORAGE_FILE,
-                ((AconfigStorageException) p.getException()).getErrorCode());
+                p.getException().getErrorCode());
 
         // file read issue
         pr = new StorageFileProvider(TESTDATA_PATH, "fake/path/");
@@ -156,7 +156,7 @@ public class PlatformAconfigPackageInternalTest {
                         "mockup", "com.android.aconfig.storage.test_1", fingerprint, pr);
         assertEquals(
                 AconfigStorageException.ERROR_CANNOT_READ_STORAGE_FILE,
-                ((AconfigStorageException) p.getException()).getErrorCode());
+                p.getException().getErrorCode());
     }
 
     @Test
