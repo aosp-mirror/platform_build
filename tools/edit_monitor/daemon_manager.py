@@ -33,7 +33,7 @@ from proto import edit_event_pb2
 
 DEFAULT_PROCESS_TERMINATION_TIMEOUT_SECONDS = 5
 DEFAULT_MONITOR_INTERVAL_SECONDS = 5
-DEFAULT_MEMORY_USAGE_THRESHOLD = 3 * 1024  # 3GB
+DEFAULT_MEMORY_USAGE_THRESHOLD = 0.02  # 2% of total memory
 DEFAULT_CPU_USAGE_THRESHOLD = 200
 DEFAULT_REBOOT_TIMEOUT_SECONDS = 60 * 60 * 24
 BLOCK_SIGN_FILE = "edit_monitor_block_sign"
@@ -70,6 +70,9 @@ class DaemonManager:
 
     self.max_memory_usage = 0
     self.max_cpu_usage = 0
+    self.total_memory_size = os.sysconf("SC_PAGE_SIZE") * os.sysconf(
+        "SC_PHYS_PAGES"
+    )
 
     pid_file_dir = pathlib.Path(tempfile.gettempdir()).joinpath("edit_monitor")
     pid_file_dir.mkdir(parents=True, exist_ok=True)
@@ -345,7 +348,13 @@ class DaemonManager:
       stat_data = f.readline().split()
       # RSS is the 24th field in /proc/[pid]/stat
       rss_pages = int(stat_data[23])
-      return rss_pages * 4 / 1024  # Covert to MB
+      process_memory = rss_pages * 4 * 1024  # Convert to bytes
+
+    return (
+        process_memory / self.total_memory_size
+        if self.total_memory_size
+        else 0.0
+    )
 
   def _get_process_cpu_percent(self, pid: int, interval: int = 1) -> float:
     total_start_time = self._get_total_cpu_time(pid)
