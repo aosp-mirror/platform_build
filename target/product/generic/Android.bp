@@ -346,11 +346,6 @@ phony {
     ],
 }
 
-filegroup {
-    name: "system_image_erofs_compress_hints.txt",
-    srcs: ["erofs_compress_hints.txt"],
-}
-
 android_filesystem_defaults {
     name: "system_image_defaults",
     partition_name: "system",
@@ -373,11 +368,6 @@ android_filesystem_defaults {
             "framework/oat/*/*", // framework/oat/{arch}
         ],
         libs: [":framework-res{.export-package.apk}"],
-    },
-    type: "erofs",
-    erofs: {
-        compressor: "lz4hc,9",
-        compress_hints: ":system_image_erofs_compress_hints.txt",
     },
     build_logtags: true,
     gen_aconfig_flags_pb: true,
@@ -907,4 +897,9 @@ android_system_image {
     defaults: ["system_image_defaults"],
     dirs: android_rootdirs,
     symlinks: android_symlinks,
+    type: "erofs",
+    erofs: {
+        compressor: "lz4hc,9",
+        compress_hints: "erofs_compress_hints.txt",
+    },
 }
