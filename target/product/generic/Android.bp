@@ -56,10 +56,6 @@ generic_symlinks = [
         name: "bugreports",
     },
     {
-        target: "/data/cache",
-        name: "cache",
-    },
-    {
         target: "/sys/kernel/debug",
         name: "d",
     },
@@ -124,6 +120,10 @@ android_symlinks = [
     {
         target: "/system_ext",
         name: "system/system_ext",
+    },
+    {
+        target: "/data/cache",
+        name: "cache",
     },
 ]
 
