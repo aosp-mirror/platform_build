@@ -196,4 +196,5 @@ android_system_image {
         "true": true,
         default: false,
     }),
+    type: "ext4",
 }
