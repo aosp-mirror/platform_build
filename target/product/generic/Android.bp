@@ -901,7 +901,7 @@ android_filesystem_defaults {
 }
 
 android_system_image {
-    name: "generic_system_image",
+    name: "aosp_shared_system_image",
     defaults: ["system_image_defaults"],
     dirs: android_rootdirs,
     symlinks: android_symlinks,
