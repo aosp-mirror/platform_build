@@ -1654,6 +1654,8 @@ INTERNAL_VENDOR_RAMDISK_FILES := $(filter $(TARGET_VENDOR_RAMDISK_OUT)/%, \
     $(ALL_DEFAULT_INSTALLED_MODULES))
 
 INTERNAL_VENDOR_RAMDISK_TARGET := $(call intermediates-dir-for,PACKAGING,vendor_boot)/vendor_ramdisk.cpio$(RAMDISK_EXT)
+vendor_ramdisk_intermediates :=$= $(call intermediates-dir-for,PACKAGING,vendor_ramdisk)
+$(eval $(call write-partition-file-list,$(vendor_ramdisk_intermediates)/file_list.txt,$(TARGET_VENDOR_RAMDISK_OUT),$(INTERNAL_VENDOR_RAMDISK_FILES)))
 
 # Exclude recovery files in the default vendor ramdisk if including a standalone
 # recovery ramdisk in vendor_boot.
