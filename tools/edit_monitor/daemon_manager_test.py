@@ -202,11 +202,15 @@ class DaemonManagerTest(unittest.TestCase):
         fake_cclient, edit_event_pb2.EditEvent.FAILED_TO_START_EDIT_MONITOR
     )
 
-  def test_monitor_daemon_subprocess_killed_high_memory_usage(self):
+  @mock.patch('os.execv')
+  def test_monitor_reboot_with_high_memory_usage(self, mock_execv):
     fake_cclient = FakeClearcutClient()
+    binary_file = tempfile.NamedTemporaryFile(
+        dir=self.working_dir.name, delete=False
+    )
 
     dm = daemon_manager.DaemonManager(
-        TEST_BINARY_FILE,
+        binary_file.name,
         daemon_target=memory_consume_daemon_target,
         daemon_args=(2,),
         cclient=fake_cclient,
@@ -222,6 +226,7 @@ class DaemonManagerTest(unittest.TestCase):
         fake_cclient,
         edit_event_pb2.EditEvent.KILLED_DUE_TO_EXCEEDED_MEMORY_USAGE,
     )
+    mock_execv.assert_called_once()
 
   def test_monitor_daemon_subprocess_killed_high_cpu_usage(self):
     fake_cclient = FakeClearcutClient()
