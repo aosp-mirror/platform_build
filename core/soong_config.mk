@@ -274,6 +274,7 @@ $(call add_json_bool, EnforceProductPartitionInterface,  $(filter true,$(PRODUCT
 $(call add_json_str,  DeviceCurrentApiLevelForVendorModules,  $(BOARD_CURRENT_API_LEVEL_FOR_VENDOR_MODULES))
 
 $(call add_json_bool, CompressedApex, $(filter true,$(PRODUCT_COMPRESSED_APEX)))
+$(call add_json_str, DefaultApexPayloadType, $(PRODUCT_DEFAULT_APEX_PAYLOAD_TYPE))
 
 $(call add_json_bool, BoardUsesRecoveryAsBoot, $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)))
 
