@@ -71,12 +71,21 @@ gsi_symlinks = [
         target: "/system/product",
         name: "product",
     },
+    {
+        target: "/odm/odm_dlkm/etc",
+        name: "odm_dlkm/etc",
+    },
+    {
+        target: "/vendor/vendor_dlkm/etc",
+        name: "vendor_dlkm/etc",
+    },
 ]
 
 android_system_image {
     name: "android_gsi",
     defaults: ["system_image_defaults"],
     symlinks: gsi_symlinks,
+    dirs: ["cache"],
     deps: [
         ///////////////////////////////////////////
         // gsi_system_ext
@@ -196,4 +205,5 @@ android_system_image {
         "true": true,
         default: false,
     }),
+    type: "ext4",
 }
