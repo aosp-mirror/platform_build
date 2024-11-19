@@ -204,16 +204,19 @@ class DaemonManagerTest(unittest.TestCase):
 
   def test_monitor_daemon_subprocess_killed_high_memory_usage(self):
     fake_cclient = FakeClearcutClient()
+
     dm = daemon_manager.DaemonManager(
         TEST_BINARY_FILE,
         daemon_target=memory_consume_daemon_target,
         daemon_args=(2,),
         cclient=fake_cclient,
     )
+    # set the fake total_memory_size
+    dm.total_memory_size = 100 * 1024 *1024
     dm.start()
-    dm.monitor_daemon(interval=1, memory_threshold=2)
+    dm.monitor_daemon(interval=1)
 
-    self.assertTrue(dm.max_memory_usage >= 2)
+    self.assertTrue(dm.max_memory_usage >= 0.02)
     self.assert_no_subprocess_running()
     self._assert_error_event_logged(
         fake_cclient,
