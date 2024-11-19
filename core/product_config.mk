@@ -468,10 +468,17 @@ $(foreach c,$(PRODUCT_SANITIZER_MODULE_CONFIGS),\
     $(eval SANITIZER.$(TARGET_PRODUCT).$(m).CONFIG := $(cf))))
 _psmc_modules :=
 
-# Reset ADB keys for non-debuggable builds
-ifeq (,$(filter eng userdebug,$(TARGET_BUILD_VARIANT)))
+# Reset ADB keys. If RELEASE_BUILD_USE_VARIANT_FLAGS is set look for
+# the value of a dedicated flag. Otherwise check if build variant is
+# non-debuggable.
+ifneq (,$(RELEASE_BUILD_USE_VARIANT_FLAGS))
+ifneq (,$(RELEASE_BUILD_PURGE_PRODUCT_ADB_KEYS))
   PRODUCT_ADB_KEYS :=
 endif
+else ifeq (,$(filter eng userdebug,$(TARGET_BUILD_VARIANT)))
+  PRODUCT_ADB_KEYS :=
+endif
+
 ifneq ($(filter-out 0 1,$(words $(PRODUCT_ADB_KEYS))),)
   $(error Only one file may be in PRODUCT_ADB_KEYS: $(PRODUCT_ADB_KEYS))
 endif
