@@ -16,15 +16,6 @@ test_suite_name := vts
 test_suite_tradefed := vts-tradefed
 test_suite_readme := test/vts/tools/vts-core-tradefed/README
 
-include $(BUILD_SYSTEM)/tasks/tools/vts-kernel-tests.mk
-
-ltp_copy_pairs := \
-  $(call target-native-copy-pairs,$(kernel_ltp_modules),$(kernel_ltp_vts_out))
-
-copy_ltp_tests := $(call copy-many-files,$(ltp_copy_pairs))
-
-test_suite_extra_deps := $(copy_ltp_tests)
-
 include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
 
 .PHONY: vts

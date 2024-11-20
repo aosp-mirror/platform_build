@@ -274,6 +274,7 @@ $(call add_json_bool, EnforceProductPartitionInterface,  $(filter true,$(PRODUCT
 $(call add_json_str,  DeviceCurrentApiLevelForVendorModules,  $(BOARD_CURRENT_API_LEVEL_FOR_VENDOR_MODULES))
 
 $(call add_json_bool, CompressedApex, $(filter true,$(PRODUCT_COMPRESSED_APEX)))
+$(call add_json_str, DefaultApexPayloadType, $(PRODUCT_DEFAULT_APEX_PAYLOAD_TYPE))
 
 $(call add_json_bool, BoardUsesRecoveryAsBoot, $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)))
 
@@ -430,6 +431,7 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   # boot image stuff
   $(call add_json_bool, BuildingRamdiskImage, $(filter true,$(BUILDING_RAMDISK_IMAGE)))
   $(call add_json_bool, ProductBuildBootImage, $(filter true,$(PRODUCT_BUILD_BOOT_IMAGE)))
+  $(call add_json_str, ProductBuildVendorBootImage, $(PRODUCT_BUILD_VENDOR_BOOT_IMAGE))
   $(call add_json_bool, ProductBuildInitBootImage, $(filter true,$(PRODUCT_BUILD_INIT_BOOT_IMAGE)))
   $(call add_json_bool, BoardUsesRecoveryAsBoot, $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)))
   $(call add_json_str, BoardPrebuiltBootimage, $(BOARD_PREBUILT_BOOT_IMAGE))
@@ -438,6 +440,7 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_str, BoardInitBootimagePartitionSize, $(BOARD_INIT_BOOTIMAGE_PARTITION_SIZE))
   $(call add_json_str, BoardBootHeaderVersion, $(BOARD_BOOT_HEADER_VERSION))
   $(call add_json_str, TargetKernelPath, $(TARGET_KERNEL_PATH))
+  $(call add_json_bool, BoardUsesGenericKernelImage, $(BOARD_USES_GENERIC_KERNEL_IMAGE))
 
   # Avb (android verified boot) stuff
   $(call add_json_bool, BoardAvbEnable, $(filter true,$(BOARD_AVB_ENABLE)))
