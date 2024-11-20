@@ -29,6 +29,9 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
             {{ -endfor }}
         } catch (Exception e) \{
             // pass
+        } catch (NoClassDefFoundError e) \{
+            // for mainline module running on older devices.
+            // This should be replaces to version check, after the version bump.
         }
         isCached = true;
     }
