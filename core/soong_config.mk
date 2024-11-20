@@ -441,6 +441,9 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_str, BoardBootHeaderVersion, $(BOARD_BOOT_HEADER_VERSION))
   $(call add_json_str, TargetKernelPath, $(TARGET_KERNEL_PATH))
   $(call add_json_bool, BoardUsesGenericKernelImage, $(BOARD_USES_GENERIC_KERNEL_IMAGE))
+  $(call add_json_str, BootSecurityPatch, $(BOOT_SECURITY_PATCH))
+  $(call add_json_str, InitBootSecurityPatch, $(INIT_BOOT_SECURITY_PATCH))
+  $(call add_json_str, VendorSecurityPatch, $(VENDOR_SECURITY_PATCH))
 
   # Avb (android verified boot) stuff
   $(call add_json_bool, BoardAvbEnable, $(filter true,$(BOARD_AVB_ENABLE)))
