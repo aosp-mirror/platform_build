@@ -47,6 +47,9 @@ class BuildContext:
       self.is_test_mapping = False
       self.test_mapping_test_groups = set()
       self.file_download_options = set()
+      self.name = test_info_dict.get('name')
+      self.command = test_info_dict.get('command')
+      self.extra_options = test_info_dict.get('extraOptions')
       for opt in test_info_dict.get('extraOptions', []):
         key = opt.get('key')
         if key == 'test-mapping-test-group':

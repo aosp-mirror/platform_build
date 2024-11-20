@@ -37,6 +37,8 @@ import build_test_suites
 import ci_test_lib
 import optimized_targets
 from pyfakefs import fake_filesystem_unittest
+import metrics_agent
+import test_discovery_agent
 
 
 class BuildTestSuitesTest(fake_filesystem_unittest.TestCase):
@@ -51,6 +53,10 @@ class BuildTestSuitesTest(fake_filesystem_unittest.TestCase):
     subprocess_run_patcher = mock.patch('subprocess.run')
     self.addCleanup(subprocess_run_patcher.stop)
     self.mock_subprocess_run = subprocess_run_patcher.start()
+
+    metrics_agent_finalize_patcher = mock.patch('metrics_agent.MetricsAgent.end_reporting')
+    self.addCleanup(metrics_agent_finalize_patcher.stop)
+    self.mock_metrics_agent_end = metrics_agent_finalize_patcher.start()
 
     self._setup_working_build_env()
 
@@ -255,6 +261,12 @@ class BuildPlannerTest(unittest.TestCase):
 
     def get_enabled_flag(self):
       return f'{self.target}_enabled'
+
+  def setUp(self):
+    test_discovery_agent_patcher = mock.patch('test_discovery_agent.TestDiscoveryAgent.discover_test_zip_regexes')
+    self.addCleanup(test_discovery_agent_patcher.stop)
+    self.mock_test_discovery_agent_end = test_discovery_agent_patcher.start()
+
 
   def test_build_optimization_off_builds_everything(self):
     build_targets = {'target_1', 'target_2'}
