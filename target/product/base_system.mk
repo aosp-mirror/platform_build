@@ -249,6 +249,7 @@ PRODUCT_PACKAGES += \
     pintool \
     platform.xml \
     pm \
+    prefetch \
     preinstalled-packages-asl-files.xml \
     preinstalled-packages-platform.xml \
     preinstalled-packages-strict-signature.xml \
