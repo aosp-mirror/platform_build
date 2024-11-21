@@ -433,21 +433,24 @@ mod tests {
             get_package_read_context(&package_mapped_file, "com.android.aconfig.storage.test_1")
                 .unwrap()
                 .unwrap();
-        let expected_package_context = PackageReadContext { package_id: 0, boolean_start_index: 0 };
+        let expected_package_context =
+            PackageReadContext { package_id: 0, boolean_start_index: 0, fingerprint: 0 };
         assert_eq!(package_context, expected_package_context);
 
         let package_context =
             get_package_read_context(&package_mapped_file, "com.android.aconfig.storage.test_2")
                 .unwrap()
                 .unwrap();
-        let expected_package_context = PackageReadContext { package_id: 1, boolean_start_index: 3 };
+        let expected_package_context =
+            PackageReadContext { package_id: 1, boolean_start_index: 3, fingerprint: 0 };
         assert_eq!(package_context, expected_package_context);
 
         let package_context =
             get_package_read_context(&package_mapped_file, "com.android.aconfig.storage.test_4")
                 .unwrap()
                 .unwrap();
-        let expected_package_context = PackageReadContext { package_id: 2, boolean_start_index: 6 };
+        let expected_package_context =
+            PackageReadContext { package_id: 2, boolean_start_index: 6, fingerprint: 0 };
         assert_eq!(package_context, expected_package_context);
     }
 
