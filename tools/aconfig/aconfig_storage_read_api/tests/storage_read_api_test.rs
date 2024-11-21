@@ -64,21 +64,67 @@ mod aconfig_storage_rust_test {
             get_package_read_context(&package_mapped_file, "com.android.aconfig.storage.test_1")
                 .unwrap()
                 .unwrap();
-        let expected_package_context = PackageReadContext { package_id: 0, boolean_start_index: 0 };
+        let expected_package_context =
+            PackageReadContext { package_id: 0, boolean_start_index: 0, fingerprint: 0 };
         assert_eq!(package_context, expected_package_context);
 
         let package_context =
             get_package_read_context(&package_mapped_file, "com.android.aconfig.storage.test_2")
                 .unwrap()
                 .unwrap();
-        let expected_package_context = PackageReadContext { package_id: 1, boolean_start_index: 3 };
+        let expected_package_context =
+            PackageReadContext { package_id: 1, boolean_start_index: 3, fingerprint: 0 };
         assert_eq!(package_context, expected_package_context);
 
         let package_context =
             get_package_read_context(&package_mapped_file, "com.android.aconfig.storage.test_4")
                 .unwrap()
                 .unwrap();
-        let expected_package_context = PackageReadContext { package_id: 2, boolean_start_index: 6 };
+        let expected_package_context =
+            PackageReadContext { package_id: 2, boolean_start_index: 6, fingerprint: 0 };
+        assert_eq!(package_context, expected_package_context);
+    }
+
+    #[test]
+    fn test_package_context_query_with_fingerprint() {
+        let storage_dir = create_test_storage_files(2);
+        // SAFETY:
+        // The safety here is ensured as the test process will not write to temp storage file
+        let package_mapped_file = unsafe {
+            get_mapped_file(&storage_dir, "mockup", StorageFileType::PackageMap).unwrap()
+        };
+
+        let package_context =
+            get_package_read_context(&package_mapped_file, "com.android.aconfig.storage.test_1")
+                .unwrap()
+                .unwrap();
+        let expected_package_context = PackageReadContext {
+            package_id: 0,
+            boolean_start_index: 0,
+            fingerprint: 15248948510590158086u64,
+        };
+        assert_eq!(package_context, expected_package_context);
+
+        let package_context =
+            get_package_read_context(&package_mapped_file, "com.android.aconfig.storage.test_2")
+                .unwrap()
+                .unwrap();
+        let expected_package_context = PackageReadContext {
+            package_id: 1,
+            boolean_start_index: 3,
+            fingerprint: 4431940502274857964u64,
+        };
+        assert_eq!(package_context, expected_package_context);
+
+        let package_context =
+            get_package_read_context(&package_mapped_file, "com.android.aconfig.storage.test_4")
+                .unwrap()
+                .unwrap();
+        let expected_package_context = PackageReadContext {
+            package_id: 2,
+            boolean_start_index: 6,
+            fingerprint: 16233229917711622375u64,
+        };
         assert_eq!(package_context, expected_package_context);
     }
 
