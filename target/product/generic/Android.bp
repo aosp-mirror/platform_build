@@ -562,11 +562,6 @@ android_filesystem_defaults {
         default: [
             "android.software.preview_sdk.prebuilt.xml", // media_system
         ],
-    }) + select(soong_config_variable("ANDROID", "release_package_profiling_module"), {
-        "true": [
-            "trace_redactor", // base_system (RELEASE_PACKAGE_PROFILING_MODULE)
-        ],
-        default: [],
     }) + select(release_flag("RELEASE_MEMORY_MANAGEMENT_DAEMON"), {
         true: [
             "mm_daemon", // base_system (RELEASE_MEMORY_MANAGEMENT_DAEMON)
