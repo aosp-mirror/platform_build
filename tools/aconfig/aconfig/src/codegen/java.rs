@@ -523,17 +523,15 @@ mod tests {
             private static boolean disabledRwInOtherNamespace = false;
             private static boolean enabledRw = true;
             private void init() {
-                StorageInternalReader reader = null;
-                boolean foundPackage = true;
                 try {
-                    reader = new StorageInternalReader("system", "com.android.aconfig.test");
+                    StorageInternalReader reader = new StorageInternalReader("system", "com.android.aconfig.test");
+                    disabledRw = reader.getBooleanFlagValue(1);
+                    disabledRwExported = reader.getBooleanFlagValue(2);
+                    enabledRw = reader.getBooleanFlagValue(8);
+                    disabledRwInOtherNamespace = reader.getBooleanFlagValue(3);
                 } catch (Exception e) {
-                    foundPackage = false;
+                    // pass
                 }
-                disabledRw = foundPackage ? reader.getBooleanFlagValue(1) : false;
-                disabledRwExported = foundPackage ? reader.getBooleanFlagValue(2) : false;
-                enabledRw = foundPackage ? reader.getBooleanFlagValue(8) : true;
-                disabledRwInOtherNamespace = foundPackage ? reader.getBooleanFlagValue(3) : false;
                 isCached = true;
             }
 
