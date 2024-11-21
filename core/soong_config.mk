@@ -446,6 +446,8 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_str, VendorSecurityPatch, $(VENDOR_SECURITY_PATCH))
   $(call add_json_bool, BoardIncludeDtbInBootimg, $(BOARD_INCLUDE_DTB_IN_BOOTIMG))
   $(call add_json_list, InternalKernelCmdline, $(INTERNAL_KERNEL_CMDLINE))
+  $(call add_json_list, InternalBootconfig, $(INTERNAL_BOOTCONFIG))
+  $(call add_json_str, InternalBootconfigFile, $(INTERNAL_BOOTCONFIG_FILE))
 
   # Avb (android verified boot) stuff
   $(call add_json_bool, BoardAvbEnable, $(filter true,$(BOARD_AVB_ENABLE)))
