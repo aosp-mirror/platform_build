@@ -39,6 +39,8 @@ public class AconfigStorageException extends RuntimeException {
     /** Error code indicating that there was an error reading the Aconfig Storage file. */
     public static final int ERROR_CANNOT_READ_STORAGE_FILE = 4;
 
+    public static final int ERROR_FILE_FINGERPRINT_MISMATCH = 5;
+
     private final int mErrorCode;
 
     /**
@@ -126,6 +128,8 @@ public class AconfigStorageException extends RuntimeException {
                 return "ERROR_CONTAINER_NOT_FOUND";
             case ERROR_CANNOT_READ_STORAGE_FILE:
                 return "ERROR_CANNOT_READ_STORAGE_FILE";
+            case ERROR_FILE_FINGERPRINT_MISMATCH:
+                return "ERROR_FILE_FINGERPRINT_MISMATCH";
             default:
                 return "<Unknown error code " + mErrorCode + ">";
         }

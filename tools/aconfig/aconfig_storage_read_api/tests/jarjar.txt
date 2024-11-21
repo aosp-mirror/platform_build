@@ -15,3 +15,5 @@ rule android.aconfig.storage.FlagTable$* android.aconfig.storage.test.FlagTable$
 rule android.aconfig.storage.PackageTable$* android.aconfig.storage.test.PackageTable$@1
 rule android.aconfig.storage.FlagValueList$* android.aconfig.storage.test.FlagValueList@1
 rule android.aconfig.storage.SipHasher13$* android.aconfig.storage.test.SipHasher13@1
+
+rule android.os.flagging.PlatformAconfigPackageInternal android.aconfig.storage.test.PlatformAconfigPackageInternal

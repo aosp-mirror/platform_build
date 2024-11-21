@@ -32,3 +32,24 @@ java_library {
     host_supported: true,
     is_stubs_module: true,
 }
+
+java_library {
+    name: "aconfig_storage_stub",
+    srcs: [
+        "src/android/os/flagging/**/*.java",
+    ],
+    sdk_version: "core_current",
+    host_supported: true,
+    is_stubs_module: true,
+}
+
+java_library {
+    name: "aconfig_storage_stub_none",
+    srcs: [
+        "src/android/os/flagging/**/*.java",
+    ],
+    sdk_version: "none",
+    system_modules: "core-all-system-modules",
+    host_supported: true,
+    is_stubs_module: true,
+}

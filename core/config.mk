@@ -1307,10 +1307,6 @@ endif
 SOONG_VARIABLES :=
 SOONG_EXTRA_VARIABLES :=
 
--include external/ltp/android/ltp_package_list.mk
-DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages)
-.KATI_READONLY := DEFAULT_DATA_OUT_MODULES
-
 include $(BUILD_SYSTEM)/dumpvar.mk
 
 ifdef BOARD_VNDK_VERSION

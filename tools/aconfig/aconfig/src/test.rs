@@ -266,6 +266,7 @@ parsed_flag {
                 reader: Box::new(include_bytes!("../tests/read_only_test.values").as_slice()),
             }],
             crate::commands::DEFAULT_FLAG_PERMISSION,
+            true,
         )
         .unwrap();
         aconfig_protos::parsed_flags::try_from_binary_proto(&bytes).unwrap()
@@ -290,6 +291,7 @@ parsed_flag {
                 },
             ],
             crate::commands::DEFAULT_FLAG_PERMISSION,
+            true,
         )
         .unwrap();
         aconfig_protos::parsed_flags::try_from_binary_proto(&bytes).unwrap()
@@ -308,6 +310,7 @@ parsed_flag {
                 reader: Box::new(include_bytes!("../tests/third.values").as_slice()),
             }],
             crate::commands::DEFAULT_FLAG_PERMISSION,
+            true,
         )
         .unwrap();
         aconfig_protos::parsed_flags::try_from_binary_proto(&bytes).unwrap()
