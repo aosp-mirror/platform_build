@@ -531,6 +531,9 @@ mod tests {
                     disabledRwInOtherNamespace = reader.getBooleanFlagValue(3);
                 } catch (Exception e) {
                     // pass
+                } catch (NoClassDefFoundError e) {
+                    // for mainline module running on older devices.
+                    // This should be replaces to version check, after the version bump.
                 }
                 isCached = true;
             }
