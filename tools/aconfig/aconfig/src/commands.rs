@@ -225,6 +225,9 @@ pub fn create_java_lib(
         bail!("no parsed flags, or the parsed flags use different packages");
     };
     let package = package.to_string();
+    let mut flag_names =
+        modified_parsed_flags.iter().map(|pf| pf.name().to_string()).collect::<Vec<_>>();
+    let package_fingerprint = compute_flags_fingerprint(&mut flag_names);
     let flag_ids = assign_flag_ids(&package, modified_parsed_flags.iter())?;
     generate_java_code(
         &package,
@@ -232,6 +235,7 @@ pub fn create_java_lib(
         codegen_mode,
         flag_ids,
         allow_instrumentation,
+        package_fingerprint,
     )
 }
 
