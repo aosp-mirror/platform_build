@@ -56,10 +56,6 @@ generic_symlinks = [
         name: "bugreports",
     },
     {
-        target: "/data/cache",
-        name: "cache",
-    },
-    {
         target: "/sys/kernel/debug",
         name: "d",
     },
@@ -124,6 +120,10 @@ android_symlinks = [
     {
         target: "/system_ext",
         name: "system/system_ext",
+    },
+    {
+        target: "/data/cache",
+        name: "cache",
     },
 ]
 
@@ -346,11 +346,6 @@ phony {
     ],
 }
 
-filegroup {
-    name: "system_image_erofs_compress_hints.txt",
-    srcs: ["erofs_compress_hints.txt"],
-}
-
 android_filesystem_defaults {
     name: "system_image_defaults",
     partition_name: "system",
@@ -373,11 +368,6 @@ android_filesystem_defaults {
             "framework/oat/*/*", // framework/oat/{arch}
         ],
         libs: [":framework-res{.export-package.apk}"],
-    },
-    type: "erofs",
-    erofs: {
-        compressor: "lz4hc,9",
-        compress_hints: ":system_image_erofs_compress_hints.txt",
     },
     build_logtags: true,
     gen_aconfig_flags_pb: true,
@@ -510,6 +500,7 @@ android_filesystem_defaults {
         "pintool", // base_system
         "platform.xml", // base_system
         "pm", // base_system
+        "prefetch", //base_system
         "preinstalled-packages-asl-files.xml", // base_system
         "preinstalled-packages-platform-generic-system.xml", // generic_system
         "preinstalled-packages-platform-handheld-system.xml", // handheld_system
@@ -572,11 +563,6 @@ android_filesystem_defaults {
         default: [
             "android.software.preview_sdk.prebuilt.xml", // media_system
         ],
-    }) + select(soong_config_variable("ANDROID", "release_package_profiling_module"), {
-        "true": [
-            "trace_redactor", // base_system (RELEASE_PACKAGE_PROFILING_MODULE)
-        ],
-        default: [],
     }) + select(release_flag("RELEASE_MEMORY_MANAGEMENT_DAEMON"), {
         true: [
             "mm_daemon", // base_system (RELEASE_MEMORY_MANAGEMENT_DAEMON)
@@ -903,8 +889,13 @@ android_filesystem_defaults {
 }
 
 android_system_image {
-    name: "generic_system_image",
+    name: "aosp_shared_system_image",
     defaults: ["system_image_defaults"],
     dirs: android_rootdirs,
     symlinks: android_symlinks,
+    type: "erofs",
+    erofs: {
+        compressor: "lz4hc,9",
+        compress_hints: "erofs_compress_hints.txt",
+    },
 }

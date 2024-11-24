@@ -2605,7 +2605,17 @@ define dump-words-to-file
         @$(call emit-line,$(wordlist 108501,109000,$(1)),$(2))
         @$(call emit-line,$(wordlist 109001,109500,$(1)),$(2))
         @$(call emit-line,$(wordlist 109501,110000,$(1)),$(2))
-        @$(if $(wordlist 110001,110002,$(1)),$(error dump-words-to-file: Too many words ($(words $(1)))))
+        @$(call emit-line,$(wordlist 110001,110500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 110501,111000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 111001,111500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 111501,112000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 112001,112500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 112501,113000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 113001,113500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 113501,114000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 114001,114500,$(1)),$(2))
+        @$(call emit-line,$(wordlist 114501,115000,$(1)),$(2))
+        @$(if $(wordlist 115001,115002,$(1)),$(error dump-words-to-file: Too many words ($(words $(1)))))
 endef
 # Return jar arguments to compress files in a given directory
 # $(1): directory

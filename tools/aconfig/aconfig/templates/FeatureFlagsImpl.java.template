@@ -1,61 +1,97 @@
 package {package_name};
 {{ -if not is_test_mode }}
 {{ -if allow_instrumentation }}
-{{ if not library_exported- }}
+{{ if not library_exported- }}{#- only new storage for prod mode #}
 // TODO(b/303773055): Remove the annotation after access issue is resolved.
 import android.compat.annotation.UnsupportedAppUsage;
-{{ -endif }}
-
 {{ -if runtime_lookup_required }}
-import android.os.Binder;
-import android.provider.DeviceConfig;
-import android.provider.DeviceConfig.Properties;
-
-{{ -if not library_exported }}
-import android.aconfig.storage.StorageInternalReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import android.os.Build;
+{{ if is_platform_container }}
+import android.os.flagging.PlatformAconfigPackageInternal;
+{{ -else }}
+import android.os.flagging.AconfigPackageInternal;
 {{ -endif }}
-
+import android.os.flagging.AconfigStorageReadException;
+import android.util.Log;
 {{ -endif }}
 /** @hide */
 public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ -if runtime_lookup_required }}
-{{ -if not library_exported }}
-    private static final boolean isReadFromNew = Files.exists(Paths.get("/metadata/aconfig/boot/enable_only_new_storage"));
+    private static final String TAG = "{package_name}.FeatureFlagsImpl";
     private static volatile boolean isCached = false;
-{{ -endif }}
-{{ -for namespace_with_flags in namespace_flags }}
-    private static volatile boolean {namespace_with_flags.namespace}_is_cached = false;
-{{ -endfor- }}
-
 {{ for flag in flag_elements }}
 {{ -if flag.is_read_write }}
     private static boolean {flag.method_name} = {flag.default_value};
 {{ -endif }}
 {{ -endfor }}
 
-{{ if not library_exported }}
     private void init() \{
-        StorageInternalReader reader = null;
-        boolean foundPackage = true;
         try \{
-            reader = new StorageInternalReader("{container}", "{package_name}");
+{{ if is_platform_container }}
+            PlatformAconfigPackageInternal reader = PlatformAconfigPackageInternal.load("{container}", "{package_name}", {package_fingerprint});
+{{ -else }}
+            AconfigPackageInternal reader = AconfigPackageInternal.load("{container}", "{package_name}", {package_fingerprint});
+{{ -endif }}
+            AconfigStorageReadException error = reader.getException();
+            if (error == null) \{
+            {{ for namespace_with_flags in namespace_flags }}
+            {{ -for flag in namespace_with_flags.flags }}
+            {{ -if flag.is_read_write }}
+                {flag.method_name} = reader.getBooleanFlagValue({flag.flag_offset});
+            {{ endif }}
+            {{ -endfor }}
+            {{ -endfor }}
+            } else if (Build.VERSION.SDK_INT > 35 && error.getErrorCode() == 5 /* fingerprint doesn't match*/) \{
+            {{ for namespace_with_flags in namespace_flags }}
+            {{ -for flag in namespace_with_flags.flags }}
+            {{ -if flag.is_read_write }}
+                {flag.method_name} = reader.getBooleanFlagValue("{flag.flag_name}", {flag.default_value});
+            {{ -endif }}
+            {{ -endfor }}
+            {{ -endfor }}
+            } else \{
+                Log.e(TAG, error.getMessage());
+            }
         } catch (Exception e) \{
-            foundPackage = false;
+            Log.e(TAG, e.getMessage());
+        } catch (NoClassDefFoundError e) \{
+            // for mainline module running on older devices.
+            // This should be replaces to version check, after the version bump.
+            Log.e(TAG, e.getMessage());
         }
-        {{ for namespace_with_flags in namespace_flags }}
-        {{ -for flag in namespace_with_flags.flags }}
-        {{ if flag.is_read_write }}
-            {flag.method_name} = foundPackage ? reader.getBooleanFlagValue({flag.flag_offset}) : {flag.default_value};
-        {{ endif }}
-        {{ -endfor }}
-        {{ -endfor }}
         isCached = true;
     }
-{{ endif }}
-
-
+{{ -endif }}{#- end of runtime_lookup_required #}
+{{ -for flag in flag_elements }}
+    @Override
+    @com.android.aconfig.annotations.AconfigFlagAccessor
+    @UnsupportedAppUsage
+    public boolean {flag.method_name}() \{
+{{ -if flag.is_read_write }}
+        if (!isCached) \{
+            init();
+        }
+        return {flag.method_name};
+{{ -else }}
+        return {flag.default_value};
+{{ -endif }}
+    }
+{{ endfor }}
+}
+{{ -else- }}{#- device config for exproted mode #}
+import android.os.Binder;
+import android.provider.DeviceConfig;
+import android.provider.DeviceConfig.Properties;
+/** @hide */
+public final class FeatureFlagsImpl implements FeatureFlags \{
+{{ -for namespace_with_flags in namespace_flags }}
+    private static volatile boolean {namespace_with_flags.namespace}_is_cached = false;
+{{ -endfor- }}
+{{ for flag in flag_elements }}
+{{ -if flag.is_read_write }}
+    private static boolean {flag.method_name} = {flag.default_value};
+{{ -endif }}
+{{ -endfor }}
 {{ for namespace_with_flags in namespace_flags }}
     private void load_overrides_{namespace_with_flags.namespace}() \{
         final long ident = Binder.clearCallingIdentity();
@@ -84,40 +120,17 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
         {namespace_with_flags.namespace}_is_cached = true;
     }
 {{ endfor- }}
-
-{{ -endif }}{#- end of runtime_lookup_required #}
 {{ -for flag in flag_elements }}
     @Override
-{{ -if not library_exported }}
-    @com.android.aconfig.annotations.AconfigFlagAccessor
-    @UnsupportedAppUsage
-{{ -endif }}
     public boolean {flag.method_name}() \{
-{{ -if not library_exported }}
-{{ -if flag.is_read_write }}
-        if (isReadFromNew) \{
-            if (!isCached) \{
-                init();
-            }
-        } else \{
-            if (!{flag.device_config_namespace}_is_cached) \{
-                load_overrides_{flag.device_config_namespace}();
-            }
-        }
-        return {flag.method_name};
-{{ -else }}
-        return {flag.default_value};
-{{ -endif }}
-{{ else }}
         if (!{flag.device_config_namespace}_is_cached) \{
             load_overrides_{flag.device_config_namespace}();
         }
         return {flag.method_name};
-{{ -endif }}
     }
 {{ endfor }}
 }
-
+{{ -endif- }} {#- end exported mode #}
 {{ else }} {#- else for allow_instrumentation is not enabled #}
 {{ if not library_exported- }}
 // TODO(b/303773055): Remove the annotation after access issue is resolved.

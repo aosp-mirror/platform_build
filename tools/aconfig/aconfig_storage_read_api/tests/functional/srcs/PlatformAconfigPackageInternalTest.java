@@ -122,13 +122,13 @@ public class PlatformAconfigPackageInternalTest {
                 PlatformAconfigPackageInternal.load("fake_container", "fake_package", 0);
         assertEquals(
                 AconfigStorageException.ERROR_CANNOT_READ_STORAGE_FILE,
-                ((AconfigStorageException) aPackage.getException()).getErrorCode());
+                aPackage.getException().getErrorCode());
 
         // package not found
         aPackage = PlatformAconfigPackageInternal.load("system", "fake_container", 0);
         assertEquals(
                 AconfigStorageException.ERROR_PACKAGE_NOT_FOUND,
-                ((AconfigStorageException) aPackage.getException()).getErrorCode());
+                aPackage.getException().getErrorCode());
 
         // fingerprint doesn't match
         List<parsed_flag> flags = DeviceProtos.loadAndParseFlagProtos();
@@ -148,7 +148,7 @@ public class PlatformAconfigPackageInternalTest {
             aPackage = PlatformAconfigPackageInternal.load(container, packageName, fingerprint + 1);
             assertEquals(
                     // AconfigStorageException.ERROR_FILE_FINGERPRINT_MISMATCH,
-                    5, ((AconfigStorageException) aPackage.getException()).getErrorCode());
+                    5, aPackage.getException().getErrorCode());
             assertEquals(aPackage.getBooleanFlagValue(flag.name, !value), value);
         }
     }

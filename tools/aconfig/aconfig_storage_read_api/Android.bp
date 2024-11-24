@@ -167,27 +167,8 @@ java_library {
     ],
     sdk_version: "core_current",
     host_supported: true,
-    min_sdk_version: "29",
-    apex_available: [
-        "//apex_available:platform",
-        "//apex_available:anyapex",
+    visibility: [
+        "//frameworks/base",
+        "//build/make/tools/aconfig/aconfig_storage_read_api/tests",
     ],
-}
-
-java_library {
-    name: "aconfig_storage_reader_java_none",
-    srcs: [
-        "srcs/android/aconfig/storage/StorageInternalReader.java",
-        "srcs/android/os/flagging/PlatformAconfigPackageInternal.java",
-    ],
-    libs: [
-        "unsupportedappusage-sdk-none",
-        "fake_device_config",
-    ],
-    static_libs: [
-        "aconfig_storage_file_java_none",
-    ],
-    sdk_version: "none",
-    system_modules: "core-all-system-modules",
-    host_supported: true,
 }
