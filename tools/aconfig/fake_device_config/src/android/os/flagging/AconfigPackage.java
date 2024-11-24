@@ -14,29 +14,17 @@
  * limitations under the License.
  */
 
-package android.provider;
+package android.os.flagging;
 
 /*
  * This class allows generated aconfig code to compile independently of the framework.
  */
 public class AconfigPackage {
-
-    /** Flag value is true */
-    public static final int FLAG_BOOLEAN_VALUE_TRUE = 1;
-
-    /** Flag value is false */
-    public static final int FLAG_BOOLEAN_VALUE_FALSE = 0;
-
-    /** Flag value doesn't exist */
-    public static final int FLAG_BOOLEAN_VALUE_NOT_EXIST = 2;
-
-    public static int getBooleanFlagValue(String packageName, String flagName) {
-        return 0;
+    public static AconfigPackage load(String packageName) {
+        throw new UnsupportedOperationException("Stub!");
     }
 
-    public AconfigPackage(String packageName) {}
-
-    public int getBooleanFlagValue(String flagName) {
-        return 0;
+    public boolean getBooleanFlagValue(String flagName, boolean defaultValue) {
+        throw new UnsupportedOperationException("Stub!");
     }
 }

@@ -500,6 +500,7 @@ android_filesystem_defaults {
         "pintool", // base_system
         "platform.xml", // base_system
         "pm", // base_system
+        "prefetch", //base_system
         "preinstalled-packages-asl-files.xml", // base_system
         "preinstalled-packages-platform-generic-system.xml", // generic_system
         "preinstalled-packages-platform-handheld-system.xml", // handheld_system
@@ -562,11 +563,6 @@ android_filesystem_defaults {
         default: [
             "android.software.preview_sdk.prebuilt.xml", // media_system
         ],
-    }) + select(soong_config_variable("ANDROID", "release_package_profiling_module"), {
-        "true": [
-            "trace_redactor", // base_system (RELEASE_PACKAGE_PROFILING_MODULE)
-        ],
-        default: [],
     }) + select(release_flag("RELEASE_MEMORY_MANAGEMENT_DAEMON"), {
         true: [
             "mm_daemon", // base_system (RELEASE_MEMORY_MANAGEMENT_DAEMON)
