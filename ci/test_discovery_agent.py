@@ -17,7 +17,6 @@ import json
 import logging
 import os
 import subprocess
-import buildbot
 
 
 class TestDiscoveryAgent:
@@ -50,7 +49,7 @@ class TestDiscoveryAgent:
       A list of test zip regexes that TF is going to try to pull files from.
     """
     test_discovery_output_file_name = os.path.join(
-        buildbot.OutDir(), self._TRADEFED_DISCOVERY_OUTPUT_FILE_NAME
+        os.environ.get('TOP'), 'out', self._TRADEFED_DISCOVERY_OUTPUT_FILE_NAME
     )
     with open(
         test_discovery_output_file_name, mode="w+t"

@@ -148,7 +148,7 @@ mod tests {
 
     fn create_test_flag_table_from_source() -> Result<FlagTable> {
         let caches = parse_all_test_flags();
-        let packages = group_flags_by_package(caches.iter());
+        let packages = group_flags_by_package(caches.iter(), DEFAULT_FILE_VERSION);
         create_flag_table("mockup", &packages, DEFAULT_FILE_VERSION)
     }
 

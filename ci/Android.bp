@@ -103,13 +103,10 @@ python_binary_host {
         "test_mapping_module_retriever.py",
         "build_context.py",
         "test_discovery_agent.py",
+        "metrics_agent.py",
+        "buildbot.py",
     ],
     main: "build_test_suites.py",
-    version: {
-        py3: {
-            embedded_launcher: true,
-        },
-    },
     libs: [
         "soong-metrics-proto-py",
     ],
@@ -123,6 +120,11 @@ python_library_host {
         "test_mapping_module_retriever.py",
         "build_context.py",
         "test_discovery_agent.py",
+        "metrics_agent.py",
+        "buildbot.py",
+    ],
+    libs: [
+        "soong-metrics-proto-py",
     ],
 }
 
