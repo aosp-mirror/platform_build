@@ -30,7 +30,7 @@ import metrics_agent
 import test_discovery_agent
 
 
-REQUIRED_ENV_VARS = frozenset(['TARGET_PRODUCT', 'TARGET_RELEASE', 'TOP'])
+REQUIRED_ENV_VARS = frozenset(['TARGET_PRODUCT', 'TARGET_RELEASE', 'TOP', 'DIST_DIR'])
 SOONG_UI_EXE_REL_PATH = 'build/soong/soong_ui.bash'
 LOG_PATH = 'logs/build_test_suites.log'
 
@@ -196,6 +196,11 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
   argparser.add_argument(
       'extra_targets', nargs='*', help='Extra test suites to build.'
+  )
+  argparser.add_argument(
+      '--device-build',
+      action='store_true',
+      help='Flag to indicate running a device build.',
   )
 
   return argparser.parse_args(argv)
