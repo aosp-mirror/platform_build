@@ -39,6 +39,7 @@ $(call soong_config_set_bool,ANDROID,RELEASE_BOARD_API_LEVEL_FROZEN,$(RELEASE_BO
 $(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_DRMSERVER)
 $(call add_soong_config_var,ANDROID,TARGET_ENABLE_MEDIADRM_64)
 $(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_MEDIASERVER)
+$(call add_soong_config_var,ANDROID,BOARD_GENFS_LABELS_VERSION)
 
 $(call add_soong_config_var,ANDROID,ADDITIONAL_M4DEFS,$(if $(BOARD_SEPOLICY_M4DEFS),$(addprefix -D,$(BOARD_SEPOLICY_M4DEFS))))
 
@@ -70,6 +71,11 @@ $(call soong_config_set,art_module,art_debug_opt_flag,$(ART_DEBUG_OPT_FLAG))
 endif
 # The default value of ART_BUILD_HOST_DEBUG is true
 $(call soong_config_set_bool,art_module,art_build_host_debug,$(if $(filter false,$(ART_BUILD_HOST_DEBUG)),false,true))
+
+# For chre
+$(call soong_config_set_bool,chre,chre_daemon_lama_enabled,$(if $(filter true,$(CHRE_DAEMON_LPMA_ENABLED)),true,false))
+$(call soong_config_set_bool,chre,chre_dedicated_transport_channel_enabled,$(if $(filter true,$(CHRE_DEDICATED_TRANSPORT_CHANNEL_ENABLED)),true,false))
+$(call soong_config_set_bool,chre,chre_log_atom_extension_enabled,$(if $(filter true,$(CHRE_LOG_ATOM_EXTENSION_ENABLED)),true,false))
 
 ifdef TARGET_BOARD_AUTO
   $(call add_soong_config_var_value, ANDROID, target_board_auto, $(TARGET_BOARD_AUTO))
@@ -241,21 +247,6 @@ $(call soong_config_set,ANDROID,target_board_platform,$(TARGET_BOARD_PLATFORM))
 $(call soong_config_set_bool,google_graphics,board_uses_scaler_m2m1shot,$(if $(filter true,$(BOARD_USES_SCALER_M2M1SHOT)),true,false))
 $(call soong_config_set_bool,google_graphics,board_uses_align_restriction,$(if $(filter true,$(BOARD_USES_ALIGN_RESTRICTION)),true,false))
 
-# Export video_codec variables to soong for exynos modules
-$(call soong_config_set,video_codec,target_soc_name,$(TARGET_SOC_NAME))
-$(call soong_config_set_bool,video_codec,board_use_codec2_hidl_1_2,$(if $(filter true,$(BOARD_USE_CODEC2_HIDL_1_2)),true,false))
-$(call soong_config_set_bool,video_codec,board_support_mfc_enc_bt2020,$(if $(filter true,$(BOARD_SUPPORT_MFC_ENC_BT2020)),true,false))
-$(call soong_config_set_bool,video_codec,board_support_flexible_p010,$(if $(filter true,$(BOARD_SUPPORT_FLEXIBLE_P010)),true,false))
-$(call soong_config_set_bool,video_codec,board_use_codec2_aidl,$(if $(BOARD_USE_CODEC2_AIDL),true,false))
-$(call soong_config_set,video_codec,board_gpu_type,$(BOARD_GPU_TYPE))
-$(call soong_config_set_bool,video_codec,board_use_small_secure_memory,$(if $(filter true,$(BOARD_USE_SMALL_SECURE_MEMORY)),true,false))
-ifdef BOARD_SUPPORT_MFC_VERSION
-  $(call soong_config_set,video_codec,board_support_mfc_version,$(BOARD_SUPPORT_MFC_VERSION))
-endif
-ifdef BOARD_USE_MAX_SECURE_RESOURCE
-  $(call soong_config_set,video_codec,board_use_max_secure_resource,$(BOARD_USE_MAX_SECURE_RESOURCE))
-endif
-
 # Export related variables to soong for hardware/google/graphics/common/libacryl:libacryl
 ifdef BOARD_LIBACRYL_DEFAULT_COMPOSITOR
   $(call soong_config_set,acryl,libacryl_default_compositor,$(BOARD_LIBACRYL_DEFAULT_COMPOSITOR))
@@ -270,3 +261,25 @@ ifdef BOARD_LIBACRYL_G2D_HDR_PLUGIN
   #BOARD_LIBACRYL_G2D_HDR_PLUGIN is set in each board config
   $(call soong_config_set_bool,acryl,libacryl_use_g2d_hdr_plugin,true)
 endif
+
+# Export related variables to soong for hardware/google/graphics/common/BoardConfigCFlags.mk
+$(call soong_config_set_bool,google_graphics,hwc_no_support_skip_validate,$(if $(filter true,$(HWC_NO_SUPPORT_SKIP_VALIDATE)),true,false))
+$(call soong_config_set_bool,google_graphics,hwc_support_color_transform,$(if $(filter true,$(HWC_SUPPORT_COLOR_TRANSFORM)),true,false))
+$(call soong_config_set_bool,google_graphics,hwc_support_render_intent,$(if $(filter true,$(HWC_SUPPORT_RENDER_INTENT)),true,false))
+$(call soong_config_set_bool,google_graphics,board_uses_virtual_display,$(if $(filter true,$(BOARD_USES_VIRTUAL_DISPLAY)),true,false))
+$(call soong_config_set_bool,google_graphics,board_uses_dt,$(if $(filter true,$(BOARD_USES_DT)),true,false))
+$(call soong_config_set_bool,google_graphics,board_uses_decon_64bit_address,$(if $(filter true,$(BOARD_USES_DECON_64BIT_ADDRESS)),true,false))
+$(call soong_config_set_bool,google_graphics,board_uses_hdrui_gles_conversion,$(if $(filter true,$(BOARD_USES_HDRUI_GLES_CONVERSION)),true,false))
+$(call soong_config_set_bool,google_graphics,uses_idisplay_intf_sec,$(if $(filter true,$(USES_IDISPLAY_INTF_SEC)),true,false))
+
+# Variables for fs_config
+$(call soong_config_set_bool,fs_config,vendor,$(if $(BOARD_USES_VENDORIMAGE)$(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE),true,false))
+$(call soong_config_set_bool,fs_config,oem,$(if $(BOARD_USES_OEMIMAGE)$(BOARD_OEMIMAGE_FILE_SYSTEM_TYPE),true,false))
+$(call soong_config_set_bool,fs_config,odm,$(if $(BOARD_USES_ODMIMAGE)$(BOARD_ODMIMAGE_FILE_SYSTEM_TYPE),true,false))
+$(call soong_config_set_bool,fs_config,vendor_dlkm,$(if $(BOARD_USES_VENDOR_DLKMIMAGE)$(BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE),true,false))
+$(call soong_config_set_bool,fs_config,odm_dlkm,$(if $(BOARD_USES_ODM_DLKMIMAGE)$(BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE),true,false))
+$(call soong_config_set_bool,fs_config,system_dlkm,$(if $(BOARD_USES_SYSTEM_DLKMIMAGE)$(BOARD_SYSTEM_DLKMIMAGE_FILE_SYSTEM_TYPE),true,false))
+
+# Variables for telephony
+$(call soong_config_set_bool,telephony,sec_cp_secure_boot,$(if $(filter true,$(SEC_CP_SECURE_BOOT)),true,false))
+$(call soong_config_set_bool,telephony,cbd_protocol_sit,$(if $(filter true,$(CBD_PROTOCOL_SIT)),true,false))

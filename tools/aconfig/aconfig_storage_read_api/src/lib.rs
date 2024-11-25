@@ -413,10 +413,10 @@ mod tests {
         let flag_map = storage_dir.clone() + "/maps/mockup.flag.map";
         let flag_val = storage_dir.clone() + "/boot/mockup.val";
         let flag_info = storage_dir.clone() + "/boot/mockup.info";
-        fs::copy("./tests/data/v1/package.map", &package_map).unwrap();
-        fs::copy("./tests/data/v1/flag.map", &flag_map).unwrap();
-        fs::copy("./tests/data/v1/flag.val", &flag_val).unwrap();
-        fs::copy("./tests/data/v1/flag.info", &flag_info).unwrap();
+        fs::copy("./tests/data/v1/package_v1.map", &package_map).unwrap();
+        fs::copy("./tests/data/v1/flag_v1.map", &flag_map).unwrap();
+        fs::copy("./tests/data/v1/flag_v1.val", &flag_val).unwrap();
+        fs::copy("./tests/data/v1/flag_v1.info", &flag_info).unwrap();
 
         return storage_dir;
     }
@@ -433,21 +433,24 @@ mod tests {
             get_package_read_context(&package_mapped_file, "com.android.aconfig.storage.test_1")
                 .unwrap()
                 .unwrap();
-        let expected_package_context = PackageReadContext { package_id: 0, boolean_start_index: 0 };
+        let expected_package_context =
+            PackageReadContext { package_id: 0, boolean_start_index: 0, fingerprint: 0 };
         assert_eq!(package_context, expected_package_context);
 
         let package_context =
             get_package_read_context(&package_mapped_file, "com.android.aconfig.storage.test_2")
                 .unwrap()
                 .unwrap();
-        let expected_package_context = PackageReadContext { package_id: 1, boolean_start_index: 3 };
+        let expected_package_context =
+            PackageReadContext { package_id: 1, boolean_start_index: 3, fingerprint: 0 };
         assert_eq!(package_context, expected_package_context);
 
         let package_context =
             get_package_read_context(&package_mapped_file, "com.android.aconfig.storage.test_4")
                 .unwrap()
                 .unwrap();
-        let expected_package_context = PackageReadContext { package_id: 2, boolean_start_index: 6 };
+        let expected_package_context =
+            PackageReadContext { package_id: 2, boolean_start_index: 6, fingerprint: 0 };
         assert_eq!(package_context, expected_package_context);
     }
 
@@ -508,9 +511,9 @@ mod tests {
     #[test]
     // this test point locks down flag storage file version number query api
     fn test_storage_version_query() {
-        assert_eq!(get_storage_file_version("./tests/data/v1/package.map").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./tests/data/v1/flag.map").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./tests/data/v1/flag.val").unwrap(), 1);
-        assert_eq!(get_storage_file_version("./tests/data/v1/flag.info").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./tests/data/v1/package_v1.map").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./tests/data/v1/flag_v1.map").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./tests/data/v1/flag_v1.val").unwrap(), 1);
+        assert_eq!(get_storage_file_version("./tests/data/v1/flag_v1.info").unwrap(), 1);
     }
 }

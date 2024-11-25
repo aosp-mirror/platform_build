@@ -290,6 +290,7 @@ $(foreach var,$(_board_true_false_vars), \
     $(error Valid values of $(var) are "true", "false", and "". Not "$($(var))")))
 
 include $(BUILD_SYSTEM)/board_config_wifi.mk
+include $(BUILD_SYSTEM)/board_config_wpa_supplicant.mk
 
 # Set up soong config for "soong_config_value_variable".
 -include vendor/google/build/soong/soong_config_namespace/camera.mk
@@ -924,6 +925,18 @@ ifeq ($(PRODUCT_BUILD_PVMFW_IMAGE),true)
   BOARD_USES_PVMFWIMAGE := true
 endif
 .KATI_READONLY := BOARD_USES_PVMFWIMAGE
+
+BOARD_USES_DESKTOP_RECOVERY_IMAGE :=
+ifeq ($(PRODUCT_BUILD_DESKTOP_RECOVERY_IMAGE),true)
+  BOARD_USES_DESKTOP_RECOVERY_IMAGE := true
+endif
+.KATI_READONLY := BOARD_USES_DESKTOP_RECOVERY_IMAGE
+
+BOARD_USES_DESKTOP_UPDATE_IMAGE :=
+ifeq ($(PRODUCT_BUILD_DESKTOP_UPDATE_IMAGE),true)
+  BOARD_USES_DESKTOP_UPDATE_IMAGE := true
+endif
+.KATI_READONLY := BOARD_USES_DESKTOP_UPDATE_IMAGE
 
 ###########################################
 # Ensure consistency among TARGET_RECOVERY_UPDATER_LIBS, AB_OTA_UPDATER, and PRODUCT_OTA_FORCE_NON_AB_PACKAGE.

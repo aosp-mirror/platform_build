@@ -192,6 +192,34 @@ product_copy_files_ignored :=
 unique_product_copy_files_pairs :=
 unique_product_copy_files_destinations :=
 
+
+# Returns a list of EXTRA_INSTALL_ZIPS trios whose primary file is contained within $(1)
+# The trios will contain the primary installed file : the directory to unzip the zip to : the zip
+define relevant-extra-install-zips
+$(strip $(foreach p,$(EXTRA_INSTALL_ZIPS), \
+  $(if $(filter $(call word-colon,1,$(p)),$(1)), \
+    $(p))))
+endef
+
+# Writes a text file that contains all of the files that will be inside a partition.
+# All the file paths will be relative to the partition's staging directory.
+# It will also take into account files inside zips listed in EXTRA_INSTALL_ZIPS.
+#
+# Arguments:
+#   $(1): Output file
+#   $(2): The partition's staging directory
+#   $(3): Files to include in the partition
+define write-partition-file-list
+$(1): PRIVATE_FILES := $(subst $(2)/,,$(filter $(2)/%,$(3)))
+$(1): PRIVATE_EXTRA_INSTALL_ZIPS := $(call relevant-extra-install-zips,$(filter $(2)/%,$(3)))
+$(1): $$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(foreach p,$(call relevant-extra-install-zips,$(filter $(2)/%,$(3))),$(call word-colon,3,$(p)))
+	@echo Writing $$@
+	rm -f $$@
+	echo -n > $$@
+	$$(foreach f,$$(PRIVATE_FILES),echo "$$(f)" >> $$@$$(newline))
+	$$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(2) $$(PRIVATE_EXTRA_INSTALL_ZIPS) >> $$@
+endef
+
 # -----------------------------------------------------------------
 # Returns the max allowed size for an image suitable for hash verification
 # (e.g., boot.img, recovery.img, etc).
@@ -692,7 +720,7 @@ endif
 
 BOARD_KERNEL_MODULE_DIRS += top
 
-# Default to not generating modules.dep for kernel modules on system
+# Default to not generating modules.load for kernel modules on system
 # side. We should only load these modules if they are depended by vendor
 # side modules.
 ifeq ($(BOARD_SYSTEM_KERNEL_MODULES_LOAD),)
@@ -1267,6 +1295,10 @@ boototapackage_16k: $(BUILT_BOOT_OTA_PACKAGE_16K)
 
 endif
 
+
+ramdisk_intermediates :=$= $(call intermediates-dir-for,PACKAGING,ramdisk)
+$(eval $(call write-partition-file-list,$(ramdisk_intermediates)/file_list.txt,$(TARGET_RAMDISK_OUT),$(INTERNAL_RAMDISK_FILES)))
+
 # The value of RAMDISK_NODE_LIST is defined in system/core/rootdir/Android.bp.
 # This file contains /dev nodes description added to the generic ramdisk
 
@@ -1622,6 +1654,8 @@ INTERNAL_VENDOR_RAMDISK_FILES := $(filter $(TARGET_VENDOR_RAMDISK_OUT)/%, \
     $(ALL_DEFAULT_INSTALLED_MODULES))
 
 INTERNAL_VENDOR_RAMDISK_TARGET := $(call intermediates-dir-for,PACKAGING,vendor_boot)/vendor_ramdisk.cpio$(RAMDISK_EXT)
+vendor_ramdisk_intermediates :=$= $(call intermediates-dir-for,PACKAGING,vendor_ramdisk)
+$(eval $(call write-partition-file-list,$(vendor_ramdisk_intermediates)/file_list.txt,$(TARGET_VENDOR_RAMDISK_OUT),$(INTERNAL_VENDOR_RAMDISK_FILES)))
 
 # Exclude recovery files in the default vendor ramdisk if including a standalone
 # recovery ramdisk in vendor_boot.
@@ -3471,33 +3505,6 @@ ifneq (,$(filter address, $(SANITIZE_TARGET)))
 endif
 
 FULL_SYSTEMIMAGE_DEPS += $(INTERNAL_ROOT_FILES) $(INSTALLED_FILES_FILE_ROOT)
-
-# Returns a list of EXTRA_INSTALL_ZIPS trios whose primary file is contained within $(1)
-# The trios will contain the primary installed file : the directory to unzip the zip to : the zip
-define relevant-extra-install-zips
-$(strip $(foreach p,$(EXTRA_INSTALL_ZIPS), \
-  $(if $(filter $(call word-colon,1,$(p)),$(1)), \
-    $(p))))
-endef
-
-# Writes a text file that contains all of the files that will be inside a partition.
-# All the file paths will be relative to the partition's staging directory.
-# It will also take into account files inside zips listed in EXTRA_INSTALL_ZIPS.
-#
-# Arguments:
-#   $(1): Output file
-#   $(2): The partition's staging directory
-#   $(3): Files to include in the partition
-define write-partition-file-list
-$(1): PRIVATE_FILES := $(subst $(2)/,,$(filter $(2)/%,$(3)))
-$(1): PRIVATE_EXTRA_INSTALL_ZIPS := $(call relevant-extra-install-zips,$(filter $(2)/%,$(3)))
-$(1): $$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(foreach p,$(call relevant-extra-install-zips,$(filter $(2)/%,$(3))),$(call word-colon,3,$(p)))
-	@echo Writing $$@
-	rm -f $$@
-	echo -n > $$@
-	$$(foreach f,$$(PRIVATE_FILES),echo "$$(f)" >> $$@$$(newline))
-	$$(HOST_OUT_EXECUTABLES)/extra_install_zips_file_list $(2) $$(PRIVATE_EXTRA_INSTALL_ZIPS) >> $$@
-endef
 
 # -----------------------------------------------------------------
 ifdef BUILDING_SYSTEM_IMAGE
@@ -6383,6 +6390,10 @@ ifdef BUILDING_VENDOR_BOOT_IMAGE
   endif
 endif
 
+ifdef BUILDING_VENDOR_KERNEL_BOOT_IMAGE
+  $(BUILT_TARGET_FILES_DIR): $(INTERNAL_VENDOR_KERNEL_RAMDISK_FILES)
+endif
+
 ifdef BUILDING_RECOVERY_IMAGE
   # TODO(b/30414428): Can't depend on INTERNAL_RECOVERYIMAGE_FILES alone like other
   # BUILT_TARGET_FILES_PACKAGE dependencies because currently there're cp/rsync/rm
@@ -7976,7 +7987,7 @@ endif # PACK_DESKTOP_FILESYSTEM_IMAGES
 
 # -----------------------------------------------------------------
 # Desktop pack recovery image hook.
-ifneq (,$(strip $(PACK_DESKTOP_RECOVERY_IMAGE)))
+ifeq ($(BOARD_USES_DESKTOP_RECOVERY_IMAGE),true)
 PACK_RECOVERY_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_recovery_image.bin
 PACK_RECOVERY_IMAGE_ARGS := --noarchive --recovery
 
@@ -7997,11 +8008,11 @@ $(call dist-for-goals,dist_files,$(PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET))
 .PHONY: pack-recovery-image
 pack-recovery-image: $(PACK_RECOVERY_IMAGE_TARGET)
 
-endif # PACK_DESKTOP_RECOVERY_IMAGE
+endif # BOARD_USES_DESKTOP_RECOVERY_IMAGE
 
 # -----------------------------------------------------------------
 # Desktop pack update image hook.
-ifneq (,$(strip $(PACK_DESKTOP_UPDATE_IMAGE)))
+ifeq ($(BOARD_USES_DESKTOP_UPDATE_IMAGE),true)
 PACK_UPDATE_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_update_image.bin
 PACK_UPDATE_IMAGE_ARGS := --noarchive --update
 
@@ -8022,7 +8033,7 @@ $(call dist-for-goals,dist_files,$(PACKED_UPDATE_IMAGE_ARCHIVE_TARGET))
 .PHONY: pack-update-image
 pack-update-image: $(PACK_UPDATE_IMAGE_TARGET)
 
-endif # PACK_DESKTOP_UPDATE_IMAGE
+endif # BOARD_USES_DESKTOP_UPDATE_IMAGE
 
 PACK_MIGRATION_IMAGE_SCRIPT := $(HOST_OUT_EXECUTABLES)/pack_migration_image
 
