@@ -547,7 +547,7 @@ mod tests {
                         enabledRw = reader.getBooleanFlagValue("enabled_rw", true);
                         disabledRwInOtherNamespace = reader.getBooleanFlagValue("disabled_rw_in_other_namespace", false);
                     } else {
-                        Log.e(TAG, error.getMessage());
+                        Log.e(TAG, "encountered an AconfigStorageReadException");
                     }
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage());

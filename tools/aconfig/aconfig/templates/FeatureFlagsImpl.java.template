@@ -50,7 +50,7 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
             {{ -endfor }}
             {{ -endfor }}
             } else \{
-                Log.e(TAG, error.getMessage());
+                Log.e(TAG, "encountered an AconfigStorageReadException");
             }
         } catch (Exception e) \{
             Log.e(TAG, e.getMessage());
