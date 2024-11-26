@@ -39,11 +39,6 @@ pub mod auto_generated {
     pub fn enable_aconfigd_from_mainline() -> bool {
         aconfig_flags_rust::enable_only_new_storage()
     }
-
-    /// Returns the value for the enable_system_aconfigd_rust flag.
-    pub fn enable_system_aconfigd_rust() -> bool {
-        aconfig_flags_rust::enable_system_aconfigd_rust()
-    }
 }
 
 /// Module used when building with cargo
@@ -57,12 +52,6 @@ pub mod auto_generated {
 
     /// Returns a placeholder value for the enable_aconfigd_from_mainline flag.
     pub fn enable_aconfigd_from_mainline() -> bool {
-        // Used only to enable typechecking and testing with cargo
-        true
-    }
-
-    /// Returns a placeholder value for the enable_system_aconfigd_rust flag.
-    pub fn enable_system_aconfigd_rust() -> bool {
         // Used only to enable typechecking and testing with cargo
         true
     }
