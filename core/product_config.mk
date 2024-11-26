@@ -424,10 +424,12 @@ ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
   endif
 endif
 
-$(foreach pair,$(PRODUCT_APEX_BOOT_JARS), \
-  $(eval jar := $(call word-colon,2,$(pair))) \
-  $(if $(findstring $(jar), $(PRODUCT_BOOT_JARS)), \
-    $(error A jar in PRODUCT_APEX_BOOT_JARS must not be in PRODUCT_BOOT_JARS, but $(jar) is)))
+$(foreach apexpair,$(PRODUCT_APEX_BOOT_JARS), \
+  $(foreach platformpair,$(PRODUCT_BOOT_JARS), \
+    $(eval apexjar := $(call word-colon,2,$(apexpair))) \
+    $(eval platformjar := $(call word-colon,2,$(platformpair))) \
+    $(if $(filter $(apexjar), $(platformjar)), \
+      $(error A jar in PRODUCT_APEX_BOOT_JARS must not be in PRODUCT_BOOT_JARS, but $(apexjar) is))))
 
 ENFORCE_SYSTEM_CERTIFICATE := $(PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT)
 ENFORCE_SYSTEM_CERTIFICATE_ALLOW_LIST := $(PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_ALLOW_LIST)
@@ -530,6 +532,17 @@ endif
 # setting the OVERRIDE_PRODUCT_COMPRESSED_APEX environment variable.
 ifdef OVERRIDE_PRODUCT_COMPRESSED_APEX
   PRODUCT_COMPRESSED_APEX := $(OVERRIDE_PRODUCT_COMPRESSED_APEX)
+endif
+
+ifdef OVERRIDE_PRODUCT_DEFAULT_APEX_PAYLOAD_TYPE
+  PRODUCT_DEFAULT_APEX_PAYLOAD_TYPE := $(OVERRIDE_PRODUCT_DEFAULT_APEX_PAYLOAD_TYPE)
+else ifeq ($(PRODUCT_DEFAULT_APEX_PAYLOAD_TYPE),)
+  # Use ext4 as a default payload fs type
+  PRODUCT_DEFAULT_APEX_PAYLOAD_TYPE := ext4
+endif
+ifeq ($(filter ext4 erofs,$(PRODUCT_DEFAULT_APEX_PAYLOAD_TYPE)),)
+  $(error PRODUCT_DEFAULT_APEX_PAYLOAD_TYPE should be either erofs or ext4,\
+    not $(PRODUCT_DEFAULT_APEX_PAYLOAD_TYPE).)
 endif
 
 $(KATI_obsolete_var OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS \

@@ -30,3 +30,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34 += \
     hwservicemanager \
     android.hidl.allocator@1.0-service \
+
+# AppFunction Extensions
+ifneq (,$(RELEASE_APPFUNCTION_SIDECAR))
+    $(call inherit-product, $(SRC_TARGET_DIR)/product/app_function_extensions.mk)
+endif

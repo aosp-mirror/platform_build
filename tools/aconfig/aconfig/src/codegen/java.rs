@@ -32,6 +32,7 @@ pub fn generate_java_code<I>(
     codegen_mode: CodegenMode,
     flag_ids: HashMap<String, u16>,
     allow_instrumentation: bool,
+    package_fingerprint: u64,
 ) -> Result<Vec<OutputFile>>
 where
     I: Iterator<Item = ProtoParsedFlag>,
@@ -46,6 +47,7 @@ where
     let runtime_lookup_required =
         flag_elements.iter().any(|elem| elem.is_read_write) || library_exported;
     let container = (flag_elements.first().expect("zero template flags").container).to_string();
+    let is_platform_container = matches!(container.as_str(), "system" | "product" | "vendor");
     let context = Context {
         flag_elements,
         namespace_flags,
@@ -56,6 +58,8 @@ where
         library_exported,
         allow_instrumentation,
         container,
+        is_platform_container,
+        package_fingerprint: format!("0x{:X}L", package_fingerprint),
     };
     let mut template = TinyTemplate::new();
     template.add_template("Flags.java", include_str!("../../templates/Flags.java.template"))?;
@@ -123,6 +127,8 @@ struct Context {
     pub library_exported: bool,
     pub allow_instrumentation: bool,
     pub container: String,
+    pub is_platform_container: bool,
+    pub package_fingerprint: String,
 }
 
 #[derive(Serialize, Debug)]
@@ -502,6 +508,7 @@ mod tests {
             mode,
             flag_ids,
             true,
+            5801144784618221668,
         )
         .unwrap();
         let expect_flags_content = EXPECTED_FLAG_COMMON_CONTENT.to_string()
@@ -513,78 +520,43 @@ mod tests {
         package com.android.aconfig.test;
         // TODO(b/303773055): Remove the annotation after access issue is resolved.
         import android.compat.annotation.UnsupportedAppUsage;
-        import android.provider.DeviceConfig;
-        import android.provider.DeviceConfig.Properties;
-        import android.aconfig.storage.StorageInternalReader;
-        import java.nio.file.Files;
-        import java.nio.file.Paths;
-
+        import android.os.Build;
+        import android.os.flagging.PlatformAconfigPackageInternal;
+        import android.os.flagging.AconfigStorageReadException;
+        import android.util.Log;
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
-            private static final boolean isReadFromNew = Files.exists(Paths.get("/metadata/aconfig/boot/enable_only_new_storage"));
+            private static final String TAG = "com.android.aconfig.test.FeatureFlagsImpl";
             private static volatile boolean isCached = false;
-            private static volatile boolean aconfig_test_is_cached = false;
-            private static volatile boolean other_namespace_is_cached = false;
             private static boolean disabledRw = false;
             private static boolean disabledRwExported = false;
             private static boolean disabledRwInOtherNamespace = false;
             private static boolean enabledRw = true;
             private void init() {
-                StorageInternalReader reader = null;
-                boolean foundPackage = true;
                 try {
-                    reader = new StorageInternalReader("system", "com.android.aconfig.test");
+                    PlatformAconfigPackageInternal reader = PlatformAconfigPackageInternal.load("system", "com.android.aconfig.test", 0x5081CE7221C77064L);
+                    AconfigStorageReadException error = reader.getException();
+                    if (error == null) {
+                        disabledRw = reader.getBooleanFlagValue(1);
+                        disabledRwExported = reader.getBooleanFlagValue(2);
+                        enabledRw = reader.getBooleanFlagValue(8);
+                        disabledRwInOtherNamespace = reader.getBooleanFlagValue(3);
+                    } else if (Build.VERSION.SDK_INT > 35 && error.getErrorCode() == 5 /* fingerprint doesn't match*/) {
+                        disabledRw = reader.getBooleanFlagValue("disabled_rw", false);
+                        disabledRwExported = reader.getBooleanFlagValue("disabled_rw_exported", false);
+                        enabledRw = reader.getBooleanFlagValue("enabled_rw", true);
+                        disabledRwInOtherNamespace = reader.getBooleanFlagValue("disabled_rw_in_other_namespace", false);
+                    } else {
+                        Log.e(TAG, "encountered an AconfigStorageReadException");
+                    }
                 } catch (Exception e) {
-                    foundPackage = false;
+                    Log.e(TAG, e.getMessage());
+                } catch (NoClassDefFoundError e) {
+                    // for mainline module running on older devices.
+                    // This should be replaces to version check, after the version bump.
+                    Log.e(TAG, e.getMessage());
                 }
-                disabledRw = foundPackage ? reader.getBooleanFlagValue(1) : false;
-                disabledRwExported = foundPackage ? reader.getBooleanFlagValue(2) : false;
-                enabledRw = foundPackage ? reader.getBooleanFlagValue(8) : true;
-                disabledRwInOtherNamespace = foundPackage ? reader.getBooleanFlagValue(3) : false;
                 isCached = true;
-            }
-            private void load_overrides_aconfig_test() {
-                try {
-                    Properties properties = DeviceConfig.getProperties("aconfig_test");
-                    disabledRw =
-                        properties.getBoolean(Flags.FLAG_DISABLED_RW, false);
-                    disabledRwExported =
-                        properties.getBoolean(Flags.FLAG_DISABLED_RW_EXPORTED, false);
-                    enabledRw =
-                        properties.getBoolean(Flags.FLAG_ENABLED_RW, true);
-                } catch (NullPointerException e) {
-                    throw new RuntimeException(
-                        "Cannot read value from namespace aconfig_test "
-                        + "from DeviceConfig. It could be that the code using flag "
-                        + "executed before SettingsProvider initialization. Please use "
-                        + "fixed read-only flag by adding is_fixed_read_only: true in "
-                        + "flag declaration.",
-                        e
-                    );
-                } catch (SecurityException e) {
-                    // for isolated process case, skip loading flag value from the storage, use the default
-                }
-                aconfig_test_is_cached = true;
-            }
-
-            private void load_overrides_other_namespace() {
-                try {
-                    Properties properties = DeviceConfig.getProperties("other_namespace");
-                    disabledRwInOtherNamespace =
-                        properties.getBoolean(Flags.FLAG_DISABLED_RW_IN_OTHER_NAMESPACE, false);
-                } catch (NullPointerException e) {
-                    throw new RuntimeException(
-                        "Cannot read value from namespace other_namespace "
-                        + "from DeviceConfig. It could be that the code using flag "
-                        + "executed before SettingsProvider initialization. Please use "
-                        + "fixed read-only flag by adding is_fixed_read_only: true in "
-                        + "flag declaration.",
-                        e
-                    );
-                } catch (SecurityException e) {
-                    // for isolated process case, skip loading flag value from the storage, use the default
-                }
-                other_namespace_is_cached = true;
             }
 
             @Override
@@ -597,14 +569,8 @@ mod tests {
             @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean disabledRw() {
-                if (isReadFromNew) {
-                    if (!isCached) {
-                        init();
-                    }
-                } else {
-                    if (!aconfig_test_is_cached) {
-                        load_overrides_aconfig_test();
-                    }
+                if (!isCached) {
+                    init();
                 }
                 return disabledRw;
             }
@@ -612,14 +578,8 @@ mod tests {
             @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean disabledRwExported() {
-                if (isReadFromNew) {
-                    if (!isCached) {
-                        init();
-                    }
-                } else {
-                    if (!aconfig_test_is_cached) {
-                        load_overrides_aconfig_test();
-                    }
+                if (!isCached) {
+                    init();
                 }
                 return disabledRwExported;
             }
@@ -627,14 +587,8 @@ mod tests {
             @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean disabledRwInOtherNamespace() {
-                if (isReadFromNew) {
-                    if (!isCached) {
-                        init();
-                    }
-                } else {
-                    if (!other_namespace_is_cached) {
-                        load_overrides_other_namespace();
-                    }
+                if (!isCached) {
+                    init();
                 }
                 return disabledRwInOtherNamespace;
             }
@@ -666,14 +620,8 @@ mod tests {
             @com.android.aconfig.annotations.AconfigFlagAccessor
             @UnsupportedAppUsage
             public boolean enabledRw() {
-                if (isReadFromNew) {
-                    if (!isCached) {
-                        init();
-                    }
-                } else {
-                    if (!aconfig_test_is_cached) {
-                        load_overrides_aconfig_test();
-                    }
+                if (!isCached) {
+                    init();
                 }
                 return enabledRw;
             }
@@ -726,6 +674,7 @@ mod tests {
             mode,
             flag_ids,
             true,
+            5801144784618221668,
         )
         .unwrap();
 
@@ -764,6 +713,7 @@ mod tests {
 
         let expect_feature_flags_impl_content = r#"
         package com.android.aconfig.test;
+        import android.os.Binder;
         import android.provider.DeviceConfig;
         import android.provider.DeviceConfig.Properties;
         /** @hide */
@@ -774,6 +724,7 @@ mod tests {
             private static boolean enabledRoExported = false;
 
             private void load_overrides_aconfig_test() {
+                final long ident = Binder.clearCallingIdentity();
                 try {
                     Properties properties = DeviceConfig.getProperties("aconfig_test");
                     disabledRwExported =
@@ -793,6 +744,8 @@ mod tests {
                     );
                 } catch (SecurityException e) {
                     // for isolated process case, skip loading flag value from the storage, use the default
+                } finally {
+                    Binder.restoreCallingIdentity(ident);
                 }
                 aconfig_test_is_cached = true;
             }
@@ -920,6 +873,7 @@ mod tests {
             mode,
             flag_ids,
             true,
+            5801144784618221668,
         )
         .unwrap();
 
@@ -1041,6 +995,7 @@ mod tests {
             mode,
             flag_ids,
             true,
+            5801144784618221668,
         )
         .unwrap();
         let expect_featureflags_content = r#"

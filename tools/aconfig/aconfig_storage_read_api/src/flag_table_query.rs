@@ -74,12 +74,12 @@ pub fn find_flag_read_context(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::test_utils::create_test_flag_table;
+    use aconfig_storage_file::{test_utils::create_test_flag_table, DEFAULT_FILE_VERSION};
 
     #[test]
     // this test point locks down table query
     fn test_flag_query() {
-        let flag_table = create_test_flag_table().into_bytes();
+        let flag_table = create_test_flag_table(DEFAULT_FILE_VERSION).into_bytes();
         let baseline = vec![
             (0, "enabled_ro", StoredFlagType::ReadOnlyBoolean, 1u16),
             (0, "enabled_rw", StoredFlagType::ReadWriteBoolean, 2u16),
@@ -101,7 +101,7 @@ mod tests {
     #[test]
     // this test point locks down table query of a non exist flag
     fn test_not_existed_flag_query() {
-        let flag_table = create_test_flag_table().into_bytes();
+        let flag_table = create_test_flag_table(DEFAULT_FILE_VERSION).into_bytes();
         let flag_context = find_flag_read_context(&flag_table[..], 1, "disabled_fixed_ro").unwrap();
         assert_eq!(flag_context, None);
         let flag_context = find_flag_read_context(&flag_table[..], 2, "disabled_rw").unwrap();
@@ -111,7 +111,7 @@ mod tests {
     #[test]
     // this test point locks down query error when file has a higher version
     fn test_higher_version_storage_file() {
-        let mut table = create_test_flag_table();
+        let mut table = create_test_flag_table(DEFAULT_FILE_VERSION);
         table.header.version = MAX_SUPPORTED_FILE_VERSION + 1;
         let flag_table = table.into_bytes();
         let error = find_flag_read_context(&flag_table[..], 0, "enabled_ro").unwrap_err();
