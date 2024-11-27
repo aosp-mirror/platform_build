@@ -76,33 +76,28 @@ namespace {cpp_namespace} \{
             : boolean_start_index_()
             {{ -endif }}
             , flag_value_file_(nullptr)
-            , read_from_new_storage_(false)
             , package_exists_in_storage_(true) \{
-
-            if (access("/metadata/aconfig/boot/enable_only_new_storage", F_OK) == 0) \{
-               read_from_new_storage_ = true;
-            }
-
-            if (!read_from_new_storage_) \{
-               return;
-            }
 
             auto package_map_file = aconfig_storage::get_mapped_file(
                  "{container}",
                  aconfig_storage::StorageFileType::package_map);
             if (!package_map_file.ok()) \{
                 ALOGE("error: failed to get package map file: %s", package_map_file.error().c_str());
+                package_exists_in_storage_ = false;
+                return;
             }
 
             auto context = aconfig_storage::get_package_read_context(
                 **package_map_file, "{package}");
             if (!context.ok()) \{
                 ALOGE("error: failed to get package read context: %s", context.error().c_str());
+                package_exists_in_storage_ = false;
+                return;
             }
 
             if (!(context->package_exists)) \{
-               package_exists_in_storage_ = false;
-               return;
+                package_exists_in_storage_ = false;
+                return;
             }
 
             // cache package boolean flag start index
@@ -116,6 +111,8 @@ namespace {cpp_namespace} \{
                 aconfig_storage::StorageFileType::flag_val);
             if (!flag_value_file.ok()) \{
                 ALOGE("error: failed to get flag value file: %s", flag_value_file.error().c_str());
+                package_exists_in_storage_ = false;
+                return;
             }
 
             // cache flag value file
@@ -131,26 +128,19 @@ namespace {cpp_namespace} \{
             {{ -if item.readwrite }}
             if (cache_[{item.readwrite_idx}] == -1) \{
             {{ if allow_instrumentation- }}
-                if (read_from_new_storage_) \{
-                    if (!package_exists_in_storage_) \{
-                       return {item.default_value};
-                    }
-
-                    auto value = aconfig_storage::get_boolean_flag_value(
-                        *flag_value_file_,
-                        boolean_start_index_ + {item.flag_offset});
-
-                    if (!value.ok()) \{
-                        ALOGE("error: failed to read flag value: %s", value.error().c_str());
-                    }
-
-                    cache_[{item.readwrite_idx}] = *value;
-                } else \{
-                    cache_[{item.readwrite_idx}] = server_configurable_flags::GetServerConfigurableFlag(
-                        "aconfig_flags.{item.device_config_namespace}",
-                        "{item.device_config_flag}",
-                        "{item.default_value}") == "true";
+                if (!package_exists_in_storage_) \{
+                    return {item.default_value};
                 }
+
+                auto value = aconfig_storage::get_boolean_flag_value(
+                    *flag_value_file_,
+                    boolean_start_index_ + {item.flag_offset});
+
+                if (!value.ok()) \{
+                    ALOGE("error: failed to read flag value: %s", value.error().c_str());
+                }
+
+                cache_[{item.readwrite_idx}] = *value;
             {{ -else- }}
                 cache_[{item.readwrite_idx}] = server_configurable_flags::GetServerConfigurableFlag(
                     "aconfig_flags.{item.device_config_namespace}",
@@ -176,8 +166,6 @@ namespace {cpp_namespace} \{
         uint32_t boolean_start_index_;
 
         std::unique_ptr<aconfig_storage::MappedStorageFile> flag_value_file_;
-
-        bool read_from_new_storage_;
 
         bool package_exists_in_storage_;
     {{ -endif }}

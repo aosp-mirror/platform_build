@@ -28,6 +28,7 @@ use anyhow::anyhow;
 pub struct PackageReadContext {
     pub package_id: u32,
     pub boolean_start_index: u32,
+    pub fingerprint: u64,
 }
 
 /// Query package read context: package id and start index
@@ -62,6 +63,7 @@ pub fn find_package_read_context(
             return Ok(Some(PackageReadContext {
                 package_id: interpreted_node.package_id,
                 boolean_start_index: interpreted_node.boolean_start_index,
+                fingerprint: interpreted_node.fingerprint,
             }));
         }
         match interpreted_node.next_offset {
@@ -74,29 +76,68 @@ pub fn find_package_read_context(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::test_utils::create_test_package_table;
+    use aconfig_storage_file::{test_utils::create_test_package_table, DEFAULT_FILE_VERSION};
 
     #[test]
     // this test point locks down table query
     fn test_package_query() {
-        let package_table = create_test_package_table().into_bytes();
+        let package_table = create_test_package_table(DEFAULT_FILE_VERSION).into_bytes();
         let package_context =
             find_package_read_context(&package_table[..], "com.android.aconfig.storage.test_1")
                 .unwrap()
                 .unwrap();
-        let expected_package_context = PackageReadContext { package_id: 0, boolean_start_index: 0 };
+        let expected_package_context =
+            PackageReadContext { package_id: 0, boolean_start_index: 0, fingerprint: 0 };
         assert_eq!(package_context, expected_package_context);
         let package_context =
             find_package_read_context(&package_table[..], "com.android.aconfig.storage.test_2")
                 .unwrap()
                 .unwrap();
-        let expected_package_context = PackageReadContext { package_id: 1, boolean_start_index: 3 };
+        let expected_package_context =
+            PackageReadContext { package_id: 1, boolean_start_index: 3, fingerprint: 0 };
         assert_eq!(package_context, expected_package_context);
         let package_context =
             find_package_read_context(&package_table[..], "com.android.aconfig.storage.test_4")
                 .unwrap()
                 .unwrap();
-        let expected_package_context = PackageReadContext { package_id: 2, boolean_start_index: 6 };
+        let expected_package_context =
+            PackageReadContext { package_id: 2, boolean_start_index: 6, fingerprint: 0 };
+        assert_eq!(package_context, expected_package_context);
+    }
+
+    #[test]
+    // this test point locks down table query
+    fn test_package_query_v2() {
+        let package_table = create_test_package_table(2).into_bytes();
+        let package_context =
+            find_package_read_context(&package_table[..], "com.android.aconfig.storage.test_1")
+                .unwrap()
+                .unwrap();
+        let expected_package_context = PackageReadContext {
+            package_id: 0,
+            boolean_start_index: 0,
+            fingerprint: 15248948510590158086u64,
+        };
+        assert_eq!(package_context, expected_package_context);
+        let package_context =
+            find_package_read_context(&package_table[..], "com.android.aconfig.storage.test_2")
+                .unwrap()
+                .unwrap();
+        let expected_package_context = PackageReadContext {
+            package_id: 1,
+            boolean_start_index: 3,
+            fingerprint: 4431940502274857964u64,
+        };
+        assert_eq!(package_context, expected_package_context);
+        let package_context =
+            find_package_read_context(&package_table[..], "com.android.aconfig.storage.test_4")
+                .unwrap()
+                .unwrap();
+        let expected_package_context = PackageReadContext {
+            package_id: 2,
+            boolean_start_index: 6,
+            fingerprint: 16233229917711622375u64,
+        };
         assert_eq!(package_context, expected_package_context);
     }
 
@@ -104,7 +145,7 @@ mod tests {
     // this test point locks down table query of a non exist package
     fn test_not_existed_package_query() {
         // this will land at an empty bucket
-        let package_table = create_test_package_table().into_bytes();
+        let package_table = create_test_package_table(DEFAULT_FILE_VERSION).into_bytes();
         let package_context =
             find_package_read_context(&package_table[..], "com.android.aconfig.storage.test_3")
                 .unwrap();
@@ -119,7 +160,7 @@ mod tests {
     #[test]
     // this test point locks down query error when file has a higher version
     fn test_higher_version_storage_file() {
-        let mut table = create_test_package_table();
+        let mut table = create_test_package_table(DEFAULT_FILE_VERSION);
         table.header.version = MAX_SUPPORTED_FILE_VERSION + 1;
         let package_table = table.into_bytes();
         let error =

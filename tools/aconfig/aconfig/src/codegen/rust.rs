@@ -259,10 +259,6 @@ use log::{log, LevelFilter, Level};
 /// flag provider
 pub struct FlagProvider;
 
-static READ_FROM_NEW_STORAGE: LazyLock<bool> = LazyLock::new(|| unsafe {
-    Path::new("/metadata/aconfig/boot/enable_only_new_storage").exists()
-});
-
 static PACKAGE_OFFSET: LazyLock<Result<Option<u32>, AconfigStorageError>> = LazyLock::new(|| unsafe {
     get_mapped_storage_file("system", StorageFileType::PackageMap)
     .and_then(|package_map| get_package_read_context(&package_map, "com.android.aconfig.test"))
@@ -275,54 +271,46 @@ static FLAG_VAL_MAP: LazyLock<Result<Mmap, AconfigStorageError>> = LazyLock::new
 
 /// flag value cache for disabled_rw
 static CACHED_disabled_rw: LazyLock<bool> = LazyLock::new(|| {
-    if *READ_FROM_NEW_STORAGE {
-        // This will be called multiple times. Subsequent calls after the first are noops.
-        logger::init(
-            logger::Config::default()
-                .with_tag_on_device("aconfig_rust_codegen")
-                .with_max_level(LevelFilter::Info));
+    // This will be called multiple times. Subsequent calls after the first are noops.
+    logger::init(
+        logger::Config::default()
+            .with_tag_on_device("aconfig_rust_codegen")
+            .with_max_level(LevelFilter::Info));
 
-        let flag_value_result = FLAG_VAL_MAP
-            .as_ref()
-            .map_err(|err| format!("failed to get flag val map: {err}"))
-            .and_then(|flag_val_map| {
-                PACKAGE_OFFSET
-                    .as_ref()
-                    .map_err(|err| format!("failed to get package read offset: {err}"))
-                    .and_then(|package_offset| {
-                        match package_offset {
-                            Some(offset) => {
-                                get_boolean_flag_value(&flag_val_map, offset + 1)
-                                    .map_err(|err| format!("failed to get flag: {err}"))
-                            },
-                            None => {
-                                log!(Level::Error, "no context found for package com.android.aconfig.test");
-                                Ok(false)
-                            }
-                        }
-                    })
-                });
+    let flag_value_result = FLAG_VAL_MAP
+        .as_ref()
+        .map_err(|err| format!("failed to get flag val map: {err}"))
+        .and_then(|flag_val_map| {
+            PACKAGE_OFFSET
+               .as_ref()
+               .map_err(|err| format!("failed to get package read offset: {err}"))
+               .and_then(|package_offset| {
+                   match package_offset {
+                       Some(offset) => {
+                           get_boolean_flag_value(&flag_val_map, offset + 1)
+                               .map_err(|err| format!("failed to get flag: {err}"))
+                       },
+                       None => {
+                           log!(Level::Error, "no context found for package com.android.aconfig.test");
+                           Err(format!("failed to flag package com.android.aconfig.test"))
+                       }
+                    }
+                })
+            });
 
-        match flag_value_result {
-            Ok(flag_value) => {
-                 return flag_value;
-            },
-            Err(err) => {
-                log!(Level::Error, "aconfig_rust_codegen: error: {err}");
-                panic!("failed to read flag value: {err}");
-            }
+    match flag_value_result {
+        Ok(flag_value) => {
+            return flag_value;
+        },
+        Err(err) => {
+            log!(Level::Error, "aconfig_rust_codegen: error: {err}");
+            return false;
         }
-    } else {
-        flags_rust::GetServerConfigurableFlag(
-            "aconfig_flags.aconfig_test",
-            "com.android.aconfig.test.disabled_rw",
-            "false") == "true"
     }
 });
 
 /// flag value cache for disabled_rw_exported
 static CACHED_disabled_rw_exported: LazyLock<bool> = LazyLock::new(|| {
-    if *READ_FROM_NEW_STORAGE {
         // This will be called multiple times. Subsequent calls after the first are noops.
         logger::init(
             logger::Config::default()
@@ -344,7 +332,7 @@ static CACHED_disabled_rw_exported: LazyLock<bool> = LazyLock::new(|| {
                             },
                             None => {
                                 log!(Level::Error, "no context found for package com.android.aconfig.test");
-                                Ok(false)
+                                Err(format!("failed to flag package com.android.aconfig.test"))
                             }
                         }
                     })
@@ -356,20 +344,13 @@ static CACHED_disabled_rw_exported: LazyLock<bool> = LazyLock::new(|| {
             },
             Err(err) => {
                 log!(Level::Error, "aconfig_rust_codegen: error: {err}");
-                panic!("failed to read flag value: {err}");
+                return false;
             }
         }
-    } else {
-        flags_rust::GetServerConfigurableFlag(
-            "aconfig_flags.aconfig_test",
-            "com.android.aconfig.test.disabled_rw_exported",
-            "false") == "true"
-    }
 });
 
 /// flag value cache for disabled_rw_in_other_namespace
 static CACHED_disabled_rw_in_other_namespace: LazyLock<bool> = LazyLock::new(|| {
-    if *READ_FROM_NEW_STORAGE {
         // This will be called multiple times. Subsequent calls after the first are noops.
         logger::init(
             logger::Config::default()
@@ -391,7 +372,7 @@ static CACHED_disabled_rw_in_other_namespace: LazyLock<bool> = LazyLock::new(|| 
                             },
                             None => {
                                 log!(Level::Error, "no context found for package com.android.aconfig.test");
-                                Ok(false)
+                                Err(format!("failed to flag package com.android.aconfig.test"))
                             }
                         }
                     })
@@ -403,21 +384,14 @@ static CACHED_disabled_rw_in_other_namespace: LazyLock<bool> = LazyLock::new(|| 
             },
             Err(err) => {
                 log!(Level::Error, "aconfig_rust_codegen: error: {err}");
-                panic!("failed to read flag value: {err}");
+                return false;
             }
         }
-    } else {
-        flags_rust::GetServerConfigurableFlag(
-            "aconfig_flags.other_namespace",
-            "com.android.aconfig.test.disabled_rw_in_other_namespace",
-            "false") == "true"
-    }
 });
 
 
 /// flag value cache for enabled_rw
 static CACHED_enabled_rw: LazyLock<bool> = LazyLock::new(|| {
-    if *READ_FROM_NEW_STORAGE {
         // This will be called multiple times. Subsequent calls after the first are noops.
         logger::init(
             logger::Config::default()
@@ -439,7 +413,7 @@ static CACHED_enabled_rw: LazyLock<bool> = LazyLock::new(|| {
                             },
                             None => {
                                 log!(Level::Error, "no context found for package com.android.aconfig.test");
-                                Ok(true)
+                                Err(format!("failed to flag package com.android.aconfig.test"))
                             }
                         }
                     })
@@ -451,15 +425,9 @@ static CACHED_enabled_rw: LazyLock<bool> = LazyLock::new(|| {
             },
             Err(err) => {
                 log!(Level::Error, "aconfig_rust_codegen: error: {err}");
-                panic!("failed to read flag value: {err}");
+                return true;
             }
         }
-    } else {
-        flags_rust::GetServerConfigurableFlag(
-            "aconfig_flags.aconfig_test",
-            "com.android.aconfig.test.enabled_rw",
-            "true") == "true"
-    }
 });
 
 impl FlagProvider {

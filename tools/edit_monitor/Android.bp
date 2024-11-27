@@ -36,6 +36,7 @@ python_library_host {
     srcs: [
         "daemon_manager.py",
         "edit_monitor.py",
+        "utils.py",
     ],
     libs: [
         "asuite_cc_client",
@@ -72,6 +73,36 @@ python_test_host {
     test_options: {
         unit_test: true,
     },
+}
+
+python_test_host {
+    name: "edit_monitor_utils_test",
+    main: "utils_test.py",
+    pkg_path: "edit_monitor",
+    srcs: [
+        "utils_test.py",
+    ],
+    libs: [
+        "edit_monitor_lib",
+    ],
+    test_options: {
+        unit_test: true,
+    },
+}
+
+python_test_host {
+    name: "edit_monitor_integration_test",
+    main: "edit_monitor_integration_test.py",
+    pkg_path: "testdata",
+    srcs: [
+        "edit_monitor_integration_test.py",
+    ],
+    test_options: {
+        unit_test: true,
+    },
+    data: [
+        ":edit_monitor",
+    ],
 }
 
 python_binary_host {
