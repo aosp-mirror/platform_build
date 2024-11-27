@@ -32,6 +32,7 @@ pub fn generate_java_code<I>(
     codegen_mode: CodegenMode,
     flag_ids: HashMap<String, u16>,
     allow_instrumentation: bool,
+    package_fingerprint: u64,
 ) -> Result<Vec<OutputFile>>
 where
     I: Iterator<Item = ProtoParsedFlag>,
@@ -46,6 +47,7 @@ where
     let runtime_lookup_required =
         flag_elements.iter().any(|elem| elem.is_read_write) || library_exported;
     let container = (flag_elements.first().expect("zero template flags").container).to_string();
+    let is_platform_container = matches!(container.as_str(), "system" | "product" | "vendor");
     let context = Context {
         flag_elements,
         namespace_flags,
@@ -56,6 +58,8 @@ where
         library_exported,
         allow_instrumentation,
         container,
+        is_platform_container,
+        package_fingerprint: format!("0x{:X}L", package_fingerprint),
     };
     let mut template = TinyTemplate::new();
     template.add_template("Flags.java", include_str!("../../templates/Flags.java.template"))?;
@@ -123,6 +127,8 @@ struct Context {
     pub library_exported: bool,
     pub allow_instrumentation: bool,
     pub container: String,
+    pub is_platform_container: bool,
+    pub package_fingerprint: String,
 }
 
 #[derive(Serialize, Debug)]
@@ -502,6 +508,7 @@ mod tests {
             mode,
             flag_ids,
             true,
+            5801144784618221668,
         )
         .unwrap();
         let expect_flags_content = EXPECTED_FLAG_COMMON_CONTENT.to_string()
@@ -513,10 +520,13 @@ mod tests {
         package com.android.aconfig.test;
         // TODO(b/303773055): Remove the annotation after access issue is resolved.
         import android.compat.annotation.UnsupportedAppUsage;
-        import android.aconfig.storage.StorageInternalReader;
-
+        import android.os.Build;
+        import android.os.flagging.PlatformAconfigPackageInternal;
+        import android.os.flagging.AconfigStorageReadException;
+        import android.util.Log;
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
+            private static final String TAG = "com.android.aconfig.test.FeatureFlagsImpl";
             private static volatile boolean isCached = false;
             private static boolean disabledRw = false;
             private static boolean disabledRwExported = false;
@@ -524,16 +534,39 @@ mod tests {
             private static boolean enabledRw = true;
             private void init() {
                 try {
-                    StorageInternalReader reader = new StorageInternalReader("system", "com.android.aconfig.test");
-                    disabledRw = reader.getBooleanFlagValue(1);
-                    disabledRwExported = reader.getBooleanFlagValue(2);
-                    enabledRw = reader.getBooleanFlagValue(8);
-                    disabledRwInOtherNamespace = reader.getBooleanFlagValue(3);
+                    PlatformAconfigPackageInternal reader = PlatformAconfigPackageInternal.load("system", "com.android.aconfig.test", 0x5081CE7221C77064L);
+                    AconfigStorageReadException error = reader.getException();
+                    if (error == null) {
+                        disabledRw = reader.getBooleanFlagValue(1);
+                        disabledRwExported = reader.getBooleanFlagValue(2);
+                        enabledRw = reader.getBooleanFlagValue(8);
+                        disabledRwInOtherNamespace = reader.getBooleanFlagValue(3);
+                    } else if (Build.VERSION.SDK_INT > 35 && error.getErrorCode() == 5 /* fingerprint doesn't match*/) {
+                        disabledRw = reader.getBooleanFlagValue("disabled_rw", false);
+                        disabledRwExported = reader.getBooleanFlagValue("disabled_rw_exported", false);
+                        enabledRw = reader.getBooleanFlagValue("enabled_rw", true);
+                        disabledRwInOtherNamespace = reader.getBooleanFlagValue("disabled_rw_in_other_namespace", false);
+                    } else {
+                        if (error.getMessage() != null) {
+                            Log.e(TAG, error.getMessage());
+                        } else {
+                            Log.e(TAG, "Encountered a null AconfigStorageReadException");
+                        }
+                    }
                 } catch (Exception e) {
-                    // pass
+                    if (e.getMessage() != null) {
+                        Log.e(TAG, e.getMessage());
+                    } else {
+                        Log.e(TAG, "Encountered a null Exception");
+                    }
                 } catch (NoClassDefFoundError e) {
                     // for mainline module running on older devices.
                     // This should be replaces to version check, after the version bump.
+                    if (e.getMessage() != null) {
+                        Log.e(TAG, e.getMessage());
+                    } else {
+                        Log.e(TAG, "Encountered a null NoClassDefFoundError");
+                    }
                 }
                 isCached = true;
             }
@@ -653,6 +686,7 @@ mod tests {
             mode,
             flag_ids,
             true,
+            5801144784618221668,
         )
         .unwrap();
 
@@ -851,6 +885,7 @@ mod tests {
             mode,
             flag_ids,
             true,
+            5801144784618221668,
         )
         .unwrap();
 
@@ -972,6 +1007,7 @@ mod tests {
             mode,
             flag_ids,
             true,
+            5801144784618221668,
         )
         .unwrap();
         let expect_featureflags_content = r#"
