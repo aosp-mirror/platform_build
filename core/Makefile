@@ -1596,6 +1596,7 @@ $(INSTALLED_INIT_BOOT_IMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_INIT_BOOT_KEY_PATH)
 	$(AVBTOOL) add_hash_footer \
            --image $@ \
 	   $(call get-partition-size-argument,$(BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE)) \
+	   --salt $$(sha256sum $(BUILD_NUMBER_FILE) $(BUILD_DATETIME_FILE) | cut -d " " -f 1 | tr -d '\n') \
 	   --partition_name init_boot $(INTERNAL_AVB_INIT_BOOT_SIGNING_ARGS) \
 	   $(BOARD_AVB_INIT_BOOT_ADD_HASH_FOOTER_ARGS)
 
@@ -1771,6 +1772,7 @@ $(INSTALLED_VENDOR_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_VENDOR_BOOTIMAGE_KE
 	$(AVBTOOL) add_hash_footer \
            --image $@ \
 	   $(call get-partition-size-argument,$(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE)) \
+	   --salt $$(sha256sum $(BUILD_NUMBER_FILE) $(BUILD_DATETIME_FILE) | cut -d " " -f 1 | tr -d '\n') \
 	   --partition_name vendor_boot $(INTERNAL_AVB_VENDOR_BOOT_SIGNING_ARGS) \
 	   $(BOARD_AVB_VENDOR_BOOT_ADD_HASH_FOOTER_ARGS)
 else

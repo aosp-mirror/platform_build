@@ -48,6 +48,9 @@ RECOVERY_API_VERSION := 3
 RECOVERY_FSTAB_VERSION := 2
 $(call soong_config_set, recovery, recovery_api_version, $(RECOVERY_API_VERSION))
 $(call soong_config_set, recovery, recovery_fstab_version, $(RECOVERY_FSTAB_VERSION))
+$(call soong_config_set, recovery, target_recovery_ui_lib, $(TARGET_RECOVERY_UI_LIB))
+$(call soong_config_set_bool, recovery ,target_userimages_use_f2fs ,$(if $(TARGET_USERIMAGES_USE_F2FS),true,false))
+$(call soong_config_set_bool, recovery ,has_board_cacheimage_partition_size ,$(if $(BOARD_CACHEIMAGE_PARTITION_SIZE),true,false))
 
 # For Sanitizers
 $(call soong_config_set_bool,ANDROID,ASAN_ENABLED,$(if $(filter address,$(SANITIZE_TARGET)),true,false))
@@ -262,3 +265,8 @@ $(call soong_config_set_bool,fs_config,odm,$(if $(BOARD_USES_ODMIMAGE)$(BOARD_OD
 $(call soong_config_set_bool,fs_config,vendor_dlkm,$(if $(BOARD_USES_VENDOR_DLKMIMAGE)$(BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE),true,false))
 $(call soong_config_set_bool,fs_config,odm_dlkm,$(if $(BOARD_USES_ODM_DLKMIMAGE)$(BOARD_ODM_DLKMIMAGE_FILE_SYSTEM_TYPE),true,false))
 $(call soong_config_set_bool,fs_config,system_dlkm,$(if $(BOARD_USES_SYSTEM_DLKMIMAGE)$(BOARD_SYSTEM_DLKMIMAGE_FILE_SYSTEM_TYPE),true,false))
+
+# Variables for telephony
+$(call soong_config_set_bool,telephony,sec_cp_secure_boot,$(if $(filter true,$(SEC_CP_SECURE_BOOT)),true,false))
+$(call soong_config_set_bool,telephony,cbd_protocol_sit,$(if $(filter true,$(CBD_PROTOCOL_SIT)),true,false))
+$(call soong_config_set_bool,telephony,use_radioexternal_hal_aidl,$(if $(filter true,$(USE_RADIOEXTERNAL_HAL_AIDL)),true,false))
