@@ -381,7 +381,6 @@ android_filesystem_defaults {
 
     deps: [
         "abx",
-        "aconfigd",
         "aconfigd-system",
         "aflags",
         "am",
