@@ -45,14 +45,14 @@ public class PlatformAconfigPackageInternal {
     private final FlagValueList mFlagValueList;
     private final int mPackageId;
     private final int mPackageBooleanStartOffset;
-    private final AconfigStorageException mException;
+    private final AconfigStorageReadException mException;
 
     private PlatformAconfigPackageInternal(
             FlagValueList flagValueList,
             FlagTable flagTable,
             int packageBooleanStartOffset,
             int packageId,
-            AconfigStorageException exception) {
+            AconfigStorageReadException exception) {
         this.mFlagValueList = flagValueList;
         this.mFlagTable = flagTable;
         this.mPackageBooleanStartOffset = packageBooleanStartOffset;
@@ -150,7 +150,7 @@ public class PlatformAconfigPackageInternal {
 
             if (pNode == null) {
                 return createExceptionInstance(
-                        AconfigStorageException.ERROR_PACKAGE_NOT_FOUND,
+                        AconfigStorageReadException.ERROR_PACKAGE_NOT_FOUND,
                         "package "
                                 + packageName
                                 + " in container "
@@ -165,7 +165,7 @@ public class PlatformAconfigPackageInternal {
                         fileProvider.getFlagTable(container),
                         pNode.getBooleanStartIndex(),
                         pNode.getPackageId(),
-                        new AconfigStorageException(
+                        new AconfigStorageReadException(
                                 AconfigStorageException.ERROR_FILE_FINGERPRINT_MISMATCH,
                                 "The fingerprint provided for the Aconfig package "
                                         + packageName
@@ -244,7 +244,7 @@ public class PlatformAconfigPackageInternal {
      * @hide
      */
     @UnsupportedAppUsage
-    public Exception getException() {
+    public AconfigStorageReadException getException() {
         return mException;
     }
 
@@ -259,6 +259,6 @@ public class PlatformAconfigPackageInternal {
     private static PlatformAconfigPackageInternal createExceptionInstance(
             int errorCode, String message) {
         return new PlatformAconfigPackageInternal(
-                null, null, 0, 0, new AconfigStorageException(errorCode, message));
+                null, null, 0, 0, new AconfigStorageReadException(errorCode, message));
     }
 }
