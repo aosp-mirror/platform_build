@@ -48,6 +48,11 @@ RECOVERY_API_VERSION := 3
 RECOVERY_FSTAB_VERSION := 2
 $(call soong_config_set, recovery, recovery_api_version, $(RECOVERY_API_VERSION))
 $(call soong_config_set, recovery, recovery_fstab_version, $(RECOVERY_FSTAB_VERSION))
+$(call soong_config_set_bool, recovery ,target_userimages_use_f2fs ,$(if $(TARGET_USERIMAGES_USE_F2FS),true,false))
+$(call soong_config_set_bool, recovery ,has_board_cacheimage_partition_size ,$(if $(BOARD_CACHEIMAGE_PARTITION_SIZE),true,false))
+ifdef TARGET_RECOVERY_UI_LIB
+  $(call soong_config_set_string_list, recovery, target_recovery_ui_lib, $(TARGET_RECOVERY_UI_LIB))
+endif
 
 # For Sanitizers
 $(call soong_config_set_bool,ANDROID,ASAN_ENABLED,$(if $(filter address,$(SANITIZE_TARGET)),true,false))
@@ -283,3 +288,4 @@ $(call soong_config_set_bool,fs_config,system_dlkm,$(if $(BOARD_USES_SYSTEM_DLKM
 # Variables for telephony
 $(call soong_config_set_bool,telephony,sec_cp_secure_boot,$(if $(filter true,$(SEC_CP_SECURE_BOOT)),true,false))
 $(call soong_config_set_bool,telephony,cbd_protocol_sit,$(if $(filter true,$(CBD_PROTOCOL_SIT)),true,false))
+$(call soong_config_set_bool,telephony,use_radioexternal_hal_aidl,$(if $(filter true,$(USE_RADIOEXTERNAL_HAL_AIDL)),true,false))
