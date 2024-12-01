@@ -5,11 +5,19 @@ package {package_name};
 // TODO(b/303773055): Remove the annotation after access issue is resolved.
 import android.compat.annotation.UnsupportedAppUsage;
 {{ -if runtime_lookup_required }}
-import android.aconfig.storage.StorageInternalReader;
+import android.os.Build;
+{{ if is_platform_container }}
+import android.os.flagging.PlatformAconfigPackageInternal;
+{{ -else }}
+import android.os.flagging.AconfigPackageInternal;
+{{ -endif }}
+import android.os.flagging.AconfigStorageReadException;
+import android.util.Log;
 {{ -endif }}
 /** @hide */
 public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ -if runtime_lookup_required }}
+    private static final String TAG = "{package_name}.FeatureFlagsImpl";
     private static volatile boolean isCached = false;
 {{ for flag in flag_elements }}
 {{ -if flag.is_read_write }}
@@ -19,19 +27,49 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
 
     private void init() \{
         try \{
-            StorageInternalReader reader = new StorageInternalReader("{container}", "{package_name}");
+{{ if is_platform_container }}
+            PlatformAconfigPackageInternal reader = PlatformAconfigPackageInternal.load("{container}", "{package_name}", {package_fingerprint});
+{{ -else }}
+            AconfigPackageInternal reader = AconfigPackageInternal.load("{container}", "{package_name}", {package_fingerprint});
+{{ -endif }}
+            AconfigStorageReadException error = reader.getException();
+            if (error == null) \{
             {{ for namespace_with_flags in namespace_flags }}
             {{ -for flag in namespace_with_flags.flags }}
-            {{ if flag.is_read_write }}
+            {{ -if flag.is_read_write }}
                 {flag.method_name} = reader.getBooleanFlagValue({flag.flag_offset});
             {{ endif }}
             {{ -endfor }}
             {{ -endfor }}
+            } else if (Build.VERSION.SDK_INT > 35 && error.getErrorCode() == 5 /* fingerprint doesn't match*/) \{
+            {{ for namespace_with_flags in namespace_flags }}
+            {{ -for flag in namespace_with_flags.flags }}
+            {{ -if flag.is_read_write }}
+                {flag.method_name} = reader.getBooleanFlagValue("{flag.flag_name}", {flag.default_value});
+            {{ -endif }}
+            {{ -endfor }}
+            {{ -endfor }}
+            } else \{
+                if (error.getMessage() != null) \{
+                    Log.e(TAG, error.getMessage());
+                } else \{
+                    Log.e(TAG, "Encountered a null AconfigStorageReadException");
+                }
+            }
         } catch (Exception e) \{
-            // pass
+            if (e.getMessage() != null) \{
+                Log.e(TAG, e.getMessage());
+            } else \{
+                Log.e(TAG, "Encountered a null Exception");
+            }
         } catch (NoClassDefFoundError e) \{
             // for mainline module running on older devices.
             // This should be replaces to version check, after the version bump.
+            if (e.getMessage() != null) \{
+                Log.e(TAG, e.getMessage());
+            } else \{
+                Log.e(TAG, "Encountered a null NoClassDefFoundError");
+            }
         }
         isCached = true;
     }
