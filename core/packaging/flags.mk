@@ -24,10 +24,11 @@ _FLAG_PARTITIONS := product system vendor
 # -----------------------------------------------------------------
 # Aconfig Flags
 
-# Create a summary file of build flags for each partition
+# Create a summary file of build flags for a single partition
 # $(1): built aconfig flags file (out)
 # $(2): installed aconfig flags file (out)
 # $(3): the partition (in)
+# $(4): input aconfig files for the partition (in)
 define generate-partition-aconfig-flag-file
 $(eval $(strip $(1)): PRIVATE_OUT := $(strip $(1)))
 $(eval $(strip $(1)): PRIVATE_IN := $(strip $(4)))
