@@ -2936,6 +2936,9 @@ ifneq ($(BOARD_NAND_SPARE_SIZE),)
 $(error MTD device is no longer supported and thus BOARD_NAND_SPARE_SIZE is deprecated.)
 endif
 
+recovery_intermediates := $(call intermediates-dir-for,PACKAGING,recovery)
+$(eval $(call write-partition-file-list,$(recovery_intermediates)/file_list.txt,$(TARGET_RECOVERY_OUT),$(INTERNAL_RECOVERYIMAGE_FILES)))
+
 
 # -----------------------------------------------------------------
 # Build debug ramdisk and debug boot image.
