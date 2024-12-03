@@ -497,6 +497,9 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
 
   $(call add_json_list, ProductCopyFiles, $(PRODUCT_COPY_FILES))
 
+  # Used to generate fsv meta
+  $(call add_json_bool, ProductFsverityGenerateMetadata,               $(PRODUCT_FSVERITY_GENERATE_METADATA))
+
 $(call end_json_map)
 
 # For converting vintf_data
