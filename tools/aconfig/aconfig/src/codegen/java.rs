@@ -158,6 +158,27 @@ fn create_flag_element(
 ) -> FlagElement {
     let device_config_flag = codegen::create_device_config_ident(package, pf.name())
         .expect("values checked at flag parse time");
+
+    let no_assigned_offset =
+        (pf.container() == "system" || pf.container() == "vendor" || pf.container() == "product")
+            && pf.permission() == ProtoFlagPermission::READ_ONLY
+            && pf.state() == ProtoFlagState::DISABLED;
+
+    let flag_offset = match flag_offsets.get(pf.name()) {
+        Some(offset) => offset,
+        None => {
+            // System/vendor/product RO+disabled flags have no offset in storage files.
+            // Assign placeholder value.
+            if no_assigned_offset {
+                &0
+            }
+            // All other flags _must_ have an offset.
+            else {
+                panic!("{}", format!("missing flag offset for {}", pf.name()));
+            }
+        }
+    };
+
     FlagElement {
         container: pf.container().to_string(),
         default_value: pf.state() == ProtoFlagState::ENABLED,
@@ -165,7 +186,7 @@ fn create_flag_element(
         device_config_flag,
         flag_name: pf.name().to_string(),
         flag_name_constant_suffix: pf.name().to_ascii_uppercase(),
-        flag_offset: *flag_offsets.get(pf.name()).expect("didnt find package offset :("),
+        flag_offset: *flag_offset,
         is_read_write: pf.permission() == ProtoFlagPermission::READ_WRITE,
         method_name: format_java_method_name(pf.name()),
         properties: format_property_name(pf.namespace()),
@@ -537,10 +558,10 @@ mod tests {
                     PlatformAconfigPackageInternal reader = PlatformAconfigPackageInternal.load("system", "com.android.aconfig.test", 0x5081CE7221C77064L);
                     AconfigStorageReadException error = reader.getException();
                     if (error == null) {
-                        disabledRw = reader.getBooleanFlagValue(1);
-                        disabledRwExported = reader.getBooleanFlagValue(2);
-                        enabledRw = reader.getBooleanFlagValue(8);
-                        disabledRwInOtherNamespace = reader.getBooleanFlagValue(3);
+                        disabledRw = reader.getBooleanFlagValue(0);
+                        disabledRwExported = reader.getBooleanFlagValue(1);
+                        enabledRw = reader.getBooleanFlagValue(7);
+                        disabledRwInOtherNamespace = reader.getBooleanFlagValue(2);
                     } else if (Build.VERSION.SDK_INT > 35 && error.getErrorCode() == 5 /* fingerprint doesn't match*/) {
                         disabledRw = reader.getBooleanFlagValue("disabled_rw", false);
                         disabledRwExported = reader.getBooleanFlagValue("disabled_rw_exported", false);
