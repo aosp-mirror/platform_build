@@ -423,17 +423,28 @@ where
 {
     assert!(parsed_flags_iter.clone().tuple_windows().all(|(a, b)| a.name() <= b.name()));
     let mut flag_ids = HashMap::new();
-    for (id_to_assign, pf) in (0_u32..).zip(parsed_flags_iter) {
+    let mut flag_idx = 0;
+    for pf in parsed_flags_iter {
         if package != pf.package() {
             return Err(anyhow::anyhow!("encountered a flag not in current package"));
         }
 
         // put a cap on how many flags a package can contain to 65535
-        if id_to_assign > u16::MAX as u32 {
+        if flag_idx > u16::MAX as u32 {
             return Err(anyhow::anyhow!("the number of flags in a package cannot exceed 65535"));
         }
 
-        flag_ids.insert(pf.name().to_string(), id_to_assign as u16);
+        // Exclude system/vendor/product flags that are RO+disabled.
+        let should_filter_container = pf.container == Some("vendor".to_string())
+            || pf.container == Some("system".to_string())
+            || pf.container == Some("product".to_string());
+        if !(should_filter_container
+            && pf.state == Some(ProtoFlagState::DISABLED.into())
+            && pf.permission == Some(ProtoFlagPermission::READ_ONLY.into()))
+        {
+            flag_ids.insert(pf.name().to_string(), flag_idx as u16);
+            flag_idx += 1;
+        }
     }
     Ok(flag_ids)
 }
@@ -891,6 +902,30 @@ mod tests {
     }
 
     #[test]
+    fn test_dump_multiple_filters() {
+        let input = parse_test_flags_as_input();
+        let bytes = dump_parsed_flags(
+            vec![input],
+            DumpFormat::Custom("{fully_qualified_name}".to_string()),
+            &["container:system+state:ENABLED", "container:system+permission:READ_WRITE"],
+            false,
+        )
+        .unwrap();
+        let text = std::str::from_utf8(&bytes).unwrap();
+        let expected_flag_list = &[
+            "com.android.aconfig.test.disabled_rw",
+            "com.android.aconfig.test.disabled_rw_exported",
+            "com.android.aconfig.test.disabled_rw_in_other_namespace",
+            "com.android.aconfig.test.enabled_fixed_ro",
+            "com.android.aconfig.test.enabled_fixed_ro_exported",
+            "com.android.aconfig.test.enabled_ro",
+            "com.android.aconfig.test.enabled_ro_exported",
+            "com.android.aconfig.test.enabled_rw",
+        ];
+        assert_eq!(expected_flag_list.map(|s| format!("{}\n", s)).join(""), text);
+    }
+
+    #[test]
     fn test_dump_textproto_format_dedup() {
         let input = parse_test_flags_as_input();
         let input2 = parse_test_flags_as_input();
@@ -952,15 +987,14 @@ mod tests {
         let package = find_unique_package(&parsed_flags.parsed_flag).unwrap().to_string();
         let flag_ids = assign_flag_ids(&package, parsed_flags.parsed_flag.iter()).unwrap();
         let expected_flag_ids = HashMap::from([
-            (String::from("disabled_ro"), 0_u16),
-            (String::from("disabled_rw"), 1_u16),
-            (String::from("disabled_rw_exported"), 2_u16),
-            (String::from("disabled_rw_in_other_namespace"), 3_u16),
-            (String::from("enabled_fixed_ro"), 4_u16),
-            (String::from("enabled_fixed_ro_exported"), 5_u16),
-            (String::from("enabled_ro"), 6_u16),
-            (String::from("enabled_ro_exported"), 7_u16),
-            (String::from("enabled_rw"), 8_u16),
+            (String::from("disabled_rw"), 0_u16),
+            (String::from("disabled_rw_exported"), 1_u16),
+            (String::from("disabled_rw_in_other_namespace"), 2_u16),
+            (String::from("enabled_fixed_ro"), 3_u16),
+            (String::from("enabled_fixed_ro_exported"), 4_u16),
+            (String::from("enabled_ro"), 5_u16),
+            (String::from("enabled_ro_exported"), 6_u16),
+            (String::from("enabled_rw"), 7_u16),
         ]);
         assert_eq!(flag_ids, expected_flag_ids);
     }

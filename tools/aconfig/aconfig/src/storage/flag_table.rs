@@ -16,7 +16,7 @@
 
 use crate::commands::assign_flag_ids;
 use crate::storage::FlagPackage;
-use aconfig_protos::ProtoFlagPermission;
+use aconfig_protos::{ProtoFlagPermission, ProtoFlagState};
 use aconfig_storage_file::{
     get_table_size, FlagTable, FlagTableHeader, FlagTableNode, StorageFileType, StoredFlagType,
 };
@@ -62,9 +62,19 @@ impl FlagTableNodeWrapper {
     }
 
     fn create_nodes(package: &FlagPackage, num_buckets: u32) -> Result<Vec<Self>> {
+        // Exclude system/vendor/product flags that are RO+disabled.
+        let mut filtered_package = package.clone();
+        filtered_package.boolean_flags.retain(|f| {
+            !((f.container == Some("system".to_string())
+                || f.container == Some("vendor".to_string())
+                || f.container == Some("product".to_string()))
+                && f.permission == Some(ProtoFlagPermission::READ_ONLY.into())
+                && f.state == Some(ProtoFlagState::DISABLED.into()))
+        });
+
         let flag_ids =
-            assign_flag_ids(package.package_name, package.boolean_flags.iter().copied())?;
-        package
+            assign_flag_ids(package.package_name, filtered_package.boolean_flags.iter().copied())?;
+        filtered_package
             .boolean_flags
             .iter()
             .map(|&pf| {
