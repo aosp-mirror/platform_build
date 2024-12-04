@@ -2936,6 +2936,9 @@ ifneq ($(BOARD_NAND_SPARE_SIZE),)
 $(error MTD device is no longer supported and thus BOARD_NAND_SPARE_SIZE is deprecated.)
 endif
 
+recovery_intermediates := $(call intermediates-dir-for,PACKAGING,recovery)
+$(eval $(call write-partition-file-list,$(recovery_intermediates)/file_list.txt,$(TARGET_RECOVERY_OUT),$(INTERNAL_RECOVERYIMAGE_FILES)))
+
 
 # -----------------------------------------------------------------
 # Build debug ramdisk and debug boot image.
@@ -5173,6 +5176,8 @@ INTERNAL_ALLIMAGES_FILES := \
 # Run apex_sepolicy_tests for all installed APEXes
 
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
+# TODO(b/353896817) apex_sepolicy_tests supports only ext4
+ifeq (ext4,$(PRODUCT_DEFAULT_APEX_PAYLOAD_TYPE))
 intermediate := $(call intermediates-dir-for,PACKAGING,apex_sepolicy_tests)
 apex_dirs := \
   $(TARGET_OUT)/apex/% \
@@ -5212,6 +5217,7 @@ droid_targets: run_apex_sepolicy_tests
 
 apex_files :=
 intermediate :=
+endif # PRODUCT_DEFAULT_APEX_PAYLOAD_TYPE
 endif # TARGET_BUILD_UNBUNDLED
 
 # -----------------------------------------------------------------
