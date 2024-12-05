@@ -872,6 +872,14 @@ android_filesystem_defaults {
             }),
         },
     },
+    arch: {
+        arm64: {
+            deps: [
+                "libclang_rt.hwasan",
+                "libc_hwasan",
+            ],
+        },
+    },
 }
 
 android_system_image {
