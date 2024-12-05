@@ -502,6 +502,9 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   # Used to generate fsv meta
   $(call add_json_bool, ProductFsverityGenerateMetadata,               $(PRODUCT_FSVERITY_GENERATE_METADATA))
 
+  # Used to generate recovery partition
+  $(call add_json_str, TargetScreenDensity, $(TARGET_SCREEN_DENSITY))
+
 $(call end_json_map)
 
 # For converting vintf_data
