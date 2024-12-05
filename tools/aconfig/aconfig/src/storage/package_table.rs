@@ -47,6 +47,7 @@ impl PackageTableNodeWrapper {
         let node = PackageTableNode {
             package_name: String::from(package.package_name),
             package_id: package.package_id,
+            fingerprint: package.fingerprint,
             boolean_start_index: package.boolean_start_index,
             next_offset: None,
         };
@@ -111,23 +112,59 @@ pub fn create_package_table(
 
 #[cfg(test)]
 mod tests {
-    use aconfig_storage_file::DEFAULT_FILE_VERSION;
+    use aconfig_storage_file::{DEFAULT_FILE_VERSION, MAX_SUPPORTED_FILE_VERSION};
 
     use super::*;
     use crate::storage::{group_flags_by_package, tests::parse_all_test_flags};
 
-    pub fn create_test_package_table_from_source() -> Result<PackageTable> {
+    pub fn create_test_package_table_from_source(version: u32) -> Result<PackageTable> {
         let caches = parse_all_test_flags();
-        let packages = group_flags_by_package(caches.iter());
-        create_package_table("mockup", &packages, DEFAULT_FILE_VERSION)
+        let packages = group_flags_by_package(caches.iter(), version);
+        create_package_table("mockup", &packages, version)
     }
 
     #[test]
     // this test point locks down the table creation and each field
-    fn test_table_contents() {
-        let package_table = create_test_package_table_from_source();
-        assert!(package_table.is_ok());
-        let expected_package_table = aconfig_storage_file::test_utils::create_test_package_table();
-        assert_eq!(package_table.unwrap(), expected_package_table);
+    fn test_table_contents_default_version() {
+        let package_table_result = create_test_package_table_from_source(DEFAULT_FILE_VERSION);
+        assert!(package_table_result.is_ok());
+        let package_table = package_table_result.unwrap();
+
+        let expected_package_table =
+            aconfig_storage_file::test_utils::create_test_package_table(DEFAULT_FILE_VERSION);
+
+        assert_eq!(package_table.header, expected_package_table.header);
+        assert_eq!(package_table.buckets, expected_package_table.buckets);
+        for (node, expected_node) in
+            package_table.nodes.iter().zip(expected_package_table.nodes.iter())
+        {
+            assert_eq!(node.package_name, expected_node.package_name);
+            assert_eq!(node.package_id, expected_node.package_id);
+            assert_eq!(node.boolean_start_index, expected_node.boolean_start_index);
+            assert_eq!(node.next_offset, expected_node.next_offset);
+        }
+    }
+
+    #[test]
+    // this test point locks down the table creation and each field
+    fn test_table_contents_max_version() {
+        let package_table_result =
+            create_test_package_table_from_source(MAX_SUPPORTED_FILE_VERSION);
+        assert!(package_table_result.is_ok());
+        let package_table = package_table_result.unwrap();
+
+        let expected_package_table =
+            aconfig_storage_file::test_utils::create_test_package_table(MAX_SUPPORTED_FILE_VERSION);
+
+        assert_eq!(package_table.header, expected_package_table.header);
+        assert_eq!(package_table.buckets, expected_package_table.buckets);
+        for (node, expected_node) in
+            package_table.nodes.iter().zip(expected_package_table.nodes.iter())
+        {
+            assert_eq!(node.package_name, expected_node.package_name);
+            assert_eq!(node.package_id, expected_node.package_id);
+            assert_eq!(node.boolean_start_index, expected_node.boolean_start_index);
+            assert_eq!(node.next_offset, expected_node.next_offset);
+        }
     }
 }

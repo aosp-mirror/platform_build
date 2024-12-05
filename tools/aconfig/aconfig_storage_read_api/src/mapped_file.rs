@@ -97,10 +97,10 @@ mod tests {
         let flag_map = storage_dir.clone() + "/maps/mockup.flag.map";
         let flag_val = storage_dir.clone() + "/boot/mockup.val";
         let flag_info = storage_dir.clone() + "/boot/mockup.info";
-        fs::copy("./tests/data/v1/package.map", &package_map).unwrap();
-        fs::copy("./tests/data/v1/flag.map", &flag_map).unwrap();
-        fs::copy("./tests/data/v1/flag.val", &flag_val).unwrap();
-        fs::copy("./tests/data/v1/flag.info", &flag_info).unwrap();
+        fs::copy("./tests/data/v1/package_v1.map", &package_map).unwrap();
+        fs::copy("./tests/data/v1/flag_v1.map", &flag_map).unwrap();
+        fs::copy("./tests/data/v1/flag_v1.val", &flag_val).unwrap();
+        fs::copy("./tests/data/v1/flag_v1.info", &flag_info).unwrap();
 
         return storage_dir;
     }
@@ -108,9 +108,9 @@ mod tests {
     #[test]
     fn test_mapped_file_contents() {
         let storage_dir = create_test_storage_files();
-        map_and_verify(&storage_dir, StorageFileType::PackageMap, "./tests/data/v1/package.map");
-        map_and_verify(&storage_dir, StorageFileType::FlagMap, "./tests/data/v1/flag.map");
-        map_and_verify(&storage_dir, StorageFileType::FlagVal, "./tests/data/v1/flag.val");
-        map_and_verify(&storage_dir, StorageFileType::FlagInfo, "./tests/data/v1/flag.info");
+        map_and_verify(&storage_dir, StorageFileType::PackageMap, "./tests/data/v1/package_v1.map");
+        map_and_verify(&storage_dir, StorageFileType::FlagMap, "./tests/data/v1/flag_v1.map");
+        map_and_verify(&storage_dir, StorageFileType::FlagVal, "./tests/data/v1/flag_v1.val");
+        map_and_verify(&storage_dir, StorageFileType::FlagInfo, "./tests/data/v1/flag_v1.info");
     }
 }

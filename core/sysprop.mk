@@ -184,7 +184,7 @@ ifeq (,$(strip $(BUILD_FINGERPRINT)))
 endif
 
 BUILD_FINGERPRINT_FILE := $(PRODUCT_OUT)/build_fingerprint.txt
-ifneq (,$(shell mkdir -p $(PRODUCT_OUT) && echo $(BUILD_FINGERPRINT) >$(BUILD_FINGERPRINT_FILE) && grep " " $(BUILD_FINGERPRINT_FILE)))
+ifneq (,$(shell mkdir -p $(PRODUCT_OUT) && echo $(BUILD_FINGERPRINT) >$(BUILD_FINGERPRINT_FILE).tmp && (if ! cmp -s $(BUILD_FINGERPRINT_FILE).tmp $(BUILD_FINGERPRINT_FILE); then mv $(BUILD_FINGERPRINT_FILE).tmp $(BUILD_FINGERPRINT_FILE); else rm $(BUILD_FINGERPRINT_FILE).tmp; fi) && grep " " $(BUILD_FINGERPRINT_FILE)))
   $(error BUILD_FINGERPRINT cannot contain spaces: "$(file <$(BUILD_FINGERPRINT_FILE))")
 endif
 BUILD_FINGERPRINT_FROM_FILE := $$(cat $(BUILD_FINGERPRINT_FILE))
@@ -282,51 +282,17 @@ INSTALLED_ODM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM)/etc/build.prop
 
 # ----------------------------------------------------------------
 # vendor_dlkm/etc/build.prop
-#
+# odm_dlkm/etc/build.prop
+# system_dlkm/build.prop
+# These are built by Soong. See build/soong/Android.bp
 
 INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET := $(TARGET_OUT_VENDOR_DLKM)/etc/build.prop
-$(eval $(call build-properties,\
-    vendor_dlkm,\
-    $(INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET),\
-    $(empty),\
-    $(empty),\
-    $(empty),\
-    $(empty),\
-    $(empty)))
-
-$(eval $(call declare-1p-target,$(INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET)))
-
-# ----------------------------------------------------------------
-# odm_dlkm/etc/build.prop
-#
-
 INSTALLED_ODM_DLKM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM_DLKM)/etc/build.prop
-$(eval $(call build-properties,\
-    odm_dlkm,\
-    $(INSTALLED_ODM_DLKM_BUILD_PROP_TARGET),\
-    $(empty),\
-    $(empty),\
-    $(empty),\
-    $(empty),\
-    $(empty)))
-
-$(eval $(call declare-1p-target,$(INSTALLED_ODM_DLKM_BUILD_PROP_TARGET)))
-
-# ----------------------------------------------------------------
-# system_dlkm/build.prop
-#
-
 INSTALLED_SYSTEM_DLKM_BUILD_PROP_TARGET := $(TARGET_OUT_SYSTEM_DLKM)/etc/build.prop
-$(eval $(call build-properties,\
-    system_dlkm,\
-    $(INSTALLED_SYSTEM_DLKM_BUILD_PROP_TARGET),\
-    $(empty),\
-    $(empty),\
-    $(empty),\
-    $(empty),\
-    $(empty)))
-
-$(eval $(call declare-1p-target,$(INSTALLED_SYSTEM_DLKM_BUILD_PROP_TARGET)))
+ALL_DEFAULT_INSTALLED_MODULES += \
+  $(INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET) \
+  $(INSTALLED_ODM_DLKM_BUILD_PROP_TARGET) \
+  $(INSTALLED_SYSTEM_DLKM_BUILD_PROP_TARGET) \
 
 # -----------------------------------------------------------------
 # system_ext/etc/build.prop
@@ -336,22 +302,12 @@ $(eval $(call declare-1p-target,$(INSTALLED_SYSTEM_DLKM_BUILD_PROP_TARGET)))
 
 INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET := $(TARGET_OUT_SYSTEM_EXT)/etc/build.prop
 
-# ----------------------------------------------------------------
-# ramdisk/boot/etc/build.prop
-#
-
 RAMDISK_BUILD_PROP_REL_PATH := system/etc/ramdisk/build.prop
+ifeq (true,$(BOARD_USES_RECOVERY_AS_BOOT))
+INSTALLED_RAMDISK_BUILD_PROP_TARGET := $(TARGET_RECOVERY_ROOT_OUT)/first_stage_ramdisk/$(RAMDISK_BUILD_PROP_REL_PATH)
+else
 INSTALLED_RAMDISK_BUILD_PROP_TARGET := $(TARGET_RAMDISK_OUT)/$(RAMDISK_BUILD_PROP_REL_PATH)
-$(eval $(call build-properties,\
-    bootimage,\
-    $(INSTALLED_RAMDISK_BUILD_PROP_TARGET),\
-    $(empty),\
-    $(empty),\
-    $(empty),\
-    $(empty),\
-    $(empty)))
-
-$(eval $(call declare-1p-target,$(INSTALLED_RAMDISK_BUILD_PROP_TARGET)))
+endif
 
 ALL_INSTALLED_BUILD_PROP_FILES := \
   $(INSTALLED_BUILD_PROP_TARGET) \

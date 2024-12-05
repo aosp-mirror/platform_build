@@ -330,6 +330,18 @@ $(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(filter true,$3))
 $(eval SOONG_CONFIG_TYPE_$(strip $1)_$(strip $2):=bool)
 endef
 
+# soong_config_set_string_list is the same as soong_config_set, but it will
+# also type the variable as a list of strings, so that when using select() expressions
+# in blueprint files they can use list values instead of strings.
+# The values of the list must be space-separated.
+# $1 is the namespace. $2 is the variable name. $3 is the variable value.
+# Ex: $(call soong_config_set_string_list,acme,COOL_LIBS,a b)
+define soong_config_set_string_list
+$(call soong_config_define_internal,$1,$2) \
+$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(strip $3))
+$(eval SOONG_CONFIG_TYPE_$(strip $1)_$(strip $2):=string_list)
+endef
+
 # soong_config_append appends to the value of the variable in the given Soong
 # config namespace. If the variable does not exist, it will be defined. If the
 # namespace does not  exist, it will be defined.
@@ -894,6 +906,11 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := $(filter-out $(PLATFORM_SEPOLICY_VERSION), 
     PLATFORM_SEPOLICY_COMPAT_VERSIONS \
     PLATFORM_SEPOLICY_VERSION \
 
+BOARD_GENFS_LABELS_VERSION ?= $(BOARD_API_LEVEL)
+ifeq ($(call math_gt,$(BOARD_API_LEVEL),$(BOARD_GENFS_LABELS_VERSION)),true)
+  $(error BOARD_GENFS_LABELS_VERSION ($(BOARD_GENFS_LABELS_VERSION)) must be greater than or equal to BOARD_API_LEVEL ($(BOARD_API_LEVEL)))
+endif
+
 ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
   ifneq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
     $(error PRODUCT_USE_DYNAMIC_PARTITIONS must be true when PRODUCT_RETROFIT_DYNAMIC_PARTITIONS \
@@ -1301,10 +1318,6 @@ endif
 
 SOONG_VARIABLES :=
 SOONG_EXTRA_VARIABLES :=
-
--include external/ltp/android/ltp_package_list.mk
-DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages)
-.KATI_READONLY := DEFAULT_DATA_OUT_MODULES
 
 include $(BUILD_SYSTEM)/dumpvar.mk
 

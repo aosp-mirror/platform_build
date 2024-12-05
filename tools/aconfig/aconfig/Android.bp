@@ -68,6 +68,14 @@ aconfig_values {
     ],
 }
 
+aconfig_values {
+    name: "aconfig.test.flag.second_values",
+    package: "com.android.aconfig.test",
+    srcs: [
+        "tests/third.values",
+    ],
+}
+
 aconfig_value_set {
     name: "aconfig.test.flag.value_set",
     values: [
