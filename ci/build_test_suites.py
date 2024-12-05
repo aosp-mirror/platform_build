@@ -87,11 +87,14 @@ class BuildPlanner:
       if optimization_rationale:
         get_metrics_agent().report_unoptimized_target(target, optimization_rationale)
       else:
-        regex = r'\b(%s)\b' % re.escape(target)
-        if any(re.search(regex, opt) for opt in test_discovery_zip_regexes):
-          get_metrics_agent().report_unoptimized_target(target, 'Test artifact used.')
-        else:
-          get_metrics_agent().report_optimized_target(target)
+        try:
+          regex = r'\b(%s)\b' % re.escape(target)
+          if any(re.search(regex, opt) for opt in test_discovery_zip_regexes):
+            get_metrics_agent().report_unoptimized_target(target, 'Test artifact used.')
+          else:
+            get_metrics_agent().report_optimized_target(target)
+        except Exception as e:
+          logging.error(f'unable to parse test discovery output: {repr(e)}')
 
       if self._unused_target_exclusion_enabled(
           target
