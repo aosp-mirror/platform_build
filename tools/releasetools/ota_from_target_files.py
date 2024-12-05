@@ -1039,6 +1039,9 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
 
   # Prepare custom images.
   if OPTIONS.custom_images:
+    if source_file is not None:
+      source_file = GetTargetFilesZipForCustomImagesUpdates(
+           source_file, OPTIONS.custom_images)
     target_file = GetTargetFilesZipForCustomImagesUpdates(
         target_file, OPTIONS.custom_images)
 
