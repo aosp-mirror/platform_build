@@ -224,30 +224,6 @@ my_common := COMMON
 include $(BUILD_SYSTEM)/link_type.mk
 endif # !LOCAL_IS_HOST_MODULE
 
-ifeq (,$(filter tests,$(LOCAL_MODULE_TAGS)))
-  ifdef LOCAL_SOONG_DEVICE_RRO_DIRS
-    $(call append_enforce_rro_sources, \
-        $(my_register_name), \
-        false, \
-        $(LOCAL_FULL_MANIFEST_FILE), \
-        $(if $(LOCAL_EXPORT_PACKAGE_RESOURCES),true,false), \
-        $(LOCAL_SOONG_DEVICE_RRO_DIRS), \
-        vendor \
-    )
-  endif
-
-  ifdef LOCAL_SOONG_PRODUCT_RRO_DIRS
-    $(call append_enforce_rro_sources, \
-        $(my_register_name), \
-        false, \
-        $(LOCAL_FULL_MANIFEST_FILE), \
-        $(if $(LOCAL_EXPORT_PACKAGE_RESOURCES),true,false), \
-        $(LOCAL_SOONG_PRODUCT_RRO_DIRS), \
-        product \
-    )
-  endif
-endif
-
 ifdef LOCAL_PREBUILT_COVERAGE_ARCHIVE
   my_coverage_dir := $(TARGET_OUT_COVERAGE)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))
   my_coverage_copy_pairs := $(foreach f,$(LOCAL_PREBUILT_COVERAGE_ARCHIVE),$(f):$(my_coverage_dir)/$(notdir  $(f)))

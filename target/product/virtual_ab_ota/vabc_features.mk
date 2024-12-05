@@ -31,14 +31,15 @@ PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.enabled=true
 
 PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.compression.enabled=true
 PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.userspace.snapshots.enabled=true
-PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.io_uring.enabled=true
-PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.compression.xor.enabled=true
 PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.batch_writes=true
+
+# Optional assignments, low memory devices may benefit from overriding these.
+PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.io_uring.enabled?=true
+PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.compression.xor.enabled?=true
+
 # Low memory device configurations. If memory usage and cpu utilization is
 # a bottleneck during OTA, the below configurations can be added to a
-# device's .mk file improve performance for low mem devices. Disabling
-# ro.virtual_ab.compression.xor.enabled and ro.virtual_ab.io_uring.enabled
-# is also recommended
+# device's .mk file improve performance for low mem devices.
 #
 # PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.read_ahead_size=16
 # PRODUCT_VENDOR_PROPERTIES += ro.virtual_ab.o_direct.enabled=true
