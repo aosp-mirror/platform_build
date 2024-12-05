@@ -5686,6 +5686,7 @@ INTERNAL_OTATOOLS_MODULES := \
   brotli \
   bsdiff \
   build_image \
+  build_mixed_kernels_ramdisk_host \
   build_super_image \
   build_verity_metadata \
   build_verity_tree \
