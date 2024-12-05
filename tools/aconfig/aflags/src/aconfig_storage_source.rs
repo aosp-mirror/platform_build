@@ -93,7 +93,8 @@ fn read_from_socket() -> Result<Vec<ProtoFlagQueryReturnMessage>> {
         special_fields: SpecialFields::new(),
     };
 
-    let mut socket = UnixStream::connect("/dev/socket/aconfigd")?;
+    let socket_name = "/dev/socket/aconfigd_system";
+    let mut socket = UnixStream::connect(socket_name)?;
 
     let message_buffer = messages.write_to_bytes()?;
     let mut message_length_buffer: [u8; 4] = [0; 4];

@@ -62,6 +62,12 @@ fn cli() -> Command {
                             &commands::DEFAULT_FLAG_PERMISSION,
                         )),
                 )
+                .arg(
+                    Arg::new("allow-read-write")
+                        .long("allow-read-write")
+                        .value_parser(clap::value_parser!(bool))
+                        .default_value("true"),
+                )
                 .arg(Arg::new("cache").long("cache").required(true)),
         )
         .subcommand(
@@ -242,12 +248,15 @@ fn main() -> Result<()> {
                 sub_matches,
                 "default-permission",
             )?;
+            let allow_read_write = get_optional_arg::<bool>(sub_matches, "allow-read-write")
+                .expect("failed to parse allow-read-write");
             let output = commands::parse_flags(
                 package,
                 container,
                 declarations,
                 values,
                 *default_permission,
+                *allow_read_write,
             )
             .context("failed to create cache")?;
             let path = get_required_arg::<String>(sub_matches, "cache")?;

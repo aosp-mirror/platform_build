@@ -46,60 +46,23 @@ class EnableFeatureTest(unittest.TestCase):
         )
     )
 
-  @mock.patch.dict(
-      os.environ, {ROLLOUT_TEST_FEATURE_FLAG: 'invalid'}, clear=True
-  )
-  def test_feature_disabled_with_invalid_rollout_percentage(self):
-    self.assertFalse(
-        utils.is_feature_enabled(
-            TEST_FEATURE,
-            TEST_USER,
-            ENABLE_TEST_FEATURE_FLAG,
-            ROLLOUT_TEST_FEATURE_FLAG,
-        )
-    )
-
-  @mock.patch.dict(os.environ, {ROLLOUT_TEST_FEATURE_FLAG: '101'}, clear=True)
-  def test_feature_disabled_with_rollout_percentage_too_high(self):
-    self.assertFalse(
-        utils.is_feature_enabled(
-            TEST_FEATURE,
-            TEST_USER,
-            ENABLE_TEST_FEATURE_FLAG,
-            ROLLOUT_TEST_FEATURE_FLAG,
-        )
-    )
-
-  @mock.patch.dict(os.environ, {ROLLOUT_TEST_FEATURE_FLAG: '-1'}, clear=True)
-  def test_feature_disabled_with_rollout_percentage_too_low(self):
-    self.assertFalse(
-        utils.is_feature_enabled(
-            TEST_FEATURE,
-            TEST_USER,
-            ENABLE_TEST_FEATURE_FLAG,
-            ROLLOUT_TEST_FEATURE_FLAG,
-        )
-    )
-
-  @mock.patch.dict(os.environ, {ROLLOUT_TEST_FEATURE_FLAG: '90'}, clear=True)
   def test_feature_enabled_with_rollout_percentage(self):
     self.assertTrue(
         utils.is_feature_enabled(
             TEST_FEATURE,
             TEST_USER,
             ENABLE_TEST_FEATURE_FLAG,
-            ROLLOUT_TEST_FEATURE_FLAG,
+            90,
         )
     )
 
-  @mock.patch.dict(os.environ, {ROLLOUT_TEST_FEATURE_FLAG: '10'}, clear=True)
   def test_feature_disabled_with_rollout_percentage(self):
     self.assertFalse(
         utils.is_feature_enabled(
             TEST_FEATURE,
             TEST_USER,
             ENABLE_TEST_FEATURE_FLAG,
-            ROLLOUT_TEST_FEATURE_FLAG,
+            10,
         )
     )
 

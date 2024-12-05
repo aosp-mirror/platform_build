@@ -1100,7 +1100,7 @@ def AddImagesToTargetFiles(filename):
     vbmeta_partitions = common.AVB_PARTITIONS[:] + tuple(avb_custom_partitions)
 
     vbmeta_system = OPTIONS.info_dict.get("avb_vbmeta_system", "").strip()
-    if vbmeta_system:
+    if vbmeta_system and set(vbmeta_system.split()).intersection(partitions):
       banner("vbmeta_system")
       partitions["vbmeta_system"] = AddVBMeta(
           output_zip, partitions, "vbmeta_system", vbmeta_system.split())
@@ -1110,7 +1110,7 @@ def AddImagesToTargetFiles(filename):
       vbmeta_partitions.append("vbmeta_system")
 
     vbmeta_vendor = OPTIONS.info_dict.get("avb_vbmeta_vendor", "").strip()
-    if vbmeta_vendor:
+    if vbmeta_vendor and set(vbmeta_vendor.split()).intersection(partitions):
       banner("vbmeta_vendor")
       partitions["vbmeta_vendor"] = AddVBMeta(
           output_zip, partitions, "vbmeta_vendor", vbmeta_vendor.split())
@@ -1137,7 +1137,7 @@ def AddImagesToTargetFiles(filename):
             if item not in included_partitions]
         vbmeta_partitions.append(partition_name)
 
-    if OPTIONS.info_dict.get("avb_building_vbmeta_image") == "true":
+    if OPTIONS.info_dict.get("avb_building_vbmeta_image") == "true" and set(vbmeta_partitions).intersection(partitions):
       banner("vbmeta")
       AddVBMeta(output_zip, partitions, "vbmeta", vbmeta_partitions)
 

@@ -284,6 +284,9 @@ _product_list_vars += PRODUCT_EXTRA_VNDK_VERSIONS
 # Whether APEX should be compressed or not
 _product_single_value_vars += PRODUCT_COMPRESSED_APEX
 
+# Default fs type for APEX payload image (apex_payload.img)
+_product_single_value_vars += PRODUCT_DEFAULT_APEX_PAYLOAD_TYPE
+
 # VNDK version of product partition. It can be 'current' if the product
 # partitions uses PLATFORM_VNDK_VERSION.
 _product_single_value_vars += PRODUCT_PRODUCT_VNDK_VERSION
@@ -491,6 +494,13 @@ _product_single_value_vars += PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE
 # List of stub libraries specific to the product that are already present in the system image and
 # should be included in the system_linker_config.
 _product_list_vars += PRODUCT_EXTRA_STUB_LIBRARIES
+
+# If set to true, all Android.mk files will be ignored.
+_product_single_value_vars += PRODUCT_IGNORE_ALL_ANDROIDMK
+# When PRODUCT_IGNORE_ALL_ANDROIDMK is set to true, this variable will be used to allow some Android.mk files.
+_product_list_vars += PRODUCT_ALLOWED_ANDROIDMK_FILES
+# When PRODUCT_IGNORE_ALL_ANDROIDMK is set to true, path of file that contains a list of allowed Android.mk files
+_product_single_value_vars += PRODUCT_ANDROIDMK_ALLOWLIST_FILE
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
