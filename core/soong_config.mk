@@ -194,6 +194,8 @@ $(call add_json_str,  SystemExtPath,                     $(TARGET_COPY_OUT_SYSTE
 $(call add_json_str,  SystemDlkmPath,                    $(TARGET_COPY_OUT_SYSTEM_DLKM))
 $(call add_json_str,  OemPath,                           $(TARGET_COPY_OUT_OEM))
 $(call add_json_bool, MinimizeJavaDebugInfo,             $(filter true,$(PRODUCT_MINIMIZE_JAVA_DEBUG_INFO)))
+$(call add_json_str,  RecoveryPath,                      $(TARGET_COPY_OUT_RECOVERY))
+$(call add_json_bool, BuildingRecoveryImage,             $(BUILDING_RECOVERY_IMAGE))
 
 $(call add_json_bool, UseGoma,                           $(filter-out false,$(USE_GOMA)))
 $(call add_json_bool, UseRBE,                            $(filter-out false,$(USE_RBE)))
@@ -445,6 +447,9 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_str, InitBootSecurityPatch, $(INIT_BOOT_SECURITY_PATCH))
   $(call add_json_str, VendorSecurityPatch, $(VENDOR_SECURITY_PATCH))
   $(call add_json_bool, BoardIncludeDtbInBootimg, $(BOARD_INCLUDE_DTB_IN_BOOTIMG))
+  $(call add_json_list, InternalKernelCmdline, $(INTERNAL_KERNEL_CMDLINE))
+  $(call add_json_list, InternalBootconfig, $(INTERNAL_BOOTCONFIG))
+  $(call add_json_str, InternalBootconfigFile, $(INTERNAL_BOOTCONFIG_FILE))
 
   # Avb (android verified boot) stuff
   $(call add_json_bool, BoardAvbEnable, $(filter true,$(BOARD_AVB_ENABLE)))
@@ -483,12 +488,22 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_bool, BuildingOdmDlkmImage,               $(BUILDING_ODM_DLKM_IMAGE))
   $(call add_json_list, OdmKernelModules, $(BOARD_ODM_KERNEL_MODULES))
   $(call add_json_str, OdmKernelBlocklistFile, $(BOARD_ODM_KERNEL_MODULES_BLOCKLIST_FILE))
+  $(call add_json_list, VendorRamdiskKernelModules, $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES))
+  $(call add_json_str, VendorRamdiskKernelBlocklistFile, $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_BLOCKLIST_FILE))
+  $(call add_json_list, VendorRamdiskKernelLoadModules, $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD))
+  $(call add_json_str, VendorRamdiskKernelOptionsFile, $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_OPTIONS_FILE))
 
   # Used to generate /vendor/build.prop
   $(call add_json_list, BoardInfoFiles, $(if $(TARGET_BOARD_INFO_FILES),$(TARGET_BOARD_INFO_FILES),$(firstword $(TARGET_BOARD_INFO_FILE) $(wildcard $(TARGET_DEVICE_DIR)/board-info.txt))))
   $(call add_json_str, BootLoaderBoardName, $(TARGET_BOOTLOADER_BOARD_NAME))
 
   $(call add_json_list, ProductCopyFiles, $(PRODUCT_COPY_FILES))
+
+  # Used to generate fsv meta
+  $(call add_json_bool, ProductFsverityGenerateMetadata,               $(PRODUCT_FSVERITY_GENERATE_METADATA))
+
+  # Used to generate recovery partition
+  $(call add_json_str, TargetScreenDensity, $(TARGET_SCREEN_DENSITY))
 
 $(call end_json_map)
 

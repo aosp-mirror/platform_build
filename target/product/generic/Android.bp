@@ -381,7 +381,6 @@ android_filesystem_defaults {
 
     deps: [
         "abx",
-        "aconfigd",
         "aconfigd-system",
         "aflags",
         "am",
@@ -500,6 +499,7 @@ android_filesystem_defaults {
         "pintool", // base_system
         "platform.xml", // base_system
         "pm", // base_system
+        "prefetch", //base_system
         "preinstalled-packages-asl-files.xml", // base_system
         "preinstalled-packages-platform-generic-system.xml", // generic_system
         "preinstalled-packages-platform-handheld-system.xml", // handheld_system
@@ -870,6 +870,14 @@ android_filesystem_defaults {
                 "true": ["mediaserver"],
                 default: [],
             }),
+        },
+    },
+    arch: {
+        arm64: {
+            deps: [
+                "libclang_rt.hwasan",
+                "libc_hwasan",
+            ],
         },
     },
 }
