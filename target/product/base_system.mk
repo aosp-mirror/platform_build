@@ -316,6 +316,14 @@ else
 
 endif
 
+# When we release ondeviceintelligence in neuralnetworks module
+ifneq ($(RELEASE_ONDEVICE_INTELLIGENCE_MODULE),true)
+  PRODUCT_PACKAGES += \
+        framework-ondeviceintelligence-platform
+
+endif
+
+
 # When we release uprobestats module
 ifeq ($(RELEASE_UPROBESTATS_MODULE),true)
     PRODUCT_PACKAGES += \
