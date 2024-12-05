@@ -21,13 +21,8 @@
 # ide_query.sh. The prober doesn't check-out the full source code, so it
 # can't run ide_query.sh itself.
 
-cd $(dirname $BASH_SOURCE)
-source $(pwd)/../../../shell_utils.sh
-require_top
-
 files_to_build=(
   build/make/tools/ide_query/prober_scripts/cpp/general.cc
 )
 
-cd ${TOP}
 build/make/tools/ide_query/ide_query.sh --lunch_target=aosp_arm-trunk_staging-eng ${files_to_build[@]} > build/make/tools/ide_query/prober_scripts/ide_query.out

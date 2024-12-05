@@ -55,12 +55,14 @@ pub fn find_flag_attribute(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::{test_utils::create_test_flag_info_list, FlagInfoBit};
+    use aconfig_storage_file::{
+        test_utils::create_test_flag_info_list, FlagInfoBit, DEFAULT_FILE_VERSION,
+    };
 
     #[test]
     // this test point locks down query if flag has server override
     fn test_is_flag_sticky() {
-        let flag_info_list = create_test_flag_info_list().into_bytes();
+        let flag_info_list = create_test_flag_info_list(DEFAULT_FILE_VERSION).into_bytes();
         for offset in 0..8 {
             let attribute =
                 find_flag_attribute(&flag_info_list[..], FlagValueType::Boolean, offset).unwrap();
@@ -71,7 +73,7 @@ mod tests {
     #[test]
     // this test point locks down query if flag is readwrite
     fn test_is_flag_readwrite() {
-        let flag_info_list = create_test_flag_info_list().into_bytes();
+        let flag_info_list = create_test_flag_info_list(DEFAULT_FILE_VERSION).into_bytes();
         let baseline: Vec<bool> = vec![true, false, true, true, false, false, false, true];
         for offset in 0..8 {
             let attribute =
@@ -86,7 +88,7 @@ mod tests {
     #[test]
     // this test point locks down query if flag has local override
     fn test_flag_has_override() {
-        let flag_info_list = create_test_flag_info_list().into_bytes();
+        let flag_info_list = create_test_flag_info_list(DEFAULT_FILE_VERSION).into_bytes();
         for offset in 0..8 {
             let attribute =
                 find_flag_attribute(&flag_info_list[..], FlagValueType::Boolean, offset).unwrap();
@@ -97,7 +99,7 @@ mod tests {
     #[test]
     // this test point locks down query beyond the end of boolean section
     fn test_boolean_out_of_range() {
-        let flag_info_list = create_test_flag_info_list().into_bytes();
+        let flag_info_list = create_test_flag_info_list(DEFAULT_FILE_VERSION).into_bytes();
         let error =
             find_flag_attribute(&flag_info_list[..], FlagValueType::Boolean, 8).unwrap_err();
         assert_eq!(
@@ -109,7 +111,7 @@ mod tests {
     #[test]
     // this test point locks down query error when file has a higher version
     fn test_higher_version_storage_file() {
-        let mut info_list = create_test_flag_info_list();
+        let mut info_list = create_test_flag_info_list(DEFAULT_FILE_VERSION);
         info_list.header.version = MAX_SUPPORTED_FILE_VERSION + 1;
         let flag_info = info_list.into_bytes();
         let error = find_flag_attribute(&flag_info[..], FlagValueType::Boolean, 4).unwrap_err();
