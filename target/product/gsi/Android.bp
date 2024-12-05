@@ -61,3 +61,149 @@ prebuilt_etc {
     system_ext_specific: true,
     relative_install_path: "gsi",
 }
+
+gsi_symlinks = [
+    {
+        target: "/system/system_ext",
+        name: "system_ext",
+    },
+    {
+        target: "/system/product",
+        name: "product",
+    },
+    {
+        target: "/odm/odm_dlkm/etc",
+        name: "odm_dlkm/etc",
+    },
+    {
+        target: "/vendor/vendor_dlkm/etc",
+        name: "vendor_dlkm/etc",
+    },
+]
+
+android_system_image {
+    name: "android_gsi",
+    defaults: ["system_image_defaults"],
+    symlinks: gsi_symlinks,
+    dirs: ["cache"],
+    deps: [
+        ///////////////////////////////////////////
+        // gsi_system_ext
+        ///////////////////////////////////////////
+
+        // handheld packages
+        "Launcher3QuickStep",
+        "Provision",
+        "Settings",
+        "StorageManager",
+        "SystemUI",
+
+        // telephony packages
+        "CarrierConfig",
+
+        // Install a copy of the debug policy to the system_ext partition, and allow
+        // init-second-stage to load debug policy from system_ext.
+        // This option is only meant to be set by compliance GSI targets.
+        "system_ext_userdebug_plat_sepolicy.cil",
+
+        ///////////////////////////////////////////
+        // base_system_ext
+        ///////////////////////////////////////////
+        "build_flag_system_ext",
+        "fs_config_dirs_system_ext",
+        "fs_config_files_system_ext",
+        "group_system_ext",
+        "passwd_system_ext",
+        "SatelliteClient",
+        "selinux_policy_system_ext",
+        "system_ext_manifest.xml",
+        "system_ext-build.prop",
+        // Base modules when shipping api level is less than or equal to 34
+        "hwservicemanager",
+        "android.hidl.allocator@1.0-service",
+
+        ///////////////////////////////////////////
+        // window_extensions_base
+        ///////////////////////////////////////////
+        "androidx.window.extensions",
+        "androidx.window.sidecar",
+
+        ///////////////////////////////////////////
+        // gsi_release
+        ///////////////////////////////////////////
+        "gsi_skip_mount.cfg",
+        "init.gsi.rc",
+        "init.vndk-nodef.rc",
+        // Overlay the GSI specific setting for framework and SystemUI
+        "gsi_overlay_framework",
+        "gsi_overlay_systemui",
+
+        ///////////////////////////////////////////
+        // VNDK
+        ///////////////////////////////////////////
+        "com.android.vndk.v30",
+        "com.android.vndk.v31",
+        "com.android.vndk.v32",
+        "com.android.vndk.v33",
+        "com.android.vndk.v34",
+
+        ///////////////////////////////////////////
+        // AVF
+        ///////////////////////////////////////////
+        "com.android.compos",
+        "features_com.android.virt.xml",
+
+        ///////////////////////////////////////////
+        // gsi_product
+        ///////////////////////////////////////////
+        "Browser2",
+        "Camera2",
+        "Dialer",
+        "LatinIME",
+        "apns-full-conf.xml",
+
+        ///////////////////////////////////////////
+        // media_product
+        ///////////////////////////////////////////
+        "webview",
+
+        ///////////////////////////////////////////
+        // base_product
+        ///////////////////////////////////////////
+
+        // Base modules and settings for the product partition.
+        "build_flag_product",
+        "fs_config_dirs_product",
+        "fs_config_files_product",
+        "group_product",
+        "ModuleMetadata",
+        "passwd_product",
+        "product_compatibility_matrix.xml",
+        "product_manifest.xml",
+        "selinux_policy_product",
+        "product-build.prop",
+
+        // AUDIO
+        "frameworks_sounds",
+
+        ///////////////////////////////////////////
+        // base_system
+        ///////////////////////////////////////////
+        "charger",
+    ] + select(product_variable("debuggable"), {
+        // Packages included only for eng or userdebug builds, previously debug tagged
+        true: ["adb_keys"],
+        default: [],
+    }),
+    multilib: {
+        both: {
+            // PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34
+            deps: ["android.hidl.memory@1.0-impl"],
+        },
+    },
+    enabled: select(soong_config_variable("ANDROID", "PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT"), {
+        "true": true,
+        default: false,
+    }),
+    type: "ext4",
+}

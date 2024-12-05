@@ -70,13 +70,6 @@ team {
 }
 
 team {
-    name: "trendy_team_wear_wear_cloud_platform",
-
-    // go/trendy/manage/engineers/5917762526281728
-    trendy_team_id: "5917762526281728",
-}
-
-team {
     name: "trendy_team_pixel_system_software",
 
     // go/trendy/manage/engineers/4856005120622592
@@ -518,24 +511,10 @@ team {
 }
 
 team {
-    name: "trendy_team_wear_wear_notifications_alerts_attention_management",
-
-    // go/trendy/manage/engineers/6267643681996800
-    trendy_team_id: "6267643681996800",
-}
-
-team {
     name: "trendy_team_fwk_nfc",
 
     // go/trendy/manage/engineers/5962312512864256
     trendy_team_id: "5962312512864256",
-}
-
-team {
-    name: "trendy_team_wear_personalization_developer_surfaces",
-
-    // go/trendy/manage/engineers/4819890988810240
-    trendy_team_id: "4819890988810240",
 }
 
 team {
@@ -693,13 +672,6 @@ team {
 }
 
 team {
-    name: "trendy_team_test_eng_android_wear",
-
-    // go/trendy/manage/engineers/4979150422933504
-    trendy_team_id: "4979150422933504",
-}
-
-team {
     name: "trendy_team_mesch_team",
 
     // go/trendy/manage/engineers/5205465899368448
@@ -718,13 +690,6 @@ team {
 
     // go/trendy/manage/engineers/4667861043412992
     trendy_team_id: "4667861043412992",
-}
-
-team {
-    name: "trendy_team_wear_wear_developer_devx",
-
-    // go/trendy/manage/engineers/4894890764697600
-    trendy_team_id: "4894890764697600",
 }
 
 team {
@@ -931,13 +896,6 @@ team {
 }
 
 team {
-    name: "trendy_team_wear_wallet_on_wear",
-
-    // go/trendy/manage/engineers/5724960437731328
-    trendy_team_id: "5724960437731328",
-}
-
-team {
     name: "trendy_team_glanceables",
 
     // go/trendy/manage/engineers/4658222004600832
@@ -1068,13 +1026,6 @@ team {
 
     // go/trendy/manage/engineers/6547794223333376
     trendy_team_id: "6547794223333376",
-}
-
-team {
-    name: "trendy_team_wear_3xp",
-
-    // go/trendy/manage/engineers/5692317612539904
-    trendy_team_id: "5692317612539904",
 }
 
 team {
@@ -1211,13 +1162,6 @@ team {
 }
 
 team {
-    name: "trendy_team_wear_software_nti",
-
-    // go/trendy/manage/engineers/5164973558759424
-    trendy_team_id: "5164973558759424",
-}
-
-team {
     name: "trendy_team_machine_learning",
 
     // go/trendy/manage/engineers/5276568318246912
@@ -1309,13 +1253,6 @@ team {
 }
 
 team {
-    name: "trendy_team_wear_wear_power_emulator",
-
-    // go/trendy/manage/engineers/5160338936725504
-    trendy_team_id: "5160338936725504",
-}
-
-team {
     name: "trendy_team_deprecated_framework_svetoslavganov",
 
     // go/trendy/manage/engineers/6404117492531200
@@ -1327,13 +1264,6 @@ team {
 
     // go/trendy/manage/engineers/5702018510520320
     trendy_team_id: "5702018510520320",
-}
-
-team {
-    name: "trendy_team_wear_opus",
-
-    // go/trendy/manage/engineers/5098351636676608
-    trendy_team_id: "5098351636676608",
 }
 
 team {
@@ -1442,24 +1372,10 @@ team {
 }
 
 team {
-    name: "trendy_team_wear_developer_foundation",
-
-    // go/trendy/manage/engineers/5239127108648960
-    trendy_team_id: "5239127108648960",
-}
-
-team {
     name: "trendy_team_tpm_tvc",
 
     // go/trendy/manage/engineers/5390683333230592
     trendy_team_id: "5390683333230592",
-}
-
-team {
-    name: "trendy_team_wear_wear_ux",
-
-    // go/trendy/manage/engineers/5782097411080192
-    trendy_team_id: "5782097411080192",
 }
 
 team {
@@ -1670,13 +1586,6 @@ team {
 
     // go/trendy/manage/engineers/5401362887999488
     trendy_team_id: "5401362887999488",
-}
-
-team {
-    name: "trendy_team_wear_wear_assistant",
-
-    // go/trendy/manage/engineers/5848075306172416
-    trendy_team_id: "5848075306172416",
 }
 
 team {

@@ -16,7 +16,7 @@
 
 use crate::commands::assign_flag_ids;
 use crate::storage::FlagPackage;
-use aconfig_protos::ProtoFlagState;
+use aconfig_protos::{ProtoFlagPermission, ProtoFlagState};
 use aconfig_storage_file::{FlagValueHeader, FlagValueList, StorageFileType};
 use anyhow::{anyhow, Result};
 
@@ -36,15 +36,22 @@ pub fn create_flag_value(
     packages: &[FlagPackage],
     version: u32,
 ) -> Result<FlagValueList> {
-    // create list
-    let num_flags = packages.iter().map(|pkg| pkg.boolean_flags.len() as u32).sum();
-
+    // Exclude system/vendor/product flags that are RO+disabled.
+    let mut filtered_packages = packages.to_vec();
+    if container == "system" || container == "vendor" || container == "product" {
+        for package in filtered_packages.iter_mut() {
+            package.boolean_flags.retain(|b| {
+                !(b.state == Some(ProtoFlagState::DISABLED.into())
+                    && b.permission == Some(ProtoFlagPermission::READ_ONLY.into()))
+            });
+        }
+    }
+    let num_flags = filtered_packages.iter().map(|pkg| pkg.boolean_flags.len() as u32).sum();
     let mut list = FlagValueList {
         header: new_header(container, num_flags, version),
         booleans: vec![false; num_flags as usize],
     };
-
-    for pkg in packages.iter() {
+    for pkg in filtered_packages {
         let start_index = pkg.boolean_start_index as usize;
         let flag_ids = assign_flag_ids(pkg.package_name, pkg.boolean_flags.iter().copied())?;
         for pf in pkg.boolean_flags.iter() {
@@ -72,7 +79,7 @@ mod tests {
 
     pub fn create_test_flag_value_list_from_source() -> Result<FlagValueList> {
         let caches = parse_all_test_flags();
-        let packages = group_flags_by_package(caches.iter());
+        let packages = group_flags_by_package(caches.iter(), DEFAULT_FILE_VERSION);
         create_flag_value("mockup", &packages, DEFAULT_FILE_VERSION)
     }
 
@@ -82,7 +89,7 @@ mod tests {
         let flag_value_list = create_test_flag_value_list_from_source();
         assert!(flag_value_list.is_ok());
         let expected_flag_value_list =
-            aconfig_storage_file::test_utils::create_test_flag_value_list();
+            aconfig_storage_file::test_utils::create_test_flag_value_list(DEFAULT_FILE_VERSION);
         assert_eq!(flag_value_list.unwrap(), expected_flag_value_list);
     }
 }

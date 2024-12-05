@@ -17,7 +17,7 @@
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
     abx \
-    aconfigd \
+    aconfigd-system \
     adbd_system_api \
     aflags \
     am \
@@ -96,6 +96,7 @@ PRODUCT_PACKAGES += \
     enhanced-confirmation.xml \
     ExtShared \
     flags_health_check \
+    framework-connectivity-b \
     framework-graphics \
     framework-location \
     framework-minus-apex \
@@ -212,6 +213,7 @@ PRODUCT_PACKAGES += \
     libwilhelm \
     linker \
     llkd \
+    llndk_libs \
     lmkd \
     LocalTransport \
     locksettings \
@@ -247,6 +249,7 @@ PRODUCT_PACKAGES += \
     pintool \
     platform.xml \
     pm \
+    prefetch \
     preinstalled-packages-asl-files.xml \
     preinstalled-packages-platform.xml \
     preinstalled-packages-strict-signature.xml \
@@ -352,8 +355,7 @@ endif
 # Check if the build supports Profiling module
 ifeq ($(RELEASE_PACKAGE_PROFILING_MODULE),true)
     PRODUCT_PACKAGES += \
-       com.android.profiling \
-       trace_redactor
+       com.android.profiling
 endif
 
 ifeq ($(RELEASE_USE_WEBVIEW_BOOTSTRAP_MODULE),true)
@@ -364,6 +366,11 @@ endif
 ifneq (,$(RELEASE_RANGING_STACK))
     PRODUCT_PACKAGES += \
         com.android.ranging
+endif
+
+ifeq ($(RELEASE_MEMORY_MANAGEMENT_DAEMON),true)
+  PRODUCT_PACKAGES += \
+        mm_daemon
 endif
 
 # VINTF data for system image
@@ -440,6 +447,7 @@ PRODUCT_HOST_PACKAGES += \
     lpdump \
     mke2fs \
     mkfs.erofs \
+    pbtombstone \
     resize2fs \
     sgdisk \
     sqlite3 \
