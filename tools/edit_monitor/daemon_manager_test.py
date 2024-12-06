@@ -367,6 +367,26 @@ class DaemonManagerTest(unittest.TestCase):
         fake_cclient, edit_event_pb2.EditEvent.FAILED_TO_REBOOT_EDIT_MONITOR
     )
 
+  @mock.patch('subprocess.check_output')
+  def test_cleanup_success(self, mock_check_output):
+    p = self._create_fake_deamon_process()
+    fake_cclient = FakeClearcutClient()
+    mock_check_output.return_value = f'user {p.pid} 1 1 1 1 1 edit_monitor arg'
+
+    dm = daemon_manager.DaemonManager(
+        TEST_BINARY_FILE,
+        daemon_target=long_running_daemon,
+        cclient=fake_cclient,
+    )
+    dm.cleanup()
+
+    self.assertFalse(p.is_alive())
+    self.assertTrue(
+        pathlib.Path(self.working_dir.name)
+        .joinpath(daemon_manager.BLOCK_SIGN_FILE)
+        .exists()
+    )
+
   def assert_run_simple_daemon_success(self):
     damone_output_file = tempfile.NamedTemporaryFile(
         dir=self.working_dir.name, delete=False
