@@ -53,9 +53,6 @@ public class StorageInternalReader {
     @UnsupportedAppUsage
     public boolean getBooleanFlagValue(int index) {
         index += mPackageBooleanStartOffset;
-        if (index >= mFlagValueList.size()) {
-            throw new AconfigStorageException("Fail to get boolean flag value");
-        }
         return mFlagValueList.getBoolean(index);
     }
 

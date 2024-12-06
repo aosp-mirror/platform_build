@@ -37,9 +37,16 @@ public class FlagTable {
     public Node get(int packageId, String flagName) {
         int numBuckets = (mHeader.mNodeOffset - mHeader.mBucketOffset) / 4;
         int bucketIndex = TableUtils.getBucketIndex(makeKey(packageId, flagName), numBuckets);
+        int newPosition = mHeader.mBucketOffset + bucketIndex * 4;
+        if (newPosition >= mHeader.mNodeOffset) {
+            return null;
+        }
 
-        mReader.position(mHeader.mBucketOffset + bucketIndex * 4);
+        mReader.position(newPosition);
         int nodeIndex = mReader.readInt();
+        if (nodeIndex < mHeader.mNodeOffset || nodeIndex >= mHeader.mFileSize) {
+            return null;
+        }
 
         while (nodeIndex != -1) {
             mReader.position(nodeIndex);
@@ -50,7 +57,7 @@ public class FlagTable {
             nodeIndex = node.mNextOffset;
         }
 
-        throw new AconfigStorageException("get cannot find flag: " + flagName);
+        return null;
     }
 
     public Header getHeader() {

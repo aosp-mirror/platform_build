@@ -102,12 +102,14 @@
     {
       // aconfig_storage file java integration tests
       "name": "aconfig_storage_file.test.java"
-    }
-  ],
-  "postsubmit": [
+    },
     {
-      // aconfig_storage read api java integration tests
-      "name": "aconfig_storage_read_api.test.java"
+      // aconfig_storage read functional test
+      "name": "aconfig_storage_read_functional"
+    },
+    {
+      // aconfig_storage read unit test
+      "name": "aconfig_storage_read_unit"
     }
   ]
 }

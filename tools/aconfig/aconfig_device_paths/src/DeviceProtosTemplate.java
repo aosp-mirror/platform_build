@@ -29,7 +29,7 @@ import java.util.List;
  * @hide
  */
 public class DeviceProtos {
-    static final String[] PATHS = {
+	public static final String[] PATHS = {
         TEMPLATE
     };
 
@@ -50,10 +50,11 @@ public class DeviceProtos {
         ArrayList<parsed_flag> result = new ArrayList();
 
         for (String path : parsedFlagsProtoPaths()) {
-            FileInputStream inputStream = new FileInputStream(path);
-            parsed_flags parsedFlags = parsed_flags.parseFrom(inputStream.readAllBytes());
-            for (parsed_flag flag : parsedFlags.parsedFlag) {
-                result.add(flag);
+            try (FileInputStream inputStream = new FileInputStream(path)) {
+                parsed_flags parsedFlags = parsed_flags.parseFrom(inputStream.readAllBytes());
+                for (parsed_flag flag : parsedFlags.parsedFlag) {
+                    result.add(flag);
+                }
             }
         }
 
@@ -64,7 +65,7 @@ public class DeviceProtos {
      * Returns the list of all on-device aconfig protos paths.
      * @hide
      */
-    private static List<String> parsedFlagsProtoPaths() {
+    public static List<String> parsedFlagsProtoPaths() {
         ArrayList<String> paths = new ArrayList(Arrays.asList(PATHS));
 
         File apexDirectory = new File(APEX_DIR);
