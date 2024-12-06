@@ -102,6 +102,18 @@ else
         framework-platformcrashrecovery \
 
 endif
+
+# When we release ondeviceintelligence in NeuralNetworks module
+ifeq ($(RELEASE_ONDEVICE_INTELLIGENCE_MODULE),true)
+    PRODUCT_APEX_BOOT_JARS += \
+    com.android.neuralnetworks:framework-ondeviceintelligence \
+
+else
+    PRODUCT_BOOT_JARS += \
+        framework-ondeviceintelligence-platform \
+
+endif
+
 # Check if the build supports NFC apex or not
 ifeq ($(RELEASE_PACKAGE_NFC_STACK),NfcNci)
     PRODUCT_BOOT_JARS += \
@@ -144,6 +156,13 @@ PRODUCT_APEX_SYSTEM_SERVER_JARS := \
 ifeq ($(RELEASE_CRASHRECOVERY_MODULE),true)
   PRODUCT_APEX_SYSTEM_SERVER_JARS += \
         com.android.crashrecovery:service-crashrecovery \
+
+endif
+
+# When we release ondeviceintelligence in NeuralNetworks module
+ifeq ($(RELEASE_ONDEVICE_INTELLIGENCE_MODULE),true)
+    PRODUCT_APEX_SYSTEM_SERVER_JARS += \
+        com.android.neuralnetworks:service-ondeviceintelligence
 
 endif
 
