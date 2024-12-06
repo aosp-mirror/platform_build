@@ -15,6 +15,7 @@
 """Integration tests for Edit Monitor."""
 
 import glob
+from importlib import resources
 import logging
 import os
 import pathlib
@@ -25,8 +26,6 @@ import sys
 import tempfile
 import time
 import unittest
-
-from importlib import resources
 from unittest import mock
 
 
@@ -49,7 +48,8 @@ class EditMonitorIntegrationTest(unittest.TestCase):
     self.root_monitoring_path.mkdir()
     self.edit_monitor_binary_path = self._import_executable("edit_monitor")
     self.patch = mock.patch.dict(
-        os.environ, {'ENABLE_ANDROID_EDIT_MONITOR': 'true'})
+        os.environ, {"ENABLE_ANDROID_EDIT_MONITOR": "true"}
+    )
     self.patch.start()
 
   def tearDown(self):
@@ -83,7 +83,21 @@ class EditMonitorIntegrationTest(unittest.TestCase):
 
     self.assertEqual(self._get_logged_events_num(), 4)
 
-  def _start_edit_monitor_process(self):
+  def test_start_multiple_edit_monitor_only_one_started(self):
+    p1 = self._start_edit_monitor_process(wait_for_observer_start=False)
+    p2 = self._start_edit_monitor_process(wait_for_observer_start=False)
+    p3 = self._start_edit_monitor_process(wait_for_observer_start=False)
+
+    live_processes = self._get_live_processes([p1, p2, p3])
+
+    # Cleanup all live processes.
+    for p in live_processes:
+      os.kill(p.pid, signal.SIGINT)
+      p.communicate()
+
+    self.assertEqual(len(live_processes), 1)
+
+  def _start_edit_monitor_process(self, wait_for_observer_start=True):
     command = f"""
     export TMPDIR="{self.working_dir.name}"
     {self.edit_monitor_binary_path} --path={self.root_monitoring_path} --dry_run"""
@@ -94,7 +108,9 @@ class EditMonitorIntegrationTest(unittest.TestCase):
         start_new_session=True,
         executable="/bin/bash",
     )
-    self._wait_for_observer_start(time_out=5)
+    if wait_for_observer_start:
+      self._wait_for_observer_start(time_out=5)
+
     return p
 
   def _wait_for_observer_start(self, time_out):
@@ -124,6 +140,18 @@ class EditMonitorIntegrationTest(unittest.TestCase):
           return int(line.split(":")[-1].split(" ")[2])
 
     return 0
+
+  def _get_live_processes(self, processes):
+    live_processes = []
+    for p in processes:
+      try:
+        p.wait(timeout=5)
+      except subprocess.TimeoutExpired as e:
+        live_processes.append(p)
+        logging.info("process: %d still alive.", p.pid)
+      else:
+        logging.info("process: %d stopped.", p.pid)
+    return live_processes
 
   def _import_executable(self, executable_name: str) -> pathlib.Path:
     binary_dir = pathlib.Path(self.working_dir.name).joinpath("binary")

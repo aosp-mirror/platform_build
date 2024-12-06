@@ -1039,6 +1039,9 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
 
   # Prepare custom images.
   if OPTIONS.custom_images:
+    if source_file is not None:
+      source_file = GetTargetFilesZipForCustomImagesUpdates(
+           source_file, OPTIONS.custom_images)
     target_file = GetTargetFilesZipForCustomImagesUpdates(
         target_file, OPTIONS.custom_images)
 
@@ -1121,17 +1124,18 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   additional_args += ["--enable_lz4diff=" +
                       str(OPTIONS.enable_lz4diff).lower()]
 
+  env_override = {}
   if source_file and OPTIONS.enable_lz4diff:
-    input_tmp = common.UnzipTemp(source_file, ["META/liblz4.so"])
-    liblz4_path = os.path.join(input_tmp, "META", "liblz4.so")
+    liblz4_path = os.path.join(source_file, "META", "liblz4.so")
     assert os.path.exists(
         liblz4_path), "liblz4.so not found in META/ dir of target file {}".format(liblz4_path)
     logger.info("Enabling lz4diff %s", liblz4_path)
-    additional_args += ["--liblz4_path", liblz4_path]
     erofs_compression_param = OPTIONS.target_info_dict.get(
         "erofs_default_compressor")
     assert erofs_compression_param is not None, "'erofs_default_compressor' not found in META/misc_info.txt of target build. This is required to enable lz4diff."
     additional_args += ["--erofs_compression_param", erofs_compression_param]
+    env_override["LD_PRELOAD"] = liblz4_path + \
+        ":" + os.environ.get("LD_PRELOAD", "")
 
   if OPTIONS.disable_vabc:
     additional_args += ["--disable_vabc=true"]
@@ -1141,10 +1145,15 @@ def GenerateAbOtaPackage(target_file, output_file, source_file=None):
     additional_args += ["--compressor_types", OPTIONS.compressor_types]
   additional_args += ["--max_timestamp", max_timestamp]
 
+  env = dict(os.environ)
+  if env_override:
+    logger.info("Using environment variables %s", env_override)
+    env.update(env_override)
   payload.Generate(
       target_file,
       source_file,
-      additional_args + partition_timestamps_flags
+      additional_args + partition_timestamps_flags,
+      env=env
   )
 
   # Sign the payload.
