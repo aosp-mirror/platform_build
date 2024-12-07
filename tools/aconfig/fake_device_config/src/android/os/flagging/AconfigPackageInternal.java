@@ -21,24 +21,12 @@ package android.os.flagging;
  */
 public class AconfigPackageInternal {
 
-    public static AconfigPackageInternal load(String container, String packageName) {
-        throw new UnsupportedOperationException("Stub!");
-    }
-
     public static AconfigPackageInternal load(
             String container, String packageName, long packageFingerprint) {
         throw new UnsupportedOperationException("Stub!");
     }
 
     public boolean getBooleanFlagValue(int index) {
-        throw new UnsupportedOperationException("Stub!");
-    }
-
-    public boolean getBooleanFlagValue(String flagName, boolean defaultValue) {
-        throw new UnsupportedOperationException("Stub!");
-    }
-
-    public AconfigStorageReadException getException() {
         throw new UnsupportedOperationException("Stub!");
     }
 }
