@@ -11,7 +11,6 @@ import android.os.flagging.PlatformAconfigPackageInternal;
 {{ -else }}
 import android.os.flagging.AconfigPackageInternal;
 {{ -endif }}
-import android.os.flagging.AconfigStorageReadException;
 import android.util.Log;
 {{ -endif }}
 /** @hide */
@@ -32,44 +31,19 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ -else }}
             AconfigPackageInternal reader = AconfigPackageInternal.load("{container}", "{package_name}", {package_fingerprint});
 {{ -endif }}
-            AconfigStorageReadException error = reader.getException();
-            if (error == null) \{
-            {{ for namespace_with_flags in namespace_flags }}
-            {{ -for flag in namespace_with_flags.flags }}
-            {{ -if flag.is_read_write }}
-                {flag.method_name} = reader.getBooleanFlagValue({flag.flag_offset});
-            {{ endif }}
-            {{ -endfor }}
-            {{ -endfor }}
-            } else if (Build.VERSION.SDK_INT > 35 && error.getErrorCode() == 5 /* fingerprint doesn't match*/) \{
-            {{ for namespace_with_flags in namespace_flags }}
-            {{ -for flag in namespace_with_flags.flags }}
-            {{ -if flag.is_read_write }}
-                {flag.method_name} = reader.getBooleanFlagValue("{flag.flag_name}", {flag.default_value});
-            {{ -endif }}
-            {{ -endfor }}
-            {{ -endfor }}
-            } else \{
-                if (error.getMessage() != null) \{
-                    Log.e(TAG, error.getMessage());
-                } else \{
-                    Log.e(TAG, "Encountered a null AconfigStorageReadException");
-                }
-            }
+        {{ -for namespace_with_flags in namespace_flags }}
+        {{ -for flag in namespace_with_flags.flags }}
+        {{ -if flag.is_read_write }}
+            {flag.method_name} = reader.getBooleanFlagValue({flag.flag_offset});
+        {{ -endif }}
+        {{ -endfor }}
+        {{ -endfor }}
         } catch (Exception e) \{
-            if (e.getMessage() != null) \{
-                Log.e(TAG, e.getMessage());
-            } else \{
-                Log.e(TAG, "Encountered a null Exception");
-            }
+            Log.e(TAG, e.toString());
         } catch (NoClassDefFoundError e) \{
             // for mainline module running on older devices.
             // This should be replaces to version check, after the version bump.
-            if (e.getMessage() != null) \{
-                Log.e(TAG, e.getMessage());
-            } else \{
-                Log.e(TAG, "Encountered a null NoClassDefFoundError");
-            }
+            Log.e(TAG, e.toString());
         }
         isCached = true;
     }
