@@ -413,13 +413,19 @@ class DaemonManager:
   def _find_all_instances_pids(self) -> list[int]:
     pids = []
 
-    for file in os.listdir(self.pid_file_path.parent):
-      if file.endswith(".lock"):
-        try:
-          with open(self.pid_file_path.parent.joinpath(file), "r") as f:
-            pids.append(int(f.read().strip()))
-        except (FileNotFoundError, IOError, ValueError, TypeError):
-          logging.exception("Failed to get pid from file path: %s", file)
+    try:
+      output = subprocess.check_output(
+          ["ps", "-ef", "--no-headers"], text=True)
+      for line in output.splitlines():
+          parts = line.split()
+          process_path = parts[7]
+          if pathlib.Path(process_path).name == 'edit_monitor':
+            pid = int(parts[1])
+            if pid != self.pid:  # exclude the current process
+              pids.append(pid)
+    except Exception:
+      logging.exception(
+          "Failed to get pids of existing edit monitors from ps command.")
 
     return pids
 
