@@ -24,10 +24,11 @@ _FLAG_PARTITIONS := product system vendor
 # -----------------------------------------------------------------
 # Aconfig Flags
 
-# Create a summary file of build flags for each partition
+# Create a summary file of build flags for a single partition
 # $(1): built aconfig flags file (out)
 # $(2): installed aconfig flags file (out)
 # $(3): the partition (in)
+# $(4): input aconfig files for the partition (in)
 define generate-partition-aconfig-flag-file
 $(eval $(strip $(1)): PRIVATE_OUT := $(strip $(1)))
 $(eval $(strip $(1)): PRIVATE_IN := $(strip $(4)))
@@ -35,7 +36,8 @@ $(strip $(1)): $(ACONFIG) $(strip $(4))
 	mkdir -p $$(dir $$(PRIVATE_OUT))
 	$$(if $$(PRIVATE_IN), \
 		$$(ACONFIG) dump --dedup --format protobuf --out $$(PRIVATE_OUT) \
-			--filter container:$(strip $(3)) \
+			--filter container:$(strip $(3))+state:ENABLED \
+			--filter container:$(strip $(3))+permission:READ_WRITE \
 			$$(addprefix --cache ,$$(PRIVATE_IN)), \
 		echo -n > $$(PRIVATE_OUT) \
 	)
