@@ -872,6 +872,7 @@ SOONG_CONV := $(sort $(SOONG_CONV))
 SOONG_CONV_DATA := $(call intermediates-dir-for,PACKAGING,soong_conversion)/soong_conv_data
 $(SOONG_CONV_DATA):
 	@rm -f $@
+	@touch $@ # This file must be present even if SOONG_CONV is empty.
 	@$(foreach s,$(SOONG_CONV),echo "$(s),$(SOONG_CONV.$(s).TYPE),$(sort $(SOONG_CONV.$(s).PROBLEMS)),$(sort $(filter-out $(SOONG_ALREADY_CONV),$(SOONG_CONV.$(s).DEPS))),$(sort $(SOONG_CONV.$(s).MAKEFILES)),$(sort $(SOONG_CONV.$(s).INSTALLED))" >>$@;)
 
 $(call declare-1p-target,$(SOONG_CONV_DATA),build)
@@ -2935,6 +2936,9 @@ endif
 ifneq ($(BOARD_NAND_SPARE_SIZE),)
 $(error MTD device is no longer supported and thus BOARD_NAND_SPARE_SIZE is deprecated.)
 endif
+
+recovery_intermediates := $(call intermediates-dir-for,PACKAGING,recovery)
+$(eval $(call write-partition-file-list,$(recovery_intermediates)/file_list.txt,$(TARGET_RECOVERY_OUT),$(INTERNAL_RECOVERYIMAGE_FILES)))
 
 
 # -----------------------------------------------------------------
@@ -5173,6 +5177,8 @@ INTERNAL_ALLIMAGES_FILES := \
 # Run apex_sepolicy_tests for all installed APEXes
 
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
+# TODO(b/353896817) apex_sepolicy_tests supports only ext4
+ifeq (ext4,$(PRODUCT_DEFAULT_APEX_PAYLOAD_TYPE))
 intermediate := $(call intermediates-dir-for,PACKAGING,apex_sepolicy_tests)
 apex_dirs := \
   $(TARGET_OUT)/apex/% \
@@ -5212,6 +5218,7 @@ droid_targets: run_apex_sepolicy_tests
 
 apex_files :=
 intermediate :=
+endif # PRODUCT_DEFAULT_APEX_PAYLOAD_TYPE
 endif # TARGET_BUILD_UNBUNDLED
 
 # -----------------------------------------------------------------
@@ -5680,6 +5687,7 @@ INTERNAL_OTATOOLS_MODULES := \
   brotli \
   bsdiff \
   build_image \
+  build_mixed_kernels_ramdisk_host \
   build_super_image \
   build_verity_metadata \
   build_verity_tree \
