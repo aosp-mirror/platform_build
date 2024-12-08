@@ -72,7 +72,8 @@ def configure_logging(verbose=False):
   root_logging_dir = tempfile.mkdtemp(prefix='edit_monitor_')
   _, log_path = tempfile.mkstemp(dir=root_logging_dir, suffix='.log')
 
-  log_fmt = '%(asctime)s %(filename)s:%(lineno)s:%(levelname)s: %(message)s'
+
+  log_fmt = '%(asctime)s.%(msecs)03d %(filename)s:%(lineno)s:%(levelname)s: %(message)s'
   date_fmt = '%Y-%m-%d %H:%M:%S'
   log_level = logging.DEBUG if verbose else logging.INFO
 

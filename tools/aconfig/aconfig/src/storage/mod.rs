@@ -27,9 +27,10 @@ use crate::storage::{
     flag_info::create_flag_info, flag_table::create_flag_table, flag_value::create_flag_value,
     package_table::create_package_table,
 };
-use aconfig_protos::{ProtoParsedFlag, ProtoParsedFlags};
+use aconfig_protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag, ProtoParsedFlags};
 use aconfig_storage_file::StorageFileType;
 
+#[derive(Clone)]
 pub struct FlagPackage<'a> {
     pub package_name: &'a str,
     pub package_id: u32,
@@ -73,6 +74,17 @@ where
             if index == packages.len() {
                 packages.push(FlagPackage::new(parsed_flag.package(), index as u32));
             }
+
+            // Exclude system/vendor/product flags that are RO+disabled.
+            if (parsed_flag.container == Some("system".to_string())
+                || parsed_flag.container == Some("vendor".to_string())
+                || parsed_flag.container == Some("product".to_string()))
+                && parsed_flag.permission == Some(ProtoFlagPermission::READ_ONLY.into())
+                && parsed_flag.state == Some(ProtoFlagState::DISABLED.into())
+            {
+                continue;
+            }
+
             packages[index].insert(parsed_flag);
         }
     }

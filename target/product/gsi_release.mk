@@ -82,6 +82,7 @@ PRODUCT_EXPORT_BOOT_IMAGE_TO_DIST := true
 # Additional settings used in all GSI builds
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.crypto.metadata_init_delete_all_keys.enabled=false \
+    debug.codec2.bqpool_dealloc_after_stop=1 \
 
 # Window Extensions
 ifneq ($(PRODUCT_IS_ATV),true)
