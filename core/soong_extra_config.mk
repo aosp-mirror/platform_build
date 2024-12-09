@@ -80,7 +80,7 @@ $(call add_json_bool, PropertySplitEnabled, $(filter true,$(BOARD_PROPERTY_OVERR
 
 $(call add_json_str, ScreenDensity, $(TARGET_SCREEN_DENSITY))
 
-$(call add_json_bool, UsesVulkan, $(filter true,$(TARGET_USES_VULKAN)))
+$(call add_json_str, UsesVulkan, $(TARGET_USES_VULKAN))
 
 $(call add_json_bool, ZygoteForce64, $(filter true,$(ZYGOTE_FORCE_64)))
 
