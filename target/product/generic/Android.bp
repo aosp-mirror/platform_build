@@ -726,6 +726,13 @@ android_filesystem_defaults {
                 default: [
                     "framework-platformcrashrecovery", // base_system
                 ],
+            }) + select(release_flag("RELEASE_ONDEVICE_INTELLIGENCE_MODULE"), {
+                true: [
+                    "com.android.neuralnetworks", // base_system (RELEASE_ONDEVICE_INTELLIGENCE_MODULE)
+                ],
+                default: [
+                    "framework-ondeviceintelligence-platform", // base_system
+                ],
             }) + select(soong_config_variable("ANDROID", "release_package_profiling_module"), {
                 "true": [
                     "com.android.profiling", // base_system (RELEASE_PACKAGE_PROFILING_MODULE)
@@ -883,6 +890,14 @@ android_filesystem_defaults {
                     "libuprobestats_client", // base_system internal
                 ],
             }),
+        },
+    },
+    arch: {
+        arm64: {
+            deps: [
+                "libclang_rt.hwasan",
+                "libc_hwasan",
+            ],
         },
     },
 }

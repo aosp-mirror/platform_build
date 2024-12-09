@@ -3367,6 +3367,13 @@ team {
 }
 
 team {
+    name: "trendy_team_aaos_display_safety_triage",
+
+    // go/trendy/manage/engineers/6522093663780864
+    trendy_team_id: "6522093663780864",
+}
+
+team {
     name: "trendy_team_camera_htc_lg_qualcomm",
 
     // go/trendy/manage/engineers/6332099480911872

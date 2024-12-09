@@ -58,10 +58,6 @@ public class StorageFileProviderTest {
                 new StorageFileProvider(TestDataUtils.TESTDATA_PATH, TestDataUtils.TESTDATA_PATH);
         PackageTable pt = p.getPackageTable("mock.v1");
         assertNotNull(pt);
-        pt =
-                StorageFileProvider.getPackageTable(
-                        Paths.get(TestDataUtils.TESTDATA_PATH, "mock.v1.package.map"));
-        assertNotNull(pt);
         FlagTable f = p.getFlagTable("mock.v1");
         assertNotNull(f);
         FlagValueList v = p.getFlagValueList("mock.v1");

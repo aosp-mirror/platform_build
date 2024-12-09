@@ -468,17 +468,26 @@ $(foreach c,$(PRODUCT_SANITIZER_MODULE_CONFIGS),\
     $(eval SANITIZER.$(TARGET_PRODUCT).$(m).CONFIG := $(cf))))
 _psmc_modules :=
 
-# Reset ADB keys for non-debuggable builds
-ifeq (,$(filter eng userdebug,$(TARGET_BUILD_VARIANT)))
+# Reset ADB keys. If RELEASE_BUILD_USE_VARIANT_FLAGS is set look for
+# the value of a dedicated flag. Otherwise check if build variant is
+# non-debuggable.
+ifneq (,$(RELEASE_BUILD_USE_VARIANT_FLAGS))
+ifneq (,$(RELEASE_BUILD_PURGE_PRODUCT_ADB_KEYS))
   PRODUCT_ADB_KEYS :=
 endif
+else ifeq (,$(filter eng userdebug,$(TARGET_BUILD_VARIANT)))
+  PRODUCT_ADB_KEYS :=
+endif
+
 ifneq ($(filter-out 0 1,$(words $(PRODUCT_ADB_KEYS))),)
   $(error Only one file may be in PRODUCT_ADB_KEYS: $(PRODUCT_ADB_KEYS))
 endif
 
 # Show a warning wall of text if non-compliance-GSI products set this option.
 ifdef PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT
-  ifeq (,$(filter gsi_arm gsi_arm64 gsi_x86 gsi_x86_64 gsi_car_arm64 gsi_car_x86_64 gsi_tv_arm gsi_tv_arm64,$(PRODUCT_NAME)))
+  ifeq (,$(filter gsi_arm gsi_arm64 gsi_arm64_soong_system gsi_x86 gsi_x86_64 \
+                  gsi_x86_64_soong_system gsi_car_arm64 gsi_car_x86_64 \
+                  gsi_tv_arm gsi_tv_arm64,$(PRODUCT_NAME)))
     $(warning PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT is set but \
       PRODUCT_NAME ($(PRODUCT_NAME)) doesn't look like a GSI for compliance \
       testing. This is a special configuration for compliance GSI, so do make \
