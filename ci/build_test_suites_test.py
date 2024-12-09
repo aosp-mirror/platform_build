@@ -78,6 +78,12 @@ class BuildTestSuitesTest(fake_filesystem_unittest.TestCase):
     with self.assert_raises_word(build_test_suites.Error, 'TOP'):
       build_test_suites.main([])
 
+  def test_missing_dist_dir_env_var_raises(self):
+    del os.environ['DIST_DIR']
+
+    with self.assert_raises_word(build_test_suites.Error, 'DIST_DIR'):
+      build_test_suites.main([])
+
   def test_invalid_arg_raises(self):
     invalid_args = ['--invalid_arg']
 
@@ -114,6 +120,9 @@ class BuildTestSuitesTest(fake_filesystem_unittest.TestCase):
     self.soong_ui_dir = self.fake_top.joinpath('build/soong')
     self.soong_ui_dir.mkdir(parents=True, exist_ok=True)
 
+    self.logs_dir = self.fake_top.joinpath('dist/logs')
+    self.logs_dir.mkdir(parents=True, exist_ok=True)
+
     self.soong_ui = self.soong_ui_dir.joinpath('soong_ui.bash')
     self.soong_ui.touch()
 
@@ -121,6 +130,7 @@ class BuildTestSuitesTest(fake_filesystem_unittest.TestCase):
         'TARGET_RELEASE': 'release',
         'TARGET_PRODUCT': 'product',
         'TOP': str(self.fake_top),
+        'DIST_DIR': str(self.fake_top.joinpath('dist')),
     })
 
     self.mock_subprocess_run.return_value = 0
