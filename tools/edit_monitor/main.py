@@ -102,12 +102,12 @@ def main(argv: list[str]):
       daemon_args=(args.path, args.dry_run),
   )
 
+  if args.force_cleanup:
+    dm.cleanup()
+
   try:
-    if args.force_cleanup:
-      dm.cleanup()
-    else:
-      dm.start()
-      dm.monitor_daemon()
+    dm.start()
+    dm.monitor_daemon()
   except Exception:
     logging.exception('Unexpected exception raised when run daemon.')
   finally:
