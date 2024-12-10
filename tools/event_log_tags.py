@@ -14,21 +14,21 @@
 
 """A module for reading and parsing event-log-tags files."""
 
-import dataclasses
 import re
 import sys
-from typing import Optional
 
-@dataclasses.dataclass
-class Tag:
-  tagnum: int
-  tagname: str
-  description: Optional[str]
-  filename: str
-  linenum: int
+class Tag(object):
+  __slots__ = ["tagnum", "tagname", "description", "filename", "linenum"]
+
+  def __init__(self, tagnum, tagname, description, filename, linenum):
+    self.tagnum = tagnum
+    self.tagname = tagname
+    self.description = description
+    self.filename = filename
+    self.linenum = linenum
 
 
-class TagFile:
+class TagFile(object):
   """Read an input event-log-tags file."""
   def AddError(self, msg, linenum=None):
     if linenum is None:
@@ -76,11 +76,14 @@ class TagFile:
           self.options[parts[1]] = parts[2:]
           continue
 
-        try:
-          tag = int(parts[0])
-        except ValueError:
-          self.AddError("\"%s\" isn't an integer tag" % (parts[0],))
-          continue
+        if parts[0] == "?":
+          tag = None
+        else:
+          try:
+            tag = int(parts[0])
+          except ValueError:
+            self.AddError("\"%s\" isn't an integer tag or '?'" % (parts[0],))
+            continue
 
         tagname = parts[1]
         if len(parts) == 3:
@@ -125,8 +128,8 @@ def WriteOutput(output_file, data):
       out = sys.stdout
       output_file = "<stdout>"
     else:
-      out = open(output_file, "w")
-    out.write(data)
+      out = open(output_file, "wb")
+    out.write(str.encode(data))
     out.close()
   except (IOError, OSError) as e:
     print("failed to write %s: %s" % (output_file, e), file=sys.stderr)
