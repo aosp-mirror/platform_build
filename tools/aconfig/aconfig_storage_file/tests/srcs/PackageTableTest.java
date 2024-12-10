@@ -27,6 +27,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @RunWith(JUnit4.class)
 public class PackageTableTest {
 
@@ -120,5 +123,23 @@ public class PackageTableTest {
         assertEquals(-3197795563119393530L, node1.getPackageFingerprint());
         assertEquals(4431940502274857964L, node2.getPackageFingerprint());
         assertEquals(-2213514155997929241L, node4.getPackageFingerprint());
+    }
+
+    @Test
+    public void testPackageTable_getPackageList() throws Exception {
+        PackageTable packageTable =
+                PackageTable.fromBytes(TestDataUtils.getTestPackageMapByteBuffer(2));
+        Set<String> packages = new HashSet<>(packageTable.getPackageList());
+        assertEquals(3, packages.size());
+        assertTrue(packages.contains("com.android.aconfig.storage.test_1"));
+        assertTrue(packages.contains("com.android.aconfig.storage.test_2"));
+        assertTrue(packages.contains("com.android.aconfig.storage.test_4"));
+
+        packageTable = PackageTable.fromBytes(TestDataUtils.getTestPackageMapByteBuffer(1));
+        packages = new HashSet<>(packageTable.getPackageList());
+        assertEquals(3, packages.size());
+        assertTrue(packages.contains("com.android.aconfig.storage.test_1"));
+        assertTrue(packages.contains("com.android.aconfig.storage.test_2"));
+        assertTrue(packages.contains("com.android.aconfig.storage.test_4"));
     }
 }
