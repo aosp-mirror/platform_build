@@ -15,16 +15,12 @@
 # limitations under the License.
 
 """
-Usage: java-event-log-tags.py [-o output_file] <input_file> <merged_tags_file>
-
 Generate a java class containing constants for each of the event log
 tags in the given input file.
-
--h to display this usage message and exit.
 """
 
 from io import StringIO
-import getopt
+import argparse
 import os
 import os.path
 import re
@@ -32,56 +28,13 @@ import sys
 
 import event_log_tags
 
-output_file = None
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('-o', dest='output_file')
+parser.add_argument('file')
+args = parser.parse_args()
 
-try:
-  opts, args = getopt.getopt(sys.argv[1:], "ho:")
-except getopt.GetoptError as err:
-  print(str(err))
-  print(__doc__)
-  sys.exit(2)
-
-for o, a in opts:
-  if o == "-h":
-    print(__doc__)
-    sys.exit(2)
-  elif o == "-o":
-    output_file = a
-  else:
-    print("unhandled option %s" % (o,), file=sys.stderr)
-    sys.exit(1)
-
-if len(args) != 1 and len(args) != 2:
-  print("need one or two input files, not %d" % (len(args),))
-  print(__doc__)
-  sys.exit(1)
-
-fn = args[0]
+fn = args.file
 tagfile = event_log_tags.TagFile(fn)
-
-if len(args) > 1:
-  # Load the merged tag file (which should have numbers assigned for all
-  # tags.  Use the numbers from the merged file to fill in any missing
-  # numbers from the input file.
-  merged_fn = args[1]
-  merged_tagfile = event_log_tags.TagFile(merged_fn)
-  merged_by_name = dict([(t.tagname, t) for t in merged_tagfile.tags])
-  for t in tagfile.tags:
-    if t.tagnum is None:
-      if t.tagname in merged_by_name:
-        t.tagnum = merged_by_name[t.tagname].tagnum
-      else:
-        # We're building something that's not being included in the
-        # product, so its tags don't appear in the merged file.  Assign
-        # them all an arbitrary number so we can emit the java and
-        # compile the (unused) package.
-        t.tagnum = 999999
-else:
-  # Not using the merged tag file, so all tags must have manually assigned
-  # numbers
-  for t in tagfile.tags:
-    if t.tagnum is None:
-      tagfilef.AddError("tag \"%s\" has no number" % (tagname,), tag.linenum)
 
 if "java_package" not in tagfile.options:
   tagfile.AddError("java_package option not specified", linenum=0)
@@ -141,11 +94,11 @@ javaTypes = ["ERROR", "int", "long", "String", "Object[]", "float"]
 for t in tagfile.tags:
   methodName = javaName("write_" + t.tagname)
   if t.description:
-    args = [arg.strip("() ").split("|") for arg in t.description.split(",")]
+    fn_args = [arg.strip("() ").split("|") for arg in t.description.split(",")]
   else:
-    args = []
-  argTypesNames = ", ".join([javaTypes[int(arg[1])] + " " + javaName(arg[0]) for arg in args])
-  argNames = "".join([", " + javaName(arg[0]) for arg in args])
+    fn_args = []
+  argTypesNames = ", ".join([javaTypes[int(arg[1])] + " " + javaName(arg[0]) for arg in fn_args])
+  argNames = "".join([", " + javaName(arg[0]) for arg in fn_args])
   buffer.write("\n  public static void %s(%s) {" % (methodName, argTypesNames))
   buffer.write("\n    android.util.EventLog.writeEvent(%s%s);" % (t.tagname.upper(), argNames))
   buffer.write("\n  }\n")
@@ -153,8 +106,8 @@ for t in tagfile.tags:
 
 buffer.write("}\n");
 
-output_dir = os.path.dirname(output_file)
+output_dir = os.path.dirname(args.output_file)
 if not os.path.exists(output_dir):
   os.makedirs(output_dir)
 
-event_log_tags.WriteOutput(output_file, buffer)
+event_log_tags.WriteOutput(args.output_file, buffer)
