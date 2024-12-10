@@ -112,6 +112,7 @@ class BuildPlanner:
           get_metrics_agent().report_optimized_target(target)
         except Exception as e:
           logging.error(f'unable to parse test discovery output: {repr(e)}')
+          get_metrics_agent().report_unoptimized_target(target, f'Error in parsing test discovery output for {target}: {repr(e)}')
 
     for target in preliminary_build_targets:
       target_optimizer_getter = self.target_optimizations.get(target, None)
