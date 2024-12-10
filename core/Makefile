@@ -2664,7 +2664,7 @@ ifndef TARGET_PRIVATE_RES_DIRS
 TARGET_PRIVATE_RES_DIRS := $(wildcard $(TARGET_DEVICE_DIR)/recovery/res)
 endif
 recovery_resource_deps := $(shell find $(recovery_resources_common) \
-  $(TARGET_PRIVATE_RES_DIRS) -type f)
+  $(TARGET_PRIVATE_RES_DIRS) -type f -not -name "*.bp")
 recovery_resource_deps += $(generated_recovery_text_files)
 
 
