@@ -305,3 +305,6 @@ $(call soong_config_set_bool,telephony,use_radioexternal_hal_aidl,$(if $(filter 
 
 # Variables for hwcomposer.$(TARGET_BOARD_PLATFORM)
 $(call soong_config_set_bool,google_graphics,board_uses_hwc_services,$(if $(filter true,$(BOARD_USES_HWC_SERVICES)),true,false))
+
+# Variables for controlling android.hardware.composer.hwc3-service.pixel
+$(call soong_config_set,google_graphics,board_hwc_version,$(BOARD_HWC_VERSION))
