@@ -1555,7 +1555,7 @@ endef
 define transform-logtags-to-java
 @mkdir -p $(dir $@)
 @echo "logtags: $@ <= $<"
-$(hide) $(JAVATAGS) -o $@ $<
+$(hide) $(JAVATAGS) -o $@ $< $(PRIVATE_MERGED_TAG)
 endef
 
 
