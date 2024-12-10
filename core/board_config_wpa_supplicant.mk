@@ -40,6 +40,11 @@ ifeq ($(WIFI_FEATURE_HOSTAPD_11AX),true)
 $(call soong_config_set_bool,wpa_supplicant_8,hostapd_11ax,true)
 endif
 
+# Belong to CONFIG_IEEE80211BE definition
+ifeq ($(WIFI_FEATURE_HOSTAPD_11BE),true)
+$(call soong_config_set_bool,wpa_supplicant_8,hostapd_11be,true)
+endif
+
 # PLATFORM_VERSION
 $(call soong_config_set,wpa_supplicant_8,platform_version,$(PLATFORM_VERSION))
 
