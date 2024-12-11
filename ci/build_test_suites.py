@@ -74,6 +74,12 @@ class BuildPlanner:
     if 'optimized_build' not in self.build_context.enabled_build_features:
       return BuildPlan(set(self.args.extra_targets), set())
 
+    if not self.build_context.test_infos:
+      logging.warning('Build context has no test infos, skipping optimizations.')
+      for target in self.args.extra_targets:
+        get_metrics_agent().report_unoptimized_target(target, 'BUILD_CONTEXT has no test infos.')
+      return BuildPlan(set(self.args.extra_targets), set())
+
     build_targets = set()
     packaging_commands_getters = []
     # In order to roll optimizations out differently between test suites and
