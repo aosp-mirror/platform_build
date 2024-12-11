@@ -308,3 +308,7 @@ $(call soong_config_set_bool,google_graphics,board_uses_hwc_services,$(if $(filt
 
 # Variables for controlling android.hardware.composer.hwc3-service.pixel
 $(call soong_config_set,google_graphics,board_hwc_version,$(BOARD_HWC_VERSION))
+
+# Variables for extra branches
+# TODO(b/383238397): Use bootstrap_go_package to enable extra flags.
+-include vendor/google/build/extra_soong_config_vars.mk
