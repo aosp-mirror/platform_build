@@ -154,7 +154,6 @@ java_library {
 java_library {
     name: "aconfig_storage_reader_java",
     srcs: [
-        "srcs/android/aconfig/storage/StorageInternalReader.java",
         "srcs/android/os/flagging/PlatformAconfigPackageInternal.java",
     ],
     libs: [
