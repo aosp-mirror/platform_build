@@ -26,7 +26,7 @@ import android.aconfig.storage.FlagTable;
 import android.aconfig.storage.FlagValueList;
 import android.aconfig.storage.PackageTable;
 import android.aconfig.storage.StorageFileProvider;
-import android.os.flagging.AconfigStorageReadException;
+import android.internal.aconfig.storage.AconfigStorageException;
 import android.os.flagging.PlatformAconfigPackageInternal;
 
 import org.junit.Test;
@@ -84,20 +84,20 @@ public class PlatformAconfigPackageInternalTest {
     @Test
     public void testAconfigPackage_load_withError() throws IOException {
         // container not found fake_container
-        AconfigStorageReadException e =
+        AconfigStorageException e =
                 assertThrows(
-                        AconfigStorageReadException.class,
+                        AconfigStorageException.class,
                         () ->
                                 PlatformAconfigPackageInternal.load(
                                         "fake_container", "fake_package", 0));
-        assertEquals(AconfigStorageReadException.ERROR_CANNOT_READ_STORAGE_FILE, e.getErrorCode());
+        assertEquals(AconfigStorageException.ERROR_CANNOT_READ_STORAGE_FILE, e.getErrorCode());
 
         // package not found
         e =
                 assertThrows(
-                        AconfigStorageReadException.class,
+                        AconfigStorageException.class,
                         () -> PlatformAconfigPackageInternal.load("system", "fake_container", 0));
-        assertEquals(AconfigStorageReadException.ERROR_PACKAGE_NOT_FOUND, e.getErrorCode());
+        assertEquals(AconfigStorageException.ERROR_PACKAGE_NOT_FOUND, e.getErrorCode());
 
         // fingerprint doesn't match
         List<parsed_flag> flags = DeviceProtos.loadAndParseFlagProtos();
@@ -116,13 +116,11 @@ public class PlatformAconfigPackageInternalTest {
             long fingerprint = pNode.getPackageFingerprint();
             e =
                     assertThrows(
-                            AconfigStorageReadException.class,
+                            AconfigStorageException.class,
                             () ->
                                     PlatformAconfigPackageInternal.load(
                                             container, packageName, fingerprint + 1));
-            assertEquals(
-                    // AconfigStorageException.ERROR_FILE_FINGERPRINT_MISMATCH,
-                    5, e.getErrorCode());
+            assertEquals(AconfigStorageException.ERROR_FILE_FINGERPRINT_MISMATCH, e.getErrorCode());
         }
     }
 }
