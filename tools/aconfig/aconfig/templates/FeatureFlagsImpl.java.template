@@ -65,6 +65,45 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ endfor }}
 }
 {{ -else- }}{#- device config for exproted mode #}
+{{ -if new_exported }}
+import android.os.flagging.AconfigPackage;
+import android.util.Log;
+/** @hide */
+public final class FeatureFlagsImpl implements FeatureFlags \{
+    private static final String TAG = "{package_name}.FeatureFlagsImpl_exported";
+    private static volatile boolean isCached = false;
+{{ for flag in flag_elements }}
+    private static boolean {flag.method_name} = {flag.default_value};
+{{ -endfor }}
+    private void init() \{
+        try \{
+            AconfigPackage reader = AconfigPackage.load("{package_name}");
+            {{ -for namespace_with_flags in namespace_flags }}
+            {{ -for flag in namespace_with_flags.flags }}
+            {flag.method_name} = reader.getBooleanFlagValue("{flag.flag_name}", {flag.default_value});
+            {{ -endfor }}
+            {{ -endfor }}
+        } catch (Exception e) \{
+            // pass
+            Log.e(TAG, e.toString());
+        } catch (NoClassDefFoundError e) \{
+            // for mainline module running on older devices.
+            // This should be replaces to version check, after the version bump.
+            Log.e(TAG, e.toString());
+        }
+        isCached = true;
+    }
+{{ -for flag in flag_elements }}
+    @Override
+    public boolean {flag.method_name}() \{
+        if (!isCached) \{
+            init();
+        }
+        return {flag.method_name};
+    }
+{{ endfor }}
+}
+{{ else }}
 import android.os.Binder;
 import android.provider.DeviceConfig;
 import android.provider.DeviceConfig.Properties;
@@ -116,6 +155,7 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
     }
 {{ endfor }}
 }
+{{ -endif- }} {#- end new_exported mode #}
 {{ -endif- }} {#- end exported mode #}
 {{ else }} {#- else for allow_instrumentation is not enabled #}
 {{ if not library_exported- }}
