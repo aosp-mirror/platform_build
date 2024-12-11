@@ -33,7 +33,9 @@ import test_discovery_agent
 REQUIRED_ENV_VARS = frozenset(['TARGET_PRODUCT', 'TARGET_RELEASE', 'TOP', 'DIST_DIR'])
 SOONG_UI_EXE_REL_PATH = 'build/soong/soong_ui.bash'
 LOG_PATH = 'logs/build_test_suites.log'
-REQUIRED_BUILD_TARGETS = frozenset(['dist'])
+# Currently, this prevents the removal of those tags when they exist. In the future we likely
+# want the script to supply 'dist directly
+REQUIRED_BUILD_TARGETS = frozenset(['dist', 'droid'])
 
 
 class Error(Exception):
@@ -112,6 +114,7 @@ class BuildPlanner:
           get_metrics_agent().report_optimized_target(target)
         except Exception as e:
           logging.error(f'unable to parse test discovery output: {repr(e)}')
+          get_metrics_agent().report_unoptimized_target(target, f'Error in parsing test discovery output for {target}: {repr(e)}')
 
     for target in preliminary_build_targets:
       target_optimizer_getter = self.target_optimizations.get(target, None)
