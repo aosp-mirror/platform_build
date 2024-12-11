@@ -123,3 +123,11 @@ python_binary_host {
         "merge-event-log-tags.py",
     ],
 }
+
+python_binary_host {
+    name: "java-event-log-tags",
+    srcs: [
+        "event_log_tags.py",
+        "java-event-log-tags.py",
+    ],
+}
