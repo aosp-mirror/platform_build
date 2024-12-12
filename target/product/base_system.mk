@@ -96,7 +96,6 @@ PRODUCT_PACKAGES += \
     enhanced-confirmation.xml \
     ExtShared \
     flags_health_check \
-    framework-connectivity-b \
     framework-graphics \
     framework-location \
     framework-minus-apex \
@@ -369,6 +368,13 @@ endif
 ifeq ($(RELEASE_USE_WEBVIEW_BOOTSTRAP_MODULE),true)
     PRODUCT_PACKAGES += \
         com.android.webview.bootstrap
+endif
+
+# Only add the jar when it is not in the Tethering module. Otherwise,
+# it will be added via com.android.tethering
+ifneq ($(RELEASE_MOVE_VCN_TO_MAINLINE),true)
+    PRODUCT_PACKAGES += \
+        framework-connectivity-b
 endif
 
 ifneq (,$(RELEASE_RANGING_STACK))
