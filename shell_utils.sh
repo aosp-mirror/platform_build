@@ -214,3 +214,19 @@ function log_tool_invocation()
     ' SIGINT SIGTERM SIGQUIT EXIT
 }
 
+# Import the build variables supplied as arguments into this shell's environment.
+# For absolute variables, prefix the variable name with a '/'. For example:
+#    import_build_vars OUT_DIR DIST_DIR /HOST_OUT_EXECUTABLES
+# Returns nonzero if the build command failed. Stderr is passed through.
+function import_build_vars()
+{
+    require_top
+    local script
+    script=$(cd $TOP && build/soong/bin/get_build_vars "$@")
+    local ret=$?
+    if [ $ret -ne 0 ] ; then
+        return $ret
+    fi
+    eval "$script"
+    return $?
+}
