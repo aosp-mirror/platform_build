@@ -6663,7 +6663,7 @@ ifdef BUILDING_SYSTEM_IMAGE
 	@# Contents of the system image
 ifneq ($(SOONG_DEFINED_SYSTEM_IMAGE_PATH),)
 	$(hide) $(call package_files-copy-root, \
-	    $(SOONG_DEFINED_SYSTEM_IMAGE_BASE)/root/system,$(zip_root)/SYSTEM)
+	    $(SOONG_DEFINED_SYSTEM_IMAGE_BASE)/system/system,$(zip_root)/SYSTEM)
 else
 	$(hide) $(call package_files-copy-root, \
 	    $(SYSTEMIMAGE_SOURCE_DIR),$(zip_root)/SYSTEM)
