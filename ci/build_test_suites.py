@@ -33,7 +33,9 @@ import test_discovery_agent
 REQUIRED_ENV_VARS = frozenset(['TARGET_PRODUCT', 'TARGET_RELEASE', 'TOP', 'DIST_DIR'])
 SOONG_UI_EXE_REL_PATH = 'build/soong/soong_ui.bash'
 LOG_PATH = 'logs/build_test_suites.log'
-REQUIRED_BUILD_TARGETS = frozenset(['dist'])
+# Currently, this prevents the removal of those tags when they exist. In the future we likely
+# want the script to supply 'dist directly
+REQUIRED_BUILD_TARGETS = frozenset(['dist', 'droid'])
 
 
 class Error(Exception):
@@ -70,6 +72,12 @@ class BuildPlanner:
   def create_build_plan(self):
 
     if 'optimized_build' not in self.build_context.enabled_build_features:
+      return BuildPlan(set(self.args.extra_targets), set())
+
+    if not self.build_context.test_infos:
+      logging.warning('Build context has no test infos, skipping optimizations.')
+      for target in self.args.extra_targets:
+        get_metrics_agent().report_unoptimized_target(target, 'BUILD_CONTEXT has no test infos.')
       return BuildPlan(set(self.args.extra_targets), set())
 
     build_targets = set()
