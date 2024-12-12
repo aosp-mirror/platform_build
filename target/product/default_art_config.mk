@@ -51,7 +51,6 @@ PRODUCT_BOOT_JARS += \
     framework-minus-apex \
     framework-graphics \
     framework-location \
-    framework-connectivity-b \
     ext \
     telephony-common \
     voip-common \
@@ -135,6 +134,17 @@ ifneq (,$(RELEASE_RANGING_STACK))
     PRODUCT_APEX_BOOT_JARS += \
         com.android.uwb:framework-ranging \
     $(call soong_config_set,bootclasspath,release_ranging_stack,true)
+endif
+
+# Check if VCN should be built into the tethering module or not
+ifeq ($(RELEASE_MOVE_VCN_TO_MAINLINE),true)
+    PRODUCT_APEX_BOOT_JARS += \
+        com.android.tethering:framework-connectivity-b \
+
+else
+    PRODUCT_BOOT_JARS += \
+        framework-connectivity-b \
+
 endif
 
 # List of system_server classpath jars delivered via apex.

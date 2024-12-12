@@ -33,7 +33,13 @@ prebuilt_etc {
 // image
 otacerts_zip {
     name: "otacerts",
-    recovery_available: true,
+    relative_install_path: "security",
+    filename: "otacerts.zip",
+}
+
+otacerts_zip {
+    name: "otacerts.recovery",
+    recovery: true,
     relative_install_path: "security",
     filename: "otacerts.zip",
 }
