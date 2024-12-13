@@ -13,6 +13,8 @@
 # limitations under the License.
 
 
+import errno
+import fcntl
 import getpass
 import hashlib
 import logging
@@ -100,16 +102,32 @@ class DaemonManager:
       logging.warning("Edit monitor for cog is not supported, exiting...")
       return
 
-    try:
-      self._stop_any_existing_instance()
-      self._write_pid_to_pidfile()
-      self._start_daemon_process()
-    except Exception as e:
-      logging.exception("Failed to start daemon manager with error %s", e)
-      self._send_error_event_to_clearcut(
-          edit_event_pb2.EditEvent.FAILED_TO_START_EDIT_MONITOR
-      )
-      raise e
+    setup_lock_file = pathlib.Path(tempfile.gettempdir()).joinpath(
+        self.pid_file_path.name + ".setup"
+    )
+    logging.info("setup lock file: %s", setup_lock_file)
+    with open(setup_lock_file, "w") as f:
+      try:
+        # Acquire an exclusive lock
+        fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        self._stop_any_existing_instance()
+        self._write_pid_to_pidfile()
+        self._start_daemon_process()
+      except Exception as e:
+        if (
+            isinstance(e, IOError) and e.errno == errno.EAGAIN
+        ):  # Failed to acquire the file lock.
+          logging.warning("Another edit monitor is starting, exitinng...")
+          return
+        else:
+          logging.exception("Failed to start daemon manager with error %s", e)
+          self._send_error_event_to_clearcut(
+              edit_event_pb2.EditEvent.FAILED_TO_START_EDIT_MONITOR
+          )
+          raise e
+      finally:
+        # Release the lock
+        fcntl.flock(f, fcntl.LOCK_UN)
 
   def monitor_daemon(
       self,
@@ -413,13 +431,19 @@ class DaemonManager:
   def _find_all_instances_pids(self) -> list[int]:
     pids = []
 
-    for file in os.listdir(self.pid_file_path.parent):
-      if file.endswith(".lock"):
-        try:
-          with open(self.pid_file_path.parent.joinpath(file), "r") as f:
-            pids.append(int(f.read().strip()))
-        except (FileNotFoundError, IOError, ValueError, TypeError):
-          logging.exception("Failed to get pid from file path: %s", file)
+    try:
+      output = subprocess.check_output(["ps", "-ef", "--no-headers"], text=True)
+      for line in output.splitlines():
+        parts = line.split()
+        process_path = parts[7]
+        if pathlib.Path(process_path).name == "edit_monitor":
+          pid = int(parts[1])
+          if pid != self.pid:  # exclude the current process
+            pids.append(pid)
+    except Exception:
+      logging.exception(
+          "Failed to get pids of existing edit monitors from ps command."
+      )
 
     return pids
 

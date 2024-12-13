@@ -218,6 +218,7 @@ pub fn create_java_lib(
     mut input: Input,
     codegen_mode: CodegenMode,
     allow_instrumentation: bool,
+    new_exported: bool,
 ) -> Result<Vec<OutputFile>> {
     let parsed_flags = input.try_parse_flags()?;
     let modified_parsed_flags = modify_parsed_flags_based_on_mode(parsed_flags, codegen_mode)?;
@@ -236,6 +237,7 @@ pub fn create_java_lib(
         flag_ids,
         allow_instrumentation,
         package_fingerprint,
+        new_exported,
     )
 }
 

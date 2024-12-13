@@ -14,15 +14,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -ex
+set -x
+
+source build/make/shell_utils.sh
 
 export TARGET_PRODUCT=aosp_arm64
 export TARGET_RELEASE=trunk_staging
 export TARGET_BUILD_VARIANT=eng
 
+import_build_vars \
+        OUT_DIR \
+        DIST_DIR \
+        HOST_OUT_EXECUTABLES \
+    || exit $?
+
 TARGETS=(
     all_teams
+    source_tree_size
     release_config_metadata
 )
 
-build/soong/bin/m dist ${TARGETS[@]}
+# Build modules
+build/soong/bin/m dist ${TARGETS[@]} || exit $?
+
+# List all source files in the tree
+( \
+    $HOST_OUT_EXECUTABLES/source_tree_size -o $DIST_DIR/all_source_tree_files.pb \
+        && gzip -fn $DIST_DIR/all_source_tree_files.pb \
+) || exit $?
