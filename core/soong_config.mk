@@ -525,6 +525,22 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   # Used to generate recovery partition
   $(call add_json_str, TargetScreenDensity, $(TARGET_SCREEN_DENSITY))
 
+  # Used to generate /recovery/root/build.prop
+  $(call add_json_map, PrivateRecoveryUiProperties)
+    $(call add_json_str, animation_fps, $(TARGET_RECOVERY_UI_ANIMATION_FPS))
+    $(call add_json_str, margin_height, $(TARGET_RECOVERY_UI_MARGIN_HEIGHT))
+    $(call add_json_str, margin_width, $(TARGET_RECOVERY_UI_MARGIN_WIDTH))
+    $(call add_json_str, menu_unusable_rows, $(TARGET_RECOVERY_UI_MENU_UNUSABLE_ROWS))
+    $(call add_json_str, progress_bar_baseline, $(TARGET_RECOVERY_UI_PROGRESS_BAR_BASELINE))
+    $(call add_json_str, touch_low_threshold, $(TARGET_RECOVERY_UI_TOUCH_LOW_THRESHOLD))
+    $(call add_json_str, touch_high_threshold, $(TARGET_RECOVERY_UI_TOUCH_HIGH_THRESHOLD))
+    $(call add_json_str, vr_stereo_offset, $(TARGET_RECOVERY_UI_VR_STEREO_OFFSET))
+    $(call add_json_str, brightness_file, $(TARGET_RECOVERY_UI_BRIGHTNESS_FILE))
+    $(call add_json_str, max_brightness_file, $(TARGET_RECOVERY_UI_MAX_BRIGHTNESS_FILE))
+    $(call add_json_str, brightness_normal_percent, $(TARGET_RECOVERY_UI_BRIGHTNESS_NORMAL))
+    $(call add_json_str, brightness_dimmed_percent, $(TARGET_RECOVERY_UI_BRIGHTNESS_DIMMED))
+  $(call end_json_map)
+
 $(call end_json_map)
 
 # For converting vintf_data
