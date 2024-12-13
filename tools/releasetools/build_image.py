@@ -977,6 +977,8 @@ def main(argv):
     "will install in by default, so there could be files in the input_directory that are not "
     "actually supposed to be part of the partition. The paths in this file must be relative to "
     "input_directory.")
+  parser.add_argument("--build_datetime_file",
+                      help="a file containing the build id timestamp")
   parser.add_argument("input_directory",
     help="the staging directory to be converted to an image file")
   parser.add_argument("properties_file",
@@ -996,6 +998,11 @@ def main(argv):
   common.InitLogging()
 
   glob_dict = LoadGlobalDict(args.properties_file)
+  if args.build_datetime_file:
+    # Parse the timestamp from build_datetime_file.
+    with open(args.build_datetime_file, "r") as f:
+      glob_dict["timestamp"] = int(f.read())
+
   if "mount_point" in glob_dict:
     # The caller knows the mount point and provides a dictionary needed by
     # BuildImage().
