@@ -23,8 +23,8 @@ import org.junit.Test;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-/** Tests for {@link Main}. */
-public class MainTest {
+/** Tests for {@link WriteBackportedFixesPropFile}. */
+public class WriteBackportedFixesPropFileTest {
 
 
     @Test
@@ -32,7 +32,7 @@ public class MainTest {
         BackportedFixes fixes = BackportedFixes.newBuilder().build();
         var result = new StringWriter();
 
-        Main.writeFixesAsAliasBitSet(fixes, new PrintWriter(result));
+        WriteBackportedFixesPropFile.writeFixesAsAliasBitSet(fixes, new PrintWriter(result));
 
         Truth.assertThat(result.toString())
                 .isEqualTo("""
@@ -50,7 +50,7 @@ public class MainTest {
                 .build();
         var result = new StringWriter();
 
-        Main.writeFixesAsAliasBitSet(fixes, new PrintWriter(result));
+        WriteBackportedFixesPropFile.writeFixesAsAliasBitSet(fixes, new PrintWriter(result));
 
         Truth.assertThat(result.toString())
                 .isEqualTo("""
