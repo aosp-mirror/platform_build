@@ -39,13 +39,15 @@ public class StorageFileProvider {
     private static final String PMAP_FILE_EXT = ".package.map";
     private static final String FMAP_FILE_EXT = ".flag.map";
     private static final String VAL_FILE_EXT = ".val";
+    private static final StorageFileProvider DEFAULT_INSTANCE =
+            new StorageFileProvider(DEFAULT_MAP_PATH, DEFAULT_BOOT_PATH);
 
     private final String mMapPath;
     private final String mBootPath;
 
     /** @hide */
     public static StorageFileProvider getDefaultProvider() {
-        return new StorageFileProvider(DEFAULT_MAP_PATH, DEFAULT_BOOT_PATH);
+        return DEFAULT_INSTANCE;
     }
 
     /** @hide */
@@ -82,7 +84,9 @@ public class StorageFileProvider {
 
     /** @hide */
     public PackageTable getPackageTable(String container) {
-        return getPackageTable(Paths.get(mMapPath, container + PMAP_FILE_EXT));
+        return PackageTable.fromBytes(
+                mapStorageFile(
+                        Paths.get(mMapPath, container + PMAP_FILE_EXT), FileType.PACKAGE_MAP));
     }
 
     /** @hide */
@@ -95,11 +99,6 @@ public class StorageFileProvider {
     public FlagValueList getFlagValueList(String container) {
         return FlagValueList.fromBytes(
                 mapStorageFile(Paths.get(mBootPath, container + VAL_FILE_EXT), FileType.FLAG_VAL));
-    }
-
-    /** @hide */
-    public static PackageTable getPackageTable(Path path) {
-        return PackageTable.fromBytes(mapStorageFile(path, FileType.PACKAGE_MAP));
     }
 
     // Map a storage file given file path
