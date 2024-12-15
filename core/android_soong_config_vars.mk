@@ -202,6 +202,9 @@ $(call soong_config_set,bootclasspath,release_crashrecovery_module,$(RELEASE_CRA
 $(call soong_config_set,ANDROID,release_package_profiling_module,$(RELEASE_PACKAGE_PROFILING_MODULE))
 $(call soong_config_set,bootclasspath,release_package_profiling_module,$(RELEASE_PACKAGE_PROFILING_MODULE))
 
+# Move VCN from platform to the Tethering module; used by both platform and module
+$(call soong_config_set,ANDROID,is_vcn_in_mainline,$(RELEASE_MOVE_VCN_TO_MAINLINE))
+
 # Add perf-setup build flag to soong
 # Note: BOARD_PERFSETUP_SCRIPT location must be under platform_testing/scripts/perf-setup/.
 ifdef BOARD_PERFSETUP_SCRIPT
@@ -272,3 +275,13 @@ $(call soong_config_set_bool,fs_config,system_dlkm,$(if $(BOARD_USES_SYSTEM_DLKM
 $(call soong_config_set_bool,telephony,sec_cp_secure_boot,$(if $(filter true,$(SEC_CP_SECURE_BOOT)),true,false))
 $(call soong_config_set_bool,telephony,cbd_protocol_sit,$(if $(filter true,$(CBD_PROTOCOL_SIT)),true,false))
 $(call soong_config_set_bool,telephony,use_radioexternal_hal_aidl,$(if $(filter true,$(USE_RADIOEXTERNAL_HAL_AIDL)),true,false))
+
+# Variables for hwcomposer.$(TARGET_BOARD_PLATFORM)
+$(call soong_config_set_bool,google_graphics,board_uses_hwc_services,$(if $(filter true,$(BOARD_USES_HWC_SERVICES)),true,false))
+
+# Variables for controlling android.hardware.composer.hwc3-service.pixel
+$(call soong_config_set,google_graphics,board_hwc_version,$(BOARD_HWC_VERSION))
+
+# Variables for extra branches
+# TODO(b/383238397): Use bootstrap_go_package to enable extra flags.
+-include vendor/google/build/extra_soong_config_vars.mk
