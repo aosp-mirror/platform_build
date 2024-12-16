@@ -1,5 +1,4 @@
 generic_rootdirs = [
-    "acct",
     "apex",
     "bootstrap-apex",
     "config",
