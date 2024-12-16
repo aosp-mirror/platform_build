@@ -381,7 +381,6 @@ android_filesystem_defaults {
 
     deps: [
         "abx",
-        "aconfigd",
         "aconfigd-system",
         "aflags",
         "am",
@@ -701,7 +700,6 @@ android_filesystem_defaults {
                 "framework-graphics", // base_system
                 "framework-location", // base_system
                 "framework-minus-apex-install-dependencies", // base_system
-                "framework-connectivity-b", // base_system
                 "framework_compatibility_matrix.device.xml",
                 "generic_system_fonts", // ok
                 "hwservicemanager_compat_symlink_module", // base_system
@@ -727,11 +725,23 @@ android_filesystem_defaults {
                 default: [
                     "framework-platformcrashrecovery", // base_system
                 ],
+            }) + select(release_flag("RELEASE_ONDEVICE_INTELLIGENCE_MODULE"), {
+                true: [
+                    "com.android.neuralnetworks", // base_system (RELEASE_ONDEVICE_INTELLIGENCE_MODULE)
+                ],
+                default: [
+                    "framework-ondeviceintelligence-platform", // base_system
+                ],
             }) + select(soong_config_variable("ANDROID", "release_package_profiling_module"), {
                 "true": [
                     "com.android.profiling", // base_system (RELEASE_PACKAGE_PROFILING_MODULE)
                 ],
                 default: [],
+            }) + select(release_flag("RELEASE_MOVE_VCN_TO_MAINLINE"), {
+                true: [],
+                default: [
+                    "framework-connectivity-b", // base_system
+                ],
             }) + select(release_flag("RELEASE_AVATAR_PICKER_APP"), {
                 true: [
                     "AvatarPicker", // generic_system (RELEASE_AVATAR_PICKER_APP)
@@ -884,6 +894,14 @@ android_filesystem_defaults {
                     "libuprobestats_client", // base_system internal
                 ],
             }),
+        },
+    },
+    arch: {
+        arm64: {
+            deps: [
+                "libclang_rt.hwasan",
+                "libc_hwasan",
+            ],
         },
     },
 }

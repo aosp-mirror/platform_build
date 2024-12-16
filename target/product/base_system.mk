@@ -17,7 +17,6 @@
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
     abx \
-    aconfigd \
     aconfigd-system \
     adbd_system_api \
     aflags \
@@ -97,7 +96,6 @@ PRODUCT_PACKAGES += \
     enhanced-confirmation.xml \
     ExtShared \
     flags_health_check \
-    framework-connectivity-b \
     framework-graphics \
     framework-location \
     framework-minus-apex \
@@ -317,6 +315,14 @@ else
 
 endif
 
+# When we release ondeviceintelligence in neuralnetworks module
+ifneq ($(RELEASE_ONDEVICE_INTELLIGENCE_MODULE),true)
+  PRODUCT_PACKAGES += \
+        framework-ondeviceintelligence-platform
+
+endif
+
+
 # When we release uprobestats module
 ifeq ($(RELEASE_UPROBESTATS_MODULE),true)
     PRODUCT_PACKAGES += \
@@ -362,6 +368,13 @@ endif
 ifeq ($(RELEASE_USE_WEBVIEW_BOOTSTRAP_MODULE),true)
     PRODUCT_PACKAGES += \
         com.android.webview.bootstrap
+endif
+
+# Only add the jar when it is not in the Tethering module. Otherwise,
+# it will be added via com.android.tethering
+ifneq ($(RELEASE_MOVE_VCN_TO_MAINLINE),true)
+    PRODUCT_PACKAGES += \
+        framework-connectivity-b
 endif
 
 ifneq (,$(RELEASE_RANGING_STACK))

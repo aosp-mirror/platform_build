@@ -25,8 +25,8 @@ RELEASE_BOARD_API_LEVEL='$FINAL_BOARD_API_LEVEL'"
     fi;
 
     if [ "$need_vintf_finalize" = true ] ; then        # VINTF finalization
-        source $top/build/make/tools/finalization/finalize-vintf-resources.sh
+        source $top/build/make/tools/finalization/finalize-vintf-resources.sh $@
     fi;
 }
 
-finalize_main_step0
+finalize_main_step0 $@

@@ -194,6 +194,8 @@ $(call add_json_str,  SystemExtPath,                     $(TARGET_COPY_OUT_SYSTE
 $(call add_json_str,  SystemDlkmPath,                    $(TARGET_COPY_OUT_SYSTEM_DLKM))
 $(call add_json_str,  OemPath,                           $(TARGET_COPY_OUT_OEM))
 $(call add_json_bool, MinimizeJavaDebugInfo,             $(filter true,$(PRODUCT_MINIMIZE_JAVA_DEBUG_INFO)))
+$(call add_json_str,  RecoveryPath,                      $(TARGET_COPY_OUT_RECOVERY))
+$(call add_json_bool, BuildingRecoveryImage,             $(BUILDING_RECOVERY_IMAGE))
 
 $(call add_json_bool, UseGoma,                           $(filter-out false,$(USE_GOMA)))
 $(call add_json_bool, UseRBE,                            $(filter-out false,$(USE_RBE)))
@@ -402,6 +404,7 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
     $(call add_json_str, BoardAvbAlgorithm, $(BOARD_AVB_$(image_type)_ALGORITHM)) \
     $(call add_json_str, BoardAvbRollbackIndex, $(BOARD_AVB_$(image_type)_ROLLBACK_INDEX)) \
     $(call add_json_str, BoardAvbRollbackIndexLocation, $(BOARD_AVB_$(image_type)_ROLLBACK_INDEX_LOCATION)) \
+    $(call add_json_str, BoardAvbAddHashtreeFooterArgs, $(BOARD_AVB_$(image_type)_ADD_HASHTREE_FOOTER_ARGS)) \
     $(call add_json_str, ProductBaseFsPath, $(PRODUCT_$(image_type)_BASE_FS_PATH)) \
     $(call add_json_str, ProductHeadroom, $(PRODUCT_$(image_type)_HEADROOM)) \
     $(call add_json_str, ProductVerityPartition, $(PRODUCT_$(image_type)_VERITY_PARTITION)) \
@@ -444,8 +447,33 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_str, BootSecurityPatch, $(BOOT_SECURITY_PATCH))
   $(call add_json_str, InitBootSecurityPatch, $(INIT_BOOT_SECURITY_PATCH))
   $(call add_json_str, VendorSecurityPatch, $(VENDOR_SECURITY_PATCH))
+  $(call add_json_str, OdmSecurityPatch, $(ODM_SECURITY_PATCH))
+  $(call add_json_str, SystemDlkmSecurityPatch, $(SYSTEM_DLKM_SECURITY_PATCH))
+  $(call add_json_str, VendorDlkmSecurityPatch, $(VENDOR_DLKM_SECURITY_PATCH))
+  $(call add_json_str, OdmDlkmSecurityPatch, $(ODM_DLKM_SECURITY_PATCH))
   $(call add_json_bool, BoardIncludeDtbInBootimg, $(BOARD_INCLUDE_DTB_IN_BOOTIMG))
   $(call add_json_list, InternalKernelCmdline, $(INTERNAL_KERNEL_CMDLINE))
+  $(call add_json_list, InternalBootconfig, $(INTERNAL_BOOTCONFIG))
+  $(call add_json_str, InternalBootconfigFile, $(INTERNAL_BOOTCONFIG_FILE))
+
+  # super image stuff
+  $(call add_json_bool, ProductUseDynamicPartitions, $(filter true,$(PRODUCT_USE_DYNAMIC_PARTITIONS)))
+  $(call add_json_bool, ProductRetrofitDynamicPartitions, $(filter true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)))
+  $(call add_json_bool, ProductBuildSuperPartition, $(filter true,$(PRODUCT_BUILD_SUPER_PARTITION)))
+  $(call add_json_str, BoardSuperPartitionSize, $(BOARD_SUPER_PARTITION_SIZE))
+  $(call add_json_str, BoardSuperPartitionMetadataDevice, $(BOARD_SUPER_PARTITION_METADATA_DEVICE))
+  $(call add_json_list, BoardSuperPartitionBlockDevices, $(BOARD_SUPER_PARTITION_BLOCK_DEVICES))
+  $(call add_json_map, BoardSuperPartitionGroups)
+    $(foreach group, $(BOARD_SUPER_PARTITION_GROUPS), \
+      $(call add_json_map, $(group)) \
+        $(call add_json_str, GroupSize, $(BOARD_$(call to-upper,$(group))_SIZE)) \
+        $(if $(BOARD_$(call to-upper,$(group))_PARTITION_LIST), \
+          $(call add_json_list, PartitionList, $(BOARD_$(call to-upper,$(group))_PARTITION_LIST))) \
+      $(call end_json_map))
+    $(call end_json_map)
+  $(call add_json_bool, ProductVirtualAbOta, $(filter true,$(PRODUCT_VIRTUAL_AB_OTA)))
+  $(call add_json_bool, ProductVirtualAbOtaRetrofit, $(filter true,$(PRODUCT_VIRTUAL_AB_OTA_RETROFIT)))
+  $(call add_json_bool, AbOtaUpdater, $(filter true,$(AB_OTA_UPDATER)))
 
   # Avb (android verified boot) stuff
   $(call add_json_bool, BoardAvbEnable, $(filter true,$(BOARD_AVB_ENABLE)))
@@ -484,12 +512,38 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_bool, BuildingOdmDlkmImage,               $(BUILDING_ODM_DLKM_IMAGE))
   $(call add_json_list, OdmKernelModules, $(BOARD_ODM_KERNEL_MODULES))
   $(call add_json_str, OdmKernelBlocklistFile, $(BOARD_ODM_KERNEL_MODULES_BLOCKLIST_FILE))
+  $(call add_json_list, VendorRamdiskKernelModules, $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES))
+  $(call add_json_str, VendorRamdiskKernelBlocklistFile, $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_BLOCKLIST_FILE))
+  $(call add_json_list, VendorRamdiskKernelLoadModules, $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD))
+  $(call add_json_str, VendorRamdiskKernelOptionsFile, $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_OPTIONS_FILE))
 
   # Used to generate /vendor/build.prop
   $(call add_json_list, BoardInfoFiles, $(if $(TARGET_BOARD_INFO_FILES),$(TARGET_BOARD_INFO_FILES),$(firstword $(TARGET_BOARD_INFO_FILE) $(wildcard $(TARGET_DEVICE_DIR)/board-info.txt))))
   $(call add_json_str, BootLoaderBoardName, $(TARGET_BOOTLOADER_BOARD_NAME))
 
   $(call add_json_list, ProductCopyFiles, $(PRODUCT_COPY_FILES))
+
+  # Used to generate fsv meta
+  $(call add_json_bool, ProductFsverityGenerateMetadata,               $(PRODUCT_FSVERITY_GENERATE_METADATA))
+
+  # Used to generate recovery partition
+  $(call add_json_str, TargetScreenDensity, $(TARGET_SCREEN_DENSITY))
+
+  # Used to generate /recovery/root/build.prop
+  $(call add_json_map, PrivateRecoveryUiProperties)
+    $(call add_json_str, animation_fps, $(TARGET_RECOVERY_UI_ANIMATION_FPS))
+    $(call add_json_str, margin_height, $(TARGET_RECOVERY_UI_MARGIN_HEIGHT))
+    $(call add_json_str, margin_width, $(TARGET_RECOVERY_UI_MARGIN_WIDTH))
+    $(call add_json_str, menu_unusable_rows, $(TARGET_RECOVERY_UI_MENU_UNUSABLE_ROWS))
+    $(call add_json_str, progress_bar_baseline, $(TARGET_RECOVERY_UI_PROGRESS_BAR_BASELINE))
+    $(call add_json_str, touch_low_threshold, $(TARGET_RECOVERY_UI_TOUCH_LOW_THRESHOLD))
+    $(call add_json_str, touch_high_threshold, $(TARGET_RECOVERY_UI_TOUCH_HIGH_THRESHOLD))
+    $(call add_json_str, vr_stereo_offset, $(TARGET_RECOVERY_UI_VR_STEREO_OFFSET))
+    $(call add_json_str, brightness_file, $(TARGET_RECOVERY_UI_BRIGHTNESS_FILE))
+    $(call add_json_str, max_brightness_file, $(TARGET_RECOVERY_UI_MAX_BRIGHTNESS_FILE))
+    $(call add_json_str, brightness_normal_percent, $(TARGET_RECOVERY_UI_BRIGHTNESS_NORMAL))
+    $(call add_json_str, brightness_dimmed_percent, $(TARGET_RECOVERY_UI_BRIGHTNESS_DIMMED))
+  $(call end_json_map)
 
 $(call end_json_map)
 

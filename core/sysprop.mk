@@ -123,11 +123,19 @@ $(2): $(POST_PROCESS_PROPS) $(INTERNAL_BUILD_ID_MAKEFILE) $(3) $(6) $(BUILT_KERN
 ifneq ($(strip $(7)), true)
 	$(hide) $$(call generate-common-build-props,$(call to-lower,$(strip $(1))),$$@)
 endif
+        # Make and Soong use different intermediate files to build vendor/build.prop.
+        # Although the sysprop contents are same, the absolute paths of android_info.prop are different.
+        # Print the filename for the intermediate files (files in OUT_DIR).
+        # This helps with validating mk->soong migration of android partitions.
 	$(hide) $(foreach file,$(strip $(3)),\
 	    if [ -f "$(file)" ]; then\
 	        echo "" >> $$@;\
 	        echo "####################################" >> $$@;\
-	        echo "# from $(file)" >> $$@;\
+	        $(if $(filter $(OUT_DIR)/%,$(file)), \
+		echo "# from $(notdir $(file))" >> $$@;\
+		,\
+		echo "# from $(file)" >> $$@;\
+		)\
 	        echo "####################################" >> $$@;\
 	        cat $(file) >> $$@;\
 	    fi;)
@@ -184,7 +192,7 @@ ifeq (,$(strip $(BUILD_FINGERPRINT)))
 endif
 
 BUILD_FINGERPRINT_FILE := $(PRODUCT_OUT)/build_fingerprint.txt
-ifneq (,$(shell mkdir -p $(PRODUCT_OUT) && echo $(BUILD_FINGERPRINT) >$(BUILD_FINGERPRINT_FILE) && grep " " $(BUILD_FINGERPRINT_FILE)))
+ifneq (,$(shell mkdir -p $(PRODUCT_OUT) && echo $(BUILD_FINGERPRINT) >$(BUILD_FINGERPRINT_FILE).tmp && (if ! cmp -s $(BUILD_FINGERPRINT_FILE).tmp $(BUILD_FINGERPRINT_FILE); then mv $(BUILD_FINGERPRINT_FILE).tmp $(BUILD_FINGERPRINT_FILE); else rm $(BUILD_FINGERPRINT_FILE).tmp; fi) && grep " " $(BUILD_FINGERPRINT_FILE)))
   $(error BUILD_FINGERPRINT cannot contain spaces: "$(file <$(BUILD_FINGERPRINT_FILE))")
 endif
 BUILD_FINGERPRINT_FROM_FILE := $$(cat $(BUILD_FINGERPRINT_FILE))
