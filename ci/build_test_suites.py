@@ -112,6 +112,9 @@ class BuildPlanner:
         if optimization_rationale:
           get_metrics_agent().report_unoptimized_target(target, optimization_rationale)
           continue
+        if target in REQUIRED_BUILD_TARGETS:
+          get_metrics_agent().report_unoptimized_target(target, 'Required build target.')
+          continue
         try:
           regex = r'\b(%s.*)\b' % re.escape(target)
           if any(re.search(regex, opt) for opt in test_discovery_zip_regexes):
@@ -154,6 +157,7 @@ class BuildPlanner:
     for target in self.args.extra_targets:
       if target in REQUIRED_BUILD_TARGETS:
         build_targets.add(target)
+        get_metrics_agent().report_unoptimized_target(target, 'Required build target.')
         continue
 
       regex = r'\b(%s.*)\b' % re.escape(target)
