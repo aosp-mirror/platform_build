@@ -20,7 +20,7 @@
 # For more details, see:
 # https://source.android.com/docs/security/test/memory-safety/arm-mte
 ifeq ($(filter memtag_heap,$(SANITIZE_TARGET)),)
-  SANITIZE_TARGET := $(strip $(SANITIZE_TARGET) memtag_heap memtag_stack)
+  SANITIZE_TARGET := $(strip $(SANITIZE_TARGET) memtag_heap memtag_stack memtag_globals)
   SANITIZE_TARGET_DIAG := $(strip $(SANITIZE_TARGET_DIAG) memtag_heap)
 endif
 PRODUCT_PRODUCT_PROPERTIES += persist.arm64.memtag.default=sync
