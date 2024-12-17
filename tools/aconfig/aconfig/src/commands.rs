@@ -439,7 +439,7 @@ where
         // Exclude system/vendor/product flags that are RO+disabled.
         let should_filter_container = pf.container == Some("vendor".to_string())
             || pf.container == Some("system".to_string())
-            || pf.container == Some("vendor".to_string());
+            || pf.container == Some("product".to_string());
         if !(should_filter_container
             && pf.state == Some(ProtoFlagState::DISABLED.into())
             && pf.permission == Some(ProtoFlagPermission::READ_ONLY.into()))
