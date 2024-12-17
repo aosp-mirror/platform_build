@@ -35,7 +35,7 @@ SOONG_UI_EXE_REL_PATH = 'build/soong/soong_ui.bash'
 LOG_PATH = 'logs/build_test_suites.log'
 # Currently, this prevents the removal of those tags when they exist. In the future we likely
 # want the script to supply 'dist directly
-REQUIRED_BUILD_TARGETS = frozenset(['dist', 'droid'])
+REQUIRED_BUILD_TARGETS = frozenset(['dist', 'droid', 'checkbuild'])
 
 
 class Error(Exception):
