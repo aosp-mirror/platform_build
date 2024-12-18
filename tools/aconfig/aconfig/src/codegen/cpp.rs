@@ -24,7 +24,7 @@ use aconfig_protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
 
 use crate::codegen;
 use crate::codegen::CodegenMode;
-use crate::commands::OutputFile;
+use crate::commands::{should_include_flag, OutputFile};
 
 pub fn generate_cpp_code<I>(
     package: &str,
@@ -127,10 +127,7 @@ fn create_class_element(
     flag_ids: HashMap<String, u16>,
     rw_count: &mut i32,
 ) -> ClassElement {
-    let no_assigned_offset =
-        (pf.container() == "system" || pf.container() == "vendor" || pf.container() == "product")
-            && pf.permission() == ProtoFlagPermission::READ_ONLY
-            && pf.state() == ProtoFlagState::DISABLED;
+    let no_assigned_offset = !should_include_flag(pf);
 
     let flag_offset = match flag_ids.get(pf.name()) {
         Some(offset) => offset,
