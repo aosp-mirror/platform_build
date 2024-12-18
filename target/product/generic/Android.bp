@@ -470,7 +470,6 @@ android_filesystem_defaults {
         "locksettings", // base_system
         "logcat", // base_system
         "logd", // base_system
-        "logpersist.start",
         "lpdump", // base_system
         "lshal", // base_system
         "make_f2fs", // media_system
@@ -527,7 +526,6 @@ android_filesystem_defaults {
         "sfdo", // base_system
         "sgdisk", // base_system
         "sm", // base_system
-        "snapshotctl", // base_system
         "snapuserd", // base_system
         "storaged", // base_system
         "surfaceflinger", // base_system
@@ -580,6 +578,7 @@ android_filesystem_defaults {
             "iperf3",
             "iw",
             "layertracegenerator",
+            "logpersist.start",
             "logtagd.rc",
             "ot-cli-ftd",
             "ot-ctl",
@@ -590,6 +589,7 @@ android_filesystem_defaults {
             "sanitizer-status",
             "servicedispatcher",
             "showmap",
+            "snapshotctl",
             "sqlite3",
             "ss",
             "start_with_lockagent",
@@ -915,4 +915,9 @@ android_system_image {
         compressor: "lz4hc,9",
         compress_hints: "erofs_compress_hints.txt",
     },
+    deps: [
+        // DO NOT update this list. Instead, update the system_image_defaults to
+        // sync with the base_system.mk
+        "logpersist.start", // cf only
+    ],
 }
