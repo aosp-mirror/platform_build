@@ -17,7 +17,7 @@
 package android.aconfig.storage.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertNull;
 
 import android.aconfig.DeviceProtos;
 import android.aconfig.nano.Aconfig;
@@ -26,8 +26,7 @@ import android.aconfig.storage.FlagTable;
 import android.aconfig.storage.FlagValueList;
 import android.aconfig.storage.PackageTable;
 import android.aconfig.storage.StorageFileProvider;
-import android.internal.aconfig.storage.AconfigStorageException;
-import android.os.flagging.PlatformAconfigPackageInternal;
+import android.os.flagging.PlatformAconfigPackage;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,14 +39,14 @@ import java.util.Map;
 import java.util.Set;
 
 @RunWith(JUnit4.class)
-public class PlatformAconfigPackageInternalTest {
+public class PlatformAconfigPackageTest {
 
     private static final Set<String> PLATFORM_CONTAINERS = Set.of("system", "vendor", "product");
 
     @Test
-    public void testPlatformAconfigPackageInternal_load() throws IOException {
+    public void testPlatformAconfigPackage_load() throws IOException {
         List<parsed_flag> flags = DeviceProtos.loadAndParseFlagProtos();
-        Map<String, PlatformAconfigPackageInternal> readerMap = new HashMap<>();
+        Map<String, PlatformAconfigPackage> readerMap = new HashMap<>();
         StorageFileProvider fp = StorageFileProvider.getDefaultProvider();
 
         for (parsed_flag flag : flags) {
@@ -70,12 +69,12 @@ public class PlatformAconfigPackageInternalTest {
 
             long fingerprint = pNode.getPackageFingerprint();
 
-            PlatformAconfigPackageInternal reader = readerMap.get(packageName);
+            PlatformAconfigPackage reader = readerMap.get(packageName);
             if (reader == null) {
-                reader = PlatformAconfigPackageInternal.load(container, packageName, fingerprint);
+                reader = PlatformAconfigPackage.load(packageName);
                 readerMap.put(packageName, reader);
             }
-            boolean jVal = reader.getBooleanFlagValue(fNode.getFlagIndex());
+            boolean jVal = reader.getBooleanFlagValue(flagName, !rVal);
 
             assertEquals(rVal, jVal);
         }
@@ -83,44 +82,7 @@ public class PlatformAconfigPackageInternalTest {
 
     @Test
     public void testPlatformAconfigPackage_load_withError() throws IOException {
-        // container not found fake_container
-        AconfigStorageException e =
-                assertThrows(
-                        AconfigStorageException.class,
-                        () ->
-                                PlatformAconfigPackageInternal.load(
-                                        "fake_container", "fake_package", 0));
-        assertEquals(AconfigStorageException.ERROR_CANNOT_READ_STORAGE_FILE, e.getErrorCode());
-
         // package not found
-        e =
-                assertThrows(
-                        AconfigStorageException.class,
-                        () -> PlatformAconfigPackageInternal.load("system", "fake_container", 0));
-        assertEquals(AconfigStorageException.ERROR_PACKAGE_NOT_FOUND, e.getErrorCode());
-
-        // fingerprint doesn't match
-        List<parsed_flag> flags = DeviceProtos.loadAndParseFlagProtos();
-        StorageFileProvider fp = StorageFileProvider.getDefaultProvider();
-
-        parsed_flag flag = flags.get(0);
-
-        String container = flag.container;
-        String packageName = flag.package_;
-        boolean value = flag.state == Aconfig.ENABLED;
-
-        PackageTable pTable = fp.getPackageTable(container);
-        PackageTable.Node pNode = pTable.get(packageName);
-
-        if (pNode.hasPackageFingerprint()) {
-            long fingerprint = pNode.getPackageFingerprint();
-            e =
-                    assertThrows(
-                            AconfigStorageException.class,
-                            () ->
-                                    PlatformAconfigPackageInternal.load(
-                                            container, packageName, fingerprint + 1));
-            assertEquals(AconfigStorageException.ERROR_FILE_FINGERPRINT_MISMATCH, e.getErrorCode());
-        }
+        assertNull(PlatformAconfigPackage.load("fake_container"));
     }
 }

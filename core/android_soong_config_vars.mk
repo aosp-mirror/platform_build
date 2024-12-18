@@ -78,9 +78,10 @@ endif
 $(call soong_config_set_bool,art_module,art_build_host_debug,$(if $(filter false,$(ART_BUILD_HOST_DEBUG)),false,true))
 
 # For chre
-$(call soong_config_set_bool,chre,chre_daemon_lama_enabled,$(if $(filter true,$(CHRE_DAEMON_LPMA_ENABLED)),true,false))
+$(call soong_config_set_bool,chre,chre_daemon_lpma_enabled,$(if $(filter true,$(CHRE_DAEMON_LPMA_ENABLED)),true,false))
 $(call soong_config_set_bool,chre,chre_dedicated_transport_channel_enabled,$(if $(filter true,$(CHRE_DEDICATED_TRANSPORT_CHANNEL_ENABLED)),true,false))
 $(call soong_config_set_bool,chre,chre_log_atom_extension_enabled,$(if $(filter true,$(CHRE_LOG_ATOM_EXTENSION_ENABLED)),true,false))
+$(call soong_config_set_bool,chre,building_vendor_image,$(if $(filter true,$(BUILDING_VENDOR_IMAGE)),true,false))
 
 ifdef TARGET_BOARD_AUTO
   $(call add_soong_config_var_value, ANDROID, target_board_auto, $(TARGET_BOARD_AUTO))
@@ -98,6 +99,9 @@ endif
 # Enable SystemUI optimizations by default unless explicitly set.
 SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
+
+# Flag for enabling compose for Launcher.
+$(call soong_config_set,ANDROID,release_enable_compose_in_launcher,$(RELEASE_ENABLE_COMPOSE_IN_LAUNCHER))
 
 ifdef PRODUCT_AVF_ENABLED
 $(call add_soong_config_var_value,ANDROID,avf_enabled,$(PRODUCT_AVF_ENABLED))
@@ -197,6 +201,17 @@ else
 endif
 # Required as platform_bootclasspath is using this namespace
 $(call soong_config_set,bootclasspath,release_crashrecovery_module,$(RELEASE_CRASHRECOVERY_MODULE))
+
+# Add uprobestats build flag to soong
+$(call soong_config_set,ANDROID,release_uprobestats_module,$(RELEASE_UPROBESTATS_MODULE))
+# Add uprobestats file move flags to soong, for both platform and module
+ifeq (true,$(RELEASE_UPROBESTATS_FILE_MOVE))
+  $(call soong_config_set,ANDROID,uprobestats_files_in_module,true)
+  $(call soong_config_set,ANDROID,uprobestats_files_in_platform,false)
+else
+  $(call soong_config_set,ANDROID,uprobestats_files_in_module,false)
+  $(call soong_config_set,ANDROID,uprobestats_files_in_platform,true)
+endif
 
 # Enable Profiling module. Also used by platform_bootclasspath.
 $(call soong_config_set,ANDROID,release_package_profiling_module,$(RELEASE_PACKAGE_PROFILING_MODULE))

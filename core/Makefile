@@ -3504,18 +3504,20 @@ ifdef BUILDING_SYSTEM_IMAGE
 # Collect all available stub libraries installed in system and install with predefined linker configuration
 # Also append LLNDK libraries in the APEX as required libs
 SYSTEM_LINKER_CONFIG := $(TARGET_OUT)/etc/linker.config.pb
-SYSTEM_LINKER_CONFIG_SOURCE := $(call intermediates-dir-for,ETC,system_linker_config)/system_linker_config
+SYSTEM_LINKER_CONFIG_SOURCE := system/core/rootdir/etc/linker.config.json
 $(SYSTEM_LINKER_CONFIG): PRIVATE_SYSTEM_LINKER_CONFIG_SOURCE := $(SYSTEM_LINKER_CONFIG_SOURCE)
 $(SYSTEM_LINKER_CONFIG): $(INTERNAL_SYSTEMIMAGE_FILES) $(SYSTEM_LINKER_CONFIG_SOURCE) | conv_linker_config
 	@echo Creating linker config: $@
 	@mkdir -p $(dir $@)
-	@rm -f $@
-	$(HOST_OUT_EXECUTABLES)/conv_linker_config systemprovide --source $(PRIVATE_SYSTEM_LINKER_CONFIG_SOURCE) \
+	@rm -f $@ $@.step1
+	$(HOST_OUT_EXECUTABLES)/conv_linker_config proto --force -s $(PRIVATE_SYSTEM_LINKER_CONFIG_SOURCE) -o $@.step1
+	$(HOST_OUT_EXECUTABLES)/conv_linker_config systemprovide --source $@.step1 \
 		--output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT)"
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config append --source $@ --output $@ --key requireLibs \
 		--value "$(foreach lib,$(LLNDK_MOVED_TO_APEX_LIBRARIES), $(lib).so)"
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config append --source $@ --output $@ --key provideLibs \
 		--value "$(foreach lib,$(PRODUCT_EXTRA_STUB_LIBRARIES), $(lib).so)"
+	rm -f $@.step1
 
 $(call declare-1p-target,$(SYSTEM_LINKER_CONFIG),)
 $(call declare-license-deps,$(SYSTEM_LINKER_CONFIG),$(INTERNAL_SYSTEMIMAGE_FILES) $(SYSTEM_LINKER_CONFIG_SOURCE))
@@ -3556,7 +3558,7 @@ define build-systemimage-target
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
           $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(systemimage_intermediates)/file_list.txt) \
-          $(TARGET_OUT) $(systemimage_intermediates)/system_image_info.txt $(1) $(TARGET_OUT) \
+          $(TARGET_OUT) $(systemimage_intermediates)/system_image_info.txt $(1) $(TARGET_OUT) --build_datetime_file $(BUILD_DATETIME_FILE) \
           || ( mkdir -p $${DIST_DIR}; \
                cp $(INSTALLED_FILES_FILE) $${DIST_DIR}/installed-files-rescued.txt; \
                exit 1 )
@@ -3707,7 +3709,7 @@ define build-userdataimage-target
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
           $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(userdataimage_intermediates)/file_list.txt) \
-          $(TARGET_OUT_DATA) $(userdataimage_intermediates)/userdata_image_info.txt \
+          $(TARGET_OUT_DATA) $(userdataimage_intermediates)/userdata_image_info.txt --build_datetime_file $(BUILD_DATETIME_FILE) \
           $(INSTALLED_USERDATAIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_USERDATAIMAGE_TARGET),$(BOARD_USERDATAIMAGE_PARTITION_SIZE))
 endef
@@ -3769,7 +3771,7 @@ define build-cacheimage-target
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
           $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(cacheimage_intermediates)/file_list.txt) \
-          $(TARGET_OUT_CACHE) $(cacheimage_intermediates)/cache_image_info.txt \
+          $(TARGET_OUT_CACHE) $(cacheimage_intermediates)/cache_image_info.txt --build_datetime_file $(BUILD_DATETIME_FILE) \
           $(INSTALLED_CACHEIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_CACHEIMAGE_TARGET),$(BOARD_CACHEIMAGE_PARTITION_SIZE))
 endef
@@ -3856,7 +3858,7 @@ define build-systemotherimage-target
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
           $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(systemotherimage_intermediates)/file_list.txt) \
-          $(TARGET_OUT_SYSTEM_OTHER) $(systemotherimage_intermediates)/system_other_image_info.txt \
+          $(TARGET_OUT_SYSTEM_OTHER) $(systemotherimage_intermediates)/system_other_image_info.txt --build_datetime_file $(BUILD_DATETIME_FILE) \
           $(INSTALLED_SYSTEMOTHERIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_SYSTEMOTHERIMAGE_TARGET),$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))
 endef
@@ -3962,7 +3964,7 @@ define build-vendorimage-target
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
           $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(vendorimage_intermediates)/file_list.txt) \
-          $(TARGET_OUT_VENDOR) $(vendorimage_intermediates)/vendor_image_info.txt \
+          $(TARGET_OUT_VENDOR) $(vendorimage_intermediates)/vendor_image_info.txt --build_datetime_file $(BUILD_DATETIME_FILE) \
           $(INSTALLED_VENDORIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_VENDORIMAGE_TARGET) $(RECOVERY_FROM_BOOT_PATCH),$(BOARD_VENDORIMAGE_PARTITION_SIZE))
 endef
@@ -4050,7 +4052,7 @@ define build-productimage-target
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
           $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(productimage_intermediates)/file_list.txt) \
-          $(TARGET_OUT_PRODUCT) $(productimage_intermediates)/product_image_info.txt \
+          $(TARGET_OUT_PRODUCT) $(productimage_intermediates)/product_image_info.txt --build_datetime_file $(BUILD_DATETIME_FILE) \
           $(INSTALLED_PRODUCTIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_PRODUCTIMAGE_TARGET),$(BOARD_PRODUCTIMAGE_PARTITION_SIZE))
 endef
@@ -4119,7 +4121,7 @@ define build-system_extimage-target
       $(BUILD_IMAGE) \
           $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(system_extimage_intermediates)/file_list.txt) \
           $(TARGET_OUT_SYSTEM_EXT) \
-          $(system_extimage_intermediates)/system_ext_image_info.txt \
+          $(system_extimage_intermediates)/system_ext_image_info.txt --build_datetime_file $(BUILD_DATETIME_FILE) \
           $(INSTALLED_SYSTEM_EXTIMAGE_TARGET) \
           $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET),$(BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE))
@@ -4209,7 +4211,7 @@ define build-odmimage-target
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
           $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(odmimage_intermediates)/file_list.txt) \
-          $(TARGET_OUT_ODM) $(odmimage_intermediates)/odm_image_info.txt \
+          $(TARGET_OUT_ODM) $(odmimage_intermediates)/odm_image_info.txt --build_datetime_file $(BUILD_DATETIME_FILE) \
           $(INSTALLED_ODMIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_ODMIMAGE_TARGET),$(BOARD_ODMIMAGE_PARTITION_SIZE))
 endef
@@ -4278,7 +4280,7 @@ define build-vendor_dlkmimage-target
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
           $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(vendor_dlkmimage_intermediates)/file_list.txt) \
-          $(TARGET_OUT_VENDOR_DLKM) $(vendor_dlkmimage_intermediates)/vendor_dlkm_image_info.txt \
+          $(TARGET_OUT_VENDOR_DLKM) $(vendor_dlkmimage_intermediates)/vendor_dlkm_image_info.txt --build_datetime_file $(BUILD_DATETIME_FILE) \
           $(INSTALLED_VENDOR_DLKMIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_VENDOR_DLKMIMAGE_TARGET),$(BOARD_VENDOR_DLKMIMAGE_PARTITION_SIZE))
 endef
@@ -4347,7 +4349,7 @@ define build-odm_dlkmimage-target
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
           $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(odm_dlkmimage_intermediates)/file_list.txt) \
-          $(TARGET_OUT_ODM_DLKM) $(odm_dlkmimage_intermediates)/odm_dlkm_image_info.txt \
+          $(TARGET_OUT_ODM_DLKM) $(odm_dlkmimage_intermediates)/odm_dlkm_image_info.txt --build_datetime_file $(BUILD_DATETIME_FILE) \
           $(INSTALLED_ODM_DLKMIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_ODM_DLKMIMAGE_TARGET),$(BOARD_ODM_DLKMIMAGE_PARTITION_SIZE))
 endef
@@ -4418,7 +4420,7 @@ define build-system_dlkmimage-target
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
       $(BUILD_IMAGE) \
           $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(system_dlkmimage_intermediates)/file_list.txt) \
-          $(TARGET_OUT_SYSTEM_DLKM) $(system_dlkmimage_intermediates)/system_dlkm_image_info.txt \
+          $(TARGET_OUT_SYSTEM_DLKM) $(system_dlkmimage_intermediates)/system_dlkm_image_info.txt --build_datetime_file $(BUILD_DATETIME_FILE) \
           $(INSTALLED_SYSTEM_DLKMIMAGE_TARGET) $(TARGET_OUT)
   $(call assert-max-image-size,$(INSTALLED_SYSTEM_DLKMIMAGE_TARGET),$(BOARD_SYSTEM_DLKMIMAGE_PARTITION_SIZE))
 endef

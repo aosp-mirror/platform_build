@@ -14,3 +14,20 @@ flag {
   bug: "369808805"
   description: "When enabled, launch aconfigd from config infra module."
 }
+
+flag {
+  name: "tools_read_from_new_storage"
+  namespace: "core_experiments_team_internal"
+  bug: "370499640"
+  description: "When enabled, tools read directly from the new aconfig storage."
+}
+
+flag {
+  name: "tools_read_from_new_storage_bugfix"
+  namespace: "core_experiments_team_internal"
+  bug: "370499640"
+  description: "When enabled, tools read directly from the new aconfig storage."
+  metadata {
+    purpose: PURPOSE_BUGFIX
+  }
+}
