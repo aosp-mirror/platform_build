@@ -284,6 +284,9 @@ _product_list_vars += PRODUCT_EXTRA_VNDK_VERSIONS
 # Whether APEX should be compressed or not
 _product_single_value_vars += PRODUCT_COMPRESSED_APEX
 
+# Default fs type for APEX payload image (apex_payload.img)
+_product_single_value_vars += PRODUCT_DEFAULT_APEX_PAYLOAD_TYPE
+
 # VNDK version of product partition. It can be 'current' if the product
 # partitions uses PLATFORM_VNDK_VERSION.
 _product_single_value_vars += PRODUCT_PRODUCT_VNDK_VERSION
@@ -366,6 +369,8 @@ _product_single_value_vars += PRODUCT_BUILD_DEBUG_VENDOR_BOOT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VBMETA_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_SUPER_EMPTY_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_PVMFW_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_DESKTOP_RECOVERY_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_DESKTOP_UPDATE_IMAGE
 
 # List of boot jars delivered via updatable APEXes, following the same format as
 # PRODUCT_BOOT_JARS.
@@ -389,20 +394,6 @@ _product_single_value_vars += PRODUCT_OTA_FORCE_NON_AB_PACKAGE
 
 # If set, Java module in product partition cannot use hidden APIs.
 _product_single_value_vars += PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE
-
-# If set, only java_sdk_library can be used at inter-partition dependency.
-# Note: Build error if BOARD_VNDK_VERSION is not set while
-#       PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY is true, because
-#       PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY has no meaning if
-#       BOARD_VNDK_VERSION is not set.
-# Note: When PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE is not set, there are
-#       no restrictions at dependency between system and product partition.
-_product_single_value_vars += PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY
-
-# Allowlist for PRODUCT_ENFORCE_INTER_PARTITION_JAVA_SDK_LIBRARY option.
-# Listed modules are allowed at inter-partition dependency even if it isn't
-# a java_sdk_library module.
-_product_list_vars += PRODUCT_INTER_PARTITION_JAVA_LIBRARY_ALLOWLIST
 
 # Install a copy of the debug policy to the system_ext partition, and allow
 # init-second-stage to load debug policy from system_ext.
@@ -436,8 +427,9 @@ _product_single_value_vars += PRODUCT_MEMCG_V2_FORCE_ENABLED
 # If true, the cgroup v2 hierarchy will be split into apps/system subtrees
 _product_single_value_vars += PRODUCT_CGROUP_V2_SYS_APP_ISOLATION_ENABLED
 
-# List of .json files to be merged/compiled into vendor/etc/linker.config.pb
+# List of .json files to be merged/compiled into vendor/etc/linker.config.pb and product/etc/linker.config.pb
 _product_list_vars += PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS
+_product_list_vars += PRODUCT_PRODUCT_LINKER_CONFIG_FRAGMENTS
 
 # Whether to use userfaultfd GC.
 # Possible values are:
@@ -493,8 +485,22 @@ _product_single_value_vars += PRODUCT_16K_DEVELOPER_OPTION
 # by this flag.
 _product_single_value_vars += PRODUCT_NOT_DEBUGGABLE_IN_USERDEBUG
 
+# If set, the default value of the versionName of apps will include the build number.
+_product_single_value_vars += PRODUCT_BUILD_APPS_WITH_BUILD_NUMBER
+
 # If set, build would generate system image from Soong-defined module.
 _product_single_value_vars += PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE
+
+# List of stub libraries specific to the product that are already present in the system image and
+# should be included in the system_linker_config.
+_product_list_vars += PRODUCT_EXTRA_STUB_LIBRARIES
+
+# If set to true, all Android.mk files will be ignored.
+_product_single_value_vars += PRODUCT_IGNORE_ALL_ANDROIDMK
+# When PRODUCT_IGNORE_ALL_ANDROIDMK is set to true, this variable will be used to allow some Android.mk files.
+_product_list_vars += PRODUCT_ALLOWED_ANDROIDMK_FILES
+# When PRODUCT_IGNORE_ALL_ANDROIDMK is set to true, path of file that contains a list of allowed Android.mk files
+_product_single_value_vars += PRODUCT_ANDROIDMK_ALLOWLIST_FILE
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)

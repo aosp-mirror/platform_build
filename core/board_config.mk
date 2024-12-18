@@ -27,6 +27,7 @@ _board_strip_readonly_list += BOARD_INSTALLER_CMDLINE
 _board_strip_readonly_list += BOARD_KERNEL_CMDLINE
 _board_strip_readonly_list += BOARD_BOOT_HEADER_VERSION
 _board_strip_readonly_list += BOARD_BOOTCONFIG
+_board_strip_readonly_list += BOARD_BOOTCONFIG_FILE
 _board_strip_readonly_list += BOARD_KERNEL_BASE
 _board_strip_readonly_list += BOARD_USES_GENERIC_AUDIO
 _board_strip_readonly_list += BOARD_USES_RECOVERY_AS_BOOT
@@ -237,6 +238,7 @@ else
   .KATI_READONLY := TARGET_DEVICE_DIR
 endif
 
+$(call dump-phase-start,BOARD,,,, build/make/core/board_config.mk)
 ifndef RBC_PRODUCT_CONFIG
 include $(board_config_mk)
 else
@@ -261,6 +263,7 @@ else
 
   include $(OUT_DIR)/rbc/rbc_board_config_results.mk
 endif
+$(call dump-phase-end, build/make/core/board_config.mk)
 
 ifneq (,$(and $(TARGET_ARCH),$(TARGET_ARCH_SUITE)))
   $(error $(board_config_mk) erroneously sets both TARGET_ARCH and TARGET_ARCH_SUITE)
@@ -288,6 +291,7 @@ $(foreach var,$(_board_true_false_vars), \
 include $(BUILD_SYSTEM)/board_config_wifi.mk
 
 # Set up soong config for "soong_config_value_variable".
+-include hardware/interfaces/configstore/1.1/default/surfaceflinger.mk
 -include vendor/google/build/soong/soong_config_namespace/camera.mk
 
 # Default *_CPU_VARIANT_RUNTIME to CPU_VARIANT if unspecified.
@@ -309,9 +313,10 @@ endif
 .KATI_READONLY := $(_board_strip_readonly_list)
 
 INTERNAL_KERNEL_CMDLINE := $(BOARD_KERNEL_CMDLINE)
-ifneq (,$(BOARD_BOOTCONFIG))
+ifneq (,$(BOARD_BOOTCONFIG)$(BOARD_BOOTCONFIG_FILE))
   INTERNAL_KERNEL_CMDLINE += bootconfig
   INTERNAL_BOOTCONFIG := $(BOARD_BOOTCONFIG)
+  INTERNAL_BOOTCONFIG_FILE := $(BOARD_BOOTCONFIG_FILE)
 endif
 
 ifneq ($(filter %64,$(TARGET_ARCH)),)
@@ -919,6 +924,18 @@ ifeq ($(PRODUCT_BUILD_PVMFW_IMAGE),true)
   BOARD_USES_PVMFWIMAGE := true
 endif
 .KATI_READONLY := BOARD_USES_PVMFWIMAGE
+
+BOARD_USES_DESKTOP_RECOVERY_IMAGE :=
+ifeq ($(PRODUCT_BUILD_DESKTOP_RECOVERY_IMAGE),true)
+  BOARD_USES_DESKTOP_RECOVERY_IMAGE := true
+endif
+.KATI_READONLY := BOARD_USES_DESKTOP_RECOVERY_IMAGE
+
+BOARD_USES_DESKTOP_UPDATE_IMAGE :=
+ifeq ($(PRODUCT_BUILD_DESKTOP_UPDATE_IMAGE),true)
+  BOARD_USES_DESKTOP_UPDATE_IMAGE := true
+endif
+.KATI_READONLY := BOARD_USES_DESKTOP_UPDATE_IMAGE
 
 ###########################################
 # Ensure consistency among TARGET_RECOVERY_UPDATER_LIBS, AB_OTA_UPDATER, and PRODUCT_OTA_FORCE_NON_AB_PACKAGE.

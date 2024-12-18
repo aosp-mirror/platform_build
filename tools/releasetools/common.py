@@ -3238,7 +3238,9 @@ class File(object):
     return t
 
   def WriteToDir(self, d):
-    with open(os.path.join(d, self.name), "wb") as fp:
+    output_path = os.path.join(d, self.name)
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, "wb") as fp:
       fp.write(self.data)
 
   def AddToZip(self, z, compression=None):

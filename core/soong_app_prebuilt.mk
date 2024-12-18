@@ -29,16 +29,6 @@ full_classes_pre_proguard_jar := $(intermediates.COMMON)/classes-pre-proguard.ja
 full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
 
 
-# Use the Soong output as the checkbuild target instead of LOCAL_BUILT_MODULE
-# to avoid checkbuilds making an extra copy of every module.
-LOCAL_CHECKED_MODULE := $(LOCAL_PREBUILT_MODULE_FILE)
-LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_CLASSES_JAR)
-LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_HEADER_JAR)
-LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_FULL_MANIFEST_FILE)
-LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_DEXPREOPT_CONFIG)
-LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE)
-LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_DEX_JAR)
-
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
@@ -233,30 +223,6 @@ my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)
 my_common := COMMON
 include $(BUILD_SYSTEM)/link_type.mk
 endif # !LOCAL_IS_HOST_MODULE
-
-ifeq (,$(filter tests,$(LOCAL_MODULE_TAGS)))
-  ifdef LOCAL_SOONG_DEVICE_RRO_DIRS
-    $(call append_enforce_rro_sources, \
-        $(my_register_name), \
-        false, \
-        $(LOCAL_FULL_MANIFEST_FILE), \
-        $(if $(LOCAL_EXPORT_PACKAGE_RESOURCES),true,false), \
-        $(LOCAL_SOONG_DEVICE_RRO_DIRS), \
-        vendor \
-    )
-  endif
-
-  ifdef LOCAL_SOONG_PRODUCT_RRO_DIRS
-    $(call append_enforce_rro_sources, \
-        $(my_register_name), \
-        false, \
-        $(LOCAL_FULL_MANIFEST_FILE), \
-        $(if $(LOCAL_EXPORT_PACKAGE_RESOURCES),true,false), \
-        $(LOCAL_SOONG_PRODUCT_RRO_DIRS), \
-        product \
-    )
-  endif
-endif
 
 ifdef LOCAL_PREBUILT_COVERAGE_ARCHIVE
   my_coverage_dir := $(TARGET_OUT_COVERAGE)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))

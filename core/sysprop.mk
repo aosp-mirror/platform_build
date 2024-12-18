@@ -122,11 +122,19 @@ $(2): $(POST_PROCESS_PROPS) $(INTERNAL_BUILD_ID_MAKEFILE) $(3) $(6) $(BUILT_KERN
 ifneq ($(strip $(7)), true)
 	$(hide) $$(call generate-common-build-props,$(call to-lower,$(strip $(1))),$$@)
 endif
+        # Make and Soong use different intermediate files to build vendor/build.prop.
+        # Although the sysprop contents are same, the absolute paths of android_info.prop are different.
+        # Print the filename for the intermediate files (files in OUT_DIR).
+        # This helps with validating mk->soong migration of android partitions.
 	$(hide) $(foreach file,$(strip $(3)),\
 	    if [ -f "$(file)" ]; then\
 	        echo "" >> $$@;\
 	        echo "####################################" >> $$@;\
-	        echo "# from $(file)" >> $$@;\
+	        $(if $(filter $(OUT_DIR)/%,$(file)), \
+		echo "# from $(notdir $(file))" >> $$@;\
+		,\
+		echo "# from $(file)" >> $$@;\
+		)\
 	        echo "####################################" >> $$@;\
 	        cat $(file) >> $$@;\
 	    fi;)
@@ -151,61 +159,6 @@ endif
 
 $(call declare-1p-target,$(2))
 endef
-
-# -----------------------------------------------------------------
-# Define fingerprint, thumbprint, and version tags for the current build
-#
-# BUILD_VERSION_TAGS is a comma-separated list of tags chosen by the device
-# implementer that further distinguishes the build. It's basically defined
-# by the device implementer. Here, we are adding a mandatory tag that
-# identifies the signing config of the build.
-BUILD_VERSION_TAGS := $(BUILD_VERSION_TAGS)
-ifeq ($(TARGET_BUILD_TYPE),debug)
-  BUILD_VERSION_TAGS += debug
-endif
-# The "test-keys" tag marks builds signed with the old test keys,
-# which are available in the SDK.  "dev-keys" marks builds signed with
-# non-default dev keys (usually private keys from a vendor directory).
-# Both of these tags will be removed and replaced with "release-keys"
-# when the target-files is signed in a post-build step.
-ifeq ($(DEFAULT_SYSTEM_DEV_CERTIFICATE),build/make/target/product/security/testkey)
-BUILD_KEYS := test-keys
-else
-BUILD_KEYS := dev-keys
-endif
-BUILD_VERSION_TAGS += $(BUILD_KEYS)
-BUILD_VERSION_TAGS := $(subst $(space),$(comma),$(sort $(BUILD_VERSION_TAGS)))
-
-# BUILD_FINGERPRINT is used used to uniquely identify the combined build and
-# product; used by the OTA server.
-ifeq (,$(strip $(BUILD_FINGERPRINT)))
-  BUILD_FINGERPRINT := $(PRODUCT_BRAND)/$(TARGET_PRODUCT)/$(TARGET_DEVICE):$(PLATFORM_VERSION)/$(BUILD_ID)/$(BUILD_NUMBER_FROM_FILE):$(TARGET_BUILD_VARIANT)/$(BUILD_VERSION_TAGS)
-endif
-
-BUILD_FINGERPRINT_FILE := $(PRODUCT_OUT)/build_fingerprint.txt
-ifneq (,$(shell mkdir -p $(PRODUCT_OUT) && echo $(BUILD_FINGERPRINT) >$(BUILD_FINGERPRINT_FILE) && grep " " $(BUILD_FINGERPRINT_FILE)))
-  $(error BUILD_FINGERPRINT cannot contain spaces: "$(file <$(BUILD_FINGERPRINT_FILE))")
-endif
-BUILD_FINGERPRINT_FROM_FILE := $$(cat $(BUILD_FINGERPRINT_FILE))
-# unset it for safety.
-BUILD_FINGERPRINT :=
-
-# BUILD_THUMBPRINT is used to uniquely identify the system build; used by the
-# OTA server. This purposefully excludes any product-specific variables.
-ifeq (,$(strip $(BUILD_THUMBPRINT)))
-  BUILD_THUMBPRINT := $(PLATFORM_VERSION)/$(BUILD_ID)/$(BUILD_NUMBER_FROM_FILE):$(TARGET_BUILD_VARIANT)/$(BUILD_VERSION_TAGS)
-endif
-
-BUILD_THUMBPRINT_FILE := $(PRODUCT_OUT)/build_thumbprint.txt
-ifeq ($(strip $(HAS_BUILD_NUMBER)),true)
-$(BUILD_THUMBPRINT_FILE): $(BUILD_NUMBER_FILE)
-endif
-ifneq (,$(shell mkdir -p $(PRODUCT_OUT) && echo $(BUILD_THUMBPRINT) >$(BUILD_THUMBPRINT_FILE) && grep " " $(BUILD_THUMBPRINT_FILE)))
-  $(error BUILD_THUMBPRINT cannot contain spaces: "$(file <$(BUILD_THUMBPRINT_FILE))")
-endif
-# unset it for safety.
-BUILD_THUMBPRINT_FILE :=
-BUILD_THUMBPRINT :=
 
 KNOWN_OEM_THUMBPRINT_PROPERTIES := \
     ro.product.brand \
@@ -281,51 +234,17 @@ INSTALLED_ODM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM)/etc/build.prop
 
 # ----------------------------------------------------------------
 # vendor_dlkm/etc/build.prop
-#
+# odm_dlkm/etc/build.prop
+# system_dlkm/build.prop
+# These are built by Soong. See build/soong/Android.bp
 
 INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET := $(TARGET_OUT_VENDOR_DLKM)/etc/build.prop
-$(eval $(call build-properties,\
-    vendor_dlkm,\
-    $(INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET),\
-    $(empty),\
-    $(empty),\
-    $(empty),\
-    $(empty),\
-    $(empty)))
-
-$(eval $(call declare-1p-target,$(INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET)))
-
-# ----------------------------------------------------------------
-# odm_dlkm/etc/build.prop
-#
-
 INSTALLED_ODM_DLKM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM_DLKM)/etc/build.prop
-$(eval $(call build-properties,\
-    odm_dlkm,\
-    $(INSTALLED_ODM_DLKM_BUILD_PROP_TARGET),\
-    $(empty),\
-    $(empty),\
-    $(empty),\
-    $(empty),\
-    $(empty)))
-
-$(eval $(call declare-1p-target,$(INSTALLED_ODM_DLKM_BUILD_PROP_TARGET)))
-
-# ----------------------------------------------------------------
-# system_dlkm/build.prop
-#
-
 INSTALLED_SYSTEM_DLKM_BUILD_PROP_TARGET := $(TARGET_OUT_SYSTEM_DLKM)/etc/build.prop
-$(eval $(call build-properties,\
-    system_dlkm,\
-    $(INSTALLED_SYSTEM_DLKM_BUILD_PROP_TARGET),\
-    $(empty),\
-    $(empty),\
-    $(empty),\
-    $(empty),\
-    $(empty)))
-
-$(eval $(call declare-1p-target,$(INSTALLED_SYSTEM_DLKM_BUILD_PROP_TARGET)))
+ALL_DEFAULT_INSTALLED_MODULES += \
+  $(INSTALLED_VENDOR_DLKM_BUILD_PROP_TARGET) \
+  $(INSTALLED_ODM_DLKM_BUILD_PROP_TARGET) \
+  $(INSTALLED_SYSTEM_DLKM_BUILD_PROP_TARGET) \
 
 # -----------------------------------------------------------------
 # system_ext/etc/build.prop
@@ -335,22 +254,12 @@ $(eval $(call declare-1p-target,$(INSTALLED_SYSTEM_DLKM_BUILD_PROP_TARGET)))
 
 INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET := $(TARGET_OUT_SYSTEM_EXT)/etc/build.prop
 
-# ----------------------------------------------------------------
-# ramdisk/boot/etc/build.prop
-#
-
 RAMDISK_BUILD_PROP_REL_PATH := system/etc/ramdisk/build.prop
+ifeq (true,$(BOARD_USES_RECOVERY_AS_BOOT))
+INSTALLED_RAMDISK_BUILD_PROP_TARGET := $(TARGET_RECOVERY_ROOT_OUT)/first_stage_ramdisk/$(RAMDISK_BUILD_PROP_REL_PATH)
+else
 INSTALLED_RAMDISK_BUILD_PROP_TARGET := $(TARGET_RAMDISK_OUT)/$(RAMDISK_BUILD_PROP_REL_PATH)
-$(eval $(call build-properties,\
-    bootimage,\
-    $(INSTALLED_RAMDISK_BUILD_PROP_TARGET),\
-    $(empty),\
-    $(empty),\
-    $(empty),\
-    $(empty),\
-    $(empty)))
-
-$(eval $(call declare-1p-target,$(INSTALLED_RAMDISK_BUILD_PROP_TARGET)))
+endif
 
 ALL_INSTALLED_BUILD_PROP_FILES := \
   $(INSTALLED_BUILD_PROP_TARGET) \

@@ -1,0 +1,33 @@
+package: "com.android.aconfig.flags"
+container: "system"
+
+flag {
+  name: "enable_only_new_storage"
+  namespace: "core_experiments_team_internal"
+  bug: "312235596"
+  description: "When enabled, aconfig flags are read from the new aconfig storage only."
+}
+
+flag {
+  name: "enable_aconfigd_from_mainline"
+  namespace: "core_experiments_team_internal"
+  bug: "369808805"
+  description: "When enabled, launch aconfigd from config infra module."
+}
+
+flag {
+  name: "tools_read_from_new_storage"
+  namespace: "core_experiments_team_internal"
+  bug: "370499640"
+  description: "When enabled, tools read directly from the new aconfig storage."
+}
+
+flag {
+  name: "tools_read_from_new_storage_bugfix"
+  namespace: "core_experiments_team_internal"
+  bug: "370499640"
+  description: "When enabled, tools read directly from the new aconfig storage."
+  metadata {
+    purpose: PURPOSE_BUGFIX
+  }
+}

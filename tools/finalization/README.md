@@ -19,3 +19,8 @@ Performed in build targets in Finalization branches.
 
 ## Utility:
 [Full cleanup](./cleanup.sh). Remove all local changes and switch each project into head-less state. This is the best state to sync/rebase/finalize the branch.
+
+## Dry run:
+[Full cleanup](./dryrun-cleanup.sh). Remove all local changes and switch each project into head-less state. Also removes "DryRun" branches.
+[SDK](./dryrun-step-1.sh). Perform SDK finalization and upload the CLs to Gerrit.
+[SDK and REL](./dryrun-step-1-and-2.sh). Perform SDK finalization, plus all necessary changes to switch configuration to REL, and upload the CLs to Gerrit.

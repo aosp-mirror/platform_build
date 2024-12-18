@@ -56,7 +56,7 @@ BUILD_DATETIME_FILE := $(OUT_DIR)/build_date.txt
 
 # Escape quotation marks for CSV, and wraps in quotation marks.
 define escape-for-csv
-"$(subst ","",$1)"
+"$(subst ","",$(subst $(newline), ,$1))"
 endef
 
 # Args:
@@ -68,7 +68,7 @@ endef
 # Args:
 #   $(1): include stack
 define dump-import-done
-$(eval $(file >> $(DUMPCONFIG_FILE),imported,$(strip $(1))))
+$(eval $(file >> $(DUMPCONFIG_FILE),imported,$(strip $(1)),$(filter-out $(1),$(MAKEFILE_LIST))))
 endef
 
 # Args:

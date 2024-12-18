@@ -36,10 +36,10 @@ rust_test_host {
         "librand",
     ],
     data: [
-        "tests/package.map",
-        "tests/flag.map",
-        "tests/flag.val",
-        "tests/flag.info",
+        "tests/data/v1/package_v1.map",
+        "tests/data/v1/flag_v1.map",
+        "tests/data/v1/flag_v1.val",
+        "tests/data/v1/flag_v1.info",
     ],
 }
 
@@ -107,31 +107,12 @@ cc_library {
     afdo: true,
 }
 
-soong_config_module_type {
-    name: "aconfig_lib_cc_shared_link_defaults",
-    module_type: "cc_defaults",
-    config_namespace: "Aconfig",
-    bool_variables: [
-        "read_from_new_storage",
-    ],
-    properties: [
-        "shared_libs",
-    ],
-}
-
-soong_config_bool_variable {
-    name: "read_from_new_storage",
-}
-
-aconfig_lib_cc_shared_link_defaults {
+cc_defaults {
     name: "aconfig_lib_cc_shared_link.defaults",
-    soong_config_variables: {
-        read_from_new_storage: {
-            shared_libs: [
-                "libaconfig_storage_read_api_cc",
-            ],
-        },
-    },
+    shared_libs: select(release_flag("RELEASE_READ_FROM_NEW_STORAGE"), {
+        true: ["libaconfig_storage_read_api_cc"],
+        default: [],
+    }),
 }
 
 cc_defaults {
@@ -147,6 +128,7 @@ rust_ffi_shared {
     crate_name: "aconfig_storage_read_api_rust_jni",
     srcs: ["srcs/lib.rs"],
     rustlibs: [
+        "libaconfig_storage_file",
         "libaconfig_storage_read_api",
         "libanyhow",
         "libjni",
@@ -172,37 +154,17 @@ java_library {
 java_library {
     name: "aconfig_storage_reader_java",
     srcs: [
-        "srcs/android/aconfig/storage/StorageInternalReader.java",
+        "srcs/android/os/flagging/*.java",
     ],
     libs: [
         "unsupportedappusage",
-        "strict_mode_stub",
     ],
     static_libs: [
         "aconfig_storage_file_java",
     ],
-    sdk_version: "core_current",
-    host_supported: true,
-    min_sdk_version: "29",
-    apex_available: [
-        "//apex_available:platform",
-        "//apex_available:anyapex",
+    sdk_version: "current",
+    visibility: [
+        "//frameworks/base",
+        "//build/make/tools/aconfig/aconfig_storage_read_api/tests",
     ],
-}
-
-java_library {
-    name: "aconfig_storage_reader_java_none",
-    srcs: [
-        "srcs/android/aconfig/storage/StorageInternalReader.java",
-    ],
-    libs: [
-        "unsupportedappusage-sdk-none",
-        "fake_device_config",
-    ],
-    static_libs: [
-        "aconfig_storage_file_java_none",
-    ],
-    sdk_version: "none",
-    system_modules: "core-all-system-modules",
-    host_supported: true,
 }

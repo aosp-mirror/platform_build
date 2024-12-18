@@ -18,7 +18,7 @@
 
 use aconfig_storage_file::{
     read_u8_from_bytes, AconfigStorageError, FlagInfoBit, FlagInfoHeader, FlagValueType,
-    FILE_VERSION,
+    MAX_SUPPORTED_FILE_VERSION,
 };
 use anyhow::anyhow;
 
@@ -28,11 +28,11 @@ fn get_flag_info_offset(
     flag_index: u32,
 ) -> Result<usize, AconfigStorageError> {
     let interpreted_header = FlagInfoHeader::from_bytes(buf)?;
-    if interpreted_header.version > FILE_VERSION {
+    if interpreted_header.version > MAX_SUPPORTED_FILE_VERSION {
         return Err(AconfigStorageError::HigherStorageFileVersion(anyhow!(
             "Cannot write to storage file with a higher version of {} with lib version {}",
             interpreted_header.version,
-            FILE_VERSION
+            MAX_SUPPORTED_FILE_VERSION
         )));
     }
 
@@ -94,13 +94,13 @@ pub fn update_flag_has_local_override(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::test_utils::create_test_flag_info_list;
+    use aconfig_storage_file::{test_utils::create_test_flag_info_list, DEFAULT_FILE_VERSION};
     use aconfig_storage_read_api::flag_info_query::find_flag_attribute;
 
     #[test]
     // this test point locks down has server override update
     fn test_update_flag_has_server_override() {
-        let flag_info_list = create_test_flag_info_list();
+        let flag_info_list = create_test_flag_info_list(DEFAULT_FILE_VERSION);
         let mut buf = flag_info_list.into_bytes();
         for i in 0..flag_info_list.header.num_flags {
             update_flag_has_server_override(&mut buf, FlagValueType::Boolean, i, true).unwrap();
@@ -115,7 +115,7 @@ mod tests {
     #[test]
     // this test point locks down has local override update
     fn test_update_flag_has_local_override() {
-        let flag_info_list = create_test_flag_info_list();
+        let flag_info_list = create_test_flag_info_list(DEFAULT_FILE_VERSION);
         let mut buf = flag_info_list.into_bytes();
         for i in 0..flag_info_list.header.num_flags {
             update_flag_has_local_override(&mut buf, FlagValueType::Boolean, i, true).unwrap();

@@ -17,7 +17,7 @@
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
     abx \
-    aconfigd \
+    aconfigd-system \
     adbd_system_api \
     aflags \
     am \
@@ -83,7 +83,6 @@ PRODUCT_PACKAGES += \
     CtsShimPrivPrebuilt \
     debuggerd\
     device_config \
-    DeviceDiagnostics \
     dmctl \
     dnsmasq \
     dmesgd \
@@ -179,6 +178,7 @@ PRODUCT_PACKAGES += \
     libmedia \
     libmedia_jni \
     libmediandk \
+    libmonkey_jni \
     libmtp \
     libnetd_client \
     libnetlink \
@@ -205,6 +205,7 @@ PRODUCT_PACKAGES += \
     libstdc++ \
     libsysutils \
     libui \
+    libuprobestats_client \
     libusbhost \
     libutils \
     libvintf_jni \
@@ -212,6 +213,7 @@ PRODUCT_PACKAGES += \
     libwilhelm \
     linker \
     llkd \
+    llndk_libs \
     lmkd \
     LocalTransport \
     locksettings \
@@ -247,6 +249,7 @@ PRODUCT_PACKAGES += \
     pintool \
     platform.xml \
     pm \
+    prefetch \
     preinstalled-packages-asl-files.xml \
     preinstalled-packages-platform.xml \
     preinstalled-packages-strict-signature.xml \
@@ -275,7 +278,6 @@ PRODUCT_PACKAGES += \
     Shell \
     shell_and_utilities_system \
     sm \
-    snapshotctl \
     snapuserd \
     storaged \
     surfaceflinger \
@@ -288,11 +290,11 @@ PRODUCT_PACKAGES += \
     tombstoned \
     traced \
     traced_probes \
+    tradeinmode \
     tune2fs \
     uiautomator \
     uinput \
     uncrypt \
-    uprobestats \
     usbd \
     vdc \
     vintf \
@@ -307,6 +309,17 @@ PRODUCT_PACKAGES += \
 ifeq ($(RELEASE_CRASHRECOVERY_MODULE),true)
   PRODUCT_PACKAGES += \
         com.android.crashrecovery \
+
+endif
+
+# When we release uprobestats module
+ifeq ($(RELEASE_UPROBESTATS_MODULE),true)
+    PRODUCT_PACKAGES += \
+        com.android.uprobestats \
+
+else
+    PRODUCT_PACKAGES += \
+        uprobestats \
 
 endif
 
@@ -344,6 +357,23 @@ endif
 ifeq ($(RELEASE_USE_WEBVIEW_BOOTSTRAP_MODULE),true)
     PRODUCT_PACKAGES += \
         com.android.webview.bootstrap
+endif
+
+# Only add the jar when it is not in the Tethering module. Otherwise,
+# it will be added via com.android.tethering
+ifneq ($(RELEASE_MOVE_VCN_TO_MAINLINE),true)
+    PRODUCT_PACKAGES += \
+        framework-connectivity-b
+endif
+
+ifneq (,$(RELEASE_RANGING_STACK))
+    PRODUCT_PACKAGES += \
+        com.android.ranging
+endif
+
+ifeq ($(RELEASE_MEMORY_MANAGEMENT_DAEMON),true)
+  PRODUCT_PACKAGES += \
+        mm_daemon
 endif
 
 # VINTF data for system image
@@ -420,6 +450,7 @@ PRODUCT_HOST_PACKAGES += \
     lpdump \
     mke2fs \
     mkfs.erofs \
+    pbtombstone \
     resize2fs \
     sgdisk \
     sqlite3 \
@@ -466,7 +497,6 @@ PRODUCT_PACKAGES += \
 
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
-    adb_keys \
     adevice_fingerprint \
     arping \
     dmuserd \
@@ -488,6 +518,7 @@ PRODUCT_PACKAGES_DEBUG := \
     record_binder \
     servicedispatcher \
     showmap \
+    snapshotctl \
     sqlite3 \
     ss \
     start_with_lockagent \
@@ -534,3 +565,4 @@ $(call inherit-product,$(SRC_TARGET_DIR)/product/updatable_apex.mk)
 
 $(call soong_config_set, bionic, large_system_property_node, $(RELEASE_LARGE_SYSTEM_PROPERTY_NODE))
 $(call soong_config_set, Aconfig, read_from_new_storage, $(RELEASE_READ_FROM_NEW_STORAGE))
+$(call soong_config_set, SettingsLib, legacy_avatar_picker_app_enabled, $(if $(RELEASE_AVATAR_PICKER_APP),,true))

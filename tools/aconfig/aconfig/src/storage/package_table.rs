@@ -18,14 +18,13 @@ use anyhow::Result;
 
 use aconfig_storage_file::{
     get_table_size, PackageTable, PackageTableHeader, PackageTableNode, StorageFileType,
-    FILE_VERSION,
 };
 
 use crate::storage::FlagPackage;
 
-fn new_header(container: &str, num_packages: u32) -> PackageTableHeader {
+fn new_header(container: &str, num_packages: u32, version: u32) -> PackageTableHeader {
     PackageTableHeader {
-        version: FILE_VERSION,
+        version,
         container: String::from(container),
         file_type: StorageFileType::PackageMap as u8,
         file_size: 0,
@@ -48,6 +47,7 @@ impl PackageTableNodeWrapper {
         let node = PackageTableNode {
             package_name: String::from(package.package_name),
             package_id: package.package_id,
+            fingerprint: package.fingerprint,
             boolean_start_index: package.boolean_start_index,
             next_offset: None,
         };
@@ -56,20 +56,26 @@ impl PackageTableNodeWrapper {
     }
 }
 
-pub fn create_package_table(container: &str, packages: &[FlagPackage]) -> Result<PackageTable> {
+pub fn create_package_table(
+    container: &str,
+    packages: &[FlagPackage],
+    version: u32,
+) -> Result<PackageTable> {
     // create table
     let num_packages = packages.len() as u32;
     let num_buckets = get_table_size(num_packages)?;
-    let mut header = new_header(container, num_packages);
+    let mut header = new_header(container, num_packages, version);
     let mut buckets = vec![None; num_buckets as usize];
-    let mut node_wrappers: Vec<_> =
-        packages.iter().map(|pkg| PackageTableNodeWrapper::new(pkg, num_buckets)).collect();
+    let mut node_wrappers: Vec<_> = packages
+        .iter()
+        .map(|pkg: &FlagPackage<'_>| PackageTableNodeWrapper::new(pkg, num_buckets))
+        .collect();
 
     // initialize all header fields
     header.bucket_offset = header.into_bytes().len() as u32;
     header.node_offset = header.bucket_offset + num_buckets * 4;
     header.file_size = header.node_offset
-        + node_wrappers.iter().map(|x| x.node.into_bytes().len()).sum::<usize>() as u32;
+        + node_wrappers.iter().map(|x| x.node.into_bytes(version).len()).sum::<usize>() as u32;
 
     // sort node_wrappers by bucket index for efficiency
     node_wrappers.sort_by(|a, b| a.bucket_index.cmp(&b.bucket_index));
@@ -87,7 +93,7 @@ pub fn create_package_table(container: &str, packages: &[FlagPackage]) -> Result
         if buckets[node_bucket_idx as usize].is_none() {
             buckets[node_bucket_idx as usize] = Some(offset);
         }
-        offset += node_wrappers[i].node.into_bytes().len() as u32;
+        offset += node_wrappers[i].node.into_bytes(version).len() as u32;
 
         if let Some(index) = next_node_bucket_idx {
             if index == node_bucket_idx {
@@ -106,21 +112,59 @@ pub fn create_package_table(container: &str, packages: &[FlagPackage]) -> Result
 
 #[cfg(test)]
 mod tests {
+    use aconfig_storage_file::{DEFAULT_FILE_VERSION, MAX_SUPPORTED_FILE_VERSION};
+
     use super::*;
     use crate::storage::{group_flags_by_package, tests::parse_all_test_flags};
 
-    pub fn create_test_package_table_from_source() -> Result<PackageTable> {
+    pub fn create_test_package_table_from_source(version: u32) -> Result<PackageTable> {
         let caches = parse_all_test_flags();
-        let packages = group_flags_by_package(caches.iter());
-        create_package_table("mockup", &packages)
+        let packages = group_flags_by_package(caches.iter(), version);
+        create_package_table("mockup", &packages, version)
     }
 
     #[test]
     // this test point locks down the table creation and each field
-    fn test_table_contents() {
-        let package_table = create_test_package_table_from_source();
-        assert!(package_table.is_ok());
-        let expected_package_table = aconfig_storage_file::test_utils::create_test_package_table();
-        assert_eq!(package_table.unwrap(), expected_package_table);
+    fn test_table_contents_default_version() {
+        let package_table_result = create_test_package_table_from_source(DEFAULT_FILE_VERSION);
+        assert!(package_table_result.is_ok());
+        let package_table = package_table_result.unwrap();
+
+        let expected_package_table =
+            aconfig_storage_file::test_utils::create_test_package_table(DEFAULT_FILE_VERSION);
+
+        assert_eq!(package_table.header, expected_package_table.header);
+        assert_eq!(package_table.buckets, expected_package_table.buckets);
+        for (node, expected_node) in
+            package_table.nodes.iter().zip(expected_package_table.nodes.iter())
+        {
+            assert_eq!(node.package_name, expected_node.package_name);
+            assert_eq!(node.package_id, expected_node.package_id);
+            assert_eq!(node.boolean_start_index, expected_node.boolean_start_index);
+            assert_eq!(node.next_offset, expected_node.next_offset);
+        }
+    }
+
+    #[test]
+    // this test point locks down the table creation and each field
+    fn test_table_contents_max_version() {
+        let package_table_result =
+            create_test_package_table_from_source(MAX_SUPPORTED_FILE_VERSION);
+        assert!(package_table_result.is_ok());
+        let package_table = package_table_result.unwrap();
+
+        let expected_package_table =
+            aconfig_storage_file::test_utils::create_test_package_table(MAX_SUPPORTED_FILE_VERSION);
+
+        assert_eq!(package_table.header, expected_package_table.header);
+        assert_eq!(package_table.buckets, expected_package_table.buckets);
+        for (node, expected_node) in
+            package_table.nodes.iter().zip(expected_package_table.nodes.iter())
+        {
+            assert_eq!(node.package_name, expected_node.package_name);
+            assert_eq!(node.package_id, expected_node.package_id);
+            assert_eq!(node.boolean_start_index, expected_node.boolean_start_index);
+            assert_eq!(node.next_offset, expected_node.next_offset);
+        }
     }
 }

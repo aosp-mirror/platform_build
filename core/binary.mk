@@ -174,7 +174,7 @@ my_allow_undefined_symbols := true
 endif
 endif
 
-my_ndk_sysroot_include :=
+my_ndk_sysroot :=
 my_ndk_sysroot_lib :=
 my_api_level := 10000
 
@@ -207,11 +207,9 @@ ifneq ($(LOCAL_SDK_VERSION),)
 
   my_built_ndk := $(SOONG_OUT_DIR)/ndk
   my_ndk_triple := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NDK_TRIPLE)
-  my_ndk_sysroot_include := \
-      $(my_built_ndk)/sysroot/usr/include \
-      $(my_built_ndk)/sysroot/usr/include/$(my_ndk_triple) \
+  my_ndk_sysroot := $(my_built_ndk)/sysroot
 
-  my_ndk_sysroot_lib := $(my_built_ndk)/sysroot/usr/lib/$(my_ndk_triple)/$(my_ndk_api)
+  my_ndk_sysroot_lib := $(my_ndk_sysroot)/usr/lib/$(my_ndk_triple)/$(my_ndk_api)
 
   # The bionic linker now has support for packed relocations and gnu style
   # hashes (which are much faster!), but shipping to older devices requires
@@ -330,17 +328,19 @@ ifneq ($(call module-in-vendor-or-product),)
   ifneq ($(LOCAL_IN_VENDOR),)
     # Vendor modules have LOCAL_IN_VENDOR
     my_cflags += -D__ANDROID_VENDOR__
-
-    ifeq ($(BOARD_API_LEVEL),)
-      # TODO(b/314036847): This is a fallback for UDC targets.
-      # This must be a build failure when UDC is no longer built from this source tree.
-      my_cflags += -D__ANDROID_VENDOR_API__=$(PLATFORM_SDK_VERSION)
-    else
-      my_cflags += -D__ANDROID_VENDOR_API__=$(BOARD_API_LEVEL)
-    endif
   else ifneq ($(LOCAL_IN_PRODUCT),)
     # Product modules have LOCAL_IN_PRODUCT
     my_cflags += -D__ANDROID_PRODUCT__
+  endif
+
+  # Define __ANDROID_VENDOR_API__ for both product and vendor variants because
+  # they both use the same LLNDK libraries.
+  ifeq ($(BOARD_API_LEVEL),)
+    # TODO(b/314036847): This is a fallback for UDC targets.
+    # This must be a build failure when UDC is no longer built from this source tree.
+    my_cflags += -D__ANDROID_VENDOR_API__=$(PLATFORM_SDK_VERSION)
+  else
+    my_cflags += -D__ANDROID_VENDOR_API__=$(BOARD_API_LEVEL)
   endif
 endif
 
@@ -1626,19 +1626,6 @@ my_ldlibs += $(my_cxx_ldlibs)
 ###########################################################
 ifndef LOCAL_IS_HOST_MODULE
 
-ifeq ($(call module-in-vendor-or-product),true)
-  my_target_global_c_includes :=
-  my_target_global_c_system_includes := $(TARGET_OUT_HEADERS)
-else ifdef LOCAL_SDK_VERSION
-  my_target_global_c_includes :=
-  my_target_global_c_system_includes := $(my_ndk_stl_include_path) $(my_ndk_sysroot_include)
-else
-  my_target_global_c_includes := $(SRC_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
-  my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
-endif
-
 my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CFLAGS)
 my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
 my_target_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
@@ -1653,6 +1640,22 @@ ifeq ($(my_use_clang_lld),true)
 else
   my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
 endif # my_use_clang_lld
+
+ifeq ($(call module-in-vendor-or-product),true)
+  my_target_global_c_includes :=
+  my_target_global_c_system_includes := $(TARGET_OUT_HEADERS)
+  my_target_global_cflags += -nostdlibinc
+else ifdef LOCAL_SDK_VERSION
+  my_target_global_c_includes :=
+  my_target_global_c_system_includes := $(my_ndk_stl_include_path)
+  my_target_global_cflags += --sysroot $(my_ndk_sysroot)
+else
+  my_target_global_c_includes := $(SRC_HEADERS) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
+  my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
+  my_target_global_cflags += -nostdlibinc
+endif
 
 my_target_triple := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)TRIPLE)
 ifndef LOCAL_IS_HOST_MODULE

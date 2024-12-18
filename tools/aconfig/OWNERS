@@ -1,7 +1,8 @@
-amhk@google.com
 dzshen@google.com
-jham@google.com
-joeo@google.com
 opg@google.com
 tedbauer@google.com
 zhidou@google.com
+
+amhk@google.com  #{LAST_RESORT_SUGGESTION}
+jham@google.com  #{LAST_RESORT_SUGGESTION}
+joeo@google.com  #{LAST_RESORT_SUGGESTION}
