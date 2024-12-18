@@ -45,7 +45,8 @@ class AconfigStorageTest : public ::testing::Test {
   }
 
   void SetUp() override {
-    auto const test_dir = android::base::GetExecutableDirectory();
+    auto const test_base_dir = android::base::GetExecutableDirectory();
+    auto const test_dir = test_base_dir + "/data/v1";
     storage_dir = std::string(root_dir.path);
     auto maps_dir = storage_dir + "/maps";
     auto boot_dir = storage_dir + "/boot";
@@ -55,10 +56,10 @@ class AconfigStorageTest : public ::testing::Test {
     flag_map = std::string(maps_dir) + "/mockup.flag.map";
     flag_val = std::string(boot_dir) + "/mockup.val";
     flag_info = std::string(boot_dir) + "/mockup.info";
-    copy_file(test_dir + "/package.map", package_map);
-    copy_file(test_dir + "/flag.map", flag_map);
-    copy_file(test_dir + "/flag.val", flag_val);
-    copy_file(test_dir + "/flag.info", flag_info);
+    copy_file(test_dir + "/package_v1.map", package_map);
+    copy_file(test_dir + "/flag_v1.map", flag_map);
+    copy_file(test_dir + "/flag_v1.val", flag_val);
+    copy_file(test_dir + "/flag_v1.info", flag_info);
   }
 
   void TearDown() override {

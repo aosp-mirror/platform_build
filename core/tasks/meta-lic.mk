@@ -225,3 +225,6 @@ $(eval $(call declare-1p-copy-files,packages/services/Car,))
 
 # Moved here from hardware/libhardware_legacy/Android.mk
 $(eval $(call declare-1p-copy-files,hardware/libhardware_legacy,))
+
+# Moved here from system/core/rootdir/Android.mk
+$(eval $(call declare-1p-copy-files,system/core/rootdir,))

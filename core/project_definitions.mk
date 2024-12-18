@@ -22,3 +22,6 @@
 # Include definitions for prebuilt SDK, if present.
 #
 -include prebuilts/sdk/current/definitions.mk
+
+# SDV-specific config.
+-include system/software_defined_vehicle/platform/config.mk

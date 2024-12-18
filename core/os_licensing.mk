@@ -17,12 +17,16 @@ $(eval $(call xml-notice-rule,$(target_notice_file_xml_gz),"System image",$(syst
 
 $(eval $(call text-notice-rule,$(target_notice_file_txt),"System image",$(system_notice_file_message),$(SYSTEM_NOTICE_DEPS),$(SYSTEM_NOTICE_DEPS)))
 
+ifneq ($(USE_SOONG_DEFINED_SYSTEM_IMAGE),true)
 $(installed_notice_html_or_xml_gz): $(target_notice_file_xml_gz)
 	$(copy-file-to-target)
 endif
+endif
 
 $(call declare-1p-target,$(target_notice_file_xml_gz))
+ifneq ($(USE_SOONG_DEFINED_SYSTEM_IMAGE),true)
 $(call declare-1p-target,$(installed_notice_html_or_xml_gz))
+endif
 endif
 
 .PHONY: vendorlicense

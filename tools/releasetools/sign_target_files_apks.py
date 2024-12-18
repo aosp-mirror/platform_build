@@ -184,6 +184,7 @@ import re
 import shutil
 import stat
 import sys
+import shlex
 import tempfile
 import zipfile
 from xml.etree import ElementTree
@@ -582,6 +583,24 @@ def IsBuildPropFile(filename):
         filename.endswith("/prop.default")
 
 
+def GetOtaSigningArgs():
+  args = []
+  if OPTIONS.package_key:
+    args.extend(["--package_key", OPTIONS.package_key])
+  if OPTIONS.payload_signer:
+    args.extend(["--payload_signer=" + OPTIONS.payload_signer])
+  if OPTIONS.payload_signer_args:
+    args.extend(["--payload_signer_args=" + shlex.join(OPTIONS.payload_signer_args)])
+  if OPTIONS.search_path:
+    args.extend(["--search_path", OPTIONS.search_path])
+  if OPTIONS.payload_signer_maximum_signature_size:
+    args.extend(["--payload_signer_maximum_signature_size",
+                OPTIONS.payload_signer_maximum_signature_size])
+  if OPTIONS.private_key_suffix:
+    args.extend(["--private_key_suffix", OPTIONS.private_key_suffix])
+  return args
+
+
 def RegenerateKernelPartitions(input_tf_zip: zipfile.ZipFile, output_tf_zip: zipfile.ZipFile, misc_info):
   """Re-generate boot and dtbo partitions using new signing configuration"""
   files_to_unzip = [
@@ -591,6 +610,7 @@ def RegenerateKernelPartitions(input_tf_zip: zipfile.ZipFile, output_tf_zip: zip
   else:
     common.UnzipToDir(input_tf_zip.filename, OPTIONS.input_tmp, files_to_unzip)
   unzip_dir = OPTIONS.input_tmp
+  os.makedirs(os.path.join(unzip_dir, "IMAGES"), exist_ok=True)
 
   boot_image = common.GetBootableImage(
       "IMAGES/boot.img", "boot.img", unzip_dir, "BOOT", misc_info)
@@ -647,9 +667,9 @@ def RegenerateBootOTA(input_tf_zip: zipfile.ZipFile, filename, input_ota):
       if os.path.exists(signed_16k_dtbo_image):
         signed_dtbo_image += ":" + signed_16k_dtbo_image
 
-
-  args = ["ota_from_raw_img", "--package_key", OPTIONS.package_key,
+  args = ["ota_from_raw_img",
           "--max_timestamp", timestamp, "--output", input_ota.name]
+  args.extend(GetOtaSigningArgs())
   if "dtbo" in partitions:
     args.extend(["--partition_name", "boot,dtbo",
                 signed_boot_image, signed_dtbo_image])

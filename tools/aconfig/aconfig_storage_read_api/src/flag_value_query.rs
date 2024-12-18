@@ -16,18 +16,20 @@
 
 //! flag value query module defines the flag value file read from mapped bytes
 
-use crate::{AconfigStorageError, FILE_VERSION};
-use aconfig_storage_file::{flag_value::FlagValueHeader, read_u8_from_bytes};
+use crate::AconfigStorageError;
+use aconfig_storage_file::{
+    flag_value::FlagValueHeader, read_u8_from_bytes, MAX_SUPPORTED_FILE_VERSION,
+};
 use anyhow::anyhow;
 
 /// Query flag value
 pub fn find_boolean_flag_value(buf: &[u8], flag_index: u32) -> Result<bool, AconfigStorageError> {
     let interpreted_header = FlagValueHeader::from_bytes(buf)?;
-    if interpreted_header.version > crate::FILE_VERSION {
+    if interpreted_header.version > MAX_SUPPORTED_FILE_VERSION {
         return Err(AconfigStorageError::HigherStorageFileVersion(anyhow!(
             "Cannot read storage file with a higher version of {} with lib version {}",
             interpreted_header.version,
-            FILE_VERSION
+            MAX_SUPPORTED_FILE_VERSION
         )));
     }
 
@@ -46,12 +48,12 @@ pub fn find_boolean_flag_value(buf: &[u8], flag_index: u32) -> Result<bool, Acon
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_storage_file::test_utils::create_test_flag_value_list;
+    use aconfig_storage_file::{test_utils::create_test_flag_value_list, DEFAULT_FILE_VERSION};
 
     #[test]
     // this test point locks down flag value query
     fn test_flag_value_query() {
-        let flag_value_list = create_test_flag_value_list().into_bytes();
+        let flag_value_list = create_test_flag_value_list(DEFAULT_FILE_VERSION).into_bytes();
         let baseline: Vec<bool> = vec![false, true, true, false, true, true, true, true];
         for (offset, expected_value) in baseline.into_iter().enumerate() {
             let flag_value = find_boolean_flag_value(&flag_value_list[..], offset as u32).unwrap();
@@ -62,7 +64,7 @@ mod tests {
     #[test]
     // this test point locks down query beyond the end of boolean section
     fn test_boolean_out_of_range() {
-        let flag_value_list = create_test_flag_value_list().into_bytes();
+        let flag_value_list = create_test_flag_value_list(DEFAULT_FILE_VERSION).into_bytes();
         let error = find_boolean_flag_value(&flag_value_list[..], 8).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
@@ -73,16 +75,16 @@ mod tests {
     #[test]
     // this test point locks down query error when file has a higher version
     fn test_higher_version_storage_file() {
-        let mut value_list = create_test_flag_value_list();
-        value_list.header.version = crate::FILE_VERSION + 1;
+        let mut value_list = create_test_flag_value_list(DEFAULT_FILE_VERSION);
+        value_list.header.version = MAX_SUPPORTED_FILE_VERSION + 1;
         let flag_value = value_list.into_bytes();
         let error = find_boolean_flag_value(&flag_value[..], 4).unwrap_err();
         assert_eq!(
             format!("{:?}", error),
             format!(
                 "HigherStorageFileVersion(Cannot read storage file with a higher version of {} with lib version {})",
-                crate::FILE_VERSION + 1,
-                crate::FILE_VERSION
+                MAX_SUPPORTED_FILE_VERSION + 1,
+                MAX_SUPPORTED_FILE_VERSION
             )
         );
     }

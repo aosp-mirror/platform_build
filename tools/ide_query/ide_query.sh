@@ -19,7 +19,7 @@ source $(pwd)/../../shell_utils.sh
 require_top
 
 # Ensure cogsetup (out/ will be symlink outside the repo)
-. ${TOP}/build/make/cogsetup.sh
+setup_cog_env_if_needed
 
 case $(uname -s) in
     Linux)
