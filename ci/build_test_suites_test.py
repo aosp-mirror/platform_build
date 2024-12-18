@@ -37,6 +37,8 @@ import build_test_suites
 import ci_test_lib
 import optimized_targets
 from pyfakefs import fake_filesystem_unittest
+import metrics_agent
+import test_discovery_agent
 
 
 class BuildTestSuitesTest(fake_filesystem_unittest.TestCase):
@@ -51,6 +53,10 @@ class BuildTestSuitesTest(fake_filesystem_unittest.TestCase):
     subprocess_run_patcher = mock.patch('subprocess.run')
     self.addCleanup(subprocess_run_patcher.stop)
     self.mock_subprocess_run = subprocess_run_patcher.start()
+
+    metrics_agent_finalize_patcher = mock.patch('metrics_agent.MetricsAgent.end_reporting')
+    self.addCleanup(metrics_agent_finalize_patcher.stop)
+    self.mock_metrics_agent_end = metrics_agent_finalize_patcher.start()
 
     self._setup_working_build_env()
 
@@ -70,6 +76,12 @@ class BuildTestSuitesTest(fake_filesystem_unittest.TestCase):
     del os.environ['TOP']
 
     with self.assert_raises_word(build_test_suites.Error, 'TOP'):
+      build_test_suites.main([])
+
+  def test_missing_dist_dir_env_var_raises(self):
+    del os.environ['DIST_DIR']
+
+    with self.assert_raises_word(build_test_suites.Error, 'DIST_DIR'):
       build_test_suites.main([])
 
   def test_invalid_arg_raises(self):
@@ -108,6 +120,9 @@ class BuildTestSuitesTest(fake_filesystem_unittest.TestCase):
     self.soong_ui_dir = self.fake_top.joinpath('build/soong')
     self.soong_ui_dir.mkdir(parents=True, exist_ok=True)
 
+    self.logs_dir = self.fake_top.joinpath('dist/logs')
+    self.logs_dir.mkdir(parents=True, exist_ok=True)
+
     self.soong_ui = self.soong_ui_dir.joinpath('soong_ui.bash')
     self.soong_ui.touch()
 
@@ -115,6 +130,7 @@ class BuildTestSuitesTest(fake_filesystem_unittest.TestCase):
         'TARGET_RELEASE': 'release',
         'TARGET_PRODUCT': 'product',
         'TOP': str(self.fake_top),
+        'DIST_DIR': str(self.fake_top.joinpath('dist')),
     })
 
     self.mock_subprocess_run.return_value = 0
@@ -241,20 +257,26 @@ class BuildPlannerTest(unittest.TestCase):
   class TestOptimizedBuildTarget(optimized_targets.OptimizedBuildTarget):
 
     def __init__(
-        self, target, build_context, args, output_targets, packaging_outputs
+        self, target, build_context, args, output_targets, packaging_commands
     ):
       super().__init__(target, build_context, args)
       self.output_targets = output_targets
-      self.packaging_outputs = packaging_outputs
+      self.packaging_commands = packaging_commands
 
     def get_build_targets_impl(self):
       return self.output_targets
 
-    def package_outputs_impl(self):
-      self.packaging_outputs.add(f'packaging {" ".join(self.output_targets)}')
+    def get_package_outputs_commands_impl(self):
+      return self.packaging_commands
 
     def get_enabled_flag(self):
       return f'{self.target}_enabled'
+
+  def setUp(self):
+    test_discovery_agent_patcher = mock.patch('test_discovery_agent.TestDiscoveryAgent.discover_test_zip_regexes')
+    self.addCleanup(test_discovery_agent_patcher.stop)
+    self.mock_test_discovery_agent_end = test_discovery_agent_patcher.start()
+
 
   def test_build_optimization_off_builds_everything(self):
     build_targets = {'target_1', 'target_2'}
@@ -276,14 +298,16 @@ class BuildPlannerTest(unittest.TestCase):
 
     build_plan = build_planner.create_build_plan()
 
-    self.assertEqual(len(build_plan.packaging_functions), 0)
+    for packaging_command in self.run_packaging_commands(build_plan):
+      self.assertEqual(len(packaging_command), 0)
 
   def test_build_optimization_on_optimizes_target(self):
     build_targets = {'target_1', 'target_2'}
     build_planner = self.create_build_planner(
         build_targets=build_targets,
         build_context=self.create_build_context(
-            enabled_build_features=[{'name': self.get_target_flag('target_1')}]
+            enabled_build_features=[{'name': self.get_target_flag('target_1')}],
+            test_context=self.get_test_context('target_1'),
         ),
     )
 
@@ -294,20 +318,20 @@ class BuildPlannerTest(unittest.TestCase):
 
   def test_build_optimization_on_packages_target(self):
     build_targets = {'target_1', 'target_2'}
-    packaging_outputs = set()
+    optimized_target_name = self.get_optimized_target_name('target_1')
+    packaging_commands = [[f'packaging {optimized_target_name}']]
     build_planner = self.create_build_planner(
         build_targets=build_targets,
         build_context=self.create_build_context(
-            enabled_build_features=[{'name': self.get_target_flag('target_1')}]
+            enabled_build_features=[{'name': self.get_target_flag('target_1')}],
+            test_context=self.get_test_context('target_1'),
         ),
-        packaging_outputs=packaging_outputs,
+        packaging_commands=packaging_commands,
     )
 
     build_plan = build_planner.create_build_plan()
-    self.run_packaging_functions(build_plan)
 
-    optimized_target_name = self.get_optimized_target_name('target_1')
-    self.assertIn(f'packaging {optimized_target_name}', packaging_outputs)
+    self.assertIn(packaging_commands, self.run_packaging_commands(build_plan))
 
   def test_individual_build_optimization_off_doesnt_optimize(self):
     build_targets = {'target_1', 'target_2'}
@@ -321,16 +345,16 @@ class BuildPlannerTest(unittest.TestCase):
 
   def test_individual_build_optimization_off_doesnt_package(self):
     build_targets = {'target_1', 'target_2'}
-    packaging_outputs = set()
+    packaging_commands = [['packaging command']]
     build_planner = self.create_build_planner(
         build_targets=build_targets,
-        packaging_outputs=packaging_outputs,
+        packaging_commands=packaging_commands,
     )
 
     build_plan = build_planner.create_build_plan()
-    self.run_packaging_functions(build_plan)
 
-    self.assertFalse(packaging_outputs)
+    for packaging_command in self.run_packaging_commands(build_plan):
+      self.assertEqual(len(packaging_command), 0)
 
   def test_target_output_used_target_built(self):
     build_target = 'test_target'
@@ -408,7 +432,7 @@ class BuildPlannerTest(unittest.TestCase):
       target_optimizations: dict[
           str, optimized_targets.OptimizedBuildTarget
       ] = None,
-      packaging_outputs: set[str] = set(),
+      packaging_commands: list[list[str]] = [],
   ) -> build_test_suites.BuildPlanner:
     if not build_context:
       build_context = self.create_build_context()
@@ -418,7 +442,7 @@ class BuildPlannerTest(unittest.TestCase):
       target_optimizations = self.create_target_optimizations(
           build_context,
           build_targets,
-          packaging_outputs,
+          packaging_commands,
       )
     return build_test_suites.BuildPlanner(
         build_context, args, target_optimizations
@@ -450,14 +474,14 @@ class BuildPlannerTest(unittest.TestCase):
       self,
       build_context: BuildContext,
       build_targets: set[str],
-      packaging_outputs: set[str] = set(),
+      packaging_commands: list[list[str]] = [],
   ):
     target_optimizations = dict()
     for target in build_targets:
       target_optimizations[target] = functools.partial(
           self.TestOptimizedBuildTarget,
           output_targets={self.get_optimized_target_name(target)},
-          packaging_outputs=packaging_outputs,
+          packaging_commands=packaging_commands,
       )
 
     return target_optimizations
@@ -467,10 +491,6 @@ class BuildPlannerTest(unittest.TestCase):
 
   def get_optimized_target_name(self, target: str):
     return f'{target}_optimized'
-
-  def run_packaging_functions(self, build_plan: build_test_suites.BuildPlan):
-    for packaging_function in build_plan.packaging_functions:
-      packaging_function()
 
   def get_test_context(self, target: str):
     return {
@@ -490,6 +510,12 @@ class BuildPlannerTest(unittest.TestCase):
             },
         ],
     }
+
+  def run_packaging_commands(self, build_plan: build_test_suites.BuildPlan):
+    return [
+        packaging_command_getter()
+        for packaging_command_getter in build_plan.packaging_commands_getters
+    ]
 
 
 def wait_until(

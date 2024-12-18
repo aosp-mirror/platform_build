@@ -22,6 +22,13 @@
     <option name="exclude-paths" value="java" />
     <option name="use-robolectric-resources" value="true" />
 
+    <!-- attempt to always show Tradefed errors -->
+    <option name="do-not-swallow-runner-errors" value="true" />
+
+    <!-- prevent Tradefed from hanging indefinitely in CI -->
+    <option name="socket-timeout" value="600000" />
+    <option name="test-case-timeout" value="2m" />
+
     {EXTRA_CONFIGS}
 
     <test class="com.android.tradefed.testtype.IsolatedHostTest" >
@@ -33,5 +40,15 @@
         <option name="java-flags" value="--add-opens=java.base/jdk.internal.util.random=ALL-UNNAMED"/>
         <!-- b/251387255 -->
         <option name="java-flags" value="--add-opens=java.base/java.io=ALL-UNNAMED"/>
+        <option name="java-flags" value="--add-opens=java.base/java.net=ALL-UNNAMED"/>
+        <option name="java-flags" value="--add-opens=java.base/java.nio=ALL-UNNAMED"/> <!-- required for ShadowVMRuntime -->
+        <option name="java-flags" value="--add-opens=java.base/java.security=ALL-UNNAMED"/>
+        <option name="java-flags" value="--add-opens=java.base/java.text=ALL-UNNAMED"/>
+        <option name="java-flags" value="--add-opens=java.base/java.util=ALL-UNNAMED"/>
+        <option name="java-flags" value="--add-opens=java.base/jdk.internal.access=ALL-UNNAMED"/>
+        <option name="java-flags" value="--add-opens=java.desktop/java.awt.font=ALL-UNNAMED"/>
+        <option name="java-flags" value="--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"/>
+        <option name="java-flags" value="--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED"/>
+        <option name="java-flags" value="--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED"/>
     </test>
 </configuration>

@@ -1,0 +1,9 @@
+# Allowlist only for the next release configuration.
+# TODO(b/369678122): The list will be cleared when the trunk configurations are
+# available to the next.
+
+# KATI only installed files
+framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.odex
+framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.odex.fsv_meta
+framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.vdex
+framework/oat/x86_64/apex@com.android.compos@javalib@service-compos.jar@classes.vdex.fsv_meta

@@ -116,9 +116,10 @@ impl Flag {
     }
 
     fn display_staged_value(&self) -> String {
-        match self.staged_value {
-            Some(v) => format!("(->{})", v),
-            None => "-".to_string(),
+        match (&self.permission, self.staged_value) {
+            (FlagPermission::ReadOnly, _) => "-".to_string(),
+            (FlagPermission::ReadWrite, None) => "-".to_string(),
+            (FlagPermission::ReadWrite, Some(v)) => format!("(->{})", v),
         }
     }
 }
@@ -164,10 +165,6 @@ struct Cli {
 enum Command {
     /// List all aconfig flags on this device.
     List {
-        /// Read from the new flag storage.
-        #[clap(long)]
-        use_new_storage: bool,
-
         /// Optionally filter by container name.
         #[clap(short = 'c', long = "container")]
         container: Option<String>,
@@ -184,6 +181,9 @@ enum Command {
         /// <package>.<flag_name>
         qualified_name: String,
     },
+
+    /// Display which flag storage backs aconfig flags.
+    WhichBacking,
 }
 
 struct PaddingInfo {
@@ -253,6 +253,14 @@ fn list(source_type: FlagSourceType, container: Option<String>) -> Result<String
         FlagSourceType::DeviceConfig => DeviceConfigSource::list_flags()?,
         FlagSourceType::AconfigStorage => AconfigStorageSource::list_flags()?,
     };
+
+    if let Some(ref c) = container {
+        ensure!(
+            load_protos::list_containers()?.contains(c),
+            format!("container '{}' not found", &c)
+        );
+    }
+
     let flags = (Filter { container }).apply(&flags_unfiltered);
     let padding_info = PaddingInfo {
         longest_flag_col: flags.iter().map(|f| f.qualified_name().len()).max().unwrap_or(0),
@@ -282,21 +290,31 @@ fn list(source_type: FlagSourceType, container: Option<String>) -> Result<String
     Ok(result)
 }
 
+fn display_which_backing() -> String {
+    if aconfig_flags::auto_generated::enable_only_new_storage() {
+        "aconfig_storage".to_string()
+    } else {
+        "device_config".to_string()
+    }
+}
+
 fn main() -> Result<()> {
     ensure!(nix::unistd::Uid::current().is_root(), "must be root");
 
     let cli = Cli::parse();
     let output = match cli.command {
-        Command::List { use_new_storage: true, container } => {
-            list(FlagSourceType::AconfigStorage, container)
-                .map_err(|err| anyhow!("storage may not be enabled: {err}"))
-                .map(Some)
-        }
-        Command::List { use_new_storage: false, container } => {
-            list(FlagSourceType::DeviceConfig, container).map(Some)
+        Command::List { container } => {
+            if aconfig_flags::auto_generated::enable_only_new_storage() {
+                list(FlagSourceType::AconfigStorage, container)
+                    .map_err(|err| anyhow!("could not list flags: {err}"))
+                    .map(Some)
+            } else {
+                list(FlagSourceType::DeviceConfig, container).map(Some)
+            }
         }
         Command::Enable { qualified_name } => set_flag(&qualified_name, "true").map(|_| None),
         Command::Disable { qualified_name } => set_flag(&qualified_name, "false").map(|_| None),
+        Command::WhichBacking => Ok(Some(display_which_backing())),
     };
     match output {
         Ok(Some(text)) => println!("{text}"),

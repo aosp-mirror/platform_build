@@ -1,66 +1,125 @@
 package {package_name};
 {{ -if not is_test_mode }}
-{{ if not library_exported- }}
+{{ -if allow_instrumentation }}
+{{ if not library_exported- }}{#- only new storage for prod mode #}
 // TODO(b/303773055): Remove the annotation after access issue is resolved.
 import android.compat.annotation.UnsupportedAppUsage;
-{{ -endif }}
-
 {{ -if runtime_lookup_required }}
-import android.provider.DeviceConfig;
-import android.provider.DeviceConfig.Properties;
-
-
-{{ -if not library_exported }}
-{{ -if allow_instrumentation }}
-import android.aconfig.storage.StorageInternalReader;
+import android.os.Build;
+{{ if is_platform_container }}
+import android.os.flagging.PlatformAconfigPackageInternal;
+{{ -else }}
+import android.os.flagging.AconfigPackageInternal;
+{{ -endif }}
 import android.util.Log;
-{{ -endif }}
-{{ -endif }}
-
 {{ -endif }}
 /** @hide */
 public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ -if runtime_lookup_required }}
-{{ -for namespace_with_flags in namespace_flags }}
-    private static volatile boolean {namespace_with_flags.namespace}_is_cached = false;
-{{ -endfor- }}
-
+    private static final String TAG = "{package_name}.FeatureFlagsImpl";
+    private static volatile boolean isCached = false;
 {{ for flag in flag_elements }}
-{{- if flag.is_read_write }}
+{{ -if flag.is_read_write }}
     private static boolean {flag.method_name} = {flag.default_value};
 {{ -endif }}
 {{ -endfor }}
-{{ -if not library_exported }}
-{{ -if allow_instrumentation }}
-    StorageInternalReader reader;
-    boolean readFromNewStorage;
-
-    boolean useNewStorageValueAndDiscardOld = false;
-
-    private final static String TAG = "AconfigJavaCodegen";
-    private final static String SUCCESS_LOG = "success: %s value matches";
-    private final static String MISMATCH_LOG = "error: %s value mismatch, new storage value is %s, old storage value is %s";
-    private final static String ERROR_LOG = "error: failed to read flag value";
 
     private void init() \{
-        if (reader != null) return;
-        if (DeviceConfig.getBoolean("core_experiments_team_internal", "com.android.providers.settings.storage_test_mission_1", false)) \{
-            readFromNewStorage = true;
-            try \{
-                reader = new StorageInternalReader("{container}", "{package_name}");
-            } catch (Exception e) \{
-                reader = null;
-            }
+        try \{
+{{ if is_platform_container }}
+            PlatformAconfigPackageInternal reader = PlatformAconfigPackageInternal.load("{container}", "{package_name}", {package_fingerprint});
+{{ -else }}
+            AconfigPackageInternal reader = AconfigPackageInternal.load("{container}", "{package_name}", {package_fingerprint});
+{{ -endif }}
+        {{ -for namespace_with_flags in namespace_flags }}
+        {{ -for flag in namespace_with_flags.flags }}
+        {{ -if flag.is_read_write }}
+            {flag.method_name} = reader.getBooleanFlagValue({flag.flag_offset});
+        {{ -endif }}
+        {{ -endfor }}
+        {{ -endfor }}
+        } catch (Exception e) \{
+            Log.e(TAG, e.toString());
+        } catch (NoClassDefFoundError e) \{
+            // for mainline module running on older devices.
+            // This should be replaces to version check, after the version bump.
+            Log.e(TAG, e.toString());
         }
-
-        useNewStorageValueAndDiscardOld =
-            DeviceConfig.getBoolean("core_experiments_team_internal", "com.android.providers.settings.use_new_storage_value", false);
+        isCached = true;
     }
-
+{{ -endif }}{#- end of runtime_lookup_required #}
+{{ -for flag in flag_elements }}
+    @Override
+    @com.android.aconfig.annotations.AconfigFlagAccessor
+    @UnsupportedAppUsage
+    public boolean {flag.method_name}() \{
+{{ -if flag.is_read_write }}
+        if (!isCached) \{
+            init();
+        }
+        return {flag.method_name};
+{{ -else }}
+        return {flag.default_value};
 {{ -endif }}
+    }
+{{ endfor }}
+}
+{{ -else- }}{#- device config for exproted mode #}
+{{ -if new_exported }}
+import android.os.flagging.AconfigPackage;
+import android.util.Log;
+/** @hide */
+public final class FeatureFlagsImpl implements FeatureFlags \{
+    private static final String TAG = "{package_name}.FeatureFlagsImpl_exported";
+    private static volatile boolean isCached = false;
+{{ for flag in flag_elements }}
+    private static boolean {flag.method_name} = {flag.default_value};
+{{ -endfor }}
+    private void init() \{
+        try \{
+            AconfigPackage reader = AconfigPackage.load("{package_name}");
+            {{ -for namespace_with_flags in namespace_flags }}
+            {{ -for flag in namespace_with_flags.flags }}
+            {flag.method_name} = reader.getBooleanFlagValue("{flag.flag_name}", {flag.default_value});
+            {{ -endfor }}
+            {{ -endfor }}
+        } catch (Exception e) \{
+            // pass
+            Log.e(TAG, e.toString());
+        } catch (NoClassDefFoundError e) \{
+            // for mainline module running on older devices.
+            // This should be replaces to version check, after the version bump.
+            Log.e(TAG, e.toString());
+        }
+        isCached = true;
+    }
+{{ -for flag in flag_elements }}
+    @Override
+    public boolean {flag.method_name}() \{
+        if (!isCached) \{
+            init();
+        }
+        return {flag.method_name};
+    }
+{{ endfor }}
+}
+{{ else }}
+import android.os.Binder;
+import android.provider.DeviceConfig;
+import android.provider.DeviceConfig.Properties;
+/** @hide */
+public final class FeatureFlagsImpl implements FeatureFlags \{
+{{ -for namespace_with_flags in namespace_flags }}
+    private static volatile boolean {namespace_with_flags.namespace}_is_cached = false;
+{{ -endfor- }}
+{{ for flag in flag_elements }}
+{{ -if flag.is_read_write }}
+    private static boolean {flag.method_name} = {flag.default_value};
 {{ -endif }}
+{{ -endfor }}
 {{ for namespace_with_flags in namespace_flags }}
     private void load_overrides_{namespace_with_flags.namespace}() \{
+        final long ident = Binder.clearCallingIdentity();
         try \{
             Properties properties = DeviceConfig.getProperties("{namespace_with_flags.namespace}");
 {{ -for flag in namespace_with_flags.flags }}
@@ -78,37 +137,74 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
                 + "flag declaration.",
                 e
             );
+        } catch (SecurityException e) \{
+            // for isolated process case, skip loading flag value from the storage, use the default
+        } finally \{
+            Binder.restoreCallingIdentity(ident);
         }
         {namespace_with_flags.namespace}_is_cached = true;
-{{ -if not library_exported }}
-{{ -if allow_instrumentation }}
-        init();
-        if (readFromNewStorage && reader != null) \{
-            boolean val;
-            try \{
-{{ -for flag in namespace_with_flags.flags }}
-{{ -if flag.is_read_write }}
+    }
+{{ endfor- }}
+{{ -for flag in flag_elements }}
+    @Override
+    public boolean {flag.method_name}() \{
+        if (!{flag.device_config_namespace}_is_cached) \{
+            load_overrides_{flag.device_config_namespace}();
+        }
+        return {flag.method_name};
+    }
+{{ endfor }}
+}
+{{ -endif- }} {#- end new_exported mode #}
+{{ -endif- }} {#- end exported mode #}
+{{ else }} {#- else for allow_instrumentation is not enabled #}
+{{ if not library_exported- }}
+// TODO(b/303773055): Remove the annotation after access issue is resolved.
+import android.compat.annotation.UnsupportedAppUsage;
+{{ -endif }}
 
-                val = reader.getBooleanFlagValue({flag.flag_offset});
-                if (val == {flag.method_name}) \{
-                    Log.i(TAG, String.format(SUCCESS_LOG, "{flag.method_name}"));
-                } else \{
-                    Log.i(TAG, String.format(MISMATCH_LOG, "{flag.method_name}", val, {flag.method_name}));
-                }
+{{ -if runtime_lookup_required }}
+import android.os.Binder;
+import android.provider.DeviceConfig;
+import android.provider.DeviceConfig.Properties;
+{{ -endif }}
+/** @hide */
+public final class FeatureFlagsImpl implements FeatureFlags \{
+{{ -if runtime_lookup_required }}
+{{ -for namespace_with_flags in namespace_flags }}
+    private static volatile boolean {namespace_with_flags.namespace}_is_cached = false;
+{{ -endfor- }}
 
-                if (useNewStorageValueAndDiscardOld) \{
-                    {flag.method_name} = val;
-                }
-
+{{ for flag in flag_elements }}
+{{- if flag.is_read_write }}
+    private static boolean {flag.method_name} = {flag.default_value};
 {{ -endif }}
 {{ -endfor }}
-            } catch (Exception e) \{
-                    Log.e(TAG, ERROR_LOG, e);
-            }
+{{ for namespace_with_flags in namespace_flags }}
+    private void load_overrides_{namespace_with_flags.namespace}() \{
+        final long ident = Binder.clearCallingIdentity();
+        try \{
+            Properties properties = DeviceConfig.getProperties("{namespace_with_flags.namespace}");
+{{ -for flag in namespace_with_flags.flags }}
+{{ -if flag.is_read_write }}
+            {flag.method_name} =
+                properties.getBoolean(Flags.FLAG_{flag.flag_name_constant_suffix}, {flag.default_value});
+{{ -endif }}
+{{ -endfor }}
+        } catch (NullPointerException e) \{
+            throw new RuntimeException(
+                "Cannot read value from namespace {namespace_with_flags.namespace} "
+                + "from DeviceConfig. It could be that the code using flag "
+                + "executed before SettingsProvider initialization. Please use "
+                + "fixed read-only flag by adding is_fixed_read_only: true in "
+                + "flag declaration.",
+                e
+            );
+        } finally \{
+            Binder.restoreCallingIdentity(ident);
         }
-{{ -endif }}
-{{ -endif }}
-    }
+        {namespace_with_flags.namespace}_is_cached = true;
+}
 {{ endfor- }}
 {{ -endif }}{#- end of runtime_lookup_required #}
 {{ -for flag in flag_elements }}
@@ -129,8 +225,8 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
     }
 {{ endfor }}
 }
-{{ else }}
-{#- Generate only stub if in test mode #}
+{{ endif}} {#- endif for allow_instrumentation #}
+{{ else }} {#- Generate only stub if in test mode #}
 /** @hide */
 public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ for flag in flag_elements }}

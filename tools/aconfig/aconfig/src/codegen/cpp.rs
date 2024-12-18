@@ -24,7 +24,7 @@ use aconfig_protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
 
 use crate::codegen;
 use crate::codegen::CodegenMode;
-use crate::commands::OutputFile;
+use crate::commands::{should_include_flag, OutputFile};
 
 pub fn generate_cpp_code<I>(
     package: &str,
@@ -127,6 +127,23 @@ fn create_class_element(
     flag_ids: HashMap<String, u16>,
     rw_count: &mut i32,
 ) -> ClassElement {
+    let no_assigned_offset = !should_include_flag(pf);
+
+    let flag_offset = match flag_ids.get(pf.name()) {
+        Some(offset) => offset,
+        None => {
+            // System/vendor/product RO+disabled flags have no offset in storage files.
+            // Assign placeholder value.
+            if no_assigned_offset {
+                &0
+            }
+            // All other flags _must_ have an offset.
+            else {
+                panic!("{}", format!("missing flag offset for {}", pf.name()));
+            }
+        }
+    };
+
     ClassElement {
         readwrite_idx: if pf.permission() == ProtoFlagPermission::READ_WRITE {
             let index = *rw_count;
@@ -144,7 +161,7 @@ fn create_class_element(
         },
         flag_name: pf.name().to_string(),
         flag_macro: pf.name().to_uppercase(),
-        flag_offset: *flag_ids.get(pf.name()).expect("values checked at flag parse time"),
+        flag_offset: *flag_offset,
         device_config_namespace: pf.namespace().to_string(),
         device_config_flag: codegen::create_device_config_ident(package, pf.name())
             .expect("values checked at flag parse time"),
@@ -283,39 +300,23 @@ public:
     virtual ~flag_provider_interface() = default;
 
     virtual bool disabled_ro() = 0;
-
-    virtual void disabled_ro(bool val) = 0;
-
     virtual bool disabled_rw() = 0;
-
-    virtual void disabled_rw(bool val) = 0;
-
     virtual bool disabled_rw_exported() = 0;
-
-    virtual void disabled_rw_exported(bool val) = 0;
-
     virtual bool disabled_rw_in_other_namespace() = 0;
-
-    virtual void disabled_rw_in_other_namespace(bool val) = 0;
-
     virtual bool enabled_fixed_ro() = 0;
-
-    virtual void enabled_fixed_ro(bool val) = 0;
-
     virtual bool enabled_fixed_ro_exported() = 0;
-
-    virtual void enabled_fixed_ro_exported(bool val) = 0;
-
     virtual bool enabled_ro() = 0;
-
-    virtual void enabled_ro(bool val) = 0;
-
     virtual bool enabled_ro_exported() = 0;
-
-    virtual void enabled_ro_exported(bool val) = 0;
-
     virtual bool enabled_rw() = 0;
 
+    virtual void disabled_ro(bool val) = 0;
+    virtual void disabled_rw(bool val) = 0;
+    virtual void disabled_rw_exported(bool val) = 0;
+    virtual void disabled_rw_in_other_namespace(bool val) = 0;
+    virtual void enabled_fixed_ro(bool val) = 0;
+    virtual void enabled_fixed_ro_exported(bool val) = 0;
+    virtual void enabled_ro(bool val) = 0;
+    virtual void enabled_ro_exported(bool val) = 0;
     virtual void enabled_rw(bool val) = 0;
 
     virtual void reset_flags() {}

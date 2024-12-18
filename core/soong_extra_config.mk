@@ -43,6 +43,7 @@ $(call add_json_list, PRODUCT_VENDOR_PROPERTIES,         $(call collapse-prop-pa
 $(call add_json_list, PRODUCT_PRODUCT_PROPERTIES,        $(call collapse-prop-pairs,PRODUCT_PRODUCT_PROPERTIES))
 $(call add_json_list, PRODUCT_ODM_PROPERTIES,            $(call collapse-prop-pairs,PRODUCT_ODM_PROPERTIES))
 $(call add_json_list, PRODUCT_PROPERTY_OVERRIDES,        $(call collapse-prop-pairs,PRODUCT_PROPERTY_OVERRIDES))
+$(call add_json_list, PRODUCT_DEFAULT_PROPERTY_OVERRIDES,        $(call collapse-prop-pairs,PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
 
 $(call add_json_str, BootloaderBoardName, $(TARGET_BOOTLOADER_BOARD_NAME))
 
@@ -79,7 +80,7 @@ $(call add_json_bool, PropertySplitEnabled, $(filter true,$(BOARD_PROPERTY_OVERR
 
 $(call add_json_str, ScreenDensity, $(TARGET_SCREEN_DENSITY))
 
-$(call add_json_bool, UsesVulkan, $(filter true,$(TARGET_USES_VULKAN)))
+$(call add_json_str, UsesVulkan, $(TARGET_USES_VULKAN))
 
 $(call add_json_bool, ZygoteForce64, $(filter true,$(ZYGOTE_FORCE_64)))
 

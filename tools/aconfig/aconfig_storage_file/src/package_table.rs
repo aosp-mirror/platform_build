@@ -17,13 +17,17 @@
 //! package table module defines the package table file format and methods for serialization
 //! and deserialization
 
-use crate::{get_bucket_index, read_str_from_bytes, read_u32_from_bytes, read_u8_from_bytes};
+use crate::{
+    get_bucket_index, read_str_from_bytes, read_u32_from_bytes, read_u64_from_bytes,
+    read_u8_from_bytes,
+};
 use crate::{AconfigStorageError, StorageFileType};
 use anyhow::anyhow;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// Package table header struct
-#[derive(PartialEq)]
+#[derive(PartialEq, Serialize, Deserialize)]
 pub struct PackageTableHeader {
     pub version: u32,
     pub container: String,
@@ -92,10 +96,11 @@ impl PackageTableHeader {
 }
 
 /// Package table node struct
-#[derive(PartialEq)]
+#[derive(PartialEq, Serialize, Deserialize)]
 pub struct PackageTableNode {
     pub package_name: String,
     pub package_id: u32,
+    pub fingerprint: u64,
     // The index of the first boolean flag in this aconfig package among all boolean
     // flags in this container.
     pub boolean_start_index: u32,
@@ -107,8 +112,12 @@ impl fmt::Debug for PackageTableNode {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         writeln!(
             f,
-            "Package: {}, Id: {}, Boolean flag start index: {}, Next: {:?}",
-            self.package_name, self.package_id, self.boolean_start_index, self.next_offset
+            "Package: {}, Id: {}, Fingerprint: {}, Boolean flag start index: {}, Next: {:?}",
+            self.package_name,
+            self.package_id,
+            self.fingerprint,
+            self.boolean_start_index,
+            self.next_offset
         )?;
         Ok(())
     }
@@ -116,7 +125,16 @@ impl fmt::Debug for PackageTableNode {
 
 impl PackageTableNode {
     /// Serialize to bytes
-    pub fn into_bytes(&self) -> Vec<u8> {
+    pub fn into_bytes(&self, version: u32) -> Vec<u8> {
+        match version {
+            1 => Self::into_bytes_v1(self),
+            2 => Self::into_bytes_v2(self),
+            // TODO(b/316357686): into_bytes should return a Result.
+            _ => Self::into_bytes_v2(&self),
+        }
+    }
+
+    fn into_bytes_v1(&self) -> Vec<u8> {
         let mut result = Vec::new();
         let name_bytes = self.package_name.as_bytes();
         result.extend_from_slice(&(name_bytes.len() as u32).to_le_bytes());
@@ -127,18 +145,60 @@ impl PackageTableNode {
         result
     }
 
-    /// Deserialize from bytes
-    pub fn from_bytes(bytes: &[u8]) -> Result<Self, AconfigStorageError> {
+    fn into_bytes_v2(&self) -> Vec<u8> {
+        let mut result = Vec::new();
+        let name_bytes = self.package_name.as_bytes();
+        result.extend_from_slice(&(name_bytes.len() as u32).to_le_bytes());
+        result.extend_from_slice(name_bytes);
+        result.extend_from_slice(&self.package_id.to_le_bytes());
+        result.extend_from_slice(&self.fingerprint.to_le_bytes());
+        result.extend_from_slice(&self.boolean_start_index.to_le_bytes());
+        result.extend_from_slice(&self.next_offset.unwrap_or(0).to_le_bytes());
+        result
+    }
+
+    /// Deserialize from bytes based on file version.
+    pub fn from_bytes(bytes: &[u8], version: u32) -> Result<Self, AconfigStorageError> {
+        match version {
+            1 => Self::from_bytes_v1(bytes),
+            2 => Self::from_bytes_v2(bytes),
+            _ => {
+                return Err(AconfigStorageError::BytesParseFail(anyhow!(
+                    "Binary file is an unsupported version: {}",
+                    version
+                )))
+            }
+        }
+    }
+
+    fn from_bytes_v1(bytes: &[u8]) -> Result<Self, AconfigStorageError> {
         let mut head = 0;
-        let node = Self {
-            package_name: read_str_from_bytes(bytes, &mut head)?,
-            package_id: read_u32_from_bytes(bytes, &mut head)?,
-            boolean_start_index: read_u32_from_bytes(bytes, &mut head)?,
-            next_offset: match read_u32_from_bytes(bytes, &mut head)? {
-                0 => None,
-                val => Some(val),
-            },
+        let package_name = read_str_from_bytes(bytes, &mut head)?;
+        let package_id = read_u32_from_bytes(bytes, &mut head)?;
+        // v1 does not have fingerprint, so just set to 0.
+        let fingerprint: u64 = 0;
+        let boolean_start_index = read_u32_from_bytes(bytes, &mut head)?;
+        let next_offset = match read_u32_from_bytes(bytes, &mut head)? {
+            0 => None,
+            val => Some(val),
         };
+
+        let node = Self { package_name, package_id, fingerprint, boolean_start_index, next_offset };
+        Ok(node)
+    }
+
+    fn from_bytes_v2(bytes: &[u8]) -> Result<Self, AconfigStorageError> {
+        let mut head = 0;
+        let package_name = read_str_from_bytes(bytes, &mut head)?;
+        let package_id = read_u32_from_bytes(bytes, &mut head)?;
+        let fingerprint = read_u64_from_bytes(bytes, &mut head)?;
+        let boolean_start_index = read_u32_from_bytes(bytes, &mut head)?;
+        let next_offset = match read_u32_from_bytes(bytes, &mut head)? {
+            0 => None,
+            val => Some(val),
+        };
+
+        let node = Self { package_name, package_id, fingerprint, boolean_start_index, next_offset };
         Ok(node)
     }
 
@@ -146,12 +206,12 @@ impl PackageTableNode {
     /// construction side (aconfig binary) and consumption side (flag read lib)
     /// use the same method of hashing
     pub fn find_bucket_index(package: &str, num_buckets: u32) -> u32 {
-        get_bucket_index(&package, num_buckets)
+        get_bucket_index(package.as_bytes(), num_buckets)
     }
 }
 
 /// Package table struct
-#[derive(PartialEq)]
+#[derive(PartialEq, Serialize, Deserialize)]
 pub struct PackageTable {
     pub header: PackageTableHeader,
     pub buckets: Vec<Option<u32>>,
@@ -179,7 +239,11 @@ impl PackageTable {
         [
             self.header.into_bytes(),
             self.buckets.iter().map(|v| v.unwrap_or(0).to_le_bytes()).collect::<Vec<_>>().concat(),
-            self.nodes.iter().map(|v| v.into_bytes()).collect::<Vec<_>>().concat(),
+            self.nodes
+                .iter()
+                .map(|v| v.into_bytes(self.header.version))
+                .collect::<Vec<_>>()
+                .concat(),
         ]
         .concat()
     }
@@ -198,8 +262,8 @@ impl PackageTable {
             .collect();
         let nodes = (0..num_packages)
             .map(|_| {
-                let node = PackageTableNode::from_bytes(&bytes[head..])?;
-                head += node.into_bytes().len();
+                let node = PackageTableNode::from_bytes(&bytes[head..], header.version)?;
+                head += node.into_bytes(header.version).len();
                 Ok(node)
             })
             .collect::<Result<Vec<_>, AconfigStorageError>>()
@@ -219,11 +283,13 @@ impl PackageTable {
 mod tests {
     use super::*;
     use crate::test_utils::create_test_package_table;
+    use crate::{read_u32_from_start_of_bytes, DEFAULT_FILE_VERSION, MAX_SUPPORTED_FILE_VERSION};
 
     #[test]
     // this test point locks down the table serialization
-    fn test_serialization() {
-        let package_table = create_test_package_table();
+    // TODO: b/376108268 - Use parameterized tests.
+    fn test_serialization_default() {
+        let package_table = create_test_package_table(DEFAULT_FILE_VERSION);
         let header: &PackageTableHeader = &package_table.header;
         let reinterpreted_header = PackageTableHeader::from_bytes(&header.into_bytes());
         assert!(reinterpreted_header.is_ok());
@@ -231,7 +297,32 @@ mod tests {
 
         let nodes: &Vec<PackageTableNode> = &package_table.nodes;
         for node in nodes.iter() {
-            let reinterpreted_node = PackageTableNode::from_bytes(&node.into_bytes()).unwrap();
+            let reinterpreted_node =
+                PackageTableNode::from_bytes(&node.into_bytes(header.version), header.version)
+                    .unwrap();
+            assert_eq!(node, &reinterpreted_node);
+        }
+
+        let package_table_bytes = package_table.into_bytes();
+        let reinterpreted_table = PackageTable::from_bytes(&package_table_bytes);
+        assert!(reinterpreted_table.is_ok());
+        assert_eq!(&package_table, &reinterpreted_table.unwrap());
+        assert_eq!(package_table_bytes.len() as u32, header.file_size);
+    }
+
+    #[test]
+    fn test_serialization_max() {
+        let package_table = create_test_package_table(MAX_SUPPORTED_FILE_VERSION);
+        let header: &PackageTableHeader = &package_table.header;
+        let reinterpreted_header = PackageTableHeader::from_bytes(&header.into_bytes());
+        assert!(reinterpreted_header.is_ok());
+        assert_eq!(header, &reinterpreted_header.unwrap());
+
+        let nodes: &Vec<PackageTableNode> = &package_table.nodes;
+        for node in nodes.iter() {
+            let reinterpreted_node =
+                PackageTableNode::from_bytes(&node.into_bytes(header.version), header.version)
+                    .unwrap();
             assert_eq!(node, &reinterpreted_node);
         }
 
@@ -246,17 +337,36 @@ mod tests {
     // this test point locks down that version number should be at the top of serialized
     // bytes
     fn test_version_number() {
-        let package_table = create_test_package_table();
+        let package_table = create_test_package_table(DEFAULT_FILE_VERSION);
         let bytes = &package_table.into_bytes();
-        let mut head = 0;
-        let version = read_u32_from_bytes(bytes, &mut head).unwrap();
-        assert_eq!(version, 1);
+        let unpacked_version = read_u32_from_start_of_bytes(bytes).unwrap();
+        assert_eq!(unpacked_version, DEFAULT_FILE_VERSION);
+    }
+
+    #[test]
+    fn test_round_trip_default() {
+        let table: PackageTable = create_test_package_table(DEFAULT_FILE_VERSION);
+        let table_bytes = table.into_bytes();
+
+        let reinterpreted_table = PackageTable::from_bytes(&table_bytes).unwrap();
+
+        assert_eq!(table, reinterpreted_table);
+    }
+
+    #[test]
+    fn test_round_trip_max() {
+        let table: PackageTable = create_test_package_table(MAX_SUPPORTED_FILE_VERSION);
+        let table_bytes = table.into_bytes();
+
+        let reinterpreted_table = PackageTable::from_bytes(&table_bytes).unwrap();
+
+        assert_eq!(table, reinterpreted_table);
     }
 
     #[test]
     // this test point locks down file type check
     fn test_file_type_check() {
-        let mut package_table = create_test_package_table();
+        let mut package_table = create_test_package_table(DEFAULT_FILE_VERSION);
         package_table.header.file_type = 123u8;
         let error = PackageTable::from_bytes(&package_table.into_bytes()).unwrap_err();
         assert_eq!(

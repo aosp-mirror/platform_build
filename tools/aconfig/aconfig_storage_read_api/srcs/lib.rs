@@ -1,5 +1,6 @@
 //! aconfig storage read api java rust interlop
 
+use aconfig_storage_file::SipHasher13;
 use aconfig_storage_read_api::flag_table_query::find_flag_read_context;
 use aconfig_storage_read_api::flag_value_query::find_boolean_flag_value;
 use aconfig_storage_read_api::package_table_query::find_package_read_context;
@@ -7,8 +8,9 @@ use aconfig_storage_read_api::{FlagReadContext, PackageReadContext};
 
 use anyhow::Result;
 use jni::objects::{JByteBuffer, JClass, JString};
-use jni::sys::{jboolean, jint};
+use jni::sys::{jboolean, jint, jlong};
 use jni::JNIEnv;
+use std::hash::Hasher;
 
 /// Call rust find package read context
 fn get_package_read_context_java(
@@ -157,4 +159,31 @@ pub extern "system" fn Java_android_aconfig_storage_AconfigStorageReadAPI_getBoo
             0u8
         }
     }
+}
+
+/// Get flag value JNI
+#[no_mangle]
+#[allow(unused)]
+pub extern "system" fn Java_android_aconfig_storage_AconfigStorageReadAPI_hash<'local>(
+    mut env: JNIEnv<'local>,
+    class: JClass<'local>,
+    package_name: JString<'local>,
+) -> jlong {
+    match siphasher13_hash(&mut env, package_name) {
+        Ok(value) => value as jlong,
+        Err(errmsg) => {
+            env.throw(("java/io/IOException", errmsg.to_string())).expect("failed to throw");
+            0i64
+        }
+    }
+}
+
+fn siphasher13_hash(env: &mut JNIEnv, package_name: JString) -> Result<u64> {
+    // SAFETY:
+    // The safety here is ensured as the flag name is guaranteed to be a java string
+    let flag_name: String = unsafe { env.get_string_unchecked(&package_name)?.into() };
+    let mut s = SipHasher13::new();
+    s.write(flag_name.as_bytes());
+    s.write_u8(0xff);
+    Ok(s.finish())
 }

@@ -14,6 +14,7 @@ rust_defaults {
         "libclap",
         "libcxx",
         "libaconfig_storage_protos",
+        "libserde",
     ],
 }
 
@@ -36,7 +37,10 @@ rust_binary_host {
     name: "aconfig-storage",
     defaults: ["aconfig_storage_file.defaults"],
     srcs: ["src/main.rs"],
-    rustlibs: ["libaconfig_storage_file"],
+    rustlibs: [
+        "libaconfig_storage_file",
+        "libserde_json",
+    ],
 }
 
 rust_test_host {

@@ -17,11 +17,13 @@ Simple parsing code to scan test_mapping files and determine which
 modules are needed to build for the given list of changed files.
 TODO(lucafarsi): Deduplicate from artifact_helper.py
 """
+# TODO(lucafarsi): Share this logic with the original logic in
+# test_mapping_test_retriever.py
 
-from typing import Any, Dict, Set, Text
 import json
 import os
 import re
+from typing import Any
 
 # Regex to extra test name from the path of test config file.
 TEST_NAME_REGEX = r'(?:^|.*/)([^/]+)\.config'
@@ -39,7 +41,7 @@ TEST_MAPPING = 'TEST_MAPPING'
 _COMMENTS_RE = re.compile(r'(\"(?:[^\"\\]|\\.)*\"|(?=//))(?://.*)?')
 
 
-def FilterComments(test_mapping_file: Text) -> Text:
+def FilterComments(test_mapping_file: str) -> str:
   """Remove comments in TEST_MAPPING file to valid format.
 
   Only '//' is regarded as comments.
@@ -52,8 +54,8 @@ def FilterComments(test_mapping_file: Text) -> Text:
   """
   return re.sub(_COMMENTS_RE, r'\1', test_mapping_file)
 
-def GetTestMappings(paths: Set[Text],
-                    checked_paths: Set[Text]) -> Dict[Text, Dict[Text, Any]]:
+def GetTestMappings(paths: set[str],
+                    checked_paths: set[str]) -> dict[str, dict[str, Any]]:
   """Get the affected TEST_MAPPING files.
 
   TEST_MAPPING files in source code are packaged into a build artifact
@@ -123,3 +125,68 @@ def GetTestMappings(paths: Set[Text],
       pass
 
   return test_mappings
+
+
+def FindAffectedModules(
+    test_mappings: dict[str, Any],
+    changed_files: set[str],
+    test_mapping_test_groups: set[str],
+) -> set[str]:
+  """Find affected test modules.
+
+  Find the affected set of test modules that would run in a test mapping run based on the given test mappings, changed files, and test mapping test group.
+
+  Args:
+    test_mappings: A set of test mappings returned by GetTestMappings in the following format:
+      {
+        'test_mapping_file_path': {
+          'group_name' : [
+            'name': 'module_name',
+          ],
+        }
+      }
+    changed_files: A set of files changed for the given run.
+    test_mapping_test_groups: A set of test mapping test groups that are being considered for the given run.
+
+  Returns:
+    A set of test module names which would run for a test mapping test run with the given parameters.
+  """
+
+  modules = set()
+
+  for test_mapping in test_mappings.values():
+    for group_name, group in test_mapping.items():
+      # If a module is not in any of the test mapping groups being tested skip
+      # it.
+      if group_name not in test_mapping_test_groups:
+        continue
+
+      for entry in group:
+        module_name = entry.get('name')
+
+        if not module_name:
+          continue
+
+        file_patterns = entry.get('file_patterns')
+        if not file_patterns:
+          modules.add(module_name)
+          continue
+
+        if matches_file_patterns(file_patterns, changed_files):
+          modules.add(module_name)
+
+  return modules
+
+def MatchesFilePatterns(
+    file_patterns: list[set], changed_files: set[str]
+) -> bool:
+  """Checks if any of the changed files match any of the file patterns.
+
+  Args:
+    file_patterns: A list of file patterns to match against.
+    changed_files: A set of files to check against the file patterns.
+
+  Returns:
+    True if any of the changed files match any of the file patterns.
+  """
+  return any(re.search(pattern, "|".join(changed_files)) for pattern in file_patterns)
