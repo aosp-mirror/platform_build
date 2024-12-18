@@ -27,7 +27,6 @@
 #   compatibility_zip: the path to the output zip file.
 
 special_mts_test_suites :=
-special_mts_test_suites += mcts
 special_mts_test_suites += $(mts_modules)
 ifneq ($(filter $(special_mts_test_suites),$(patsubst mcts-%,%,$(test_suite_name))),)
 	test_suite_subdir := android-mts

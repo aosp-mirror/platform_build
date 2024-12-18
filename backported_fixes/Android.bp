@@ -19,19 +19,24 @@ package {
 
 genrule {
     name: "applied_backported_fixes",
-    tools: ["applied_backported_fixes_main"],
+    tools: ["applied_backported_fixes_property_writer"],
     srcs: [":applied_backported_fix_binpbs"],
     out: ["applied_backported_fixes.prop"],
-    cmd: "$(location applied_backported_fixes_main)" +
+    cmd: "$(location applied_backported_fixes_property_writer)" +
         " -p $(location applied_backported_fixes.prop)" +
         " $(in)",
 }
 
-java_library {
-    name: "backported_fixes_proto",
+filegroup {
+    name: "backported_fixes_proto_file",
     srcs: [
         "backported_fixes.proto",
     ],
+}
+
+java_library {
+    name: "backported_fixes_proto",
+    srcs: ["backported_fixes.proto"],
     host_supported: true,
 }
 
@@ -63,7 +68,7 @@ java_test_host {
 }
 
 java_library {
-    name: "applied_backported_fixes_lib",
+    name: "backported_fixes_main_lib",
     srcs: ["src/java/com/android/build/backportedfixes/*.java"],
     static_libs: [
         "backported_fixes_common",
@@ -75,18 +80,35 @@ java_library {
 }
 
 java_binary_host {
-    name: "applied_backported_fixes_main",
-    main_class: "com.android.build.backportedfixes.Main",
+    name: "applied_backported_fixes_property_writer",
+    main_class: "com.android.build.backportedfixes.WriteBackportedFixesPropFile",
     static_libs: [
-        "applied_backported_fixes_lib",
+        "backported_fixes_main_lib",
     ],
 }
 
+java_binary_host {
+    name: "backported_fixes_combiner",
+    main_class: "com.android.build.backportedfixes.CombineBackportedFixes",
+    static_libs: [
+        "backported_fixes_main_lib",
+    ],
+}
+
+// Combines BackportedFix binary proto files into a single BackportedFixes binary proto file.
+genrule_defaults {
+    name: "default_backported_fixes_combiner",
+    tools: ["backported_fixes_combiner"],
+    cmd: "$(location backported_fixes_combiner)" +
+        " -o $(out)" +
+        " $(in)",
+}
+
 java_test_host {
-    name: "applied_backported_fixes_test",
+    name: "backported_fixes_main_lib_test",
     srcs: ["tests/java/com/android/build/backportedfixes/*.java"],
     static_libs: [
-        "applied_backported_fixes_lib",
+        "backported_fixes_main_lib",
         "backported_fixes_proto",
         "junit",
         "truth",
@@ -97,19 +119,25 @@ java_test_host {
     test_suites: ["general-tests"],
 }
 
+// Converts BackprotedFix text protos to binary protos
+genrule_defaults {
+    name: "default_backported_fix_binpbs",
+    tools: ["aprotoc"],
+    tool_files: [
+        ":backported_fixes_proto_file",
+    ],
+    cmd: "$(location aprotoc)  " +
+        " --encode=com.android.build.backportedfixes.BackportedFix" +
+        "  $(location :backported_fixes_proto_file)" +
+        " < $(in)" +
+        " > $(out); echo $(out)",
+}
+
 gensrcs {
     name: "applied_backported_fix_binpbs",
-    tools: ["aprotoc"],
+    defaults: ["default_backported_fix_binpbs"],
+    output_extension: "binpb",
     srcs: [
         "applied_fixes/*.txtpb",
     ],
-    tool_files: [
-        "backported_fixes.proto",
-    ],
-    output_extension: "binpb",
-    cmd: "$(location aprotoc)  " +
-        " --encode=com.android.build.backportedfixes.BackportedFix" +
-        "  $(location backported_fixes.proto)" +
-        " < $(in)" +
-        " > $(out); echo $(out)",
 }

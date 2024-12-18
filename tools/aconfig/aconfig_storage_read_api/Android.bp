@@ -154,19 +154,15 @@ java_library {
 java_library {
     name: "aconfig_storage_reader_java",
     srcs: [
-        "srcs/android/aconfig/storage/StorageInternalReader.java",
-        "srcs/android/os/flagging/PlatformAconfigPackageInternal.java",
+        "srcs/android/os/flagging/*.java",
     ],
     libs: [
         "unsupportedappusage",
-        "strict_mode_stub",
-        "aconfig_storage_stub",
     ],
     static_libs: [
         "aconfig_storage_file_java",
     ],
-    sdk_version: "core_current",
-    host_supported: true,
+    sdk_version: "current",
     visibility: [
         "//frameworks/base",
         "//build/make/tools/aconfig/aconfig_storage_read_api/tests",
