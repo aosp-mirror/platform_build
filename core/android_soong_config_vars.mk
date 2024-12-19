@@ -82,6 +82,7 @@ $(call soong_config_set_bool,chre,chre_daemon_lpma_enabled,$(if $(filter true,$(
 $(call soong_config_set_bool,chre,chre_dedicated_transport_channel_enabled,$(if $(filter true,$(CHRE_DEDICATED_TRANSPORT_CHANNEL_ENABLED)),true,false))
 $(call soong_config_set_bool,chre,chre_log_atom_extension_enabled,$(if $(filter true,$(CHRE_LOG_ATOM_EXTENSION_ENABLED)),true,false))
 $(call soong_config_set_bool,chre,building_vendor_image,$(if $(filter true,$(BUILDING_VENDOR_IMAGE)),true,false))
+$(call soong_config_set_bool,chre,chre_usf_daemon_enabled,$(if $(filter true,$(CHRE_USF_DAEMON_ENABLED)),true,false))
 
 ifdef TARGET_BOARD_AUTO
   $(call add_soong_config_var_value, ANDROID, target_board_auto, $(TARGET_BOARD_AUTO))
