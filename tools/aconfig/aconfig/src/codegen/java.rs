@@ -22,7 +22,7 @@ use tinytemplate::TinyTemplate;
 
 use crate::codegen;
 use crate::codegen::CodegenMode;
-use crate::commands::OutputFile;
+use crate::commands::{should_include_flag, OutputFile};
 use aconfig_protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
 use std::collections::HashMap;
 
@@ -162,10 +162,7 @@ fn create_flag_element(
     let device_config_flag = codegen::create_device_config_ident(package, pf.name())
         .expect("values checked at flag parse time");
 
-    let no_assigned_offset =
-        (pf.container() == "system" || pf.container() == "vendor" || pf.container() == "product")
-            && pf.permission() == ProtoFlagPermission::READ_ONLY
-            && pf.state() == ProtoFlagState::DISABLED;
+    let no_assigned_offset = !should_include_flag(pf);
 
     let flag_offset = match flag_offsets.get(pf.name()) {
         Some(offset) => offset,
