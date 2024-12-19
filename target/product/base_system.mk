@@ -52,7 +52,7 @@ PRODUCT_PACKAGES += \
     com.android.adbd \
     com.android.adservices \
     com.android.appsearch \
-    com.android.btservices \
+    com.android.bt \
     com.android.configinfrastructure \
     com.android.conscrypt \
     com.android.devicelock \
