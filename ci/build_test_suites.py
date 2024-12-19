@@ -166,13 +166,15 @@ class BuildPlanner:
           if re.search(regex, opt):
             get_metrics_agent().report_unoptimized_target(target, 'Test artifact used.')
             build_targets.add(target)
-            continue
+            # proceed to next target evaluation
+            break
           get_metrics_agent().report_optimized_target(target)
         except Exception as e:
           # In case of exception report as unoptimized
           build_targets.add(target)
           get_metrics_agent().report_unoptimized_target(target, f'Error in parsing test discovery output for {target}: {repr(e)}')
           logging.error(f'unable to parse test discovery output: {repr(e)}')
+          break
 
     return build_targets
 
