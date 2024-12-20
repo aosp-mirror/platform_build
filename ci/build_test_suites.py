@@ -129,6 +129,10 @@ class BuildPlanner:
         build_targets.add(target)
         get_metrics_agent().report_unoptimized_target(target, 'Required build target.')
         continue
+      # If nothing is discovered without error, that means nothing is needed.
+      if not test_discovery_zip_regexes:
+        get_metrics_agent().report_optimized_target(target)
+        continue
 
       regex = r'\b(%s.*)\b' % re.escape(target)
       for opt in test_discovery_zip_regexes:
