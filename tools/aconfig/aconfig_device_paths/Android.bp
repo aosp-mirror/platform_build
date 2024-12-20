@@ -26,7 +26,6 @@ rust_defaults {
         "libaconfig_protos",
         "libanyhow",
         "libprotobuf",
-        "libregex",
     ],
 }
 
@@ -35,6 +34,11 @@ rust_library {
     crate_name: "aconfig_device_paths",
     host_supported: true,
     defaults: ["libaconfig_device_paths.defaults"],
+    apex_available: [
+        "//apex_available:platform",
+        "com.android.configinfrastructure",
+    ],
+    min_sdk_version: "34",
 }
 
 genrule {
@@ -54,7 +58,9 @@ java_library {
     sdk_version: "core_platform",
     apex_available: [
         "//apex_available:platform",
+        "com.android.configinfrastructure",
     ],
+    min_sdk_version: "34",
 }
 
 genrule {
