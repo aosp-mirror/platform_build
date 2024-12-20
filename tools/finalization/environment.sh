@@ -30,8 +30,8 @@ export BUILD_FROM_SOURCE_STUB=true
 # TODO(b/323985297): The version must match with that from the release configuration.
 # Instead of hardcoding the version here, read it from a release configuration.
 export FINAL_BOARD_API_LEVEL='202504'
-export FINAL_CORRESPONDING_VERSION_LETTER='W'
+export FINAL_CORRESPONDING_VERSION_LETTER='B'
 export FINAL_CORRESPONDING_PLATFORM_VERSION='16'
 export FINAL_NEXT_BOARD_API_LEVEL='202604'
-export FINAL_NEXT_CORRESPONDING_VERSION_LETTER='X'
+export FINAL_NEXT_CORRESPONDING_VERSION_LETTER='C'
 export FINAL_NEXT_CORRESPONDING_SDK_VERSION='37'
