@@ -226,8 +226,20 @@ def main(argv):
     logger.setLevel(logging.INFO)
 
   logger.info(args)
+  if args.java_path:
+    common.OPTIONS.java_path = args.java_path
+
   if args.search_path:
     common.OPTIONS.search_path = args.search_path
+
+  if args.signapk_path:
+    common.OPTIONS.signapk_path = args.signapk_path
+
+  if args.extra_signapk_args:
+    common.OPTIONS.extra_signapk_args = args.extra_signapk_args
+
+  if args.signapk_shared_library_path:
+    common.OPTIONS.signapk_shared_library_path = args.signapk_shared_library_path
 
   metadata_ota = args.packages[-1]
   if args.metadata_ota is not None:
