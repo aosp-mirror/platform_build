@@ -79,7 +79,7 @@ define generate-common-build-props
     echo "ro.$(1).build.version.release=$(PLATFORM_VERSION_LAST_STABLE)" >> $(2);\
     echo "ro.$(1).build.version.release_or_codename=$(PLATFORM_VERSION)" >> $(2);\
     echo "ro.$(1).build.version.sdk=$(PLATFORM_SDK_VERSION)" >> $(2);\
-    echo "ro.$(1).build.version.sdk_minor=$(PLATFORM_SDK_MINOR_VERSION)" >> $(2);\
+    echo "ro.$(1).build.version.sdk_full=$(PLATFORM_SDK_VERSION_FULL)" >> $(2);\
 
 endef
 
