@@ -677,6 +677,21 @@ def TryParseFingerprint(glob_dict: dict):
       glob_dict["fingerprint"] = fingerprint
       return
 
+def TryParseFingerprintAndTimestamp(glob_dict):
+  """Helper function that parses fingerprint and timestamp from the global dictionary.
+
+  Args:
+    glob_dict: the global dictionary from the build system.
+  """
+  TryParseFingerprint(glob_dict)
+
+  # Set fixed timestamp for building the OTA package.
+  if "use_fixed_timestamp" in glob_dict:
+    glob_dict["timestamp"] = FIXED_FILE_TIMESTAMP
+  if "build.prop" in glob_dict:
+    timestamp = glob_dict["build.prop"].GetProp("ro.build.date.utc")
+    if timestamp:
+      glob_dict["timestamp"] = timestamp
 
 def ImagePropFromGlobalDict(glob_dict, mount_point):
   """Build an image property dictionary from the global dictionary.
@@ -686,15 +701,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     mount_point: such as "system", "data" etc.
   """
   d = {}
-  TryParseFingerprint(glob_dict)
-
-  # Set fixed timestamp for building the OTA package.
-  if "use_fixed_timestamp" in glob_dict:
-    d["timestamp"] = FIXED_FILE_TIMESTAMP
-  if "build.prop" in glob_dict:
-    timestamp = glob_dict["build.prop"].GetProp("ro.build.date.utc")
-    if timestamp:
-      d["timestamp"] = timestamp
+  TryParseFingerprintAndTimestamp(glob_dict)
 
   def copy_prop(src_p, dest_p):
     """Copy a property from the global dictionary.
@@ -730,6 +737,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "avb_avbtool",
       "use_dynamic_partition_size",
       "fingerprint",
+      "timestamp",
   )
   for p in common_props:
     copy_prop(p, p)
@@ -969,6 +977,8 @@ def main(argv):
     "will install in by default, so there could be files in the input_directory that are not "
     "actually supposed to be part of the partition. The paths in this file must be relative to "
     "input_directory.")
+  parser.add_argument("--build_datetime_file",
+                      help="a file containing the build id timestamp")
   parser.add_argument("input_directory",
     help="the staging directory to be converted to an image file")
   parser.add_argument("properties_file",
@@ -988,10 +998,16 @@ def main(argv):
   common.InitLogging()
 
   glob_dict = LoadGlobalDict(args.properties_file)
+  if args.build_datetime_file:
+    # Parse the timestamp from build_datetime_file.
+    with open(args.build_datetime_file, "r") as f:
+      glob_dict["timestamp"] = int(f.read())
+
   if "mount_point" in glob_dict:
     # The caller knows the mount point and provides a dictionary needed by
     # BuildImage().
     image_properties = glob_dict
+    TryParseFingerprintAndTimestamp(image_properties)
   else:
     image_filename = os.path.basename(args.out_file)
     mount_point = ""

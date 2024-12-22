@@ -24,7 +24,7 @@ use std::collections::HashMap;
 
 use crate::codegen;
 use crate::codegen::CodegenMode;
-use crate::commands::OutputFile;
+use crate::commands::{should_include_flag, OutputFile};
 
 pub fn generate_rust_code<I>(
     package: &str,
@@ -88,18 +88,12 @@ struct TemplateParsedFlag {
 impl TemplateParsedFlag {
     #[allow(clippy::nonminimal_bool)]
     fn new(package: &str, flag_offsets: HashMap<String, u16>, pf: &ProtoParsedFlag) -> Self {
-        let no_assigned_offset = (pf.container() == "system"
-            || pf.container() == "vendor"
-            || pf.container() == "product")
-            && pf.permission() == ProtoFlagPermission::READ_ONLY
-            && pf.state() == ProtoFlagState::DISABLED;
-
         let flag_offset = match flag_offsets.get(pf.name()) {
             Some(offset) => offset,
             None => {
                 // System/vendor/product RO+disabled flags have no offset in storage files.
                 // Assign placeholder value.
-                if no_assigned_offset {
+                if !should_include_flag(pf) {
                     &0
                 }
                 // All other flags _must_ have an offset.

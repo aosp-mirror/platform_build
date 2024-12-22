@@ -17,6 +17,23 @@ use std::os::unix::net::UnixStream;
 
 pub struct AconfigStorageSource {}
 
+static ACONFIGD_SYSTEM_SOCKET_NAME: &str = "/dev/socket/aconfigd_system";
+static ACONFIGD_MAINLINE_SOCKET_NAME: &str = "/dev/socket/aconfigd_mainline";
+
+enum AconfigdSocket {
+    System,
+    Mainline,
+}
+
+impl AconfigdSocket {
+    pub fn name(&self) -> &str {
+        match self {
+            AconfigdSocket::System => ACONFIGD_SYSTEM_SOCKET_NAME,
+            AconfigdSocket::Mainline => ACONFIGD_MAINLINE_SOCKET_NAME,
+        }
+    }
+}
+
 fn load_flag_to_container() -> Result<HashMap<String, String>> {
     Ok(load_protos::load()?.into_iter().map(|p| (p.qualified_name(), p.container)).collect())
 }
@@ -81,7 +98,7 @@ fn convert(msg: ProtoFlagQueryReturnMessage, containers: &HashMap<String, String
     })
 }
 
-fn read_from_socket() -> Result<Vec<ProtoFlagQueryReturnMessage>> {
+fn read_from_socket(socket: AconfigdSocket) -> Result<Vec<ProtoFlagQueryReturnMessage>> {
     let messages = ProtoStorageRequestMessages {
         msgs: vec![ProtoStorageRequestMessage {
             msg: Some(ProtoStorageRequestMessageMsg::ListStorageMessage(ProtoListStorageMessage {
@@ -93,8 +110,7 @@ fn read_from_socket() -> Result<Vec<ProtoFlagQueryReturnMessage>> {
         special_fields: SpecialFields::new(),
     };
 
-    let socket_name = "/dev/socket/aconfigd_system";
-    let mut socket = UnixStream::connect(socket_name)?;
+    let mut socket = UnixStream::connect(socket.name())?;
 
     let message_buffer = messages.write_to_bytes()?;
     let mut message_length_buffer: [u8; 4] = [0; 4];
@@ -128,14 +144,20 @@ fn read_from_socket() -> Result<Vec<ProtoFlagQueryReturnMessage>> {
 impl FlagSource for AconfigStorageSource {
     fn list_flags() -> Result<Vec<Flag>> {
         let containers = load_flag_to_container()?;
-        read_from_socket()
-            .map(|query_messages| {
-                query_messages
-                    .iter()
-                    .map(|message| convert(message.clone(), &containers))
-                    .collect::<Vec<_>>()
-            })?
+        let system_messages = read_from_socket(AconfigdSocket::System);
+        let mainline_messages = read_from_socket(AconfigdSocket::Mainline);
+
+        let mut all_messages = vec![];
+        if let Ok(system_messages) = system_messages {
+            all_messages.extend_from_slice(&system_messages);
+        }
+        if let Ok(mainline_messages) = mainline_messages {
+            all_messages.extend_from_slice(&mainline_messages);
+        }
+
+        all_messages
             .into_iter()
+            .map(|query_message| convert(query_message.clone(), &containers))
             .collect()
     }
 

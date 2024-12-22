@@ -84,15 +84,13 @@ public class PlatformAconfigPackageInternal {
         try {
             pNode = fileProvider.getPackageTable(container).get(packageName);
             vList = fileProvider.getFlagValueList(container);
-        } catch (AconfigStorageException e) {
-            throw new AconfigStorageReadException(e.getErrorCode(), e.toString());
         } finally {
             StrictMode.setThreadPolicy(oldPolicy);
         }
 
         if (pNode == null || vList == null) {
-            throw new AconfigStorageReadException(
-                    AconfigStorageReadException.ERROR_PACKAGE_NOT_FOUND,
+            throw new AconfigStorageException(
+                    AconfigStorageException.ERROR_PACKAGE_NOT_FOUND,
                     String.format(
                             "package "
                                     + packageName
@@ -102,8 +100,8 @@ public class PlatformAconfigPackageInternal {
         }
 
         if (pNode.hasPackageFingerprint() && packageFingerprint != pNode.getPackageFingerprint()) {
-            throw new AconfigStorageReadException(
-                    5, // AconfigStorageReadException.ERROR_FILE_FINGERPRINT_MISMATCH,
+            throw new AconfigStorageException(
+                    AconfigStorageException.ERROR_FILE_FINGERPRINT_MISMATCH,
                     String.format(
                             "package "
                                     + packageName
