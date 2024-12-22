@@ -35,7 +35,7 @@ SOONG_UI_EXE_REL_PATH = 'build/soong/soong_ui.bash'
 LOG_PATH = 'logs/build_test_suites.log'
 # Currently, this prevents the removal of those tags when they exist. In the future we likely
 # want the script to supply 'dist directly
-REQUIRED_BUILD_TARGETS = frozenset(['dist', 'droid'])
+REQUIRED_BUILD_TARGETS = frozenset(['dist', 'droid', 'checkbuild'])
 
 
 class Error(Exception):
@@ -112,6 +112,9 @@ class BuildPlanner:
         if optimization_rationale:
           get_metrics_agent().report_unoptimized_target(target, optimization_rationale)
           continue
+        if target in REQUIRED_BUILD_TARGETS:
+          get_metrics_agent().report_unoptimized_target(target, 'Required build target.')
+          continue
         try:
           regex = r'\b(%s.*)\b' % re.escape(target)
           if any(re.search(regex, opt) for opt in test_discovery_zip_regexes):
@@ -154,6 +157,7 @@ class BuildPlanner:
     for target in self.args.extra_targets:
       if target in REQUIRED_BUILD_TARGETS:
         build_targets.add(target)
+        get_metrics_agent().report_unoptimized_target(target, 'Required build target.')
         continue
 
       regex = r'\b(%s.*)\b' % re.escape(target)
@@ -162,13 +166,15 @@ class BuildPlanner:
           if re.search(regex, opt):
             get_metrics_agent().report_unoptimized_target(target, 'Test artifact used.')
             build_targets.add(target)
-            continue
+            # proceed to next target evaluation
+            break
           get_metrics_agent().report_optimized_target(target)
         except Exception as e:
           # In case of exception report as unoptimized
           build_targets.add(target)
           get_metrics_agent().report_unoptimized_target(target, f'Error in parsing test discovery output for {target}: {repr(e)}')
           logging.error(f'unable to parse test discovery output: {repr(e)}')
+          break
 
     return build_targets
 

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2009 The Android Open Source Project
+# Copyright (C) 2024 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
-ifdef NET_ETH0_STARTONBOOT
-  PRODUCT_VENDOR_PROPERTIES += net.eth0.startonboot=1
-endif
+# The app function sidecar extensions
+
+# /system_ext packages
+PRODUCT_PACKAGES += \
+    com.google.android.appfunctions.sidecar \
+    appfunctions.sidecar.xml
