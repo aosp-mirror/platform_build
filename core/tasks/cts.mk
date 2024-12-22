@@ -111,11 +111,27 @@ cts_api_map_exe := $(HOST_OUT_EXECUTABLES)/cts-api-map
 coverage_out := $(HOST_OUT)/cts-api-coverage
 api_map_out := $(HOST_OUT)/cts-api-map
 
-cts_jar_files := $(api_map_out)/api_map_files.txt
+cts_jar_files := $(api_map_out)/cts_jar_files.txt
+cts_interactive_jar_files := $(api_map_out)/cts_interactive_jar_files.txt
+cts_all_jar_files := $(api_map_out)/cts_all_jar_files.txt
+
 $(cts_jar_files): PRIVATE_API_MAP_FILES := $(sort $(COMPATIBILITY.cts.API_MAP_FILES))
 $(cts_jar_files):
 	mkdir -p $(dir $@)
 	echo $(PRIVATE_API_MAP_FILES) > $@
+
+$(cts_interactive_jar_files): PRIVATE_API_MAP_FILES := $(sort $(COMPATIBILITY.cts-interactive.API_MAP_FILES))
+$(cts_interactive_jar_files): $(SOONG_ANDROID_CTS_VERIFIER_APP_LIST)
+	mkdir -p $(dir $@)
+	cp $< $@
+	echo $(PRIVATE_API_MAP_FILES) >> $@
+
+$(cts_all_jar_files): PRIVATE_API_MAP_FILES := $(sort $(COMPATIBILITY.cts.API_MAP_FILES) \
+                                                      $(COMPATIBILITY.cts-interactive.API_MAP_FILES))
+$(cts_all_jar_files): $(SOONG_ANDROID_CTS_VERIFIER_APP_LIST)
+	mkdir -p $(dir $@)
+	cp $< $@
+	echo $(PRIVATE_API_MAP_FILES) >> $@
 
 api_xml_description := $(TARGET_OUT_COMMON_INTERMEDIATES)/api.xml
 
@@ -138,13 +154,14 @@ cts-combined-xml-coverage-report := $(coverage_out)/combined-coverage.xml
 cts_api_coverage_dependencies := $(cts_api_coverage_exe) $(dexdeps_exe) $(api_xml_description) $(napi_xml_description)
 cts_system_api_coverage_dependencies := $(cts_api_coverage_exe) $(dexdeps_exe) $(system_api_xml_description)
 
-cts-api-xml-api-map-report := $(api_map_out)/api-map.xml
-cts-api-html-api-map-report := $(api_map_out)/api-map.html
-cts-system-api-xml-api-map-report := $(api_map_out)/system-api-map.xml
-cts-system-api-html-api-map-report := $(api_map_out)/system-api-map.html
+cts-system-api-map-xml-report := $(api_map_out)/cts-system-api-map.xml
+cts-interactive-system-api-map-xml-report := $(api_map_out)/cts-interactive-system-api-map.xml
+cts-combined-system-api-map-xml-report := $(api_map_out)/cts-combined-system-api-map.xml
+cts-combined-system-api-map-html-report := $(api_map_out)/cts-combined-system-api-map.html
 
 cts_system_api_map_dependencies := $(cts_api_map_exe) $(system_api_xml_description) $(cts_jar_files)
-cts_api_map_dependencies := $(cts_api_map_exe) $(api_xml_description) $(cts_jar_files)
+cts_interactive_system_api_map_dependencies := $(cts_api_map_exe) $(system_api_xml_description) $(cts_interactive_jar_files)
+cts_combined_system_api_map_dependencies := $(cts_api_map_exe) $(system_api_xml_description) $(cts_all_jar_files)
 
 android_cts_zip := $(HOST_OUT)/cts/android-cts.zip
 cts_verifier_apk := $(call intermediates-dir-for,APPS,CtsVerifier)/package.apk
@@ -224,45 +241,42 @@ cts-combined-xml-coverage : $(cts-combined-xml-coverage-report)
 .PHONY: cts-coverage-report-all cts-api-coverage
 cts-coverage-report-all: cts-test-coverage cts-verifier-coverage cts-combined-coverage cts-combined-xml-coverage
 
-$(cts-system-api-xml-api-map-report): PRIVATE_CTS_API_MAP_EXE := $(cts_api_map_exe)
-$(cts-system-api-xml-api-map-report): PRIVATE_API_XML_DESC := $(system_api_xml_description)
-$(cts-system-api-xml-api-map-report): PRIVATE_JAR_FILES := $(cts_jar_files)
-$(cts-system-api-xml-api-map-report) : $(android_cts_zip) $(cts_system_api_map_dependencies) | $(ACP)
+$(cts-system-api-map-xml-report): PRIVATE_CTS_API_MAP_EXE := $(cts_api_map_exe)
+$(cts-system-api-map-xml-report): PRIVATE_API_XML_DESC := $(system_api_xml_description)
+$(cts-system-api-map-xml-report): PRIVATE_JAR_FILES := $(cts_jar_files)
+$(cts-system-api-map-xml-report) : $(android_cts_zip) $(cts_system_api_map_dependencies) | $(ACP)
 	$(call generate-api-map-report-cts,"CTS System API MAP Report - XML",\
 			$(PRIVATE_JAR_FILES),xml)
 
-$(cts-system-api-html-api-map-report): PRIVATE_CTS_API_MAP_EXE := $(cts_api_map_exe)
-$(cts-system-api-html-api-map-report): PRIVATE_API_XML_DESC := $(system_api_xml_description)
-$(cts-system-api-html-api-map-report): PRIVATE_JAR_FILES := $(cts_jar_files)
-$(cts-system-api-html-api-map-report) : $(android_cts_zip) $(cts_system_api_map_dependencies) | $(ACP)
-	$(call generate-api-map-report-cts,"CTS System API MAP Report - HTML",\
-			$(PRIVATE_JAR_FILES),html)
-
-$(cts-api-xml-api-map-report): PRIVATE_CTS_API_MAP_EXE := $(cts_api_map_exe)
-$(cts-api-xml-api-map-report): PRIVATE_API_XML_DESC := $(api_xml_description)
-$(cts-api-xml-api-map-report): PRIVATE_JAR_FILES := $(cts_jar_files)
-$(cts-api-xml-api-map-report) : $(android_cts_zip) $(cts_api_map_dependencies) | $(ACP)
-	$(call generate-api-map-report-cts,"CTS API MAP Report - XML",\
+$(cts-interactive-system-api-map-xml-report): PRIVATE_CTS_API_MAP_EXE := $(cts_api_map_exe)
+$(cts-interactive-system-api-map-xml-report): PRIVATE_API_XML_DESC := $(system_api_xml_description)
+$(cts-interactive-system-api-map-xml-report): PRIVATE_JAR_FILES := $(cts_interactive_jar_files)
+$(cts-interactive-system-api-map-xml-report) : $(verifier_zip) $(cts_interactive_system_api_map_dependencies) | $(ACP)
+	$(call generate-api-map-report-cts,"CTS Interactive System API MAP Report - XML",\
 			$(PRIVATE_JAR_FILES),xml)
 
-$(cts-api-html-api-map-report): PRIVATE_CTS_API_MAP_EXE := $(cts_api_map_exe)
-$(cts-api-html-api-map-report): PRIVATE_API_XML_DESC := $(api_xml_description)
-$(cts-api-html-api-map-report): PRIVATE_JAR_FILES := $(cts_jar_files)
-$(cts-api-html-api-map-report) : $(android_cts_zip) $(cts_api_map_dependencies) | $(ACP)
-	$(call generate-api-map-report-cts,"CTS API MAP Report - HTML",\
+$(cts-combined-system-api-map-xml-report): PRIVATE_CTS_API_MAP_EXE := $(cts_api_map_exe)
+$(cts-combined-system-api-map-xml-report): PRIVATE_API_XML_DESC := $(system_api_xml_description)
+$(cts-combined-system-api-map-xml-report): PRIVATE_JAR_FILES := $(cts_all_jar_files)
+$(cts-combined-system-api-map-xml-report) : $(verifier_zip) $(android_cts_zip) $(cts_combined_system_api_map_dependencies) | $(ACP)
+	$(call generate-api-map-report-cts,"CTS Combined System API MAP Report - XML",\
+			$(PRIVATE_JAR_FILES),xml)
+
+$(cts-combined-system-api-map-html-report): PRIVATE_CTS_API_MAP_EXE := $(cts_api_map_exe)
+$(cts-combined-system-api-map-html-report): PRIVATE_API_XML_DESC := $(system_api_xml_description)
+$(cts-combined-system-api-map-html-report): PRIVATE_JAR_FILES := $(cts_all_jar_files)
+$(cts-combined-system-api-map-html-report) : $(verifier_zip) $(android_cts_zip) $(cts_combined_system_api_map_dependencies) | $(ACP)
+	$(call generate-api-map-report-cts,"CTS Combined System API MAP Report - HTML",\
 			$(PRIVATE_JAR_FILES),html)
 
-.PHONY: cts-system-api-xml-api-map
-cts-system-api-xml-api-map : $(cts-system-api-xml-api-map-report)
+.PHONY: cts-system-api-map-xml
+cts-system-api-map-xml : $(cts-system-api-map-xml-report)
 
-.PHONY: cts-system-api-html-api-map
-cts-system-api-html-api-map : $(cts-system-api-html-api-map-report)
+.PHONY: cts-interactive-system-api-map-xml
+cts-interactive-system-api-map-xml: $(cts-interactive-system-api-map-xml-report)
 
-.PHONY: cts-api-xml-api-map
-cts-api-xml-api-map : $(cts-api-xml-api-map-report)
-
-.PHONY: cts-api-html-api-map
-cts-api-html-api-map : $(cts-api-html-api-map-report)
+.PHONY: cts-combined-system-api-map-xml
+cts-combined-system-api-map-xml : $(cts-combined-system-api-map-xml-report)
 
 .PHONY: cts-api-map-all
 
@@ -282,15 +296,13 @@ ALL_TARGETS.$(cts-combined-coverage-report).META_LIC:=$(module_license_metadata)
 ALL_TARGETS.$(cts-combined-xml-coverage-report).META_LIC:=$(module_license_metadata)
 
 # Put the test api map report in the dist dir if "cts-api-map-all" is among the build goals.
-$(call dist-for-goals, cts-api-map-all, $(cts-system-api-xml-api-map-report):cts-system-api-xml-api-map-report.xml)
-$(call dist-for-goals, cts-api-map-all, $(cts-system-api-html-api-map-report):cts-system-api-html-api-map-report.html)
-$(call dist-for-goals, cts-api-map-all, $(cts-api-xml-api-map-report):cts-api-xml-api-map-report.xml)
-$(call dist-for-goals, cts-api-map-all, $(cts-api-html-api-map-report):cts-api-html-api-map-report.html)
+$(call dist-for-goals, cts-api-map-all, $(cts-combined-system-api-map-xml-report):cts-api-map-report.xml)
+$(call dist-for-goals, cts-api-map-all, $(cts-combined-system-api-map-html-report):cts-api-map-report.html)
 
-ALL_TARGETS.$(cts-system-api-xml-api-map-report).META_LIC:=$(module_license_metadata)
-ALL_TARGETS.$(cts-system-api-html-api-map-report).META_LIC:=$(module_license_metadata)
-ALL_TARGETS.$(cts-api-xml-api-map-report).META_LIC:=$(module_license_metadata)
-ALL_TARGETS.$(cts-api-html-api-map-report).META_LIC:=$(module_license_metadata)
+ALL_TARGETS.$(cts-system-api-map-xml-report).META_LIC:=$(module_license_metadata)
+ALL_TARGETS.$(cts-interactive-system-api-map-xml-report).META_LIC:=$(module_license_metadata)
+ALL_TARGETS.$(cts-combined-system-api-map-xml-report).META_LIC:=$(module_license_metadata)
+ALL_TARGETS.$(cts-combined-system-api-map-html-report).META_LIC:=$(module_license_metadata)
 
 # Arguments;
 #  1 - Name of the report printed out on the screen
@@ -315,18 +327,19 @@ endef
 # Reset temp vars
 cts_api_coverage_dependencies :=
 cts_system_api_coverage_dependencies :=
-cts_api_map_dependencies :=
 cts_system_api_map_dependencies :=
+cts_interactive_system_api_map_dependencies :=
+cts_combined_system_api_map_dependencies :=
 cts-combined-coverage-report :=
 cts-combined-xml-coverage-report :=
 cts-verifier-coverage-report :=
 cts-test-coverage-report :=
 cts-system-api-coverage-report :=
 cts-system-api-xml-coverage-report :=
-cts-api-xml-api-map-report :=
-cts-api-html-api-map-report :=
-cts-system-api-xml-api-map-report :=
-cts-system-api-html-api-map-report :=
+cts-system-api-map-xml-report :=
+cts-interactive-system-api-map-xml-report :=
+cts-combined-system-api-map-xml-report :=
+cts-combined-system-api-map-html-report :=
 api_xml_description :=
 api_text_description :=
 system_api_xml_description :=
