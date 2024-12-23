@@ -346,6 +346,77 @@ phony {
 }
 
 android_filesystem_defaults {
+    name: "system_ext_image_defaults",
+    deps: [
+        ///////////////////////////////////////////
+        // base_system_ext
+        ///////////////////////////////////////////
+        "build_flag_system_ext",
+        "fs_config_dirs_system_ext",
+        "fs_config_files_system_ext",
+        "group_system_ext",
+        "passwd_system_ext",
+        "SatelliteClient",
+        "selinux_policy_system_ext",
+        "system_ext_manifest.xml",
+        "system_ext-build.prop",
+        // Base modules when shipping api level is less than or equal to 34
+        "hwservicemanager",
+        "android.hidl.allocator@1.0-service",
+
+        ///////////////////////////////////////////
+        // window_extensions_base
+        ///////////////////////////////////////////
+        "androidx.window.extensions",
+        "androidx.window.sidecar",
+
+        ///////////////////////////////////////////
+        // base_system
+        ///////////////////////////////////////////
+        "charger",
+    ] + select(release_flag("RELEASE_APPFUNCTION_SIDECAR"), {
+        true: [
+            "com.android.extensions.appfunctions",
+            "appfunctions.extension.xml",
+        ],
+        default: [],
+    }),
+}
+
+android_filesystem_defaults {
+    name: "product_image_defaults",
+    deps: [
+        ///////////////////////////////////////////
+        // media_product
+        ///////////////////////////////////////////
+        "webview",
+
+        ///////////////////////////////////////////
+        // base_product
+        ///////////////////////////////////////////
+
+        // Base modules and settings for the product partition.
+        "build_flag_product",
+        "fs_config_dirs_product",
+        "fs_config_files_product",
+        "group_product",
+        "ModuleMetadata",
+        "passwd_product",
+        "product_compatibility_matrix.xml",
+        "product_manifest.xml",
+        "selinux_policy_product",
+        "product-build.prop",
+
+        // AUDIO
+        "frameworks_sounds",
+    ] + select(product_variable("debuggable"), {
+        // Packages included only for eng or userdebug builds, previously debug tagged
+        true: ["adb_keys"],
+        default: [],
+    }),
+}
+
+android_filesystem_defaults {
     name: "system_image_defaults",
     partition_name: "system",
     base_dir: "system",
