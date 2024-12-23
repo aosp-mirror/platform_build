@@ -257,6 +257,8 @@ _prop_vars_ += \
     PRODUCT_VENDOR_PROPERTIES
 endif
 
+_footers_ :=   $(SOONG_OUT_DIR)/.intermediates/build/make/backported_fixes/applied_backported_fixes/gen/applied_backported_fixes.prop
+
 INSTALLED_BUILD_PROP_TARGET := $(TARGET_OUT)/build.prop
 
 $(eval $(call build-properties,\
@@ -265,7 +267,7 @@ $(eval $(call build-properties,\
     $(_prop_files_),\
     $(_prop_vars_),\
     $(PRODUCT_SYSTEM_PROPERTY_BLACKLIST),\
-    $(empty),\
+    $(_footers_),\
     $(empty)))
 
 $(eval $(call declare-1p-target,$(INSTALLED_BUILD_PROP_TARGET)))
