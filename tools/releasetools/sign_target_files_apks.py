@@ -862,21 +862,32 @@ def ProcessTargetFiles(input_tf_zip: zipfile.ZipFile, output_tf_zip: zipfile.Zip
 
     # Updates pvmfw embedded public key with the virt APEX payload key.
     elif filename == "PREBUILT_IMAGES/pvmfw.img":
-      # Find the name of the virt APEX in the target files.
+      # Find the path of the virt APEX in the target files.
       namelist = input_tf_zip.namelist()
-      apex_gen = (GetApexFilename(f) for f in namelist if IsApexFile(f))
-      virt_apex_re = re.compile("^com\.([^\.]+\.)?android\.virt\.apex$")
-      virt_apex = next((a for a in apex_gen if virt_apex_re.match(a)), None)
-      if not virt_apex:
+      apex_gen = (f for f in namelist if IsApexFile(f))
+      virt_apex_re = re.compile("^.*com\.([^\.]+\.)?android\.virt\.apex$")
+      virt_apex_path = next(
+        (a for a in apex_gen if virt_apex_re.match(a)), None)
+      if not virt_apex_path:
         print("Removing %s from ramdisk: virt APEX not found" % filename)
       else:
-        print("Replacing %s embedded key with %s key" % (filename, virt_apex))
+        print("Replacing %s embedded key with %s key" % (filename,
+                                                         virt_apex_path))
         # Get the current and new embedded keys.
+        virt_apex = GetApexFilename(virt_apex_path)
         payload_key, container_key, sign_tool = apex_keys[virt_apex]
-        new_pubkey_path = common.ExtractAvbPublicKey(
-            misc_info['avb_avbtool'], payload_key)
-        with open(new_pubkey_path, 'rb') as f:
-          new_pubkey = f.read()
+
+        # b/384813199: handles the pre-signed com.android.virt.apex in GSI.
+        if payload_key == 'PRESIGNED':
+          with input_tf_zip.open(virt_apex_path) as apex_fp:
+            with zipfile.ZipFile(apex_fp) as apex_zip:
+              new_pubkey = apex_zip.read('apex_pubkey')
+        else:
+          new_pubkey_path = common.ExtractAvbPublicKey(
+              misc_info['avb_avbtool'], payload_key)
+          with open(new_pubkey_path, 'rb') as f:
+            new_pubkey = f.read()
+
         pubkey_info = copy.copy(
             input_tf_zip.getinfo("PREBUILT_IMAGES/pvmfw_embedded.avbpubkey"))
         old_pubkey = input_tf_zip.read(pubkey_info.filename)
