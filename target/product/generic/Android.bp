@@ -637,6 +637,7 @@ android_filesystem_defaults {
         default: [],
     }) + select(product_variable("debuggable"), {
         true: [
+            "alloctop",
             "adevice_fingerprint",
             "arping",
             "avbctl",
