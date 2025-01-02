@@ -21,8 +21,7 @@ package android.os.flagging;
  */
 public class PlatformAconfigPackageInternal {
 
-    public static PlatformAconfigPackageInternal load(
-            String container, String packageName, long packageFingerprint) {
+    public static PlatformAconfigPackageInternal load(String packageName, long packageFingerprint) {
         throw new UnsupportedOperationException("Stub!");
     }
 
