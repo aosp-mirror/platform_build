@@ -84,7 +84,7 @@ public class DeviceProtosTestUtil {
                 continue;
             }
 
-            String apexName = prefix.getName();
+            String apexName = prefix.getName().replace("com.google", "com");
             apexName = apexName.substring(0, apexName.length() - 5);
 
             File protoPath = new File(APEX_DIR + apexName + APEX_ACONFIG_PATH_SUFFIX);
