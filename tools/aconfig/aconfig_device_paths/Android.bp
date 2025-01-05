@@ -73,3 +73,23 @@ java_library_host {
     name: "aconfig_host_device_paths_java",
     srcs: [":libaconfig_java_host_device_paths_src"],
 }
+
+genrule {
+    name: "java_device_paths_test_util_src",
+    srcs: ["src/DeviceProtosTestUtilTemplate.java"],
+    out: ["DeviceProtosTestUtil.java"],
+    tool_files: ["partition_aconfig_flags_paths.txt"],
+    cmd: "sed -e '/TEMPLATE/{r$(location partition_aconfig_flags_paths.txt)' -e 'd}' $(in) > $(out)",
+}
+
+java_library {
+    name: "aconfig_device_paths_java_util",
+    srcs: [":java_device_paths_test_util_src"],
+    static_libs: [
+        "libaconfig_java_proto_nano",
+    ],
+    sdk_version: "core_platform",
+    apex_available: [
+        "//apex_available:platform",
+    ],
+}

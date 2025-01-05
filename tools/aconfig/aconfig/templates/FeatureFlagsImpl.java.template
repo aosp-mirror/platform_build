@@ -73,7 +73,7 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
     private static final String TAG = "{package_name}.FeatureFlagsImpl_exported";
     private static volatile boolean isCached = false;
 {{ for flag in flag_elements }}
-    private static boolean {flag.method_name} = {flag.default_value};
+    private static boolean {flag.method_name} = false;
 {{ -endfor }}
     private void init() \{
         try \{
