@@ -19,6 +19,9 @@ rust_defaults {
 rust_binary {
     name: "printflags",
     defaults: ["printflags.defaults"],
+    apex_available: [
+        "//apex_available:platform",
+    ],
 }
 
 rust_test_host {
