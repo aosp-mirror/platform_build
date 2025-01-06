@@ -62,6 +62,12 @@ fn cli() -> Command {
                             &commands::DEFAULT_FLAG_PERMISSION,
                         )),
                 )
+                .arg(
+                    Arg::new("allow-read-write")
+                        .long("allow-read-write")
+                        .value_parser(clap::value_parser!(bool))
+                        .default_value("true"),
+                )
                 .arg(Arg::new("cache").long("cache").required(true)),
         )
         .subcommand(
@@ -77,6 +83,12 @@ fn cli() -> Command {
                 .arg(
                     Arg::new("allow-instrumentation")
                         .long("allow-instrumentation")
+                        .value_parser(clap::value_parser!(bool))
+                        .default_value("false"),
+                )
+                .arg(
+                    Arg::new("new-exported")
+                        .long("new-exported")
                         .value_parser(clap::value_parser!(bool))
                         .default_value("false"),
                 ),
@@ -242,12 +254,15 @@ fn main() -> Result<()> {
                 sub_matches,
                 "default-permission",
             )?;
+            let allow_read_write = get_optional_arg::<bool>(sub_matches, "allow-read-write")
+                .expect("failed to parse allow-read-write");
             let output = commands::parse_flags(
                 package,
                 container,
                 declarations,
                 values,
                 *default_permission,
+                *allow_read_write,
             )
             .context("failed to create cache")?;
             let path = get_required_arg::<String>(sub_matches, "cache")?;
@@ -258,8 +273,10 @@ fn main() -> Result<()> {
             let mode = get_required_arg::<CodegenMode>(sub_matches, "mode")?;
             let allow_instrumentation =
                 get_required_arg::<bool>(sub_matches, "allow-instrumentation")?;
-            let generated_files = commands::create_java_lib(cache, *mode, *allow_instrumentation)
-                .context("failed to create java lib")?;
+            let new_exported = get_required_arg::<bool>(sub_matches, "new-exported")?;
+            let generated_files =
+                commands::create_java_lib(cache, *mode, *allow_instrumentation, *new_exported)
+                    .context("failed to create java lib")?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
             generated_files
                 .iter()

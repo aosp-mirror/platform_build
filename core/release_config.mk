@@ -146,6 +146,9 @@ ifneq (,$(_use_protobuf))
         # This will also set ALL_RELEASE_CONFIGS_FOR_PRODUCT and _used_files for us.
         $(eval include $(_flags_file))
         $(KATI_extra_file_deps $(OUT_DIR)/release-config $(protobuf_map_files) $(_flags_file))
+        ifneq (,$(_disallow_lunch_use))
+            $(error Release config ${TARGET_RELEASE} is disallowed for build.  Please use one of: $(ALL_RELEASE_CONFIGS_FOR_PRODUCT))
+        endif
     else
         # This is the first pass of product config.
         $(eval include $(_flags_varmk))

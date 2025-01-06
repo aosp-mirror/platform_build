@@ -42,8 +42,9 @@ _EM_ARM = 40
 _EM_X86_64 = 62
 _EM_AARCH64 = 183
 
-_KNOWN_MACHINES = {_EM_386, _EM_ARM, _EM_X86_64, _EM_AARCH64}
-
+_32_BIT_MACHINES = {_EM_386, _EM_ARM}
+_64_BIT_MACHINES = {_EM_X86_64, _EM_AARCH64}
+_KNOWN_MACHINES = _32_BIT_MACHINES | _64_BIT_MACHINES
 
 # ELF header struct
 _ELF_HEADER_STRUCT = (
@@ -483,6 +484,11 @@ class Checker(object):
       sys.exit(2)
 
   def check_max_page_size(self, max_page_size):
+    if self._file_under_test.header.e_machine in _32_BIT_MACHINES:
+      # Skip test on 32-bit machines. 16 KB pages is an arm64 feature
+      # and no 32-bit systems in Android use it.
+      return
+
     for alignment in self._file_under_test.alignments:
       if alignment % max_page_size != 0:
         self._error(f'Load segment has alignment {alignment} but '

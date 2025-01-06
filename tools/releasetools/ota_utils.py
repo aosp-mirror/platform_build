@@ -845,16 +845,16 @@ class PayloadGenerator(object):
     self.is_partial_update = is_partial_update
     self.spl_downgrade = spl_downgrade
 
-  def _Run(self, cmd):  # pylint: disable=no-self-use
+  def _Run(self, cmd, **kwargs):  # pylint: disable=no-self-use
     # Don't pipe (buffer) the output if verbose is set. Let
     # brillo_update_payload write to stdout/stderr directly, so its progress can
     # be monitored.
     if OPTIONS.verbose:
-      common.RunAndCheckOutput(cmd, stdout=None, stderr=None)
+      common.RunAndCheckOutput(cmd, stdout=None, stderr=None, **kwargs)
     else:
-      common.RunAndCheckOutput(cmd)
+      common.RunAndCheckOutput(cmd, **kwargs)
 
-  def Generate(self, target_file, source_file=None, additional_args=None):
+  def Generate(self, target_file, source_file=None, additional_args=None, **kwargs):
     """Generates a payload from the given target-files zip(s).
 
     Args:
@@ -863,6 +863,7 @@ class PayloadGenerator(object):
           generating a full OTA.
       additional_args: A list of additional args that should be passed to
           delta_generator binary; or None.
+      kwargs: Any additional args to pass to subprocess.Popen
     """
     if additional_args is None:
       additional_args = []
@@ -918,7 +919,7 @@ class PayloadGenerator(object):
     if self.is_partial_update:
       cmd.extend(["--is_partial_update=true"])
     cmd.extend(additional_args)
-    self._Run(cmd)
+    self._Run(cmd, **kwargs)
 
     self.payload_file = payload_file
     self.payload_properties = None

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-use crate::commands::assign_flag_ids;
+use crate::commands::{assign_flag_ids, should_include_flag};
 use crate::storage::FlagPackage;
 use aconfig_protos::ProtoFlagPermission;
 use aconfig_storage_file::{
@@ -62,9 +62,13 @@ impl FlagTableNodeWrapper {
     }
 
     fn create_nodes(package: &FlagPackage, num_buckets: u32) -> Result<Vec<Self>> {
+        // Exclude system/vendor/product flags that are RO+disabled.
+        let mut filtered_package = package.clone();
+        filtered_package.boolean_flags.retain(|pf| should_include_flag(pf));
+
         let flag_ids =
-            assign_flag_ids(package.package_name, package.boolean_flags.iter().copied())?;
-        package
+            assign_flag_ids(package.package_name, filtered_package.boolean_flags.iter().copied())?;
+        filtered_package
             .boolean_flags
             .iter()
             .map(|&pf| {
@@ -148,7 +152,7 @@ mod tests {
 
     fn create_test_flag_table_from_source() -> Result<FlagTable> {
         let caches = parse_all_test_flags();
-        let packages = group_flags_by_package(caches.iter());
+        let packages = group_flags_by_package(caches.iter(), DEFAULT_FILE_VERSION);
         create_flag_table("mockup", &packages, DEFAULT_FILE_VERSION)
     }
 
@@ -157,7 +161,8 @@ mod tests {
     fn test_table_contents() {
         let flag_table = create_test_flag_table_from_source();
         assert!(flag_table.is_ok());
-        let expected_flag_table = aconfig_storage_file::test_utils::create_test_flag_table();
+        let expected_flag_table =
+            aconfig_storage_file::test_utils::create_test_flag_table(DEFAULT_FILE_VERSION);
         assert_eq!(flag_table.unwrap(), expected_flag_table);
     }
 }

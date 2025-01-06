@@ -13,6 +13,8 @@
 # limitations under the License.
 
 
+import errno
+import fcntl
 import getpass
 import hashlib
 import logging
@@ -33,7 +35,7 @@ from proto import edit_event_pb2
 
 DEFAULT_PROCESS_TERMINATION_TIMEOUT_SECONDS = 5
 DEFAULT_MONITOR_INTERVAL_SECONDS = 5
-DEFAULT_MEMORY_USAGE_THRESHOLD = 2 * 1024  # 2GB
+DEFAULT_MEMORY_USAGE_THRESHOLD = 0.02  # 2% of total memory
 DEFAULT_CPU_USAGE_THRESHOLD = 200
 DEFAULT_REBOOT_TIMEOUT_SECONDS = 60 * 60 * 24
 BLOCK_SIGN_FILE = "edit_monitor_block_sign"
@@ -70,6 +72,9 @@ class DaemonManager:
 
     self.max_memory_usage = 0
     self.max_cpu_usage = 0
+    self.total_memory_size = os.sysconf("SC_PAGE_SIZE") * os.sysconf(
+        "SC_PHYS_PAGES"
+    )
 
     pid_file_dir = pathlib.Path(tempfile.gettempdir()).joinpath("edit_monitor")
     pid_file_dir.mkdir(parents=True, exist_ok=True)
@@ -83,8 +88,8 @@ class DaemonManager:
     if not utils.is_feature_enabled(
         "edit_monitor",
         self.user_name,
-        "ENABLE_EDIT_MONITOR",
-        "EDIT_MONITOR_ROLLOUT_PERCENTAGE",
+        "ENABLE_ANDROID_EDIT_MONITOR",
+        100,
     ):
       logging.warning("Edit monitor is disabled, exiting...")
       return
@@ -97,16 +102,32 @@ class DaemonManager:
       logging.warning("Edit monitor for cog is not supported, exiting...")
       return
 
-    try:
-      self._stop_any_existing_instance()
-      self._write_pid_to_pidfile()
-      self._start_daemon_process()
-    except Exception as e:
-      logging.exception("Failed to start daemon manager with error %s", e)
-      self._send_error_event_to_clearcut(
-          edit_event_pb2.EditEvent.FAILED_TO_START_EDIT_MONITOR
-      )
-      raise e
+    setup_lock_file = pathlib.Path(tempfile.gettempdir()).joinpath(
+        self.pid_file_path.name + ".setup"
+    )
+    logging.info("setup lock file: %s", setup_lock_file)
+    with open(setup_lock_file, "w") as f:
+      try:
+        # Acquire an exclusive lock
+        fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        self._stop_any_existing_instance()
+        self._write_pid_to_pidfile()
+        self._start_daemon_process()
+      except Exception as e:
+        if (
+            isinstance(e, IOError) and e.errno == errno.EAGAIN
+        ):  # Failed to acquire the file lock.
+          logging.warning("Another edit monitor is starting, exitinng...")
+          return
+        else:
+          logging.exception("Failed to start daemon manager with error %s", e)
+          self._send_error_event_to_clearcut(
+              edit_event_pb2.EditEvent.FAILED_TO_START_EDIT_MONITOR
+          )
+          raise e
+      finally:
+        # Release the lock
+        fcntl.flock(f, fcntl.LOCK_UN)
 
   def monitor_daemon(
       self,
@@ -141,16 +162,20 @@ class DaemonManager:
         # Logging the error and continue.
         logging.warning("Failed to monitor daemon process with error: %s", e)
 
-      if (
-          self.max_memory_usage >= memory_threshold
-          or self.max_cpu_usage >= cpu_threshold
-      ):
-        logging.error(
-            "Daemon process is consuming too much resource, killing..."
-        ),
+      if self.max_memory_usage >= memory_threshold:
         self._send_error_event_to_clearcut(
-            edit_event_pb2.EditEvent.KILLED_DUE_TO_EXCEEDED_RESOURCE_USAGE
+            edit_event_pb2.EditEvent.KILLED_DUE_TO_EXCEEDED_MEMORY_USAGE
         )
+        logging.error(
+            "Daemon process is consuming too much memory, rebooting..."
+        )
+        self.reboot()
+
+      if self.max_cpu_usage >= cpu_threshold:
+        self._send_error_event_to_clearcut(
+            edit_event_pb2.EditEvent.KILLED_DUE_TO_EXCEEDED_CPU_USAGE
+        )
+        logging.error("Daemon process is consuming too much cpu, killing...")
         self._terminate_process(self.daemon_process.pid)
 
     logging.info(
@@ -172,7 +197,7 @@ class DaemonManager:
         self._wait_for_process_terminate(self.daemon_process.pid, 1)
         if self.daemon_process.is_alive():
           self._terminate_process(self.daemon_process.pid)
-      self._remove_pidfile()
+      self._remove_pidfile(self.pid)
       logging.info("Successfully stopped daemon manager.")
     except Exception as e:
       logging.exception("Failed to stop daemon manager with error %s", e)
@@ -246,11 +271,15 @@ class DaemonManager:
     if ex_pid:
       logging.info("Found another instance with pid %d.", ex_pid)
       self._terminate_process(ex_pid)
-      self._remove_pidfile()
+      self._remove_pidfile(ex_pid)
 
-  def _read_pid_from_pidfile(self):
-    with open(self.pid_file_path, "r") as f:
-      return int(f.read().strip())
+  def _read_pid_from_pidfile(self) -> int | None:
+    try:
+      with open(self.pid_file_path, "r") as f:
+        return int(f.read().strip())
+    except FileNotFoundError as e:
+      logging.warning("pidfile %s does not exist.", self.pid_file_path)
+      return None
 
   def _write_pid_to_pidfile(self):
     """Creates a pidfile and writes the current pid to the file.
@@ -326,7 +355,23 @@ class DaemonManager:
       )
       return True
 
-  def _remove_pidfile(self):
+  def _remove_pidfile(self, expected_pid: int):
+    recorded_pid = self._read_pid_from_pidfile()
+
+    if recorded_pid is None:
+      logging.info("pid file %s already removed.", self.pid_file_path)
+      return
+
+    if recorded_pid != expected_pid:
+      logging.warning(
+          "pid file contains pid from a different process, expected pid: %d,"
+          " actual pid: %d.",
+          expected_pid,
+          recorded_pid,
+      )
+      return
+
+    logging.debug("removing pidfile written by process %s", expected_pid)
     try:
       os.remove(self.pid_file_path)
     except FileNotFoundError:
@@ -351,7 +396,13 @@ class DaemonManager:
       stat_data = f.readline().split()
       # RSS is the 24th field in /proc/[pid]/stat
       rss_pages = int(stat_data[23])
-      return rss_pages * 4 / 1024  # Covert to MB
+      process_memory = rss_pages * 4 * 1024  # Convert to bytes
+
+    return (
+        process_memory / self.total_memory_size
+        if self.total_memory_size
+        else 0.0
+    )
 
   def _get_process_cpu_percent(self, pid: int, interval: int = 1) -> float:
     total_start_time = self._get_total_cpu_time(pid)
@@ -365,9 +416,7 @@ class DaemonManager:
       uptime_end = float(f.readline().split()[0])
 
     return (
-        (total_end_time - total_start_time)
-        / (uptime_end - uptime_start)
-        * 100
+        (total_end_time - total_start_time) / (uptime_end - uptime_start) * 100
     )
 
   def _get_total_cpu_time(self, pid: int) -> float:
@@ -382,13 +431,19 @@ class DaemonManager:
   def _find_all_instances_pids(self) -> list[int]:
     pids = []
 
-    for file in os.listdir(self.pid_file_path.parent):
-      if file.endswith(".lock"):
-        try:
-          with open(self.pid_file_path.parent.joinpath(file), "r") as f:
-            pids.append(int(f.read().strip()))
-        except (FileNotFoundError, IOError, ValueError, TypeError):
-          logging.exception("Failed to get pid from file path: %s", file)
+    try:
+      output = subprocess.check_output(["ps", "-ef", "--no-headers"], text=True)
+      for line in output.splitlines():
+        parts = line.split()
+        process_path = parts[7]
+        if pathlib.Path(process_path).name == "edit_monitor":
+          pid = int(parts[1])
+          if pid != self.pid:  # exclude the current process
+            pids.append(pid)
+    except Exception:
+      logging.exception(
+          "Failed to get pids of existing edit monitors from ps command."
+      )
 
     return pids
 

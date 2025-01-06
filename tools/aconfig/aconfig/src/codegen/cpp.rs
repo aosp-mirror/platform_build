@@ -24,7 +24,7 @@ use aconfig_protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
 
 use crate::codegen;
 use crate::codegen::CodegenMode;
-use crate::commands::OutputFile;
+use crate::commands::{should_include_flag, OutputFile};
 
 pub fn generate_cpp_code<I>(
     package: &str,
@@ -127,6 +127,23 @@ fn create_class_element(
     flag_ids: HashMap<String, u16>,
     rw_count: &mut i32,
 ) -> ClassElement {
+    let no_assigned_offset = !should_include_flag(pf);
+
+    let flag_offset = match flag_ids.get(pf.name()) {
+        Some(offset) => offset,
+        None => {
+            // System/vendor/product RO+disabled flags have no offset in storage files.
+            // Assign placeholder value.
+            if no_assigned_offset {
+                &0
+            }
+            // All other flags _must_ have an offset.
+            else {
+                panic!("{}", format!("missing flag offset for {}", pf.name()));
+            }
+        }
+    };
+
     ClassElement {
         readwrite_idx: if pf.permission() == ProtoFlagPermission::READ_WRITE {
             let index = *rw_count;
@@ -144,7 +161,7 @@ fn create_class_element(
         },
         flag_name: pf.name().to_string(),
         flag_macro: pf.name().to_uppercase(),
-        flag_offset: *flag_ids.get(pf.name()).expect("values checked at flag parse time"),
+        flag_offset: *flag_offset,
         device_config_namespace: pf.namespace().to_string(),
         device_config_flag: codegen::create_device_config_ident(package, pf.name())
             .expect("values checked at flag parse time"),

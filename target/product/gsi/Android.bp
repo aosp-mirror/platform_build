@@ -61,3 +61,98 @@ prebuilt_etc {
     system_ext_specific: true,
     relative_install_path: "gsi",
 }
+
+gsi_symlinks = [
+    {
+        target: "/system/system_ext",
+        name: "system_ext",
+    },
+    {
+        target: "/system/product",
+        name: "product",
+    },
+    {
+        target: "/odm/odm_dlkm/etc",
+        name: "odm_dlkm/etc",
+    },
+    {
+        target: "/vendor/vendor_dlkm/etc",
+        name: "vendor_dlkm/etc",
+    },
+]
+
+android_system_image {
+    name: "android_gsi",
+    defaults: [
+        "system_image_defaults",
+        "system_ext_image_defaults",
+        "product_image_defaults",
+    ],
+    symlinks: gsi_symlinks,
+    dirs: ["cache"],
+    deps: [
+        ///////////////////////////////////////////
+        // gsi_system_ext
+        ///////////////////////////////////////////
+
+        // handheld packages
+        "Launcher3QuickStep",
+        "Provision",
+        "Settings",
+        "StorageManager",
+        "SystemUI",
+
+        // telephony packages
+        "CarrierConfig",
+
+        // Install a copy of the debug policy to the system_ext partition, and allow
+        // init-second-stage to load debug policy from system_ext.
+        // This option is only meant to be set by compliance GSI targets.
+        "system_ext_userdebug_plat_sepolicy.cil",
+
+        ///////////////////////////////////////////
+        // gsi_release
+        ///////////////////////////////////////////
+        "gsi_skip_mount.cfg",
+        "init.gsi.rc",
+        "init.vndk-nodef.rc",
+        // Overlay the GSI specific setting for framework and SystemUI
+        "gsi_overlay_framework",
+        "gsi_overlay_systemui",
+
+        ///////////////////////////////////////////
+        // VNDK
+        ///////////////////////////////////////////
+        "com.android.vndk.v30",
+        "com.android.vndk.v31",
+        "com.android.vndk.v32",
+        "com.android.vndk.v33",
+        "com.android.vndk.v34",
+
+        ///////////////////////////////////////////
+        // AVF
+        ///////////////////////////////////////////
+        "com.android.compos",
+        "features_com.android.virt.xml",
+
+        ///////////////////////////////////////////
+        // gsi_product
+        ///////////////////////////////////////////
+        "Browser2",
+        "Camera2",
+        "Dialer",
+        "LatinIME",
+        "apns-full-conf.xml",
+    ],
+    multilib: {
+        both: {
+            // PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34
+            deps: ["android.hidl.memory@1.0-impl"],
+        },
+    },
+    enabled: select(soong_config_variable("ANDROID", "PRODUCT_INSTALL_DEBUG_POLICY_TO_SYSTEM_EXT"), {
+        "true": true,
+        default: false,
+    }),
+    type: "ext4",
+}

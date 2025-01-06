@@ -37,6 +37,8 @@ import build_test_suites
 import ci_test_lib
 import optimized_targets
 from pyfakefs import fake_filesystem_unittest
+import metrics_agent
+import test_discovery_agent
 
 
 class BuildTestSuitesTest(fake_filesystem_unittest.TestCase):
@@ -51,6 +53,10 @@ class BuildTestSuitesTest(fake_filesystem_unittest.TestCase):
     subprocess_run_patcher = mock.patch('subprocess.run')
     self.addCleanup(subprocess_run_patcher.stop)
     self.mock_subprocess_run = subprocess_run_patcher.start()
+
+    metrics_agent_finalize_patcher = mock.patch('metrics_agent.MetricsAgent.end_reporting')
+    self.addCleanup(metrics_agent_finalize_patcher.stop)
+    self.mock_metrics_agent_end = metrics_agent_finalize_patcher.start()
 
     self._setup_working_build_env()
 
@@ -70,6 +76,12 @@ class BuildTestSuitesTest(fake_filesystem_unittest.TestCase):
     del os.environ['TOP']
 
     with self.assert_raises_word(build_test_suites.Error, 'TOP'):
+      build_test_suites.main([])
+
+  def test_missing_dist_dir_env_var_raises(self):
+    del os.environ['DIST_DIR']
+
+    with self.assert_raises_word(build_test_suites.Error, 'DIST_DIR'):
       build_test_suites.main([])
 
   def test_invalid_arg_raises(self):
@@ -108,6 +120,9 @@ class BuildTestSuitesTest(fake_filesystem_unittest.TestCase):
     self.soong_ui_dir = self.fake_top.joinpath('build/soong')
     self.soong_ui_dir.mkdir(parents=True, exist_ok=True)
 
+    self.logs_dir = self.fake_top.joinpath('dist/logs')
+    self.logs_dir.mkdir(parents=True, exist_ok=True)
+
     self.soong_ui = self.soong_ui_dir.joinpath('soong_ui.bash')
     self.soong_ui.touch()
 
@@ -115,6 +130,7 @@ class BuildTestSuitesTest(fake_filesystem_unittest.TestCase):
         'TARGET_RELEASE': 'release',
         'TARGET_PRODUCT': 'product',
         'TOP': str(self.fake_top),
+        'DIST_DIR': str(self.fake_top.joinpath('dist')),
     })
 
     self.mock_subprocess_run.return_value = 0
@@ -256,6 +272,12 @@ class BuildPlannerTest(unittest.TestCase):
     def get_enabled_flag(self):
       return f'{self.target}_enabled'
 
+  def setUp(self):
+    test_discovery_agent_patcher = mock.patch('test_discovery_agent.TestDiscoveryAgent.discover_test_zip_regexes')
+    self.addCleanup(test_discovery_agent_patcher.stop)
+    self.mock_test_discovery_agent_end = test_discovery_agent_patcher.start()
+
+
   def test_build_optimization_off_builds_everything(self):
     build_targets = {'target_1', 'target_2'}
     build_planner = self.create_build_planner(
@@ -284,7 +306,8 @@ class BuildPlannerTest(unittest.TestCase):
     build_planner = self.create_build_planner(
         build_targets=build_targets,
         build_context=self.create_build_context(
-            enabled_build_features=[{'name': self.get_target_flag('target_1')}]
+            enabled_build_features=[{'name': self.get_target_flag('target_1')}],
+            test_context=self.get_test_context('target_1'),
         ),
     )
 
@@ -300,7 +323,8 @@ class BuildPlannerTest(unittest.TestCase):
     build_planner = self.create_build_planner(
         build_targets=build_targets,
         build_context=self.create_build_context(
-            enabled_build_features=[{'name': self.get_target_flag('target_1')}]
+            enabled_build_features=[{'name': self.get_target_flag('target_1')}],
+            test_context=self.get_test_context('target_1'),
         ),
         packaging_commands=packaging_commands,
     )

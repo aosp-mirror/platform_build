@@ -14,6 +14,7 @@
 
 """Unittests for DaemonManager."""
 
+import fcntl
 import logging
 import multiprocessing
 import os
@@ -81,7 +82,9 @@ class DaemonManagerTest(unittest.TestCase):
     # Sets the tempdir under the working dir so any temp files created during
     # tests will be cleaned.
     tempfile.tempdir = self.working_dir.name
-    self.patch = mock.patch.dict(os.environ, {'ENABLE_EDIT_MONITOR': 'true'})
+    self.patch = mock.patch.dict(
+        os.environ, {'ENABLE_ANDROID_EDIT_MONITOR': 'true'}
+    )
     self.patch.start()
 
   def tearDown(self):
@@ -101,6 +104,7 @@ class DaemonManagerTest(unittest.TestCase):
     p = self._create_fake_deamon_process()
 
     self.assert_run_simple_daemon_success()
+    self.assert_no_subprocess_running()
 
   def test_start_success_with_existing_instance_already_dead(self):
     # Create a pidfile with pid that does not exist.
@@ -136,7 +140,9 @@ class DaemonManagerTest(unittest.TestCase):
     # Verify no daemon process is started.
     self.assertIsNone(dm.daemon_process)
 
-  @mock.patch.dict(os.environ, {'ENABLE_EDIT_MONITOR': 'false'}, clear=True)
+  @mock.patch.dict(
+      os.environ, {'ENABLE_ANDROID_EDIT_MONITOR': 'false'}, clear=True
+  )
   def test_start_return_directly_if_disabled(self):
     dm = daemon_manager.DaemonManager(TEST_BINARY_FILE)
     dm.start()
@@ -150,6 +156,25 @@ class DaemonManagerTest(unittest.TestCase):
     )
     dm.start()
 
+    # Verify no daemon process is started.
+    self.assertIsNone(dm.daemon_process)
+
+  def test_start_failed_other_instance_is_starting(self):
+    f = open(
+        pathlib.Path(self.working_dir.name).joinpath(
+            TEST_PID_FILE_PATH + '.setup'
+        ),
+        'w',
+    )
+    # Acquire an exclusive lock
+    fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+
+    dm = daemon_manager.DaemonManager(TEST_BINARY_FILE)
+    dm.start()
+
+    # Release the lock
+    fcntl.flock(f, fcntl.LOCK_UN)
+    f.close()
     # Verify no daemon process is started.
     self.assertIsNone(dm.daemon_process)
 
@@ -176,6 +201,7 @@ class DaemonManagerTest(unittest.TestCase):
         'edit_monitor'
     )
     pid_file_path_dir.mkdir(parents=True, exist_ok=True)
+
     # Makes the directory read-only so write pidfile will fail.
     os.chmod(pid_file_path_dir, 0o555)
 
@@ -201,23 +227,31 @@ class DaemonManagerTest(unittest.TestCase):
         fake_cclient, edit_event_pb2.EditEvent.FAILED_TO_START_EDIT_MONITOR
     )
 
-  def test_monitor_daemon_subprocess_killed_high_memory_usage(self):
+  @mock.patch('os.execv')
+  def test_monitor_reboot_with_high_memory_usage(self, mock_execv):
     fake_cclient = FakeClearcutClient()
+    binary_file = tempfile.NamedTemporaryFile(
+        dir=self.working_dir.name, delete=False
+    )
+
     dm = daemon_manager.DaemonManager(
-        TEST_BINARY_FILE,
+        binary_file.name,
         daemon_target=memory_consume_daemon_target,
         daemon_args=(2,),
         cclient=fake_cclient,
     )
+    # set the fake total_memory_size
+    dm.total_memory_size = 100 * 1024 * 1024
     dm.start()
-    dm.monitor_daemon(interval=1, memory_threshold=2)
+    dm.monitor_daemon(interval=1)
 
-    self.assertTrue(dm.max_memory_usage >= 2)
+    self.assertTrue(dm.max_memory_usage >= 0.02)
     self.assert_no_subprocess_running()
     self._assert_error_event_logged(
         fake_cclient,
-        edit_event_pb2.EditEvent.KILLED_DUE_TO_EXCEEDED_RESOURCE_USAGE,
+        edit_event_pb2.EditEvent.KILLED_DUE_TO_EXCEEDED_MEMORY_USAGE,
     )
+    mock_execv.assert_called_once()
 
   def test_monitor_daemon_subprocess_killed_high_cpu_usage(self):
     fake_cclient = FakeClearcutClient()
@@ -234,7 +268,7 @@ class DaemonManagerTest(unittest.TestCase):
     self.assert_no_subprocess_running()
     self._assert_error_event_logged(
         fake_cclient,
-        edit_event_pb2.EditEvent.KILLED_DUE_TO_EXCEEDED_RESOURCE_USAGE,
+        edit_event_pb2.EditEvent.KILLED_DUE_TO_EXCEEDED_CPU_USAGE,
     )
 
   @mock.patch('subprocess.check_output')
@@ -358,6 +392,26 @@ class DaemonManagerTest(unittest.TestCase):
         fake_cclient, edit_event_pb2.EditEvent.FAILED_TO_REBOOT_EDIT_MONITOR
     )
 
+  @mock.patch('subprocess.check_output')
+  def test_cleanup_success(self, mock_check_output):
+    p = self._create_fake_deamon_process()
+    fake_cclient = FakeClearcutClient()
+    mock_check_output.return_value = f'user {p.pid} 1 1 1 1 1 edit_monitor arg'
+
+    dm = daemon_manager.DaemonManager(
+        TEST_BINARY_FILE,
+        daemon_target=long_running_daemon,
+        cclient=fake_cclient,
+    )
+    dm.cleanup()
+
+    self.assertFalse(p.is_alive())
+    self.assertTrue(
+        pathlib.Path(self.working_dir.name)
+        .joinpath(daemon_manager.BLOCK_SIGN_FILE)
+        .exists()
+    )
+
   def assert_run_simple_daemon_success(self):
     damone_output_file = tempfile.NamedTemporaryFile(
         dir=self.working_dir.name, delete=False
@@ -423,7 +477,7 @@ class DaemonManagerTest(unittest.TestCase):
         pass
 
   def _create_fake_deamon_process(
-      self, name: str = ''
+      self, name: str = TEST_PID_FILE_PATH
   ) -> multiprocessing.Process:
     # Create a long running subprocess
     p = multiprocessing.Process(target=long_running_daemon)
@@ -434,7 +488,7 @@ class DaemonManagerTest(unittest.TestCase):
         'edit_monitor'
     )
     pid_file_path_dir.mkdir(parents=True, exist_ok=True)
-    with open(pid_file_path_dir.joinpath(name + 'pid.lock'), 'w') as f:
+    with open(pid_file_path_dir.joinpath(name), 'w') as f:
       f.write(str(p.pid))
     return p
 

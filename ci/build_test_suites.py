@@ -20,16 +20,22 @@ import json
 import logging
 import os
 import pathlib
+import re
 import subprocess
 import sys
 from typing import Callable
 from build_context import BuildContext
 import optimized_targets
+import metrics_agent
+import test_discovery_agent
 
 
-REQUIRED_ENV_VARS = frozenset(['TARGET_PRODUCT', 'TARGET_RELEASE', 'TOP'])
+REQUIRED_ENV_VARS = frozenset(['TARGET_PRODUCT', 'TARGET_RELEASE', 'TOP', 'DIST_DIR'])
 SOONG_UI_EXE_REL_PATH = 'build/soong/soong_ui.bash'
 LOG_PATH = 'logs/build_test_suites.log'
+# Currently, this prevents the removal of those tags when they exist. In the future we likely
+# want the script to supply 'dist directly
+REQUIRED_BUILD_TARGETS = frozenset(['dist', 'droid', 'checkbuild'])
 
 
 class Error(Exception):
@@ -68,14 +74,28 @@ class BuildPlanner:
     if 'optimized_build' not in self.build_context.enabled_build_features:
       return BuildPlan(set(self.args.extra_targets), set())
 
+    if not self.build_context.test_infos:
+      logging.warning('Build context has no test infos, skipping optimizations.')
+      for target in self.args.extra_targets:
+        get_metrics_agent().report_unoptimized_target(target, 'BUILD_CONTEXT has no test infos.')
+      return BuildPlan(set(self.args.extra_targets), set())
+
     build_targets = set()
     packaging_commands_getters = []
-    for target in self.args.extra_targets:
-      if self._unused_target_exclusion_enabled(
-          target
-      ) and not self.build_context.build_target_used(target):
-        continue
+    # In order to roll optimizations out differently between test suites and
+    # device builds, we have separate flags.
+    enable_discovery = ('test_suites_zip_test_discovery'
+        in self.build_context.enabled_build_features
+        and not self.args.device_build
+    ) or (
+        'device_zip_test_discovery'
+        in self.build_context.enabled_build_features
+        and self.args.device_build
+    )
+    logging.info(f'Discovery mode is enabled= {enable_discovery}')
+    preliminary_build_targets = self._collect_preliminary_build_targets(enable_discovery)
 
+    for target in preliminary_build_targets:
       target_optimizer_getter = self.target_optimizations.get(target, None)
       if not target_optimizer_getter:
         build_targets.add(target)
@@ -91,12 +111,95 @@ class BuildPlanner:
 
     return BuildPlan(build_targets, packaging_commands_getters)
 
+  def _collect_preliminary_build_targets(self, enable_discovery: bool):
+    build_targets = set()
+    try:
+      test_discovery_zip_regexes = self._get_test_discovery_zip_regexes()
+      logging.info(f'Discovered test discovery regexes: {test_discovery_zip_regexes}')
+    except test_discovery_agent.TestDiscoveryError as e:
+      optimization_rationale = e.message
+      logging.warning(f'Unable to perform test discovery: {optimization_rationale}')
+
+      for target in self.args.extra_targets:
+        get_metrics_agent().report_unoptimized_target(target, optimization_rationale)
+      return self._legacy_collect_preliminary_build_targets()
+
+    for target in self.args.extra_targets:
+      if target in REQUIRED_BUILD_TARGETS:
+        build_targets.add(target)
+        get_metrics_agent().report_unoptimized_target(target, 'Required build target.')
+        continue
+      # If nothing is discovered without error, that means nothing is needed.
+      if not test_discovery_zip_regexes:
+        get_metrics_agent().report_optimized_target(target)
+        continue
+
+      regex = r'\b(%s.*)\b' % re.escape(target)
+      for opt in test_discovery_zip_regexes:
+        try:
+          if re.search(regex, opt):
+            get_metrics_agent().report_unoptimized_target(target, 'Test artifact used.')
+            build_targets.add(target)
+            # proceed to next target evaluation
+            break
+          get_metrics_agent().report_optimized_target(target)
+        except Exception as e:
+          # In case of exception report as unoptimized
+          build_targets.add(target)
+          get_metrics_agent().report_unoptimized_target(target, f'Error in parsing test discovery output for {target}: {repr(e)}')
+          logging.error(f'unable to parse test discovery output: {repr(e)}')
+          break
+    # If discovery is not enabled, return the original list
+    if not enable_discovery:
+      return self._legacy_collect_preliminary_build_targets()
+
+    return build_targets
+
+  def _legacy_collect_preliminary_build_targets(self):
+    build_targets = set()
+    for target in self.args.extra_targets:
+      if self._unused_target_exclusion_enabled(
+          target
+      ) and not self.build_context.build_target_used(target):
+        continue
+
+      build_targets.add(target)
+    return build_targets
+
   def _unused_target_exclusion_enabled(self, target: str) -> bool:
     return (
         f'{target}_unused_exclusion'
         in self.build_context.enabled_build_features
     )
 
+  def _get_test_discovery_zip_regexes(self) -> set[str]:
+    build_target_regexes = set()
+    for test_info in self.build_context.test_infos:
+      tf_command = self._build_tf_command(test_info)
+      discovery_agent = test_discovery_agent.TestDiscoveryAgent(tradefed_args=tf_command)
+      for regex in discovery_agent.discover_test_zip_regexes():
+        build_target_regexes.add(regex)
+    return build_target_regexes
+
+
+  def _build_tf_command(self, test_info) -> list[str]:
+    command = [test_info.command]
+    for extra_option in test_info.extra_options:
+      if not extra_option.get('key'):
+        continue
+      arg_key = '--' + extra_option.get('key')
+      if arg_key == '--build-id':
+        command.append(arg_key)
+        command.append(os.environ.get('BUILD_NUMBER'))
+        continue
+      if extra_option.get('values'):
+        for value in extra_option.get('values'):
+          command.append(arg_key)
+          command.append(value)
+      else:
+        command.append(arg_key)
+
+    return command
 
 @dataclass(frozen=True)
 class BuildPlan:
@@ -113,19 +216,27 @@ def build_test_suites(argv: list[str]) -> int:
   Returns:
     The exit code of the build.
   """
-  args = parse_args(argv)
-  check_required_env()
-  build_context = BuildContext(load_build_context())
-  build_planner = BuildPlanner(
-      build_context, args, optimized_targets.OPTIMIZED_BUILD_TARGETS
-  )
-  build_plan = build_planner.create_build_plan()
+  get_metrics_agent().analysis_start()
+  try:
+    args = parse_args(argv)
+    check_required_env()
+    build_context = BuildContext(load_build_context())
+    build_planner = BuildPlanner(
+        build_context, args, optimized_targets.OPTIMIZED_BUILD_TARGETS
+    )
+    build_plan = build_planner.create_build_plan()
+  except:
+    raise
+  finally:
+    get_metrics_agent().analysis_end()
 
   try:
     execute_build_plan(build_plan)
   except BuildFailureError as e:
     logging.error('Build command failed! Check build_log for details.')
     return e.return_code
+  finally:
+    get_metrics_agent().end_reporting()
 
   return 0
 
@@ -135,6 +246,11 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
   argparser.add_argument(
       'extra_targets', nargs='*', help='Extra test suites to build.'
+  )
+  argparser.add_argument(
+      '--device-build',
+      action='store_true',
+      help='Flag to indicate running a device build.',
   )
 
   return argparser.parse_args(argv)
@@ -183,12 +299,15 @@ def execute_build_plan(build_plan: BuildPlan):
   except subprocess.CalledProcessError as e:
     raise BuildFailureError(e.returncode) from e
 
-  for packaging_commands_getter in build_plan.packaging_commands_getters:
-    try:
+  get_metrics_agent().packaging_start()
+  try:
+    for packaging_commands_getter in build_plan.packaging_commands_getters:
       for packaging_command in packaging_commands_getter():
         run_command(packaging_command)
-    except subprocess.CalledProcessError as e:
-      raise BuildFailureError(e.returncode) from e
+  except subprocess.CalledProcessError as e:
+    raise BuildFailureError(e.returncode) from e
+  finally:
+    get_metrics_agent().packaging_end()
 
 
 def get_top() -> pathlib.Path:
@@ -197,6 +316,10 @@ def get_top() -> pathlib.Path:
 
 def run_command(args: list[str], stdout=None):
   subprocess.run(args=args, check=True, stdout=stdout)
+
+
+def get_metrics_agent():
+  return metrics_agent.MetricsAgent.instance()
 
 
 def main(argv):
@@ -209,3 +332,7 @@ def main(argv):
         filename=log_file,
     )
   sys.exit(build_test_suites(argv))
+
+
+if __name__ == '__main__':
+  main(sys.argv[1:])

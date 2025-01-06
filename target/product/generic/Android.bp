@@ -1,5 +1,4 @@
-android_rootdirs = [
-    "acct",
+generic_rootdirs = [
     "apex",
     "bootstrap-apex",
     "config",
@@ -15,19 +14,22 @@ android_rootdirs = [
     "oem",
     "postinstall",
     "proc",
-    "product",
     "second_stage_resources",
     "storage",
     "sys",
     "system",
     "system_dlkm",
-    "system_ext",
     "tmp",
     "vendor",
     "vendor_dlkm",
 ]
 
-android_symlinks = [
+android_rootdirs = [
+    "system_ext",
+    "product",
+]
+
+generic_symlinks = [
     {
         target: "/system/bin/init",
         name: "init",
@@ -41,16 +43,8 @@ android_symlinks = [
         name: "bin",
     },
     {
-        target: "/product",
-        name: "system/product",
-    },
-    {
         target: "/vendor",
         name: "system/vendor",
-    },
-    {
-        target: "/system_ext",
-        name: "system/system_ext",
     },
     {
         target: "/system_dlkm/lib/modules",
@@ -59,10 +53,6 @@ android_symlinks = [
     {
         target: "/data/user_de/0/com.android.shell/files/bugreports",
         name: "bugreports",
-    },
-    {
-        target: "/data/cache",
-        name: "cache",
     },
     {
         target: "/sys/kernel/debug",
@@ -118,6 +108,21 @@ android_symlinks = [
     {
         target: "/vendor/odm/usr",
         name: "odm/usr",
+    },
+]
+
+android_symlinks = [
+    {
+        target: "/product",
+        name: "system/product",
+    },
+    {
+        target: "/system_ext",
+        name: "system/system_ext",
+    },
+    {
+        target: "/data/cache",
+        name: "cache",
     },
 ]
 
@@ -340,15 +345,88 @@ phony {
     ],
 }
 
-android_system_image {
-    name: "generic_system_image",
+android_filesystem_defaults {
+    name: "system_ext_image_defaults",
+    deps: [
+        ///////////////////////////////////////////
+        // base_system_ext
+        ///////////////////////////////////////////
+        "build_flag_system_ext",
+        "fs_config_dirs_system_ext",
+        "fs_config_files_system_ext",
+        "group_system_ext",
+        "passwd_system_ext",
+        "SatelliteClient",
+        "selinux_policy_system_ext",
+        "system_ext_manifest.xml",
+        "system_ext-build.prop",
+        // Base modules when shipping api level is less than or equal to 34
+        "hwservicemanager",
+        "android.hidl.allocator@1.0-service",
 
+        ///////////////////////////////////////////
+        // window_extensions_base
+        ///////////////////////////////////////////
+        "androidx.window.extensions",
+        "androidx.window.sidecar",
+
+        ///////////////////////////////////////////
+        // base_system
+        ///////////////////////////////////////////
+        "charger",
+    ] + select(release_flag("RELEASE_APPFUNCTION_SIDECAR"), {
+        true: [
+            "com.android.extensions.appfunctions",
+            "appfunctions.extension.xml",
+        ],
+        default: [],
+    }),
+}
+
+android_filesystem_defaults {
+    name: "product_image_defaults",
+    deps: [
+        ///////////////////////////////////////////
+        // media_product
+        ///////////////////////////////////////////
+        "webview",
+
+        ///////////////////////////////////////////
+        // base_product
+        ///////////////////////////////////////////
+
+        // Base modules and settings for the product partition.
+        "build_flag_product",
+        "fs_config_dirs_product",
+        "fs_config_files_product",
+        "group_product",
+        "ModuleMetadata",
+        "passwd_product",
+        "product_compatibility_matrix.xml",
+        "product_manifest.xml",
+        "selinux_policy_product",
+        "product-build.prop",
+
+        // AUDIO
+        "frameworks_sounds",
+    ] + select(product_variable("debuggable"), {
+        // Packages included only for eng or userdebug builds, previously debug tagged
+        true: ["adb_keys"],
+        default: [],
+    }),
+}
+
+android_filesystem_defaults {
+    name: "system_image_defaults",
     partition_name: "system",
     base_dir: "system",
-    dirs: android_rootdirs,
-    symlinks: android_symlinks,
+    dirs: generic_rootdirs,
+    symlinks: generic_symlinks,
     file_contexts: ":plat_file_contexts",
-    linker_config_src: ":system_linker_config_json_file",
+    linker_config: {
+        gen_linker_config: true,
+        linker_config_srcs: [":system_linker_config_json_file"],
+    },
     fsverity: {
         inputs: [
             "etc/boot-image.prof",
@@ -360,11 +438,6 @@ android_system_image {
             "framework/oat/*/*", // framework/oat/{arch}
         ],
         libs: [":framework-res{.export-package.apk}"],
-    },
-    type: "erofs",
-    erofs: {
-        compressor: "lz4hc,9",
-        compress_hints: "erofs_compress_hints.txt",
     },
     build_logtags: true,
     gen_aconfig_flags_pb: true,
@@ -378,7 +451,7 @@ android_system_image {
 
     deps: [
         "abx",
-        "aconfigd",
+        "aconfigd-system",
         "aflags",
         "am",
         "android.software.credentials.prebuilt.xml", // generic_system
@@ -468,7 +541,6 @@ android_system_image {
         "locksettings", // base_system
         "logcat", // base_system
         "logd", // base_system
-        "logpersist.start",
         "lpdump", // base_system
         "lshal", // base_system
         "make_f2fs", // media_system
@@ -496,6 +568,7 @@ android_system_image {
         "pintool", // base_system
         "platform.xml", // base_system
         "pm", // base_system
+        "prefetch", //base_system
         "preinstalled-packages-asl-files.xml", // base_system
         "preinstalled-packages-platform-generic-system.xml", // generic_system
         "preinstalled-packages-platform-handheld-system.xml", // handheld_system
@@ -524,7 +597,6 @@ android_system_image {
         "sfdo", // base_system
         "sgdisk", // base_system
         "sm", // base_system
-        "snapshotctl", // base_system
         "snapuserd", // base_system
         "storaged", // base_system
         "surfaceflinger", // base_system
@@ -558,13 +630,14 @@ android_system_image {
         default: [
             "android.software.preview_sdk.prebuilt.xml", // media_system
         ],
-    }) + select(soong_config_variable("ANDROID", "release_package_profiling_module"), {
-        "true": [
-            "trace_redactor", // base_system (RELEASE_PACKAGE_PROFILING_MODULE)
+    }) + select(release_flag("RELEASE_MEMORY_MANAGEMENT_DAEMON"), {
+        true: [
+            "mm_daemon", // base_system (RELEASE_MEMORY_MANAGEMENT_DAEMON)
         ],
         default: [],
     }) + select(product_variable("debuggable"), {
         true: [
+            "alloctop",
             "adevice_fingerprint",
             "arping",
             "avbctl",
@@ -577,6 +650,7 @@ android_system_image {
             "iperf3",
             "iw",
             "layertracegenerator",
+            "logpersist.start",
             "logtagd.rc",
             "ot-cli-ftd",
             "ot-ctl",
@@ -587,6 +661,7 @@ android_system_image {
             "sanitizer-status",
             "servicedispatcher",
             "showmap",
+            "snapshotctl",
             "sqlite3",
             "ss",
             "start_with_lockagent",
@@ -721,14 +796,31 @@ android_system_image {
                 default: [
                     "framework-platformcrashrecovery", // base_system
                 ],
+            }) + select(release_flag("RELEASE_ONDEVICE_INTELLIGENCE_MODULE"), {
+                true: [
+                    "com.android.neuralnetworks", // base_system (RELEASE_ONDEVICE_INTELLIGENCE_MODULE)
+                ],
+                default: [
+                    "framework-ondeviceintelligence-platform", // base_system
+                ],
             }) + select(soong_config_variable("ANDROID", "release_package_profiling_module"), {
                 "true": [
                     "com.android.profiling", // base_system (RELEASE_PACKAGE_PROFILING_MODULE)
                 ],
                 default: [],
+            }) + select(release_flag("RELEASE_MOVE_VCN_TO_MAINLINE"), {
+                true: [],
+                default: [
+                    "framework-connectivity-b", // base_system
+                ],
             }) + select(release_flag("RELEASE_AVATAR_PICKER_APP"), {
                 true: [
                     "AvatarPicker", // generic_system (RELEASE_AVATAR_PICKER_APP)
+                ],
+                default: [],
+            }) + select(release_flag("RELEASE_UPROBESTATS_MODULE"), {
+                true: [
+                    "com.android.uprobestats", // base_system (RELEASE_UPROBESTATS_MODULE)
                 ],
                 default: [],
             }),
@@ -745,8 +837,12 @@ android_system_image {
                 "android.system.virtualizationservice-ndk",
                 "libgsi",
                 "servicemanager",
-                "uprobestats", // base_system - internal
-            ],
+            ] + select(release_flag("RELEASE_UPROBESTATS_MODULE"), {
+                true: [],
+                default: [
+                    "uprobestats", // base_system internal
+                ],
+            }),
         },
         both: {
             deps: [
@@ -848,7 +944,6 @@ android_system_image {
                 "libstdc++", // base_system
                 "libsysutils", // base_system
                 "libui", // base_system
-                "libuprobestats_client", // base_system - internal
                 "libusbhost", // base_system
                 "libutils", // base_system
                 "libvendorsupport", // llndk library
@@ -864,7 +959,37 @@ android_system_image {
             }) + select(soong_config_variable("ANDROID", "TARGET_DYNAMIC_64_32_MEDIASERVER"), {
                 "true": ["mediaserver"],
                 default: [],
+            }) + select(release_flag("RELEASE_UPROBESTATS_MODULE"), {
+                true: [],
+                default: [
+                    "libuprobestats_client", // base_system internal
+                ],
             }),
         },
     },
+    arch: {
+        arm64: {
+            deps: [
+                "libclang_rt.hwasan",
+                "libc_hwasan",
+            ],
+        },
+    },
+}
+
+android_system_image {
+    name: "aosp_shared_system_image",
+    defaults: ["system_image_defaults"],
+    dirs: android_rootdirs,
+    symlinks: android_symlinks,
+    type: "erofs",
+    erofs: {
+        compressor: "lz4hc,9",
+        compress_hints: "erofs_compress_hints.txt",
+    },
+    deps: [
+        // DO NOT update this list. Instead, update the system_image_defaults to
+        // sync with the base_system.mk
+        "logpersist.start", // cf only
+    ],
 }

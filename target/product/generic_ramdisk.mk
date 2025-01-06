@@ -23,6 +23,7 @@
 PRODUCT_PACKAGES += \
     init_first_stage \
     snapuserd_ramdisk \
+    ramdisk-build.prop \
 
 # Debug ramdisk
 PRODUCT_PACKAGES += \
@@ -35,8 +36,6 @@ PRODUCT_PACKAGES += \
 _my_paths := \
     $(TARGET_COPY_OUT_RAMDISK)/ \
     $(TARGET_COPY_OUT_DEBUG_RAMDISK)/ \
-    system/usr/share/zoneinfo/tz_version \
-    system/usr/share/zoneinfo/tzdata \
     $(TARGET_COPY_OUT_RECOVERY)/root/first_stage_ramdisk/system \
 
 

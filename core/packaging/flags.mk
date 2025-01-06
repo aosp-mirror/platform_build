@@ -24,10 +24,11 @@ _FLAG_PARTITIONS := product system vendor
 # -----------------------------------------------------------------
 # Aconfig Flags
 
-# Create a summary file of build flags for each partition
+# Create a summary file of build flags for a single partition
 # $(1): built aconfig flags file (out)
 # $(2): installed aconfig flags file (out)
 # $(3): the partition (in)
+# $(4): input aconfig files for the partition (in)
 define generate-partition-aconfig-flag-file
 $(eval $(strip $(1)): PRIVATE_OUT := $(strip $(1)))
 $(eval $(strip $(1)): PRIVATE_IN := $(strip $(4)))
@@ -35,7 +36,8 @@ $(strip $(1)): $(ACONFIG) $(strip $(4))
 	mkdir -p $$(dir $$(PRIVATE_OUT))
 	$$(if $$(PRIVATE_IN), \
 		$$(ACONFIG) dump --dedup --format protobuf --out $$(PRIVATE_OUT) \
-			--filter container:$(strip $(3)) \
+			--filter container:$(strip $(3))+state:ENABLED \
+			--filter container:$(strip $(3))+permission:READ_WRITE \
 			$$(addprefix --cache ,$$(PRIVATE_IN)), \
 		echo -n > $$(PRIVATE_OUT) \
 	)
@@ -107,10 +109,17 @@ $(eval $(call generate-global-aconfig-flag-file, \
 define generate-partition-aconfig-storage-file
 $(eval $(strip $(1)): PRIVATE_OUT := $(strip $(1)))
 $(eval $(strip $(1)): PRIVATE_IN := $(strip $(9)))
+
+ifneq (,$(RELEASE_FINGERPRINT_ACONFIG_PACKAGES))
+STORAGE_FILE_VERSION := 2
+else
+STORAGE_FILE_VERSION := 1
+endif
+
 $(strip $(1)): $(ACONFIG) $(strip $(9))
 	mkdir -p $$(dir $$(PRIVATE_OUT))
 	$$(if $$(PRIVATE_IN), \
-		$$(ACONFIG) create-storage --container $(10) --file package_map --out $$(PRIVATE_OUT) \
+		$$(ACONFIG) create-storage --container $(10) --file package_map --out $$(PRIVATE_OUT) --version $$(STORAGE_FILE_VERSION) \
 			$$(addprefix --cache ,$$(PRIVATE_IN)), \
 	)
 	touch $$(PRIVATE_OUT)
@@ -119,7 +128,7 @@ $(eval $(strip $(2)): PRIVATE_IN := $(strip $(9)))
 $(strip $(2)): $(ACONFIG) $(strip $(9))
 	mkdir -p $$(dir $$(PRIVATE_OUT))
 	$$(if $$(PRIVATE_IN), \
-		$$(ACONFIG) create-storage --container $(10) --file flag_map --out $$(PRIVATE_OUT) \
+		$$(ACONFIG) create-storage --container $(10) --file flag_map --out $$(PRIVATE_OUT) --version $$(STORAGE_FILE_VERSION) \
 			$$(addprefix --cache ,$$(PRIVATE_IN)), \
 	)
 	touch $$(PRIVATE_OUT)
@@ -128,7 +137,7 @@ $(eval $(strip $(3)): PRIVATE_IN := $(strip $(9)))
 $(strip $(3)): $(ACONFIG) $(strip $(9))
 	mkdir -p $$(dir $$(PRIVATE_OUT))
 	$$(if $$(PRIVATE_IN), \
-		$$(ACONFIG) create-storage --container $(10) --file flag_val --out $$(PRIVATE_OUT) \
+		$$(ACONFIG) create-storage --container $(10) --file flag_val --out $$(PRIVATE_OUT) --version $$(STORAGE_FILE_VERSION) \
 		$$(addprefix --cache ,$$(PRIVATE_IN)), \
 	)
 	touch $$(PRIVATE_OUT)
@@ -137,7 +146,7 @@ $(eval $(strip $(4)): PRIVATE_IN := $(strip $(9)))
 $(strip $(4)): $(ACONFIG) $(strip $(9))
 	mkdir -p $$(dir $$(PRIVATE_OUT))
 	$$(if $$(PRIVATE_IN), \
-		$$(ACONFIG) create-storage --container $(10) --file flag_info --out $$(PRIVATE_OUT) \
+		$$(ACONFIG) create-storage --container $(10) --file flag_info --out $$(PRIVATE_OUT) --version $$(STORAGE_FILE_VERSION) \
 		$$(addprefix --cache ,$$(PRIVATE_IN)), \
 	)
 	touch $$(PRIVATE_OUT)
