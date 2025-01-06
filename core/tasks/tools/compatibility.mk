@@ -37,7 +37,6 @@ endif
 out_dir := $(HOST_OUT)/$(test_suite_name)/$(test_suite_subdir)
 test_artifacts := $(COMPATIBILITY.$(test_suite_name).FILES)
 test_tools := $(HOST_OUT_JAVA_LIBRARIES)/tradefed.jar \
-  $(HOST_OUT_JAVA_LIBRARIES)/tradefed-test-framework.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/loganalysis.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/compatibility-host-util.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/compatibility-tradefed.jar \

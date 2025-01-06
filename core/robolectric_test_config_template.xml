@@ -33,5 +33,11 @@
         <option name="java-flags" value="--add-opens=java.base/jdk.internal.util.random=ALL-UNNAMED"/>
         <!-- b/251387255 -->
         <option name="java-flags" value="--add-opens=java.base/java.io=ALL-UNNAMED"/>
+        <option name="java-flags" value="-Drobolectric.offline=true"/>
+        <option name="java-flags" value="-Drobolectric.logging=stdout"/>
+        <option name="java-flags" value="-Drobolectric.resourcesMode=binary"/>
+        <option name="java-flags" value="-Drobolectric.usePreinstrumentedJars=false"/>
+        <option name="java-flags" value="-Drobolectric.conscryptMode=OFF"/>
+        <option name="java-flags" value="-Drobolectric.logging.enabled=true"/>
     </test>
 </configuration>
