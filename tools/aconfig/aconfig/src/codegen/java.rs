@@ -547,7 +547,7 @@ mod tests {
         import android.util.Log;
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
-            private static final String TAG = "com.android.aconfig.test.FeatureFlagsImpl";
+            private static final String TAG = "FeatureFlagsImpl";
             private static volatile boolean isCached = false;
             private static boolean disabledRw = false;
             private static boolean disabledRwExported = false;
@@ -562,7 +562,7 @@ mod tests {
                     disabledRwInOtherNamespace = reader.getBooleanFlagValue(2);
                 } catch (Exception e) {
                     Log.e(TAG, e.toString());
-                } catch (NoClassDefFoundError e) {
+                } catch (LinkageError e) {
                     // for mainline module running on older devices.
                     // This should be replaces to version check, after the version bump.
                     Log.e(TAG, e.toString());
@@ -929,7 +929,7 @@ mod tests {
         import android.util.Log;
         /** @hide */
         public final class FeatureFlagsImpl implements FeatureFlags {
-            private static final String TAG = "com.android.aconfig.test.FeatureFlagsImpl_exported";
+            private static final String TAG = "FeatureFlagsImplExport";
             private static volatile boolean isCached = false;
             private static boolean disabledRwExported = false;
             private static boolean enabledFixedRoExported = false;
@@ -943,7 +943,7 @@ mod tests {
                 } catch (Exception e) {
                     // pass
                     Log.e(TAG, e.toString());
-                } catch (NoClassDefFoundError e) {
+                } catch (LinkageError e) {
                     // for mainline module running on older devices.
                     // This should be replaces to version check, after the version bump.
                     Log.e(TAG, e.toString());
