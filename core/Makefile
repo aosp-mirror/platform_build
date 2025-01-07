@@ -84,21 +84,6 @@ ifneq ($(BUILDING_VENDOR_KERNEL_BOOT_IMAGE),)
 endif
 
 
-###########################################################
-# Get the module names suitable for ALL_MODULES.* variables that are installed
-# for a given partition
-#
-# $(1): Partition
-###########################################################
-define register-names-for-partition
-$(sort $(foreach m,$(product_MODULES),\
-	$(if $(filter $(PRODUCT_OUT)/$(strip $(1))/%, $(ALL_MODULES.$(m).INSTALLED)), \
-		$(m)
-	) \
-))
-endef
-
-
 # Release & Aconfig Flags
 # -----------------------------------------------------------------
 include $(BUILD_SYSTEM)/packaging/flags.mk
