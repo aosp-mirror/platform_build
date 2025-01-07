@@ -30,15 +30,18 @@ namespace {cpp_namespace} \{
         std::unordered_map<std::string, bool> overrides_;
 
     {{ if allow_instrumentation- }}
+    {{ if readwrite- }}
         uint32_t boolean_start_index_;
 
         std::unique_ptr<aconfig_storage::MappedStorageFile> flag_value_file_;
 
         bool package_exists_in_storage_;
     {{ -endif }}
+    {{ -endif }}
 
     public:
     {{ if allow_instrumentation- }}
+    {{ if readwrite- }}
         flag_provider()
             : overrides_()
             , boolean_start_index_()
@@ -94,8 +97,13 @@ namespace {cpp_namespace} \{
             : overrides_()
         \{}
     {{ -endif }}
+    {{ -else }}
+        flag_provider()
+            : overrides_()
+        \{}
+    {{ -endif }}
 
-{{ for item in class_elements }}
+    {{ for item in class_elements }}
         virtual bool {item.flag_name}() override \{
             auto it = overrides_.find("{item.flag_name}");
             if (it != overrides_.end()) \{
@@ -132,7 +140,7 @@ namespace {cpp_namespace} \{
         virtual void {item.flag_name}(bool val) override \{
             overrides_["{item.flag_name}"] = val;
         }
-{{ endfor }}
+    {{ endfor }}
 
         virtual void reset_flags() override \{
             overrides_.clear();
