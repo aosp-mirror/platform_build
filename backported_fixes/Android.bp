@@ -38,6 +38,7 @@ java_library {
     name: "backported_fixes_proto",
     srcs: ["backported_fixes.proto"],
     host_supported: true,
+    sdk_version: "current",
 }
 
 java_library {
