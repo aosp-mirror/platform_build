@@ -96,7 +96,6 @@ PRODUCT_PACKAGES += \
     enhanced-confirmation.xml \
     ExtShared \
     flags_health_check \
-    framework-connectivity-b \
     framework-graphics \
     framework-location \
     framework-minus-apex \
@@ -179,6 +178,7 @@ PRODUCT_PACKAGES += \
     libmedia \
     libmedia_jni \
     libmediandk \
+    libmonkey_jni \
     libmtp \
     libnetd_client \
     libnetlink \
@@ -205,6 +205,7 @@ PRODUCT_PACKAGES += \
     libstdc++ \
     libsysutils \
     libui \
+    libuprobestats_client \
     libusbhost \
     libutils \
     libvintf_jni \
@@ -294,7 +295,6 @@ PRODUCT_PACKAGES += \
     uiautomator \
     uinput \
     uncrypt \
-    uprobestats \
     usbd \
     vdc \
     vintf \
@@ -309,6 +309,17 @@ PRODUCT_PACKAGES += \
 ifeq ($(RELEASE_CRASHRECOVERY_MODULE),true)
   PRODUCT_PACKAGES += \
         com.android.crashrecovery \
+
+endif
+
+# When we release uprobestats module
+ifeq ($(RELEASE_UPROBESTATS_MODULE),true)
+    PRODUCT_PACKAGES += \
+        com.android.uprobestats \
+
+else
+    PRODUCT_PACKAGES += \
+        uprobestats \
 
 endif
 
@@ -346,6 +357,13 @@ endif
 ifeq ($(RELEASE_USE_WEBVIEW_BOOTSTRAP_MODULE),true)
     PRODUCT_PACKAGES += \
         com.android.webview.bootstrap
+endif
+
+# Only add the jar when it is not in the Tethering module. Otherwise,
+# it will be added via com.android.tethering
+ifneq ($(RELEASE_MOVE_VCN_TO_MAINLINE),true)
+    PRODUCT_PACKAGES += \
+        framework-connectivity-b
 endif
 
 ifneq (,$(RELEASE_RANGING_STACK))
@@ -471,6 +489,7 @@ PRODUCT_VENDOR_PROPERTIES += ro.zygote?=zygote32
 
 PRODUCT_SYSTEM_PROPERTIES += debug.atrace.tags.enableflags=0
 PRODUCT_SYSTEM_PROPERTIES += persist.traced.enable=1
+PRODUCT_SYSTEM_PROPERTIES += ro.surface_flinger.game_default_frame_rate_override=60
 
 # Include kernel configs.
 PRODUCT_PACKAGES += \

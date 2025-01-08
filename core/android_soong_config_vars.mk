@@ -78,9 +78,11 @@ endif
 $(call soong_config_set_bool,art_module,art_build_host_debug,$(if $(filter false,$(ART_BUILD_HOST_DEBUG)),false,true))
 
 # For chre
-$(call soong_config_set_bool,chre,chre_daemon_lama_enabled,$(if $(filter true,$(CHRE_DAEMON_LPMA_ENABLED)),true,false))
+$(call soong_config_set_bool,chre,chre_daemon_lpma_enabled,$(if $(filter true,$(CHRE_DAEMON_LPMA_ENABLED)),true,false))
 $(call soong_config_set_bool,chre,chre_dedicated_transport_channel_enabled,$(if $(filter true,$(CHRE_DEDICATED_TRANSPORT_CHANNEL_ENABLED)),true,false))
 $(call soong_config_set_bool,chre,chre_log_atom_extension_enabled,$(if $(filter true,$(CHRE_LOG_ATOM_EXTENSION_ENABLED)),true,false))
+$(call soong_config_set_bool,chre,building_vendor_image,$(if $(filter true,$(BUILDING_VENDOR_IMAGE)),true,false))
+$(call soong_config_set_bool,chre,chre_usf_daemon_enabled,$(if $(filter true,$(CHRE_USF_DAEMON_ENABLED)),true,false))
 
 ifdef TARGET_BOARD_AUTO
   $(call add_soong_config_var_value, ANDROID, target_board_auto, $(TARGET_BOARD_AUTO))
@@ -98,6 +100,9 @@ endif
 # Enable SystemUI optimizations by default unless explicitly set.
 SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
+
+# Flag for enabling compose for Launcher.
+$(call soong_config_set,ANDROID,release_enable_compose_in_launcher,$(RELEASE_ENABLE_COMPOSE_IN_LAUNCHER))
 
 ifdef PRODUCT_AVF_ENABLED
 $(call add_soong_config_var_value,ANDROID,avf_enabled,$(PRODUCT_AVF_ENABLED))
@@ -123,6 +128,8 @@ endif
 
 ifdef PRODUCT_CGROUP_V2_SYS_APP_ISOLATION_ENABLED
 $(call add_soong_config_var_value,ANDROID,cgroup_v2_sys_app_isolation,$(PRODUCT_CGROUP_V2_SYS_APP_ISOLATION_ENABLED))
+else
+$(call add_soong_config_var_value,ANDROID,cgroup_v2_sys_app_isolation,true)
 endif
 
 $(call add_soong_config_var_value,ANDROID,release_avf_allow_preinstalled_apps,$(RELEASE_AVF_ALLOW_PREINSTALLED_APPS))
@@ -198,9 +205,23 @@ endif
 # Required as platform_bootclasspath is using this namespace
 $(call soong_config_set,bootclasspath,release_crashrecovery_module,$(RELEASE_CRASHRECOVERY_MODULE))
 
+# Add uprobestats build flag to soong
+$(call soong_config_set,ANDROID,release_uprobestats_module,$(RELEASE_UPROBESTATS_MODULE))
+# Add uprobestats file move flags to soong, for both platform and module
+ifeq (true,$(RELEASE_UPROBESTATS_FILE_MOVE))
+  $(call soong_config_set,ANDROID,uprobestats_files_in_module,true)
+  $(call soong_config_set,ANDROID,uprobestats_files_in_platform,false)
+else
+  $(call soong_config_set,ANDROID,uprobestats_files_in_module,false)
+  $(call soong_config_set,ANDROID,uprobestats_files_in_platform,true)
+endif
+
 # Enable Profiling module. Also used by platform_bootclasspath.
 $(call soong_config_set,ANDROID,release_package_profiling_module,$(RELEASE_PACKAGE_PROFILING_MODULE))
 $(call soong_config_set,bootclasspath,release_package_profiling_module,$(RELEASE_PACKAGE_PROFILING_MODULE))
+
+# Move VCN from platform to the Tethering module; used by both platform and module
+$(call soong_config_set,ANDROID,is_vcn_in_mainline,$(RELEASE_MOVE_VCN_TO_MAINLINE))
 
 # Add perf-setup build flag to soong
 # Note: BOARD_PERFSETUP_SCRIPT location must be under platform_testing/scripts/perf-setup/.
@@ -272,3 +293,13 @@ $(call soong_config_set_bool,fs_config,system_dlkm,$(if $(BOARD_USES_SYSTEM_DLKM
 $(call soong_config_set_bool,telephony,sec_cp_secure_boot,$(if $(filter true,$(SEC_CP_SECURE_BOOT)),true,false))
 $(call soong_config_set_bool,telephony,cbd_protocol_sit,$(if $(filter true,$(CBD_PROTOCOL_SIT)),true,false))
 $(call soong_config_set_bool,telephony,use_radioexternal_hal_aidl,$(if $(filter true,$(USE_RADIOEXTERNAL_HAL_AIDL)),true,false))
+
+# Variables for hwcomposer.$(TARGET_BOARD_PLATFORM)
+$(call soong_config_set_bool,google_graphics,board_uses_hwc_services,$(if $(filter true,$(BOARD_USES_HWC_SERVICES)),true,false))
+
+# Variables for controlling android.hardware.composer.hwc3-service.pixel
+$(call soong_config_set,google_graphics,board_hwc_version,$(BOARD_HWC_VERSION))
+
+# Variables for extra branches
+# TODO(b/383238397): Use bootstrap_go_package to enable extra flags.
+-include vendor/google/build/extra_soong_config_vars.mk

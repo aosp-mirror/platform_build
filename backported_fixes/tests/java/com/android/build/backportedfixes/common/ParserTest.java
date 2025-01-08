@@ -23,14 +23,20 @@ import com.android.build.backportedfixes.BackportedFixes;
 
 import com.google.common.collect.ImmutableList;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
-import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 
 /** Tests for {@link Parser}.*/
 public class ParserTest {
+
+    @Rule
+    public TemporaryFolder mTempFolder = new TemporaryFolder();
 
     @Test
     public void getFileInputStreams() throws IOException {
@@ -53,15 +59,15 @@ public class ParserTest {
     }
 
     @Test
-    public void parseBackportedFixes_empty() throws IOException {
-        var result = Parser.parseBackportedFixes(ImmutableList.of());
+    public void parseBackportedFixFiles_empty() throws IOException {
+        var result = Parser.parseBackportedFixFiles(ImmutableList.of());
         assertThat(result).isEqualTo(BackportedFixes.getDefaultInstance());
     }
 
+
     @Test
-    public void parseBackportedFixes_oneBlank() throws IOException {
-        var result = Parser.parseBackportedFixes(
-                ImmutableList.of(inputStream(BackportedFix.getDefaultInstance())));
+    public void parseBackportedFixFiles_oneBlank() throws IOException {
+        var result = Parser.parseBackportedFixFiles(ImmutableList.of(mTempFolder.newFile()));
 
         assertThat(result).isEqualTo(
                 BackportedFixes.newBuilder()
@@ -70,7 +76,7 @@ public class ParserTest {
     }
 
     @Test
-    public void parseBackportedFixes_two() throws IOException {
+    public void parseBackportedFixFiles_two() throws IOException {
         BackportedFix ki123 = BackportedFix.newBuilder()
                 .setKnownIssue(123)
                 .setAlias(1)
@@ -79,8 +85,8 @@ public class ParserTest {
                 .setKnownIssue(456)
                 .setAlias(2)
                 .build();
-        var result = Parser.parseBackportedFixes(
-                ImmutableList.of(inputStream(ki123), inputStream(ki456)));
+        var result = Parser.parseBackportedFixFiles(
+                ImmutableList.of(tempFile(ki456), tempFile(ki123)));
         assertThat(result).isEqualTo(
                 BackportedFixes.newBuilder()
                         .addFixes(ki123)
@@ -88,7 +94,11 @@ public class ParserTest {
                         .build());
     }
 
-    private static ByteArrayInputStream inputStream(BackportedFix f) {
-        return new ByteArrayInputStream(f.toByteArray());
+    private File tempFile(BackportedFix fix) throws IOException {
+        File f = mTempFolder.newFile();
+        try (FileOutputStream out = new FileOutputStream(f)) {
+            fix.writeTo(out);
+            return f;
+        }
     }
 }
