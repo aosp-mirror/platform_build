@@ -16,7 +16,7 @@ import android.util.Log;
 /** @hide */
 public final class FeatureFlagsImpl implements FeatureFlags \{
 {{ -if runtime_lookup_required }}
-    private static final String TAG = "{package_name}.FeatureFlagsImpl";
+    private static final String TAG = "FeatureFlagsImpl";
     private static volatile boolean isCached = false;
 {{ for flag in flag_elements }}
 {{ -if flag.is_read_write }}
@@ -40,7 +40,7 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
         {{ -endfor }}
         } catch (Exception e) \{
             Log.e(TAG, e.toString());
-        } catch (NoClassDefFoundError e) \{
+        } catch (LinkageError e) \{
             // for mainline module running on older devices.
             // This should be replaces to version check, after the version bump.
             Log.e(TAG, e.toString());
@@ -70,7 +70,7 @@ import android.os.flagging.AconfigPackage;
 import android.util.Log;
 /** @hide */
 public final class FeatureFlagsImpl implements FeatureFlags \{
-    private static final String TAG = "{package_name}.FeatureFlagsImpl_exported";
+    private static final String TAG = "FeatureFlagsImplExport";
     private static volatile boolean isCached = false;
 {{ for flag in flag_elements }}
     private static boolean {flag.method_name} = false;
@@ -86,7 +86,7 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
         } catch (Exception e) \{
             // pass
             Log.e(TAG, e.toString());
-        } catch (NoClassDefFoundError e) \{
+        } catch (LinkageError e) \{
             // for mainline module running on older devices.
             // This should be replaces to version check, after the version bump.
             Log.e(TAG, e.toString());

@@ -1759,10 +1759,6 @@ dump-files:
 	@echo $(sort $(patsubst $(PRODUCT_OUT)/%,%,$(filter $(PRODUCT_OUT)/%,$(modules_to_install)))) | tr -s ' ' '\n'
 	@echo Successfully dumped product target file list.
 
-.PHONY: nothing
-nothing:
-	@echo Successfully read the makefiles.
-
 .PHONY: tidy_only
 tidy_only:
 	@echo Successfully make tidy_only.
