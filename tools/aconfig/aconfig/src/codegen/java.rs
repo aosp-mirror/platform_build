@@ -555,7 +555,7 @@ mod tests {
             private static boolean enabledRw = true;
             private void init() {
                 try {
-                    PlatformAconfigPackageInternal reader = PlatformAconfigPackageInternal.load("system", "com.android.aconfig.test", 0x5081CE7221C77064L);
+                    PlatformAconfigPackageInternal reader = PlatformAconfigPackageInternal.load("com.android.aconfig.test", 0x5081CE7221C77064L);
                     disabledRw = reader.getBooleanFlagValue(0);
                     disabledRwExported = reader.getBooleanFlagValue(1);
                     enabledRw = reader.getBooleanFlagValue(7);
