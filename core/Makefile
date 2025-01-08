@@ -169,7 +169,7 @@ $(foreach cf,$(unique_product_copy_files_pairs), \
             $(eval $(call copy-xml-file-checked,$(_src),$(_fulldest))),\
             $(if $(and $(filter %.jar,$(_dest)),$(filter $(basename $(notdir $(_dest))),$(PRODUCT_LOADED_BY_PRIVILEGED_MODULES))),\
                 $(eval $(call copy-and-uncompress-dexs,$(_src),$(_fulldest))), \
-                $(if $(filter init%rc,$(notdir $(_dest)))$(filter %/etc/init,$(dir $(_dest))),\
+                $(if $(filter init%rc,$(notdir $(_dest)))$(filter %/etc/init/,$(dir $(_dest))),\
                     $(eval $(call copy-init-script-file-checked,$(_src),$(_fulldest))),\
                     $(if $(and $(filter true,$(check_elf_prebuilt_product_copy_files)), \
                                $(filter bin lib lib64,$(subst /,$(space),$(_dest)))), \
@@ -885,11 +885,6 @@ $(SOONG_TO_CONVERT): $(SOONG_CONV_DATA) $(SOONG_TO_CONVERT_SCRIPT)
 $(call declare-1p-target,$(SOONG_TO_CONVERT),build)
 $(call dist-for-goals,droidcore-unbundled,$(SOONG_TO_CONVERT))
 
-$(PRODUCT_OUT)/product_packages.txt:
-	@rm -f $@
-	echo "" > $@
-	$(foreach x,$(PRODUCT_PACKAGES),echo $(x) >> $@$(newline))
-
 MK2BP_CATALOG_SCRIPT := build/make/tools/mk2bp_catalog.py
 PRODUCT_PACKAGES_TXT := $(PRODUCT_OUT)/product_packages.txt
 MK2BP_REMAINING_HTML := $(PRODUCT_OUT)/mk2bp_remaining.html
@@ -970,26 +965,11 @@ systemimage:
 
 # -----------------------------------------------------------------
 
-.PHONY: event-log-tags
-
-# Produce an event logs tag file for everything we know about, in order
-# to properly allocate numbers.  Then produce a file that's filtered
-# for what's going to be installed.
-
-all_event_log_tags_file := $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt
-
 event_log_tags_file := $(TARGET_OUT)/etc/event-log-tags
 
 # Include tags from all packages that we know about
 all_event_log_tags_src := \
     $(sort $(foreach m, $(ALL_MODULES), $(ALL_MODULES.$(m).EVENT_LOG_TAGS)))
-
-$(all_event_log_tags_file): PRIVATE_SRC_FILES := $(all_event_log_tags_src)
-$(all_event_log_tags_file): $(all_event_log_tags_src) $(MERGETAGS) build/make/tools/event_log_tags.py
-	$(hide) mkdir -p $(dir $@)
-	$(hide) $(MERGETAGS) -o $@ $(PRIVATE_SRC_FILES)
-
-$(call declare-0p-target,$(all_event_log_tags_file))
 
 # Include tags from all packages included in this product, plus all
 # tags that are part of the system (ie, not in a vendor/ or device/
@@ -1002,13 +982,13 @@ event_log_tags_src := \
       $(filter-out vendor/% device/% out/%,$(all_event_log_tags_src)))
 
 $(event_log_tags_file): PRIVATE_SRC_FILES := $(event_log_tags_src)
-$(event_log_tags_file): PRIVATE_MERGED_FILE := $(all_event_log_tags_file)
-$(event_log_tags_file): $(event_log_tags_src) $(all_event_log_tags_file) $(MERGETAGS) build/make/tools/event_log_tags.py
+$(event_log_tags_file): $(event_log_tags_src) $(MERGETAGS)
 	$(hide) mkdir -p $(dir $@)
-	$(hide) $(MERGETAGS) -o $@ -m $(PRIVATE_MERGED_FILE) $(PRIVATE_SRC_FILES)
+	$(hide) $(MERGETAGS) -o $@ $(PRIVATE_SRC_FILES)
 
 $(eval $(call declare-0p-target,$(event_log_tags_file)))
 
+.PHONY: event-log-tags
 event-log-tags: $(event_log_tags_file)
 
 ALL_DEFAULT_INSTALLED_MODULES += $(event_log_tags_file)
@@ -2418,7 +2398,7 @@ $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
 $(hide) echo "root_dir=$(TARGET_ROOT_OUT)" >> $(1)
 $(if $(filter true,$(PRODUCT_USE_DYNAMIC_PARTITION_SIZE)),\
     $(hide) echo "use_dynamic_partition_size=true" >> $(1))
-$(if $(COPY_IMAGES_FOR_TARGET_FILES_ZIP),\
+$(if $(USE_FIXED_TIMESTAMP_IMG_FILES)$(COPY_IMAGES_FOR_TARGET_FILES_ZIP),\
     $(hide) echo "use_fixed_timestamp=true" >> $(1))
 $(if $(3),$(hide) $(foreach kv,$(3),echo "$(kv)" >> $(1);))
 $(hide) sort -o $(1) $(1)
@@ -2664,7 +2644,7 @@ ifndef TARGET_PRIVATE_RES_DIRS
 TARGET_PRIVATE_RES_DIRS := $(wildcard $(TARGET_DEVICE_DIR)/recovery/res)
 endif
 recovery_resource_deps := $(shell find $(recovery_resources_common) \
-  $(TARGET_PRIVATE_RES_DIRS) -type f)
+  $(TARGET_PRIVATE_RES_DIRS) -type f -not -name "*.bp")
 recovery_resource_deps += $(generated_recovery_text_files)
 
 
@@ -3519,18 +3499,20 @@ ifdef BUILDING_SYSTEM_IMAGE
 # Collect all available stub libraries installed in system and install with predefined linker configuration
 # Also append LLNDK libraries in the APEX as required libs
 SYSTEM_LINKER_CONFIG := $(TARGET_OUT)/etc/linker.config.pb
-SYSTEM_LINKER_CONFIG_SOURCE := $(call intermediates-dir-for,ETC,system_linker_config)/system_linker_config
+SYSTEM_LINKER_CONFIG_SOURCE := system/core/rootdir/etc/linker.config.json
 $(SYSTEM_LINKER_CONFIG): PRIVATE_SYSTEM_LINKER_CONFIG_SOURCE := $(SYSTEM_LINKER_CONFIG_SOURCE)
 $(SYSTEM_LINKER_CONFIG): $(INTERNAL_SYSTEMIMAGE_FILES) $(SYSTEM_LINKER_CONFIG_SOURCE) | conv_linker_config
 	@echo Creating linker config: $@
 	@mkdir -p $(dir $@)
-	@rm -f $@
-	$(HOST_OUT_EXECUTABLES)/conv_linker_config systemprovide --source $(PRIVATE_SYSTEM_LINKER_CONFIG_SOURCE) \
+	@rm -f $@ $@.step1
+	$(HOST_OUT_EXECUTABLES)/conv_linker_config proto --force -s $(PRIVATE_SYSTEM_LINKER_CONFIG_SOURCE) -o $@.step1
+	$(HOST_OUT_EXECUTABLES)/conv_linker_config systemprovide --source $@.step1 \
 		--output $@ --value "$(STUB_LIBRARIES)" --system "$(TARGET_OUT)"
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config append --source $@ --output $@ --key requireLibs \
 		--value "$(foreach lib,$(LLNDK_MOVED_TO_APEX_LIBRARIES), $(lib).so)"
 	$(HOST_OUT_EXECUTABLES)/conv_linker_config append --source $@ --output $@ --key provideLibs \
 		--value "$(foreach lib,$(PRODUCT_EXTRA_STUB_LIBRARIES), $(lib).so)"
+	rm -f $@.step1
 
 $(call declare-1p-target,$(SYSTEM_LINKER_CONFIG),)
 $(call declare-license-deps,$(SYSTEM_LINKER_CONFIG),$(INTERNAL_SYSTEMIMAGE_FILES) $(SYSTEM_LINKER_CONFIG_SOURCE))
@@ -6678,7 +6660,7 @@ ifdef BUILDING_SYSTEM_IMAGE
 	@# Contents of the system image
 ifneq ($(SOONG_DEFINED_SYSTEM_IMAGE_PATH),)
 	$(hide) $(call package_files-copy-root, \
-	    $(SOONG_DEFINED_SYSTEM_IMAGE_BASE)/root/system,$(zip_root)/SYSTEM)
+	    $(SOONG_DEFINED_SYSTEM_IMAGE_BASE)/system/system,$(zip_root)/SYSTEM)
 else
 	$(hide) $(call package_files-copy-root, \
 	    $(SYSTEMIMAGE_SOURCE_DIR),$(zip_root)/SYSTEM)
