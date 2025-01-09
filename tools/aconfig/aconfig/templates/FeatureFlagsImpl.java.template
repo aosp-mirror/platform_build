@@ -27,9 +27,9 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
     private void init() \{
         try \{
 {{ if is_platform_container }}
-            PlatformAconfigPackageInternal reader = PlatformAconfigPackageInternal.load("{container}", "{package_name}", {package_fingerprint});
+            PlatformAconfigPackageInternal reader = PlatformAconfigPackageInternal.load("{package_name}", {package_fingerprint});
 {{ -else }}
-            AconfigPackageInternal reader = AconfigPackageInternal.load("{container}", "{package_name}", {package_fingerprint});
+            AconfigPackageInternal reader = AconfigPackageInternal.load("{package_name}", {package_fingerprint});
 {{ -endif }}
         {{ -for namespace_with_flags in namespace_flags }}
         {{ -for flag in namespace_with_flags.flags }}

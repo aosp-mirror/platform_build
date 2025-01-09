@@ -19,7 +19,7 @@ package android.aconfig.storage.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import android.aconfig.DeviceProtos;
+import android.aconfig.DeviceProtosTestUtil;
 import android.aconfig.nano.Aconfig.parsed_flag;
 import android.aconfig.storage.AconfigStorageReadAPI;
 import android.aconfig.storage.FlagReadContext;
@@ -210,7 +210,7 @@ public class AconfigStorageReadAPITest {
 
     @Test
     public void testRustJavaEqualHash() throws IOException {
-        List<parsed_flag> flags = DeviceProtos.loadAndParseFlagProtos();
+        List<parsed_flag> flags = DeviceProtosTestUtil.loadAndParseFlagProtos();
         for (parsed_flag flag : flags) {
             String packageName = flag.package_;
             String flagName = flag.name;
