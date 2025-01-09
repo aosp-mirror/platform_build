@@ -31,10 +31,16 @@ include build/make/common/strings.mk
 droid: droid_targets
 
 .PHONY: droid_targets
-droid_targets: dist_files
+droid_targets: droidcore dist_files
 
 .PHONY: dist_files
 dist_files:
+
+.PHONY: droidcore
+droidcore: droidcore-unbundled
+
+.PHONY: droidcore-unbundled
+droidcore-unbundled:
 
 $(info [2/4] including distdir.mk ...)
 
