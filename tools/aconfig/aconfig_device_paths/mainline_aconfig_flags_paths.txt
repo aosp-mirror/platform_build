@@ -1,7 +1,7 @@
 "/apex/com.android.adservices/etc/aconfig_flags.pb",
 "/apex/com.android.appsearch/etc/aconfig_flags.pb",
 "/apex/com.android.art/etc/aconfig_flags.pb",
-"/apex/com.android.btservices/etc/aconfig_flags.pb",
+"/apex/com.android.bt/etc/aconfig_flags.pb",
 "/apex/com.android.cellbroadcast/etc/aconfig_flags.pb",
 "/apex/com.android.configinfrastructure/etc/aconfig_flags.pb",
 "/apex/com.android.conscrypt/etc/aconfig_flags.pb",
