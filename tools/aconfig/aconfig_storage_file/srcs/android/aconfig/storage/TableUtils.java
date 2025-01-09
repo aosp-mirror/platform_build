@@ -63,4 +63,16 @@ public class TableUtils {
         long hashVal = SipHasher13.hash(val);
         return (int) Long.remainderUnsigned(hashVal, numBuckets);
     }
+
+     public static class StorageFilesBundle {
+        public final PackageTable packageTable;
+        public final FlagTable flagTable;
+        public final FlagValueList flagValueList;
+
+        public StorageFilesBundle (PackageTable pTable, FlagTable fTable, FlagValueList fValueList) {
+            this.packageTable = pTable;
+            this.flagTable = fTable;
+            this.flagValueList = fValueList;
+        }
+     }
 }
