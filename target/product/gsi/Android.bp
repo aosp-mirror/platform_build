@@ -130,12 +130,6 @@ android_system_image {
         "com.android.vndk.v34",
 
         ///////////////////////////////////////////
-        // AVF
-        ///////////////////////////////////////////
-        "com.android.compos",
-        "features_com.android.virt.xml",
-
-        ///////////////////////////////////////////
         // gsi_product
         ///////////////////////////////////////////
         "Browser2",
@@ -145,6 +139,15 @@ android_system_image {
         "apns-full-conf.xml",
     ],
     multilib: {
+        lib64: {
+            deps: [
+                ///////////////////////////////////////////
+                // AVF
+                ///////////////////////////////////////////
+                "com.android.compos",
+                "features_com.android.virt.xml",
+            ],
+        },
         both: {
             // PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34
             deps: ["android.hidl.memory@1.0-impl"],
