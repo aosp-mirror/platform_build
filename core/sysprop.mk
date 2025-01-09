@@ -124,7 +124,7 @@ ifneq ($(strip $(7)), true)
 	$(hide) $$(call generate-common-build-props,$(call to-lower,$(strip $(1))),$$@)
 endif
         # Make and Soong use different intermediate files to build vendor/build.prop.
-        # Although the sysprop contents are same, the absolute paths of android_info.prop are different.
+        # Although the sysprop contents are same, the absolute paths of android-info.prop are different.
         # Print the filename for the intermediate files (files in OUT_DIR).
         # This helps with validating mk->soong migration of android partitions.
 	$(hide) $(foreach file,$(strip $(3)),\
@@ -184,7 +184,7 @@ _prop_files_ := $(if $(TARGET_VENDOR_PROP),\
     $(TARGET_VENDOR_PROP),\
     $(wildcard $(TARGET_DEVICE_DIR)/vendor.prop))
 
-android_info_prop := $(call intermediates-dir-for,ETC,android_info_prop)/android_info.prop
+android_info_prop := $(call intermediates-dir-for,ETC,android_info_prop)/android-info.prop
 $(android_info_prop): $(INSTALLED_ANDROID_INFO_TXT_TARGET)
 	cat $< | grep 'require version-' | sed -e 's/require version-/ro.build.expect./g' > $@
 
