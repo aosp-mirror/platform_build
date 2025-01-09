@@ -45,7 +45,6 @@ $(info [3/4] defining phony modules ...)
 include $(OUT_DIR)/soong/soong_phony_targets.mk
 
 goals := $(sort $(foreach pair,$(DIST_GOAL_OUTPUT_PAIRS),$(call word-colon,1,$(pair))))
-$(warning goals: $(goals))
 $(foreach goal,$(goals), \
   $(eval .PHONY: $$(goal)) \
   $(eval $$(goal):) \
