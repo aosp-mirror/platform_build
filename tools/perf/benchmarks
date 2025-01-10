@@ -786,6 +786,14 @@ benchmarks:
                       preroll=1,
                       postroll=2,
                       ),
+            Benchmark(id="add_systemui_field_with_tests",
+                      title="Add SystemUI field with tests",
+                      change=AddJavaField("frameworks/base/packages/SystemUI/src/com/android/systemui/wmshell/WMShell.java",
+                                    "public"),
+                      modules=["SystemUiRavenTests"],
+                      preroll=1,
+                      postroll=2,
+                      ),
         ]
 
     def _error(self, message):
