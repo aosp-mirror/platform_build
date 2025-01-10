@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 The Android Open Source Project
+ * Copyright 2014 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package android.os.flagging;
+package jvm.other;
 
-/*
- * This class allows generated aconfig code to compile independently of the framework.
- */
-public class PlatformAconfigPackageInternal {
+/** Other class */
+public class Other {
+  public Other(int first, String second) {}
 
-    public static PlatformAconfigPackageInternal load(String packageName, long packageFingerprint) {
-        throw new UnsupportedOperationException("Stub!");
-    }
-
-    public boolean getBooleanFlagValue(int index) {
-        throw new UnsupportedOperationException("Stub!");
-    }
+  public Other other() {
+    return new Other(0, "");
+  }
 }

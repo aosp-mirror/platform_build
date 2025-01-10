@@ -55,7 +55,7 @@ android_test {
         "functional/srcs/**/*.java",
     ],
     static_libs: [
-        "aconfig_device_paths_java",
+        "aconfig_device_paths_java_util",
         "aconfig_storage_file_java",
         "androidx.test.rules",
         "libaconfig_storage_read_api_java",
@@ -74,26 +74,4 @@ android_test {
     ],
     test_config: "AconfigStorageReadFunctionalTest.xml",
     team: "trendy_team_android_core_experiments",
-}
-
-android_test {
-    name: "aconfig_storage_read_unit",
-    team: "trendy_team_android_core_experiments",
-    srcs: [
-        "unit/srcs/**/*.java",
-    ],
-    static_libs: [
-        "androidx.test.runner",
-        "junit",
-        "aconfig_storage_reader_java",
-    ],
-    sdk_version: "test_current",
-    data: [
-        ":read_api_test_storage_files",
-    ],
-    test_suites: [
-        "general-tests",
-    ],
-    test_config: "AconfigStorageReadUnitTest.xml",
-    jarjar_rules: "jarjar.txt",
 }

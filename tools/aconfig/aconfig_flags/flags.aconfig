@@ -31,3 +31,13 @@ flag {
     purpose: PURPOSE_BUGFIX
   }
 }
+
+flag {
+  name: "invoke_updatable_aflags"
+  namespace: "core_experiments_team_internal"
+  bug: "385383899"
+  description: "When enabled, the system aflags binary invokes the updatable aflags."
+  metadata {
+    purpose: PURPOSE_BUGFIX
+  }
+}

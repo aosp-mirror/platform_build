@@ -370,6 +370,7 @@ _config_enable_uffd_gc := \
   $(firstword $(OVERRIDE_ENABLE_UFFD_GC) $(PRODUCT_ENABLE_UFFD_GC) default)
 $(call add_json_str, EnableUffdGc, $(_config_enable_uffd_gc))
 _config_enable_uffd_gc :=
+$(call add_json_str, BoardKernelVersion, $(BOARD_KERNEL_VERSION))
 
 $(call add_json_list, DeviceFrameworkCompatibilityMatrixFile, $(DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE))
 $(call add_json_list, DeviceProductCompatibilityMatrixFile, $(DEVICE_PRODUCT_COMPATIBILITY_MATRIX_FILE))
@@ -440,6 +441,7 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_str, BoardPrebuiltBootimage, $(BOARD_PREBUILT_BOOT_IMAGE))
   $(call add_json_str, BoardPrebuiltInitBootimage, $(BOARD_PREBUILT_INIT_BOOT_IMAGE))
   $(call add_json_str, BoardBootimagePartitionSize, $(BOARD_BOOTIMAGE_PARTITION_SIZE))
+  $(call add_json_str, BoardVendorBootimagePartitionSize, $(BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE))
   $(call add_json_str, BoardInitBootimagePartitionSize, $(BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE))
   $(call add_json_str, BoardBootHeaderVersion, $(BOARD_BOOT_HEADER_VERSION))
   $(call add_json_str, TargetKernelPath, $(TARGET_KERNEL_PATH))
@@ -544,6 +546,8 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
     $(call add_json_str, brightness_normal_percent, $(TARGET_RECOVERY_UI_BRIGHTNESS_NORMAL))
     $(call add_json_str, brightness_dimmed_percent, $(TARGET_RECOVERY_UI_BRIGHTNESS_DIMMED))
   $(call end_json_map)
+
+  $(call add_json_str, PrebuiltBootloader, $(BOARD_PREBUILT_BOOTLOADER))
 
 $(call end_json_map)
 

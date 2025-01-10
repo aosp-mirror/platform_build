@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 The Android Open Source Project
+ * Copyright 2014 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package android.os.flagging;
+package jvm;
 
-/*
- * This class allows generated aconfig code to compile independently of the framework.
- */
-public class PlatformAconfigPackageInternal {
+/** Bar class. The class for testing code assist within the same build module. */
+class Bar<K extends Number, V extends Number> {
+  Bar() {
+    foo(new Foo());
+  }
 
-    public static PlatformAconfigPackageInternal load(String packageName, long packageFingerprint) {
-        throw new UnsupportedOperationException("Stub!");
-    }
+  void foo(Foo f) {}
 
-    public boolean getBooleanFlagValue(int index) {
-        throw new UnsupportedOperationException("Stub!");
-    }
+  void foo(Object o) {}
+
+  void bar(Foo f) {}
+
+  void baz(Object o) {}
 }

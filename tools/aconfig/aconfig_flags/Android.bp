@@ -24,6 +24,11 @@ rust_library {
         "libaconfig_flags_rust",
     ],
     host_supported: true,
+    apex_available: [
+        "//apex_available:platform",
+        "com.android.configinfrastructure",
+    ],
+    min_sdk_version: "34",
 }
 
 aconfig_declarations {
@@ -38,6 +43,11 @@ rust_aconfig_library {
     crate_name: "aconfig_flags_rust",
     aconfig_declarations: "aconfig_flags",
     host_supported: true,
+    apex_available: [
+        "//apex_available:platform",
+        "com.android.configinfrastructure",
+    ],
+    min_sdk_version: "34",
 }
 
 cc_aconfig_library {
