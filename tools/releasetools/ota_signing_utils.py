@@ -23,10 +23,18 @@ def ParseSignerArgs(args):
 
 
 def AddSigningArgumentParse(parser: argparse.ArgumentParser):
+  parser.add_argument('--java_path', type=str,
+                      help='Path to JVM if other than default')
   parser.add_argument('--package_key', type=str,
                       help='Paths to private key for signing payload')
   parser.add_argument('--search_path', '--path', type=str,
                       help='Search path for framework/signapk.jar')
+  parser.add_argument('--signapk_path', type=str,
+                      help='Path to signapk.jar, relative to search_path')
+  parser.add_argument('--extra_signapk_args', type=ParseSignerArgs,
+                      help='Extra arguments for signapk.jar')
+  parser.add_argument('--signapk_shared_library_path', type=str,
+                      help='Path to lib64 libraries used by signapk.jar')
   parser.add_argument('--payload_signer', type=str,
                       help='Path to custom payload signer')
   parser.add_argument('--payload_signer_args', type=ParseSignerArgs,

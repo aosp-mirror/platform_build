@@ -17,9 +17,10 @@
 package android.aconfig.storage.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import android.aconfig.DeviceProtos;
+import android.aconfig.DeviceProtosTestUtil;
 import android.aconfig.nano.Aconfig;
 import android.aconfig.nano.Aconfig.parsed_flag;
 import android.aconfig.storage.FlagTable;
@@ -44,8 +45,22 @@ public class PlatformAconfigPackageTest {
     private static final Set<String> PLATFORM_CONTAINERS = Set.of("system", "vendor", "product");
 
     @Test
+    public void testPlatformAconfigPackage_StorageFilesCache() throws IOException {
+        List<parsed_flag> flags = DeviceProtosTestUtil.loadAndParseFlagProtos();
+        for (parsed_flag flag : flags) {
+            if (flag.permission == Aconfig.READ_ONLY && flag.state == Aconfig.DISABLED) {
+                continue;
+            }
+            String container = flag.container;
+            String packageName = flag.package_;
+            if (!PLATFORM_CONTAINERS.contains(container)) continue;
+            assertNotNull(PlatformAconfigPackage.load(packageName));
+        }
+    }
+
+    @Test
     public void testPlatformAconfigPackage_load() throws IOException {
-        List<parsed_flag> flags = DeviceProtos.loadAndParseFlagProtos();
+        List<parsed_flag> flags = DeviceProtosTestUtil.loadAndParseFlagProtos();
         Map<String, PlatformAconfigPackage> readerMap = new HashMap<>();
         StorageFileProvider fp = StorageFileProvider.getDefaultProvider();
 
