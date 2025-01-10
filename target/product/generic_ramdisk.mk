@@ -24,7 +24,6 @@ PRODUCT_PACKAGES += \
     init_first_stage \
     snapuserd_ramdisk \
     ramdisk-build.prop \
-    toolbox_ramdisk \
 
 # Debug ramdisk
 PRODUCT_PACKAGES += \
