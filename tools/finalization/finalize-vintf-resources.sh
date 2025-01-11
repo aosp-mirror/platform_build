@@ -41,11 +41,10 @@ function finalize_vintf_resources() {
     # system/sepolicy
     "$top/system/sepolicy/tools/finalize-vintf-resources.sh" "$top" "$FINAL_BOARD_API_LEVEL"
 
-    finalize_compat_matrix $build_test_only
-
-    # pre-finalization build target (trunk)
     local aidl_m="$top/build/soong/soong_ui.bash --make-mode"
     AIDL_TRANSITIVE_FREEZE=true $aidl_m aidl-freeze-api create_reference_dumps
+
+    finalize_compat_matrix $build_test_only
 
     if ! [ "$build_test_only" = "true" ]; then
         # Generate LLNDK ABI dumps
@@ -62,8 +61,8 @@ function finalize_compat_matrix() {
 
     if ! [ "$build_test_only" = "true" ]; then
         # Freeze the current framework manifest file. This relies on the
-        # aosp_cf_x86_64-trunk_staging build target to get the right manifest
-        # fragments installed.
+        # interfaces already being frozen because we are building with fina_0 which
+        # inherits from `next` where RELEASE_AIDL_USE_UNFROZEN=false
         "$top/system/libhidl/vintfdata/freeze.sh" "$CURRENT_COMPATIBILITY_MATRIX_LEVEL"
     fi
 }
