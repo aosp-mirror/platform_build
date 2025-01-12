@@ -78,14 +78,8 @@ public class DeviceProtosTestUtil {
         }
 
         for (File prefix : subdirs) {
-            // For each mainline modules, there are two directories, one <modulepackage>/,
-            // and one <modulepackage>@<versioncode>/. Just read the former.
-            if (!prefix.getAbsolutePath().endsWith(".apex")) {
-                continue;
-            }
-
-            String apexName = prefix.getName();
-            apexName = apexName.substring(0, apexName.length() - 5);
+            String apexName = prefix.getName().replace("com.google", "com");
+            apexName = apexName.substring(0, apexName.lastIndexOf('.'));
 
             File protoPath = new File(APEX_DIR + apexName + APEX_ACONFIG_PATH_SUFFIX);
             if (!protoPath.exists()) {

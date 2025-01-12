@@ -46,7 +46,7 @@ public class DeviceProtosTestUtilTest {
             }
         }
 
-        assertTrue(platformFlags > 0);
-        assertTrue(mainlineFlags > 0);
+        assertTrue(platformFlags > 3);
+        assertTrue(mainlineFlags > 3);
     }
 }
