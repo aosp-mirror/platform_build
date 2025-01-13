@@ -32,6 +32,9 @@
     {EXTRA_CONFIGS}
 
     <test class="com.android.tradefed.testtype.IsolatedHostTest" >
+
+        {EXTRA_TEST_RUNNER_CONFIGS}
+
         <option name="jar" value="{MODULE}.jar" />
         <option name="java-flags" value="--add-modules=jdk.compiler"/>
         <option name="java-flags" value="--add-opens=java.base/java.lang=ALL-UNNAMED"/>
