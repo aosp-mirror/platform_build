@@ -27,7 +27,6 @@
 #
 
 BUILDING_GSI := true
-$(call soong_config_set_bool,gsi,building_gsi,true)
 
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     system/etc/init/config \
