@@ -84,14 +84,14 @@ class BuildPlanner:
     packaging_commands_getters = []
     # In order to roll optimizations out differently between test suites and
     # device builds, we have separate flags.
-    enable_discovery = ('test_suites_zip_test_discovery'
+    enable_discovery = (('test_suites_zip_test_discovery'
         in self.build_context.enabled_build_features
         and not self.args.device_build
     ) or (
         'device_zip_test_discovery'
         in self.build_context.enabled_build_features
         and self.args.device_build
-    )
+    )) and not self.args.test_discovery_info_mode
     logging.info(f'Discovery mode is enabled= {enable_discovery}')
     preliminary_build_targets = self._collect_preliminary_build_targets(enable_discovery)
 
@@ -251,6 +251,11 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
       '--device-build',
       action='store_true',
       help='Flag to indicate running a device build.',
+  )
+  argparser.add_argument(
+      '--test_discovery_info_mode',
+      action='store_true',
+      help='Flag to enable running test discovery in info only mode.',
   )
 
   return argparser.parse_args(argv)
