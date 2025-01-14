@@ -16,6 +16,8 @@
 
 package android.os.flagging;
 
+import static android.aconfig.storage.TableUtils.StorageFilesBundle;
+
 import android.aconfig.storage.AconfigStorageException;
 import android.aconfig.storage.FlagTable;
 import android.aconfig.storage.FlagValueList;
@@ -49,8 +51,6 @@ public class PlatformAconfigPackage {
     private static final String MAP_PATH = "/metadata/aconfig/maps/";
     private static final String BOOT_PATH = "/metadata/aconfig/boot/";
 
-    private static final Map<String, PackageTable> sPackageTableCache = new HashMap<>();
-
     private FlagTable mFlagTable;
     private FlagValueList mFlagValueList;
 
@@ -58,6 +58,9 @@ public class PlatformAconfigPackage {
     private int mPackageId = -1;
 
     private PlatformAconfigPackage() {}
+
+    /** @hide */
+    static final Map<String, StorageFilesBundle> sStorageFilesCache = new HashMap<>();
 
     /** @hide */
     @UnsupportedAppUsage
@@ -68,8 +71,14 @@ public class PlatformAconfigPackage {
         for (String pf : PLATFORM_PACKAGE_MAP_FILES) {
             try {
                 PackageTable pTable = PackageTable.fromBytes(mapStorageFile(MAP_PATH + pf));
+                String container = pTable.getHeader().getContainer();
+                FlagTable fTable =
+                        FlagTable.fromBytes(mapStorageFile(MAP_PATH + container + ".flag.map"));
+                FlagValueList fValueList =
+                        FlagValueList.fromBytes(mapStorageFile(BOOT_PATH + container + ".val"));
+                StorageFilesBundle files = new StorageFilesBundle(pTable, fTable, fValueList);
                 for (String packageName : pTable.getPackageList()) {
-                    sPackageTableCache.put(packageName, pTable);
+                    sStorageFilesCache.put(packageName, files);
                 }
             } catch (Exception e) {
                 // pass
@@ -95,16 +104,13 @@ public class PlatformAconfigPackage {
     public static PlatformAconfigPackage load(String packageName) {
         try {
             PlatformAconfigPackage aconfigPackage = new PlatformAconfigPackage();
-            PackageTable pTable = sPackageTableCache.get(packageName);
-            if (pTable == null) {
+            StorageFilesBundle files = sStorageFilesCache.get(packageName);
+            if (files == null) {
                 return null;
             }
-            PackageTable.Node pNode = pTable.get(packageName);
-            String container = pTable.getHeader().getContainer();
-            aconfigPackage.mFlagTable =
-                    FlagTable.fromBytes(mapStorageFile(MAP_PATH + container + ".flag.map"));
-            aconfigPackage.mFlagValueList =
-                    FlagValueList.fromBytes(mapStorageFile(BOOT_PATH + container + ".val"));
+            PackageTable.Node pNode = files.packageTable.get(packageName);
+            aconfigPackage.mFlagTable = files.flagTable;
+            aconfigPackage.mFlagValueList = files.flagValueList;
             aconfigPackage.mPackageBooleanStartOffset = pNode.getBooleanStartIndex();
             aconfigPackage.mPackageId = pNode.getPackageId();
             return aconfigPackage;

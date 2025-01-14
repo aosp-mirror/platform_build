@@ -5159,8 +5159,7 @@ INTERNAL_ALLIMAGES_FILES := \
 # Run apex_sepolicy_tests for all installed APEXes
 
 ifeq (,$(TARGET_BUILD_UNBUNDLED))
-# TODO(b/353896817) apex_sepolicy_tests supports only ext4
-ifeq (ext4,$(PRODUCT_DEFAULT_APEX_PAYLOAD_TYPE))
+ifneq (,$(filter ext4 erofs,$(PRODUCT_DEFAULT_APEX_PAYLOAD_TYPE)))
 intermediate := $(call intermediates-dir-for,PACKAGING,apex_sepolicy_tests)
 apex_dirs := \
   $(TARGET_OUT)/apex/% \
@@ -5177,11 +5176,10 @@ apex_dirs :=
 define _run_apex_sepolicy_tests
 $2: $1 \
     $(HOST_OUT_EXECUTABLES)/apex_sepolicy_tests \
-    $(HOST_OUT_EXECUTABLES)/deapexer \
-    $(HOST_OUT_EXECUTABLES)/debugfs_static
+    $(HOST_OUT_EXECUTABLES)/apex-ls
 	@rm -rf $$@
 	@mkdir -p $(dir $$@)
-	$(HOST_OUT_EXECUTABLES)/apex_sepolicy_tests --all -f <($(HOST_OUT_EXECUTABLES)/deapexer --debugfs_path $(HOST_OUT_EXECUTABLES)/debugfs_static list -Z $$<)
+	$(HOST_OUT_EXECUTABLES)/apex_sepolicy_tests --all -f <($(HOST_OUT_EXECUTABLES)/apex-ls -Z $$<)
 	@touch $$@
 endef
 
@@ -6181,10 +6179,13 @@ endef
 
 built_ota_tools :=
 
+
 # We can't build static executables when SANITIZE_TARGET=address
 ifeq (,$(filter address, $(SANITIZE_TARGET)))
+ifeq (false,$(AB_OTA_UPDATER))
 built_ota_tools += \
     $(call intermediates-dir-for,EXECUTABLES,updater)/updater
+endif
 endif
 
 $(BUILT_TARGET_FILES_DIR): PRIVATE_OTA_TOOLS := $(built_ota_tools)
