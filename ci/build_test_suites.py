@@ -298,7 +298,7 @@ def execute_build_plan(build_plan: BuildPlan):
   build_command.append(get_top().joinpath(SOONG_UI_EXE_REL_PATH))
   build_command.append('--make-mode')
   build_command.extend(build_plan.build_targets)
-
+  logging.info(f'Running build command: {build_command}')
   try:
     run_command(build_command)
   except subprocess.CalledProcessError as e:
