@@ -45,5 +45,3 @@ ifeq ($(DIST),true)
 endif
 
 copy-one-dist-file :=
-DIST_GOAL_OUTPUT_PAIRS :=
-DIST_SRC_DST_PAIRS :=
