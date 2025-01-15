@@ -552,6 +552,11 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
 
   $(call add_json_str, PrebuiltBootloader, $(BOARD_PREBUILT_BOOTLOADER))
 
+  # Used to generate userdata partition
+  $(call add_json_str, ProductFsCasefold, $(PRODUCT_FS_CASEFOLD))
+  $(call add_json_str, ProductQuotaProjid, $(PRODUCT_QUOTA_PROJID))
+  $(call add_json_str, ProductFsCompression, $(PRODUCT_FS_COMPRESSION))
+
 $(call end_json_map)
 
 # For converting vintf_data
