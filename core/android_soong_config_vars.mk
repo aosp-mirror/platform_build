@@ -196,6 +196,14 @@ else
 $(call add_soong_config_var_value,ANDROID,include_nonpublic_framework_api,true)
 endif
 
+# Add nfc build flag to soong
+ifneq ($(RELEASE_PACKAGE_NFC_STACK),NfcNci)
+  $(call soong_config_set,bootclasspath,nfc_apex_bootclasspath_fragment,true)
+endif
+
+# Add uwb build flag to soong
+$(call soong_config_set,bootclasspath,release_ranging_stack,$(RELEASE_RANGING_STACK))
+
 # Add crashrecovery build flag to soong
 $(call soong_config_set,ANDROID,release_crashrecovery_module,$(RELEASE_CRASHRECOVERY_MODULE))
 # Add crashrecovery file move flags to soong, for both platform and module
