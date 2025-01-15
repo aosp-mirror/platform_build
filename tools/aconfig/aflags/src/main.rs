@@ -320,7 +320,10 @@ fn invoke_updatable_aflags() {
         .wait_with_output()
         .expect("failed to execute command");
 
-    println!("{}", String::from_utf8_lossy(&output.stdout).trim());
+    let output_str = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    if !output_str.is_empty() {
+        println!("{}", output_str);
+    }
 }
 
 fn main() -> Result<()> {
