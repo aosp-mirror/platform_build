@@ -416,6 +416,19 @@ android_filesystem_defaults {
     }),
 }
 
+system_image_fsverity_default = {
+    inputs: [
+        "etc/boot-image.prof",
+        "etc/classpaths/*.pb",
+        "etc/dirty-image-objects",
+        "etc/preloaded-classes",
+        "framework/*",
+        "framework/*/*", // framework/{arch}
+        "framework/oat/*/*", // framework/oat/{arch}
+    ],
+    libs: [":framework-res{.export-package.apk}"],
+}
+
 android_filesystem_defaults {
     name: "system_image_defaults",
     partition_name: "system",
@@ -428,16 +441,22 @@ android_filesystem_defaults {
         linker_config_srcs: [":system_linker_config_json_file"],
     },
     fsverity: {
-        inputs: [
-            "etc/boot-image.prof",
-            "etc/classpaths/*.pb",
-            "etc/dirty-image-objects",
-            "etc/preloaded-classes",
-            "framework/*",
-            "framework/*/*", // framework/{arch}
-            "framework/oat/*/*", // framework/oat/{arch}
-        ],
-        libs: [":framework-res{.export-package.apk}"],
+        inputs: select(soong_config_variable("ANDROID", "PRODUCT_FSVERITY_GENERATE_METADATA"), {
+            true: [
+                "etc/boot-image.prof",
+                "etc/classpaths/*.pb",
+                "etc/dirty-image-objects",
+                "etc/preloaded-classes",
+                "framework/*",
+                "framework/*/*", // framework/{arch}
+                "framework/oat/*/*", // framework/oat/{arch}
+            ],
+            default: [],
+        }),
+        libs: select(soong_config_variable("ANDROID", "PRODUCT_FSVERITY_GENERATE_METADATA"), {
+            true: [":framework-res{.export-package.apk}"],
+            default: [],
+        }),
     },
     build_logtags: true,
     gen_aconfig_flags_pb: true,
