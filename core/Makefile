@@ -5034,6 +5034,10 @@ define build-chained-vbmeta-image
 	    $(foreach image,$(BOARD_AVB_$(call to-upper,$(1))), \
 	        --include_descriptors_from_image $(call images-for-partitions,$(image))) \
 	    --output $@
+      # libavb expects to be able to read the maximum vbmeta size, so we must provide a partition
+      # which matches this or the read will fail.
+      # See external/avb/libavb/avb_slot_verify.c#VBMETA_MAX_SIZE
+      truncate -s 65536 $@
 endef
 
 ifdef BUILDING_SYSTEM_IMAGE
@@ -5092,6 +5096,10 @@ define build-vbmetaimage-target
     $(PRIVATE_AVB_VBMETA_SIGNING_ARGS) \
     $(BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS) \
     --output $@
+    # libavb expects to be able to read the maximum vbmeta size, so we must provide a partition
+    # which matches this or the read will fail.
+    # See external/avb/libavb/avb_slot_verify.c#VBMETA_MAX_SIZE
+    truncate -s 65536 $@
   $(hide) rm -rf $(AVB_CHAIN_KEY_DIR)
 endef
 
