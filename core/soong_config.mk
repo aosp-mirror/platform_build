@@ -476,6 +476,10 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
     $(call end_json_map)
   $(call add_json_bool, ProductVirtualAbOta, $(filter true,$(PRODUCT_VIRTUAL_AB_OTA)))
   $(call add_json_bool, ProductVirtualAbOtaRetrofit, $(filter true,$(PRODUCT_VIRTUAL_AB_OTA_RETROFIT)))
+  $(call add_json_bool, ProductVirtualAbCompression, $(filter true,$(PRODUCT_VIRTUAL_AB_COMPRESSION)))
+  $(call add_json_str, ProductVirtualAbCompressionMethod, $(PRODUCT_VIRTUAL_AB_COMPRESSION_METHOD))
+  $(call add_json_str, ProductVirtualAbCompressionFactor, $(PRODUCT_VIRTUAL_AB_COMPRESSION_FACTOR))
+  $(call add_json_str, ProductVirtualAbCowVersion, $(PRODUCT_VIRTUAL_AB_COW_VERSION))
   $(call add_json_bool, AbOtaUpdater, $(filter true,$(AB_OTA_UPDATER)))
 
   # Avb (android verified boot) stuff
