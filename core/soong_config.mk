@@ -459,6 +459,8 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_list, InternalBootconfig, $(INTERNAL_BOOTCONFIG))
   $(call add_json_str, InternalBootconfigFile, $(INTERNAL_BOOTCONFIG_FILE))
 
+  $(call add_json_bool, BuildingSystemOtherImage, $(BUILDING_SYSTEM_OTHER_IMAGE))
+
   # super image stuff
   $(call add_json_bool, ProductUseDynamicPartitions, $(filter true,$(PRODUCT_USE_DYNAMIC_PARTITIONS)))
   $(call add_json_bool, ProductRetrofitDynamicPartitions, $(filter true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)))
