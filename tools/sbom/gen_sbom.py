@@ -709,7 +709,13 @@ def main():
         'is_prebuilt_make_module': False
     }
     file_metadata.update(db.get_soong_module_of_built_file(dep_file))
-    add_package_of_file(file_id, file_metadata, doc, report)
+    if is_source_package(file_metadata) or is_prebuilt_package(file_metadata):
+      add_package_of_file(file_id, file_metadata, doc, report)
+    else:
+      # Other static lib files are generated from the platform
+      doc.add_relationship(sbom_data.Relationship(id1=file_id,
+                                                  relationship=sbom_data.RelationshipType.GENERATED_FROM,
+                                                  id2=sbom_data.SPDXID_PLATFORM))
 
     # Add relationships for static deps of static libraries
     add_static_deps_of_file(file_id, file_metadata, doc)
