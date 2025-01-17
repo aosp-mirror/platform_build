@@ -1,0 +1,42 @@
+// Copyright (C) 2023 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License
+
+// This is the schema definition for protos intended for internal aconfig
+// use ONLY. There are no guarantees regarding backwards compatibility.
+// Do not put protos here intended for storage or communication.
+
+syntax = "proto2";
+
+package android.aconfig_internal;
+
+
+// This protobuf defines messages used to store data about flags used to guard
+// APIs which are finalized for a given SDK.
+message finalized_flag {
+  // Name of the flag (required). Does not include package name.
+  // Must match flag name in the aconfig declaration header.
+  optional string name = 1;
+
+  // Package the flag belongs to (required).  Must match package in the aconfig declaration header.
+  optional string package = 2;
+
+  // SDK level in which the flag was finalized.
+  optional int32 min_sdk = 3;
+
+  // TODO - b/378936061: Add support for minor SDK version & SDK extension.
+};
+
+message finalized_flags {
+  repeated finalized_flag finalized_flag = 1;
+}
