@@ -196,6 +196,8 @@ $(call add_json_str,  OemPath,                           $(TARGET_COPY_OUT_OEM))
 $(call add_json_bool, MinimizeJavaDebugInfo,             $(filter true,$(PRODUCT_MINIMIZE_JAVA_DEBUG_INFO)))
 $(call add_json_str,  RecoveryPath,                      $(TARGET_COPY_OUT_RECOVERY))
 $(call add_json_bool, BuildingRecoveryImage,             $(BUILDING_RECOVERY_IMAGE))
+$(call add_json_str,  UserdataPath,                      $(TARGET_COPY_OUT_DATA))
+$(call add_json_bool, BuildingUserdataImage,             $(BUILDING_USERDATA_IMAGE))
 
 $(call add_json_bool, UseGoma,                           $(filter-out false,$(USE_GOMA)))
 $(call add_json_bool, UseRBE,                            $(filter-out false,$(USE_RBE)))
@@ -358,8 +360,6 @@ $(call add_json_list, ProductPropFiles, $(TARGET_PRODUCT_PROP))
 $(call add_json_list, OdmPropFiles, $(TARGET_ODM_PROP))
 $(call add_json_list, VendorPropFiles, $(TARGET_VENDOR_PROP))
 
-$(call add_json_str, ExtraAllowedDepsTxt, $(EXTRA_ALLOWED_DEPS_TXT))
-
 # Do not set ArtTargetIncludeDebugBuild into any value if PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD is not set,
 # to have the same behavior from runtime_libart.mk.
 ifneq ($(PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD),)
@@ -475,6 +475,10 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
     $(call end_json_map)
   $(call add_json_bool, ProductVirtualAbOta, $(filter true,$(PRODUCT_VIRTUAL_AB_OTA)))
   $(call add_json_bool, ProductVirtualAbOtaRetrofit, $(filter true,$(PRODUCT_VIRTUAL_AB_OTA_RETROFIT)))
+  $(call add_json_bool, ProductVirtualAbCompression, $(filter true,$(PRODUCT_VIRTUAL_AB_COMPRESSION)))
+  $(call add_json_str, ProductVirtualAbCompressionMethod, $(PRODUCT_VIRTUAL_AB_COMPRESSION_METHOD))
+  $(call add_json_str, ProductVirtualAbCompressionFactor, $(PRODUCT_VIRTUAL_AB_COMPRESSION_FACTOR))
+  $(call add_json_str, ProductVirtualAbCowVersion, $(PRODUCT_VIRTUAL_AB_COW_VERSION))
   $(call add_json_bool, AbOtaUpdater, $(filter true,$(AB_OTA_UPDATER)))
 
   # Avb (android verified boot) stuff
@@ -546,6 +550,13 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
     $(call add_json_str, brightness_normal_percent, $(TARGET_RECOVERY_UI_BRIGHTNESS_NORMAL))
     $(call add_json_str, brightness_dimmed_percent, $(TARGET_RECOVERY_UI_BRIGHTNESS_DIMMED))
   $(call end_json_map)
+
+  $(call add_json_str, PrebuiltBootloader, $(BOARD_PREBUILT_BOOTLOADER))
+
+  # Used to generate userdata partition
+  $(call add_json_str, ProductFsCasefold, $(PRODUCT_FS_CASEFOLD))
+  $(call add_json_str, ProductQuotaProjid, $(PRODUCT_QUOTA_PROJID))
+  $(call add_json_str, ProductFsCompression, $(PRODUCT_FS_COMPRESSION))
 
 $(call end_json_map)
 

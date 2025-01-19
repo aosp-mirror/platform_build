@@ -763,50 +763,23 @@ endif
 .KATI_READONLY := \
     PRODUCT_COMPATIBLE_PROPERTY
 
-# Boolean variable determining if Treble is fully enabled
-PRODUCT_FULL_TREBLE := false
-ifneq ($(PRODUCT_FULL_TREBLE_OVERRIDE),)
-  PRODUCT_FULL_TREBLE := $(PRODUCT_FULL_TREBLE_OVERRIDE)
-else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
-  #$(warning no product shipping level defined)
-else ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),26),)
-  PRODUCT_FULL_TREBLE := true
-endif
-
-requirements := \
-    PRODUCT_TREBLE_LINKER_NAMESPACES \
-    PRODUCT_ENFORCE_VINTF_MANIFEST
-
-# If it is overriden, then the requirement override is taken, otherwise it's
-# PRODUCT_FULL_TREBLE
-$(foreach req,$(requirements),$(eval \
-    $(req) := $(if $($(req)_OVERRIDE),$($(req)_OVERRIDE),$(PRODUCT_FULL_TREBLE))))
-# If the requirement is false for any reason, then it's not PRODUCT_FULL_TREBLE
-$(foreach req,$(requirements),$(eval \
-    PRODUCT_FULL_TREBLE := $(if $(filter false,$($(req))),false,$(PRODUCT_FULL_TREBLE))))
-
-PRODUCT_FULL_TREBLE_OVERRIDE ?=
-$(foreach req,$(requirements),$(eval $(req)_OVERRIDE ?=))
-
-# used to be a part of PRODUCT_FULL_TREBLE, but now always set it
+# TODO: remove all code referencing these, and remove override variables
+PRODUCT_FULL_TREBLE := true
 PRODUCT_NOTICE_SPLIT := true
+PRODUCT_TREBLE_LINKER_NAMESPACES := true
+PRODUCT_ENFORCE_VINTF_MANIFEST := true
 
 # TODO(b/114488870): disallow PRODUCT_FULL_TREBLE_OVERRIDE from being used.
 .KATI_READONLY := \
-    PRODUCT_FULL_TREBLE_OVERRIDE \
-    $(foreach req,$(requirements),$(req)_OVERRIDE) \
-    $(requirements) \
     PRODUCT_FULL_TREBLE \
+    PRODUCT_TREBLE_LINKER_NAMESPACES \
+    PRODUCT_ENFORCE_VINTF_MANIFEST \
     PRODUCT_NOTICE_SPLIT \
 
-ifneq ($(PRODUCT_FULL_TREBLE),true)
-    $(warning This device does not have Treble enabled. This is unsafe.)
-endif
-
-$(KATI_obsolete_var $(foreach req,$(requirements),$(req)_OVERRIDE) \
-    ,This should be referenced without the _OVERRIDE suffix.)
-
-requirements :=
+# TODO(b/114488870): remove all sets of these everwhere, and disallow them to be used
+$(KATI_obsolete_var PRODUCT_TREBLE_LINKER_NAMESPACES_OVERRIDE,Deprecated.)
+$(KATI_obsolete_var PRODUCT_ENFORCE_VINTF_MANIFEST_OVERRIDE,Deprecated.)
+$(KATI_obsolete_var PRODUCT_FULL_TREBLE_OVERRIDE,Deprecated.)
 
 # BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED can be true only if early-mount of
 # partitions is supported. But the early-mount must be supported for full
