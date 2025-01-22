@@ -5441,7 +5441,8 @@ ifeq (default,$(ENABLE_UFFD_GC))
 ifneq (,$(BUILT_KERNEL_VERSION_FILE))
 $(BUILT_KERNEL_VERSION_FILE_FOR_UFFD_GC): $(BUILT_KERNEL_VERSION_FILE)
 $(BUILT_KERNEL_VERSION_FILE_FOR_UFFD_GC):
-	cp $(BUILT_KERNEL_VERSION_FILE) $(BUILT_KERNEL_VERSION_FILE_FOR_UFFD_GC)
+	if ! cmp -s $(BUILT_KERNEL_VERSION_FILE) $@ ; then cp $(BUILT_KERNEL_VERSION_FILE) $@; fi
+.KATI_RESTAT: $(BUILT_KERNEL_VERSION_FILE_FOR_UFFD_GC)
 else
 # We make this a warning rather than an error to avoid breaking too many builds. When it happens,
 # we use a placeholder as the kernel version, which is consumed by uffd_gc_utils.py.
