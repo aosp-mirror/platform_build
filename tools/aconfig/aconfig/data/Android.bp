@@ -1,0 +1,14 @@
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+python_binary_host {
+    name: "convert_finalized_flags_to_proto",
+    srcs: ["convert_finalized_flags_to_proto.py"],
+    libs: ["aconfig_internal_proto_python"],
+    version: {
+        py3: {
+            embedded_launcher: true,
+        },
+    },
+}
