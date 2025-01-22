@@ -865,15 +865,18 @@ BOARD_SEPOLICY_VERS := $(PLATFORM_SEPOLICY_VERSION)
 .KATI_READONLY := PLATFORM_SEPOLICY_VERSION BOARD_SEPOLICY_VERS
 
 # A list of SEPolicy versions, besides PLATFORM_SEPOLICY_VERSION, that the framework supports.
-PLATFORM_SEPOLICY_COMPAT_VERSIONS := $(filter-out $(PLATFORM_SEPOLICY_VERSION), \
+PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
     29.0 \
     30.0 \
     31.0 \
     32.0 \
     33.0 \
     34.0 \
+
+PLATFORM_SEPOLICY_COMPAT_VERSIONS += $(foreach ver,\
     202404 \
-    )
+    202504 \
+    ,$(if $(filter true,$(call math_gt,$(PLATFORM_SEPOLICY_VERSION),$(ver))),$(ver)))
 
 .KATI_READONLY := \
     PLATFORM_SEPOLICY_COMPAT_VERSIONS \
