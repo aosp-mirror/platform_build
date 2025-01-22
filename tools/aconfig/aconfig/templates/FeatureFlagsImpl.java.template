@@ -66,6 +66,7 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
 }
 {{ -else- }}{#- device config for exproted mode #}
 {{ -if new_exported }}
+import android.os.Build;
 import android.os.flagging.AconfigPackage;
 import android.util.Log;
 /** @hide */
@@ -80,7 +81,11 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
             AconfigPackage reader = AconfigPackage.load("{package_name}");
             {{ -for namespace_with_flags in namespace_flags }}
             {{ -for flag in namespace_with_flags.flags }}
+            {{ -if flag.finalized_sdk_present }}
+            {flag.method_name} = Build.VERSION.SDK_INT >= {flag.finalized_sdk_value} ? true : reader.getBooleanFlagValue("{flag.flag_name}", {flag.default_value});
+            {{ - else }}
             {flag.method_name} = reader.getBooleanFlagValue("{flag.flag_name}", {flag.default_value});
+            {{ -endif}}
             {{ -endfor }}
             {{ -endfor }}
         } catch (Exception e) \{
