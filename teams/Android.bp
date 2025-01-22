@@ -4402,5 +4402,12 @@ team {
     trendy_team_id: "5440764114206720",
 }
 
+team {
+    name: "trendy_team_desktop_wifi",
+
+    // go/trendy/manage/engineers/6463689697099776
+    trendy_team_id: "6463689697099776",
+}
+
 // DON'T ADD NEW RULES HERE. For more details refer to
 // go/new-android-ownership-model
