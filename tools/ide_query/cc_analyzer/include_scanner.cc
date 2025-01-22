@@ -94,6 +94,11 @@ class IncludeScanningAction final : public clang::PreprocessOnlyAction {
       std::unordered_map<std::string, std::string> &abs_paths)
       : abs_paths_(abs_paths) {}
   bool BeginSourceFileAction(clang::CompilerInstance &ci) override {
+    // Be more resilient against all warnings/errors, as we want
+    // include-scanning to work even on incomplete sources.
+    ci.getDiagnostics().setEnableAllWarnings(false);
+    ci.getDiagnostics().setSeverityForAll(clang::diag::Flavor::WarningOrError,
+                                          clang::diag::Severity::Ignored);
     std::string cwd;
     auto cwd_or_err = ci.getVirtualFileSystem().getCurrentWorkingDirectory();
     if (!cwd_or_err || cwd_or_err.get().empty()) return false;
@@ -154,6 +159,8 @@ llvm::Expected<std::vector<std::pair<std::string, std::string>>> ScanIncludes(
                         main_file.get()->getBuffer().str());
 
   std::vector<std::string> argv = cmd.CommandLine;
+  // Disable all warnings to be more robust in analysis.
+  argv.insert(llvm::find(argv, "--"), {"-Wno-error", "-w"});
   fs = OverlayBuiltinHeaders(argv, std::move(fs));
 
   llvm::IntrusiveRefCntPtr<clang::FileManager> files(
