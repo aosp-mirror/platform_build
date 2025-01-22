@@ -142,6 +142,7 @@ ifneq (,$(filter true,$(OVERRIDE_DISABLE_DEXOPT_ALL)))
   # be too much of a problem for platform developers because a change to framework code should not
   # trigger dexpreopt for the ART boot image.
   WITH_DEXPREOPT_ART_BOOT_IMG_ONLY := true
+  $(call soong_config_set_bool,PrebuiltGmsCore,ExcludeExtractApk,true)
 endif
 
 # Enable resolution of startup const strings.
