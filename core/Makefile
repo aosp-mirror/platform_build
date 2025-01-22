@@ -5649,7 +5649,7 @@ else
         build_ota_package := false
       endif
     endif # INSTALLED_BOOTIMAGE_TARGET == ""
-    ifeq ($(recovery_fstab),)
+    ifeq ($(filter $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab,$(INTERNAL_RECOVERYIMAGE_FILES)),)
       build_ota_package := false
     endif
   endif # PRODUCT_BUILD_GENERIC_OTA_PACKAGE
