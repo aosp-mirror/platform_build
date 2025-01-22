@@ -91,6 +91,16 @@ fn cli() -> Command {
                         .long("new-exported")
                         .value_parser(clap::value_parser!(bool))
                         .default_value("false"),
+                )
+                // Allows build flag toggling of checking API level in exported
+                // flag lib for finalized API flags.
+                // TODO: b/378936061 - Remove once build flag for API level
+                // check is fully enabled.
+                .arg(
+                    Arg::new("check-api-level")
+                        .long("check-api-level")
+                        .value_parser(clap::value_parser!(bool))
+                        .default_value("false"),
                 ),
         )
         .subcommand(
@@ -274,9 +284,15 @@ fn main() -> Result<()> {
             let allow_instrumentation =
                 get_required_arg::<bool>(sub_matches, "allow-instrumentation")?;
             let new_exported = get_required_arg::<bool>(sub_matches, "new-exported")?;
-            let generated_files =
-                commands::create_java_lib(cache, *mode, *allow_instrumentation, *new_exported)
-                    .context("failed to create java lib")?;
+            let check_api_level = get_required_arg::<bool>(sub_matches, "check-api-level")?;
+            let generated_files = commands::create_java_lib(
+                cache,
+                *mode,
+                *allow_instrumentation,
+                *new_exported,
+                *check_api_level,
+            )
+            .context("failed to create java lib")?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
             generated_files
                 .iter()
