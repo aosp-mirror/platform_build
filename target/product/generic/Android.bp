@@ -594,6 +594,7 @@ android_filesystem_defaults {
         "preinstalled-packages-platform.xml", // base_system
         "preinstalled-packages-strict-signature.xml", // base_system
         "preloaded-classes", // ok
+        "printflags", // base_system
         "privapp-permissions-platform.xml", // base_system
         "prng_seeder", // base_system
         "public.libraries.android.txt",
