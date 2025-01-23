@@ -699,4 +699,12 @@ $(foreach image, \
 
 product-build-image-config :=
 
+ifdef PRODUCT_SOONG_ONLY
+  ifneq ($(PRODUCT_SOONG_ONLY),true)
+    ifneq ($(PRODUCT_SOONG_ONLY),false)
+      $(error PRODUCT_SOONG_ONLY can only be true, false or unset)
+    endif
+  endif
+endif
+
 $(call readonly-product-vars)
