@@ -23,7 +23,7 @@ use std::io::Read;
 use std::path::PathBuf;
 
 use crate::codegen::cpp::generate_cpp_code;
-use crate::codegen::java::generate_java_code;
+use crate::codegen::java::{generate_java_code, JavaCodegenConfig};
 use crate::codegen::rust::generate_rust_code;
 use crate::codegen::CodegenMode;
 use crate::dump::{DumpFormat, DumpPredicate};
@@ -219,6 +219,7 @@ pub fn create_java_lib(
     codegen_mode: CodegenMode,
     allow_instrumentation: bool,
     new_exported: bool,
+    check_api_level: bool,
 ) -> Result<Vec<OutputFile>> {
     let parsed_flags = input.try_parse_flags()?;
     let modified_parsed_flags =
@@ -230,15 +231,15 @@ pub fn create_java_lib(
     let mut flag_names = extract_flag_names(parsed_flags)?;
     let package_fingerprint = compute_flags_fingerprint(&mut flag_names);
     let flag_ids = assign_flag_ids(&package, modified_parsed_flags.iter())?;
-    generate_java_code(
-        &package,
-        modified_parsed_flags.into_iter(),
+    let config = JavaCodegenConfig {
         codegen_mode,
         flag_ids,
         allow_instrumentation,
         package_fingerprint,
         new_exported,
-    )
+        check_api_level,
+    };
+    generate_java_code(&package, modified_parsed_flags.into_iter(), config)
 }
 
 pub fn create_cpp_lib(

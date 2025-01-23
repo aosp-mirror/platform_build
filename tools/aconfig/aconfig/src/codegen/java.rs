@@ -26,25 +26,34 @@ use crate::commands::{should_include_flag, OutputFile};
 use aconfig_protos::{ProtoFlagPermission, ProtoFlagState, ProtoParsedFlag};
 use std::collections::HashMap;
 
+// Arguments to configure codegen for generate_java_code.
+pub struct JavaCodegenConfig {
+    pub codegen_mode: CodegenMode,
+    pub flag_ids: HashMap<String, u16>,
+    pub allow_instrumentation: bool,
+    pub package_fingerprint: u64,
+    pub new_exported: bool,
+    pub check_api_level: bool,
+}
+
 pub fn generate_java_code<I>(
     package: &str,
     parsed_flags_iter: I,
-    codegen_mode: CodegenMode,
-    flag_ids: HashMap<String, u16>,
-    allow_instrumentation: bool,
-    package_fingerprint: u64,
-    new_exported: bool,
+    config: JavaCodegenConfig,
 ) -> Result<Vec<OutputFile>>
 where
     I: Iterator<Item = ProtoParsedFlag>,
 {
-    let flag_elements: Vec<FlagElement> =
-        parsed_flags_iter.map(|pf| create_flag_element(package, &pf, flag_ids.clone())).collect();
+    let flag_elements: Vec<FlagElement> = parsed_flags_iter
+        .map(|pf| {
+            create_flag_element(package, &pf, config.flag_ids.clone(), config.check_api_level)
+        })
+        .collect();
     let namespace_flags = gen_flags_by_namespace(&flag_elements);
     let properties_set: BTreeSet<String> =
         flag_elements.iter().map(|fe| format_property_name(&fe.device_config_namespace)).collect();
-    let is_test_mode = codegen_mode == CodegenMode::Test;
-    let library_exported = codegen_mode == CodegenMode::Exported;
+    let is_test_mode = config.codegen_mode == CodegenMode::Test;
+    let library_exported = config.codegen_mode == CodegenMode::Exported;
     let runtime_lookup_required =
         flag_elements.iter().any(|elem| elem.is_read_write) || library_exported;
     let container = (flag_elements.first().expect("zero template flags").container).to_string();
@@ -57,11 +66,11 @@ where
         properties_set,
         package_name: package.to_string(),
         library_exported,
-        allow_instrumentation,
+        allow_instrumentation: config.allow_instrumentation,
         container,
         is_platform_container,
-        package_fingerprint: format!("0x{:X}L", package_fingerprint),
-        new_exported,
+        package_fingerprint: format!("0x{:X}L", config.package_fingerprint),
+        new_exported: config.new_exported,
     };
     let mut template = TinyTemplate::new();
     template.add_template("Flags.java", include_str!("../../templates/Flags.java.template"))?;
@@ -152,12 +161,15 @@ struct FlagElement {
     pub is_read_write: bool,
     pub method_name: String,
     pub properties: String,
+    pub finalized_sdk_present: bool,
+    pub finalized_sdk_value: i32,
 }
 
 fn create_flag_element(
     package: &str,
     pf: &ProtoParsedFlag,
     flag_offsets: HashMap<String, u16>,
+    check_api_level: bool,
 ) -> FlagElement {
     let device_config_flag = codegen::create_device_config_ident(package, pf.name())
         .expect("values checked at flag parse time");
@@ -190,6 +202,8 @@ fn create_flag_element(
         is_read_write: pf.permission() == ProtoFlagPermission::READ_WRITE,
         method_name: format_java_method_name(pf.name()),
         properties: format_property_name(pf.namespace()),
+        finalized_sdk_present: check_api_level,
+        finalized_sdk_value: i32::MAX, // TODO: b/378936061 - Read value from artifact.
     }
 }
 
@@ -523,14 +537,18 @@ mod tests {
             crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
         let flag_ids =
             assign_flag_ids(crate::test::TEST_PACKAGE, modified_parsed_flags.iter()).unwrap();
+        let config = JavaCodegenConfig {
+            codegen_mode: mode,
+            flag_ids,
+            allow_instrumentation: true,
+            package_fingerprint: 5801144784618221668,
+            new_exported: false,
+            check_api_level: false,
+        };
         let generated_files = generate_java_code(
             crate::test::TEST_PACKAGE,
             modified_parsed_flags.into_iter(),
-            mode,
-            flag_ids,
-            true,
-            5801144784618221668,
-            false,
+            config,
         )
         .unwrap();
         let expect_flags_content = EXPECTED_FLAG_COMMON_CONTENT.to_string()
@@ -679,14 +697,18 @@ mod tests {
             crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
         let flag_ids =
             assign_flag_ids(crate::test::TEST_PACKAGE, modified_parsed_flags.iter()).unwrap();
+        let config = JavaCodegenConfig {
+            codegen_mode: mode,
+            flag_ids,
+            allow_instrumentation: true,
+            package_fingerprint: 5801144784618221668,
+            new_exported: false,
+            check_api_level: false,
+        };
         let generated_files = generate_java_code(
             crate::test::TEST_PACKAGE,
             modified_parsed_flags.into_iter(),
-            mode,
-            flag_ids,
-            true,
-            5801144784618221668,
-            false,
+            config,
         )
         .unwrap();
 
@@ -879,14 +901,18 @@ mod tests {
             crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
         let flag_ids =
             assign_flag_ids(crate::test::TEST_PACKAGE, modified_parsed_flags.iter()).unwrap();
+        let config = JavaCodegenConfig {
+            codegen_mode: mode,
+            flag_ids,
+            allow_instrumentation: true,
+            package_fingerprint: 5801144784618221668,
+            new_exported: true,
+            check_api_level: false,
+        };
         let generated_files = generate_java_code(
             crate::test::TEST_PACKAGE,
             modified_parsed_flags.into_iter(),
-            mode,
-            flag_ids,
-            true,
-            5801144784618221668,
-            true,
+            config,
         )
         .unwrap();
 
@@ -925,6 +951,7 @@ mod tests {
 
         let expect_feature_flags_impl_content = r#"
         package com.android.aconfig.test;
+        import android.os.Build;
         import android.os.flagging.AconfigPackage;
         import android.util.Log;
         /** @hide */
@@ -1068,14 +1095,18 @@ mod tests {
             crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
         let flag_ids =
             assign_flag_ids(crate::test::TEST_PACKAGE, modified_parsed_flags.iter()).unwrap();
+        let config = JavaCodegenConfig {
+            codegen_mode: mode,
+            flag_ids,
+            allow_instrumentation: true,
+            package_fingerprint: 5801144784618221668,
+            new_exported: false,
+            check_api_level: false,
+        };
         let generated_files = generate_java_code(
             crate::test::TEST_PACKAGE,
             modified_parsed_flags.into_iter(),
-            mode,
-            flag_ids,
-            true,
-            5801144784618221668,
-            false,
+            config,
         )
         .unwrap();
 
@@ -1191,14 +1222,18 @@ mod tests {
             crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
         let flag_ids =
             assign_flag_ids(crate::test::TEST_PACKAGE, modified_parsed_flags.iter()).unwrap();
+        let config = JavaCodegenConfig {
+            codegen_mode: mode,
+            flag_ids,
+            allow_instrumentation: true,
+            package_fingerprint: 5801144784618221668,
+            new_exported: false,
+            check_api_level: false,
+        };
         let generated_files = generate_java_code(
             crate::test::TEST_PACKAGE,
             modified_parsed_flags.into_iter(),
-            mode,
-            flag_ids,
-            true,
-            5801144784618221668,
-            false,
+            config,
         )
         .unwrap();
         let expect_featureflags_content = r#"
