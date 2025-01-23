@@ -252,7 +252,6 @@ PRODUCT_PACKAGES += \
     preinstalled-packages-asl-files.xml \
     preinstalled-packages-platform.xml \
     preinstalled-packages-strict-signature.xml \
-    printflags \
     privapp-permissions-platform.xml \
     prng_seeder \
     recovery-persist \
