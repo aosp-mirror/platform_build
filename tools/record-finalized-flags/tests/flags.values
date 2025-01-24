@@ -1,0 +1,13 @@
+flag_value {
+    package: "record_finalized_flags.test"
+    name: "foo"
+    state: ENABLED
+    permission: READ_ONLY
+}
+
+flag_value {
+    package: "record_finalized_flags.test"
+    name: "not_enabled"
+    state: DISABLED
+    permission: READ_ONLY
+}
