@@ -5034,6 +5034,10 @@ define build-chained-vbmeta-image
 	    $(foreach image,$(BOARD_AVB_$(call to-upper,$(1))), \
 	        --include_descriptors_from_image $(call images-for-partitions,$(image))) \
 	    --output $@
+      # libavb expects to be able to read the maximum vbmeta size, so we must provide a partition
+      # which matches this or the read will fail.
+      # See external/avb/libavb/avb_slot_verify.c#VBMETA_MAX_SIZE
+      truncate -s 65536 $@
 endef
 
 ifdef BUILDING_SYSTEM_IMAGE
@@ -5092,6 +5096,10 @@ define build-vbmetaimage-target
     $(PRIVATE_AVB_VBMETA_SIGNING_ARGS) \
     $(BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS) \
     --output $@
+    # libavb expects to be able to read the maximum vbmeta size, so we must provide a partition
+    # which matches this or the read will fail.
+    # See external/avb/libavb/avb_slot_verify.c#VBMETA_MAX_SIZE
+    truncate -s 65536 $@
   $(hide) rm -rf $(AVB_CHAIN_KEY_DIR)
 endef
 
@@ -5433,7 +5441,8 @@ ifeq (default,$(ENABLE_UFFD_GC))
 ifneq (,$(BUILT_KERNEL_VERSION_FILE))
 $(BUILT_KERNEL_VERSION_FILE_FOR_UFFD_GC): $(BUILT_KERNEL_VERSION_FILE)
 $(BUILT_KERNEL_VERSION_FILE_FOR_UFFD_GC):
-	cp $(BUILT_KERNEL_VERSION_FILE) $(BUILT_KERNEL_VERSION_FILE_FOR_UFFD_GC)
+	if ! cmp -s $(BUILT_KERNEL_VERSION_FILE) $@ ; then cp $(BUILT_KERNEL_VERSION_FILE) $@; fi
+.KATI_RESTAT: $(BUILT_KERNEL_VERSION_FILE_FOR_UFFD_GC)
 else
 # We make this a warning rather than an error to avoid breaking too many builds. When it happens,
 # we use a placeholder as the kernel version, which is consumed by uffd_gc_utils.py.
@@ -5641,7 +5650,7 @@ else
         build_ota_package := false
       endif
     endif # INSTALLED_BOOTIMAGE_TARGET == ""
-    ifeq ($(recovery_fstab),)
+    ifeq ($(filter $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab,$(INTERNAL_RECOVERYIMAGE_FILES)),)
       build_ota_package := false
     endif
   endif # PRODUCT_BUILD_GENERIC_OTA_PACKAGE

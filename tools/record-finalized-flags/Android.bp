@@ -1,0 +1,4 @@
+sh_binary_host {
+    name: "record-finalized-flags",
+    src: "record-finalized-flags.sh",
+}

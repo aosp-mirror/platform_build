@@ -2157,3 +2157,11 @@ class PartitionBuildPropsTest(test_utils.ReleaseToolsTestCase):
         'google/coral/coral:10/RP1A.200325.001/6337676:user/dev-keys',
         'ro.product.odm.device': 'coral',
     }, copied_props.build_props)
+
+
+class DeviceSpecificParamsTest(test_utils.ReleaseToolsTestCase):
+
+  def test_missingSource(self):
+    common.OPTIONS.device_specific = '/does_not_exist'
+    ds = DeviceSpecificParams()
+    self.assertIsNone(ds.module)
