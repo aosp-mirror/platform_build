@@ -42,6 +42,7 @@ $(call add_soong_config_var,ANDROID,TARGET_DYNAMIC_64_32_MEDIASERVER)
 $(call soong_config_set_bool,ANDROID,TARGET_SUPPORTS_32_BIT_APPS,$(if $(filter true,$(TARGET_SUPPORTS_32_BIT_APPS)),true,false))
 $(call soong_config_set_bool,ANDROID,TARGET_SUPPORTS_64_BIT_APPS,$(if $(filter true,$(TARGET_SUPPORTS_64_BIT_APPS)),true,false))
 $(call add_soong_config_var,ANDROID,BOARD_GENFS_LABELS_VERSION)
+$(call soong_config_set_bool,ANDROID,PRODUCT_FSVERITY_GENERATE_METADATA,$(if $(filter true,$(PRODUCT_FSVERITY_GENERATE_METADATA)),true,false))
 
 $(call add_soong_config_var,ANDROID,ADDITIONAL_M4DEFS,$(if $(BOARD_SEPOLICY_M4DEFS),$(addprefix -D,$(BOARD_SEPOLICY_M4DEFS))))
 
@@ -308,6 +309,17 @@ $(call soong_config_set_bool,google_graphics,board_uses_hwc_services,$(if $(filt
 
 # Variables for controlling android.hardware.composer.hwc3-service.pixel
 $(call soong_config_set,google_graphics,board_hwc_version,$(BOARD_HWC_VERSION))
+
+# Flag ExcludeExtractApk is to support "extract_apk" property for the following conditions.
+ifneq ($(WITH_DEXPREOPT),true)
+  $(call soong_config_set_bool,PrebuiltGmsCore,ExcludeExtractApk,true)
+endif
+ifeq ($(DONT_DEXPREOPT_PREBUILTS),true)
+  $(call soong_config_set_bool,PrebuiltGmsCore,ExcludeExtractApk,true)
+endif
+ifeq ($(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY),true)
+  $(call soong_config_set_bool,PrebuiltGmsCore,ExcludeExtractApk,true)
+endif
 
 # Variables for extra branches
 # TODO(b/383238397): Use bootstrap_go_package to enable extra flags.

@@ -501,6 +501,9 @@ _product_single_value_vars += PRODUCT_IGNORE_ALL_ANDROIDMK
 _product_list_vars += PRODUCT_ALLOWED_ANDROIDMK_FILES
 # When PRODUCT_IGNORE_ALL_ANDROIDMK is set to true, path of file that contains a list of allowed Android.mk files
 _product_single_value_vars += PRODUCT_ANDROIDMK_ALLOWLIST_FILE
+# Setting PRODUCT_SOONG_ONLY will cause the build to default to --soong-only mode, and the main
+# kati invocation will not be run.
+_product_single_value_vars += PRODUCT_SOONG_ONLY
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
