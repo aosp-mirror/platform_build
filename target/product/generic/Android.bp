@@ -581,6 +581,7 @@ android_filesystem_defaults {
         "otapreopt_script", // generic_system
         "package-shareduid-allowlist.xml", // base_system
         "passwd_system", // base_system
+        "pbtombstone", // base_system
         "perfetto", // base_system
         "ping", // base_system
         "ping6", // base_system

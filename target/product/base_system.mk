@@ -241,6 +241,7 @@ PRODUCT_PACKAGES += \
     PackageInstaller \
     package-shareduid-allowlist.xml \
     passwd_system \
+    pbtombstone \
     perfetto \
     perfetto-extras \
     ping \
