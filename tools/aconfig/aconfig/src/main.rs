@@ -40,9 +40,86 @@ mod test;
 
 use commands::{Input, OutputFile};
 
+const HELP_DUMP_CACHE: &str = r#"
+An aconfig cache file, created via `aconfig create-cache`.
+"#;
+
+const HELP_DUMP_FORMAT: &str = r#"
+Change the output format for each flag.
+
+The argument to --format is a format string. Each flag will be a copy of this string, with certain
+placeholders replaced by attributes of the flag. The placeholders are
+
+  {package}
+  {name}
+  {namespace}
+  {description}
+  {bug}
+  {state}
+  {state:bool}
+  {permission}
+  {trace}
+  {trace:paths}
+  {is_fixed_read_only}
+  {is_exported}
+  {container}
+  {metadata}
+  {fully_qualified_name}
+
+Note: the format strings "textproto" and "protobuf" are handled in a special way: they output all
+flag attributes in text or binary protobuf format.
+
+Examples:
+
+  # See which files were read to determine the value of a flag; the files were read in the order
+  # listed.
+  --format='{fully_qualified_name} {trace}'
+
+  # Trace the files read for a specific flag. Useful during debugging.
+  --filter=fully_qualified_name:com.foo.flag_name --format='{trace}'
+
+  # Print a somewhat human readable description of each flag.
+  --format='The flag {name} in package {package} is {state} and has permission {permission}.'
+"#;
+
 const HELP_DUMP_FILTER: &str = r#"
-Limit which flags to output. If multiple --filter arguments are provided, the output will be
-limited to flags that match any of the filters.
+Limit which flags to output. If --filter is omitted, all flags will be printed. If multiple
+--filter options are provided, the output will be limited to flags that match any of the filters.
+
+The argument to --filter is a search query. Multiple queries can be AND-ed together by
+concatenating them with a plus sign.
+
+Valid queries are:
+
+  package:<string>
+  name:<string>
+  namespace:<string>
+  bug:<string>
+  state:ENABLED|DISABLED
+  permission:READ_ONLY|READ_WRITE
+  is_fixed_read_only:true|false
+  is_exported:true|false
+  container:<string>
+  fully_qualified_name:<string>
+
+Note: there is currently no support for filtering based on these flag attributes: description,
+trace, metadata.
+
+Examples:
+
+  # Print a single flag:
+  --filter=fully_qualified_name:com.foo.flag_name
+
+  # Print all known information about a single flag:
+  --filter=fully_qualified_name:com.foo.flag_name --format=textproto
+
+  # Print all flags in the com.foo package, and all enabled flags in the com.bar package:
+  --filter=package:com.foo --filter=package.com.bar+state:ENABLED
+"#;
+
+const HELP_DUMP_DEDUP: &str = r#"
+Allow the same flag to be present in multiple cache files; if duplicates are found, collapse into
+a single instance.
 "#;
 
 fn cli() -> Command {
@@ -150,22 +227,34 @@ fn cli() -> Command {
         .subcommand(
             Command::new("dump-cache")
                 .alias("dump")
-                .arg(Arg::new("cache").long("cache").action(ArgAction::Append))
+                .arg(
+                    Arg::new("cache")
+                        .long("cache")
+                        .action(ArgAction::Append)
+                        .long_help(HELP_DUMP_CACHE.trim()),
+                )
                 .arg(
                     Arg::new("format")
                         .long("format")
                         .value_parser(|s: &str| DumpFormat::try_from(s))
                         .default_value(
                             "{fully_qualified_name} [{container}]: {permission} + {state}",
-                        ),
+                        )
+                        .long_help(HELP_DUMP_FORMAT.trim()),
                 )
                 .arg(
                     Arg::new("filter")
                         .long("filter")
                         .action(ArgAction::Append)
-                        .help(HELP_DUMP_FILTER.trim()),
+                        .long_help(HELP_DUMP_FILTER.trim()),
                 )
-                .arg(Arg::new("dedup").long("dedup").num_args(0).action(ArgAction::SetTrue))
+                .arg(
+                    Arg::new("dedup")
+                        .long("dedup")
+                        .num_args(0)
+                        .action(ArgAction::SetTrue)
+                        .long_help(HELP_DUMP_DEDUP.trim()),
+                )
                 .arg(Arg::new("out").long("out").default_value("-")),
         )
         .subcommand(
