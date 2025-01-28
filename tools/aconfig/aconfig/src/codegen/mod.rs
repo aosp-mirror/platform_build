@@ -50,67 +50,6 @@ impl std::fmt::Display for CodegenMode {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use aconfig_protos::is_valid_container_ident;
-
-    #[test]
-    fn test_is_valid_name_ident() {
-        assert!(is_valid_name_ident("foo"));
-        assert!(is_valid_name_ident("foo_bar_123"));
-        assert!(is_valid_name_ident("foo_"));
-
-        assert!(!is_valid_name_ident(""));
-        assert!(!is_valid_name_ident("123_foo"));
-        assert!(!is_valid_name_ident("foo-bar"));
-        assert!(!is_valid_name_ident("foo-b\u{00e5}r"));
-        assert!(!is_valid_name_ident("foo__bar"));
-        assert!(!is_valid_name_ident("_foo"));
-    }
-
-    #[test]
-    fn test_is_valid_package_ident() {
-        assert!(is_valid_package_ident("foo.bar"));
-        assert!(is_valid_package_ident("foo.bar_baz"));
-        assert!(is_valid_package_ident("foo.bar.a123"));
-
-        assert!(!is_valid_package_ident("foo_bar_123"));
-        assert!(!is_valid_package_ident("foo"));
-        assert!(!is_valid_package_ident("foo._bar"));
-        assert!(!is_valid_package_ident(""));
-        assert!(!is_valid_package_ident("123_foo"));
-        assert!(!is_valid_package_ident("foo-bar"));
-        assert!(!is_valid_package_ident("foo-b\u{00e5}r"));
-        assert!(!is_valid_package_ident("foo.bar.123"));
-        assert!(!is_valid_package_ident(".foo.bar"));
-        assert!(!is_valid_package_ident("foo.bar."));
-        assert!(!is_valid_package_ident("."));
-        assert!(!is_valid_package_ident(".."));
-        assert!(!is_valid_package_ident("foo..bar"));
-        assert!(!is_valid_package_ident("foo.__bar"));
-    }
-
-    #[test]
-    fn test_is_valid_container_ident() {
-        assert!(is_valid_container_ident("foo.bar"));
-        assert!(is_valid_container_ident("foo.bar_baz"));
-        assert!(is_valid_container_ident("foo.bar.a123"));
-        assert!(is_valid_container_ident("foo"));
-        assert!(is_valid_container_ident("foo_bar_123"));
-
-        assert!(!is_valid_container_ident(""));
-        assert!(!is_valid_container_ident("foo._bar"));
-        assert!(!is_valid_container_ident("_foo"));
-        assert!(!is_valid_container_ident("123_foo"));
-        assert!(!is_valid_container_ident("foo-bar"));
-        assert!(!is_valid_container_ident("foo-b\u{00e5}r"));
-        assert!(!is_valid_container_ident("foo.bar.123"));
-        assert!(!is_valid_container_ident(".foo.bar"));
-        assert!(!is_valid_container_ident("foo.bar."));
-        assert!(!is_valid_container_ident("."));
-        assert!(!is_valid_container_ident(".."));
-        assert!(!is_valid_container_ident("foo..bar"));
-        assert!(!is_valid_container_ident("foo.__bar"));
-    }
-
     #[test]
     fn test_create_device_config_ident() {
         assert_eq!(
