@@ -3332,6 +3332,13 @@ team {
 }
 
 team {
+    name: "trendy_team_wear_partner_engineering",
+
+    // go/trendy/manage/engineers/5098351636676608
+    trendy_team_id: "5098351636676608",
+}
+
+team {
     name: "trendy_team_framework_android_multiuser",
 
     // go/trendy/manage/engineers/5981525732392960
