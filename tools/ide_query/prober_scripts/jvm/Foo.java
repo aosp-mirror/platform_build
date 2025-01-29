@@ -20,7 +20,7 @@ import jvm.other.Other;
 
 /** Foo class. */
 public final class Foo {
-//               |  | foo_def
+//               ^  ^ foo_def
 
   void testParameterInfo() {
     // Test signature help for type parameters.
