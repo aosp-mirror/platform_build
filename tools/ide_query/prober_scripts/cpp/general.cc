@@ -56,7 +56,7 @@ void TestCompletion() {
 
 void TestNavigation() {
   std::vector<int> ints;
-  //               |   | ints
+  //               ^   ^ ints
   //      ^
 
   // step
