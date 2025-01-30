@@ -1,12 +1,73 @@
 //! codegenerated rust flag lib
-
+use aconfig_storage_read_api::\{Mmap, AconfigStorageError, StorageFileType, PackageReadContext, get_mapped_storage_file, get_boolean_flag_value, get_package_read_context};
 use std::collections::BTreeMap;
-use std::sync::Mutex;
+use std::path::Path;
+use std::io::Write;
+use std::sync::\{LazyLock, Mutex};
+use log::\{log, LevelFilter, Level};
 
 /// flag provider
 pub struct FlagProvider \{
     overrides: BTreeMap<&'static str, bool>,
 }
+
+{{ if has_readwrite- }}
+static PACKAGE_OFFSET: LazyLock<Result<Option<u32>, AconfigStorageError>> = LazyLock::new(|| unsafe \{
+    get_mapped_storage_file("{container}", StorageFileType::PackageMap)
+    .and_then(|package_map| get_package_read_context(&package_map, "{package}"))
+    .map(|context| context.map(|c| c.boolean_start_index))
+});
+
+static FLAG_VAL_MAP: LazyLock<Result<Mmap, AconfigStorageError>> = LazyLock::new(|| unsafe \{
+    get_mapped_storage_file("{container}", StorageFileType::FlagVal)
+});
+
+{{ -for flag in template_flags }}
+{{ -if flag.readwrite }}
+/// flag value cache for {flag.name}
+static CACHED_{flag.name}: LazyLock<bool> = LazyLock::new(|| \{
+
+    // This will be called multiple times. Subsequent calls after the first are noops.
+    logger::init(
+        logger::Config::default()
+            .with_tag_on_device("aconfig_rust_codegen")
+            .with_max_level(LevelFilter::Info));
+
+    let flag_value_result = FLAG_VAL_MAP
+        .as_ref()
+        .map_err(|err| format!("failed to get flag val map: \{err}"))
+        .and_then(|flag_val_map| \{
+            PACKAGE_OFFSET
+                .as_ref()
+                .map_err(|err| format!("failed to get package read offset: \{err}"))
+                .and_then(|package_offset| \{
+                    match package_offset \{
+                        Some(offset) => \{
+                            get_boolean_flag_value(&flag_val_map, offset + {flag.flag_offset})
+                                .map_err(|err| format!("failed to get flag: \{err}"))
+                        },
+                        None => \{
+                            log!(Level::Error, "no context found for package {package}");
+                            Err(format!("failed to flag package {package}"))
+                        }
+                    }
+                })
+            });
+
+    match flag_value_result \{
+        Ok(flag_value) => \{
+            return flag_value;
+        },
+        Err(err) => \{
+            log!(Level::Error, "aconfig_rust_codegen: error: \{err}");
+            return {flag.default_value};
+        }
+    }
+
+});
+{{ -endif }}
+{{ -endfor }}
+{{ -endif }}
 
 impl FlagProvider \{
 {{ for flag in template_flags }}
@@ -14,10 +75,7 @@ impl FlagProvider \{
     pub fn {flag.name}(&self) -> bool \{
         self.overrides.get("{flag.name}").copied().unwrap_or(
         {{ if flag.readwrite -}}
-          flags_rust::GetServerConfigurableFlag(
-            "aconfig_flags.{flag.device_config_namespace}",
-            "{flag.device_config_flag}",
-            "{flag.default_value}") == "true"
+           *CACHED_{flag.name}
         {{ -else- }}
            {flag.default_value}
         {{ -endif }}
