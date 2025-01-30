@@ -92,6 +92,7 @@ THIRD_PARTY_IDENTIFIER_TYPES = [
     'SVN',
     'Hg',
     'Darcs',
+    'Piper',
     'VCS',
     'Archive',
     'PrebuiltByAlphabet',
@@ -708,7 +709,10 @@ def main():
         'installed_file': dep_file,
         'is_prebuilt_make_module': False
     }
-    file_metadata.update(db.get_soong_module_of_built_file(dep_file))
+    soong_module = db.get_soong_module_of_built_file(dep_file)
+    if not soong_module:
+      continue
+    file_metadata.update(soong_module)
     if is_source_package(file_metadata) or is_prebuilt_package(file_metadata):
       add_package_of_file(file_id, file_metadata, doc, report)
     else:
