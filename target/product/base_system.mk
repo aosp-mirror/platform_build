@@ -525,6 +525,7 @@ PRODUCT_PACKAGES_DEBUG := \
     logtagd.rc \
     ot-cli-ftd \
     ot-ctl \
+    overlay_remounter \
     procrank \
     profcollectd \
     profcollectctl \

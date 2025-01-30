@@ -674,6 +674,7 @@ android_filesystem_defaults {
             "logtagd.rc",
             "ot-cli-ftd",
             "ot-ctl",
+            "overlay_remounter",
             "procrank",
             "profcollectctl",
             "profcollectd",
