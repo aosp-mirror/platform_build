@@ -129,5 +129,7 @@ python_binary_host {
         },
     },
     libs: [
+        "compliance_metadata",
+        "metadata_file_proto_py",
     ],
 }
