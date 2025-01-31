@@ -94,7 +94,7 @@ class MetadataDb:
     cursor.close()
     rows = []
     for m in multi_built_file_modules:
-      built_files = m['installed_file'].strip().split(' ')
+      built_files = m['built_file'].strip().split(' ')
       for f in built_files:
         rows.append((m['module_id'], m['module_name'], m['package'], f))
     self.conn.executemany('insert into module_built_file values (?, ?, ?, ?)', rows)
