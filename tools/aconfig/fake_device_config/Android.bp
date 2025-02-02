@@ -24,16 +24,6 @@ java_library {
 }
 
 java_library {
-    name: "strict_mode_stub",
-    srcs: [
-        "src/android/os/StrictMode.java",
-    ],
-    sdk_version: "core_current",
-    host_supported: true,
-    is_stubs_module: true,
-}
-
-java_library {
     name: "aconfig_storage_stub",
     srcs: [
         "src/android/os/flagging/**/*.java",
