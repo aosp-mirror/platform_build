@@ -1,4 +1,28 @@
-sh_binary_host {
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+rust_defaults {
+    name: "record-finalized-flags-defaults",
+    edition: "2021",
+    clippy_lints: "android",
+    lints: "android",
+    srcs: ["src/main.rs"],
+    rustlibs: [
+        "libaconfig_protos",
+        "libanyhow",
+        "libclap",
+        "libregex",
+    ],
+}
+
+rust_binary_host {
     name: "record-finalized-flags",
-    src: "record-finalized-flags.sh",
+    defaults: ["record-finalized-flags-defaults"],
+}
+
+rust_test_host {
+    name: "record-finalized-flags-test",
+    defaults: ["record-finalized-flags-defaults"],
+    test_suites: ["general-tests"],
 }
