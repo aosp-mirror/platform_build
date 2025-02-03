@@ -47,7 +47,7 @@ FILE_FOOTER = '''\
 def get_args():
   parser = argparse.ArgumentParser()
   parser.add_argument('-v', '--verbose', action='store_true', default=False, help='Print more information.')
-  parser.add_argument('-d', '--debug', action='store_true', default=True, help='Debug mode')
+  parser.add_argument('-d', '--debug', action='store_true', default=False, help='Debug mode')
   parser.add_argument('--output_file', required=True, help='The path of the generated NOTICE.xml.gz file.')
   parser.add_argument('--partition', required=True, help='The name of partition for which the NOTICE.xml.gz is generated.')
   parser.add_argument('--metadata', required=True, help='The path of compliance metadata DB file.')
