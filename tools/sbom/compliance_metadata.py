@@ -18,7 +18,7 @@ import sqlite3
 
 class MetadataDb:
   def __init__(self, db):
-    self.conn = sqlite3.connect(':memory')
+    self.conn = sqlite3.connect(':memory:')
     self.conn.row_factory = sqlite3.Row
     with sqlite3.connect(db) as c:
       c.backup(self.conn)
