@@ -4464,6 +4464,25 @@ INTERNAL_PVMFWIMAGE_FILES := $(call module-target-built-files,pvmfw_img)
 INTERNAL_PVMFW_EMBEDDED_AVBKEY := $(call module-target-built-files,pvmfw_embedded_key_pub_bin)
 INTERNAL_PVMFW_SYMBOL := $(TARGET_OUT_EXECUTABLES_UNSTRIPPED)/pvmfw
 
+# If pvmfw target is not available and there is a prebuilt available use prebuilt
+# NOTE: This is only a temporary feature for x86_64 and is not meant to be supported for long.
+# TODO(b/391333413): Don't allow use of pvmfw prebuilts as soon as it is possible
+ifeq ($(INTERNAL_PVMFWIMAGE_FILES),)
+ifneq ($(PRODUCT_PVMFW_IMAGE_PREBUILT),)
+INTERNAL_PVMFWIMAGE_FILES := $(call module-target-built-files,$(PRODUCT_PVMFW_IMAGE_PREBUILT))
+INTERNAL_PVMFW_SYMBOL :=
+
+ifneq ($(PRODUCT_PVMFW_BIN_PREBUILT),)
+INSTALLED_PVMFW_BINARY_TARGET := $(call module-target-built-files,$(PRODUCT_PVMFW_BIN_PREBUILT))
+endif # PRODUCT_PVMFW_BIN_PREBUILT
+
+ifneq ($(PRODUCT_PVMFW_EMBEDDED_AVBKEY_PREBUILT),)
+INTERNAL_PVMFW_EMBEDDED_AVBKEY := $(call module-target-built-files,$(PRODUCT_PVMFW_EMBEDDED_AVBKEY_PREBUILT))
+endif # PRODUCT_PVMFW_EMBEDDED_AVBKEY_PREBUILT
+
+endif # PRODUCT_PVMFW_IMAGE_PREBUILT
+endif # INTERNAL_PVMFWIMAGE_FILES
+
 $(call declare-1p-container,$(INSTALLED_PVMFWIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_PVMFWIMAGE_TARGET),$(INTERNAL_PVMFWIMAGE_FILES),$(PRODUCT_OUT)/:/)
 
