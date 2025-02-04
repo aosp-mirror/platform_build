@@ -17,14 +17,14 @@ $(eval $(call xml-notice-rule,$(target_notice_file_xml_gz),"System image",$(syst
 
 $(eval $(call text-notice-rule,$(target_notice_file_txt),"System image",$(system_notice_file_message),$(SYSTEM_NOTICE_DEPS),$(SYSTEM_NOTICE_DEPS)))
 
-ifneq ($(USE_SOONG_DEFINED_SYSTEM_IMAGE),true)
+ifneq ($(PRODUCT_USE_SOONG_NOTICE_XML),true)
 $(installed_notice_html_or_xml_gz): $(target_notice_file_xml_gz)
 	$(copy-file-to-target)
 endif
 endif
 
 $(call declare-1p-target,$(target_notice_file_xml_gz))
-ifneq ($(USE_SOONG_DEFINED_SYSTEM_IMAGE),true)
+ifneq ($(PRODUCT_USE_SOONG_NOTICE_XML),true)
 $(call declare-1p-target,$(installed_notice_html_or_xml_gz))
 endif
 endif
@@ -44,11 +44,15 @@ $(eval $(call xml-notice-rule,$(target_vendor_notice_file_xml_gz),"Vendor image"
          "Notices for files contained in all filesystem images except system/system_ext/product/odm/vendor_dlkm/odm_dlkm in this directory:", \
          $(VENDOR_NOTICE_DEPS),$(VENDOR_NOTICE_DEPS)))
 
+ifneq ($(PRODUCT_USE_SOONG_NOTICE_XML),true)
 $(installed_vendor_notice_xml_gz): $(target_vendor_notice_file_xml_gz)
 	$(copy-file-to-target)
+endif
 
 $(call declare-1p-target,$(target_vendor_notice_file_xml_gz))
+ifneq ($(PRODUCT_USE_SOONG_NOTICE_XML),true)
 $(call declare-1p-target,$(installed_vendor_notice_xml_gz))
+endif
 endif
 
 .PHONY: odmlicense
@@ -63,11 +67,15 @@ $(eval $(call xml-notice-rule,$(target_odm_notice_file_xml_gz),"ODM filesystem i
          "Notices for files contained in the odm filesystem image in this directory:", \
          $(ODM_NOTICE_DEPS),$(ODM_NOTICE_DEPS)))
 
+ifneq ($(PRODUCT_USE_SOONG_NOTICE_XML),true)
 $(installed_odm_notice_xml_gz): $(target_odm_notice_file_xml_gz)
 	$(copy-file-to-target)
+endif
 
 $(call declare-1p-target,$(target_odm_notice_file_xml_gz))
+ifneq ($(PRODUCT_USE_SOONG_NOTICE_XML),true)
 $(call declare-1p-target,$(installed_odm_notice_xml_gz))
+endif
 endif
 
 .PHONY: oemlicense
@@ -85,11 +93,15 @@ $(eval $(call xml-notice-rule,$(target_product_notice_file_xml_gz),"Product imag
          "Notices for files contained in the product filesystem image in this directory:", \
          $(PRODUCT_NOTICE_DEPS),$(PRODUCT_NOTICE_DEPS)))
 
+ifneq ($(PRODUCT_USE_SOONG_NOTICE_XML),true)
 $(installed_product_notice_xml_gz): $(target_product_notice_file_xml_gz)
 	$(copy-file-to-target)
+endif
 
 $(call declare-1p-target,$(target_product_notice_file_xml_gz))
+ifneq ($(PRODUCT_USE_SOONG_NOTICE_XML),true)
 $(call declare-1p-target,$(installed_product_notice_xml_gz))
+endif
 endif
 
 .PHONY: systemextlicense
@@ -104,11 +116,15 @@ $(eval $(call xml-notice-rule,$(target_system_ext_notice_file_xml_gz),"System_ex
          "Notices for files contained in the system_ext filesystem image in this directory:", \
          $(SYSTEM_EXT_NOTICE_DEPS),$(SYSTEM_EXT_NOTICE_DEPS)))
 
+ifneq ($(PRODUCT_USE_SOONG_NOTICE_XML),true)
 $(installed_system_ext_notice_xml_gz): $(target_system_ext_notice_file_xml_gz)
 	$(copy-file-to-target)
+endif
 
 $(call declare-1p-target,$(target_system_ext_notice_file_xml_gz))
+ifneq ($(PRODUCT_USE_SOONG_NOTICE_XML),true)
 $(call declare-1p-target,$(installed_system_ext_notice_xml_gz))
+endif
 endif
 
 .PHONY: vendor_dlkmlicense
@@ -123,11 +139,15 @@ $(eval $(call xml-notice-rule,$(target_vendor_dlkm_notice_file_xml_gz),"Vendor_d
          "Notices for files contained in the vendor_dlkm filesystem image in this directory:", \
          $(VENDOR_DLKM_NOTICE_DEPS),$(VENDOR_DLKM_NOTICE_DEPS)))
 
+ifneq ($(PRODUCT_USE_SOONG_NOTICE_XML),true)
 $(installed_vendor_dlkm_notice_xml_gz): $(target_vendor_dlkm_notice_file_xml_gz)
 	$(copy-file-to-target)
+endif
 
 $(call declare-1p-target,$(target_vendor_dlkm_notice_file_xml_gz))
+ifneq ($(PRODUCT_USE_SOONG_NOTICE_XML),true)
 $(call declare-1p-target,$(installed_vendor_dlkm_notice_xml_gz))
+endif
 endif
 
 .PHONY: odm_dlkmlicense
@@ -142,11 +162,15 @@ $(eval $(call xml-notice-rule,$(target_odm_dlkm_notice_file_xml_gz),"ODM_dlkm fi
          "Notices for files contained in the odm_dlkm filesystem image in this directory:", \
          $(ODM_DLKM_NOTICE_DEPS),$(ODM_DLKM_NOTICE_DEPS)))
 
+ifneq ($(PRODUCT_USE_SOONG_NOTICE_XML),true)
 $(installed_odm_dlkm_notice_xml_gz): $(target_odm_dlkm_notice_file_xml_gz)
 	$(copy-file-to-target)
+endif
 
 $(call declare-1p-target,$(target_odm_dlkm_notice_file_xml_gz))
+ifneq ($(PRODUCT_USE_SOONG_NOTICE_XML),true)
 $(call declare-1p-target,$(installed_odm_dlkm_notice_xml_gz))
+endif
 endif
 
 .PHONY: system_dlkmlicense
@@ -161,11 +185,15 @@ $(eval $(call xml-notice-rule,$(target_system_dlkm_notice_file_xml_gz),"System_d
          "Notices for files contained in the system_dlkm filesystem image in this directory:", \
          $(SYSTEM_DLKM_NOTICE_DEPS),$(SYSTEM_DLKM_NOTICE_DEPS)))
 
+ifneq ($(PRODUCT_USE_SOONG_NOTICE_XML),true)
 $(installed_system_dlkm_notice_xml_gz): $(target_system_dlkm_notice_file_xml_gz)
 	$(copy-file-to-target)
+endif
 
 $(call declare-1p-target,$(target_system_dlkm_notice_file_xml_gz))
+ifneq ($(PRODUCT_USE_SOONG_NOTICE_XML),true)
 $(call declare-1p-target,$(installed_sysetm_dlkm_notice_xml_gz))
+endif
 endif
 
 endif # not TARGET_BUILD_APPS
