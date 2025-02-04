@@ -137,6 +137,7 @@ android_system_image {
         "Dialer",
         "LatinIME",
         "apns-full-conf.xml",
+        "frameworks-base-overlays",
     ],
     multilib: {
         lib64: {
