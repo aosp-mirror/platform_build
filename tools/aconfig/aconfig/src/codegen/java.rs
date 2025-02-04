@@ -243,9 +243,6 @@ fn add_feature_flags_impl_template(
         return Ok(());
     }
 
-    println!("lib exported: {}", context.library_exported);
-    println!("new_exp: {}", context.new_exported);
-    println!("allow in: {}", context.allow_instrumentation);
     match (context.library_exported, context.new_exported, context.allow_instrumentation) {
         // Exported library with new_exported enabled, use new storage exported template.
         (true, true, _) => {
