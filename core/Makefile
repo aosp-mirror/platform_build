@@ -1982,7 +1982,7 @@ target_system_dlkm_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE_SYST
 installed_system_dlkm_notice_xml_gz := $(TARGET_OUT_SYSTEM_DLKM)/etc/NOTICE.xml.gz
 
 ALL_INSTALLED_NOTICE_FILES := \
-  $(if $(USE_SOONG_DEFINED_SYSTEM_IMAGE),,$(installed_notice_html_or_xml_gz)) \
+  $(installed_notice_html_or_xml_gz) \
   $(installed_vendor_notice_xml_gz) \
   $(installed_product_notice_xml_gz) \
   $(installed_system_ext_notice_xml_gz) \
@@ -1993,7 +1993,8 @@ ALL_INSTALLED_NOTICE_FILES := \
 
 # $1 installed file path, e.g. out/target/product/vsoc_x86_64/system_ext/etc/NOTICE.xml.gz
 define is-notice-file
-$(if $(findstring $1,$(ALL_INSTALLED_NOTICE_FILES)),Y)
+$(if $(filter true,$(PRODUCT_USE_SOONG_NOTICE_XML)),, \
+  $(if $(findstring $1,$(ALL_INSTALLED_NOTICE_FILES)),Y))
 endef
 
 # Notice files are copied to TARGET_OUT_NOTICE_FILES as a side-effect of their module
@@ -2069,9 +2070,7 @@ endif
 
 endif # PRODUCT_NOTICE_SPLIT
 
-ifneq ($(USE_SOONG_DEFINED_SYSTEM_IMAGE),true)
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
-endif
 
 need_vendor_notice:=false
 ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)

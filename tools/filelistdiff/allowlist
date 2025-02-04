@@ -1,5 +1,3 @@
 # Known diffs that are installed in either system image with the configuration
 # b/353429422
 init.environ.rc
-# b/338342381
-etc/NOTICE.xml.gz
