@@ -158,15 +158,14 @@ PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.minidebuginfo=true \
     dalvik.vm.dex2oat-minidebuginfo=true
 
-# Enable Madvising of the whole art, odex and vdex files to MADV_WILLNEED.
+# Enable Madvising of the whole odex and vdex files to MADV_WILLNEED.
 # The size specified here is the size limit of how much of the file
 # (in bytes) is madvised.
-# We madvise the whole .art file to MADV_WILLNEED with UINT_MAX limit.
 # For odex and vdex files, we limit madvising to 100MB.
+# For art files, we defer to the runtime for default behavior.
 PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.madvise.vdexfile.size=104857600 \
-    dalvik.vm.madvise.odexfile.size=104857600 \
-    dalvik.vm.madvise.artfile.size=4294967295
+    dalvik.vm.madvise.odexfile.size=104857600
 
 # Properties for the Unspecialized App Process Pool
 PRODUCT_SYSTEM_PROPERTIES += \

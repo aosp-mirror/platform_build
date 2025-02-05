@@ -1,0 +1,14 @@
+package {package_name}; {#- CODEGEN FOR TEST MODE #}
+/** @hide */
+public final class FeatureFlagsImpl implements FeatureFlags \{
+{{ for flag in flag_elements }}
+    @Override
+{{ -if not library_exported }}
+    @com.android.aconfig.annotations.AconfigFlagAccessor
+{{ -endif }}
+    public boolean {flag.method_name}() \{
+        throw new UnsupportedOperationException(
+            "Method is not implemented.");
+    }
+{{ endfor- }}
+}

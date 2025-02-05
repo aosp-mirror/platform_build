@@ -31,7 +31,6 @@ pub fn generate_rust_code<I>(
     flag_ids: HashMap<String, u16>,
     parsed_flags_iter: I,
     codegen_mode: CodegenMode,
-    allow_instrumentation: bool,
 ) -> Result<OutputFile>
 where
     I: Iterator<Item = ProtoParsedFlag>,
@@ -46,7 +45,6 @@ where
         template_flags,
         modules: package.split('.').map(|s| s.to_string()).collect::<Vec<_>>(),
         has_readwrite,
-        allow_instrumentation,
         container,
     };
     let mut template = TinyTemplate::new();
@@ -70,7 +68,6 @@ struct TemplateContext {
     pub template_flags: Vec<TemplateParsedFlag>,
     pub modules: Vec<String>,
     pub has_readwrite: bool,
-    pub allow_instrumentation: bool,
     pub container: String,
 }
 
@@ -124,146 +121,6 @@ mod tests {
     use super::*;
 
     const PROD_EXPECTED: &str = r#"
-//! codegenerated rust flag lib
-use aconfig_storage_read_api::{Mmap, AconfigStorageError, StorageFileType, PackageReadContext, get_mapped_storage_file, get_boolean_flag_value, get_package_read_context};
-use std::path::Path;
-use std::io::Write;
-use std::sync::LazyLock;
-use log::{log, LevelFilter, Level};
-
-/// flag provider
-pub struct FlagProvider;
-
-    /// flag value cache for disabled_rw
-    static CACHED_disabled_rw: LazyLock<bool> = LazyLock::new(|| flags_rust::GetServerConfigurableFlag(
-        "aconfig_flags.aconfig_test",
-        "com.android.aconfig.test.disabled_rw",
-        "false") == "true");
-
-    /// flag value cache for disabled_rw_exported
-    static CACHED_disabled_rw_exported: LazyLock<bool> = LazyLock::new(|| flags_rust::GetServerConfigurableFlag(
-        "aconfig_flags.aconfig_test",
-        "com.android.aconfig.test.disabled_rw_exported",
-        "false") == "true");
-
-    /// flag value cache for disabled_rw_in_other_namespace
-    static CACHED_disabled_rw_in_other_namespace: LazyLock<bool> = LazyLock::new(|| flags_rust::GetServerConfigurableFlag(
-        "aconfig_flags.other_namespace",
-        "com.android.aconfig.test.disabled_rw_in_other_namespace",
-        "false") == "true");
-
-    /// flag value cache for enabled_rw
-    static CACHED_enabled_rw: LazyLock<bool> = LazyLock::new(|| flags_rust::GetServerConfigurableFlag(
-        "aconfig_flags.aconfig_test",
-        "com.android.aconfig.test.enabled_rw",
-        "true") == "true");
-
-impl FlagProvider {
-    /// query flag disabled_ro
-    pub fn disabled_ro(&self) -> bool {
-        false
-    }
-
-    /// query flag disabled_rw
-    pub fn disabled_rw(&self) -> bool {
-        *CACHED_disabled_rw
-    }
-
-    /// query flag disabled_rw_exported
-    pub fn disabled_rw_exported(&self) -> bool {
-        *CACHED_disabled_rw_exported
-    }
-
-    /// query flag disabled_rw_in_other_namespace
-    pub fn disabled_rw_in_other_namespace(&self) -> bool {
-        *CACHED_disabled_rw_in_other_namespace
-    }
-
-    /// query flag enabled_fixed_ro
-    pub fn enabled_fixed_ro(&self) -> bool {
-        true
-    }
-
-    /// query flag enabled_fixed_ro_exported
-    pub fn enabled_fixed_ro_exported(&self) -> bool {
-        true
-    }
-
-    /// query flag enabled_ro
-    pub fn enabled_ro(&self) -> bool {
-        true
-    }
-
-    /// query flag enabled_ro_exported
-    pub fn enabled_ro_exported(&self) -> bool {
-        true
-    }
-
-    /// query flag enabled_rw
-    pub fn enabled_rw(&self) -> bool {
-        *CACHED_enabled_rw
-    }
-}
-
-/// flag provider
-pub static PROVIDER: FlagProvider = FlagProvider;
-
-/// query flag disabled_ro
-#[inline(always)]
-pub fn disabled_ro() -> bool {
-    false
-}
-
-/// query flag disabled_rw
-#[inline(always)]
-pub fn disabled_rw() -> bool {
-    PROVIDER.disabled_rw()
-}
-
-/// query flag disabled_rw_exported
-#[inline(always)]
-pub fn disabled_rw_exported() -> bool {
-    PROVIDER.disabled_rw_exported()
-}
-
-/// query flag disabled_rw_in_other_namespace
-#[inline(always)]
-pub fn disabled_rw_in_other_namespace() -> bool {
-    PROVIDER.disabled_rw_in_other_namespace()
-}
-
-/// query flag enabled_fixed_ro
-#[inline(always)]
-pub fn enabled_fixed_ro() -> bool {
-    true
-}
-
-/// query flag enabled_fixed_ro_exported
-#[inline(always)]
-pub fn enabled_fixed_ro_exported() -> bool {
-    true
-}
-
-/// query flag enabled_ro
-#[inline(always)]
-pub fn enabled_ro() -> bool {
-    true
-}
-
-/// query flag enabled_ro_exported
-#[inline(always)]
-pub fn enabled_ro_exported() -> bool {
-    true
-}
-
-/// query flag enabled_rw
-#[inline(always)]
-pub fn enabled_rw() -> bool {
-    PROVIDER.enabled_rw()
-}
-"#;
-
-    const PROD_INSTRUMENTED_EXPECTED: &str = r#"
 //! codegenerated rust flag lib
 use aconfig_storage_read_api::{Mmap, AconfigStorageError, StorageFileType, PackageReadContext, get_mapped_storage_file, get_boolean_flag_value, get_package_read_context};
 use std::path::Path;
@@ -557,14 +414,188 @@ pub fn enabled_rw() -> bool {
 
     const TEST_EXPECTED: &str = r#"
 //! codegenerated rust flag lib
-
+use aconfig_storage_read_api::{Mmap, AconfigStorageError, StorageFileType, PackageReadContext, get_mapped_storage_file, get_boolean_flag_value, get_package_read_context};
 use std::collections::BTreeMap;
-use std::sync::Mutex;
+use std::path::Path;
+use std::io::Write;
+use std::sync::{LazyLock, Mutex};
+use log::{log, LevelFilter, Level};
 
 /// flag provider
 pub struct FlagProvider {
     overrides: BTreeMap<&'static str, bool>,
 }
+
+static PACKAGE_OFFSET: LazyLock<Result<Option<u32>, AconfigStorageError>> = LazyLock::new(|| unsafe {
+    get_mapped_storage_file("system", StorageFileType::PackageMap)
+    .and_then(|package_map| get_package_read_context(&package_map, "com.android.aconfig.test"))
+    .map(|context| context.map(|c| c.boolean_start_index))
+});
+
+static FLAG_VAL_MAP: LazyLock<Result<Mmap, AconfigStorageError>> = LazyLock::new(|| unsafe {
+    get_mapped_storage_file("system", StorageFileType::FlagVal)
+});
+
+/// flag value cache for disabled_rw
+static CACHED_disabled_rw: LazyLock<bool> = LazyLock::new(|| {
+    // This will be called multiple times. Subsequent calls after the first are noops.
+    logger::init(
+        logger::Config::default()
+            .with_tag_on_device("aconfig_rust_codegen")
+            .with_max_level(LevelFilter::Info));
+
+    let flag_value_result = FLAG_VAL_MAP
+        .as_ref()
+        .map_err(|err| format!("failed to get flag val map: {err}"))
+        .and_then(|flag_val_map| {
+            PACKAGE_OFFSET
+               .as_ref()
+               .map_err(|err| format!("failed to get package read offset: {err}"))
+               .and_then(|package_offset| {
+                   match package_offset {
+                       Some(offset) => {
+                           get_boolean_flag_value(&flag_val_map, offset + 0)
+                               .map_err(|err| format!("failed to get flag: {err}"))
+                       },
+                       None => {
+                           log!(Level::Error, "no context found for package com.android.aconfig.test");
+                           Err(format!("failed to flag package com.android.aconfig.test"))
+                       }
+                    }
+                })
+            });
+
+    match flag_value_result {
+        Ok(flag_value) => {
+            return flag_value;
+        },
+        Err(err) => {
+            log!(Level::Error, "aconfig_rust_codegen: error: {err}");
+            return false;
+        }
+    }
+});
+
+/// flag value cache for disabled_rw_exported
+static CACHED_disabled_rw_exported: LazyLock<bool> = LazyLock::new(|| {
+        // This will be called multiple times. Subsequent calls after the first are noops.
+        logger::init(
+            logger::Config::default()
+                .with_tag_on_device("aconfig_rust_codegen")
+                .with_max_level(LevelFilter::Info));
+
+        let flag_value_result = FLAG_VAL_MAP
+            .as_ref()
+            .map_err(|err| format!("failed to get flag val map: {err}"))
+            .and_then(|flag_val_map| {
+                PACKAGE_OFFSET
+                    .as_ref()
+                    .map_err(|err| format!("failed to get package read offset: {err}"))
+                    .and_then(|package_offset| {
+                        match package_offset {
+                            Some(offset) => {
+                                get_boolean_flag_value(&flag_val_map, offset + 1)
+                                    .map_err(|err| format!("failed to get flag: {err}"))
+                            },
+                            None => {
+                                log!(Level::Error, "no context found for package com.android.aconfig.test");
+                                Err(format!("failed to flag package com.android.aconfig.test"))
+                            }
+                        }
+                    })
+                });
+
+        match flag_value_result {
+            Ok(flag_value) => {
+                 return flag_value;
+            },
+            Err(err) => {
+                log!(Level::Error, "aconfig_rust_codegen: error: {err}");
+                return false;
+            }
+        }
+});
+
+/// flag value cache for disabled_rw_in_other_namespace
+static CACHED_disabled_rw_in_other_namespace: LazyLock<bool> = LazyLock::new(|| {
+        // This will be called multiple times. Subsequent calls after the first are noops.
+        logger::init(
+            logger::Config::default()
+                .with_tag_on_device("aconfig_rust_codegen")
+                .with_max_level(LevelFilter::Info));
+
+        let flag_value_result = FLAG_VAL_MAP
+            .as_ref()
+            .map_err(|err| format!("failed to get flag val map: {err}"))
+            .and_then(|flag_val_map| {
+                PACKAGE_OFFSET
+                    .as_ref()
+                    .map_err(|err| format!("failed to get package read offset: {err}"))
+                    .and_then(|package_offset| {
+                        match package_offset {
+                            Some(offset) => {
+                                get_boolean_flag_value(&flag_val_map, offset + 2)
+                                    .map_err(|err| format!("failed to get flag: {err}"))
+                            },
+                            None => {
+                                log!(Level::Error, "no context found for package com.android.aconfig.test");
+                                Err(format!("failed to flag package com.android.aconfig.test"))
+                            }
+                        }
+                    })
+                });
+
+        match flag_value_result {
+            Ok(flag_value) => {
+                 return flag_value;
+            },
+            Err(err) => {
+                log!(Level::Error, "aconfig_rust_codegen: error: {err}");
+                return false;
+            }
+        }
+});
+
+
+/// flag value cache for enabled_rw
+static CACHED_enabled_rw: LazyLock<bool> = LazyLock::new(|| {
+        // This will be called multiple times. Subsequent calls after the first are noops.
+        logger::init(
+            logger::Config::default()
+                .with_tag_on_device("aconfig_rust_codegen")
+                .with_max_level(LevelFilter::Info));
+
+        let flag_value_result = FLAG_VAL_MAP
+            .as_ref()
+            .map_err(|err| format!("failed to get flag val map: {err}"))
+            .and_then(|flag_val_map| {
+                PACKAGE_OFFSET
+                    .as_ref()
+                    .map_err(|err| format!("failed to get package read offset: {err}"))
+                    .and_then(|package_offset| {
+                        match package_offset {
+                            Some(offset) => {
+                                get_boolean_flag_value(&flag_val_map, offset + 7)
+                                    .map_err(|err| format!("failed to get flag: {err}"))
+                            },
+                            None => {
+                                log!(Level::Error, "no context found for package com.android.aconfig.test");
+                                Err(format!("failed to flag package com.android.aconfig.test"))
+                            }
+                        }
+                    })
+                });
+
+        match flag_value_result {
+            Ok(flag_value) => {
+                 return flag_value;
+            },
+            Err(err) => {
+                log!(Level::Error, "aconfig_rust_codegen: error: {err}");
+                return true;
+            }
+        }
+});
 
 impl FlagProvider {
     /// query flag disabled_ro
@@ -582,10 +613,7 @@ impl FlagProvider {
     /// query flag disabled_rw
     pub fn disabled_rw(&self) -> bool {
         self.overrides.get("disabled_rw").copied().unwrap_or(
-            flags_rust::GetServerConfigurableFlag(
-                "aconfig_flags.aconfig_test",
-                "com.android.aconfig.test.disabled_rw",
-                "false") == "true"
+            *CACHED_disabled_rw
         )
     }
 
@@ -597,10 +625,7 @@ impl FlagProvider {
     /// query flag disabled_rw_exported
     pub fn disabled_rw_exported(&self) -> bool {
         self.overrides.get("disabled_rw_exported").copied().unwrap_or(
-            flags_rust::GetServerConfigurableFlag(
-                "aconfig_flags.aconfig_test",
-                "com.android.aconfig.test.disabled_rw_exported",
-                "false") == "true"
+            *CACHED_disabled_rw_exported
         )
     }
 
@@ -612,10 +637,7 @@ impl FlagProvider {
     /// query flag disabled_rw_in_other_namespace
     pub fn disabled_rw_in_other_namespace(&self) -> bool {
         self.overrides.get("disabled_rw_in_other_namespace").copied().unwrap_or(
-            flags_rust::GetServerConfigurableFlag(
-                "aconfig_flags.other_namespace",
-                "com.android.aconfig.test.disabled_rw_in_other_namespace",
-                "false") == "true"
+            *CACHED_disabled_rw_in_other_namespace
         )
     }
 
@@ -675,10 +697,7 @@ impl FlagProvider {
     /// query flag enabled_rw
     pub fn enabled_rw(&self) -> bool {
         self.overrides.get("enabled_rw").copied().unwrap_or(
-            flags_rust::GetServerConfigurableFlag(
-                "aconfig_flags.aconfig_test",
-                "com.android.aconfig.test.enabled_rw",
-                "true") == "true"
+            *CACHED_enabled_rw
         )
     }
 
@@ -812,74 +831,6 @@ pub fn reset_flags() {
 }
 "#;
 
-    const EXPORTED_EXPECTED: &str = r#"
-//! codegenerated rust flag lib
-use aconfig_storage_read_api::{Mmap, AconfigStorageError, StorageFileType, PackageReadContext, get_mapped_storage_file, get_boolean_flag_value, get_package_read_context};
-use std::path::Path;
-use std::io::Write;
-use std::sync::LazyLock;
-use log::{log, LevelFilter, Level};
-
-/// flag provider
-pub struct FlagProvider;
-
-    /// flag value cache for disabled_rw_exported
-    static CACHED_disabled_rw_exported: LazyLock<bool> = LazyLock::new(|| flags_rust::GetServerConfigurableFlag(
-        "aconfig_flags.aconfig_test",
-        "com.android.aconfig.test.disabled_rw_exported",
-        "false") == "true");
-
-    /// flag value cache for enabled_fixed_ro_exported
-    static CACHED_enabled_fixed_ro_exported: LazyLock<bool> = LazyLock::new(|| flags_rust::GetServerConfigurableFlag(
-        "aconfig_flags.aconfig_test",
-        "com.android.aconfig.test.enabled_fixed_ro_exported",
-        "false") == "true");
-
-    /// flag value cache for enabled_ro_exported
-    static CACHED_enabled_ro_exported: LazyLock<bool> = LazyLock::new(|| flags_rust::GetServerConfigurableFlag(
-        "aconfig_flags.aconfig_test",
-        "com.android.aconfig.test.enabled_ro_exported",
-        "false") == "true");
-
-impl FlagProvider {
-    /// query flag disabled_rw_exported
-    pub fn disabled_rw_exported(&self) -> bool {
-        *CACHED_disabled_rw_exported
-    }
-
-    /// query flag enabled_fixed_ro_exported
-    pub fn enabled_fixed_ro_exported(&self) -> bool {
-        *CACHED_enabled_fixed_ro_exported
-    }
-
-    /// query flag enabled_ro_exported
-    pub fn enabled_ro_exported(&self) -> bool {
-        *CACHED_enabled_ro_exported
-    }
-}
-
-/// flag provider
-pub static PROVIDER: FlagProvider = FlagProvider;
-
-/// query flag disabled_rw_exported
-#[inline(always)]
-pub fn disabled_rw_exported() -> bool {
-    PROVIDER.disabled_rw_exported()
-}
-
-/// query flag enabled_fixed_ro_exported
-#[inline(always)]
-pub fn enabled_fixed_ro_exported() -> bool {
-    PROVIDER.enabled_fixed_ro_exported()
-}
-
-/// query flag enabled_ro_exported
-#[inline(always)]
-pub fn enabled_ro_exported() -> bool {
-    PROVIDER.enabled_ro_exported()
-}
-"#;
-
     const FORCE_READ_ONLY_EXPECTED: &str = r#"
 //! codegenerated rust flag lib
 use aconfig_storage_read_api::{Mmap, AconfigStorageError, StorageFileType, PackageReadContext, get_mapped_storage_file, get_boolean_flag_value, get_package_read_context};
@@ -964,7 +915,7 @@ pub fn enabled_rw() -> bool {
 "#;
     use crate::commands::assign_flag_ids;
 
-    fn test_generate_rust_code(mode: CodegenMode, allow_instrumentation: bool, expected: &str) {
+    fn test_generate_rust_code(mode: CodegenMode, expected: &str) {
         let parsed_flags = crate::test::parse_test_flags();
         let modified_parsed_flags =
             crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
@@ -975,7 +926,6 @@ pub fn enabled_rw() -> bool {
             flag_ids,
             modified_parsed_flags.into_iter(),
             mode,
-            allow_instrumentation,
         )
         .unwrap();
         assert_eq!("src/lib.rs", format!("{}", generated.path.display()));
@@ -990,26 +940,16 @@ pub fn enabled_rw() -> bool {
 
     #[test]
     fn test_generate_rust_code_for_prod() {
-        test_generate_rust_code(CodegenMode::Production, false, PROD_EXPECTED);
-    }
-
-    #[test]
-    fn test_generate_rust_code_for_prod_instrumented() {
-        test_generate_rust_code(CodegenMode::Production, true, PROD_INSTRUMENTED_EXPECTED);
+        test_generate_rust_code(CodegenMode::Production, PROD_EXPECTED);
     }
 
     #[test]
     fn test_generate_rust_code_for_test() {
-        test_generate_rust_code(CodegenMode::Test, false, TEST_EXPECTED);
-    }
-
-    #[test]
-    fn test_generate_rust_code_for_exported() {
-        test_generate_rust_code(CodegenMode::Exported, false, EXPORTED_EXPECTED);
+        test_generate_rust_code(CodegenMode::Test, TEST_EXPECTED);
     }
 
     #[test]
     fn test_generate_rust_code_for_force_read_only() {
-        test_generate_rust_code(CodegenMode::ForceReadOnly, false, FORCE_READ_ONLY_EXPECTED);
+        test_generate_rust_code(CodegenMode::ForceReadOnly, FORCE_READ_ONLY_EXPECTED);
     }
 }
