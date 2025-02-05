@@ -246,7 +246,6 @@ fn add_feature_flags_impl_template(
     match (context.library_exported, context.new_exported, context.allow_instrumentation) {
         // Exported library with new_exported enabled, use new storage exported template.
         (true, true, _) => {
-            println!("new exported template");
             template.add_template(
                 "FeatureFlagsImpl.java",
                 include_str!("../../templates/FeatureFlagsImpl.exported.java.template"),
@@ -258,7 +257,6 @@ fn add_feature_flags_impl_template(
         // device config for exported libs if new_exported isn't enabled.
         // Remove once new_exported is fully rolled out.
         (true, false, _) => {
-            println!("old exported, old template");
             template.add_template(
                 "FeatureFlagsImpl.java",
                 include_str!("../../templates/FeatureFlagsImpl.java.template"),
