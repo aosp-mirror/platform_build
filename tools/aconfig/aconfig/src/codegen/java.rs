@@ -74,10 +74,7 @@ where
     };
     let mut template = TinyTemplate::new();
     template.add_template("Flags.java", include_str!("../../templates/Flags.java.template"))?;
-    template.add_template(
-        "FeatureFlagsImpl.java",
-        include_str!("../../templates/FeatureFlagsImpl.java.template"),
-    )?;
+    add_feature_flags_impl_template(&context, &mut template)?;
     template.add_template(
         "FeatureFlags.java",
         include_str!("../../templates/FeatureFlags.java.template"),
@@ -231,6 +228,63 @@ fn format_java_method_name(flag_name: &str) -> String {
 fn format_property_name(property_name: &str) -> String {
     let name = format_java_method_name(property_name);
     format!("mProperties{}{}", &name[0..1].to_ascii_uppercase(), &name[1..])
+}
+
+fn add_feature_flags_impl_template(
+    context: &Context,
+    template: &mut TinyTemplate,
+) -> Result<(), tinytemplate::error::Error> {
+    if context.is_test_mode {
+        // Test mode has its own template, so use regardless of any other settings.
+        template.add_template(
+            "FeatureFlagsImpl.java",
+            include_str!("../../templates/FeatureFlagsImpl.test_mode.java.template"),
+        )?;
+        return Ok(());
+    }
+
+    println!("lib exported: {}", context.library_exported);
+    println!("new_exp: {}", context.new_exported);
+    println!("allow in: {}", context.allow_instrumentation);
+    match (context.library_exported, context.new_exported, context.allow_instrumentation) {
+        // Exported library with new_exported enabled, use new storage exported template.
+        (true, true, _) => {
+            println!("new exported template");
+            template.add_template(
+                "FeatureFlagsImpl.java",
+                include_str!("../../templates/FeatureFlagsImpl.exported.java.template"),
+            )?;
+        }
+
+        // Exported library with new_exported NOT enabled, use legacy (device
+        // config) template, because regardless of allow_instrumentation, we use
+        // device config for exported libs if new_exported isn't enabled.
+        // Remove once new_exported is fully rolled out.
+        (true, false, _) => {
+            println!("old exported, old template");
+            template.add_template(
+                "FeatureFlagsImpl.java",
+                include_str!("../../templates/FeatureFlagsImpl.java.template"),
+            )?;
+        }
+
+        // New storage internal mode.
+        (false, _, true) => {
+            template.add_template(
+                "FeatureFlagsImpl.java",
+                include_str!("../../templates/FeatureFlagsImpl.new_storage.java.template"),
+            )?;
+        }
+
+        // Device config internal mode. Use legacy (device config) template.
+        (false, _, false) => {
+            template.add_template(
+                "FeatureFlagsImpl.java",
+                include_str!("../../templates/FeatureFlagsImpl.java.template"),
+            )?;
+        }
+    };
+    Ok(())
 }
 
 #[cfg(test)]
