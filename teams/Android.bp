@@ -931,7 +931,7 @@ team {
 }
 
 team {
-    name: "trendy_team_camerax",
+    name: "trendy_team_android_camera_innovation_team",
 
     // go/trendy/manage/engineers/5272590669479936
     trendy_team_id: "5272590669479936",
