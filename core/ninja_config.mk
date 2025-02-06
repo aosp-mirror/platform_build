@@ -19,8 +19,6 @@ PARSE_TIME_MAKE_GOALS := \
 	build-art% \
 	build_kernel-nodeps \
 	clean-oat% \
-	continuous_instrumentation_tests \
-	continuous_native_tests \
 	cts \
 	custom_images \
 	dicttool_aosp \
