@@ -1,6 +1,5 @@
 #include "{header}.h"
 
-{{ if allow_instrumentation }}
 {{ if readwrite- }}
 #include <unistd.h>
 #include "aconfig_storage/aconfig_storage_read_api.hpp"
@@ -8,11 +7,7 @@
 #define LOG_TAG "aconfig_cpp_codegen"
 #define ALOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 {{ -endif }}
-{{ endif }}
 
-{{ if readwrite- }}
-#include <server_configurable_flags/get_flags.h>
-{{ endif }}
 {{ if is_test_mode }}
 #include <unordered_map>
 #include <string>
@@ -29,7 +24,7 @@ namespace {cpp_namespace} \{
     private:
         std::unordered_map<std::string, bool> overrides_;
 
-    {{ if allow_instrumentation- }}
+    {{ if readwrite- }}
         uint32_t boolean_start_index_;
 
         std::unique_ptr<aconfig_storage::MappedStorageFile> flag_value_file_;
@@ -38,7 +33,7 @@ namespace {cpp_namespace} \{
     {{ -endif }}
 
     public:
-    {{ if allow_instrumentation- }}
+    {{ if readwrite- }}
         flag_provider()
             : overrides_()
             , boolean_start_index_()
@@ -95,14 +90,13 @@ namespace {cpp_namespace} \{
         \{}
     {{ -endif }}
 
-{{ for item in class_elements }}
+    {{ for item in class_elements }}
         virtual bool {item.flag_name}() override \{
             auto it = overrides_.find("{item.flag_name}");
             if (it != overrides_.end()) \{
                 return it->second;
             } else \{
                 {{ if item.readwrite- }}
-                {{ if allow_instrumentation- }}
                 if (!package_exists_in_storage_) \{
                     return {item.default_value};
                 }
@@ -118,12 +112,6 @@ namespace {cpp_namespace} \{
                     return *value;
                 }
                 {{ -else }}
-                return server_configurable_flags::GetServerConfigurableFlag(
-                  "aconfig_flags.{item.device_config_namespace}",
-                  "{item.device_config_flag}",
-                  "{item.default_value}") == "true";
-                {{ -endif }}
-                {{ -else }}
                 return {item.default_value};
                 {{ -endif }}
             }
@@ -132,7 +120,7 @@ namespace {cpp_namespace} \{
         virtual void {item.flag_name}(bool val) override \{
             overrides_["{item.flag_name}"] = val;
         }
-{{ endfor }}
+    {{ endfor }}
 
         virtual void reset_flags() override \{
             overrides_.clear();
@@ -145,7 +133,6 @@ namespace {cpp_namespace} \{
     public:
 
         {{ if readwrite- }}
-        {{ if allow_instrumentation- }}
         flag_provider()
             : cache_({readwrite_count}, -1)
             , boolean_start_index_()
@@ -195,13 +182,11 @@ namespace {cpp_namespace} \{
 
         }
         {{ -endif }}
-        {{ -endif }}
 
         {{ -for item in class_elements }}
         virtual bool {item.flag_name}() override \{
             {{ -if item.readwrite }}
             if (cache_[{item.readwrite_idx}] == -1) \{
-            {{ if allow_instrumentation- }}
                 if (!package_exists_in_storage_) \{
                     return {item.default_value};
                 }
@@ -216,12 +201,6 @@ namespace {cpp_namespace} \{
                 }
 
                 cache_[{item.readwrite_idx}] = *value;
-            {{ -else- }}
-                cache_[{item.readwrite_idx}] = server_configurable_flags::GetServerConfigurableFlag(
-                    "aconfig_flags.{item.device_config_namespace}",
-                    "{item.device_config_flag}",
-                    "{item.default_value}") == "true";
-            {{ -endif }}
             }
             return cache_[{item.readwrite_idx}];
             {{ -else }}
@@ -237,13 +216,12 @@ namespace {cpp_namespace} \{
     {{ if readwrite- }}
     private:
         std::vector<int8_t> cache_ = std::vector<int8_t>({readwrite_count}, -1);
-    {{ if allow_instrumentation- }}
+
         uint32_t boolean_start_index_;
 
         std::unique_ptr<aconfig_storage::MappedStorageFile> flag_value_file_;
 
         bool package_exists_in_storage_;
-    {{ -endif }}
     {{ -endif }}
 
     };

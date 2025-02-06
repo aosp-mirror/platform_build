@@ -16,6 +16,9 @@
 
 //! `aflags` is a device binary to read and write aconfig flags.
 
+use std::env;
+use std::process::{Command as OsCommand, Stdio};
+
 use anyhow::{anyhow, ensure, Result};
 use clap::Parser;
 
@@ -298,7 +301,37 @@ fn display_which_backing() -> String {
     }
 }
 
+fn invoke_updatable_aflags() {
+    let updatable_command = "/apex/com.android.configinfrastructure/bin/aflags_updatable";
+
+    let args: Vec<String> = env::args().collect();
+    let command_args = if args.len() >= 2 { &args[1..] } else { &["--help".to_string()] };
+
+    let mut child = OsCommand::new(updatable_command);
+    for arg in command_args {
+        child.arg(arg);
+    }
+
+    let output = child
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("failed to execute child")
+        .wait_with_output()
+        .expect("failed to execute command");
+
+    let output_str = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    if !output_str.is_empty() {
+        println!("{}", output_str);
+    }
+}
+
 fn main() -> Result<()> {
+    if aconfig_flags::auto_generated::invoke_updatable_aflags() {
+        invoke_updatable_aflags();
+        return Ok(());
+    }
+
     ensure!(nix::unistd::Uid::current().is_root(), "must be root");
 
     let cli = Cli::parse();

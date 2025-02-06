@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package android.os;
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
 
-public class Binder {
-    public static final long clearCallingIdentity() {
-        throw new UnsupportedOperationException("Stub!");
-    }
-    public static final void restoreCallingIdentity(long token) {
-        throw new UnsupportedOperationException("Stub!");
-    }
+java_library {
+    name: "ide_query_proberscript_jvm",
+    srcs: [
+        "Foo.java",
+        "Bar.java",
+        "other/Other.java",
+    ],
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 The Android Open Source Project
+ * Copyright 2014 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package android.os;
+package jvm.other;
 
-public class StrictMode {
-    public static ThreadPolicy allowThreadDiskReads() {
-        throw new UnsupportedOperationException("Stub!");
-    }
+/** Other class */
+public class Other {
+  public Other(int first, String second) {}
 
-    public static void setThreadPolicy(final ThreadPolicy policy) {
-        throw new UnsupportedOperationException("Stub!");
-    }
-
-    public static final class ThreadPolicy {}
+  public Other other() {
+    return new Other(0, "");
+  }
 }

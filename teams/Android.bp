@@ -3332,6 +3332,13 @@ team {
 }
 
 team {
+    name: "trendy_team_wear_partner_engineering",
+
+    // go/trendy/manage/engineers/5098351636676608
+    trendy_team_id: "5098351636676608",
+}
+
+team {
     name: "trendy_team_framework_android_multiuser",
 
     // go/trendy/manage/engineers/5981525732392960
@@ -4400,6 +4407,13 @@ team {
 
     // go/trendy/manage/engineers/5440764114206720
     trendy_team_id: "5440764114206720",
+}
+
+team {
+    name: "trendy_team_desktop_wifi",
+
+    // go/trendy/manage/engineers/6463689697099776
+    trendy_team_id: "6463689697099776",
 }
 
 // DON'T ADD NEW RULES HERE. For more details refer to

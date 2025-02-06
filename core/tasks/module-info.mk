@@ -50,6 +50,8 @@ $(MODULE_INFO_JSON): $(SOONG_MODULE_INFO)
 			$(call write-optional-json-list, "host_dependencies", $(sort $(ALL_MODULES.$(m).HOST_REQUIRED_FROM_TARGET))) \
 			$(call write-optional-json-list, "target_dependencies", $(sort $(ALL_MODULES.$(m).TARGET_REQUIRED_FROM_HOST))) \
 			$(call write-optional-json-bool, "test_module_config_base", $(ALL_MODULES.$(m).TEST_MODULE_CONFIG_BASE)) \
+			$(call write-optional-json-bool, "make", $(if $(ALL_MODULES.$(m).IS_SOONG_MODULE),,true)) \
+			$(call write-optional-json-bool, "make_generated_module_info", true) \
 		'}')'\n}\n' >> $@.tmp
 	$(PRIVATE_MERGE_JSON_OBJECTS) -o $@ $(PRIVATE_SOONG_MODULE_INFO) $@.tmp
 	rm $@.tmp

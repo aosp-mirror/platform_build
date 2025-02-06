@@ -31,6 +31,9 @@ rust_binary {
     name: "aflags",
     host_supported: true,
     defaults: ["aflags.defaults"],
+    apex_available: [
+        "//apex_available:platform",
+    ],
 }
 
 rust_test_host {

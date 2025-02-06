@@ -31,7 +31,6 @@ pub fn generate_cpp_code<I>(
     parsed_flags_iter: I,
     codegen_mode: CodegenMode,
     flag_ids: HashMap<String, u16>,
-    allow_instrumentation: bool,
 ) -> Result<Vec<OutputFile>>
 where
     I: Iterator<Item = ProtoParsedFlag>,
@@ -59,7 +58,6 @@ where
         is_test_mode: codegen_mode == CodegenMode::Test,
         class_elements,
         container,
-        allow_instrumentation,
     };
 
     let files = [
@@ -104,7 +102,6 @@ pub struct Context<'a> {
     pub is_test_mode: bool,
     pub class_elements: Vec<ClassElement>,
     pub container: String,
-    pub allow_instrumentation: bool,
 }
 
 #[derive(Serialize)]
@@ -451,56 +448,6 @@ void com_android_aconfig_test_reset_flags();
 
 "#;
 
-    const EXPORTED_EXPORTED_HEADER_EXPECTED: &str = r#"
-#pragma once
-
-#ifdef __cplusplus
-
-#include <memory>
-
-namespace com::android::aconfig::test {
-
-class flag_provider_interface {
-public:
-    virtual ~flag_provider_interface() = default;
-
-    virtual bool disabled_rw_exported() = 0;
-
-    virtual bool enabled_fixed_ro_exported() = 0;
-
-    virtual bool enabled_ro_exported() = 0;
-};
-
-extern std::unique_ptr<flag_provider_interface> provider_;
-
-inline bool disabled_rw_exported() {
-    return provider_->disabled_rw_exported();
-}
-
-inline bool enabled_fixed_ro_exported() {
-    return provider_->enabled_fixed_ro_exported();
-}
-
-inline bool enabled_ro_exported() {
-    return provider_->enabled_ro_exported();
-}
-
-}
-
-extern "C" {
-#endif // __cplusplus
-
-bool com_android_aconfig_test_disabled_rw_exported();
-
-bool com_android_aconfig_test_enabled_fixed_ro_exported();
-
-bool com_android_aconfig_test_enabled_ro_exported();
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
-"#;
-
     const EXPORTED_FORCE_READ_ONLY_HEADER_EXPECTED: &str = r#"
 #pragma once
 
@@ -585,7 +532,13 @@ bool com_android_aconfig_test_enabled_rw();
 
     const PROD_SOURCE_FILE_EXPECTED: &str = r#"
 #include "com_android_aconfig_test.h"
-#include <server_configurable_flags/get_flags.h>
+
+#include <unistd.h>
+#include "aconfig_storage/aconfig_storage_read_api.hpp"
+#include <android/log.h>
+#define LOG_TAG "aconfig_cpp_codegen"
+#define ALOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
+
 #include <vector>
 
 namespace com::android::aconfig::test {
@@ -593,36 +546,116 @@ namespace com::android::aconfig::test {
     class flag_provider : public flag_provider_interface {
         public:
 
+            flag_provider()
+                : cache_(4, -1)
+                , boolean_start_index_()
+                , flag_value_file_(nullptr)
+                , package_exists_in_storage_(true) {
+
+                auto package_map_file = aconfig_storage::get_mapped_file(
+                    "system",
+                    aconfig_storage::StorageFileType::package_map);
+                if (!package_map_file.ok()) {
+                    ALOGE("error: failed to get package map file: %s", package_map_file.error().c_str());
+                    package_exists_in_storage_ = false;
+                    return;
+                }
+
+                auto context = aconfig_storage::get_package_read_context(
+                    **package_map_file, "com.android.aconfig.test");
+                if (!context.ok()) {
+                    ALOGE("error: failed to get package read context: %s", context.error().c_str());
+                    package_exists_in_storage_ = false;
+                    return;
+                }
+
+                if (!(context->package_exists)) {
+                    package_exists_in_storage_ = false;
+                    return;
+                }
+
+                // cache package boolean flag start index
+                boolean_start_index_ = context->boolean_start_index;
+
+                // unmap package map file and free memory
+                delete *package_map_file;
+
+                auto flag_value_file = aconfig_storage::get_mapped_file(
+                    "system",
+                    aconfig_storage::StorageFileType::flag_val);
+                if (!flag_value_file.ok()) {
+                    ALOGE("error: failed to get flag value file: %s", flag_value_file.error().c_str());
+                    package_exists_in_storage_ = false;
+                    return;
+                }
+
+                // cache flag value file
+                flag_value_file_ = std::unique_ptr<aconfig_storage::MappedStorageFile>(
+                    *flag_value_file);
+
+            }
+
+
             virtual bool disabled_ro() override {
                 return false;
             }
 
             virtual bool disabled_rw() override {
                 if (cache_[0] == -1) {
-                    cache_[0] = server_configurable_flags::GetServerConfigurableFlag(
-                        "aconfig_flags.aconfig_test",
-                        "com.android.aconfig.test.disabled_rw",
-                        "false") == "true";
+                    if (!package_exists_in_storage_) {
+                        return false;
+                    }
+
+                    auto value = aconfig_storage::get_boolean_flag_value(
+                        *flag_value_file_,
+                        boolean_start_index_ + 0);
+
+                    if (!value.ok()) {
+                        ALOGE("error: failed to read flag value: %s", value.error().c_str());
+                        return false;
+                    }
+
+                    cache_[0] = *value;
                 }
                 return cache_[0];
             }
 
             virtual bool disabled_rw_exported() override {
                 if (cache_[1] == -1) {
-                    cache_[1] = server_configurable_flags::GetServerConfigurableFlag(
-                        "aconfig_flags.aconfig_test",
-                        "com.android.aconfig.test.disabled_rw_exported",
-                        "false") == "true";
+                    if (!package_exists_in_storage_) {
+                        return false;
+                    }
+
+                    auto value = aconfig_storage::get_boolean_flag_value(
+                        *flag_value_file_,
+                        boolean_start_index_ + 1);
+
+                    if (!value.ok()) {
+                        ALOGE("error: failed to read flag value: %s", value.error().c_str());
+                        return false;
+                    }
+
+                    cache_[1] = *value;
                 }
                 return cache_[1];
             }
 
             virtual bool disabled_rw_in_other_namespace() override {
                 if (cache_[2] == -1) {
-                    cache_[2] = server_configurable_flags::GetServerConfigurableFlag(
-                        "aconfig_flags.other_namespace",
-                        "com.android.aconfig.test.disabled_rw_in_other_namespace",
-                        "false") == "true";
+                    if (!package_exists_in_storage_) {
+                        return false;
+                    }
+
+                    auto value = aconfig_storage::get_boolean_flag_value(
+                        *flag_value_file_,
+                        boolean_start_index_ + 2);
+
+                    if (!value.ok()) {
+                        ALOGE("error: failed to read flag value: %s", value.error().c_str());
+                        return false;
+                    }
+
+                    cache_[2] = *value;
                 }
                 return cache_[2];
             }
@@ -645,16 +678,32 @@ namespace com::android::aconfig::test {
 
             virtual bool enabled_rw() override {
                 if (cache_[3] == -1) {
-                    cache_[3] = server_configurable_flags::GetServerConfigurableFlag(
-                        "aconfig_flags.aconfig_test",
-                        "com.android.aconfig.test.enabled_rw",
-                        "true") == "true";
+                    if (!package_exists_in_storage_) {
+                        return true;
+                    }
+
+                    auto value = aconfig_storage::get_boolean_flag_value(
+                        *flag_value_file_,
+                        boolean_start_index_ + 7);
+
+                    if (!value.ok()) {
+                        ALOGE("error: failed to read flag value: %s", value.error().c_str());
+                        return true;
+                    }
+
+                    cache_[3] = *value;
                 }
                 return cache_[3];
             }
 
     private:
         std::vector<int8_t> cache_ = std::vector<int8_t>(4, -1);
+
+        uint32_t boolean_start_index_;
+
+        std::unique_ptr<aconfig_storage::MappedStorageFile> flag_value_file_;
+
+        bool package_exists_in_storage_;
     };
 
     std::unique_ptr<flag_provider_interface> provider_ =
@@ -701,7 +750,13 @@ bool com_android_aconfig_test_enabled_rw() {
 
     const TEST_SOURCE_FILE_EXPECTED: &str = r#"
 #include "com_android_aconfig_test.h"
-#include <server_configurable_flags/get_flags.h>
+
+#include <unistd.h>
+#include "aconfig_storage/aconfig_storage_read_api.hpp"
+#include <android/log.h>
+#define LOG_TAG "aconfig_cpp_codegen"
+#define ALOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
+
 #include <unordered_map>
 #include <string>
 
@@ -711,10 +766,63 @@ namespace com::android::aconfig::test {
         private:
             std::unordered_map<std::string, bool> overrides_;
 
+            uint32_t boolean_start_index_;
+
+            std::unique_ptr<aconfig_storage::MappedStorageFile> flag_value_file_;
+
+            bool package_exists_in_storage_;
+
         public:
             flag_provider()
                 : overrides_()
-            {}
+                , boolean_start_index_()
+                , flag_value_file_(nullptr)
+                , package_exists_in_storage_(true) {
+
+                auto package_map_file = aconfig_storage::get_mapped_file(
+                     "system",
+                    aconfig_storage::StorageFileType::package_map);
+
+                if (!package_map_file.ok()) {
+                    ALOGE("error: failed to get package map file: %s", package_map_file.error().c_str());
+                    package_exists_in_storage_ = false;
+                    return;
+                }
+
+                auto context = aconfig_storage::get_package_read_context(
+                    **package_map_file, "com.android.aconfig.test");
+
+                if (!context.ok()) {
+                    ALOGE("error: failed to get package read context: %s", context.error().c_str());
+                    package_exists_in_storage_ = false;
+                    return;
+                }
+
+                if (!(context->package_exists)) {
+                    package_exists_in_storage_ = false;
+                    return;
+                }
+
+                // cache package boolean flag start index
+                boolean_start_index_ = context->boolean_start_index;
+
+                // unmap package map file and free memory
+                delete *package_map_file;
+
+                auto flag_value_file = aconfig_storage::get_mapped_file(
+                    "system",
+                aconfig_storage::StorageFileType::flag_val);
+                if (!flag_value_file.ok()) {
+                    ALOGE("error: failed to get flag value file: %s", flag_value_file.error().c_str());
+                    package_exists_in_storage_ = false;
+                    return;
+                }
+
+                // cache flag value file
+                flag_value_file_ = std::unique_ptr<aconfig_storage::MappedStorageFile>(
+                *flag_value_file);
+
+            }
 
             virtual bool disabled_ro() override {
                 auto it = overrides_.find("disabled_ro");
@@ -734,10 +842,20 @@ namespace com::android::aconfig::test {
                   if (it != overrides_.end()) {
                       return it->second;
                 } else {
-                  return server_configurable_flags::GetServerConfigurableFlag(
-                      "aconfig_flags.aconfig_test",
-                      "com.android.aconfig.test.disabled_rw",
-                      "false") == "true";
+                    if (!package_exists_in_storage_) {
+                        return false;
+                    }
+
+                    auto value = aconfig_storage::get_boolean_flag_value(
+                        *flag_value_file_,
+                        boolean_start_index_ + 0);
+
+                    if (!value.ok()) {
+                        ALOGE("error: failed to read flag value: %s", value.error().c_str());
+                        return false;
+                    } else {
+                        return *value;
+                    }
                 }
             }
 
@@ -750,10 +868,20 @@ namespace com::android::aconfig::test {
                   if (it != overrides_.end()) {
                       return it->second;
                 } else {
-                  return server_configurable_flags::GetServerConfigurableFlag(
-                      "aconfig_flags.aconfig_test",
-                      "com.android.aconfig.test.disabled_rw_exported",
-                      "false") == "true";
+                    if (!package_exists_in_storage_) {
+                        return false;
+                    }
+
+                    auto value = aconfig_storage::get_boolean_flag_value(
+                        *flag_value_file_,
+                        boolean_start_index_ + 1);
+
+                    if (!value.ok()) {
+                        ALOGE("error: failed to read flag value: %s", value.error().c_str());
+                        return false;
+                    } else {
+                        return *value;
+                    }
                 }
             }
 
@@ -766,10 +894,20 @@ namespace com::android::aconfig::test {
                   if (it != overrides_.end()) {
                       return it->second;
                 } else {
-                  return server_configurable_flags::GetServerConfigurableFlag(
-                      "aconfig_flags.other_namespace",
-                      "com.android.aconfig.test.disabled_rw_in_other_namespace",
-                      "false") == "true";
+                    if (!package_exists_in_storage_) {
+                        return false;
+                    }
+
+                    auto value = aconfig_storage::get_boolean_flag_value(
+                        *flag_value_file_,
+                        boolean_start_index_ + 2);
+
+                    if (!value.ok()) {
+                        ALOGE("error: failed to read flag value: %s", value.error().c_str());
+                        return false;
+                    } else {
+                        return *value;
+                    }
                 }
             }
 
@@ -834,10 +972,20 @@ namespace com::android::aconfig::test {
                   if (it != overrides_.end()) {
                       return it->second;
                 } else {
-                  return server_configurable_flags::GetServerConfigurableFlag(
-                      "aconfig_flags.aconfig_test",
-                      "com.android.aconfig.test.enabled_rw",
-                      "true") == "true";
+                    if (!package_exists_in_storage_) {
+                        return true;
+                    }
+
+                    auto value = aconfig_storage::get_boolean_flag_value(
+                        *flag_value_file_,
+                        boolean_start_index_ + 7);
+
+                    if (!value.ok()) {
+                        ALOGE("error: failed to read flag value: %s", value.error().c_str());
+                        return true;
+                    } else {
+                        return *value;
+                    }
                 }
             }
 
@@ -939,68 +1087,6 @@ void set_com_android_aconfig_test_enabled_rw(bool val) {
 void com_android_aconfig_test_reset_flags() {
      com::android::aconfig::test::reset_flags();
 }
-
-"#;
-
-    const EXPORTED_SOURCE_FILE_EXPECTED: &str = r#"
-#include "com_android_aconfig_test.h"
-#include <server_configurable_flags/get_flags.h>
-#include <vector>
-
-namespace com::android::aconfig::test {
-
-    class flag_provider : public flag_provider_interface {
-        public:
-            virtual bool disabled_rw_exported() override {
-                if (cache_[0] == -1) {
-                    cache_[0] = server_configurable_flags::GetServerConfigurableFlag(
-                        "aconfig_flags.aconfig_test",
-                        "com.android.aconfig.test.disabled_rw_exported",
-                        "false") == "true";
-                }
-                return cache_[0];
-            }
-
-            virtual bool enabled_fixed_ro_exported() override {
-                if (cache_[1] == -1) {
-                    cache_[1] = server_configurable_flags::GetServerConfigurableFlag(
-                        "aconfig_flags.aconfig_test",
-                        "com.android.aconfig.test.enabled_fixed_ro_exported",
-                        "false") == "true";
-                }
-                return cache_[1];
-            }
-
-            virtual bool enabled_ro_exported() override {
-                if (cache_[2] == -1) {
-                    cache_[2] = server_configurable_flags::GetServerConfigurableFlag(
-                        "aconfig_flags.aconfig_test",
-                        "com.android.aconfig.test.enabled_ro_exported",
-                        "false") == "true";
-                }
-                return cache_[2];
-            }
-
-    private:
-        std::vector<int8_t> cache_ = std::vector<int8_t>(3, -1);
-    };
-
-    std::unique_ptr<flag_provider_interface> provider_ =
-        std::make_unique<flag_provider>();
-}
-
-bool com_android_aconfig_test_disabled_rw_exported() {
-    return com::android::aconfig::test::disabled_rw_exported();
-}
-
-bool com_android_aconfig_test_enabled_fixed_ro_exported() {
-    return com::android::aconfig::test::enabled_fixed_ro_exported();
-}
-
-bool com_android_aconfig_test_enabled_ro_exported() {
-    return com::android::aconfig::test::enabled_ro_exported();
-}
-
 
 "#;
 
@@ -1188,7 +1274,6 @@ bool com_android_aconfig_test_enabled_ro() {
         mode: CodegenMode,
         expected_header: &str,
         expected_src: &str,
-        allow_instrumentation: bool,
     ) {
         let modified_parsed_flags =
             crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
@@ -1199,7 +1284,6 @@ bool com_android_aconfig_test_enabled_ro() {
             modified_parsed_flags.into_iter(),
             mode,
             flag_ids,
-            allow_instrumentation,
         )
         .unwrap();
         let mut generated_files_map = HashMap::new();
@@ -1239,7 +1323,6 @@ bool com_android_aconfig_test_enabled_ro() {
             CodegenMode::Production,
             EXPORTED_PROD_HEADER_EXPECTED,
             PROD_SOURCE_FILE_EXPECTED,
-            false,
         );
     }
 
@@ -1251,19 +1334,6 @@ bool com_android_aconfig_test_enabled_ro() {
             CodegenMode::Test,
             EXPORTED_TEST_HEADER_EXPECTED,
             TEST_SOURCE_FILE_EXPECTED,
-            false,
-        );
-    }
-
-    #[test]
-    fn test_generate_cpp_code_for_exported() {
-        let parsed_flags = crate::test::parse_test_flags();
-        test_generate_cpp_code(
-            parsed_flags,
-            CodegenMode::Exported,
-            EXPORTED_EXPORTED_HEADER_EXPECTED,
-            EXPORTED_SOURCE_FILE_EXPECTED,
-            false,
         );
     }
 
@@ -1275,7 +1345,6 @@ bool com_android_aconfig_test_enabled_ro() {
             CodegenMode::ForceReadOnly,
             EXPORTED_FORCE_READ_ONLY_HEADER_EXPECTED,
             FORCE_READ_ONLY_SOURCE_FILE_EXPECTED,
-            false,
         );
     }
 
@@ -1287,7 +1356,6 @@ bool com_android_aconfig_test_enabled_ro() {
             CodegenMode::Production,
             READ_ONLY_EXPORTED_PROD_HEADER_EXPECTED,
             READ_ONLY_PROD_SOURCE_FILE_EXPECTED,
-            false,
         );
     }
 }

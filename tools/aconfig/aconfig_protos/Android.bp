@@ -58,6 +58,11 @@ rust_protobuf {
     crate_name: "aconfig_rust_proto",
     source_stem: "aconfig_rust_proto",
     host_supported: true,
+    apex_available: [
+        "//apex_available:platform",
+        "com.android.configinfrastructure",
+    ],
+    min_sdk_version: "34",
 }
 
 rust_defaults {
@@ -81,10 +86,25 @@ rust_library {
     crate_name: "aconfig_protos",
     host_supported: true,
     defaults: ["aconfig_protos.defaults"],
+    apex_available: [
+        "//apex_available:platform",
+        "com.android.configinfrastructure",
+    ],
+    min_sdk_version: "34",
 }
 
 rust_test_host {
     name: "aconfig_protos.test",
     test_suites: ["general-tests"],
     defaults: ["aconfig_protos.defaults"],
+}
+
+// Internal protos
+
+python_library_host {
+    name: "aconfig_internal_proto_python",
+    srcs: ["protos/aconfig_internal.proto"],
+    proto: {
+        canonical_path_from_root: false,
+    },
 }
