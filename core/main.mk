@@ -1195,8 +1195,9 @@ endif
 ifneq ($(TARGET_BUILD_APPS),)
   # If this build is just for apps, only build apps and not the full system by default.
   ifneq ($(filter all,$(TARGET_BUILD_APPS)),)
-    # If they used the magic goal "all" then build all apps in the source tree.
-    unbundled_build_modules := $(foreach m,$(sort $(ALL_MODULES)),$(if $(filter APPS,$(ALL_MODULES.$(m).CLASS)),$(m)))
+    # The magic goal "all" used to build all apps in the source tree. This was deprecated
+    # so that we can know all TARGET_BUILD_APPS apps are built with soong for soong-only builds.
+    $(error TARGET_BUILD_APPS=all is deprecated)
   else
     unbundled_build_modules := $(sort $(TARGET_BUILD_APPS))
   endif
