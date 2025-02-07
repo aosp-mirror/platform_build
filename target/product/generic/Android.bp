@@ -376,8 +376,8 @@ android_filesystem_defaults {
         "charger",
     ] + select(release_flag("RELEASE_APPFUNCTION_SIDECAR"), {
         true: [
-            "com.android.extensions.appfunctions",
-            "appfunctions.extension.xml",
+            "com.google.android.appfunctions.sidecar",
+            "appfunctions.sidecar.xml",
         ],
         default: [],
     }),
