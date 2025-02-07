@@ -295,11 +295,6 @@ ndk-docs: $(ndk_doxygen_out)/index.html
 .PHONY: ndk-docs
 endif
 
-ifeq ($(HOST_OS),linux)
-$(call dist-for-goals,sdk,$(API_FINGERPRINT))
-$(call dist-for-goals,droidcore,$(API_FINGERPRINT))
-endif
-
 INSTALLED_RECOVERYIMAGE_TARGET :=
 # Build recovery image if
 # BUILDING_RECOVERY_IMAGE && !BOARD_USES_RECOVERY_AS_BOOT && !BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT.
