@@ -1536,11 +1536,26 @@ boototapackage_4k: $(BUILT_BOOT_OTA_PACKAGE_4K)
 ifeq ($(BOARD_16K_OTA_MOVE_VENDOR),true)
 $(eval $(call copy-one-file,$(BUILT_BOOT_OTA_PACKAGE_4K),$(TARGET_OUT_VENDOR)/boot_otas/boot_ota_4k.zip))
 $(eval $(call copy-one-file,$(BUILT_BOOT_OTA_PACKAGE_16K),$(TARGET_OUT_VENDOR)/boot_otas/boot_ota_16k.zip))
+
 ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_VENDOR)/boot_otas/boot_ota_4k.zip
 ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_VENDOR)/boot_otas/boot_ota_16k.zip
+
+ifneq ($(BOARD_VENDOR_KERNEL_MODULES_2ND_STAGE_16KB_MODE),)
+# Add the modules that need to be loaded in the Second Boot Stage
+# to /vendor_dlkm/lib/modules/16k-mode
+VENDOR_DLKM_16K_MODE_DIR := lib/modules/16k-mode
+$(foreach module,$(BOARD_VENDOR_KERNEL_MODULES_2ND_STAGE_16KB_MODE), \
+    $(eval $(call copy-one-file,$(TARGET_KERNEL_DIR_16K)/$(module),\
+                                $(TARGET_OUT_VENDOR_DLKM)/$(VENDOR_DLKM_16K_MODE_DIR)/$(module))))
+
+ALL_DEFAULT_INSTALLED_MODULES += $(foreach module,$(BOARD_VENDOR_KERNEL_MODULES_2ND_STAGE_16KB_MODE),\
+    $(TARGET_OUT_VENDOR_DLKM)/$(VENDOR_DLKM_16K_MODE_DIR)/$(module))
+endif # BOARD_VENDOR_KERNEL_MODULES_2ND_STAGE_16KB_MODE not empty
+
 else
 $(eval $(call copy-one-file,$(BUILT_BOOT_OTA_PACKAGE_4K),$(TARGET_OUT)/boot_otas/boot_ota_4k.zip))
 $(eval $(call copy-one-file,$(BUILT_BOOT_OTA_PACKAGE_16K),$(TARGET_OUT)/boot_otas/boot_ota_16k.zip))
+
 ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT)/boot_otas/boot_ota_4k.zip
 ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT)/boot_otas/boot_ota_16k.zip
 endif # BOARD_16K_OTA_MOVE_VENDOR == true
