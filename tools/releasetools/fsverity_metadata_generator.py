@@ -236,6 +236,12 @@ if __name__ == '__main__':
       'We require that all .fsv_meta files follow this convention regardless of if it\'s a link or '
       'not. However {args.input} had a different output file: {args.output}')
 
+  # remove the output file first, as switching between a file and a symlink can be complicated
+  try:
+    os.remove(output_file)
+  except FileNotFoundError:
+    pass
+
   if os.path.islink(args.input):
     target = os.readlink(args.input) + '.fsv_meta'
     os.symlink(target, output_file)
