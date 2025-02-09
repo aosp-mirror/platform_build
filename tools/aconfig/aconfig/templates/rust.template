@@ -9,7 +9,6 @@ use log::\{log, LevelFilter, Level};
 pub struct FlagProvider;
 
 {{ if has_readwrite- }}
-{{ if allow_instrumentation }}
 static PACKAGE_OFFSET: LazyLock<Result<Option<u32>, AconfigStorageError>> = LazyLock::new(|| unsafe \{
     get_mapped_storage_file("{container}", StorageFileType::PackageMap)
     .and_then(|package_map| get_package_read_context(&package_map, "{package}"))
@@ -19,12 +18,10 @@ static PACKAGE_OFFSET: LazyLock<Result<Option<u32>, AconfigStorageError>> = Lazy
 static FLAG_VAL_MAP: LazyLock<Result<Mmap, AconfigStorageError>> = LazyLock::new(|| unsafe \{
     get_mapped_storage_file("{container}", StorageFileType::FlagVal)
 });
-{{ -endif }}
 {{ -for flag in template_flags }}
 
 {{ -if flag.readwrite }}
 /// flag value cache for {flag.name}
-{{ if allow_instrumentation }}
 static CACHED_{flag.name}: LazyLock<bool> = LazyLock::new(|| \{
 
     // This will be called multiple times. Subsequent calls after the first are noops.
@@ -65,12 +62,6 @@ static CACHED_{flag.name}: LazyLock<bool> = LazyLock::new(|| \{
     }
 
 });
-{{ else }}
-static CACHED_{flag.name}: LazyLock<bool> = LazyLock::new(|| flags_rust::GetServerConfigurableFlag(
-    "aconfig_flags.{flag.device_config_namespace}",
-    "{flag.device_config_flag}",
-    "{flag.default_value}") == "true");
-{{ endif }}
 {{ -endif }}
 {{ -endfor }}
 {{ -endif }}

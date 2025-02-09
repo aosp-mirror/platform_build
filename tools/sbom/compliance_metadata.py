@@ -18,7 +18,7 @@ import sqlite3
 
 class MetadataDb:
   def __init__(self, db):
-    self.conn = sqlite3.connect(':memory')
+    self.conn = sqlite3.connect(':memory:')
     self.conn.row_factory = sqlite3.Row
     with sqlite3.connect(db) as c:
       c.backup(self.conn)
@@ -94,7 +94,7 @@ class MetadataDb:
     cursor.close()
     rows = []
     for m in multi_built_file_modules:
-      built_files = m['installed_file'].strip().split(' ')
+      built_files = m['built_file'].strip().split(' ')
       for f in built_files:
         rows.append((m['module_id'], m['module_name'], m['package'], f))
     self.conn.executemany('insert into module_built_file values (?, ?, ?, ?)', rows)
@@ -124,6 +124,21 @@ class MetadataDb:
   def get_installed_files(self):
     # Get all records from table make_metadata, which contains all installed files and corresponding make modules' metadata
     cursor = self.conn.execute('select installed_file, module_path, is_prebuilt_make_module, product_copy_files, kernel_module_copy_files, is_platform_generated, license_text from make_metadata')
+    rows = cursor.fetchall()
+    cursor.close()
+    installed_files_metadata = []
+    for row in rows:
+      metadata = dict(zip(row.keys(), row))
+      installed_files_metadata.append(metadata)
+    return installed_files_metadata
+
+  def get_installed_file_in_dir(self, dir):
+    dir = dir.removesuffix('/')
+    cursor = self.conn.execute(
+        'select installed_file, module_path, is_prebuilt_make_module, product_copy_files, '
+        '       kernel_module_copy_files, is_platform_generated, license_text '
+        'from make_metadata '
+        'where installed_file like ?', (dir + '/%',))
     rows = cursor.fetchall()
     cursor.close()
     installed_files_metadata = []

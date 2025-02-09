@@ -390,10 +390,8 @@ fn main() -> Result<()> {
         Some(("create-cpp-lib", sub_matches)) => {
             let cache = open_single_file(sub_matches, "cache")?;
             let mode = get_required_arg::<CodegenMode>(sub_matches, "mode")?;
-            let allow_instrumentation =
-                get_required_arg::<bool>(sub_matches, "allow-instrumentation")?;
-            let generated_files = commands::create_cpp_lib(cache, *mode, *allow_instrumentation)
-                .context("failed to create cpp lib")?;
+            let generated_files =
+                commands::create_cpp_lib(cache, *mode).context("failed to create cpp lib")?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
             generated_files
                 .iter()
@@ -402,10 +400,8 @@ fn main() -> Result<()> {
         Some(("create-rust-lib", sub_matches)) => {
             let cache = open_single_file(sub_matches, "cache")?;
             let mode = get_required_arg::<CodegenMode>(sub_matches, "mode")?;
-            let allow_instrumentation =
-                get_required_arg::<bool>(sub_matches, "allow-instrumentation")?;
-            let generated_file = commands::create_rust_lib(cache, *mode, *allow_instrumentation)
-                .context("failed to create rust lib")?;
+            let generated_file =
+                commands::create_rust_lib(cache, *mode).context("failed to create rust lib")?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);
             write_output_file_realtive_to_dir(&dir, &generated_file)?;
         }
