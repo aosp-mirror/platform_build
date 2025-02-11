@@ -98,3 +98,13 @@ rust_test_host {
     test_suites: ["general-tests"],
     defaults: ["aconfig_protos.defaults"],
 }
+
+// Internal protos
+
+python_library_host {
+    name: "aconfig_internal_proto_python",
+    srcs: ["protos/aconfig_internal.proto"],
+    proto: {
+        canonical_path_from_root: false,
+    },
+}
