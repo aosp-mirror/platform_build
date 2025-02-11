@@ -8074,6 +8074,46 @@ pack-migration-image: $(PACK_MIGRATION_IMAGE_TARGET)
 
 endif # ANDROID_DESKTOP_MIGRATION_IMAGE
 
+ifdef SOONG_ONLY_ALL_IMAGES_ZIP
+
+allimages_soong_zip_args :=
+allimages_deps :=
+
+define include_image
+$(if $(1), \
+  $(eval allimages_soong_zip_args += -e $(notdir $(1)) -f $(1)) \
+  $(eval allimages_deps += $(1)))
+endef
+
+$(call include_image,$(INSTALLED_SUPERIMAGE_TARGET))
+$(call include_image,$(INSTALLED_BOOTIMAGE_TARGET))
+$(call include_image,$(INSTALLED_INIT_BOOT_IMAGE_TARGET))
+$(call include_image,$(INSTALLED_VENDOR_BOOTIMAGE_TARGET))
+$(call include_image,$(INSTALLED_USERDATAIMAGE_TARGET))
+$(call include_image,$(INSTALLED_RECOVERYIMAGE_TARGET))
+$(call include_image,$(INSTALLED_VBMETAIMAGE_TARGET))
+$(call include_image,$(INSTALLED_VBMETA_SYSTEMIMAGE_TARGET))
+$(call include_image,$(INSTALLED_VBMETA_VENDORIMAGE_TARGET))
+$(foreach partition,$(call to-upper,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)), \
+  $(call include_image,$(INSTALLED_VBMETA_$(partition)IMAGE_TARGET)))
+
+allimages_zip := $(PRODUCT_OUT)/all_images.zip
+$(allimages_zip): PRIVATE_SOONG_ZIP_ARGUMENTS := $(allimages_soong_zip_args)
+$(allimages_zip): $(SOONG_ZIP) $(allimages_deps)
+	$(SOONG_ZIP) -o $@ --sort_entries $(PRIVATE_SOONG_ZIP_ARGUMENTS)
+
+.PHONY: soong_only_diff_test
+soong_only_diff_test: PRIVATE_ALLIMAGES_ZIP := $(allimages_zip)
+soong_only_diff_test: $(allimages_zip) $(SOONG_ONLY_ALL_IMAGES_ZIP)
+	diff $(PRIVATE_ALLIMAGES_ZIP) $(SOONG_ONLY_ALL_IMAGES_ZIP)
+
+allimages_soong_zip_args :=
+allimages_deps :=
+allimages_zip :=
+include_image :=
+
+endif # ifdef SOONG_ONLY_ALL_IMAGES_ZIP
+
 # -----------------------------------------------------------------
 # OS Licensing
 
