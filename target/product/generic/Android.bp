@@ -126,6 +126,23 @@ android_symlinks = [
     },
 ]
 
+extra_vendor_symlinks = [
+    // Some vendors still haven't cleaned up all device specific directories under root!
+    // TODO(b/111434759, b/111287060) SoC specific hacks
+    {
+        target: "/vendor/lib/dsp",
+        name: "dsp",
+    },
+    {
+        target: "/mnt/vendor/persist",
+        name: "persist",
+    },
+    {
+        target: "/vendor/firmware_mnt",
+        name: "firmware",
+    },
+]
+
 filegroup {
     name: "generic_system_sign_key",
     srcs: [":avb_testkey_rsa4096"],
@@ -429,13 +446,38 @@ system_image_fsverity_default = {
     libs: [":framework-res{.export-package.apk}"],
 }
 
-android_filesystem_defaults {
+soong_config_module_type {
+    name: "system_image_defaults",
+    module_type: "android_filesystem_defaults",
+    config_namespace: "ANDROID",
+    bool_variables: ["TARGET_ADD_ROOT_EXTRA_VENDOR_SYMLINKS"],
+    properties: ["symlinks"],
+}
+
+genrule {
+    name: "plat_and_vendor_file_contexts",
+    device_common_srcs: [
+        ":plat_file_contexts",
+        ":vendor_file_contexts",
+    ],
+    out: ["file_contexts"],
+    cmd: "cat $(in) > $(out)",
+}
+
+system_image_defaults {
     name: "system_image_defaults",
     partition_name: "system",
     base_dir: "system",
     dirs: generic_rootdirs,
-    symlinks: generic_symlinks,
-    file_contexts: ":plat_file_contexts",
+    soong_config_variables: {
+        TARGET_ADD_ROOT_EXTRA_VENDOR_SYMLINKS: {
+            symlinks: generic_symlinks + extra_vendor_symlinks,
+            conditions_default: {
+                symlinks: generic_symlinks,
+            },
+        },
+    },
+    file_contexts: ":plat_and_vendor_file_contexts",
     linker_config: {
         gen_linker_config: true,
         linker_config_srcs: [":system_linker_config_json_file"],
