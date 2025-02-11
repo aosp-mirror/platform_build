@@ -707,6 +707,11 @@ android_filesystem_defaults {
             "update_engine_client",
         ],
         default: [],
+    }) + select(release_flag("RELEASE_UPROBESTATS_MODULE"), {
+        true: [],
+        default: [
+            "uprobestats", // base_system internal
+        ],
     }),
     multilib: {
         common: {
@@ -854,12 +859,7 @@ android_filesystem_defaults {
                 "android.system.virtualizationservice-ndk",
                 "libgsi",
                 "servicemanager",
-            ] + select(release_flag("RELEASE_UPROBESTATS_MODULE"), {
-                true: [],
-                default: [
-                    "uprobestats", // base_system internal
-                ],
-            }),
+            ],
         },
         both: {
             deps: [
