@@ -66,8 +66,6 @@ include build/make/target/board/BoardConfigGsiCommon.mk
 BOARD_ROOT_EXTRA_SYMLINKS += /vendor/lib/dsp:/dsp
 BOARD_ROOT_EXTRA_SYMLINKS += /mnt/vendor/persist:/persist
 BOARD_ROOT_EXTRA_SYMLINKS += /vendor/firmware_mnt:/firmware
-# for Android.bp
-TARGET_ADD_ROOT_EXTRA_VENDOR_SYMLINKS := true
 
 # TODO(b/36764215): remove this setting when the generic system image
 # no longer has QCOM-specific directories under /.
