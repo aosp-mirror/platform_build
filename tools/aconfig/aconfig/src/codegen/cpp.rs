@@ -237,11 +237,11 @@ inline bool disabled_rw_in_other_namespace() {
     return provider_->disabled_rw_in_other_namespace();
 }
 
-inline bool enabled_fixed_ro() {
+constexpr inline bool enabled_fixed_ro() {
     return COM_ANDROID_ACONFIG_TEST_ENABLED_FIXED_RO;
 }
 
-inline bool enabled_fixed_ro_exported() {
+constexpr inline bool enabled_fixed_ro_exported() {
     return COM_ANDROID_ACONFIG_TEST_ENABLED_FIXED_RO_EXPORTED;
 }
 
@@ -549,7 +549,7 @@ inline bool disabled_rw_in_other_namespace() {
     return false;
 }
 
-inline bool enabled_fixed_ro() {
+constexpr inline bool enabled_fixed_ro() {
     return COM_ANDROID_ACONFIG_TEST_ENABLED_FIXED_RO;
 }
 
@@ -1103,7 +1103,7 @@ public:
 
 extern std::unique_ptr<flag_provider_interface> provider_;
 
-inline bool disabled_fixed_ro() {
+constexpr inline bool disabled_fixed_ro() {
     return COM_ANDROID_ACONFIG_TEST_DISABLED_FIXED_RO;
 }
 
@@ -1111,7 +1111,7 @@ inline bool disabled_ro() {
     return false;
 }
 
-inline bool enabled_fixed_ro() {
+constexpr inline bool enabled_fixed_ro() {
     return COM_ANDROID_ACONFIG_TEST_ENABLED_FIXED_RO;
 }
 
