@@ -151,6 +151,7 @@ cts-api-map-xml-report := $(api_map_out)/cts-api-map.xml
 cts-v-host-api-map-xml-report := $(api_map_out)/cts-v-host-api-map.xml
 cts-combined-api-map-xml-report := $(api_map_out)/cts-combined-api-map.xml
 cts-combined-api-map-html-report := $(api_map_out)/cts-combined-api-map.html
+cts-combined-api-inherit-xml-report := $(api_map_out)/cts-combined-api-inherit.xml
 
 cts_api_map_dependencies := $(cts_api_map_exe) $(combined_api_xml_description) $(cts_jar_files)
 cts_v_host_api_map_dependencies := $(cts_api_map_exe) $(combined_api_xml_description) $(cts_v_host_jar_files)
@@ -262,6 +263,13 @@ $(cts-combined-api-map-html-report) : $(verifier_zip) $(android_cts_zip) $(cts_c
 	$(call generate-api-map-report-cts,"CTS Combined API MAP Report - HTML",\
 			$(PRIVATE_JAR_FILES),html)
 
+$(cts-combined-api-inherit-xml-report): PRIVATE_CTS_API_MAP_EXE := $(cts_api_map_exe)
+$(cts-combined-api-inherit-xml-report): PRIVATE_API_XML_DESC := $(combined_api_xml_description)
+$(cts-combined-api-inherit-xml-report): PRIVATE_JAR_FILES := $(cts_all_jar_files)
+$(cts-combined-api-inherit-xml-report) : $(verifier_zip) $(android_cts_zip) $(cts_combined_api_map_dependencies) | $(ACP)
+	$(call generate-api-inherit-report-cts,"CTS Combined API Inherit Report - XML",\
+			$(PRIVATE_JAR_FILES),xml)
+
 .PHONY: cts-api-map-xml
 cts-api-map-xml : $(cts-api-map-xml-report)
 
@@ -270,6 +278,9 @@ cts-v-host-api-map-xml: $(cts-v-host-api-map-xml-report)
 
 .PHONY: cts-combined-api-map-xml
 cts-combined-api-map-xml : $(cts-combined-api-map-xml-report)
+
+.PHONY: cts-combined-api-inherit-xml
+cts-combined-api-inherit-xml : $(cts-combined-api-inherit-xml-report)
 
 .PHONY: cts-api-map-all
 
@@ -291,11 +302,13 @@ ALL_TARGETS.$(cts-combined-xml-coverage-report).META_LIC:=$(module_license_metad
 # Put the test api map report in the dist dir if "cts-api-map-all" is among the build goals.
 $(call dist-for-goals, cts-api-map-all, $(cts-combined-api-map-xml-report):cts-api-map-report.xml)
 $(call dist-for-goals, cts-api-map-all, $(cts-combined-api-map-html-report):cts-api-map-report.html)
+$(call dist-for-goals, cts-api-map-all, $(cts-combined-api-inherit-xml-report):cts-api-inherit-report.xml)
 
 ALL_TARGETS.$(cts-api-map-xml-report).META_LIC:=$(module_license_metadata)
 ALL_TARGETS.$(cts-v-host-api-map-xml-report).META_LIC:=$(module_license_metadata)
 ALL_TARGETS.$(cts-combined-api-map-xml-report).META_LIC:=$(module_license_metadata)
 ALL_TARGETS.$(cts-combined-api-map-html-report).META_LIC:=$(module_license_metadata)
+ALL_TARGETS.$(cts-combined-api-map-inherit-report).META_LIC:=$(module_license_metadata)
 
 # Arguments;
 #  1 - Name of the report printed out on the screen
@@ -313,7 +326,18 @@ endef
 #  3 - Format of the report
 define generate-api-map-report-cts
 	$(hide) mkdir -p $(dir $@)
-	$(hide) $(PRIVATE_CTS_API_MAP_EXE) -j 8 -a $(shell echo "$(PRIVATE_API_XML_DESC)" | tr ' ' ',') -i $(2) -f $(3) -o $@
+	$(hide) $(PRIVATE_CTS_API_MAP_EXE) -j 8 -m api_map -m xts_annotation -a $(shell echo "$(PRIVATE_API_XML_DESC)" | tr ' ' ',') -i $(2) -f $(3) -o $@
+	@ echo $(1): file://$$(cd $(dir $@); pwd)/$(notdir $@)
+endef
+
+
+# Arguments;
+#  1 - Name of the report printed out on the screen
+#  2 - A file containing list of files that to be analyzed
+#  3 - Format of the report
+define generate-api-inherit-report-cts
+	$(hide) mkdir -p $(dir $@)
+	$(hide) $(PRIVATE_CTS_API_MAP_EXE) -j 8 -m xts_api_inherit -a $(shell echo "$(PRIVATE_API_XML_DESC)" | tr ' ' ',') -i $(2) -f $(3) -o $@
 	@ echo $(1): file://$$(cd $(dir $@); pwd)/$(notdir $@)
 endef
 
@@ -333,6 +357,7 @@ cts-api-map-xml-report :=
 cts-v-host-api-map-xml-report :=
 cts-combined-api-map-xml-report :=
 cts-combined-api-map-html-report :=
+cts-combined-api-map-inherit-report :=
 api_xml_description :=
 api_text_description :=
 system_api_xml_description :=
