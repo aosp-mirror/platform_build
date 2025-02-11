@@ -509,6 +509,7 @@ system_image_defaults {
     avb_private_key: ":generic_system_sign_key",
     avb_algorithm: "SHA256_RSA4096",
     avb_hash_algorithm: "sha256",
+    rollback_index_location: 1,
 
     deps: [
         "abx",
