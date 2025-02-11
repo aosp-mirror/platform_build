@@ -378,6 +378,37 @@ def GetApexKeys(keys_info, key_map):
   return keys_info
 
 
+def GetMicrodroidVbmetaKey(virt_apex_path, avbtool_path):
+  """Extracts the AVB public key from microdroid_vbmeta.img within a virt apex.
+
+  Args:
+    virt_apex_path: The path to the com.android.virt.apex file.
+    avbtool_path: The path to the avbtool executable.
+
+  Returns:
+    The AVB public key (bytes).
+  """
+  # Creates an ApexApkSigner to extract microdroid_vbmeta.img.
+  # No need to set key_passwords/codename_to_api_level_map since
+  # we won't do signing here.
+  apex_signer = apex_utils.ApexApkSigner(
+      virt_apex_path,
+      None,  # key_passwords
+      None)  # codename_to_api_level_map
+  payload_dir = apex_signer.ExtractApexPayload(virt_apex_path)
+  microdroid_vbmeta_image = os.path.join(
+      payload_dir, 'etc', 'fs', 'microdroid_vbmeta.img')
+
+  # Extracts the avb public key from microdroid_vbmeta.img.
+  with tempfile.NamedTemporaryFile() as microdroid_pubkey:
+    common.RunAndCheckOutput([
+        avbtool_path, 'info_image',
+        '--image', microdroid_vbmeta_image,
+        '--output_pubkey', microdroid_pubkey.name])
+    with open(microdroid_pubkey.name, 'rb') as f:
+      return f.read()
+
+
 def GetApkFileInfo(filename, compressed_extension, skipped_prefixes):
   """Returns the APK info based on the given filename.
 
@@ -879,9 +910,8 @@ def ProcessTargetFiles(input_tf_zip: zipfile.ZipFile, output_tf_zip: zipfile.Zip
 
         # b/384813199: handles the pre-signed com.android.virt.apex in GSI.
         if payload_key == 'PRESIGNED':
-          with input_tf_zip.open(virt_apex_path) as apex_fp:
-            with zipfile.ZipFile(apex_fp) as apex_zip:
-              new_pubkey = apex_zip.read('apex_pubkey')
+          new_pubkey = GetMicrodroidVbmetaKey(virt_apex_path,
+                                              misc_info['avb_avbtool'])
         else:
           new_pubkey_path = common.ExtractAvbPublicKey(
               misc_info['avb_avbtool'], payload_key)

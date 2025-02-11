@@ -295,11 +295,6 @@ ndk-docs: $(ndk_doxygen_out)/index.html
 .PHONY: ndk-docs
 endif
 
-ifeq ($(HOST_OS),linux)
-$(call dist-for-goals,sdk,$(API_FINGERPRINT))
-$(call dist-for-goals,droidcore,$(API_FINGERPRINT))
-endif
-
 INSTALLED_RECOVERYIMAGE_TARGET :=
 # Build recovery image if
 # BUILDING_RECOVERY_IMAGE && !BOARD_USES_RECOVERY_AS_BOOT && !BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT.
@@ -1982,7 +1977,7 @@ target_system_dlkm_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE_SYST
 installed_system_dlkm_notice_xml_gz := $(TARGET_OUT_SYSTEM_DLKM)/etc/NOTICE.xml.gz
 
 ALL_INSTALLED_NOTICE_FILES := \
-  $(if $(USE_SOONG_DEFINED_SYSTEM_IMAGE),,$(installed_notice_html_or_xml_gz)) \
+  $(installed_notice_html_or_xml_gz) \
   $(installed_vendor_notice_xml_gz) \
   $(installed_product_notice_xml_gz) \
   $(installed_system_ext_notice_xml_gz) \
@@ -1993,7 +1988,8 @@ ALL_INSTALLED_NOTICE_FILES := \
 
 # $1 installed file path, e.g. out/target/product/vsoc_x86_64/system_ext/etc/NOTICE.xml.gz
 define is-notice-file
-$(if $(findstring $1,$(ALL_INSTALLED_NOTICE_FILES)),Y)
+$(if $(filter true,$(PRODUCT_USE_SOONG_NOTICE_XML)),, \
+  $(if $(findstring $1,$(ALL_INSTALLED_NOTICE_FILES)),Y))
 endef
 
 # Notice files are copied to TARGET_OUT_NOTICE_FILES as a side-effect of their module
@@ -2069,9 +2065,7 @@ endif
 
 endif # PRODUCT_NOTICE_SPLIT
 
-ifneq ($(USE_SOONG_DEFINED_SYSTEM_IMAGE),true)
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
-endif
 
 need_vendor_notice:=false
 ifeq ($(BUILDING_VENDOR_BOOT_IMAGE),true)
@@ -3602,7 +3596,7 @@ $(error PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE must be set if USE_SOONG_DEFINED_SYST
 endif
 SOONG_DEFINED_SYSTEM_IMAGE_PATH := $(call intermediates-dir-for,ETC,$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE))/$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE)
 SOONG_DEFINED_SYSTEM_IMAGE_BASE := $(dir $(ALL_MODULES.$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE).FILESYSTEM_FILELIST))
-$(BUILT_SYSTEMIMAGE): $(INSTALLED_FILES_FILE) $(systemimage_intermediates)/file_list.txt $(SOONG_DEFINED_SYSTEM_IMAGE_PATH)
+$(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE) $(systemimage_intermediates)/file_list.txt $(SOONG_DEFINED_SYSTEM_IMAGE_PATH)
 $(eval $(call copy-one-file, $(SOONG_DEFINED_SYSTEM_IMAGE_PATH), $(BUILT_SYSTEMIMAGE)))
 else
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE) $(systemimage_intermediates)/file_list.txt
@@ -4464,6 +4458,25 @@ INTERNAL_PVMFWIMAGE_FILES := $(call module-target-built-files,pvmfw_img)
 INTERNAL_PVMFW_EMBEDDED_AVBKEY := $(call module-target-built-files,pvmfw_embedded_key_pub_bin)
 INTERNAL_PVMFW_SYMBOL := $(TARGET_OUT_EXECUTABLES_UNSTRIPPED)/pvmfw
 
+# If pvmfw target is not available and there is a prebuilt available use prebuilt
+# NOTE: This is only a temporary feature for x86_64 and is not meant to be supported for long.
+# TODO(b/391333413): Don't allow use of pvmfw prebuilts as soon as it is possible
+ifeq ($(INTERNAL_PVMFWIMAGE_FILES),)
+ifneq ($(PRODUCT_PVMFW_IMAGE_PREBUILT),)
+INTERNAL_PVMFWIMAGE_FILES := $(call module-target-built-files,$(PRODUCT_PVMFW_IMAGE_PREBUILT))
+INTERNAL_PVMFW_SYMBOL :=
+
+ifneq ($(PRODUCT_PVMFW_BIN_PREBUILT),)
+INSTALLED_PVMFW_BINARY_TARGET := $(call module-target-built-files,$(PRODUCT_PVMFW_BIN_PREBUILT))
+endif # PRODUCT_PVMFW_BIN_PREBUILT
+
+ifneq ($(PRODUCT_PVMFW_EMBEDDED_AVBKEY_PREBUILT),)
+INTERNAL_PVMFW_EMBEDDED_AVBKEY := $(call module-target-built-files,$(PRODUCT_PVMFW_EMBEDDED_AVBKEY_PREBUILT))
+endif # PRODUCT_PVMFW_EMBEDDED_AVBKEY_PREBUILT
+
+endif # PRODUCT_PVMFW_IMAGE_PREBUILT
+endif # INTERNAL_PVMFWIMAGE_FILES
+
 $(call declare-1p-container,$(INSTALLED_PVMFWIMAGE_TARGET),)
 $(call declare-container-license-deps,$(INSTALLED_PVMFWIMAGE_TARGET),$(INTERNAL_PVMFWIMAGE_FILES),$(PRODUCT_OUT)/:/)
 
@@ -5034,6 +5047,10 @@ define build-chained-vbmeta-image
 	    $(foreach image,$(BOARD_AVB_$(call to-upper,$(1))), \
 	        --include_descriptors_from_image $(call images-for-partitions,$(image))) \
 	    --output $@
+      # libavb expects to be able to read the maximum vbmeta size, so we must provide a partition
+      # which matches this or the read will fail.
+      # See external/avb/libavb/avb_slot_verify.c#VBMETA_MAX_SIZE
+      truncate -s 65536 $@
 endef
 
 ifdef BUILDING_SYSTEM_IMAGE
@@ -5092,6 +5109,10 @@ define build-vbmetaimage-target
     $(PRIVATE_AVB_VBMETA_SIGNING_ARGS) \
     $(BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS) \
     --output $@
+    # libavb expects to be able to read the maximum vbmeta size, so we must provide a partition
+    # which matches this or the read will fail.
+    # See external/avb/libavb/avb_slot_verify.c#VBMETA_MAX_SIZE
+    truncate -s 65536 $@
   $(hide) rm -rf $(AVB_CHAIN_KEY_DIR)
 endef
 
@@ -5433,7 +5454,8 @@ ifeq (default,$(ENABLE_UFFD_GC))
 ifneq (,$(BUILT_KERNEL_VERSION_FILE))
 $(BUILT_KERNEL_VERSION_FILE_FOR_UFFD_GC): $(BUILT_KERNEL_VERSION_FILE)
 $(BUILT_KERNEL_VERSION_FILE_FOR_UFFD_GC):
-	cp $(BUILT_KERNEL_VERSION_FILE) $(BUILT_KERNEL_VERSION_FILE_FOR_UFFD_GC)
+	if ! cmp -s $(BUILT_KERNEL_VERSION_FILE) $@ ; then cp $(BUILT_KERNEL_VERSION_FILE) $@; fi
+.KATI_RESTAT: $(BUILT_KERNEL_VERSION_FILE_FOR_UFFD_GC)
 else
 # We make this a warning rather than an error to avoid breaking too many builds. When it happens,
 # we use a placeholder as the kernel version, which is consumed by uffd_gc_utils.py.
@@ -5642,7 +5664,9 @@ else
       endif
     endif # INSTALLED_BOOTIMAGE_TARGET == ""
     ifeq ($(recovery_fstab),)
-      build_ota_package := false
+      ifeq ($(filter $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab,$(INTERNAL_RECOVERYIMAGE_FILES)),)
+        build_ota_package := false
+      endif
     endif
   endif # PRODUCT_BUILD_GENERIC_OTA_PACKAGE
 

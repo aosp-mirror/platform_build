@@ -34,7 +34,7 @@ private val API_SIGNATURE =
           ctor @FlaggedApi("android.flag.foo") public Clazz();
           field @FlaggedApi("android.flag.foo") public static final int FOO = 1; // 0x1
           method @FlaggedApi("android.flag.foo") public int getErrorCode();
-          method @FlaggedApi("android.flag.foo") public boolean setData(int, int[][], @NonNull android.util.Utility<T, U>);
+          method @FlaggedApi("android.flag.foo") public <T,U> boolean setData(int, int[][], @NonNull android.util.Utility<T, U>);
           method @FlaggedApi("android.flag.foo") public boolean setVariableData(int, android.util.Atom...);
           method @FlaggedApi("android.flag.foo") public boolean innerClassArg(android.Clazz.Builder);
         }

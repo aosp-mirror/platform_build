@@ -40,14 +40,8 @@ within a product configuration .mk file, board config .mk file, or buildspec.mk.
 
 ## Python 2 to 3 migration
 
-The path set when running builds now makes the `python` executable point to python 3,
-whereas on previous versions it pointed to python 2. If you still have python 2 scripts,
-you can change the shebang line to use `python2` explicitly. This only applies for
-scripts run directly from makefiles, or from soong genrules.
-
-In addition, `python_*` soong modules no longer allow python 2.
-
-Python 2 is slated for complete removal in V.
+Python 2 has been completely removed from the build. Please migrate any remaining usages to
+Python 3, and remove any version-specific properties from bp files.
 
 ## Stop referencing sysprop_library directly from cc modules
 

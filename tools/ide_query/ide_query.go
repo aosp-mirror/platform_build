@@ -116,8 +116,8 @@ func main() {
 
 	var targets []string
 	javaTargetsByFile := findJavaModules(javaFiles, javaModules)
-	for _, t := range javaTargetsByFile {
-		targets = append(targets, t)
+	for _, target := range javaTargetsByFile {
+		targets = append(targets, javaModules[target].Jars...)
 	}
 
 	ccTargets, err := getCCTargets(ctx, env, ccFiles)
@@ -306,6 +306,10 @@ func findJavaModules(paths []string, modules map[string]*javaModule) map[string]
 		}
 
 		module := modules[name]
+		if len(module.Jars) == 0 {
+			continue
+		}
+
 		for i, p := range paths {
 			if slices.Contains(module.Srcs, p) {
 				ret[p] = name
@@ -317,6 +321,7 @@ func findJavaModules(paths []string, modules map[string]*javaModule) map[string]
 			break
 		}
 	}
+
 	return ret
 }
 
