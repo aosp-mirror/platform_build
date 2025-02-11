@@ -1,0 +1,68 @@
+package {package_name};
+{{ if not library_exported- }}
+// TODO(b/303773055): Remove the annotation after access issue is resolved.
+import android.compat.annotation.UnsupportedAppUsage;
+{{ -endif }} {#- end of not library_exported#}
+{{ -if runtime_lookup_required }}
+import android.os.Binder;
+import android.provider.DeviceConfig;
+import android.provider.DeviceConfig.Properties;
+{{ -endif }}  {#- end of runtime_lookup_required#}
+/** @hide */
+public final class FeatureFlagsImpl implements FeatureFlags \{
+{{ -if runtime_lookup_required }}
+{{ -for namespace_with_flags in namespace_flags }}
+    private static volatile boolean {namespace_with_flags.namespace}_is_cached = false;
+{{ -endfor- }}
+{{ for flag in flag_elements }}
+{{- if flag.is_read_write }}
+    private static boolean {flag.method_name} = {flag.default_value};
+{{ -endif }} {#- end of is_read_write#}
+{{ -endfor }}
+{{ for namespace_with_flags in namespace_flags }}
+    private void load_overrides_{namespace_with_flags.namespace}() \{
+        final long ident = Binder.clearCallingIdentity();
+        try \{
+            Properties properties = DeviceConfig.getProperties("{namespace_with_flags.namespace}");
+{{ -for flag in namespace_with_flags.flags }}
+{{ -if flag.is_read_write }}
+            {flag.method_name} =
+                properties.getBoolean(Flags.FLAG_{flag.flag_name_constant_suffix}, {flag.default_value});
+{{ -endif }} {#- end of is_read_write#}
+{{ -endfor }}
+        } catch (NullPointerException e) \{
+            throw new RuntimeException(
+                "Cannot read value from namespace {namespace_with_flags.namespace} "
+                + "from DeviceConfig. It could be that the code using flag "
+                + "executed before SettingsProvider initialization. Please use "
+                + "fixed read-only flag by adding is_fixed_read_only: true in "
+                + "flag declaration.",
+                e
+            );
+        } catch (SecurityException e) \{
+            // for isolated process case, skip loading flag value from the storage, use the default
+        } finally \{
+            Binder.restoreCallingIdentity(ident);
+        }
+        {namespace_with_flags.namespace}_is_cached = true;
+}
+{{ endfor- }}
+{{ -endif }}{#- end of runtime_lookup_required #}
+{{ -for flag in flag_elements }}
+    @Override
+{{ -if not library_exported }}
+    @com.android.aconfig.annotations.AconfigFlagAccessor
+    @UnsupportedAppUsage
+{{ -endif }}{#- end of not library_exported #}
+    public boolean {flag.method_name}() \{
+{{ -if flag.is_read_write }}
+        if (!{flag.device_config_namespace}_is_cached) \{
+            load_overrides_{flag.device_config_namespace}();
+        }
+        return {flag.method_name};
+{{ -else }} {#- else is_read_write #}
+        return {flag.default_value};
+{{ -endif }}{#- end of is_read_write #}
+    }
+{{ endfor }}
+}

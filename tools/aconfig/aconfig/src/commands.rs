@@ -219,6 +219,7 @@ pub fn create_java_lib(
     codegen_mode: CodegenMode,
     allow_instrumentation: bool,
     new_exported: bool,
+    single_exported_file: bool,
     check_api_level: bool,
 ) -> Result<Vec<OutputFile>> {
     let parsed_flags = input.try_parse_flags()?;
@@ -237,6 +238,7 @@ pub fn create_java_lib(
         allow_instrumentation,
         package_fingerprint,
         new_exported,
+        single_exported_file,
         check_api_level,
     };
     generate_java_code(&package, modified_parsed_flags.into_iter(), config)
