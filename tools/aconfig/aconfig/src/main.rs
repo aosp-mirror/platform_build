@@ -158,11 +158,19 @@ fn cli() -> Command {
                         .default_value("production"),
                 )
                 .arg(
+                    Arg::new("single-exported-file")
+                        .long("single-exported-file")
+                        .value_parser(clap::value_parser!(bool))
+                        .default_value("false"),
+                )
+                // TODO: b/395899938 - clean up flags for switching to new storage
+                .arg(
                     Arg::new("allow-instrumentation")
                         .long("allow-instrumentation")
                         .value_parser(clap::value_parser!(bool))
                         .default_value("false"),
                 )
+                // TODO: b/395899938 - clean up flags for switching to new storage
                 .arg(
                     Arg::new("new-exported")
                         .long("new-exported")
@@ -373,12 +381,15 @@ fn main() -> Result<()> {
             let allow_instrumentation =
                 get_required_arg::<bool>(sub_matches, "allow-instrumentation")?;
             let new_exported = get_required_arg::<bool>(sub_matches, "new-exported")?;
+            let single_exported_file =
+                get_required_arg::<bool>(sub_matches, "single-exported-file")?;
             let check_api_level = get_required_arg::<bool>(sub_matches, "check-api-level")?;
             let generated_files = commands::create_java_lib(
                 cache,
                 *mode,
                 *allow_instrumentation,
                 *new_exported,
+                *single_exported_file,
                 *check_api_level,
             )
             .context("failed to create java lib")?;
