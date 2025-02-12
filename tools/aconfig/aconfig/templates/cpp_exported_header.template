@@ -41,6 +41,7 @@ public:
 extern std::unique_ptr<flag_provider_interface> provider_;
 
 {{ for item in class_elements}}
+{{ if not is_test_mode }}{{ if item.is_fixed_read_only }}constexpr {{ endif }}{{ endif -}}
 inline bool {item.flag_name}() \{
     {{ -if is_test_mode }}
     return provider_->{item.flag_name}();
