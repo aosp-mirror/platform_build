@@ -1,4 +1,4 @@
-# Copyright (C) 2018 The Android Open Source Project
+# Copyright (C) 2025 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ TARGET_2ND_ARCH := arm
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 
-ifneq ($(TARGET_BUILD_APPS)$(filter cts sdk,$(MAKECMDGOALS)),)
 # DO NOT USE
 # DO NOT USE
 #
@@ -47,10 +46,6 @@ TARGET_2ND_ARCH_VARIANT := armv7-a-neon
 TARGET_2ND_CPU_VARIANT := generic
 # DO NOT USE
 # DO NOT USE
-else
-TARGET_2ND_ARCH_VARIANT := armv8-a
-TARGET_2ND_CPU_VARIANT := generic
-endif
 
 # Include 64-bit mediaserver to support 64-bit only devices
 TARGET_DYNAMIC_64_32_MEDIASERVER := true
@@ -58,17 +53,3 @@ TARGET_DYNAMIC_64_32_MEDIASERVER := true
 TARGET_DYNAMIC_64_32_DRMSERVER := true
 
 include build/make/target/board/BoardConfigGsiCommon.mk
-
-# Some vendors still haven't cleaned up all device specific directories under
-# root!
-
-# TODO(b/111434759, b/111287060) SoC specific hacks
-BOARD_ROOT_EXTRA_SYMLINKS += /vendor/lib/dsp:/dsp
-BOARD_ROOT_EXTRA_SYMLINKS += /mnt/vendor/persist:/persist
-BOARD_ROOT_EXTRA_SYMLINKS += /vendor/firmware_mnt:/firmware
-# for Android.bp
-TARGET_ADD_ROOT_EXTRA_VENDOR_SYMLINKS := true
-
-# TODO(b/36764215): remove this setting when the generic system image
-# no longer has QCOM-specific directories under /.
-BOARD_SEPOLICY_DIRS += build/make/target/board/generic_arm64/sepolicy

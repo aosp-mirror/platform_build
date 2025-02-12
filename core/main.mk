@@ -45,11 +45,6 @@ BUILD_HOSTNAME_FILE := $(SOONG_OUT_DIR)/build_hostname.txt
 $(KATI_obsolete_var BUILD_HOSTNAME,Use BUILD_HOSTNAME_FROM_FILE instead)
 $(KATI_obsolete_var FILE_NAME_TAG,https://android.googlesource.com/platform/build/+/master/Changes.md#FILE_NAME_TAG)
 
-$(BUILD_NUMBER_FILE):
-	# empty rule to prevent dangling rule error for a file that is written by soong_ui
-$(BUILD_HOSTNAME_FILE):
-	# empty rule to prevent dangling rule error for a file that is written by soong_ui
-
 .KATI_RESTAT: $(BUILD_NUMBER_FILE)
 .KATI_RESTAT: $(BUILD_HOSTNAME_FILE)
 
@@ -1200,8 +1195,9 @@ endif
 ifneq ($(TARGET_BUILD_APPS),)
   # If this build is just for apps, only build apps and not the full system by default.
   ifneq ($(filter all,$(TARGET_BUILD_APPS)),)
-    # If they used the magic goal "all" then build all apps in the source tree.
-    unbundled_build_modules := $(foreach m,$(sort $(ALL_MODULES)),$(if $(filter APPS,$(ALL_MODULES.$(m).CLASS)),$(m)))
+    # The magic goal "all" used to build all apps in the source tree. This was deprecated
+    # so that we can know all TARGET_BUILD_APPS apps are built with soong for soong-only builds.
+    $(error TARGET_BUILD_APPS=all is deprecated)
   else
     unbundled_build_modules := $(sort $(TARGET_BUILD_APPS))
   endif
@@ -1671,24 +1667,6 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
   ifeq ($(EMMA_INSTRUMENT),true)
     $(call dist-for-goals, dist_files, $(JACOCO_REPORT_CLASSES_ALL))
   endif
-
-  # Put XML formatted API files in the dist dir.
-  $(TARGET_OUT_COMMON_INTERMEDIATES)/api.xml: $(call java-lib-files,$(ANDROID_PUBLIC_STUBS)) $(APICHECK)
-  $(TARGET_OUT_COMMON_INTERMEDIATES)/system-api.xml: $(call java-lib-files,$(ANDROID_SYSTEM_STUBS)) $(APICHECK)
-  $(TARGET_OUT_COMMON_INTERMEDIATES)/module-lib-api.xml: $(call java-lib-files,$(ANDROID_MODULE_LIB_STUBS)) $(APICHECK)
-  $(TARGET_OUT_COMMON_INTERMEDIATES)/system-server-api.xml: $(call java-lib-files,$(ANDROID_SYSTEM_SERVER_STUBS)) $(APICHECK)
-  $(TARGET_OUT_COMMON_INTERMEDIATES)/test-api.xml: $(call java-lib-files,$(ANDROID_TEST_STUBS)) $(APICHECK)
-
-  api_xmls := $(addprefix $(TARGET_OUT_COMMON_INTERMEDIATES)/,api.xml system-api.xml module-lib-api.xml system-server-api.xml test-api.xml)
-  $(api_xmls):
-	$(hide) echo "Converting API file to XML: $@"
-	$(hide) mkdir -p $(dir $@)
-	$(hide) $(APICHECK_COMMAND) jar-to-jdiff $< $@
-
-  $(foreach xml,$(sort $(api_xmls)),$(call declare-1p-target,$(xml),))
-
-  $(call dist-for-goals, dist_files, $(api_xmls))
-  api_xmls :=
 
   ifdef CLANG_COVERAGE
     $(foreach f,$(SOONG_NDK_API_XML), \

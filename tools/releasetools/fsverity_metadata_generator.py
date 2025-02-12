@@ -104,15 +104,12 @@ class FSVerityMetadataGenerator:
     out = subprocess.check_output(cmd, universal_newlines=True).strip()
     return bytes(bytearray.fromhex(out))
 
-  def generate(self, input_file, output_file=None):
+  def generate(self, input_file, output_file):
     if self._signature != 'none':
       if not self._key:
         raise RuntimeError("key must be specified.")
       if not self._cert:
         raise RuntimeError("cert must be specified.")
-
-    if not output_file:
-      output_file = input_file + '.fsv_meta'
 
     with TempDirectory() as temp_dir:
       self._do_generate(input_file, output_file, temp_dir)
@@ -229,6 +226,27 @@ if __name__ == '__main__':
       required=True)
   args = p.parse_args(sys.argv[1:])
 
+  output_file = args.output
+  if not output_file:
+    output_file = input_file + '.fsv_meta'
+
+  if output_file != args.input + '.fsv_meta':
+    sys.exit('When generating .fsv_meta files for symlinks, we assume that all fsv_meta files '
+      'are named the same as the file they protect, just with the .fsv_meta suffix appended. '
+      'We require that all .fsv_meta files follow this convention regardless of if it\'s a link or '
+      'not. However {args.input} had a different output file: {args.output}')
+
+  # remove the output file first, as switching between a file and a symlink can be complicated
+  try:
+    os.remove(output_file)
+  except FileNotFoundError:
+    pass
+
+  if os.path.islink(args.input):
+    target = os.readlink(args.input) + '.fsv_meta'
+    os.symlink(target, output_file)
+    sys.exit(0)
+
   generator = FSVerityMetadataGenerator(args.fsverity_path)
   generator.set_signature(args.signature)
   if args.signature == 'none':
@@ -241,4 +259,4 @@ if __name__ == '__main__':
     generator.set_cert(args.cert)
   generator.set_key_format(args.key_format)
   generator.set_hash_alg(args.hash_alg)
-  generator.generate(args.input, args.output)
+  generator.generate(args.input, output_file)

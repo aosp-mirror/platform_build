@@ -58,8 +58,12 @@ ifeq (aosp_x86,$(TARGET_PRODUCT))
 MODULE_BUILD_FROM_SOURCE ?= true
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_release.mk)
-endif
 
+PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE := aosp_system_image
+USE_SOONG_DEFINED_SYSTEM_IMAGE := true
+PRODUCT_USE_SOONG_NOTICE_XML := true
+
+endif
 
 PRODUCT_NAME := aosp_x86
 PRODUCT_DEVICE := generic_x86
