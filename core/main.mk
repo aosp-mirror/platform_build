@@ -1621,7 +1621,6 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
 
   ifneq ($(ANDROID_BUILD_EMBEDDED),true)
     $(call dist-for-goals-with-filenametag, droidcore, \
-      $(APPS_ZIP) \
       $(INTERNAL_EMULATOR_PACKAGE_TARGET) \
     )
   endif
