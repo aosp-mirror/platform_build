@@ -107,7 +107,7 @@ $(system_server_zip): PRIVATE_SYSTEM_SERVER_JARS := $(non_updatable_system_serve
 $(system_server_zip): PRIVATE_APEX_SYSTEM_SERVER_JARS := $(apex_system_server_jars)
 $(system_server_zip): PRIVATE_APEX_STANDALONE_SYSTEM_SERVER_JARS := $(apex_standalone_system_server_jars)
 $(system_server_zip): PRIVATE_STANDALONE_SYSTEM_SERVER_JARS := $(standalone_system_server_jars)
-$(system_server_zip): $(system_server_jars) $(apex_system_server_jars) $(apex_standalone_system_server_jars) $(standalone_system_server_jars) $(SOONG_ZIP)
+$(system_server_zip): $(non_updatable_system_server_jars) $(apex_system_server_jars) $(apex_standalone_system_server_jars) $(standalone_system_server_jars) $(SOONG_ZIP)
 	@echo "Create system server package: $@"
 	rm -f $@
 	$(SOONG_ZIP) -o $@ \
