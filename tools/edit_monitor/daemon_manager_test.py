@@ -494,8 +494,8 @@ class DaemonManagerTest(unittest.TestCase):
 
   def _assert_error_event_logged(self, fake_cclient, error_type):
     error_events = fake_cclient.get_sent_events()
-    self.assertEquals(len(error_events), 1)
-    self.assertEquals(
+    self.assertEqual(len(error_events), 1)
+    self.assertEqual(
         edit_event_pb2.EditEvent.FromString(
             error_events[0].source_extension
         ).edit_monitor_error_event.error_type,

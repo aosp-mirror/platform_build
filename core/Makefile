@@ -3594,7 +3594,6 @@ ifeq ($(USE_SOONG_DEFINED_SYSTEM_IMAGE),true)
 ifeq ($(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE),)
 $(error PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE must be set if USE_SOONG_DEFINED_SYSTEM_IMAGE is true)
 endif
-SOONG_DEFINED_SYSTEM_IMAGE_PATH := $(call intermediates-dir-for,ETC,$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE))/$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE)
 SOONG_DEFINED_SYSTEM_IMAGE_BASE := $(dir $(ALL_MODULES.$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE).FILESYSTEM_FILELIST))
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE) $(systemimage_intermediates)/file_list.txt $(SOONG_DEFINED_SYSTEM_IMAGE_PATH)
 $(eval $(call copy-one-file, $(SOONG_DEFINED_SYSTEM_IMAGE_PATH), $(BUILT_SYSTEMIMAGE)))
@@ -7318,29 +7317,6 @@ ifeq (true,$(CLANG_COVERAGE))
 
   $(call dist-for-goals,droidcore-unbundled apps_only,$(LLVM_COVERAGE_TOOLS_ZIP))
 endif
-
-# -----------------------------------------------------------------
-# A zip of the Android Apps. Not keeping full path so that we don't
-# include product names when distributing
-#
-name := $(TARGET_PRODUCT)
-ifeq ($(TARGET_BUILD_TYPE),debug)
-  name := $(name)_debug
-endif
-name := $(name)-apps
-
-APPS_ZIP := $(PRODUCT_OUT)/$(name).zip
-$(APPS_ZIP): $(FULL_SYSTEMIMAGE_DEPS)
-	@echo "Package apps: $@"
-	$(hide) rm -rf $@
-	$(hide) mkdir -p $(dir $@)
-	$(hide) apps_to_zip=`find $(TARGET_OUT_APPS) $(TARGET_OUT_APPS_PRIVILEGED) -mindepth 2 -maxdepth 3 -name "*.apk"`; \
-	if [ -z "$$apps_to_zip" ]; then \
-	    echo "No apps to zip up. Generating empty apps archive." ; \
-	    a=$$(mktemp /tmp/XXXXXXX) && touch $$a && zip $@ $$a && zip -d $@ $$a; \
-	else \
-	    zip -qjX $@ $$apps_to_zip; \
-	fi
 
 ifeq (true,$(EMMA_INSTRUMENT))
 #------------------------------------------------------------------

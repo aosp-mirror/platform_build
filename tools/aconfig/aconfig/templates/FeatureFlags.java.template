@@ -3,7 +3,16 @@ package {package_name};
 // TODO(b/303773055): Remove the annotation after access issue is resolved.
 import android.compat.annotation.UnsupportedAppUsage;
 {{ -endif }}
+{{ -if single_exported_file }}
+{{ -if library_exported }}
+/**
+ * @deprecated Use \{@link ExportedFlags} instead.
+ */
+@Deprecated {#- PREFER ExportedFlags #}
+{{ -endif }}
+{{ -else }}
 /** @hide */
+{{ -endif }}
 public interface FeatureFlags \{
 {{ for item in flag_elements }}
 {{ -if not item.is_read_write }}

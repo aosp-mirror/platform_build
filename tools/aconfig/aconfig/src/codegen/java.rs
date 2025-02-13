@@ -33,6 +33,7 @@ pub struct JavaCodegenConfig {
     pub allow_instrumentation: bool,
     pub package_fingerprint: u64,
     pub new_exported: bool,
+    pub single_exported_file: bool,
     pub check_api_level: bool,
 }
 
@@ -71,8 +72,15 @@ where
         is_platform_container,
         package_fingerprint: format!("0x{:X}L", config.package_fingerprint),
         new_exported: config.new_exported,
+        single_exported_file: config.single_exported_file,
     };
     let mut template = TinyTemplate::new();
+    if library_exported && config.single_exported_file {
+        template.add_template(
+            "ExportedFlags.java",
+            include_str!("../../templates/ExportedFlags.java.template"),
+        )?;
+    }
     template.add_template("Flags.java", include_str!("../../templates/Flags.java.template"))?;
     add_feature_flags_impl_template(&context, &mut template)?;
     template.add_template(
@@ -89,18 +97,25 @@ where
     )?;
 
     let path: PathBuf = package.split('.').collect();
-    [
+    let mut files = vec![
         "Flags.java",
         "FeatureFlags.java",
         "FeatureFlagsImpl.java",
         "CustomFeatureFlags.java",
         "FakeFeatureFlagsImpl.java",
-    ]
-    .iter()
-    .map(|file| {
-        Ok(OutputFile { contents: template.render(file, &context)?.into(), path: path.join(file) })
-    })
-    .collect::<Result<Vec<OutputFile>>>()
+    ];
+    if library_exported && config.single_exported_file {
+        files.push("ExportedFlags.java");
+    }
+    files
+        .iter()
+        .map(|file| {
+            Ok(OutputFile {
+                contents: template.render(file, &context)?.into(),
+                path: path.join(file),
+            })
+        })
+        .collect::<Result<Vec<OutputFile>>>()
 }
 
 fn gen_flags_by_namespace(flags: &[FlagElement]) -> Vec<NamespaceFlags> {
@@ -138,6 +153,7 @@ struct Context {
     pub is_platform_container: bool,
     pub package_fingerprint: String,
     pub new_exported: bool,
+    pub single_exported_file: bool,
 }
 
 #[derive(Serialize, Debug)]
@@ -259,7 +275,7 @@ fn add_feature_flags_impl_template(
         (true, false, _) => {
             template.add_template(
                 "FeatureFlagsImpl.java",
-                include_str!("../../templates/FeatureFlagsImpl.java.template"),
+                include_str!("../../templates/FeatureFlagsImpl.deviceConfig.java.template"),
             )?;
         }
 
@@ -275,7 +291,7 @@ fn add_feature_flags_impl_template(
         (false, _, false) => {
             template.add_template(
                 "FeatureFlagsImpl.java",
-                include_str!("../../templates/FeatureFlagsImpl.java.template"),
+                include_str!("../../templates/FeatureFlagsImpl.deviceConfig.java.template"),
             )?;
         }
     };
@@ -592,6 +608,7 @@ mod tests {
             allow_instrumentation: true,
             package_fingerprint: 5801144784618221668,
             new_exported: false,
+            single_exported_file: false,
             check_api_level: false,
         };
         let generated_files = generate_java_code(
@@ -752,6 +769,7 @@ mod tests {
             allow_instrumentation: true,
             package_fingerprint: 5801144784618221668,
             new_exported: false,
+            single_exported_file: false,
             check_api_level: false,
         };
         let generated_files = generate_java_code(
@@ -956,6 +974,7 @@ mod tests {
             allow_instrumentation: true,
             package_fingerprint: 5801144784618221668,
             new_exported: true,
+            single_exported_file: false,
             check_api_level: false,
         };
         let generated_files = generate_java_code(
@@ -1022,7 +1041,7 @@ mod tests {
                 } catch (LinkageError e) {
                     // for mainline module running on older devices.
                     // This should be replaces to version check, after the version bump.
-                    Log.e(TAG, e.toString());
+                    Log.w(TAG, e.toString());
                 }
                 isCached = true;
             }
@@ -1150,6 +1169,7 @@ mod tests {
             allow_instrumentation: true,
             package_fingerprint: 5801144784618221668,
             new_exported: false,
+            single_exported_file: false,
             check_api_level: false,
         };
         let generated_files = generate_java_code(
@@ -1277,6 +1297,7 @@ mod tests {
             allow_instrumentation: true,
             package_fingerprint: 5801144784618221668,
             new_exported: false,
+            single_exported_file: false,
             check_api_level: false,
         };
         let generated_files = generate_java_code(

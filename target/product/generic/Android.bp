@@ -468,6 +468,8 @@ system_image_defaults {
     name: "system_image_defaults",
     partition_name: "system",
     base_dir: "system",
+    stem: "system.img",
+    no_full_install: true,
     dirs: generic_rootdirs,
     soong_config_variables: {
         TARGET_ADD_ROOT_EXTRA_VENDOR_SYMLINKS: {
