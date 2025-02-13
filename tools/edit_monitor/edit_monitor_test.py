@@ -260,7 +260,7 @@ class EditMonitorTest(unittest.TestCase):
 
     # Wait until observer started.
     received_data = receiver.recv()
-    self.assertEquals(received_data, 'Observer started.')
+    self.assertEqual(received_data, 'Observer started.')
 
     receiver.close()
     return p
