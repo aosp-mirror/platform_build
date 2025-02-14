@@ -230,6 +230,12 @@ if __name__ == '__main__':
   if not output_file:
     output_file = input_file + '.fsv_meta'
 
+  if output_file != args.input + '.fsv_meta':
+    sys.exit('When generating .fsv_meta files for symlinks, we assume that all fsv_meta files '
+      'are named the same as the file they protect, just with the .fsv_meta suffix appended. '
+      'We require that all .fsv_meta files follow this convention regardless of if it\'s a link or '
+      'not. However {args.input} had a different output file: {args.output}')
+
   # remove the output file first, as switching between a file and a symlink can be complicated
   try:
     os.remove(output_file)
