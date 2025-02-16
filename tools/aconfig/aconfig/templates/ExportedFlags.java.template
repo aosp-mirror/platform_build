@@ -1,24 +1,19 @@
-package {package_name}; {#- CODEGEN FOR EXPORTED MODE FOR NEW STORAGE #}
+package {package_name}; {#- CODEGEN FOR EXPORTED MODE FOR NEW STORAGE SINGLE EXPORTED FILE#}
 
 import android.os.Build;
 import android.os.flagging.AconfigPackage;
 import android.util.Log;
-{{ -if single_exported_file }}
-{{ -if library_exported }}
-/**
- * @deprecated Use \{@link ExportedFlags} instead.
- */
-@Deprecated {#- PREFER ExportedFlags #}
-{{ -endif }}
-{{ -else }}
-/** @hide */
-{{ -endif }}
-public final class FeatureFlagsImpl implements FeatureFlags \{
-    private static final String TAG = "FeatureFlagsImplExport";
+public final class ExportedFlags \{
+{{ -for item in flag_elements}}
+    public static final String FLAG_{item.flag_name_constant_suffix} = "{item.device_config_flag}";
+{{- endfor }}
+    private static final String TAG = "ExportedFlags";
     private static volatile boolean isCached = false;
 {{ for flag in flag_elements }}
     private static boolean {flag.method_name} = false;
 {{ -endfor }} {#- end flag_elements #}
+    private ExportedFlags() \{}
+
     private void init() \{
         try \{
             AconfigPackage reader = AconfigPackage.load("{package_name}");
@@ -41,13 +36,14 @@ public final class FeatureFlagsImpl implements FeatureFlags \{
         }
         isCached = true;
     }
+
 {{ -for flag in flag_elements }}
-    @Override
-    public boolean {flag.method_name}() \{
-        if (!isCached) \{
-            init();
+    public static boolean {flag.method_name}() \{
+        if (!featureFlags.isCached) \{
+            featureFlags.init();
         }
-        return {flag.method_name};
+        return featureFlags.{flag.method_name};
     }
-{{ endfor }} {#- end flag_elements #}
+{{ -endfor }}
+    private static ExportedFlags featureFlags = new ExportedFlags();
 }
