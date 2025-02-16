@@ -11,7 +11,13 @@ import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+{{ -if single_exported_file }}
+{{ -if library_exported }}
+@Deprecated {#- PREFER ExportedFlags #}
+{{ -endif }}
+{{ -else }}
 /** @hide */
+{{ -endif }}
 public class CustomFeatureFlags implements FeatureFlags \{
 
     private BiPredicate<String, Predicate<FeatureFlags>> mGetValueImpl;

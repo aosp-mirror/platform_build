@@ -295,11 +295,6 @@ ndk-docs: $(ndk_doxygen_out)/index.html
 .PHONY: ndk-docs
 endif
 
-ifeq ($(HOST_OS),linux)
-$(call dist-for-goals,sdk,$(API_FINGERPRINT))
-$(call dist-for-goals,droidcore,$(API_FINGERPRINT))
-endif
-
 INSTALLED_RECOVERYIMAGE_TARGET :=
 # Build recovery image if
 # BUILDING_RECOVERY_IMAGE && !BOARD_USES_RECOVERY_AS_BOOT && !BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT.
@@ -3599,7 +3594,6 @@ ifeq ($(USE_SOONG_DEFINED_SYSTEM_IMAGE),true)
 ifeq ($(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE),)
 $(error PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE must be set if USE_SOONG_DEFINED_SYSTEM_IMAGE is true)
 endif
-SOONG_DEFINED_SYSTEM_IMAGE_PATH := $(call intermediates-dir-for,ETC,$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE))/$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE)
 SOONG_DEFINED_SYSTEM_IMAGE_BASE := $(dir $(ALL_MODULES.$(PRODUCT_SOONG_DEFINED_SYSTEM_IMAGE).FILESYSTEM_FILELIST))
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE) $(systemimage_intermediates)/file_list.txt $(SOONG_DEFINED_SYSTEM_IMAGE_PATH)
 $(eval $(call copy-one-file, $(SOONG_DEFINED_SYSTEM_IMAGE_PATH), $(BUILT_SYSTEMIMAGE)))
@@ -7324,29 +7318,6 @@ ifeq (true,$(CLANG_COVERAGE))
   $(call dist-for-goals,droidcore-unbundled apps_only,$(LLVM_COVERAGE_TOOLS_ZIP))
 endif
 
-# -----------------------------------------------------------------
-# A zip of the Android Apps. Not keeping full path so that we don't
-# include product names when distributing
-#
-name := $(TARGET_PRODUCT)
-ifeq ($(TARGET_BUILD_TYPE),debug)
-  name := $(name)_debug
-endif
-name := $(name)-apps
-
-APPS_ZIP := $(PRODUCT_OUT)/$(name).zip
-$(APPS_ZIP): $(FULL_SYSTEMIMAGE_DEPS)
-	@echo "Package apps: $@"
-	$(hide) rm -rf $@
-	$(hide) mkdir -p $(dir $@)
-	$(hide) apps_to_zip=`find $(TARGET_OUT_APPS) $(TARGET_OUT_APPS_PRIVILEGED) -mindepth 2 -maxdepth 3 -name "*.apk"`; \
-	if [ -z "$$apps_to_zip" ]; then \
-	    echo "No apps to zip up. Generating empty apps archive." ; \
-	    a=$$(mktemp /tmp/XXXXXXX) && touch $$a && zip $@ $$a && zip -d $@ $$a; \
-	else \
-	    zip -qjX $@ $$apps_to_zip; \
-	fi
-
 ifeq (true,$(EMMA_INSTRUMENT))
 #------------------------------------------------------------------
 # An archive of classes for use in generating code-coverage reports
@@ -8078,6 +8049,46 @@ $(call dist-for-goals,dist_files,$(PACKED_MIGRATION_IMAGE_ARCHIVE_TARGET))
 pack-migration-image: $(PACK_MIGRATION_IMAGE_TARGET)
 
 endif # ANDROID_DESKTOP_MIGRATION_IMAGE
+
+ifdef SOONG_ONLY_ALL_IMAGES_ZIP
+
+allimages_soong_zip_args :=
+allimages_deps :=
+
+define include_image
+$(if $(1), \
+  $(eval allimages_soong_zip_args += -e $(notdir $(1)) -f $(1)) \
+  $(eval allimages_deps += $(1)))
+endef
+
+$(call include_image,$(INSTALLED_SUPERIMAGE_TARGET))
+$(call include_image,$(INSTALLED_BOOTIMAGE_TARGET))
+$(call include_image,$(INSTALLED_INIT_BOOT_IMAGE_TARGET))
+$(call include_image,$(INSTALLED_VENDOR_BOOTIMAGE_TARGET))
+$(call include_image,$(INSTALLED_USERDATAIMAGE_TARGET))
+$(call include_image,$(INSTALLED_RECOVERYIMAGE_TARGET))
+$(call include_image,$(INSTALLED_VBMETAIMAGE_TARGET))
+$(call include_image,$(INSTALLED_VBMETA_SYSTEMIMAGE_TARGET))
+$(call include_image,$(INSTALLED_VBMETA_VENDORIMAGE_TARGET))
+$(foreach partition,$(call to-upper,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)), \
+  $(call include_image,$(INSTALLED_VBMETA_$(partition)IMAGE_TARGET)))
+
+allimages_zip := $(PRODUCT_OUT)/all_images.zip
+$(allimages_zip): PRIVATE_SOONG_ZIP_ARGUMENTS := $(allimages_soong_zip_args)
+$(allimages_zip): $(SOONG_ZIP) $(allimages_deps)
+	$(SOONG_ZIP) -o $@ --sort_entries $(PRIVATE_SOONG_ZIP_ARGUMENTS)
+
+.PHONY: soong_only_diff_test
+soong_only_diff_test: PRIVATE_ALLIMAGES_ZIP := $(allimages_zip)
+soong_only_diff_test: $(allimages_zip) $(SOONG_ONLY_ALL_IMAGES_ZIP)
+	diff $(PRIVATE_ALLIMAGES_ZIP) $(SOONG_ONLY_ALL_IMAGES_ZIP)
+
+allimages_soong_zip_args :=
+allimages_deps :=
+allimages_zip :=
+include_image :=
+
+endif # ifdef SOONG_ONLY_ALL_IMAGES_ZIP
 
 # -----------------------------------------------------------------
 # OS Licensing
