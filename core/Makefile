@@ -7960,6 +7960,18 @@ IMAGES := $(INSTALLED_BOOTIMAGE_TARGET) \
 	$(INSTALLED_USERDATAIMAGE_TARGET)
 
 # -----------------------------------------------------------------
+# Desktop generated firmware filesystem.
+TARGET_PRODUCT_FW_IMAGE_PACKAGE := prebuilt-$(TARGET_PRODUCT)-firmware-image
+GENERATED_FW_IMAGE := $(PRODUCT_OUT)/product/etc/$(TARGET_PRODUCT)-firmware.img
+
+generated_fw_image_found := $(strip $(foreach pp,$(PRODUCT_PACKAGES),\
+	$(if $(findstring $(TARGET_PRODUCT_FW_IMAGE_PACKAGE),$(pp)),$(pp))))
+
+ifneq (,$(generated_fw_image_found))
+$(call dist-for-goals,dist_files,$(GENERATED_FW_IMAGE))
+endif
+
+# -----------------------------------------------------------------
 # Desktop pack image hook.
 ifneq (,$(strip $(PACK_DESKTOP_FILESYSTEM_IMAGES)))
 PACK_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_image.bin
