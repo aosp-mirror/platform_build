@@ -768,10 +768,7 @@ endif
 # $5 partition tag
 # $6 output file
 define _apkcerts_write_line
-$(hide) echo -n 'name="$(1).apk" certificate="$2" private_key="$3"' >> $6
-$(if $(4), $(hide) echo -n ' compressed="$4"' >> $6)
-$(if $(5), $(hide) echo -n ' partition="$5"' >> $6)
-$(hide) echo '' >> $6
+$(hide) echo 'name="$(1).apk" certificate="$2" private_key="$3"$(if $(4), compressed="$4")$(if $(5), partition="$5")' >> $6
 
 endef
 
