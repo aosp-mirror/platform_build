@@ -910,8 +910,11 @@ def ProcessTargetFiles(input_tf_zip: zipfile.ZipFile, output_tf_zip: zipfile.Zip
 
         # b/384813199: handles the pre-signed com.android.virt.apex in GSI.
         if payload_key == 'PRESIGNED':
-          new_pubkey = GetMicrodroidVbmetaKey(virt_apex_path,
-                                              misc_info['avb_avbtool'])
+          with tempfile.NamedTemporaryFile() as virt_apex_temp_file:
+            virt_apex_temp_file.write(input_tf_zip.read(virt_apex_path))
+            virt_apex_temp_file.flush()
+            new_pubkey = GetMicrodroidVbmetaKey(virt_apex_temp_file.name,
+                                                misc_info['avb_avbtool'])
         else:
           new_pubkey_path = common.ExtractAvbPublicKey(
               misc_info['avb_avbtool'], payload_key)
