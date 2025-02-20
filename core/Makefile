@@ -8101,7 +8101,7 @@ $(foreach partition,$(call to-upper,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)), \
 allimages_zip := $(PRODUCT_OUT)/all_images.zip
 $(allimages_zip): PRIVATE_SOONG_ZIP_ARGUMENTS := $(allimages_soong_zip_args)
 $(allimages_zip): $(SOONG_ZIP) $(allimages_deps)
-	$(SOONG_ZIP) -o $@ --sort_entries $(PRIVATE_SOONG_ZIP_ARGUMENTS)
+	$(SOONG_ZIP) -o $@ $(PRIVATE_SOONG_ZIP_ARGUMENTS)
 
 .PHONY: soong_only_diff_test
 soong_only_diff_test: PRIVATE_ALLIMAGES_ZIP := $(allimages_zip)
