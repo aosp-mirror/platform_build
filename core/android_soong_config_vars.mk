@@ -325,3 +325,8 @@ endif
 # Variables for extra branches
 # TODO(b/383238397): Use bootstrap_go_package to enable extra flags.
 -include vendor/google/build/extra_soong_config_vars.mk
+
+# Variable for CI test packages
+ifneq ($(filter arm x86 true,$(TARGET_ARCH) $(TARGET_2ND_ARCH) $(TARGET_ENABLE_MEDIADRM_64)),)
+  $(call soong_config_set_bool,ci_tests,uses_widevine_tests, true)
+endif
