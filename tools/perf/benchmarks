@@ -337,6 +337,12 @@ class Runner():
 
     def Run(self):
         """Run all of the user-selected benchmarks."""
+
+        # With `--list`, just list the benchmarks available.
+        if self._options.List():
+            print(" ".join(self._options.BenchmarkIds()))
+            return
+
         # Clean out the log dir or create it if necessary
         prepare_log_dir(self._options.LogDir())
 
@@ -546,6 +552,8 @@ benchmarks:
         parser.add_argument("--benchmark", nargs="*", default=[b.id for b in self._benchmarks],
                             metavar="BENCHMARKS",
                             help="Benchmarks to run.  Default suite will be run if omitted.")
+        parser.add_argument("--list", action="store_true",
+                            help="list the available benchmarks.  No benchmark is run.")
         parser.add_argument("--dist-one", action="store_true",
                             help="Copy logs and metrics to the given dist dir. Requires that only"
                                 + " one benchmark be supplied. Postroll steps will be skipped.")
@@ -614,6 +622,12 @@ benchmarks:
 
     def DryRun(self):
         return self._args.dry_run
+
+    def List(self):
+        return self._args.list
+
+    def BenchmarkIds(self) :
+        return [benchmark.id for benchmark in self._benchmarks]
 
     def _lunches(self):
         def parse_lunch(lunch):
