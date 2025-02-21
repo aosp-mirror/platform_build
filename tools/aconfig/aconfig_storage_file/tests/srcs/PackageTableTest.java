@@ -28,7 +28,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.CyclicBarrier;
 
 @RunWith(JUnit4.class)
 public class PackageTableTest {
@@ -141,5 +143,47 @@ public class PackageTableTest {
         assertTrue(packages.contains("com.android.aconfig.storage.test_1"));
         assertTrue(packages.contains("com.android.aconfig.storage.test_2"));
         assertTrue(packages.contains("com.android.aconfig.storage.test_4"));
+    }
+
+    @Test
+    public void testPackageTable_multithreadsRead() throws Exception {
+        PackageTable packageTable =
+                PackageTable.fromBytes(TestDataUtils.getTestPackageMapByteBuffer(2));
+        int numberOfThreads = 3;
+        Thread[] threads = new Thread[numberOfThreads];
+        final CyclicBarrier gate = new CyclicBarrier(numberOfThreads + 1);
+        String[] expects = {
+            "com.android.aconfig.storage.test_1",
+            "com.android.aconfig.storage.test_2",
+            "com.android.aconfig.storage.test_4"
+        };
+
+        for (int i = 0; i < numberOfThreads; i++) {
+            final String packageName = expects[i];
+            threads[i] =
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                gate.await();
+                            } catch (Exception e) {
+                            }
+                            for (int j = 0; j < 10; j++) {
+                                if (!Objects.equals(
+                                        packageName,
+                                        packageTable.get(packageName).getPackageName())) {
+                                    throw new RuntimeException();
+                                }
+                            }
+                        }
+                    };
+            threads[i].start();
+        }
+
+        gate.await();
+
+        for (int i = 0; i < numberOfThreads; i++) {
+            threads[i].join();
+        }
     }
 }
