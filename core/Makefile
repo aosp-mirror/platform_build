@@ -913,18 +913,6 @@ $(call declare-0p-target,$(WALL_WERROR))
 
 $(call dist-for-goals,droidcore-unbundled,$(WALL_WERROR))
 
-# -----------------------------------------------------------------
-# Modules missing profile files
-PGO_PROFILE_MISSING := $(PRODUCT_OUT)/pgo_profile_file_missing.txt
-$(PGO_PROFILE_MISSING):
-	@rm -f $@
-	echo "# Modules missing PGO profile files" >> $@
-	for m in $(SOONG_MODULES_MISSING_PGO_PROFILE_FILE); do echo $$m >> $@; done
-
-$(call declare-0p-target,$(PGO_PROFILE_MISSING))
-
-$(call dist-for-goals,droidcore,$(PGO_PROFILE_MISSING))
-
 CERTIFICATE_VIOLATION_MODULES_FILENAME := $(PRODUCT_OUT)/certificate_violation_modules.txt
 $(CERTIFICATE_VIOLATION_MODULES_FILENAME):
 	rm -f $@
