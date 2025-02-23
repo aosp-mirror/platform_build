@@ -768,10 +768,7 @@ endif
 # $5 partition tag
 # $6 output file
 define _apkcerts_write_line
-$(hide) echo -n 'name="$(1).apk" certificate="$2" private_key="$3"' >> $6
-$(if $(4), $(hide) echo -n ' compressed="$4"' >> $6)
-$(if $(5), $(hide) echo -n ' partition="$5"' >> $6)
-$(hide) echo '' >> $6
+$(hide) echo 'name="$(1).apk" certificate="$2" private_key="$3"$(if $(4), compressed="$4")$(if $(5), partition="$5")' >> $6
 
 endef
 
@@ -1223,55 +1220,6 @@ endif
 endif # BOARD_PREBUILT_DTBOIMAGE_16KB
 
 
-ifneq ($(BOARD_KERNEL_PATH_16K),)
-BUILT_KERNEL_16K_TARGET := $(PRODUCT_OUT)/kernel_16k
-
-$(eval $(call copy-one-file,$(BOARD_KERNEL_PATH_16K),$(BUILT_KERNEL_16K_TARGET)))
-
-# Copies BOARD_KERNEL_PATH_16K to output directory as is
-kernel_16k: $(BUILT_KERNEL_16K_TARGET)
-.PHONY: kernel_16k
-
-BUILT_BOOTIMAGE_16K_TARGET := $(PRODUCT_OUT)/boot_16k.img
-
-BOARD_KERNEL_16K_BOOTIMAGE_PARTITION_SIZE := $(BOARD_BOOTIMAGE_PARTITION_SIZE)
-
-$(BUILT_BOOTIMAGE_16K_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH) $(BUILT_KERNEL_16K_TARGET)
-	$(call pretty,"Target boot 16k image: $@")
-	$(call build_boot_from_kernel_avb_enabled,$@,$(BUILT_KERNEL_16K_TARGET))
-
-
-bootimage_16k: $(BUILT_BOOTIMAGE_16K_TARGET)
-.PHONY: bootimage_16k
-
-BUILT_BOOT_OTA_PACKAGE_16K := $(PRODUCT_OUT)/boot_ota_16k.zip
-$(BUILT_BOOT_OTA_PACKAGE_16K):  $(OTA_FROM_RAW_IMG) \
-                                $(BUILT_BOOTIMAGE_16K_TARGET) \
-                                $(INSTALLED_BOOTIMAGE_TARGET) \
-                                $(DEFAULT_SYSTEM_DEV_CERTIFICATE).pk8 \
-                                $(INSTALLED_DTBOIMAGE_16KB_TARGET) \
-                                $(INSTALLED_DTBOIMAGE_TARGET)
-	$(OTA_FROM_RAW_IMG) --package_key $(DEFAULT_SYSTEM_DEV_CERTIFICATE) \
-                      --max_timestamp `cat $(BUILD_DATETIME_FILE)` \
-                      --path $(HOST_OUT) \
-                      --partition_name $(if $(and $(INSTALLED_DTBOIMAGE_TARGET),\
-                          $(INSTALLED_DTBOIMAGE_16KB_TARGET)),\
-                        boot$(comma)dtbo,\
-                        boot) \
-                      --output $@ \
-                      $(if $(BOARD_16K_OTA_USE_INCREMENTAL),\
-                        $(INSTALLED_BOOTIMAGE_TARGET):$(BUILT_BOOTIMAGE_16K_TARGET),\
-                        $(BUILT_BOOTIMAGE_16K_TARGET)\
-                      )\
-                      $(if $(and $(INSTALLED_DTBOIMAGE_TARGET),$(INSTALLED_DTBOIMAGE_16KB_TARGET)),\
-                        $(INSTALLED_DTBOIMAGE_16KB_TARGET))
-
-boototapackage_16k: $(BUILT_BOOT_OTA_PACKAGE_16K)
-.PHONY: boototapackage_16k
-
-endif
-
-
 ramdisk_intermediates :=$= $(call intermediates-dir-for,PACKAGING,ramdisk)
 $(eval $(call write-partition-file-list,$(ramdisk_intermediates)/file_list.txt,$(TARGET_RAMDISK_OUT),$(INTERNAL_RAMDISK_FILES)))
 
@@ -1508,6 +1456,55 @@ endif # BOARD_PREBUILT_BOOTIMAGE
 endif # my_installed_prebuilt_gki_apex not defined
 
 ifneq ($(BOARD_KERNEL_PATH_16K),)
+
+BUILT_KERNEL_16K_TARGET := $(PRODUCT_OUT)/kernel_16k
+
+$(eval $(call copy-one-file,$(BOARD_KERNEL_PATH_16K),$(BUILT_KERNEL_16K_TARGET)))
+
+# Copies BOARD_KERNEL_PATH_16K to output directory as is
+kernel_16k: $(BUILT_KERNEL_16K_TARGET)
+.PHONY: kernel_16k
+
+BUILT_BOOTIMAGE_16K_TARGET := $(PRODUCT_OUT)/boot_16k.img
+
+BOARD_KERNEL_16K_BOOTIMAGE_PARTITION_SIZE := $(BOARD_BOOTIMAGE_PARTITION_SIZE)
+
+$(BUILT_BOOTIMAGE_16K_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH) $(BUILT_KERNEL_16K_TARGET)
+	$(call pretty,"Target boot 16k image: $@")
+	$(call build_boot_from_kernel_avb_enabled,$@,$(BUILT_KERNEL_16K_TARGET))
+
+
+bootimage_16k: $(BUILT_BOOTIMAGE_16K_TARGET)
+.PHONY: bootimage_16k
+
+BUILT_BOOT_OTA_PACKAGE_16K := $(PRODUCT_OUT)/boot_ota_16k.zip
+$(BUILT_BOOT_OTA_PACKAGE_16K): PRIVATE_BOOTIMAGE_TARGET := $(INSTALLED_BOOTIMAGE_TARGET)
+$(BUILT_BOOT_OTA_PACKAGE_16K): PRIVATE_BOOTIMAGE_16KB_TARGET := $(BUILT_BOOTIMAGE_16K_TARGET)
+$(BUILT_BOOT_OTA_PACKAGE_16K):  $(OTA_FROM_RAW_IMG) \
+                                $(DEFAULT_SYSTEM_DEV_CERTIFICATE).pk8 \
+                                $(INSTALLED_BOOTIMAGE_TARGET) \
+                                $(BUILT_BOOTIMAGE_16K_TARGET) \
+                                $(INSTALLED_DTBOIMAGE_16KB_TARGET) \
+                                $(INSTALLED_DTBOIMAGE_TARGET)
+	$(OTA_FROM_RAW_IMG) --package_key $(DEFAULT_SYSTEM_DEV_CERTIFICATE) \
+                      --max_timestamp `cat $(BUILD_DATETIME_FILE)` \
+                      --path $(HOST_OUT) \
+                      --partition_name $(if $(and $(INSTALLED_DTBOIMAGE_TARGET),\
+                          $(INSTALLED_DTBOIMAGE_16KB_TARGET)),\
+                        boot$(comma)dtbo,\
+                        boot) \
+                      --output $@ \
+                      $(if $(BOARD_16K_OTA_USE_INCREMENTAL),\
+                        $(PRIVATE_BOOTIMAGE_TARGET):$(PRIVATE_BOOTIMAGE_16KB_TARGET),\
+                        $(PRIVATE_BOOTIMAGE_16KB_TARGET)\
+                      )\
+                      $(if $(and $(INSTALLED_DTBOIMAGE_TARGET),$(INSTALLED_DTBOIMAGE_16KB_TARGET)),\
+                        $(INSTALLED_DTBOIMAGE_16KB_TARGET))
+
+boototapackage_16k: $(BUILT_BOOT_OTA_PACKAGE_16K)
+.PHONY: boototapackage_16k
+
+
 BUILT_BOOT_OTA_PACKAGE_4K := $(PRODUCT_OUT)/boot_ota_4k.zip
 $(BUILT_BOOT_OTA_PACKAGE_4K): $(OTA_FROM_RAW_IMG) \
                               $(INSTALLED_BOOTIMAGE_TARGET) \
@@ -1797,6 +1794,7 @@ INTERNAL_VENDOR_KERNEL_RAMDISK_FILES := $(filter $(TARGET_VENDOR_KERNEL_RAMDISK_
 INTERNAL_VENDOR_KERNEL_RAMDISK_TARGET := $(call intermediates-dir-for,PACKAGING,vendor_kernel_boot)/vendor_kernel_ramdisk.cpio$(RAMDISK_EXT)
 
 $(INTERNAL_VENDOR_KERNEL_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_VENDOR_KERNEL_RAMDISK_FILES) | $(COMPRESSION_COMMAND_DEPS)
+	$(hide) : $(words $(INTERNAL_VENDOR_KERNEL_RAMDISK_FILES))
 	$(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_VENDOR_KERNEL_RAMDISK_OUT) | $(COMPRESSION_COMMAND) > $@
 
 INSTALLED_VENDOR_KERNEL_RAMDISK_TARGET := $(PRODUCT_OUT)/vendor_kernel_ramdisk.img
