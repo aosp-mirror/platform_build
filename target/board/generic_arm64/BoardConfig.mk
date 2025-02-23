@@ -23,14 +23,14 @@ TARGET_2ND_ARCH := arm
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 
-ifneq ($(TARGET_BUILD_APPS)$(filter cts sdk,$(MAKECMDGOALS)),)
+ifneq ($(TARGET_BUILD_APPS)$(filter sdk,$(MAKECMDGOALS)),)
 # DO NOT USE
 # DO NOT USE
 #
 # This architecture / CPU variant must NOT be used for any 64 bit
 # platform builds. It is the lowest common denominator required
 # to build an unbundled application or cts for all supported 32 and 64 bit
-# platforms.
+# platforms. It now recommended to use generic_arm64_plus_armv7 to achieve this.
 #
 # If you're building a 64 bit platform (and not an application) the
 # ARM-v8 specification allows you to assume all the features available in an
