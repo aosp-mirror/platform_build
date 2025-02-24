@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 public class ByteBufferReader {
 
     private ByteBuffer mByteBuffer;
+    private int mPosition;
 
     public ByteBufferReader(ByteBuffer byteBuffer) {
         this.mByteBuffer = byteBuffer;
@@ -30,19 +31,19 @@ public class ByteBufferReader {
     }
 
     public int readByte() {
-        return Byte.toUnsignedInt(mByteBuffer.get());
+        return Byte.toUnsignedInt(mByteBuffer.get(nextGetIndex(1)));
     }
 
     public int readShort() {
-        return Short.toUnsignedInt(mByteBuffer.getShort());
+        return Short.toUnsignedInt(mByteBuffer.getShort(nextGetIndex(2)));
     }
 
     public int readInt() {
-        return this.mByteBuffer.getInt();
+        return this.mByteBuffer.getInt(nextGetIndex(4));
     }
 
     public long readLong() {
-        return this.mByteBuffer.getLong();
+        return this.mByteBuffer.getLong(nextGetIndex(8));
     }
 
     public String readString() {
@@ -52,7 +53,7 @@ public class ByteBufferReader {
                     "String length exceeds maximum allowed size (1024 bytes): " + length);
         }
         byte[] bytes = new byte[length];
-        mByteBuffer.get(bytes, 0, length);
+        mByteBuffer.get(nextGetIndex(length), bytes, 0, length);
         return new String(bytes, StandardCharsets.UTF_8);
     }
 
@@ -61,10 +62,16 @@ public class ByteBufferReader {
     }
 
     public void position(int newPosition) {
-        mByteBuffer.position(newPosition);
+        mPosition = newPosition;
     }
 
     public int position() {
-        return mByteBuffer.position();
+        return mPosition;
+    }
+
+    private int nextGetIndex(int nb) {
+        int p = mPosition;
+        mPosition += nb;
+        return p;
     }
 }
