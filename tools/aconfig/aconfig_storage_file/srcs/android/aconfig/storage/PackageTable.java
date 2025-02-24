@@ -30,12 +30,12 @@ public class PackageTable {
     private static final int NODE_SKIP_BYTES = 12;
 
     private Header mHeader;
-    private ByteBuffer mBuffer;
+    private ByteBufferReader mReader;
 
     public static PackageTable fromBytes(ByteBuffer bytes) {
         PackageTable packageTable = new PackageTable();
-        packageTable.mBuffer = bytes;
-        packageTable.mHeader = Header.fromBytes(new ByteBufferReader(bytes));
+        packageTable.mReader = new ByteBufferReader(bytes);
+        packageTable.mHeader = Header.fromBytes(packageTable.mReader);
 
         return packageTable;
     }
@@ -47,17 +47,16 @@ public class PackageTable {
         if (newPosition >= mHeader.mNodeOffset) {
             return null;
         }
-        ByteBufferReader reader = new ByteBufferReader(mBuffer);
-        reader.position(newPosition);
-        int nodeIndex = reader.readInt();
+        mReader.position(newPosition);
+        int nodeIndex = mReader.readInt();
 
         if (nodeIndex < mHeader.mNodeOffset || nodeIndex >= mHeader.mFileSize) {
             return null;
         }
 
         while (nodeIndex != -1) {
-            reader.position(nodeIndex);
-            Node node = Node.fromBytes(reader, mHeader.mVersion);
+            mReader.position(nodeIndex);
+            Node node = Node.fromBytes(mReader, mHeader.mVersion);
             if (Objects.equals(packageName, node.mPackageName)) {
                 return node;
             }
@@ -69,13 +68,12 @@ public class PackageTable {
 
     public List<String> getPackageList() {
         List<String> list = new ArrayList<>(mHeader.mNumPackages);
-        ByteBufferReader reader = new ByteBufferReader(mBuffer);
-        reader.position(mHeader.mNodeOffset);
+        mReader.position(mHeader.mNodeOffset);
         int fingerprintBytes = mHeader.mVersion == 1 ? 0 : FINGERPRINT_BYTES;
         int skipBytes = fingerprintBytes + NODE_SKIP_BYTES;
         for (int i = 0; i < mHeader.mNumPackages; i++) {
-            list.add(reader.readString());
-            reader.position(reader.position() + skipBytes);
+            list.add(mReader.readString());
+            mReader.position(mReader.position() + skipBytes);
         }
         return list;
     }
