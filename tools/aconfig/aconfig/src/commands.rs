@@ -15,6 +15,7 @@
  */
 
 use anyhow::{bail, ensure, Context, Result};
+use convert_finalized_flags::FinalizedFlagMap;
 use itertools::Itertools;
 use protobuf::Message;
 use std::collections::HashMap;
@@ -220,7 +221,7 @@ pub fn create_java_lib(
     allow_instrumentation: bool,
     new_exported: bool,
     single_exported_file: bool,
-    check_api_level: bool,
+    finalized_flags: FinalizedFlagMap,
 ) -> Result<Vec<OutputFile>> {
     let parsed_flags = input.try_parse_flags()?;
     let modified_parsed_flags =
@@ -239,7 +240,7 @@ pub fn create_java_lib(
         package_fingerprint,
         new_exported,
         single_exported_file,
-        check_api_level,
+        finalized_flags,
     };
     generate_java_code(&package, modified_parsed_flags.into_iter(), config)
 }

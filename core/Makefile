@@ -839,16 +839,6 @@ endif
 
 
 # -----------------------------------------------------------------
-# build system stats
-BUILD_SYSTEM_STATS := $(PRODUCT_OUT)/build_system_stats.txt
-$(BUILD_SYSTEM_STATS):
-	@rm -f $@
-	@$(foreach s,$(STATS.MODULE_TYPE),echo "modules_type_make,$(s),$(words $(STATS.MODULE_TYPE.$(s)))" >>$@;)
-	@$(foreach s,$(STATS.SOONG_MODULE_TYPE),echo "modules_type_soong,$(s),$(STATS.SOONG_MODULE_TYPE.$(s))" >>$@;)
-$(call declare-1p-target,$(BUILD_SYSTEM_STATS),build)
-$(call dist-for-goals,droidcore-unbundled,$(BUILD_SYSTEM_STATS))
-
-# -----------------------------------------------------------------
 # build /product/etc/security/avb/system_other.avbpubkey if needed
 ifdef BUILDING_SYSTEM_OTHER_IMAGE
 ifeq ($(BOARD_AVB_ENABLE),true)
@@ -922,18 +912,6 @@ $(WALL_WERROR):
 $(call declare-0p-target,$(WALL_WERROR))
 
 $(call dist-for-goals,droidcore-unbundled,$(WALL_WERROR))
-
-# -----------------------------------------------------------------
-# Modules missing profile files
-PGO_PROFILE_MISSING := $(PRODUCT_OUT)/pgo_profile_file_missing.txt
-$(PGO_PROFILE_MISSING):
-	@rm -f $@
-	echo "# Modules missing PGO profile files" >> $@
-	for m in $(SOONG_MODULES_MISSING_PGO_PROFILE_FILE); do echo $$m >> $@; done
-
-$(call declare-0p-target,$(PGO_PROFILE_MISSING))
-
-$(call dist-for-goals,droidcore,$(PGO_PROFILE_MISSING))
 
 CERTIFICATE_VIOLATION_MODULES_FILENAME := $(PRODUCT_OUT)/certificate_violation_modules.txt
 $(CERTIFICATE_VIOLATION_MODULES_FILENAME):
@@ -1533,11 +1511,26 @@ boototapackage_4k: $(BUILT_BOOT_OTA_PACKAGE_4K)
 ifeq ($(BOARD_16K_OTA_MOVE_VENDOR),true)
 $(eval $(call copy-one-file,$(BUILT_BOOT_OTA_PACKAGE_4K),$(TARGET_OUT_VENDOR)/boot_otas/boot_ota_4k.zip))
 $(eval $(call copy-one-file,$(BUILT_BOOT_OTA_PACKAGE_16K),$(TARGET_OUT_VENDOR)/boot_otas/boot_ota_16k.zip))
+
 ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_VENDOR)/boot_otas/boot_ota_4k.zip
 ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_VENDOR)/boot_otas/boot_ota_16k.zip
+
+ifneq ($(BOARD_VENDOR_KERNEL_MODULES_2ND_STAGE_16KB_MODE),)
+# Add the modules that need to be loaded in the Second Boot Stage
+# to /vendor_dlkm/lib/modules/16k-mode
+VENDOR_DLKM_16K_MODE_DIR := lib/modules/16k-mode
+$(foreach module,$(BOARD_VENDOR_KERNEL_MODULES_2ND_STAGE_16KB_MODE), \
+    $(eval $(call copy-one-file,$(TARGET_KERNEL_DIR_16K)/$(module),\
+                                $(TARGET_OUT_VENDOR_DLKM)/$(VENDOR_DLKM_16K_MODE_DIR)/$(module))))
+
+ALL_DEFAULT_INSTALLED_MODULES += $(foreach module,$(BOARD_VENDOR_KERNEL_MODULES_2ND_STAGE_16KB_MODE),\
+    $(TARGET_OUT_VENDOR_DLKM)/$(VENDOR_DLKM_16K_MODE_DIR)/$(module))
+endif # BOARD_VENDOR_KERNEL_MODULES_2ND_STAGE_16KB_MODE not empty
+
 else
 $(eval $(call copy-one-file,$(BUILT_BOOT_OTA_PACKAGE_4K),$(TARGET_OUT)/boot_otas/boot_ota_4k.zip))
 $(eval $(call copy-one-file,$(BUILT_BOOT_OTA_PACKAGE_16K),$(TARGET_OUT)/boot_otas/boot_ota_16k.zip))
+
 ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT)/boot_otas/boot_ota_4k.zip
 ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT)/boot_otas/boot_ota_16k.zip
 endif # BOARD_16K_OTA_MOVE_VENDOR == true
@@ -7957,6 +7950,18 @@ IMAGES := $(INSTALLED_BOOTIMAGE_TARGET) \
 	$(INSTALLED_USERDATAIMAGE_TARGET)
 
 # -----------------------------------------------------------------
+# Desktop generated firmware filesystem.
+TARGET_PRODUCT_FW_IMAGE_PACKAGE := prebuilt-$(TARGET_PRODUCT)-firmware-image
+GENERATED_FW_IMAGE := $(PRODUCT_OUT)/product/etc/$(TARGET_PRODUCT)-firmware.img
+
+generated_fw_image_found := $(strip $(foreach pp,$(PRODUCT_PACKAGES),\
+	$(if $(findstring $(TARGET_PRODUCT_FW_IMAGE_PACKAGE),$(pp)),$(pp))))
+
+ifneq (,$(generated_fw_image_found))
+$(call dist-for-goals,dist_files,$(GENERATED_FW_IMAGE))
+endif
+
+# -----------------------------------------------------------------
 # Desktop pack image hook.
 ifneq (,$(strip $(PACK_DESKTOP_FILESYSTEM_IMAGES)))
 PACK_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_image.bin
@@ -8074,7 +8079,7 @@ $(foreach partition,$(call to-upper,$(BOARD_AVB_VBMETA_CUSTOM_PARTITIONS)), \
 allimages_zip := $(PRODUCT_OUT)/all_images.zip
 $(allimages_zip): PRIVATE_SOONG_ZIP_ARGUMENTS := $(allimages_soong_zip_args)
 $(allimages_zip): $(SOONG_ZIP) $(allimages_deps)
-	$(SOONG_ZIP) -o $@ --sort_entries $(PRIVATE_SOONG_ZIP_ARGUMENTS)
+	$(SOONG_ZIP) -o $@ $(PRIVATE_SOONG_ZIP_ARGUMENTS)
 
 .PHONY: soong_only_diff_test
 soong_only_diff_test: PRIVATE_ALLIMAGES_ZIP := $(allimages_zip)
