@@ -90,9 +90,6 @@ ALL_INIT_RC_INSTALLED_PAIRS :=
 # All installed vintf manifest fragments for a partition at
 ALL_VINTF_MANIFEST_FRAGMENTS_LIST:=
 
-# All tests that should be skipped in presubmit check.
-ALL_DISABLED_PRESUBMIT_TESTS :=
-
 # All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITE
 ALL_COMPATIBILITY_SUITES :=
 
