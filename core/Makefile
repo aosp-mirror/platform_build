@@ -1926,15 +1926,6 @@ kernel_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/kernel.txt
 # need no associated notice file on the device UI.
 exclude_target_dirs := apex
 
-# TODO(b/69865032): Make PRODUCT_NOTICE_SPLIT the default behavior.
-ifneq ($(PRODUCT_NOTICE_SPLIT),true)
-#target_notice_file_html := $(TARGET_OUT_INTERMEDIATES)/NOTICE.html
-target_notice_file_html_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE.html.gz
-installed_notice_html_or_xml_gz := $(TARGET_OUT)/etc/NOTICE.html.gz
-
-$(call declare-0p-target,$(target_notice_file_html_gz))
-$(call declare-0p-target,$(installed_notice_html_or_xml_gz))
-else
 # target_notice_file_xml := $(TARGET_OUT_INTERMEDIATES)/NOTICE.xml
 target_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE.xml.gz
 installed_notice_html_or_xml_gz := $(TARGET_OUT)/etc/NOTICE.xml.gz
@@ -2053,8 +2044,6 @@ license_modules_vendor += $(license_modules_rehomed)
 system_xml_directories := xml_system
 system_notice_file_message := "Notices for files contained in the system filesystem image in this directory:"
 endif
-
-endif # PRODUCT_NOTICE_SPLIT
 
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
 
