@@ -7,12 +7,6 @@ ifneq (,$(SYSTEM_NOTICE_DEPS))
 
 SYSTEM_NOTICE_DEPS += $(UNMOUNTED_NOTICE_DEPS) $(UNMOUNTED_NOTICE_VENDOR_DEPS)
 
-ifneq ($(PRODUCT_NOTICE_SPLIT),true)
-$(eval $(call html-notice-rule,$(target_notice_file_html_gz),"System image",$(system_notice_file_message),$(SYSTEM_NOTICE_DEPS),$(SYSTEM_NOTICE_DEPS)))
-
-$(installed_notice_html_or_xml_gz): $(target_notice_file_html_gz)
-	$(copy-file-to-target)
-else
 $(eval $(call xml-notice-rule,$(target_notice_file_xml_gz),"System image",$(system_notice_file_message),$(SYSTEM_NOTICE_DEPS),$(SYSTEM_NOTICE_DEPS)))
 
 $(eval $(call text-notice-rule,$(target_notice_file_txt),"System image",$(system_notice_file_message),$(SYSTEM_NOTICE_DEPS),$(SYSTEM_NOTICE_DEPS)))
@@ -20,7 +14,6 @@ $(eval $(call text-notice-rule,$(target_notice_file_txt),"System image",$(system
 ifneq ($(PRODUCT_USE_SOONG_NOTICE_XML),true)
 $(installed_notice_html_or_xml_gz): $(target_notice_file_xml_gz)
 	$(copy-file-to-target)
-endif
 endif
 
 $(call declare-1p-target,$(target_notice_file_xml_gz))
