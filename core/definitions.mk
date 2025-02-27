@@ -836,18 +836,6 @@ $(strip \
 endef
 
 ###########################################################
-## Declare that non-module targets copied from project $(1) and
-## optionally ending in $(2) are non-copyrightable files.
-##
-## e.g. an information-only file merely listing other files.
-###########################################################
-define declare-0p-copy-files
-$(strip \
-  $(foreach _pair,$(filter $(1)%$(2),$(PRODUCT_COPY_FILES)),$(eval $(call declare-0p-target,$(PRODUCT_OUT)/$(call word-colon,2,$(_pair))))) \
-)
-endef
-
-###########################################################
 ## Declare non-module target $(1) to have a first-party license
 ## (Android Apache 2.0)
 ##
