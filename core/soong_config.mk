@@ -488,6 +488,7 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_list, AbOtaPartitions, $(AB_OTA_PARTITIONS))
   $(call add_json_list, AbOtaKeys, $(PRODUCT_OTA_PUBLIC_KEYS))
   $(call add_json_list, AbOtaPostInstallConfig, $(AB_OTA_POSTINSTALL_CONFIG))
+  $(call add_json_bool, BoardSuperImageInUpdatePackage, $(filter true,$(BOARD_SUPER_IMAGE_IN_UPDATE_PACKAGE)))
 
   # Avb (android verified boot) stuff
   $(call add_json_bool, BoardAvbEnable, $(filter true,$(BOARD_AVB_ENABLE)))
