@@ -296,11 +296,6 @@ python_library_host {
 
 python_defaults {
     name: "releasetools_binary_defaults",
-    version: {
-        py3: {
-            embedded_launcher: true,
-        },
-    },
     // TODO (b/140144201) Build imgdiff from releasetools_common
     required: [
         "aapt2",
@@ -338,11 +333,6 @@ python_library_host {
 
 python_binary_host {
     name: "merge_ota",
-    version: {
-        py3: {
-            embedded_launcher: true,
-        },
-    },
     srcs: [
         "merge_ota.py",
     ],
@@ -357,11 +347,6 @@ python_binary_host {
 
 python_binary_host {
     name: "create_brick_ota",
-    version: {
-        py3: {
-            embedded_launcher: true,
-        },
-    },
     srcs: [
         "create_brick_ota.py",
     ],
