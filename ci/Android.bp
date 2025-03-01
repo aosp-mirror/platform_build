@@ -35,11 +35,6 @@ python_test_host {
     data: [
         ":py3-cmd",
     ],
-    version: {
-        py3: {
-            embedded_launcher: true,
-        },
-    },
 }
 
 // This test is only intended to be run locally since it's slow, not hermetic,
@@ -64,11 +59,6 @@ python_test_host {
     test_options: {
         unit_test: false,
     },
-    version: {
-        py3: {
-            embedded_launcher: true,
-        },
-    },
 }
 
 python_test_host {
@@ -88,11 +78,6 @@ python_test_host {
     data: [
         ":py3-cmd",
     ],
-    version: {
-        py3: {
-            embedded_launcher: true,
-        },
-    },
 }
 
 python_binary_host {
