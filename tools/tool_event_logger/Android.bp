@@ -58,10 +58,4 @@ python_test_host {
         "asuite_cc_client",
         "tool_event_proto",
     ],
-    version: {
-        py3: {
-            embedded_launcher: true,
-            enabled: true,
-        },
-    },
 }
