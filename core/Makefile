@@ -5874,7 +5874,10 @@ endif
 endif # BOARD_AVB_ENABLE
 ifneq (,$(strip $(BOARD_CUSTOMIMAGES_PARTITION_LIST)))
 	$(hide) $(foreach partition,$(BOARD_CUSTOMIMAGES_PARTITION_LIST), \
-	  echo "flash $(partition)" >> $@;)
+		$(if $(BOARD_$(call to-upper,$(partition))_IMAGE_NO_FLASHALL),, \
+	      echo "flash $(partition)" >> $@; \
+		) \
+	)
 endif
 	$(hide) echo "reboot fastboot" >> $@
 	$(hide) echo "update-super" >> $@
