@@ -152,7 +152,7 @@ my_dexpreopt_libs_all := $(sort $(my_dexpreopt_libs) $(my_dexpreopt_libs_compat)
 # this dexpreopt.config is generated. So it's necessary to add file-level
 # dependencies between dexpreopt.config files.
 my_dexpreopt_dep_configs := $(foreach lib, \
-  $(filter-out $(my_dexpreopt_libs_compat),$(LOCAL_USES_LIBRARIES) $(my_filtered_optional_uses_libraries)), \
+  $(filter-out $(my_dexpreopt_libs_compat) $(FRAMEWORK_LIBRARIES),$(LOCAL_USES_LIBRARIES) $(my_filtered_optional_uses_libraries)), \
   $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,)/dexpreopt.config)
 
 # 1: SDK version

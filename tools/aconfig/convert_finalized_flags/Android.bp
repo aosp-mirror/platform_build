@@ -1,0 +1,56 @@
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+rust_defaults {
+    name: "convert_finalized_flags.defaults",
+    edition: "2021",
+    clippy_lints: "android",
+    lints: "android",
+    rustlibs: [
+        "libanyhow",
+        "libclap",
+        "libitertools",
+        "libprotobuf",
+        "libserde",
+        "libserde_json",
+        "libtempfile",
+        "libtinytemplate",
+    ],
+}
+
+rust_library_host {
+    name: "libconvert_finalized_flags",
+    crate_name: "convert_finalized_flags",
+    defaults: ["convert_finalized_flags.defaults"],
+    srcs: [
+        "src/lib.rs",
+    ],
+}
+
+rust_binary_host {
+    name: "convert_finalized_flags",
+    defaults: ["convert_finalized_flags.defaults"],
+    srcs: ["src/main.rs"],
+    rustlibs: [
+        "libconvert_finalized_flags",
+        "libserde_json",
+    ],
+}
+
+rust_test_host {
+    name: "convert_finalized_flags.test",
+    defaults: ["convert_finalized_flags.defaults"],
+    test_suites: ["general-tests"],
+    srcs: ["src/lib.rs"],
+}
+
+genrule {
+    name: "finalized_flags_record.json",
+    srcs: [
+        "//prebuilts/sdk:finalized-api-flags",
+    ],
+    out: ["finalized_flags_record.json"],
+    tools: ["convert_finalized_flags"],
+    cmd: "args=\"\" && for f in $(locations //prebuilts/sdk:finalized-api-flags); do args=\"$$args --flag_file_path $$f\"; done && $(location convert_finalized_flags) $$args > $(out)",
+}

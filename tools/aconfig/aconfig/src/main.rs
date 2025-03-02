@@ -33,6 +33,7 @@ mod storage;
 
 use aconfig_storage_file::StorageFileType;
 use codegen::CodegenMode;
+use convert_finalized_flags::FinalizedFlagMap;
 use dump::DumpFormat;
 
 #[cfg(test)]
@@ -348,6 +349,12 @@ fn write_output_to_file_or_stdout(path: &str, data: &[u8]) -> Result<()> {
     Ok(())
 }
 
+fn load_finalized_flags() -> Result<FinalizedFlagMap> {
+    let json_str = include_str!(concat!(env!("OUT_DIR"), "/finalized_flags_record.json"));
+    let map = serde_json::from_str(json_str)?;
+    Ok(map)
+}
+
 fn main() -> Result<()> {
     let matches = cli().get_matches();
     match matches.subcommand() {
@@ -383,14 +390,18 @@ fn main() -> Result<()> {
             let new_exported = get_required_arg::<bool>(sub_matches, "new-exported")?;
             let single_exported_file =
                 get_required_arg::<bool>(sub_matches, "single-exported-file")?;
+
             let check_api_level = get_required_arg::<bool>(sub_matches, "check-api-level")?;
+            let finalized_flags: FinalizedFlagMap =
+                if *check_api_level { load_finalized_flags()? } else { FinalizedFlagMap::new() };
+
             let generated_files = commands::create_java_lib(
                 cache,
                 *mode,
                 *allow_instrumentation,
                 *new_exported,
                 *single_exported_file,
-                *check_api_level,
+                finalized_flags,
             )
             .context("failed to create java lib")?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);

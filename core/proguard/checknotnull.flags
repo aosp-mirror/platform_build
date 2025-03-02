@@ -1,0 +1,25 @@
+# Tell R8 that the following methods are check not null methods, and to
+# replace invocations to them with a more concise nullness check that produces
+# (slightly) less informative error messages
+
+-convertchecknotnull class com.google.common.base.Preconditions {
+  ** checkNotNull(...);
+}
+
+-convertchecknotnull class java.util.Objects {
+  ** requireNonNull(...);
+}
+
+-convertchecknotnull class kotlin.jvm.internal.Intrinsics {
+  void checkNotNull(...);
+  void checkExpressionValueIsNotNull(...);
+  void checkNotNullExpressionValue(...);
+  void checkReturnedValueIsNotNull(...);
+  void checkFieldIsNotNull(...);
+  void checkParameterIsNotNull(...);
+  void checkNotNullParameter(...);
+}
+
+-convertchecknotnull class dagger.internal.Preconditions {
+  ** checkNotNull*(...);
+}
