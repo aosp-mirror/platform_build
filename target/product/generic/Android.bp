@@ -880,11 +880,6 @@ system_image_defaults {
                 default: [
                     "framework-connectivity-b", // base_system
                 ],
-            }) + select(release_flag("RELEASE_AVATAR_PICKER_APP"), {
-                true: [
-                    "AvatarPicker", // generic_system (RELEASE_AVATAR_PICKER_APP)
-                ],
-                default: [],
             }) + select(release_flag("RELEASE_UPROBESTATS_MODULE"), {
                 true: [
                     "com.android.uprobestats", // base_system (RELEASE_UPROBESTATS_MODULE)

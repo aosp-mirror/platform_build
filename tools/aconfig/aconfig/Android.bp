@@ -7,7 +7,10 @@ rust_defaults {
     edition: "2021",
     clippy_lints: "android",
     lints: "android",
-    srcs: ["src/main.rs"],
+    srcs: [
+        "src/main.rs",
+        ":finalized_flags_record.json",
+    ],
     rustlibs: [
         "libaconfig_protos",
         "libaconfig_storage_file",
@@ -18,6 +21,7 @@ rust_defaults {
         "libserde",
         "libserde_json",
         "libtinytemplate",
+        "libconvert_finalized_flags",
     ],
 }
 

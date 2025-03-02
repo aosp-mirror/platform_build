@@ -1467,7 +1467,6 @@ droidcore: droidcore-unbundled
 # dist_files only for putting your library into the dist directory with a full build.
 .PHONY: dist_files
 
-$(call dist-for-goals, dist_files, $(SOONG_OUT_DIR)/module_bp_java_deps.json)
 $(call dist-for-goals, dist_files, $(PRODUCT_OUT)/module-info.json)
 
 .PHONY: apps_only
