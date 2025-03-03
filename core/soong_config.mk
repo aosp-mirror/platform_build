@@ -488,6 +488,7 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_list, AbOtaPartitions, $(AB_OTA_PARTITIONS))
   $(call add_json_list, AbOtaKeys, $(PRODUCT_OTA_PUBLIC_KEYS))
   $(call add_json_list, AbOtaPostInstallConfig, $(AB_OTA_POSTINSTALL_CONFIG))
+  $(call add_json_bool, BoardSuperImageInUpdatePackage, $(filter true,$(BOARD_SUPER_IMAGE_IN_UPDATE_PACKAGE)))
 
   # Avb (android verified boot) stuff
   $(call add_json_bool, BoardAvbEnable, $(filter true,$(BOARD_AVB_ENABLE)))
@@ -567,6 +568,9 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
   $(call add_json_str, ProductFsCompression, $(PRODUCT_FS_COMPRESSION))
 
   $(call add_json_str, ReleaseToolsExtensionDir, $(firstword $(TARGET_RELEASETOOLS_EXTENSIONS) $($(TARGET_DEVICE_DIR)/../common)))
+
+  # Fastboot
+  $(call add_json_str, BoardFastbootInfoFile, $(TARGET_BOARD_FASTBOOT_INFO_FILE))
 
 $(call end_json_map)
 
