@@ -39,16 +39,6 @@ blueprint_go_binary {
 }
 
 blueprint_go_binary {
-    name: "compliancenotice_bom",
-    srcs: ["cmd/bom/bom.go"],
-    deps: [
-        "compliance-module",
-        "soong-response",
-    ],
-    testSrcs: ["cmd/bom/bom_test.go"],
-}
-
-blueprint_go_binary {
     name: "compliancenotice_shippedlibs",
     srcs: ["cmd/shippedlibs/shippedlibs.go"],
     deps: [
