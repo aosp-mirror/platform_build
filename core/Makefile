@@ -5343,7 +5343,7 @@ my_decompress_tools := \
     lz4:$(HOST_OUT_EXECUTABLES)/lz4 \
 
 
-# BOARD_KERNEL_CONFIG_FILE and BOARD_KERNEL_VERSION can be used to override the values extracted
+# BOARD_KERNEL_VERSION can be used to override the values extracted
 # from INSTALLED_KERNEL_TARGET.
 ifdef BOARD_KERNEL_VERSION
 $(BUILT_KERNEL_VERSION_FILE): PRIVATE_DECOMPRESS_TOOLS := $(my_decompress_tools)
@@ -5355,15 +5355,8 @@ $(BUILT_KERNEL_VERSION_FILE): $(EXTRACT_KERNEL) $(firstword $(INSTALLED_KERNEL_T
     echo "Specified kernel version '$(BOARD_KERNEL_VERSION)' does not match actual kernel version '$$KERNEL_RELEASE' " ; exit 1; fi;
 	echo '$(BOARD_KERNEL_VERSION)' > $@
 
-ifdef BOARD_KERNEL_CONFIG_FILE
-$(BUILT_KERNEL_CONFIGS_FILE): $(BOARD_KERNEL_CONFIG_FILE)
-	cp $< $@
-
-$(call declare-license-metadata,$(BUILT_KERNEL_CONFIGS_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
 $(call declare-license-metadata,$(BUILT_KERNEL_VERSION_FILE),SPDX-license-identifier-GPL-2.0-only,restricted,$(BUILD_SYSTEM)/LINUX_KERNEL_COPYING,"Kernel",kernel)
 
-my_board_extracted_kernel := true
-endif # BOARD_KERNEL_CONFIG_FILE
 endif # BOARD_KERNEL_VERSION
 
 
