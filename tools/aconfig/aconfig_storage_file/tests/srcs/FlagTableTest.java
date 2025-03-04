@@ -26,6 +26,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.Objects;
+import java.util.concurrent.CyclicBarrier;
+
 @RunWith(JUnit4.class)
 public class FlagTableTest {
 
@@ -99,5 +102,54 @@ public class FlagTableTest {
         assertEquals(-1, node6.getNextOffset());
         assertEquals(-1, node7.getNextOffset());
         assertEquals(-1, node8.getNextOffset());
+    }
+
+    @Test
+    public void testFlagTable_multithreadsRead() throws Exception {
+        FlagTable flagTable = FlagTable.fromBytes(TestDataUtils.getTestFlagMapByteBuffer(2));
+
+        int numberOfThreads = 8;
+        Thread[] threads = new Thread[numberOfThreads];
+        final CyclicBarrier gate = new CyclicBarrier(numberOfThreads + 1);
+        String[] expects = {
+            "enabled_ro",
+            "enabled_rw",
+            "enabled_rw",
+            "disabled_rw",
+            "enabled_fixed_ro",
+            "enabled_ro",
+            "enabled_fixed_ro",
+            "disabled_rw"
+        };
+        int[] packageIds = {0, 0, 2, 1, 1, 1, 2, 0};
+
+        for (int i = 0; i < numberOfThreads; i++) {
+            String expectRet = expects[i];
+            int packageId = packageIds[i];
+            threads[i] =
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                gate.await();
+                            } catch (Exception e) {
+                            }
+                            for (int j = 0; j < 10; j++) {
+                                if (!Objects.equals(
+                                        expectRet,
+                                        flagTable.get(packageId, expectRet).getFlagName())) {
+                                    throw new RuntimeException();
+                                }
+                            }
+                        }
+                    };
+            threads[i].start();
+        }
+
+        gate.await();
+
+        for (int i = 0; i < numberOfThreads; i++) {
+            threads[i].join();
+        }
     }
 }
