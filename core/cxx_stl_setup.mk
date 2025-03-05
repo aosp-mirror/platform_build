@@ -78,7 +78,7 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
         my_static_libraries += libc++demangle
 
         ifeq ($(my_link_type),static)
-            my_static_libraries += libm libc libunwind libstatic_rustlibs_for_make
+            my_static_libraries += libm libc libunwind
         endif
     endif
 else ifeq ($(my_cxx_stl),ndk)
