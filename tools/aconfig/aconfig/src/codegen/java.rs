@@ -796,6 +796,7 @@ mod tests {
 
         let expect_flags_content = r#"
         package com.android.aconfig.test;
+        import android.os.Build;
         /** @hide */
         public final class Flags {
             /** @hide */
@@ -1001,6 +1002,7 @@ mod tests {
 
         let expect_flags_content = r#"
         package com.android.aconfig.test;
+        import android.os.Build;
         /** @hide */
         public final class Flags {
             /** @hide */
@@ -1204,6 +1206,7 @@ mod tests {
 
         let expect_flags_content = r#"
         package com.android.aconfig.test;
+        import android.os.Build;
         /** @hide */
         public final class Flags {
             /** @hide */
@@ -1213,6 +1216,9 @@ mod tests {
             /** @hide */
             public static final String FLAG_ENABLED_RO_EXPORTED = "com.android.aconfig.test.enabled_ro_exported";
             public static boolean disabledRwExported() {
+                if (Build.VERSION.SDK_INT >= 36) {
+                  return true;
+                }
                 return FEATURE_FLAGS.disabledRwExported();
             }
             public static boolean enabledFixedRoExported() {
@@ -1785,6 +1791,109 @@ mod tests {
         }
 
         assert!(file_set.is_empty());
+    }
+
+    #[test]
+    fn test_generate_java_code_exported_flags() {
+        let parsed_flags = crate::test::parse_test_flags();
+        let mode = CodegenMode::Exported;
+        let modified_parsed_flags =
+            crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
+        let flag_ids =
+            assign_flag_ids(crate::test::TEST_PACKAGE, modified_parsed_flags.iter()).unwrap();
+        let mut finalized_flags = FinalizedFlagMap::new();
+        finalized_flags.insert_if_new(
+            ApiLevel(36),
+            FinalizedFlag {
+                flag_name: "disabled_rw_exported".to_string(),
+                package_name: "com.android.aconfig.test".to_string(),
+            },
+        );
+        let config = JavaCodegenConfig {
+            codegen_mode: mode,
+            flag_ids,
+            allow_instrumentation: true,
+            package_fingerprint: 5801144784618221668,
+            new_exported: true,
+            single_exported_file: true,
+            finalized_flags,
+        };
+        let generated_files = generate_java_code(
+            crate::test::TEST_PACKAGE,
+            modified_parsed_flags.into_iter(),
+            config,
+        )
+        .unwrap();
+
+        let expect_exported_flags_content = r#"
+        package com.android.aconfig.test;
+
+        import android.os.Build;
+        import android.os.flagging.AconfigPackage;
+        import android.util.Log;
+        public final class ExportedFlags {
+
+            public static final String FLAG_DISABLED_RW_EXPORTED = "com.android.aconfig.test.disabled_rw_exported";
+            public static final String FLAG_ENABLED_FIXED_RO_EXPORTED = "com.android.aconfig.test.enabled_fixed_ro_exported";
+            public static final String FLAG_ENABLED_RO_EXPORTED = "com.android.aconfig.test.enabled_ro_exported";
+            private static final String TAG = "ExportedFlags";
+            private static volatile boolean isCached = false;
+
+            private static boolean disabledRwExported = false;
+            private static boolean enabledFixedRoExported = false;
+            private static boolean enabledRoExported = false;
+            private ExportedFlags() {}
+
+            private void init() {
+                try {
+                    AconfigPackage reader = AconfigPackage.load("com.android.aconfig.test");
+                    disabledRwExported = reader.getBooleanFlagValue("disabled_rw_exported", false);
+                    enabledFixedRoExported = reader.getBooleanFlagValue("enabled_fixed_ro_exported", false);
+                    enabledRoExported = reader.getBooleanFlagValue("enabled_ro_exported", false);
+                } catch (Exception e) {
+                    // pass
+                    Log.e(TAG, e.toString());
+                } catch (LinkageError e) {
+                    // for mainline module running on older devices.
+                    // This should be replaces to version check, after the version bump.
+                    Log.w(TAG, e.toString());
+                }
+                isCached = true;
+            }
+            public static boolean disabledRwExported() {
+                if (Build.VERSION.SDK_INT >= 36) {
+                  return true;
+                }
+
+                if (!featureFlags.isCached) {
+                    featureFlags.init();
+                }
+                return featureFlags.disabledRwExported;
+            }
+            public static boolean enabledFixedRoExported() {
+                if (!featureFlags.isCached) {
+                    featureFlags.init();
+                }
+                return featureFlags.enabledFixedRoExported;
+            }
+            public static boolean enabledRoExported() {
+                if (!featureFlags.isCached) {
+                    featureFlags.init();
+                }
+                return featureFlags.enabledRoExported;
+            }
+            private static ExportedFlags featureFlags = new ExportedFlags();
+        }"#;
+
+        let file = generated_files.iter().find(|f| f.path.ends_with("ExportedFlags.java")).unwrap();
+        assert_eq!(
+            None,
+            crate::test::first_significant_code_diff(
+                expect_exported_flags_content,
+                &String::from_utf8(file.contents.clone()).unwrap()
+            ),
+            "ExportedFlags content is not correct"
+        );
     }
 
     #[test]

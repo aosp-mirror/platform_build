@@ -572,7 +572,7 @@ def AddCustomImages(output_zip, partition_name, image_list):
 
   default = os.path.join(OPTIONS.input_tmp, "IMAGES", partition_name + ".img")
   assert os.path.exists(default), \
-      "There should be one %s.img" % (partition_name)
+      "Can't find %s for image %s" % (default, partition_name)
   return default
 
 
