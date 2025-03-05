@@ -19,11 +19,8 @@ public final class ExportedFlags \{
             AconfigPackage reader = AconfigPackage.load("{package_name}");
             {{ -for namespace_with_flags in namespace_flags }}
             {{ -for flag in namespace_with_flags.flags }}
-            {{ -if flag.finalized_sdk_present }}
-            {flag.method_name} = Build.VERSION.SDK_INT >= {flag.finalized_sdk_value} ? true : reader.getBooleanFlagValue("{flag.flag_name}", {flag.default_value});
-            {{ - else }} {#- else finalized_sdk_present #}
             {flag.method_name} = reader.getBooleanFlagValue("{flag.flag_name}", {flag.default_value});
-            {{ -endif}}  {#- end finalized_sdk_present#}
+
             {{ -endfor }} {#- end namespace_with_flags.flags #}
             {{ -endfor }} {#- end namespace_flags #}
         } catch (Exception e) \{
@@ -39,6 +36,11 @@ public final class ExportedFlags \{
 
 {{ -for flag in flag_elements }}
     public static boolean {flag.method_name}() \{
+        {{ -if flag.finalized_sdk_present }}
+        if (Build.VERSION.SDK_INT >= {flag.finalized_sdk_value}) \{
+          return true;
+        }
+        {{ -endif}}  {#- end finalized_sdk_present#}
         if (!featureFlags.isCached) \{
             featureFlags.init();
         }
