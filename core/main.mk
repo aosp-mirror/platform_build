@@ -1555,7 +1555,6 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
   $(call dist-for-goals, droidcore, \
     $(BUILT_OTATOOLS_PACKAGE) \
     $(APPCOMPAT_ZIP) \
-    $(DEXPREOPT_TOOLS_ZIP) \
   )
 
   # We dist the following targets for droidcore-unbundled (and droidcore since
