@@ -1601,12 +1601,7 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
     $(INSTALLED_FILES_JSON_SYSTEMOTHER) \
     $(INSTALLED_FILES_FILE_RECOVERY) \
     $(INSTALLED_FILES_JSON_RECOVERY) \
-    $(if $(BUILDING_SYSTEM_IMAGE), $(INSTALLED_BUILD_PROP_TARGET):build.prop) \
     $(if $(BUILDING_VENDOR_IMAGE), $(INSTALLED_VENDOR_BUILD_PROP_TARGET):build.prop-vendor) \
-    $(if $(BUILDING_PRODUCT_IMAGE), $(INSTALLED_PRODUCT_BUILD_PROP_TARGET):build.prop-product) \
-    $(if $(BUILDING_ODM_IMAGE), $(INSTALLED_ODM_BUILD_PROP_TARGET):build.prop-odm) \
-    $(if $(BUILDING_SYSTEM_EXT_IMAGE), $(INSTALLED_SYSTEM_EXT_BUILD_PROP_TARGET):build.prop-system_ext) \
-    $(if $(BUILDING_RAMDISK_IMAGE), $(INSTALLED_RAMDISK_BUILD_PROP_TARGET):build.prop-ramdisk) \
     $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
     $(INSTALLED_MISC_INFO_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
@@ -1700,7 +1695,6 @@ ifeq ($(HOST_OS),linux)
 ALL_SDK_TARGETS := $(INTERNAL_SDK_TARGET)
 sdk: $(ALL_SDK_TARGETS)
 $(call dist-for-goals-with-filenametag,sdk,$(ALL_SDK_TARGETS))
-$(call dist-for-goals,sdk,$(INSTALLED_BUILD_PROP_TARGET))
 endif
 
 # umbrella targets to assit engineers in verifying builds
