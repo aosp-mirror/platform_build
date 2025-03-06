@@ -5213,7 +5213,9 @@ APEX_INFO_FILE := $(APEX_OUT)/apex-info-list.xml
 # apexd_host scans/activates APEX files and writes /apex/apex-info-list.xml
 # Note that `@echo $(PRIVATE_APEX_FILES)` line is added to trigger the rule when the APEX list is changed.
 $(APEX_INFO_FILE): PRIVATE_APEX_FILES := $(apex_files)
-$(APEX_INFO_FILE): $(HOST_OUT_EXECUTABLES)/apexd_host $(apex_files)
+$(APEX_INFO_FILE): $(HOST_OUT_EXECUTABLES)/apexd_host \
+    $(HOST_OUT_EXECUTABLES)/deapexer $(HOST_OUT_EXECUTABLES)/debugfs $(HOST_OUT_EXECUTABLES)/fsck.erofs \
+    $(apex_files)
 	@echo "Extracting apexes..."
 	@echo $(PRIVATE_APEX_FILES) > /dev/null
 	@rm -rf $(APEX_OUT)
@@ -7147,22 +7149,6 @@ $(APPCOMPAT_ZIP): $(SOONG_ZIP)
 	$(hide) mkdir -p $(dir $@) $(PRODUCT_OUT)/appcompat $(dir $(PRIVATE_LIST_FILE))
 	$(hide) find $(PRODUCT_OUT)/appcompat | sort >$(PRIVATE_LIST_FILE)
 	$(hide) $(SOONG_ZIP) -d -o $@ -C $(PRODUCT_OUT)/appcompat -l $(PRIVATE_LIST_FILE)
-
-# The mac build doesn't build dex2oat, so create the zip file only if the build OS is linux.
-ifeq ($(BUILD_OS),linux)
-ifneq ($(DEX2OAT),)
-dexpreopt_tools_deps := $(DEXPREOPT_GEN_DEPS) $(DEXPREOPT_GEN)
-dexpreopt_tools_deps += $(HOST_OUT_EXECUTABLES)/dexdump
-dexpreopt_tools_deps += $(HOST_OUT_EXECUTABLES)/oatdump
-DEXPREOPT_TOOLS_ZIP := $(PRODUCT_OUT)/dexpreopt_tools.zip
-$(DEXPREOPT_TOOLS_ZIP): $(dexpreopt_tools_deps)
-$(DEXPREOPT_TOOLS_ZIP): PRIVATE_DEXPREOPT_TOOLS_DEPS := $(dexpreopt_tools_deps)
-$(DEXPREOPT_TOOLS_ZIP): $(SOONG_ZIP)
-	$(hide) mkdir -p $(dir $@)
-	$(hide) $(SOONG_ZIP) -d -o $@ -j $(addprefix -f ,$(PRIVATE_DEXPREOPT_TOOLS_DEPS)) -f $$(realpath $(DEX2OAT))
-$(call declare-1p-target,$(DEXPREOPT_TOOLS_ZIP),)
-endif # DEX2OAT is set
-endif # BUILD_OS == linux
 
 DEXPREOPT_CONFIG_ZIP := $(PRODUCT_OUT)/dexpreopt_config.zip
 

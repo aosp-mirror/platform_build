@@ -123,7 +123,7 @@ class MetadataDb:
 
   def get_installed_files(self):
     # Get all records from table make_metadata, which contains all installed files and corresponding make modules' metadata
-    cursor = self.conn.execute('select installed_file, module_path, is_prebuilt_make_module, product_copy_files, kernel_module_copy_files, is_platform_generated, license_text from make_metadata')
+    cursor = self.conn.execute('select installed_file, module_path, is_soong_module, is_prebuilt_make_module, product_copy_files, kernel_module_copy_files, is_platform_generated, license_text from make_metadata')
     rows = cursor.fetchall()
     cursor.close()
     installed_files_metadata = []
@@ -135,7 +135,7 @@ class MetadataDb:
   def get_installed_file_in_dir(self, dir):
     dir = dir.removesuffix('/')
     cursor = self.conn.execute(
-        'select installed_file, module_path, is_prebuilt_make_module, product_copy_files, '
+        'select installed_file, module_path, is_soong_module, is_prebuilt_make_module, product_copy_files, '
         '       kernel_module_copy_files, is_platform_generated, license_text '
         'from make_metadata '
         'where installed_file like ?', (dir + '/%',))
