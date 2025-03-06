@@ -2,7 +2,6 @@ package {package_name}; {#- CODEGEN FOR INTERNAL MODE FOR NEW STORAGE #}
 // TODO(b/303773055): Remove the annotation after access issue is resolved.
 import android.compat.annotation.UnsupportedAppUsage;
 {{ -if runtime_lookup_required }}
-import android.os.Build;
 {{ if is_platform_container }}
 import android.os.flagging.PlatformAconfigPackageInternal;
 {{ -else }} {#- else is_platform_container #}
