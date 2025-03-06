@@ -285,11 +285,7 @@ cts-combined-api-inherit-xml : $(cts-combined-api-inherit-xml-report)
 .PHONY: cts-api-map-all
 
 # Put the test coverage report in the dist dir if "cts-api-coverage" is among the build goals.
-$(call dist-for-goals, cts-api-coverage, $(cts-test-coverage-report):cts-test-coverage-report.html)
-$(call dist-for-goals, cts-api-coverage, $(cts-system-api-coverage-report):cts-system-api-coverage-report.html)
 $(call dist-for-goals, cts-api-coverage, $(cts-system-api-xml-coverage-report):cts-system-api-coverage-report.xml)
-$(call dist-for-goals, cts-api-coverage, $(cts-verifier-coverage-report):cts-verifier-coverage-report.html)
-$(call dist-for-goals, cts-api-coverage, $(cts-combined-coverage-report):cts-combined-coverage-report.html)
 $(call dist-for-goals, cts-api-coverage, $(cts-combined-xml-coverage-report):cts-combined-coverage-report.xml)
 
 ALL_TARGETS.$(cts-test-coverage-report).META_LIC:=$(module_license_metadata)
@@ -301,7 +297,6 @@ ALL_TARGETS.$(cts-combined-xml-coverage-report).META_LIC:=$(module_license_metad
 
 # Put the test api map report in the dist dir if "cts-api-map-all" is among the build goals.
 $(call dist-for-goals, cts-api-map-all, $(cts-combined-api-map-xml-report):cts-api-map-report.xml)
-$(call dist-for-goals, cts-api-map-all, $(cts-combined-api-map-html-report):cts-api-map-report.html)
 $(call dist-for-goals, cts-api-map-all, $(cts-combined-api-inherit-xml-report):cts-api-inherit-report.xml)
 
 ALL_TARGETS.$(cts-api-map-xml-report).META_LIC:=$(module_license_metadata)
