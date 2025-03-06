@@ -34,3 +34,6 @@ $(call soong_config_set, messagequeue, release_package_messagequeue_implementati
 
 # Use the configured version of WebView
 $(call soong_config_set, webview, release_package_webview_version, $(RELEASE_PACKAGE_WEBVIEW_VERSION))
+
+# Use the configured version of Cronet
+$(call soong_config_set,cronet,enable_cronet_tot,$(RELEASE_ENABLE_TOT_CRONET))
