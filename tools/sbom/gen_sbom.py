@@ -415,11 +415,13 @@ def save_report(report_file_path, report):
 def installed_file_has_metadata(installed_file_metadata, report):
   installed_file = installed_file_metadata['installed_file']
   module_path = installed_file_metadata['module_path']
+  is_soong_module = installed_file_metadata['is_soong_module']
   product_copy_files = installed_file_metadata['product_copy_files']
   kernel_module_copy_files = installed_file_metadata['kernel_module_copy_files']
   is_platform_generated = installed_file_metadata['is_platform_generated']
 
   if (not module_path and
+      not is_soong_module and
       not product_copy_files and
       not kernel_module_copy_files and
       not is_platform_generated and
