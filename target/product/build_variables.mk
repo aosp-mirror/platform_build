@@ -31,3 +31,6 @@ $(call soong_config_set, libsqlite3, release_package_libsqlite3, $(RELEASE_PACKA
 
 # Use the configured MessageQueue implementation
 $(call soong_config_set, messagequeue, release_package_messagequeue_implementation, $(RELEASE_PACKAGE_MESSAGEQUEUE_IMPLEMENTATION))
+
+# Use the configured version of Cronet
+$(call soong_config_set,cronet,enable_cronet_tot,$(RELEASE_ENABLE_TOT_CRONET))
