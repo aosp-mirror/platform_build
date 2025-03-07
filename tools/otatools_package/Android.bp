@@ -1,0 +1,65 @@
+// Copyright (C) 2025 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package {
+    // See: http://go/android-license-faq
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+java_genrule_host {
+    name: "otatools_package_dep_jars",
+    tools: ["soong_zip"],
+    compile_multilib: "first",
+    cmd: "mkdir -p $(genDir)/framework && " +
+        "cp $(in) $(genDir)/framework && " +
+        "$(location soong_zip) -o $(out) -C $(genDir) -D $(genDir)/framework",
+    srcs: [
+        ":apksigner",
+        ":boot_signer",
+        ":signapk",
+        ":verity_signer",
+    ],
+    out: ["otatools_package_dep_jars.zip"],
+}
+
+genrule {
+    name: "otatools_package_cert_files",
+    tools: ["soong_zip"],
+    cmd: "mkdir -p $(genDir)/tmp/ && " +
+        "echo $(in) > $(genDir)/tmp/zip_files.list && " +
+        "$(location soong_zip) -o $(out) -l $(genDir)/tmp/zip_files.list ",
+    srcs: [
+        ":soong_generated_otatools_package_filegroup",
+    ],
+    out: ["otatools_package_cert_files.zip"],
+}
+
+java_genrule_host {
+    name: "otatools_package",
+    tools: ["merge_zips"],
+    compile_multilib: "first",
+    cmd: "$(location merge_zips) $(out) $(in)",
+    srcs: [
+        ":otatools_package_cert_files",
+        ":otatools_package_dep_jars",
+        ":otatools_package_releasetools",
+    ],
+    // TODO: Rename as "otatools.zip" when the rest files are ready.
+    out: ["otatools_temp.zip"],
+    dist: {
+        targets: [
+            "otatools-package-temp",
+        ],
+    },
+}
