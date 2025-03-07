@@ -775,7 +775,13 @@ name := $(name)-apkcerts
 intermediates := \
 	$(call intermediates-dir-for,PACKAGING,apkcerts)
 APKCERTS_FILE := $(intermediates)/$(name).txt
-all_apkcerts_files := $(sort $(foreach p,$(PACKAGES),$(PACKAGES.$(p).APKCERTS_FILE)))
+ifeq ($(RELEASE_APKCERTS_INSTALL_ONLY), true)
+  all_apkcerts_packages := $(filter $(call product-installed-modules,$(INTERNAL_PRODUCT)),$(PACKAGES))
+else
+  all_apkcerts_packages := $(PACKAGES)
+endif
+all_apkcerts_files := $(sort $(foreach p,$(all_apkcerts_packages),$(PACKAGES.$(p).APKCERTS_FILE)))
+
 $(APKCERTS_FILE): $(all_apkcerts_files)
 # We don't need to really build all the modules.
 # TODO: rebuild APKCERTS_FILE if any app change its cert.
@@ -783,7 +789,7 @@ $(APKCERTS_FILE):
 	@echo APK certs list: $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
-	$(foreach p,$(sort $(PACKAGES)),\
+	$(foreach p,$(sort $(all_apkcerts_packages)),\
 	  $(if $(PACKAGES.$(p).APKCERTS_FILE),\
 	    $(call _apkcerts_merge,$(PACKAGES.$(p).APKCERTS_FILE), $@),\
 	    $(if $(PACKAGES.$(p).EXTERNAL_KEY),\
