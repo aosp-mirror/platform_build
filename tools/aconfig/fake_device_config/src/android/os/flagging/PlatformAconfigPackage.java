@@ -24,7 +24,11 @@ import java.util.Set;
 public class PlatformAconfigPackage {
 
     public static final Set<String> PLATFORM_PACKAGE_MAP_FILES =
-            Set.of("system.package.map", "vendor.package.map", "product.package.map");
+            Set.of(
+                    "system.package.map",
+                    "system_ext.package.map",
+                    "vendor.package.map",
+                    "product.package.map");
 
     public static PlatformAconfigPackage load(String packageName) {
         throw new UnsupportedOperationException("Stub!");
