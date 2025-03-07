@@ -7314,6 +7314,72 @@ else
   _proguard_dict_zip_modules := $(unbundled_build_modules)
 endif
 
+# Filter out list to avoid uncessary proguard related file generation
+ifeq (,$(TARGET_BUILD_UNBUNDLED))
+filter_out_proguard_dict_zip_modules :=
+# product.img
+ifndef BUILDING_PRODUCT_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/product/%
+endif
+# system.img
+ifndef BUILDING_SYSTEM_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/system/%
+endif
+# system_dlkm.img
+ifndef BUILDING_SYSTEM_DLKM_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/system_dlkm/%
+endif
+# system_ext.img
+ifndef BUILDING_SYSTEM_EXT_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/system_ext/%
+endif
+# system_other.img
+ifndef BUILDING_SYSTEM_OTHER_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/system_other/%
+endif
+# odm.img
+ifndef BUILDING_ODM_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/odm/%
+endif
+# odm_dlkm.img
+ifndef BUILDING_ODM_DLKM_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/odm_dlkm/%
+endif
+# vendor.img
+ifndef BUILDING_VENDOR_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/vendor/%
+endif
+# vendor_dlkm.img
+ifndef BUILDING_VENDOR_DLKM_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/vendor_dlkm/%
+endif
+# cache.img
+ifndef BUILDING_CACHE_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/cache/%
+endif
+# ramdisk.img
+ifndef BUILDING_RAMDISK_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/ramdisk/%
+endif
+# recovery.img
+ifndef INSTALLED_RECOVERYIMAGE_TARGET
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/recovery/%
+endif
+# userdata.img
+ifndef BUILDING_USERDATA_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/data/%
+endif
+
+# Check the installed files of each module and return the module name
+# or return empty if none of the files remain to be installed
+define filter-out-proguard-modules
+$(if $(filter-out $(filter_out_proguard_dict_zip_modules),$(call module-installed-files,$(1))),$(1))
+endef
+
+# Filter out proguard dict zip modules those are not installed at the built image
+_proguard_dict_zip_modules := $(foreach m,$(_proguard_dict_zip_modules),$(strip $(call filter-out-proguard-modules,$(m))))
+endif
+
 # The path to the zip file containing proguard dictionaries.
 PROGUARD_DICT_ZIP :=$= $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-dict.zip
 $(PROGUARD_DICT_ZIP): PRIVATE_SOONG_ZIP_ARGUMENTS := $(foreach m,$(_proguard_dict_zip_modules),$(ALL_MODULES.$(m).PROGUARD_DICTIONARY_SOONG_ZIP_ARGUMENTS))
