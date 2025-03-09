@@ -62,12 +62,13 @@ mod tests {
 
     #[test]
     fn test_read_partition_paths() {
-        assert_eq!(read_partition_paths().len(), 3);
+        assert_eq!(read_partition_paths().len(), 4);
 
         assert_eq!(
             read_partition_paths(),
             vec![
                 PathBuf::from("/system/etc/aconfig_flags.pb"),
+                PathBuf::from("/system_ext/etc/aconfig_flags.pb"),
                 PathBuf::from("/product/etc/aconfig_flags.pb"),
                 PathBuf::from("/vendor/etc/aconfig_flags.pb")
             ]
