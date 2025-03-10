@@ -205,7 +205,6 @@ PRODUCT_PACKAGES += \
     libstdc++ \
     libsysutils \
     libui \
-    libuprobestats_client \
     libusbhost \
     libutils \
     libvintf_jni \
@@ -310,7 +309,19 @@ ifeq ($(RELEASE_CRASHRECOVERY_MODULE),true)
   PRODUCT_PACKAGES += \
         com.android.crashrecovery \
 
+else
+  PRODUCT_PACKAGES += \
+    framework-platformcrashrecovery \
+
 endif
+
+# When we release ondeviceintelligence in neuralnetworks module
+ifneq ($(RELEASE_ONDEVICE_INTELLIGENCE_MODULE),true)
+  PRODUCT_PACKAGES += \
+        framework-ondeviceintelligence-platform
+
+endif
+
 
 # When we release uprobestats module
 ifeq ($(RELEASE_UPROBESTATS_MODULE),true)
@@ -320,6 +331,7 @@ ifeq ($(RELEASE_UPROBESTATS_MODULE),true)
 else
     PRODUCT_PACKAGES += \
         uprobestats \
+        libuprobestats_client \
 
 endif
 
@@ -350,8 +362,7 @@ endif
 # Check if the build supports Profiling module
 ifeq ($(RELEASE_PACKAGE_PROFILING_MODULE),true)
     PRODUCT_PACKAGES += \
-       com.android.profiling \
-       trace_redactor
+       com.android.profiling
 endif
 
 ifeq ($(RELEASE_USE_WEBVIEW_BOOTSTRAP_MODULE),true)

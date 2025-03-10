@@ -16,6 +16,13 @@ function finalize_vintf_resources() {
     export TARGET_RELEASE=fina_0
     export TARGET_PRODUCT=aosp_arm64
 
+    # build/soong
+    local vendor_api_level_map="case ${FINAL_NEXT_BOARD_API_LEVEL}:"
+    if ! grep -q "$vendor_api_level_map" "$top/build/soong/android/vendor_api_levels.go" ; then
+        sed -i -e "/case ${FINAL_BOARD_API_LEVEL}:/{N;a \\\t$vendor_api_level_map\n\t\tsdkVersion = ${FINAL_NEXT_CORRESPONDING_SDK_VERSION}
+        }" "$top/build/soong/android/vendor_api_levels.go"
+    fi
+
     # system/sepolicy
     "$top/system/sepolicy/tools/finalize-vintf-resources.sh" "$top" "$FINAL_BOARD_API_LEVEL"
 

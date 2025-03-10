@@ -393,8 +393,8 @@ android_filesystem_defaults {
         "charger",
     ] + select(release_flag("RELEASE_APPFUNCTION_SIDECAR"), {
         true: [
-            "com.google.android.appfunctions.sidecar",
-            "appfunctions.sidecar.xml",
+            "com.android.extensions.appfunctions",
+            "appfunctions.extension.xml",
         ],
         default: [],
     }),
@@ -694,11 +694,6 @@ system_image_defaults {
         default: [
             "android.software.preview_sdk.prebuilt.xml", // media_system
         ],
-    }) + select(soong_config_variable("ANDROID", "release_package_profiling_module"), {
-        "true": [
-            "trace_redactor", // base_system (RELEASE_PACKAGE_PROFILING_MODULE)
-        ],
-        default: [],
     }) + select(release_flag("RELEASE_MEMORY_MANAGEMENT_DAEMON"), {
         true: [
             "mm_daemon", // base_system (RELEASE_MEMORY_MANAGEMENT_DAEMON)
@@ -868,7 +863,16 @@ system_image_defaults {
                 "true": [
                     "com.android.crashrecovery", // base_system (RELEASE_CRASHRECOVERY_MODULE)
                 ],
-                default: [],
+                default: [
+                    "framework-platformcrashrecovery", // base_system
+                ],
+            }) + select(release_flag("RELEASE_ONDEVICE_INTELLIGENCE_MODULE"), {
+                true: [
+                    "com.android.neuralnetworks", // base_system (RELEASE_ONDEVICE_INTELLIGENCE_MODULE)
+                ],
+                default: [
+                    "framework-ondeviceintelligence-platform", // base_system
+                ],
             }) + select(soong_config_variable("ANDROID", "release_package_profiling_module"), {
                 "true": [
                     "com.android.profiling", // base_system (RELEASE_PACKAGE_PROFILING_MODULE)
