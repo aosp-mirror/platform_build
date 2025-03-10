@@ -698,7 +698,9 @@ system_image_defaults {
         true: [
             "mm_daemon", // base_system (RELEASE_MEMORY_MANAGEMENT_DAEMON)
         ],
-        default: [],
+        default: [
+            "init-mmd-prop.rc", // base_system
+        ],
     }) + select(product_variable("debuggable"), {
         true: [
             "alloctop",

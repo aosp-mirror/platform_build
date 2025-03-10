@@ -385,6 +385,9 @@ endif
 ifeq ($(RELEASE_MEMORY_MANAGEMENT_DAEMON),true)
   PRODUCT_PACKAGES += \
         mm_daemon
+else
+  PRODUCT_PACKAGES += \
+        init-mmd-prop.rc
 endif
 
 # VINTF data for system image
