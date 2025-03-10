@@ -1,0 +1,18 @@
+package: "record_finalized_flags.test"
+container: "system"
+
+flag {
+    name: "foo"
+    namespace: "test"
+    description: "FIXME"
+    bug: ""
+    is_exported:true
+}
+
+flag {
+    name: "not_enabled"
+    namespace: "test"
+    description: "FIXME"
+    bug: ""
+    is_exported:true
+}
