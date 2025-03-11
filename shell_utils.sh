@@ -97,8 +97,11 @@ function setup_cog_symlink() {
   local out_dir=$(getoutdir)
   local top=$(gettop)
 
-  # return early if out dir is already a symlink
+  # return early if out dir is already a symlink.
   if [[ -L "$out_dir" ]]; then
+    destination=$(readlink "$out_dir")
+    # ensure the destination exists.
+    mkdir -p "$destination"
     return 0
   fi
 

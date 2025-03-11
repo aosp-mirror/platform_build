@@ -641,7 +641,6 @@ mod tests {
         package com.android.aconfig.test;
         // TODO(b/303773055): Remove the annotation after access issue is resolved.
         import android.compat.annotation.UnsupportedAppUsage;
-        import android.os.Build;
         import android.os.flagging.PlatformAconfigPackageInternal;
         import android.util.Log;
         /** @hide */
@@ -1377,6 +1376,56 @@ mod tests {
         }
 
         assert!(file_set.is_empty());
+    }
+
+    // Test that the SDK check isn't added unless the library is exported (even
+    // if the flag is present in finalized_flags).
+    #[test]
+    fn test_generate_java_code_flags_with_sdk_check() {
+        let parsed_flags = crate::test::parse_test_flags();
+        let mode = CodegenMode::Production;
+        let modified_parsed_flags =
+            crate::commands::modify_parsed_flags_based_on_mode(parsed_flags, mode).unwrap();
+        let flag_ids =
+            assign_flag_ids(crate::test::TEST_PACKAGE, modified_parsed_flags.iter()).unwrap();
+        let mut finalized_flags = FinalizedFlagMap::new();
+        finalized_flags.insert_if_new(
+            ApiLevel(36),
+            FinalizedFlag {
+                flag_name: "disabled_rw".to_string(),
+                package_name: "com.android.aconfig.test".to_string(),
+            },
+        );
+        let config = JavaCodegenConfig {
+            codegen_mode: mode,
+            flag_ids,
+            allow_instrumentation: true,
+            package_fingerprint: 5801144784618221668,
+            new_exported: true,
+            single_exported_file: false,
+            finalized_flags,
+        };
+        let generated_files = generate_java_code(
+            crate::test::TEST_PACKAGE,
+            modified_parsed_flags.into_iter(),
+            config,
+        )
+        .unwrap();
+
+        let expect_flags_content = EXPECTED_FLAG_COMMON_CONTENT.to_string()
+            + r#"
+        private static FeatureFlags FEATURE_FLAGS = new FeatureFlagsImpl();
+        }"#;
+
+        let file = generated_files.iter().find(|f| f.path.ends_with("Flags.java")).unwrap();
+        assert_eq!(
+            None,
+            crate::test::first_significant_code_diff(
+                &expect_flags_content,
+                &String::from_utf8(file.contents.clone()).unwrap()
+            ),
+            "Flags content is not correct"
+        );
     }
 
     #[test]
