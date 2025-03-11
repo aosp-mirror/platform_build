@@ -24,12 +24,12 @@ import java.util.Objects;
 public class FlagTable {
 
     private Header mHeader;
-    private ByteBufferReader mReader;
+    private ByteBuffer mBuffer;
 
     public static FlagTable fromBytes(ByteBuffer bytes) {
         FlagTable flagTable = new FlagTable();
-        flagTable.mReader = new ByteBufferReader(bytes);
-        flagTable.mHeader = Header.fromBytes(flagTable.mReader);
+        flagTable.mBuffer = bytes;
+        flagTable.mHeader = Header.fromBytes(new ByteBufferReader(bytes));
 
         return flagTable;
     }
@@ -41,16 +41,16 @@ public class FlagTable {
         if (newPosition >= mHeader.mNodeOffset) {
             return null;
         }
-
-        mReader.position(newPosition);
-        int nodeIndex = mReader.readInt();
+        ByteBufferReader reader = new ByteBufferReader(mBuffer) ;
+        reader.position(newPosition);
+        int nodeIndex = reader.readInt();
         if (nodeIndex < mHeader.mNodeOffset || nodeIndex >= mHeader.mFileSize) {
             return null;
         }
 
         while (nodeIndex != -1) {
-            mReader.position(nodeIndex);
-            Node node = Node.fromBytes(mReader);
+            reader.position(nodeIndex);
+            Node node = Node.fromBytes(reader);
             if (Objects.equals(flagName, node.mFlagName) && packageId == node.mPackageId) {
                 return node;
             }

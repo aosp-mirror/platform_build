@@ -19,7 +19,6 @@ PARSE_TIME_MAKE_GOALS := \
 	build-art% \
 	build_kernel-nodeps \
 	clean-oat% \
-	cts \
 	custom_images \
 	dicttool_aosp \
 	docs \

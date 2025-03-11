@@ -1,7 +1,0 @@
-{
-  "presubmit": [
-    {
-      "name": "product_config_test"
-    }
-  ]
-}

@@ -21,11 +21,6 @@ python_binary_host {
     srcs: [
         "generate-sbom.py",
     ],
-    version: {
-        py3: {
-            embedded_launcher: true,
-        },
-    },
     libs: [
         "metadata_file_proto_py",
         "libprotobuf-python",
@@ -45,11 +40,6 @@ python_binary_host {
     srcs: [
         "gen_sbom.py",
     ],
-    version: {
-        py3: {
-            embedded_launcher: true,
-        },
-    },
     libs: [
         "compliance_metadata",
         "metadata_file_proto_py",
@@ -78,11 +68,6 @@ python_test_host {
     libs: [
         "sbom_lib",
     ],
-    version: {
-        py3: {
-            embedded_launcher: true,
-        },
-    },
     test_suites: ["general-tests"],
 }
 
@@ -95,11 +80,6 @@ python_test_host {
     libs: [
         "sbom_lib",
     ],
-    version: {
-        py3: {
-            embedded_launcher: true,
-        },
-    },
     test_suites: ["general-tests"],
 }
 
@@ -108,11 +88,6 @@ python_binary_host {
     srcs: [
         "generate-sbom-framework_res.py",
     ],
-    version: {
-        py3: {
-            embedded_launcher: true,
-        },
-    },
     libs: [
         "sbom_lib",
     ],
@@ -123,11 +98,6 @@ python_binary_host {
     srcs: [
         "gen_notice_xml.py",
     ],
-    version: {
-        py3: {
-            embedded_launcher: true,
-        },
-    },
     libs: [
         "compliance_metadata",
         "metadata_file_proto_py",

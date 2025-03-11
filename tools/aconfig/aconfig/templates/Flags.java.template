@@ -2,8 +2,19 @@ package {package_name};
 {{ if not library_exported- }}
 // TODO(b/303773055): Remove the annotation after access issue is resolved.
 import android.compat.annotation.UnsupportedAppUsage;
+{{ else }}
+import android.os.Build;
+{{ -endif }} {#- end not library_exported#}
+{{ -if single_exported_file }}
+{{ -if library_exported }}
+/**
+ * @deprecated Use \{@link ExportedFlags} instead.
+ */
+@Deprecated {#- PREFER ExportedFlags #}
 {{ -endif }}
+{{ -else }}
 /** @hide */
+{{ -endif }}
 public final class Flags \{
 {{ -for item in flag_elements}}
     /** @hide */
@@ -22,6 +33,13 @@ public final class Flags \{
     @UnsupportedAppUsage
 {{ -endif }}
     public static boolean {item.method_name}() \{
+        {{ if library_exported- }}
+        {{ -if item.finalized_sdk_present }}
+        if (Build.VERSION.SDK_INT >= {item.finalized_sdk_value}) \{
+          return true;
+        }
+        {{ -endif}}  {#- end finalized_sdk_present#}
+        {{ -endif}}  {#- end library_exported#}
         return FEATURE_FLAGS.{item.method_name}();
     }
 {{ -endfor }}

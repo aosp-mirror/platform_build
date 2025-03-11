@@ -765,7 +765,6 @@ endif
 
 # TODO: remove all code referencing these, and remove override variables
 PRODUCT_FULL_TREBLE := true
-PRODUCT_NOTICE_SPLIT := true
 PRODUCT_TREBLE_LINKER_NAMESPACES := true
 PRODUCT_ENFORCE_VINTF_MANIFEST := true
 
@@ -774,7 +773,6 @@ PRODUCT_ENFORCE_VINTF_MANIFEST := true
     PRODUCT_FULL_TREBLE \
     PRODUCT_TREBLE_LINKER_NAMESPACES \
     PRODUCT_ENFORCE_VINTF_MANIFEST \
-    PRODUCT_NOTICE_SPLIT \
 
 # TODO(b/114488870): remove all sets of these everwhere, and disallow them to be used
 $(KATI_obsolete_var PRODUCT_TREBLE_LINKER_NAMESPACES_OVERRIDE,Deprecated.)
