@@ -18,11 +18,19 @@
 COMPATIBILITY.tradefed_tests_dir := \
   $(COMPATIBILITY.tradefed_tests_dir) \
   tools/tradefederation/core/res/config \
-  tools/tradefederation/core/javatests/res/config
+  tools/tradefederation/core/javatests/res/config \
+  vendor/google_tradefederation/contrib/res/config \
+  vendor/google_tradefederation/core/res/config \
+  vendor/google_tradefederation/core/javatests/res/config \
+  vendor/google_tradefederation/core/prod_tests/res/config
 
 tradefed_tests :=
 $(foreach dir, $(COMPATIBILITY.tradefed_tests_dir), \
-  $(eval tradefed_tests += $(shell find $(dir) -type f -name "*.xml")))
+  $(if $(wildcard $(dir)/*), \
+    $(eval tradefed_tests += $(shell find $(dir) -type f -name "*.xml")) \
+  ) \
+)
+
 tradefed_tests_list_intermediates := $(call intermediates-dir-for,PACKAGING,tradefed_tests_list,HOST,COMMON)
 tradefed_tests_list_zip := $(tradefed_tests_list_intermediates)/tradefed-tests_list.zip
 all_tests :=

@@ -30,12 +30,12 @@
 # Needed to ensure callback field references are kept in their respective
 # owning classes when the downstream callback registrars only store weak refs.
 -if @com.android.internal.annotations.WeaklyReferencedCallback class *
--keepclassmembers,allowaccessmodification class * {
-  <1> *;
+-keepclassmembers,allowaccessmodification,allowobfuscation,allowshrinking class * {
+  !synthetic <1> *;
 }
 -if class * extends @com.android.internal.annotations.WeaklyReferencedCallback **
--keepclassmembers,allowaccessmodification class * {
-  <1> *;
+-keepclassmembers,allowaccessmodification,allowobfuscation,allowshrinking class * {
+  !synthetic <1> *;
 }
 
 # Understand the common @Keep annotation from various Android packages:

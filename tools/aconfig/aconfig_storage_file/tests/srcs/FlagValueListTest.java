@@ -28,6 +28,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.Objects;
+import java.util.concurrent.CyclicBarrier;
+
 @RunWith(JUnit4.class)
 public class FlagValueListTest {
 
@@ -73,5 +76,44 @@ public class FlagValueListTest {
         pNode = packageTable.get("com.android.aconfig.storage.test_4");
         fNode = flagTable.get(pNode.getPackageId(), "enabled_fixed_ro");
         assertTrue(flagValueList.getBoolean(pNode.getBooleanStartIndex() + fNode.getFlagIndex()));
+    }
+
+    @Test
+    public void testFlagValueList_multithreadsRead() throws Exception {
+        FlagValueList flagValueList =
+                FlagValueList.fromBytes(TestDataUtils.getTestFlagValByteBuffer(2));
+
+        int numberOfThreads = 8;
+        Thread[] threads = new Thread[numberOfThreads];
+        final CyclicBarrier gate = new CyclicBarrier(numberOfThreads + 1);
+        boolean[] expects = {false, true, true, false, true, true, true, true};
+
+        for (int i = 0; i < numberOfThreads; i++) {
+            boolean expectRet = expects[i];
+            int position = i;
+            threads[i] =
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                gate.await();
+                            } catch (Exception e) {
+                            }
+                            for (int j = 0; j < 10; j++) {
+                                if (!Objects.equals(
+                                        expectRet, flagValueList.getBoolean(position))) {
+                                    throw new RuntimeException();
+                                }
+                            }
+                        }
+                    };
+            threads[i].start();
+        }
+
+        gate.await();
+
+        for (int i = 0; i < numberOfThreads; i++) {
+            threads[i].join();
+        }
     }
 }

@@ -33,6 +33,7 @@ mod storage;
 
 use aconfig_storage_file::StorageFileType;
 use codegen::CodegenMode;
+use convert_finalized_flags::FinalizedFlagMap;
 use dump::DumpFormat;
 
 #[cfg(test)]
@@ -158,11 +159,19 @@ fn cli() -> Command {
                         .default_value("production"),
                 )
                 .arg(
+                    Arg::new("single-exported-file")
+                        .long("single-exported-file")
+                        .value_parser(clap::value_parser!(bool))
+                        .default_value("false"),
+                )
+                // TODO: b/395899938 - clean up flags for switching to new storage
+                .arg(
                     Arg::new("allow-instrumentation")
                         .long("allow-instrumentation")
                         .value_parser(clap::value_parser!(bool))
                         .default_value("false"),
                 )
+                // TODO: b/395899938 - clean up flags for switching to new storage
                 .arg(
                     Arg::new("new-exported")
                         .long("new-exported")
@@ -340,6 +349,12 @@ fn write_output_to_file_or_stdout(path: &str, data: &[u8]) -> Result<()> {
     Ok(())
 }
 
+fn load_finalized_flags() -> Result<FinalizedFlagMap> {
+    let json_str = include_str!(concat!(env!("OUT_DIR"), "/finalized_flags_record.json"));
+    let map = serde_json::from_str(json_str)?;
+    Ok(map)
+}
+
 fn main() -> Result<()> {
     let matches = cli().get_matches();
     match matches.subcommand() {
@@ -373,13 +388,20 @@ fn main() -> Result<()> {
             let allow_instrumentation =
                 get_required_arg::<bool>(sub_matches, "allow-instrumentation")?;
             let new_exported = get_required_arg::<bool>(sub_matches, "new-exported")?;
+            let single_exported_file =
+                get_required_arg::<bool>(sub_matches, "single-exported-file")?;
+
             let check_api_level = get_required_arg::<bool>(sub_matches, "check-api-level")?;
+            let finalized_flags: FinalizedFlagMap =
+                if *check_api_level { load_finalized_flags()? } else { FinalizedFlagMap::new() };
+
             let generated_files = commands::create_java_lib(
                 cache,
                 *mode,
                 *allow_instrumentation,
                 *new_exported,
-                *check_api_level,
+                *single_exported_file,
+                finalized_flags,
             )
             .context("failed to create java lib")?;
             let dir = PathBuf::from(get_required_arg::<String>(sub_matches, "out")?);

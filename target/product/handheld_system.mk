@@ -34,7 +34,6 @@ $(call inherit-product-if-exists, frameworks/webview/chromium/chromium.mk)
 
 PRODUCT_PACKAGES += \
     android.software.window_magnification.prebuilt.xml \
-    $(if $(RELEASE_AVATAR_PICKER_APP), AvatarPicker,) \
     BasicDreams \
     BlockedNumberProvider \
     BluetoothMidiService \

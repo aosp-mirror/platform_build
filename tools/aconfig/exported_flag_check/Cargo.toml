@@ -1,0 +1,14 @@
+[package]
+name = "exported-flag-check"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = ["cargo"]
+cargo = []
+
+[dependencies]
+aconfig_protos = { path = "../aconfig_protos" }
+anyhow = "1.0.69"
+clap = { version = "4.1.8", features = ["derive"] }
+regex = "1.11.1"

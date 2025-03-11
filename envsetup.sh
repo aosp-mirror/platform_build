@@ -438,68 +438,6 @@ function print_lunch_menu()
     echo
 }
 
-function lunch()
-{
-    local answer
-    setup_cog_env_if_needed
-
-    if [[ $# -gt 1 ]]; then
-        echo "usage: lunch [target]" >&2
-        return 1
-    fi
-
-    local used_lunch_menu=0
-
-    if [ "$1" ]; then
-        answer=$1
-    else
-        print_lunch_menu
-        echo "Which would you like? [aosp_cf_x86_64_phone-trunk_staging-eng]"
-        echo -n "Pick from common choices above (e.g. 13) or specify your own (e.g. aosp_barbet-trunk_staging-eng): "
-        read answer
-        used_lunch_menu=1
-    fi
-
-    local selection=
-
-    if [ -z "$answer" ]
-    then
-        selection=aosp_cf_x86_64_phone-trunk_staging-eng
-    elif (echo -n $answer | grep -q -e "^[0-9][0-9]*$")
-    then
-        local choices=($(TARGET_BUILD_APPS= TARGET_PRODUCT= TARGET_RELEASE= TARGET_BUILD_VARIANT= _get_build_var_cached COMMON_LUNCH_CHOICES 2>/dev/null))
-        if [ $answer -le ${#choices[@]} ]
-        then
-            # array in zsh starts from 1 instead of 0.
-            if [ -n "$ZSH_VERSION" ]
-            then
-                selection=${choices[$(($answer))]}
-            else
-                selection=${choices[$(($answer-1))]}
-            fi
-        fi
-    else
-        selection=$answer
-    fi
-
-    export TARGET_BUILD_APPS=
-
-    # This must be <product>-<release>-<variant>
-    local product release variant
-    # Split string on the '-' character.
-    IFS="-" read -r product release variant <<< "$selection"
-
-    if [[ -z "$product" ]] || [[ -z "$release" ]] || [[ -z "$variant" ]]
-    then
-        echo
-        echo "Invalid lunch combo: $selection"
-        echo "Valid combos must be of the form <product>-<release>-<variant>"
-        return 1
-    fi
-
-    _lunch_meat $product $release $variant
-}
-
 function _lunch_meat()
 {
     local product=$1
@@ -582,13 +520,13 @@ function _lunch_usage()
         echo "Note that the previous interactive menu and list of hard-coded"
         echo "list of curated targets has been removed. If you would like the"
         echo "list of products, release configs for a particular product, or"
-        echo "variants, run list_products, list_release_configs, list_variants"
+        echo "variants, run list_products list_releases or list_variants"
         echo "respectively."
         echo
     ) 1>&2
 }
 
-function lunch2()
+function lunch()
 {
     if [[ $# -eq 1 && $1 = "--help" ]]; then
         _lunch_usage

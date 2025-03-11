@@ -90,9 +90,6 @@ ALL_INIT_RC_INSTALLED_PAIRS :=
 # All installed vintf manifest fragments for a partition at
 ALL_VINTF_MANIFEST_FRAGMENTS_LIST:=
 
-# All tests that should be skipped in presubmit check.
-ALL_DISABLED_PRESUBMIT_TESTS :=
-
 # All compatibility suites mentioned in LOCAL_COMPATIBILITY_SUITE
 ALL_COMPATIBILITY_SUITES :=
 
@@ -835,18 +832,6 @@ define declare-0p-target
 $(strip \
   $(eval _tgt := $(subst //,/,$(strip $(1)))) \
   $(eval ALL_0P_TARGETS += $(_tgt)) \
-)
-endef
-
-###########################################################
-## Declare that non-module targets copied from project $(1) and
-## optionally ending in $(2) are non-copyrightable files.
-##
-## e.g. an information-only file merely listing other files.
-###########################################################
-define declare-0p-copy-files
-$(strip \
-  $(foreach _pair,$(filter $(1)%$(2),$(PRODUCT_COPY_FILES)),$(eval $(call declare-0p-target,$(PRODUCT_OUT)/$(call word-colon,2,$(_pair))))) \
 )
 endef
 
