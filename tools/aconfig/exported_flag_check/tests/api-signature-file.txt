@@ -1,0 +1,15 @@
+// Signature format: 2.0
+package android {
+
+  public final class C {
+    ctor public C();
+  }
+
+  public static final class C.inner {
+    ctor public C.inner();
+    field @FlaggedApi("record_finalized_flags.test.foo") public static final String FOO = "foo";
+    field @FlaggedApi("this.flag.is.not.used") public static final String BAR = "bar";
+  }
+
+}
+

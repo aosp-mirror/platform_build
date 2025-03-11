@@ -1,0 +1,45 @@
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+    default_team: "trendy_team_android_crumpet",
+}
+
+java_binary_host {
+    name: "dependency-mapper",
+    main_class: "com.android.dependencymapper.Main",
+    static_libs: [
+        "dependency-mapper-host-lib",
+    ],
+    visibility: ["//visibility:public"],
+}
+
+java_library_host {
+    name: "dependency-mapper-host-lib",
+    srcs: [
+        "src/**/*.java",
+        "proto/**/*.proto",
+    ],
+    static_libs: [
+        "gson",
+        "ow2-asm",
+    ],
+}
+
+java_test_host {
+    name: "dependency-mapper-tests",
+    srcs: ["tests/src/**/*.java"],
+    static_libs: [
+        "junit",
+        "dependency-mapper-host-lib",
+    ],
+    data: [
+        "tests/res/**/*",
+    ],
+    test_options: {
+        unit_test: true,
+    },
+}
+
+java_library {
+    name: "dependency-mapper-test-data",
+    srcs: ["tests/res/**/*.java"],
+}
