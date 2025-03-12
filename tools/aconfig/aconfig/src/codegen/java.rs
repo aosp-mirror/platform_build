@@ -59,7 +59,8 @@ where
     let runtime_lookup_required =
         flag_elements.iter().any(|elem| elem.is_read_write) || library_exported;
     let container = (flag_elements.first().expect("zero template flags").container).to_string();
-    let is_platform_container = matches!(container.as_str(), "system" | "product" | "vendor");
+    let is_platform_container =
+        matches!(container.as_str(), "system" | "system_ext" | "product" | "vendor");
     let context = Context {
         flag_elements,
         namespace_flags,
