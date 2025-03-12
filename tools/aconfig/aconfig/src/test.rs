@@ -333,6 +333,30 @@ parsed_flag {
         }
     }
 
+    /// Asserts that the two strings are equivalent. For use in tests. Fails
+    /// with formatted error message for easier debugging.
+    pub fn assert_no_significant_code_diff(expected: &str, actual: &str) {
+        let expected =
+            expected.lines().map(|line| line.trim_start()).filter(|line| !line.is_empty());
+        let actual = actual.lines().map(|line| line.trim_start()).filter(|line| !line.is_empty());
+        let fail_message: Option<String> =
+            match itertools::diff_with(expected, actual, |left, right| left == right) {
+                Some(itertools::Diff::FirstMismatch(_, mut left, mut right)) => Some(format!(
+                    "DOES NOT MATCH: 1) expected, 2) actual:\n{}\n{}",
+                    left.next().unwrap(),
+                    right.next().unwrap()
+                )),
+                Some(itertools::Diff::Shorter(_, mut left)) => {
+                    Some(format!("LHS trailing data: '{}'", left.next().unwrap()))
+                }
+                Some(itertools::Diff::Longer(_, mut right)) => {
+                    Some(format!("RHS trailing data: '{}'", right.next().unwrap()))
+                }
+                None => None,
+            };
+        assert!(fail_message.is_none(), "{}", fail_message.unwrap());
+    }
+
     #[test]
     fn test_first_significant_code_diff() {
         assert!(first_significant_code_diff("", "").is_none());

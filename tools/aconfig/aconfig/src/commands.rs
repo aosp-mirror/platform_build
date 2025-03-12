@@ -258,13 +258,28 @@ pub fn create_rust_lib(mut input: Input, codegen_mode: CodegenMode) -> Result<Ou
         "Exported mode for generated rust flag library is disabled"
     );
     let parsed_flags = input.try_parse_flags()?;
-    let modified_parsed_flags = modify_parsed_flags_based_on_mode(parsed_flags, codegen_mode)?;
+    let modified_parsed_flags =
+        modify_parsed_flags_based_on_mode(parsed_flags.clone(), codegen_mode)?;
     let Some(package) = find_unique_package(&modified_parsed_flags) else {
         bail!("no parsed flags, or the parsed flags use different packages");
     };
     let package = package.to_string();
+
+    let package_fingerprint: Option<u64> = if cfg!(enable_fingerprint_rust) {
+        let mut flag_names = extract_flag_names(parsed_flags)?;
+        Some(compute_flags_fingerprint(&mut flag_names))
+    } else {
+        None
+    };
+
     let flag_ids = assign_flag_ids(&package, modified_parsed_flags.iter())?;
-    generate_rust_code(&package, flag_ids, modified_parsed_flags.into_iter(), codegen_mode)
+    generate_rust_code(
+        &package,
+        flag_ids,
+        modified_parsed_flags.into_iter(),
+        codegen_mode,
+        package_fingerprint,
+    )
 }
 
 pub fn create_storage(
