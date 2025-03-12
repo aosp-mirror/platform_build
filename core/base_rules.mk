@@ -214,6 +214,22 @@ else
   actual_partition_tag := $(if $(partition_tag),data,system)
 endif
 endif
+
+# if this is a soong module, verify that LOCAL_COMPATIBILITY_SUITE (legacy) matches
+# LOCAL_SOONG_PROVIDER_TEST_SUITES (new, via TestSuiteInfoProvider instead of AndroidMk stuff),
+# modulo "null-sute", "mts", and "mcts". mts/mcts are automatically added if there's a different
+# suite starting with "m(c)ts-". null-suite seems useless and is sometimes automatically added
+# if no other suites are added.
+ifneq (,$(filter $(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK)))
+  a := $(filter-out null-suite mts mcts,$(sort $(LOCAL_COMPATIBILITY_SUITE)))
+  b := $(filter-out null-suite mts mcts,$(sort $(LOCAL_SOONG_PROVIDER_TEST_SUITES)))
+  ifneq ($(a),$(b))
+    $(error $(LOCAL_MODULE): LOCAL_COMPATIBILITY_SUITE did not match LOCAL_SOONG_PROVIDER_TEST_SUITES$(newline)  LOCAL_COMPATIBILITY_SUITE: $(a)$(newline)  LOCAL_SOONG_PROVIDER_TEST_SUITES: $(b)$(newline))
+  endif
+  a :=
+  b :=
+endif
+
 # For test modules that lack a suite tag, set null-suite as the default.
 # We only support adding a default suite to native tests, native benchmarks, and instrumentation tests.
 # This is because they are the only tests we currently auto-generate test configs for.
