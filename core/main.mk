@@ -299,6 +299,8 @@ subdir_makefiles_total := $(words int $(subdir_makefiles) post finish)
 
 $(foreach mk,$(subdir_makefiles),$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] including $(mk) ...)$(eval include $(mk)))
 
+-include device/generic/goldfish/tasks/emu_img_zip.mk
+
 # Build bootloader.img/radio.img, and unpack the partitions.
 -include vendor/google_devices/$(TARGET_SOC)/prebuilts/misc_bins/update_bootloader_radio_image.mk
 

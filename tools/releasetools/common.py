@@ -2993,7 +2993,7 @@ def ZipWrite(zip_file, filename, arcname=None, perms=0o644,
     os.chmod(filename, perms)
 
     # Use a fixed timestamp so the output is repeatable.
-    # Note: Use of fromtimestamp rather than utcfromtimestamp here is
+    # Note: Use of fromtimestamp without specifying a timezone here is
     # intentional. zip stores datetimes in local time without a time zone
     # attached, so we need "epoch" but in the local time zone to get 2009/01/01
     # in the zip archive.
