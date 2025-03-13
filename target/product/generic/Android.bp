@@ -109,6 +109,14 @@ generic_symlinks = [
         target: "/vendor/odm/usr",
         name: "odm/usr",
     },
+    {
+        target: "/odm/odm_dlkm/etc",
+        name: "odm_dlkm/etc",
+    },
+    {
+        target: "/vendor/vendor_dlkm/etc",
+        name: "vendor_dlkm/etc",
+    },
 ]
 
 android_symlinks = [
