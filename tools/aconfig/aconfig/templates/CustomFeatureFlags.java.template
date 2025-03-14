@@ -5,11 +5,18 @@ package {package_name};
 import android.compat.annotation.UnsupportedAppUsage;
 {{ -endif }}
 import java.util.Arrays;
+{{ -if library_exported }}
+import java.util.HashMap;
+import java.util.Map;
+{{ -endif }}
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
+{{ -if library_exported }}
+import android.os.Build;
+{{ -endif }}
 
 {{ -if single_exported_file }}
 {{ -if library_exported }}
@@ -73,4 +80,24 @@ public class CustomFeatureFlags implements FeatureFlags \{
             ""{# The empty string here is to resolve the ending comma #}
         )
     );
+
+{{ -if library_exported }}
+    private Map<String, Integer> mFinalizedFlags = new HashMap<>(
+        Map.ofEntries(
+            {{ -for item in flag_elements }}
+            {{ -if item.finalized_sdk_present }}
+            Map.entry(Flags.FLAG_{item.flag_name_constant_suffix}, {item.finalized_sdk_value}),
+            {{ -endif }}
+            {{ -endfor }}
+            Map.entry("", Integer.MAX_VALUE){# The empty entry to avoid empty entries #}
+        )
+    );
+
+    public boolean isFlagFinalized(String flagName) \{
+        if (!mFinalizedFlags.containsKey(flagName)) \{
+            return false;
+        }
+        return Build.VERSION.SDK_INT >= mFinalizedFlags.get(flagName);
+    }
+{{ -endif }}
 }
