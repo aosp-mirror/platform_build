@@ -893,11 +893,15 @@ mod tests {
         package com.android.aconfig.test;
 
         import java.util.Arrays;
+        import java.util.HashMap;
+        import java.util.Map;
         import java.util.HashSet;
         import java.util.List;
         import java.util.Set;
         import java.util.function.BiPredicate;
         import java.util.function.Predicate;
+
+        import android.os.Build;
 
         /** @hide */
         public class CustomFeatureFlags implements FeatureFlags {
@@ -941,6 +945,19 @@ mod tests {
                     ""
                 )
             );
+
+            private Map<String, Integer> mFinalizedFlags = new HashMap<>(
+                Map.ofEntries(
+                    Map.entry("", Integer.MAX_VALUE)
+                )
+            );
+
+            public boolean isFlagFinalized(String flagName) {
+                if (!mFinalizedFlags.containsKey(flagName)) {
+                    return false;
+                }
+                return Build.VERSION.SDK_INT >= mFinalizedFlags.get(flagName);
+            }
         }
     "#;
 
@@ -1089,11 +1106,14 @@ mod tests {
         package com.android.aconfig.test;
 
         import java.util.Arrays;
+        import java.util.HashMap;
+        import java.util.Map;
         import java.util.HashSet;
         import java.util.List;
         import java.util.Set;
         import java.util.function.BiPredicate;
         import java.util.function.Predicate;
+        import android.os.Build;
 
         /** @hide */
         public class CustomFeatureFlags implements FeatureFlags {
@@ -1137,6 +1157,19 @@ mod tests {
                     ""
                 )
             );
+
+            private Map<String, Integer> mFinalizedFlags = new HashMap<>(
+                Map.ofEntries(
+                    Map.entry("", Integer.MAX_VALUE)
+                )
+            );
+
+            public boolean isFlagFinalized(String flagName) {
+                if (!mFinalizedFlags.containsKey(flagName)) {
+                    return false;
+                }
+                return Build.VERSION.SDK_INT >= mFinalizedFlags.get(flagName);
+            }
         }
     "#;
 
@@ -1296,11 +1329,14 @@ mod tests {
         package com.android.aconfig.test;
 
         import java.util.Arrays;
+        import java.util.HashMap;
+        import java.util.Map;
         import java.util.HashSet;
         import java.util.List;
         import java.util.Set;
         import java.util.function.BiPredicate;
         import java.util.function.Predicate;
+        import android.os.Build;
 
         /** @hide */
         public class CustomFeatureFlags implements FeatureFlags {
@@ -1344,6 +1380,20 @@ mod tests {
                     ""
                 )
             );
+
+            private Map<String, Integer> mFinalizedFlags = new HashMap<>(
+                Map.ofEntries(
+                    Map.entry(Flags.FLAG_DISABLED_RW_EXPORTED, 36),
+                    Map.entry("", Integer.MAX_VALUE)
+                )
+            );
+
+            public boolean isFlagFinalized(String flagName) {
+                if (!mFinalizedFlags.containsKey(flagName)) {
+                    return false;
+                }
+                return Build.VERSION.SDK_INT >= mFinalizedFlags.get(flagName);
+            }
         }
     "#;
 
