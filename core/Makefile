@@ -6119,9 +6119,6 @@ endif
 ifneq ($(BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST),)
 	$(hide) echo "partial_ota_update_partitions_list=$(BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST)" >> $@
 endif
-ifeq ($(BUILDING_WITH_VSDK),true)
-	$(hide) echo "building_with_vsdk=true" >> $@
-endif
 
 $(call declare-0p-target,$(INSTALLED_FASTBOOT_INFO_TARGET))
 

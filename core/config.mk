@@ -598,10 +598,7 @@ DISABLE_PREOPT :=
 DISABLE_PREOPT_BOOT_IMAGES :=
 ifneq (,$(TARGET_BUILD_APPS)$(TARGET_BUILD_UNBUNDLED_IMAGE))
   DISABLE_PREOPT := true
-  # VSDK builds perform dexpreopt during merge_target_files build step.
-  ifneq (true,$(BUILDING_WITH_VSDK))
-    DISABLE_PREOPT_BOOT_IMAGES := true
-  endif
+  DISABLE_PREOPT_BOOT_IMAGES := true
 endif
 ifeq (true,$(TARGET_BUILD_UNBUNDLED))
   ifneq (true,$(UNBUNDLED_BUILD_SDKS_FROM_SOURCE))
