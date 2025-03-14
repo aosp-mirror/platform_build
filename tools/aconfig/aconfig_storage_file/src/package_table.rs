@@ -287,50 +287,28 @@ mod tests {
 
     #[test]
     // this test point locks down the table serialization
-    // TODO: b/376108268 - Use parameterized tests.
-    fn test_serialization_default() {
-        let package_table = create_test_package_table(DEFAULT_FILE_VERSION);
-        let header: &PackageTableHeader = &package_table.header;
-        let reinterpreted_header = PackageTableHeader::from_bytes(&header.into_bytes());
-        assert!(reinterpreted_header.is_ok());
-        assert_eq!(header, &reinterpreted_header.unwrap());
+    fn test_serialization() {
+        for file_version in 1..=MAX_SUPPORTED_FILE_VERSION {
+            let package_table = create_test_package_table(file_version);
+            let header: &PackageTableHeader = &package_table.header;
+            let reinterpreted_header = PackageTableHeader::from_bytes(&header.into_bytes());
+            assert!(reinterpreted_header.is_ok());
+            assert_eq!(header, &reinterpreted_header.unwrap());
 
-        let nodes: &Vec<PackageTableNode> = &package_table.nodes;
-        for node in nodes.iter() {
-            let reinterpreted_node =
-                PackageTableNode::from_bytes(&node.into_bytes(header.version), header.version)
-                    .unwrap();
-            assert_eq!(node, &reinterpreted_node);
+            let nodes: &Vec<PackageTableNode> = &package_table.nodes;
+            for node in nodes.iter() {
+                let reinterpreted_node =
+                    PackageTableNode::from_bytes(&node.into_bytes(header.version), header.version)
+                        .unwrap();
+                assert_eq!(node, &reinterpreted_node);
+            }
+
+            let package_table_bytes = package_table.into_bytes();
+            let reinterpreted_table = PackageTable::from_bytes(&package_table_bytes);
+            assert!(reinterpreted_table.is_ok());
+            assert_eq!(&package_table, &reinterpreted_table.unwrap());
+            assert_eq!(package_table_bytes.len() as u32, header.file_size);
         }
-
-        let package_table_bytes = package_table.into_bytes();
-        let reinterpreted_table = PackageTable::from_bytes(&package_table_bytes);
-        assert!(reinterpreted_table.is_ok());
-        assert_eq!(&package_table, &reinterpreted_table.unwrap());
-        assert_eq!(package_table_bytes.len() as u32, header.file_size);
-    }
-
-    #[test]
-    fn test_serialization_max() {
-        let package_table = create_test_package_table(MAX_SUPPORTED_FILE_VERSION);
-        let header: &PackageTableHeader = &package_table.header;
-        let reinterpreted_header = PackageTableHeader::from_bytes(&header.into_bytes());
-        assert!(reinterpreted_header.is_ok());
-        assert_eq!(header, &reinterpreted_header.unwrap());
-
-        let nodes: &Vec<PackageTableNode> = &package_table.nodes;
-        for node in nodes.iter() {
-            let reinterpreted_node =
-                PackageTableNode::from_bytes(&node.into_bytes(header.version), header.version)
-                    .unwrap();
-            assert_eq!(node, &reinterpreted_node);
-        }
-
-        let package_table_bytes = package_table.into_bytes();
-        let reinterpreted_table = PackageTable::from_bytes(&package_table_bytes);
-        assert!(reinterpreted_table.is_ok());
-        assert_eq!(&package_table, &reinterpreted_table.unwrap());
-        assert_eq!(package_table_bytes.len() as u32, header.file_size);
     }
 
     #[test]
