@@ -5743,64 +5743,6 @@ INTERNAL_OTATOOLS_FILES := \
 .PHONY: otatools
 otatools: $(INTERNAL_OTATOOLS_FILES)
 
-# For each module, recursively resolve its host shared library dependencies. Then we have a full
-# list of modules whose installed files need to be packed.
-INTERNAL_OTATOOLS_MODULES_WITH_DEPS := \
-  $(sort $(INTERNAL_OTATOOLS_MODULES) \
-      $(foreach m,$(INTERNAL_OTATOOLS_MODULES),$(call get-all-shared-libs-deps,$(m))))
-
-INTERNAL_OTATOOLS_PACKAGE_FILES := \
-  $(filter $(HOST_OUT)/%,$(call module-installed-files,$(INTERNAL_OTATOOLS_MODULES_WITH_DEPS)))
-
-INTERNAL_OTATOOLS_PACKAGE_FILES += \
-  $(sort $(shell find build/make/target/product/security -type f -name "*.x509.pem" -o \
-      -name "*.pk8"))
-
-ifneq (,$(wildcard packages/modules))
-INTERNAL_OTATOOLS_PACKAGE_FILES += \
-  $(sort $(shell find packages/modules -type f -name "*.x509.pem" -o -name "*.pk8" -o -name \
-      "key.pem"))
-endif
-
-ifneq (,$(wildcard device))
-INTERNAL_OTATOOLS_PACKAGE_FILES += \
-  $(sort $(shell find device $(wildcard vendor) -type f -name "*.pk8" -o -name "verifiedboot*" -o \
-      -name "*.pem" -o -name "oem*.prop" -o -name "*.avbpubkey"))
-endif
-ifneq (,$(wildcard external/avb))
-INTERNAL_OTATOOLS_PACKAGE_FILES += \
-  $(sort $(shell find external/avb/test/data -type f -name "testkey_*.pem" -o \
-      -name "atx_metadata.bin"))
-endif
-
-INTERNAL_OTATOOLS_RELEASETOOLS := \
-  $(shell find build/make/tools/releasetools -name "*.pyc" -prune -o \
-      \( -type f -o -type l \) -print | sort)
-
-BUILT_OTATOOLS_PACKAGE := $(PRODUCT_OUT)/otatools.zip
-$(BUILT_OTATOOLS_PACKAGE): PRIVATE_ZIP_ROOT := $(call intermediates-dir-for,PACKAGING,otatools)/otatools
-$(BUILT_OTATOOLS_PACKAGE): PRIVATE_OTATOOLS_PACKAGE_FILES := $(INTERNAL_OTATOOLS_PACKAGE_FILES)
-$(BUILT_OTATOOLS_PACKAGE): PRIVATE_OTATOOLS_RELEASETOOLS := $(INTERNAL_OTATOOLS_RELEASETOOLS)
-$(BUILT_OTATOOLS_PACKAGE): $(INTERNAL_OTATOOLS_PACKAGE_FILES) $(INTERNAL_OTATOOLS_RELEASETOOLS)
-$(BUILT_OTATOOLS_PACKAGE): $(SOONG_ZIP) $(ZIP2ZIP)
-	@echo "Package OTA tools: $@"
-	rm -rf $@ $(PRIVATE_ZIP_ROOT)
-	mkdir -p $(dir $@)
-	$(call copy-files-with-structure,$(PRIVATE_OTATOOLS_PACKAGE_FILES),$(HOST_OUT)/,$(PRIVATE_ZIP_ROOT))
-	$(call copy-files-with-structure,$(PRIVATE_OTATOOLS_RELEASETOOLS),build/make/tools/,$(PRIVATE_ZIP_ROOT))
-	cp $(SOONG_ZIP) $(ZIP2ZIP) $(MERGE_ZIPS) $(PRIVATE_ZIP_ROOT)/bin/
-	$(SOONG_ZIP) -o $@ -C $(PRIVATE_ZIP_ROOT) -D $(PRIVATE_ZIP_ROOT)
-
-$(call declare-1p-container,$(BUILT_OTATOOLS_PACKAGE),build)
-$(call declare-container-license-deps,$(INTERNAL_OTATOOLS_PACKAGE_FILES) $(INTERNAL_OTATOOLS_RELEASETOOLS),$(BUILT_OTATOOLS_PACKAGE):)
-
-.PHONY: otatools-package
-otatools-package: $(BUILT_OTATOOLS_PACKAGE)
-
-$(call dist-for-goals, otatools-package, \
-  $(BUILT_OTATOOLS_PACKAGE) \
-)
-
 endif # build_otatools_package
 
 # -----------------------------------------------------------------

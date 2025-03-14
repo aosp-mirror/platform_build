@@ -1556,7 +1556,6 @@ else ifeq ($(TARGET_BUILD_UNBUNDLED),$(TARGET_BUILD_UNBUNDLED_IMAGE))
   # sources in a droidcore full build.
 
   $(call dist-for-goals, droidcore, \
-    $(BUILT_OTATOOLS_PACKAGE) \
     $(APPCOMPAT_ZIP) \
   )
 
