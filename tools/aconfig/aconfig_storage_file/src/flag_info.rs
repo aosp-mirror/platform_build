@@ -199,49 +199,28 @@ mod tests {
     };
 
     // this test point locks down the value list serialization
-    // TODO: b/376108268 - Use parameterized tests.
     #[test]
-    fn test_serialization_default() {
-        let flag_info_list = create_test_flag_info_list(DEFAULT_FILE_VERSION);
+    fn test_serialization() {
+        for file_version in 1..=MAX_SUPPORTED_FILE_VERSION {
+            let flag_info_list = create_test_flag_info_list(file_version);
 
-        let header: &FlagInfoHeader = &flag_info_list.header;
-        let reinterpreted_header = FlagInfoHeader::from_bytes(&header.into_bytes());
-        assert!(reinterpreted_header.is_ok());
-        assert_eq!(header, &reinterpreted_header.unwrap());
+            let header: &FlagInfoHeader = &flag_info_list.header;
+            let reinterpreted_header = FlagInfoHeader::from_bytes(&header.into_bytes());
+            assert!(reinterpreted_header.is_ok());
+            assert_eq!(header, &reinterpreted_header.unwrap());
 
-        let nodes: &Vec<FlagInfoNode> = &flag_info_list.nodes;
-        for node in nodes.iter() {
-            let reinterpreted_node = FlagInfoNode::from_bytes(&node.into_bytes()).unwrap();
-            assert_eq!(node, &reinterpreted_node);
+            let nodes: &Vec<FlagInfoNode> = &flag_info_list.nodes;
+            for node in nodes.iter() {
+                let reinterpreted_node = FlagInfoNode::from_bytes(&node.into_bytes()).unwrap();
+                assert_eq!(node, &reinterpreted_node);
+            }
+
+            let flag_info_bytes = flag_info_list.into_bytes();
+            let reinterpreted_info_list = FlagInfoList::from_bytes(&flag_info_bytes);
+            assert!(reinterpreted_info_list.is_ok());
+            assert_eq!(&flag_info_list, &reinterpreted_info_list.unwrap());
+            assert_eq!(flag_info_bytes.len() as u32, header.file_size);
         }
-
-        let flag_info_bytes = flag_info_list.into_bytes();
-        let reinterpreted_info_list = FlagInfoList::from_bytes(&flag_info_bytes);
-        assert!(reinterpreted_info_list.is_ok());
-        assert_eq!(&flag_info_list, &reinterpreted_info_list.unwrap());
-        assert_eq!(flag_info_bytes.len() as u32, header.file_size);
-    }
-
-    #[test]
-    fn test_serialization_max() {
-        let flag_info_list = create_test_flag_info_list(MAX_SUPPORTED_FILE_VERSION);
-
-        let header: &FlagInfoHeader = &flag_info_list.header;
-        let reinterpreted_header = FlagInfoHeader::from_bytes(&header.into_bytes());
-        assert!(reinterpreted_header.is_ok());
-        assert_eq!(header, &reinterpreted_header.unwrap());
-
-        let nodes: &Vec<FlagInfoNode> = &flag_info_list.nodes;
-        for node in nodes.iter() {
-            let reinterpreted_node = FlagInfoNode::from_bytes(&node.into_bytes()).unwrap();
-            assert_eq!(node, &reinterpreted_node);
-        }
-
-        let flag_info_bytes = flag_info_list.into_bytes();
-        let reinterpreted_info_list = FlagInfoList::from_bytes(&flag_info_bytes);
-        assert!(reinterpreted_info_list.is_ok());
-        assert_eq!(&flag_info_list, &reinterpreted_info_list.unwrap());
-        assert_eq!(flag_info_bytes.len() as u32, header.file_size);
     }
 
     // this test point locks down that version number should be at the top of serialized

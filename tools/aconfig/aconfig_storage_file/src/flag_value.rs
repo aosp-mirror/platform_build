@@ -138,37 +138,21 @@ mod tests {
 
     #[test]
     // this test point locks down the value list serialization
-    // TODO: b/376108268 - Use parameterized tests.
-    fn test_serialization_default() {
-        let flag_value_list = create_test_flag_value_list(DEFAULT_FILE_VERSION);
+    fn test_serialization() {
+        for file_version in 1..=MAX_SUPPORTED_FILE_VERSION {
+            let flag_value_list = create_test_flag_value_list(file_version);
 
-        let header: &FlagValueHeader = &flag_value_list.header;
-        let reinterpreted_header = FlagValueHeader::from_bytes(&header.into_bytes());
-        assert!(reinterpreted_header.is_ok());
-        assert_eq!(header, &reinterpreted_header.unwrap());
+            let header: &FlagValueHeader = &flag_value_list.header;
+            let reinterpreted_header = FlagValueHeader::from_bytes(&header.into_bytes());
+            assert!(reinterpreted_header.is_ok());
+            assert_eq!(header, &reinterpreted_header.unwrap());
 
-        let flag_value_bytes = flag_value_list.into_bytes();
-        let reinterpreted_value_list = FlagValueList::from_bytes(&flag_value_bytes);
-        assert!(reinterpreted_value_list.is_ok());
-        assert_eq!(&flag_value_list, &reinterpreted_value_list.unwrap());
-        assert_eq!(flag_value_bytes.len() as u32, header.file_size);
-    }
-
-    #[test]
-    // this test point locks down the value list serialization
-    fn test_serialization_max() {
-        let flag_value_list = create_test_flag_value_list(MAX_SUPPORTED_FILE_VERSION);
-
-        let header: &FlagValueHeader = &flag_value_list.header;
-        let reinterpreted_header = FlagValueHeader::from_bytes(&header.into_bytes());
-        assert!(reinterpreted_header.is_ok());
-        assert_eq!(header, &reinterpreted_header.unwrap());
-
-        let flag_value_bytes = flag_value_list.into_bytes();
-        let reinterpreted_value_list = FlagValueList::from_bytes(&flag_value_bytes);
-        assert!(reinterpreted_value_list.is_ok());
-        assert_eq!(&flag_value_list, &reinterpreted_value_list.unwrap());
-        assert_eq!(flag_value_bytes.len() as u32, header.file_size);
+            let flag_value_bytes = flag_value_list.into_bytes();
+            let reinterpreted_value_list = FlagValueList::from_bytes(&flag_value_bytes);
+            assert!(reinterpreted_value_list.is_ok());
+            assert_eq!(&flag_value_list, &reinterpreted_value_list.unwrap());
+            assert_eq!(flag_value_bytes.len() as u32, header.file_size);
+        }
     }
 
     #[test]
