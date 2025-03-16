@@ -43,10 +43,6 @@
       "name": "aflags.test"
     },
     {
-      // printflags unit tests
-      "name": "printflags.test"
-    },
-    {
       // aconfig_protos unit tests
       "name": "aconfig_protos.test"
     },
