@@ -108,6 +108,9 @@ endif
 SYSTEMUI_OPTIMIZE_JAVA ?= true
 $(call add_soong_config_var,ANDROID,SYSTEMUI_OPTIMIZE_JAVA)
 
+# Flag to use baseline profile for SystemUI.
+$(call soong_config_set,ANDROID,release_systemui_use_speed_profile,$(RELEASE_SYSTEMUI_USE_SPEED_PROFILE))
+
 # Flag for enabling compose for Launcher.
 $(call soong_config_set,ANDROID,release_enable_compose_in_launcher,$(RELEASE_ENABLE_COMPOSE_IN_LAUNCHER))
 
@@ -215,6 +218,19 @@ else
 endif
 # Required as platform_bootclasspath is using this namespace
 $(call soong_config_set,bootclasspath,release_crashrecovery_module,$(RELEASE_CRASHRECOVERY_MODULE))
+
+
+# Add ondeviceintelligence module build flag to soong
+ifeq (true,$(RELEASE_ONDEVICE_INTELLIGENCE_MODULE))
+    $(call soong_config_set,ANDROID,release_ondevice_intelligence_module,true)
+    # Required as platform_bootclasspath is using this namespace
+    $(call soong_config_set,bootclasspath,release_ondevice_intelligence_module,true)
+
+else
+    $(call soong_config_set,ANDROID,release_ondevice_intelligence_platform,true)
+    $(call soong_config_set,bootclasspath,release_ondevice_intelligence_platform,true)
+
+endif
 
 # Add uprobestats build flag to soong
 $(call soong_config_set,ANDROID,release_uprobestats_module,$(RELEASE_UPROBESTATS_MODULE))

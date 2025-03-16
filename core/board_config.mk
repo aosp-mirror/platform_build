@@ -225,6 +225,7 @@ else
       $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)/BoardConfig.mk \
       device/generic/goldfish/board/$(TARGET_DEVICE)/BoardConfig.mk \
       device/google/cuttlefish/board/$(TARGET_DEVICE)/BoardConfig.mk \
+      vendor/google/products/cuttlefish/pixel_watch/board/$(TARGET_DEVICE)/BoardConfig.mk \
       $(shell test -d device && find -L device -maxdepth 4 -path '*/$(TARGET_DEVICE)/BoardConfig.mk') \
       $(shell test -d vendor && find -L vendor -maxdepth 4 -path '*/$(TARGET_DEVICE)/BoardConfig.mk') \
     )))
@@ -289,6 +290,7 @@ $(foreach var,$(_board_true_false_vars), \
     $(error Valid values of $(var) are "true", "false", and "". Not "$($(var))")))
 
 include $(BUILD_SYSTEM)/board_config_wifi.mk
+include $(BUILD_SYSTEM)/board_config_wpa_supplicant.mk
 
 # Set up soong config for "soong_config_value_variable".
 -include hardware/interfaces/configstore/1.1/default/surfaceflinger.mk

@@ -1,0 +1,12 @@
+tests/res/testdata/annotation/AnnotationUsage.java
+tests/res/testdata/annotation/SourceAnnotation.java
+tests/res/testdata/annotation/RuntimeAnnotation.java
+tests/res/testdata/constants/ConstantDefinition.java
+tests/res/testdata/constants/ConstantUsage.java
+tests/res/testdata/inheritance/InheritanceUsage.java
+tests/res/testdata/inheritance/BaseClass.java
+tests/res/testdata/inheritance/BaseImpl.java
+tests/res/testdata/methods/FieldUsage.java
+tests/res/testdata/methods/MethodUsage.java
+tests/res/testdata/methods/ReferenceClass1.java
+tests/res/testdata/methods/ReferenceClass2.java

@@ -775,7 +775,13 @@ name := $(name)-apkcerts
 intermediates := \
 	$(call intermediates-dir-for,PACKAGING,apkcerts)
 APKCERTS_FILE := $(intermediates)/$(name).txt
-all_apkcerts_files := $(sort $(foreach p,$(PACKAGES),$(PACKAGES.$(p).APKCERTS_FILE)))
+ifeq ($(RELEASE_APKCERTS_INSTALL_ONLY), true)
+  all_apkcerts_packages := $(filter $(call product-installed-modules,$(INTERNAL_PRODUCT)),$(PACKAGES))
+else
+  all_apkcerts_packages := $(PACKAGES)
+endif
+all_apkcerts_files := $(sort $(foreach p,$(all_apkcerts_packages),$(PACKAGES.$(p).APKCERTS_FILE)))
+
 $(APKCERTS_FILE): $(all_apkcerts_files)
 # We don't need to really build all the modules.
 # TODO: rebuild APKCERTS_FILE if any app change its cert.
@@ -783,7 +789,7 @@ $(APKCERTS_FILE):
 	@echo APK certs list: $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
-	$(foreach p,$(sort $(PACKAGES)),\
+	$(foreach p,$(sort $(all_apkcerts_packages)),\
 	  $(if $(PACKAGES.$(p).APKCERTS_FILE),\
 	    $(call _apkcerts_merge,$(PACKAGES.$(p).APKCERTS_FILE), $@),\
 	    $(if $(PACKAGES.$(p).EXTERNAL_KEY),\
@@ -6273,13 +6279,13 @@ define dump-dynamic-partitions-info
   $(foreach device,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES), \
     echo "super_$(device)_device_size=$(BOARD_SUPER_PARTITION_$(call to-upper,$(device))_DEVICE_SIZE)" >> $(1);)
   $(if $(BOARD_SUPER_PARTITION_PARTITION_LIST), \
-    echo "dynamic_partition_list=$(call filter-out-missing-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))" >> $(1))
+    echo "dynamic_partition_list=$(sort $(call filter-out-missing-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST)))" >> $(1))
   $(if $(BOARD_SUPER_PARTITION_GROUPS),
     echo "super_partition_groups=$(BOARD_SUPER_PARTITION_GROUPS)" >> $(1))
   $(foreach group,$(BOARD_SUPER_PARTITION_GROUPS), \
     echo "super_$(group)_group_size=$(BOARD_$(call to-upper,$(group))_SIZE)" >> $(1); \
     $(if $(BOARD_$(call to-upper,$(group))_PARTITION_LIST), \
-      echo "super_$(group)_partition_list=$(call filter-out-missing-partitions,$(BOARD_$(call to-upper,$(group))_PARTITION_LIST))" >> $(1);))
+      echo "super_$(group)_partition_list=$(strip $(call filter-out-missing-partitions,$(BOARD_$(call to-upper,$(group))_PARTITION_LIST)))" >> $(1);))
   $(if $(filter true,$(TARGET_USERIMAGES_SPARSE_EXT_DISABLED)), \
     echo "build_non_sparse_super_partition=true" >> $(1))
   $(if $(filter true,$(TARGET_USERIMAGES_SPARSE_F2FS_DISABLED)), \
@@ -7312,6 +7318,72 @@ ifeq (,$(TARGET_BUILD_UNBUNDLED))
   _proguard_dict_zip_modules := $(call product-installed-modules,$(INTERNAL_PRODUCT))
 else
   _proguard_dict_zip_modules := $(unbundled_build_modules)
+endif
+
+# Filter out list to avoid uncessary proguard related file generation
+ifeq (,$(TARGET_BUILD_UNBUNDLED))
+filter_out_proguard_dict_zip_modules :=
+# product.img
+ifndef BUILDING_PRODUCT_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/product/%
+endif
+# system.img
+ifndef BUILDING_SYSTEM_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/system/%
+endif
+# system_dlkm.img
+ifndef BUILDING_SYSTEM_DLKM_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/system_dlkm/%
+endif
+# system_ext.img
+ifndef BUILDING_SYSTEM_EXT_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/system_ext/%
+endif
+# system_other.img
+ifndef BUILDING_SYSTEM_OTHER_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/system_other/%
+endif
+# odm.img
+ifndef BUILDING_ODM_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/odm/%
+endif
+# odm_dlkm.img
+ifndef BUILDING_ODM_DLKM_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/odm_dlkm/%
+endif
+# vendor.img
+ifndef BUILDING_VENDOR_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/vendor/%
+endif
+# vendor_dlkm.img
+ifndef BUILDING_VENDOR_DLKM_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/vendor_dlkm/%
+endif
+# cache.img
+ifndef BUILDING_CACHE_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/cache/%
+endif
+# ramdisk.img
+ifndef BUILDING_RAMDISK_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/ramdisk/%
+endif
+# recovery.img
+ifndef INSTALLED_RECOVERYIMAGE_TARGET
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/recovery/%
+endif
+# userdata.img
+ifndef BUILDING_USERDATA_IMAGE
+filter_out_proguard_dict_zip_modules += $(PRODUCT_OUT)/data/%
+endif
+
+# Check the installed files of each module and return the module name
+# or return empty if none of the files remain to be installed
+define filter-out-proguard-modules
+$(if $(filter-out $(filter_out_proguard_dict_zip_modules),$(call module-installed-files,$(1))),$(1))
+endef
+
+# Filter out proguard dict zip modules those are not installed at the built image
+_proguard_dict_zip_modules := $(foreach m,$(_proguard_dict_zip_modules),$(strip $(call filter-out-proguard-modules,$(m))))
 endif
 
 # The path to the zip file containing proguard dictionaries.

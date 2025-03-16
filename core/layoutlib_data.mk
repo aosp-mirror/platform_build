@@ -3,11 +3,10 @@
 FONT_TEMP := $(call intermediates-dir-for,PACKAGING,fonts,HOST,COMMON)
 
 # The font configuration files - system_fonts.xml, fallback_fonts.xml etc.
-font_config := $(sort $(wildcard frameworks/base/data/fonts/*.xml))
+font_config := $(filter $(TARGET_OUT)/etc/font%.xml, $(INTERNAL_SYSTEMIMAGE_FILES))
 font_config := $(addprefix $(FONT_TEMP)/, $(notdir $(font_config)))
 
-$(font_config): $(FONT_TEMP)/%.xml: \
-			frameworks/base/data/fonts/%.xml
+$(font_config): $(FONT_TEMP)/%: $(TARGET_OUT)/etc/%
 	$(hide) mkdir -p $(dir $@)
 	$(hide) cp -vf $< $@
 

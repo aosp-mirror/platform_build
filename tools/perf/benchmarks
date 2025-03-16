@@ -573,7 +573,7 @@ benchmarks:
 
         # --dist-one requires that only one benchmark be supplied
         if self._args.dist_one and len(self.Benchmarks()) != 1:
-            self._error("--dist-one requires that exactly one --benchmark.")
+            self._error("--dist-one requires exactly one --benchmark.")
 
         if self._had_error:
             raise FatalError()

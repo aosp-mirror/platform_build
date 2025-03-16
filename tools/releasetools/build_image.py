@@ -49,8 +49,8 @@ BYTES_IN_MB = 1024 * 1024
 # Use a fixed timestamp (01/01/2009 00:00:00 UTC) for files when packaging
 # images. (b/24377993, b/80600931)
 FIXED_FILE_TIMESTAMP = int((
-    datetime.datetime(2009, 1, 1, 0, 0, 0, 0, None) -
-    datetime.datetime.utcfromtimestamp(0)).total_seconds())
+    datetime.datetime(2009, 1, 1, 0, 0, 0, 0, datetime.UTC) -
+    datetime.datetime.fromtimestamp(0, datetime.UTC)).total_seconds())
 
 
 class BuildImageError(Exception):

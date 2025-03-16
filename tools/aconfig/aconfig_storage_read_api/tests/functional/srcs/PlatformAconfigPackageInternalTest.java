@@ -42,7 +42,8 @@ import java.util.Set;
 @RunWith(JUnit4.class)
 public class PlatformAconfigPackageInternalTest {
 
-    private static final Set<String> PLATFORM_CONTAINERS = Set.of("system", "vendor", "product");
+    private static final Set<String> PLATFORM_CONTAINERS =
+            Set.of("system", "system_ext", "vendor", "product");
 
     @Test
     public void testPlatformAconfigPackageInternal_load() throws IOException {
