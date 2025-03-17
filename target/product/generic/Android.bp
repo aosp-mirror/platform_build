@@ -382,6 +382,11 @@ android_filesystem_defaults {
         "android.hidl.allocator@1.0-service",
 
         ///////////////////////////////////////////
+        // media_system_ext
+        ///////////////////////////////////////////
+        "StatementService",
+
+        ///////////////////////////////////////////
         // window_extensions_base
         ///////////////////////////////////////////
         "androidx.window.extensions",
@@ -809,7 +814,6 @@ system_image_defaults {
                 "Shell", // base_system
                 "SimAppDialog", // handheld_system
                 "SoundPicker", // not installed by anyone
-                "StatementService", // media_system
                 "Stk", // generic_system
                 "Tag", // generic_system
                 "TeleService", // handheld_system
