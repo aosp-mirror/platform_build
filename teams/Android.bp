@@ -2520,7 +2520,7 @@ team {
 }
 
 team {
-    name: "trendy_team_xr_framework",
+    name: "trendy_team_virtual_device_framework",
 
     // go/trendy/manage/engineers/4798040542445568
     trendy_team_id: "4798040542445568",
