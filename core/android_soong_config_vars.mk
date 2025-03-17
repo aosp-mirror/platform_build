@@ -346,3 +346,11 @@ endif
 ifneq ($(filter arm x86 true,$(TARGET_ARCH) $(TARGET_2ND_ARCH) $(TARGET_ENABLE_MEDIADRM_64)),)
   $(call soong_config_set_bool,ci_tests,uses_widevine_tests, true)
 endif
+
+# Check modules to be built in "otatools-package".
+ifneq ($(wildcard vendor/google/tools),)
+  $(call soong_config_set_bool,otatools,use_vendor_google_tools,true)
+endif
+ifneq ($(wildcard bootable/deprecated-ota/applypatch),)
+  $(call soong_config_set_bool,otatools,use_bootable_deprecated_ota_applypatch,true)
+endif
