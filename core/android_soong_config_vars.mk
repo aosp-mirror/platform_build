@@ -346,3 +346,12 @@ endif
 ifneq ($(filter arm x86 true,$(TARGET_ARCH) $(TARGET_2ND_ARCH) $(TARGET_ENABLE_MEDIADRM_64)),)
   $(call soong_config_set_bool,ci_tests,uses_widevine_tests, true)
 endif
+
+# Flags used in GTVS prebuilt apps
+$(call soong_config_set_bool,GTVS,GTVS_COMPRESSED_PREBUILTS,$(if $(findstring $(GTVS_COMPRESSED_PREBUILTS),true yes),true,false))
+$(call soong_config_set_bool,GTVS,GTVS_GMSCORE_BETA,$(if $(findstring $(GTVS_GMSCORE_BETA),true yes),true,false))
+$(call soong_config_set_bool,GTVS,GTVS_SETUPWRAITH_BETA,$(if $(findstring $(GTVS_SETUPWRAITH_BETA),true yes),true,false))
+$(call soong_config_set_bool,GTVS,PRODUCT_USE_PREBUILT_GTVS,$(if $(findstring $(PRODUCT_USE_PREBUILT_GTVS),true yes),true,false))
+
+# Flags used in GTVS_GTV prebuilt apps
+$(call soong_config_set_bool,GTVS_GTV,PRODUCT_USE_PREBUILT_GTVS_GTV,$(if $(findstring $(PRODUCT_USE_PREBUILT_GTVS_GTV),true yes),true,false))

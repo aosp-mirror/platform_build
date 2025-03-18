@@ -60,9 +60,15 @@ pub(crate) fn get_exported_flags_from_binary_proto<R: Read>(
     Ok(HashSet::from_iter(iter))
 }
 
-fn get_allow_list() -> Result<HashSet<FlagId>> {
+fn get_allow_flag_list() -> Result<HashSet<FlagId>> {
     let allow_list: HashSet<FlagId> =
-        include_str!("../allow_list.txt").lines().map(|x| x.into()).collect();
+        include_str!("../allow_flag_list.txt").lines().map(|x| x.into()).collect();
+    Ok(allow_list)
+}
+
+fn get_allow_package_list() -> Result<HashSet<FlagId>> {
+    let allow_list: HashSet<FlagId> =
+        include_str!("../allow_package_list.txt").lines().map(|x| x.into()).collect();
     Ok(allow_list)
 }
 
@@ -73,7 +79,9 @@ pub(crate) fn check_all_exported_flags(
     all_flags: &HashSet<FlagId>,
     already_finalized_flags: &HashSet<FlagId>,
 ) -> Result<Vec<FlagId>> {
-    let allow_list = get_allow_list()?;
+    let allow_flag_list = get_allow_flag_list()?;
+    let allow_package_list = get_allow_package_list()?;
+
     let new_flags: Vec<FlagId> = all_flags
         .difference(flags_used_with_flaggedapi_annotation)
         .cloned()
@@ -81,11 +89,19 @@ pub(crate) fn check_all_exported_flags(
         .difference(already_finalized_flags)
         .cloned()
         .collect::<HashSet<_>>()
-        .difference(&allow_list)
+        .difference(&allow_flag_list)
+        .filter(|flag| {
+            if let Some(last_dot_index) = flag.rfind('.') {
+                let package_name = &flag[..last_dot_index];
+                !allow_package_list.contains(package_name)
+            } else {
+                true
+            }
+        })
         .cloned()
         .collect();
 
-    Ok(new_flags.into_iter().collect())
+    Ok(new_flags)
 }
 
 #[cfg(test)]

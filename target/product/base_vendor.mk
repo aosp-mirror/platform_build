@@ -106,7 +106,6 @@ PRODUCT_PACKAGES_SHIPPING_API_LEVEL_29 += \
 # VINTF data for vendor image
 PRODUCT_PACKAGES += \
     vendor_compatibility_matrix.xml \
-    vendor_manifest.xml \
 
 # Base modules and settings for the debug ramdisk, which is then packed
 # into a boot-debug.img and a vendor_boot-debug.img.

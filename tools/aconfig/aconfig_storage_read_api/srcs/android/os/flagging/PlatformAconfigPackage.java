@@ -120,11 +120,11 @@ public class PlatformAconfigPackage {
             return aconfigPackage;
         } catch (AconfigStorageException e) {
             throw new AconfigStorageReadException(
-                    e.getErrorCode(), "Fail to create AconfigPackage", e);
+                    e.getErrorCode(), "Fail to create PlatformAconfigPackage: " + packageName, e);
         } catch (Exception e) {
             throw new AconfigStorageReadException(
                     AconfigStorageReadException.ERROR_GENERIC,
-                    "Fail to create PlatformAconfigPackage",
+                    "Fail to create PlatformAconfigPackage: " + packageName,
                     e);
         }
     }

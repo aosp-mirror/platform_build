@@ -95,8 +95,19 @@ def CheckShareduidViolation(target_files_dir, partition_map):
 def CheckInitRcFiles(target_files_dir, partition_map):
   """Check for any init.rc issues using host_init_verifier."""
   try:
+    vendor_partitions = set()
+    if OPTIONS.vendor_otatools:
+      vendor_partitions = {"vendor", "odm"}
+      common.RunVendoredHostInitVerifier(
+          product_out=target_files_dir,
+          partition_map={p: partition_map[p] for p in vendor_partitions})
+
     common.RunHostInitVerifier(
-        product_out=target_files_dir, partition_map=partition_map)
+        product_out=target_files_dir,
+        partition_map={
+            p: partition_map[p]
+            for p in partition_map.keys() - vendor_partitions
+        })
   except RuntimeError as err:
     return [str(err)]
   return []

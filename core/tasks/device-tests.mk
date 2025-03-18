@@ -14,6 +14,7 @@
 
 
 .PHONY: device-tests
+.PHONY: device-tests-files-list
 
 device-tests-zip := $(PRODUCT_OUT)/device-tests.zip
 # Create an artifact to include a list of test config files in device-tests.
@@ -21,6 +22,7 @@ device-tests-list-zip := $(PRODUCT_OUT)/device-tests_list.zip
 # Create an artifact to include all test config files in device-tests.
 device-tests-configs-zip := $(PRODUCT_OUT)/device-tests_configs.zip
 my_host_shared_lib_for_device_tests := $(call copy-many-files,$(COMPATIBILITY.device-tests.HOST_SHARED_LIBRARY.FILES))
+device_tests_files_list := $(PRODUCT_OUT)/device-tests_files
 
 $(device-tests-zip) : .KATI_IMPLICIT_OUTPUTS := $(device-tests-list-zip) $(device-tests-configs-zip)
 $(device-tests-zip) : PRIVATE_device_tests_list := $(PRODUCT_OUT)/device-tests_list
@@ -45,7 +47,14 @@ $(device-tests-zip) : $(COMPATIBILITY.device-tests.FILES) $(COMPATIBILITY.device
 	rm -f $@.list $@-host.list $@-target.list $@-host-test-configs.list $@-target-test-configs.list \
 		$(PRIVATE_device_tests_list)
 
+$(device_tests_files_list) : PRIVATE_HOST_SHARED_LIBS := $(my_host_shared_lib_for_device_tests)
+$(device_tests_files_list) :
+	echo $(sort $(COMPATIBILITY.device-tests.FILES) $(COMPATIBILITY.device-tests.SOONG_INSTALLED_COMPATIBILITY_SUPPORT_FILES)) | tr " " "\n" > $@.full_list
+	grep $(HOST_OUT_TESTCASES) $@.full_list > $@ || true
+	grep $(TARGET_OUT_TESTCASES) $@.full_list >> $@ || true
+
 device-tests: $(device-tests-zip)
+device-tests-files-list: $(device_tests_files_list)
 
 $(call dist-for-goals, device-tests, $(device-tests-zip) $(device-tests-list-zip) $(device-tests-configs-zip))
 

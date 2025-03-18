@@ -87,8 +87,8 @@ Usage: merge_target_files [args]
       If provided, rebuilds odm.img or vendor.img to include merged sepolicy
       files. If odm is present then odm is preferred.
 
-  --vendor-otatools otatools.zip
-      If provided, use this otatools.zip when recompiling the odm or vendor
+  --vendor-otatools otatools.zip or directory
+      If provided, use these otatools when recompiling the odm or vendor
       image to include sepolicy.
 
   --keep-tmp
@@ -312,12 +312,9 @@ def rebuild_image_with_sepolicy(target_files_dir):
       '%s recompilation will be performed using the vendor otatools.zip',
       partition_img)
 
-  # Unzip the vendor build's otatools.zip and target-files archive.
-  vendor_otatools_dir = common.MakeTempDir(
-      prefix='merge_target_files_vendor_otatools_')
+  # Unzip the vendor build's target-files archive.
   vendor_target_files_dir = common.MakeTempDir(
       prefix='merge_target_files_vendor_target_files_')
-  common.UnzipToDir(OPTIONS.vendor_otatools, vendor_otatools_dir)
   merge_utils.CollectTargetFiles(
       input_zipfile_or_dir=OPTIONS.vendor_target_files,
       output_dir=vendor_target_files_dir,
@@ -335,7 +332,7 @@ def rebuild_image_with_sepolicy(target_files_dir):
   remove_file_if_exists(
       os.path.join(vendor_target_files_dir, 'IMAGES', partition_img))
   rebuild_partition_command = [
-      os.path.join(vendor_otatools_dir, 'bin', 'add_img_to_target_files'),
+      os.path.join(OPTIONS.vendor_otatools, 'bin', 'add_img_to_target_files'),
       '--verbose',
       '--add_missing',
   ]
@@ -668,6 +665,12 @@ def main():
 
   if OPTIONS.output_item_list:
     OPTIONS.output_item_list = common.LoadListFromFile(OPTIONS.output_item_list)
+
+  if OPTIONS.vendor_otatools and zipfile.is_zipfile(OPTIONS.vendor_otatools):
+    vendor_otatools_dir = common.MakeTempDir(
+        prefix='merge_target_files_vendor_otatools_')
+    common.UnzipToDir(OPTIONS.vendor_otatools, vendor_otatools_dir)
+    OPTIONS.vendor_otatools = vendor_otatools_dir
 
   if not merge_utils.ValidateConfigLists():
     sys.exit(1)
