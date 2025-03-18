@@ -176,6 +176,7 @@ ifeq (true,$(PRODUCT_BROKEN_SUBOPTIMAL_ORDER_OF_SYSTEM_SERVER_JARS))
 else ifneq (platform:services,$(lastword $(PRODUCT_SYSTEM_SERVER_JARS)))
   # If services is not the final jar in the dependency ordering, don't assume
   # it can be safely optimized in isolation, as there may be dependent jars.
+  # TODO(b/212737576): Remove this exception after integrating use of `$(system_server_trace_refs)`.
   SYSTEM_OPTIMIZE_JAVA ?= false
 else
   SYSTEM_OPTIMIZE_JAVA ?= true
@@ -187,6 +188,20 @@ endif
 
 $(call add_soong_config_var,ANDROID,SYSTEM_OPTIMIZE_JAVA)
 $(call add_soong_config_var,ANDROID,FULL_SYSTEM_OPTIMIZE_JAVA)
+
+ifeq (true, $(SYSTEM_OPTIMIZE_JAVA))
+  # Create a list of (non-prefixed) system server jars that follow `services` in
+  # the classpath. This can be used when optimizing `services` to trace any
+  # downstream references that need keeping.
+  # Example: "foo:service1 platform:services bar:services2" -> "services2"
+  system_server_jars_dependent_on_services := $(shell \
+      echo "$(PRODUCT_SYSTEM_SERVER_JARS)" | \
+      awk '{found=0; for(i=1;i<=NF;i++){if($$i=="platform:services"){found=1; continue} if(found){split($$i,a,":"); print a[2]}}}' | \
+      xargs)
+  ifneq ($(strip $(system_server_jars_dependent_on_services)),)
+    $(call soong_config_set_string_list,ANDROID,system_server_trace_refs,$(system_server_jars_dependent_on_services))
+  endif
+endif
 
 # TODO(b/319697968): Remove this build flag support when metalava fully supports flagged api
 $(call soong_config_set,ANDROID,release_hidden_api_exportable_stubs,$(RELEASE_HIDDEN_API_EXPORTABLE_STUBS))
