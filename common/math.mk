@@ -89,6 +89,11 @@ define math_is_number
 $(strip $(if $(call math_is_number_in_100,$(1)),true,$(call _math_ext_is_number,$(1))))
 endef
 
+# Returns true if $(1) is a positive or negative integer.
+define math_is_int
+$(call math_is_number,$(patsubst -%,%,$(1)))
+endef
+
 define math_is_zero
 $(strip \
   $(if $(word 2,$(1)),$(call math-error,Multiple words in a single argument: $(1))) \
@@ -100,6 +105,12 @@ $(call math-expect-true,(call math_is_number,2))
 $(call math-expect-true,(call math_is_number,202412))
 $(call math-expect-false,(call math_is_number,foo))
 $(call math-expect-false,(call math_is_number,-1))
+$(call math-expect-true,(call math_is_int,50))
+$(call math-expect-true,(call math_is_int,-1))
+$(call math-expect-true,(call math_is_int,-528))
+$(call math-expect-true,(call math_is_int,-0))
+$(call math-expect-false,(call math_is_int,--1))
+$(call math-expect-false,(call math_is_int,-))
 $(call math-expect-error,(call math_is_number,1 2),Multiple words in a single argument: 1 2)
 $(call math-expect-error,(call math_is_number,no 2),Multiple words in a single argument: no 2)
 
