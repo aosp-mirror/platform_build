@@ -50,7 +50,11 @@ genrule {
     srcs: [
         "//prebuilts/sdk:finalized-api-flags",
     ],
+    tool_files: ["extended_flags_list_35.txt"],
     out: ["finalized_flags_record.json"],
     tools: ["convert_finalized_flags"],
-    cmd: "args=\"\" && for f in $(locations //prebuilts/sdk:finalized-api-flags); do args=\"$$args --flag_file_path $$f\"; done && $(location convert_finalized_flags) $$args > $(out)",
+    cmd: "args=\"\" && " +
+        "for f in $(locations //prebuilts/sdk:finalized-api-flags); " +
+        " do args=\"$$args --flag_file_path $$f\"; done && " +
+        "$(location convert_finalized_flags) $$args  --extended-flag-file-path $(location extended_flags_list_35.txt) > $(out)",
 }
