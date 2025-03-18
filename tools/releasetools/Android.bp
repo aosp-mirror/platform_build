@@ -650,12 +650,3 @@ python_test_host {
         unit_test: true,
     },
 }
-
-genrule {
-    name: "otatools_package_releasetools",
-    tools: ["soong_zip"],
-    srcs: ["**/*"],
-    cmd: "find build/make/tools/releasetools -name '*.pyc' -prune -o \\( -type f -o -type l \\) -print | sort > $(genDir)/files.txt && " +
-        "$(location soong_zip) -o $(out) -C build/make/tools -l $(genDir)/files.txt",
-    out: ["otatools_package_releasetools.zip"],
-}

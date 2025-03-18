@@ -347,14 +347,6 @@ ifneq ($(filter arm x86 true,$(TARGET_ARCH) $(TARGET_2ND_ARCH) $(TARGET_ENABLE_M
   $(call soong_config_set_bool,ci_tests,uses_widevine_tests, true)
 endif
 
-# Check modules to be built in "otatools-package".
-ifneq ($(wildcard vendor/google/tools),)
-  $(call soong_config_set_bool,otatools,use_vendor_google_tools,true)
-endif
-ifneq ($(wildcard bootable/deprecated-ota/applypatch),)
-  $(call soong_config_set_bool,otatools,use_bootable_deprecated_ota_applypatch,true)
-endif
-
 # Flags used in GTVS prebuilt apps
 $(call soong_config_set_bool,GTVS,GTVS_COMPRESSED_PREBUILTS,$(if $(findstring $(GTVS_COMPRESSED_PREBUILTS),true yes),true,false))
 $(call soong_config_set_bool,GTVS,GTVS_GMSCORE_BETA,$(if $(findstring $(GTVS_GMSCORE_BETA),true yes),true,false))
