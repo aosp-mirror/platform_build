@@ -299,6 +299,8 @@ subdir_makefiles_total := $(words int $(subdir_makefiles) post finish)
 
 $(foreach mk,$(subdir_makefiles),$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] including $(mk) ...)$(eval include $(mk)))
 
+-include device/generic/goldfish/tasks/emu_img_zip.mk
+
 # Build bootloader.img/radio.img, and unpack the partitions.
 -include vendor/google_devices/$(TARGET_SOC)/prebuilts/misc_bins/update_bootloader_radio_image.mk
 
@@ -993,6 +995,7 @@ endef
 define auto-included-modules
   $(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),com.android.vndk.v$(vndk_ver)) \
   llndk.libraries.txt \
+  $(if $(DEVICE_MANIFEST_FILE),vendor_manifest.xml) \
   $(if $(DEVICE_MANIFEST_SKUS),$(foreach sku, $(DEVICE_MANIFEST_SKUS),vendor_manifest_$(sku).xml)) \
   $(if $(ODM_MANIFEST_FILES),odm_manifest.xml) \
   $(if $(ODM_MANIFEST_SKUS),$(foreach sku, $(ODM_MANIFEST_SKUS),odm_manifest_$(sku).xml)) \

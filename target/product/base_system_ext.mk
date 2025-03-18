@@ -30,6 +30,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES_SHIPPING_API_LEVEL_34 += \
     hwservicemanager \
     android.hidl.allocator@1.0-service \
+    android.hidl.memory@1.0-impl \
 
 # AppFunction Extensions
 ifneq (,$(RELEASE_APPFUNCTION_SIDECAR))
