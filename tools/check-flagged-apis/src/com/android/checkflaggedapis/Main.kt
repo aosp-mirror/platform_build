@@ -292,7 +292,7 @@ internal fun parseApiSignature(path: String, input: InputStream): Set<Pair<Symbo
           return item.modifiers
               .findAnnotation("android.annotation.FlaggedApi")
               ?.findAttribute("value")
-              ?.value
+              ?.legacyValue
               ?.let { Flag(it.value() as String) }
         }
       }
