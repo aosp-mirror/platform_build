@@ -124,6 +124,14 @@ android_symlinks = [
         target: "/data/cache",
         name: "cache",
     },
+    {
+        target: "/odm/odm_dlkm/etc",
+        name: "odm_dlkm/etc",
+    },
+    {
+        target: "/vendor/vendor_dlkm/etc",
+        name: "vendor_dlkm/etc",
+    },
 ]
 
 extra_vendor_symlinks = [
