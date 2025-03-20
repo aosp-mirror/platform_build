@@ -39,6 +39,9 @@ pub struct FinalizedFlag {
 #[derive(Copy, Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct ApiLevel(pub i32);
 
+/// API level of the extended flags file of version 35
+pub const EXTENDED_FLAGS_35_APILEVEL: ApiLevel = ApiLevel(35);
+
 /// Contains all flags finalized for a given API level.
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Default)]
 pub struct FinalizedFlagMap(HashMap<ApiLevel, HashSet<FinalizedFlag>>);
@@ -77,6 +80,8 @@ impl FinalizedFlagMap {
         self.0.values().any(|flags_set| flags_set.contains(flag))
     }
 }
+
+const EXTENDED_FLAGS_LIST_35: &str = "extended_flags_list_35.txt";
 
 /// Converts a string to an int. Will parse to int even if the string is "X.0".
 /// Returns error for "X.1".
@@ -117,28 +122,47 @@ pub fn read_files_to_map_using_path(flag_files: Vec<String>) -> Result<Finalized
             continue;
         };
 
-        let file = fs::File::open(flag_file)?;
-        let reader = io::BufReader::new(file);
+        let file = fs::File::open(&flag_file)?;
 
-        for qualified_flag_name in reader.lines() {
-            // Split the qualified flag name into package and flag name:
-            // com.my.package.name.my_flag_name -> ['com.my.package.name', 'my_flag_name'].
-            let mut flag: Vec<String> =
-                qualified_flag_name?.rsplitn(2, '.').map(|s| s.to_string()).collect();
-
-            if flag.len() != 2 {
-                continue;
-            }
-
-            let package_name = flag.pop().ok_or(anyhow!("Missing flag package."))?;
-            let flag_name = flag.pop().ok_or(anyhow!("Missing flag name."))?;
-
-            // Only add the flag if it wasn't added in a prior file.
-            data_map.insert_if_new(api_level, FinalizedFlag { flag_name, package_name });
-        }
+        io::BufReader::new(file).lines().for_each(|flag| {
+            let flag =
+                flag.unwrap_or_else(|_| panic!("Failed to read line from file {}", flag_file));
+            let finalized_flag = build_finalized_flag(&flag)
+                .unwrap_or_else(|_| panic!("cannot build finalized flag {}", flag));
+            data_map.insert_if_new(api_level, finalized_flag);
+        });
     }
 
     Ok(data_map)
+}
+
+/// Read the qualified flag names into a FinalizedFlag set
+pub fn read_extend_file_to_map_using_path(extened_file: String) -> Result<HashSet<FinalizedFlag>> {
+    let (_, file_name) =
+        extened_file.rsplit_once('/').ok_or(anyhow!("Invalid file: '{}'", extened_file))?;
+    if file_name != EXTENDED_FLAGS_LIST_35 {
+        return Err(anyhow!("Provided incorrect file, must be {}", EXTENDED_FLAGS_LIST_35));
+    }
+    let file = fs::File::open(extened_file)?;
+    let extended_flags = io::BufReader::new(file)
+        .lines()
+        .map(|flag| {
+            let flag = flag.expect("Failed to read line from extended file");
+            build_finalized_flag(&flag)
+                .unwrap_or_else(|_| panic!("cannot build finalized flag {}", flag))
+        })
+        .collect::<HashSet<FinalizedFlag>>();
+    Ok(extended_flags)
+}
+
+fn build_finalized_flag(qualified_flag_name: &String) -> Result<FinalizedFlag> {
+    // Split the qualified flag name into package and flag name:
+    // com.my.package.name.my_flag_name -> ('com.my.package.name', 'my_flag_name')
+    let (package_name, flag_name) = qualified_flag_name
+        .rsplit_once('.')
+        .ok_or(anyhow!("Invalid qualified flag name format: '{}'", qualified_flag_name))?;
+
+    Ok(FinalizedFlag { flag_name: flag_name.to_string(), package_name: package_name.to_string() })
 }
 
 #[cfg(test)]
@@ -391,5 +415,50 @@ mod tests {
 
         assert_eq!(map.get_finalized_level(&flags[0]).unwrap(), l35);
         assert_eq!(map.get_finalized_level(&flags[1]).unwrap(), l36);
+    }
+
+    #[test]
+    fn test_read_flag_from_extended_file() {
+        let flags = create_test_flags();
+
+        // Create the file <temp_dir>/35/extended_flags_list_35.txt
+        let temp_dir = tempdir().unwrap();
+        let mut file_path = temp_dir.path().to_path_buf();
+        file_path.push("35");
+        fs::create_dir_all(&file_path).unwrap();
+        file_path.push(EXTENDED_FLAGS_LIST_35);
+        let mut file = File::create(&file_path).unwrap();
+
+        // Write all flags to the file.
+        add_flags_to_file(&mut file, &[flags[0].clone(), flags[1].clone()]);
+
+        let flags_set =
+            read_extend_file_to_map_using_path(file_path.to_string_lossy().to_string()).unwrap();
+        assert_eq!(flags_set.len(), 2);
+        assert!(flags_set.contains(&flags[0]));
+        assert!(flags_set.contains(&flags[1]));
+    }
+
+    #[test]
+    fn test_read_flag_from_wrong_extended_file_err() {
+        let flags = create_test_flags();
+
+        // Create the file <temp_dir>/35/extended_flags_list.txt
+        let temp_dir = tempdir().unwrap();
+        let mut file_path = temp_dir.path().to_path_buf();
+        file_path.push("35");
+        fs::create_dir_all(&file_path).unwrap();
+        file_path.push("extended_flags_list.txt");
+        let mut file = File::create(&file_path).unwrap();
+
+        // Write all flags to the file.
+        add_flags_to_file(&mut file, &[flags[0].clone(), flags[1].clone()]);
+
+        let err = read_extend_file_to_map_using_path(file_path.to_string_lossy().to_string())
+            .unwrap_err();
+        assert_eq!(
+            format!("{:?}", err),
+            "Provided incorrect file, must be extended_flags_list_35.txt"
+        );
     }
 }

@@ -77,15 +77,23 @@ $(call dist-for-goals,layoutlib,$(LAYOUTLIB_BUILD_PROP)/layoutlib-build.prop:lay
 LAYOUTLIB_RES := $(call intermediates-dir-for,PACKAGING,layoutlib-res,HOST,COMMON)
 LAYOUTLIB_RES_FILES := $(shell find frameworks/base/core/res/res -type f -not -path 'frameworks/base/core/res/res/values-m[nc]c*' | sort)
 EMULATED_OVERLAYS_FILES := $(shell find frameworks/base/packages/overlays/*/res/ | sort)
-DEVICE_OVERLAYS_FILES := $(shell find device/generic/goldfish/phone/overlay/frameworks/base/packages/overlays/*/AndroidOverlay/res/ | sort)
-$(LAYOUTLIB_RES)/layoutlib-res.zip: $(SOONG_ZIP) $(HOST_OUT_EXECUTABLES)/aapt2 $(LAYOUTLIB_RES_FILES) $(EMULATED_OVERLAYS_FILES) $(DEVICE_OVERLAYS_FILES)
+LAYOUTLIB_SUPPORTED_DEVICES := raviole/oriole raviole/raven bluejay/bluejay pantah/panther pantah/cheetah lynx/lynx felix/felix shusky/shiba shusky/husky akita/akita caimito/tokay caimito/caiman caimito/komodo comet/comet tangorpro/tangorpro
+LAYOUTLIB_DEVICE_OVERLAYS_FILES := $(addsuffix /overlay/frameworks/base/core/res/res/values/*, $(addprefix device/google/, $(LAYOUTLIB_SUPPORTED_DEVICES)))
+LAYOUTLIB_DEVICE_OVERLAYS_FILES := $(shell find $(LAYOUTLIB_DEVICE_OVERLAYS_FILES) | sort)
+$(LAYOUTLIB_RES)/layoutlib-res.zip: $(SOONG_ZIP) $(HOST_OUT_EXECUTABLES)/aapt2 $(LAYOUTLIB_RES_FILES) $(EMULATED_OVERLAYS_FILES) $(LAYOUTLIB_DEVICE_OVERLAYS_FILES) frameworks/layoutlib/overlay_codenames.txt
 	rm -rf $@
 	echo $(LAYOUTLIB_RES_FILES) > $(LAYOUTLIB_RES)/filelist_res.txt
 	$(SOONG_ZIP) -C frameworks/base/core/res -l $(LAYOUTLIB_RES)/filelist_res.txt -o $(LAYOUTLIB_RES)/temp_res.zip
 	echo $(EMULATED_OVERLAYS_FILES) > $(LAYOUTLIB_RES)/filelist_emulated_overlays.txt
 	$(SOONG_ZIP) -C frameworks/base/packages -l $(LAYOUTLIB_RES)/filelist_emulated_overlays.txt -o $(LAYOUTLIB_RES)/temp_emulated_overlays.zip
-	echo $(DEVICE_OVERLAYS_FILES) > $(LAYOUTLIB_RES)/filelist_device_overlays.txt
-	$(SOONG_ZIP) -C device/generic/goldfish/phone/overlay/frameworks/base/packages -l $(LAYOUTLIB_RES)/filelist_device_overlays.txt -o $(LAYOUTLIB_RES)/temp_device_overlays.zip
+	for line in $$(cut -f 1 frameworks/layoutlib/overlay_codenames.txt); \
+	  do splitLine=($${line//:/ }) \
+	  origin_dir=device/google/*/$${splitLine[0]}/overlay/frameworks/base/core/res/res/values; \
+	  target_dir=$(LAYOUTLIB_RES)/overlays/$${splitLine[1]}/res/; \
+	  mkdir -p $$target_dir; \
+	  cp -r $$origin_dir $$target_dir; \
+	done
+	$(SOONG_ZIP) -C $(LAYOUTLIB_RES) -D $(LAYOUTLIB_RES)/overlays/ -o $(LAYOUTLIB_RES)/temp_device_overlays.zip
 	rm -rf $(LAYOUTLIB_RES)/data && unzip -q -d $(LAYOUTLIB_RES)/data $(LAYOUTLIB_RES)/temp_res.zip
 	unzip -q -d $(LAYOUTLIB_RES)/data $(LAYOUTLIB_RES)/temp_emulated_overlays.zip
 	unzip -q -d $(LAYOUTLIB_RES)/data $(LAYOUTLIB_RES)/temp_device_overlays.zip
@@ -163,14 +171,18 @@ $(LAYOUTLIB_SBOM)/sbom-metadata.csv:
 	  echo $(_path),,,,,,Y,$f,,, >> $@; \
 	)
 
-	$(foreach f,$(DEVICE_OVERLAYS_FILES), \
-	  $(eval _path := $(subst device/generic/goldfish/phone/overlay/frameworks/base/packages,data,$f)) \
-	  echo $(_path),,,,,,Y,$f,,, >> $@; \
-	)
+	for line in $$(cut -f 1 frameworks/layoutlib/overlay_codenames.txt); do \
+	  splitLine=($${line//:/ }); \
+	  for f in $(LAYOUTLIB_DEVICE_OVERLAYS_FILES); do \
+	    if [[ $$f == */$${splitLine[0]}/* ]]; then \
+	      echo data/overlays/$${splitLine[1]}/res/values/$$(basename $$f),,,,,,Y,$$f,,, >> $@; \
+	    fi \
+	  done \
+	done
 
 .PHONY: layoutlib-sbom
 layoutlib-sbom: $(LAYOUTLIB_SBOM)/layoutlib.spdx.json
-$(LAYOUTLIB_SBOM)/layoutlib.spdx.json: $(PRODUCT_OUT)/always_dirty_file.txt $(GEN_SBOM) $(LAYOUTLIB_SBOM)/sbom-metadata.csv $(_layoutlib_font_config_files) $(_layoutlib_fonts_files) $(LAYOUTLIB_BUILD_PROP)/layoutlib-build.prop $(_layoutlib_keyboard_files) $(_layoutlib_hyphen_files) $(LAYOUTLIB_RES_FILES) $(EMULATED_OVERLAYS_FILES) $(DEVICE_OVERLAYS_FILES)
+$(LAYOUTLIB_SBOM)/layoutlib.spdx.json: $(PRODUCT_OUT)/always_dirty_file.txt $(GEN_SBOM) $(LAYOUTLIB_SBOM)/sbom-metadata.csv $(_layoutlib_font_config_files) $(_layoutlib_fonts_files) $(LAYOUTLIB_BUILD_PROP)/layoutlib-build.prop $(_layoutlib_keyboard_files) $(_layoutlib_hyphen_files) $(LAYOUTLIB_RES_FILES) $(EMULATED_OVERLAYS_FILES) $(LAYOUTLIB_DEVICE_OVERLAYS_FILES) frameworks/layoutlib/overlay_codenames.txt
 	rm -rf $@
 	$(GEN_SBOM) --output_file $@ --metadata $(LAYOUTLIB_SBOM)/sbom-metadata.csv --build_version $(BUILD_FINGERPRINT_FROM_FILE) --product_mfr "$(PRODUCT_MANUFACTURER)" --module_name "layoutlib" --json
 

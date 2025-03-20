@@ -330,6 +330,19 @@ $(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(filter true,$3))
 $(eval SOONG_CONFIG_TYPE_$(strip $1)_$(strip $2):=bool)
 endef
 
+# soong_config_set_int is the same as soong_config_set, but it will
+# also type the variable as an integer, so that when using select() expressions
+# in blueprint files they can use integer values instead of strings.
+# It will error out if a non-integer is supplied
+# $1 is the namespace. $2 is the variable name. $3 is the variable value.
+# Ex: $(call soong_config_set_bool,acme,COOL_FEATURE,34)
+define soong_config_set_int
+$(call soong_config_define_internal,$1,$2) \
+$(if $(call math_is_int,$3),,$(error soong_config_set_int called with non-integer value $(3)))
+$(eval SOONG_CONFIG_$(strip $1)_$(strip $2):=$(strip $3))
+$(eval SOONG_CONFIG_TYPE_$(strip $1)_$(strip $2):=int)
+endef
+
 # soong_config_set_string_list is the same as soong_config_set, but it will
 # also type the variable as a list of strings, so that when using select() expressions
 # in blueprint files they can use list values instead of strings.
