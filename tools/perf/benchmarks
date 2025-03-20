@@ -202,6 +202,16 @@ def Clean():
     return Change(label="Remove out", change=remove_out, undo=lambda: None)
 
 
+def CleanNinja():
+    """Remove the out directory, and then run lunch to initialize soong"""
+    def clean_ninja():
+        returncode = subprocess.call("rm out/*.ninja out/soong/*.ninja", shell=True)
+        if returncode != 0:
+            report_error(f"Build failed: {' '.join(cmd)}")
+            raise FatalError()
+    return Change(label="Remove ninja files", change=clean_ninja, undo=lambda: None)
+
+
 def NoChange():
     """No change to the source tree."""
     return Change(label="No change", change=lambda: None, undo=lambda: None)
@@ -416,7 +426,7 @@ class Runner():
         """Builds the modules.  Saves interesting log files to log_dir.  Raises FatalError
         if the build fails.
         """
-        sys.stderr.write(f"STARTING BUILD {benchmark.build_description()}\n")
+        sys.stderr.write(f"STARTING BUILD {benchmark.build_description()} Logs to: {build_log_dir}\n")
 
         before_ns = time.perf_counter_ns()
         if not self._options.DryRun():
@@ -710,6 +720,13 @@ benchmarks:
                       title="Modify Android.bp",
                       change=Modify("bionic/libc/Android.bp", Comment("//")),
                       modules=["droid"],
+                      preroll=1,
+                      postroll=3,
+                      ),
+            Benchmark(id="full_analysis",
+                      title="Full Analysis",
+                      change=CleanNinja(),
+                      modules=["nothing"],
                       preroll=1,
                       postroll=3,
                       ),
