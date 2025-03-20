@@ -124,6 +124,14 @@ android_symlinks = [
         target: "/data/cache",
         name: "cache",
     },
+    {
+        target: "/odm/odm_dlkm/etc",
+        name: "odm_dlkm/etc",
+    },
+    {
+        target: "/vendor/vendor_dlkm/etc",
+        name: "vendor_dlkm/etc",
+    },
 ]
 
 extra_vendor_symlinks = [
@@ -380,6 +388,11 @@ android_filesystem_defaults {
         // Base modules when shipping api level is less than or equal to 34
         "hwservicemanager",
         "android.hidl.allocator@1.0-service",
+
+        ///////////////////////////////////////////
+        // media_system_ext
+        ///////////////////////////////////////////
+        "StatementService",
 
         ///////////////////////////////////////////
         // window_extensions_base
@@ -809,7 +822,6 @@ system_image_defaults {
                 "Shell", // base_system
                 "SimAppDialog", // handheld_system
                 "SoundPicker", // not installed by anyone
-                "StatementService", // media_system
                 "Stk", // generic_system
                 "Tag", // generic_system
                 "TeleService", // handheld_system

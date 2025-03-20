@@ -35,7 +35,6 @@ PRODUCT_PACKAGES += \
     libwebviewchromium_plat_support \
     make_f2fs \
     requestsync \
-    StatementService \
 
 PRODUCT_HOST_PACKAGES += \
     fsck.f2fs \
