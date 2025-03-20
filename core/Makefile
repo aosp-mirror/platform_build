@@ -8044,6 +8044,15 @@ $(call dist-for-goals,dist_files,$(PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET))
 .PHONY: pack-recovery-image
 pack-recovery-image: $(PACK_RECOVERY_IMAGE_TARGET)
 
+RECOVERY_SWAP_KERNEL_TARGET := $(PRODUCT_OUT)/recovery-kernel-swap
+
+# Has swap kernel for insecure recovery image.
+ifeq ($(BOARD_USES_DESKTOP_RECOVERY_SWAP_KERNEL),true)
+
+$(call dist-for-goals,dist_files,$(RECOVERY_SWAP_KERNEL_TARGET))
+
+endif # BOARD_USES_DESKTOP_RECOVERY_SWAP_KERNEL
+
 endif # BOARD_USES_DESKTOP_RECOVERY_IMAGE
 
 # -----------------------------------------------------------------
