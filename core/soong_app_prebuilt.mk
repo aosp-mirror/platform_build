@@ -153,8 +153,6 @@ $(foreach f, $(my_jni_lib_symbols_copy_files), \
 
 symbolic_outputs := $(foreach f,$(my_jni_lib_symbols_copy_files),$(call word-colon,2,$(f)))
 symbolic_mappings := $(foreach f,$(symbolic_outputs),$(patsubst $(TARGET_OUT_UNSTRIPPED)/%,$(call intermediates-dir-for,PACKAGING,elf_symbol_mapping)/%,$(f).textproto))
-ALL_MODULES.$(my_register_name).SYMBOLIC_OUTPUT_PATH := $(symbolic_outputs)
-ALL_MODULES.$(my_register_name).ELF_SYMBOL_MAPPING_PATH := $(symbolic_mappings)
 
 $(LOCAL_BUILT_MODULE): | $(symbolic_outputs)
 
