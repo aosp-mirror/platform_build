@@ -35,6 +35,10 @@ Flags:
       `filespec` arg in zip2zip's help message). The option can be repeated to
       include multiple entries.
 
+  --exclude <filespec>
+      Don't include these files. If the file is in --additional and --exclude,
+      the file will not be included.
+
 """
 
 from __future__ import print_function
@@ -56,6 +60,7 @@ logger = logging.getLogger(__name__)
 OPTIONS = common.OPTIONS
 
 OPTIONS.additional_entries = []
+OPTIONS.excluded_entries = []
 OPTIONS.bootable_only = False
 OPTIONS.put_super = None
 OPTIONS.put_bootloader = None
@@ -245,6 +250,9 @@ def ImgFromTargetFiles(input_file, output_file):
   # Any additional entries provided by caller.
   entries += OPTIONS.additional_entries
 
+  # Remove any excluded entries
+  entries = [e for e in entries if e not in OPTIONS.excluded_entries]
+
   CopyZipEntries(input_file, output_file, entries)
 
   if rebuild_super:
@@ -258,6 +266,8 @@ def main(argv):
       OPTIONS.bootable_only = True
     elif o == '--additional':
       OPTIONS.additional_entries.append(a)
+    elif o == '--exclude':
+      OPTIONS.excluded_entries.append(a)
     elif o == '--build_super_image':
       OPTIONS.build_super_image = a
     else:
@@ -268,6 +278,7 @@ def main(argv):
                              extra_opts='z',
                              extra_long_opts=[
                                  'additional=',
+                                 'exclude=',
                                  'bootable_zip',
                                  'build_super_image=',
                              ],
