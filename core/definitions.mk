@@ -3422,9 +3422,9 @@ endef
 # a hash mapping to the mapping directory.
 # $(1): unstripped intermediates file
 # $(2): path in symbols directory
-# $(3): path in elf_symbol_mapping packaging directory
 define copy-unstripped-elf-file-with-mapping
-$(call _copy-symbols-file-with-mapping,$(1),$(2),elf,$(3))
+$(call _copy-symbols-file-with-mapping,$(1),$(2),\
+  elf,$(patsubst $(TARGET_OUT_UNSTRIPPED)/%,$(call intermediates-dir-for,PACKAGING,elf_symbol_mapping)/%,$(2).textproto))
 endef
 
 # Copy an R8 dictionary to the packaging directory while also extracting
