@@ -3693,8 +3693,8 @@ endef
 #
 # $(1): Name of the test suite to create the zip and mapping build rules
 define create-suite-symbols-map
-_suite_symbols_zip := $$(PRODUCT_OUT)/$(1)-symbols.zip
-_suite_symbols_mapping := $$(PRODUCT_OUT)/$(1)-symbols-mapping.textproto
+_suite_symbols_zip := $$(subst -tests-,-tests_-,$$(PRODUCT_OUT)/$(1)-symbols.zip)
+_suite_symbols_mapping := $$(subst -tests-,-tests_-,$$(PRODUCT_OUT)/$(1)-symbols-mapping.textproto)
 _suite_modules_symbols_files := $$(foreach m,$$(COMPATIBILITY.$(1).MODULES),$$(ALL_MODULES.$$(m).SYMBOLIC_OUTPUT_PATH))
 _suite_modules_mapping_files := $$(foreach m,$$(COMPATIBILITY.$(1).MODULES),$$(ALL_MODULES.$$(m).ELF_SYMBOL_MAPPING_PATH))
 
