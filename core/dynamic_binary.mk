@@ -55,7 +55,8 @@ my_unstripped_path := $(LOCAL_UNSTRIPPED_PATH)
 endif
 symbolic_input := $(inject_module)
 symbolic_output := $(my_unstripped_path)/$(my_installed_module_stem)
-$(eval $(call copy-unstripped-elf-file-with-mapping,$(symbolic_input),$(symbolic_output)))
+elf_mapping_path := $(patsubst $(TARGET_OUT_UNSTRIPPED)/%,$(call intermediates-dir-for,PACKAGING,elf_symbol_mapping)/%,$(symbolic_output).textproto)
+$(eval $(call copy-unstripped-elf-file-with-mapping,$(symbolic_input),$(symbolic_output),$(elf_mapping_path)))
 
 ###########################################################
 ## Store breakpad symbols
