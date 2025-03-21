@@ -7187,6 +7187,12 @@ dexpreopt_config_zip: $(DEXPREOPT_CONFIG_ZIP)
 $(call declare-1p-target,$(DEXPREOPT_CONFIG_ZIP),)
 
 # -----------------------------------------------------------------
+# Zips of the symbols directory per test suites
+#
+
+$(foreach suite,$(ALL_COMPATIBILITY_SUITES),$(eval $(call create-suite-symbols-map,$(suite))))
+
+# -----------------------------------------------------------------
 # A zip of the symbols directory.  Keep the full paths to make it
 # more obvious where these files came from.
 # Also produces a textproto containing mappings from elf IDs to symbols
