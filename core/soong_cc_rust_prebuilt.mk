@@ -190,12 +190,7 @@ ifndef LOCAL_IS_HOST_MODULE
       # drop /root as /root is mounted as /
       my_unstripped_path := $(patsubst $(TARGET_OUT_UNSTRIPPED)/root/%,$(TARGET_OUT_UNSTRIPPED)/%, $(my_unstripped_path))
       symbolic_output := $(my_unstripped_path)/$(my_installed_module_stem)
-      elf_symbol_mapping_path := $(patsubst $(TARGET_OUT_UNSTRIPPED)/%,$(call intermediates-dir-for,PACKAGING,elf_symbol_mapping)/%,$(symbolic_output).textproto)
-
-      ALL_MODULES.$(my_register_name).SYMBOLIC_OUTPUT_PATH := $(symbolic_output)
-      ALL_MODULES.$(my_register_name).ELF_SYMBOL_MAPPING_PATH := $(elf_symbol_mapping_path)
-
-      $(eval $(call copy-unstripped-elf-file-with-mapping,$(LOCAL_SOONG_UNSTRIPPED_BINARY),$(symbolic_output),$(elf_symbol_mapping_path)))
+      $(eval $(call copy-unstripped-elf-file-with-mapping,$(LOCAL_SOONG_UNSTRIPPED_BINARY),$(symbolic_output)))
       $(LOCAL_BUILT_MODULE): | $(symbolic_output)
 
       ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
