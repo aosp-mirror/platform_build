@@ -570,6 +570,10 @@ $(call add_json_map, PartitionVarsForSoongMigrationOnlyDoNotUse)
 
   $(call add_json_str, ReleaseToolsExtensionDir, $(firstword $(TARGET_RELEASETOOLS_EXTENSIONS) $($(TARGET_DEVICE_DIR)/../common)))
 
+  $(call add_json_list, BoardPartialOtaUpdatePartitionsList, $(BOARD_PARTIAL_OTA_UPDATE_PARTITIONS_LIST))
+  $(call add_json_str, BoardFlashBlockSize, $(BOARD_FLASH_BLOCK_SIZE))
+  $(call add_json_bool, BootloaderInUpdatePackage, $(BOARD_BOOTLOADER_IN_UPDATE_PACKAGE))
+
   # Fastboot
   $(call add_json_str, BoardFastbootInfoFile, $(TARGET_BOARD_FASTBOOT_INFO_FILE))
 
