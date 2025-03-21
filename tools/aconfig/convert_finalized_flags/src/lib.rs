@@ -26,6 +26,8 @@ use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::io::{self, BufRead};
 
+const SDK_INT_MULTIPLIER: u32 = 100_000;
+
 /// Just the fully qualified flag name (package_name.flag_name).
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct FinalizedFlag {
@@ -79,6 +81,24 @@ impl FinalizedFlagMap {
     fn contains(&self, flag: &FinalizedFlag) -> bool {
         self.0.values().any(|flags_set| flags_set.contains(flag))
     }
+}
+
+#[allow(dead_code)] // TODO: b/378936061: Use with SDK_INT_FULL check.
+fn parse_full_version(version: String) -> Result<u32> {
+    let (major, minor) = if let Some(decimal_index) = version.find('.') {
+        (version[..decimal_index].parse::<u32>()?, version[decimal_index + 1..].parse::<u32>()?)
+    } else {
+        (version.parse::<u32>()?, 0)
+    };
+
+    if major >= 21474 {
+        return Err(anyhow!("Major version too large, must be less than 21474."));
+    }
+    if minor >= SDK_INT_MULTIPLIER {
+        return Err(anyhow!("Minor version too large, must be less than {}.", SDK_INT_MULTIPLIER));
+    }
+
+    Ok(major * SDK_INT_MULTIPLIER + minor)
 }
 
 const EXTENDED_FLAGS_LIST_35: &str = "extended_flags_list_35.txt";
@@ -460,5 +480,84 @@ mod tests {
             format!("{:?}", err),
             "Provided incorrect file, must be extended_flags_list_35.txt"
         );
+    }
+
+    #[test]
+    fn test_parse_full_version_correct_input_major_dot_minor() {
+        let version = parse_full_version("12.34".to_string());
+
+        assert!(version.is_ok());
+        assert_eq!(version.unwrap(), 1_200_034);
+    }
+
+    #[test]
+    fn test_parse_full_version_correct_input_omit_dot_minor() {
+        let version = parse_full_version("1234".to_string());
+
+        assert!(version.is_ok());
+        assert_eq!(version.unwrap(), 123_400_000);
+    }
+
+    #[test]
+    fn test_parse_full_version_incorrect_input_empty_string() {
+        let version = parse_full_version("".to_string());
+
+        assert!(version.is_err());
+    }
+
+    #[test]
+    fn test_parse_full_version_incorrect_input_no_numbers_in_string() {
+        let version = parse_full_version("hello".to_string());
+
+        assert!(version.is_err());
+    }
+
+    #[test]
+    fn test_parse_full_version_incorrect_input_unexpected_patch_version() {
+        let version = parse_full_version("1.2.3".to_string());
+
+        assert!(version.is_err());
+    }
+
+    #[test]
+    fn test_parse_full_version_incorrect_input_leading_dot_missing_major_version() {
+        let version = parse_full_version(".1234".to_string());
+
+        assert!(version.is_err());
+    }
+
+    #[test]
+    fn test_parse_full_version_incorrect_input_trailing_dot_missing_minor_version() {
+        let version = parse_full_version("1234.".to_string());
+
+        assert!(version.is_err());
+    }
+
+    #[test]
+    fn test_parse_full_version_incorrect_input_negative_major_version() {
+        let version = parse_full_version("-12.34".to_string());
+
+        assert!(version.is_err());
+    }
+
+    #[test]
+    fn test_parse_full_version_incorrect_input_negative_minor_version() {
+        let version = parse_full_version("12.-34".to_string());
+
+        assert!(version.is_err());
+    }
+
+    #[test]
+    fn test_parse_full_version_incorrect_input_major_version_too_large() {
+        let version = parse_full_version("40000.1".to_string());
+
+        assert!(version.is_err());
+    }
+
+    #[test]
+    fn test_parse_full_version_incorrect_input_minor_version_too_large() {
+        let version = parse_full_version("3.99999999".to_string());
+
+        assert!(version.is_err());
     }
 }
