@@ -372,8 +372,8 @@ $(call soong_config_set_bool,GTVS,PRODUCT_USE_PREBUILT_GTVS,$(if $(findstring $(
 $(call soong_config_set_bool,GTVS_GTV,PRODUCT_USE_PREBUILT_GTVS_GTV,$(if $(findstring $(PRODUCT_USE_PREBUILT_GTVS_GTV),true yes),true,false))
 
 # Check modules to be built in "otatools-package".
-ifneq ($(wildcard vendor/google/tools),)
-  $(call soong_config_set_bool,otatools,use_vendor_google_tools,true)
+ifneq ($(wildcard vendor/google/tools/build_mixed_kernels_ramdisk),)
+  $(call soong_config_set_bool,otatools,use_build_mixed_kernels_ramdisk,true)
 endif
 ifneq ($(wildcard bootable/deprecated-ota/applypatch),)
   $(call soong_config_set_bool,otatools,use_bootable_deprecated_ota_applypatch,true)

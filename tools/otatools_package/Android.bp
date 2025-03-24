@@ -174,7 +174,7 @@ cc_genrule {
         ":zip2zip",
         ":zipalign",
         ":zucchini",
-    ] + select(soong_config_variable("otatools", "use_vendor_google_tools"), {
+    ] + select(soong_config_variable("otatools", "use_build_mixed_kernels_ramdisk"), {
         true: [":build_mixed_kernels_ramdisk_host"],
         default: [],
     }) + select(soong_config_variable("otatools", "use_bootable_deprecated_ota_applypatch"), {
