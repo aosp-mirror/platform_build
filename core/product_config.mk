@@ -609,26 +609,23 @@ ifneq ($(call sdk-to-vendor-api-level,10000),10000000)
 $(error sdk-to-vendor-api-level is broken for current $(call sdk-to-vendor-api-level,10000))
 endif
 
-ifdef PRODUCT_SHIPPING_VENDOR_API_LEVEL
-# Follow the version that is set manually.
-  VSR_VENDOR_API_LEVEL := $(PRODUCT_SHIPPING_VENDOR_API_LEVEL)
-else
-  # VSR API level is the vendor api level of the product shipping API level.
-  VSR_VENDOR_API_LEVEL := $(call sdk-to-vendor-api-level,$(PLATFORM_SDK_VERSION))
-  ifdef PRODUCT_SHIPPING_API_LEVEL
-    VSR_VENDOR_API_LEVEL := $(call sdk-to-vendor-api-level,$(PRODUCT_SHIPPING_API_LEVEL))
+# VSR API level is the vendor api level of the product shipping API level.
+VSR_VENDOR_API_LEVEL := $(call sdk-to-vendor-api-level,$(PLATFORM_SDK_VERSION))
+ifdef PRODUCT_SHIPPING_API_LEVEL
+  VSR_VENDOR_API_LEVEL := $(call sdk-to-vendor-api-level,$(PRODUCT_SHIPPING_API_LEVEL))
+endif
+ifdef BOARD_SHIPPING_API_LEVEL
+  # Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
+  # In this case, the VSR API level is the minimum of the PRODUCT_SHIPPING_API_LEVEL
+  # and RELEASE_BOARD_API_LEVEL
+  board_api_level := $(RELEASE_BOARD_API_LEVEL)
+  ifdef BOARD_API_LEVEL_PROP_OVERRIDE
+    # This must be used only for testing purpose. Product must not be released
+    # with the modified api level value.
+    board_api_level := $(BOARD_API_LEVEL_PROP_OVERRIDE)
   endif
-  ifdef BOARD_SHIPPING_API_LEVEL
-    # Vendors with GRF must define BOARD_SHIPPING_API_LEVEL for the vendor API level.
-    # In this case, the VSR API level is the minimum of the PRODUCT_SHIPPING_API_LEVEL
-    # and RELEASE_BOARD_API_LEVEL
-    board_api_level := $(RELEASE_BOARD_API_LEVEL)
-    ifdef BOARD_API_LEVEL_PROP_OVERRIDE
-      board_api_level := $(BOARD_API_LEVEL_PROP_OVERRIDE)
-    endif
-    VSR_VENDOR_API_LEVEL := $(call math_min,$(VSR_VENDOR_API_LEVEL),$(board_api_level))
-    board_api_level :=
-  endif
+  VSR_VENDOR_API_LEVEL := $(call math_min,$(VSR_VENDOR_API_LEVEL),$(board_api_level))
+  board_api_level :=
 endif
 .KATI_READONLY := VSR_VENDOR_API_LEVEL
 
