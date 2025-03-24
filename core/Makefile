@@ -800,7 +800,7 @@ $(APKCERTS_FILE):
 	  $(if $(filter true,$(BUILDING_SYSTEM_EXT_IMAGE)),\
             $(call _apkcerts_write_line,BuildManifestSystemExt,$(FSVERITY_APK_KEY_PATH).x509.pem,$(FSVERITY_APK_KEY_PATH).pk8,,system_ext,$@)))
 	# In case value of PACKAGES is empty.
-	$(hide) touch $@
+	$(hide) touch $@ && sort -u -o $@ $@
 
 $(call declare-0p-target,$(APKCERTS_FILE))
 
