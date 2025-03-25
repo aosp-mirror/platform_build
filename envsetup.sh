@@ -520,7 +520,8 @@ function _lunch_usage()
         echo "Note that the previous interactive menu and list of hard-coded"
         echo "list of curated targets has been removed. If you would like the"
         echo "list of products, release configs for a particular product, or"
-        echo "variants, run list_products list_releases or list_variants"
+        echo "variants, run the following as individual commands:"
+        echo "list_products, list_releases, or list_variants"
         echo "respectively."
         echo
     ) 1>&2
