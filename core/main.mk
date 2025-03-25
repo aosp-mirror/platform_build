@@ -1757,7 +1757,8 @@ filter_out_files := \
   $(PRODUCT_OUT)/apex/% \
   $(PRODUCT_OUT)/fake_packages/% \
   $(PRODUCT_OUT)/testcases/% \
-  $(dest_files_without_source)
+  $(dest_files_without_source) \
+  $(PRODUCT_OUT)/required_images
 # Check if each partition image is built, if not filter out all its installed files
 # Also check if a partition uses prebuilt image file, save the info if prebuilt image is used.
 PREBUILT_PARTITION_COPY_FILES :=
