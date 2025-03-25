@@ -282,7 +282,8 @@ internal fun parseApiSignature(path: String, input: InputStream): Set<Pair<Symbo
               callable.parameters().joinTo(this, separator = "") { it.type().internalName() }
               append(")")
             }
-            val symbol = Symbol.createMethod(callable.containingClass().qualifiedName(), callableSignature)
+            val symbol =
+                Symbol.createMethod(callable.containingClass().qualifiedName(), callableSignature)
             output.add(Pair(symbol, flag))
           }
         }
@@ -291,7 +292,7 @@ internal fun parseApiSignature(path: String, input: InputStream): Set<Pair<Symbo
           return item.modifiers
               .findAnnotation("android.annotation.FlaggedApi")
               ?.findAttribute("value")
-              ?.value
+              ?.legacyValue
               ?.let { Flag(it.value() as String) }
         }
       }
@@ -468,8 +469,7 @@ internal fun findErrors(
         val classFlagValue =
             flaggedSymbolsInSource
                 .find { it.first.toPrettyString() == symbol.clazz }
-                ?.let { flags.getValue(it.second) }
-                ?: true
+                ?.let { flags.getValue(it.second) } ?: true
         return classFlagValue
       }
     }
