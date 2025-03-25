@@ -39,6 +39,11 @@ endif
 
 LOCAL_CHECKED_MODULE := $(my_prebuilt_src_file)
 
+ifneq (,$(LOCAL_APKCERTS_FILE))
+  PACKAGES := $(PACKAGES) $(LOCAL_MODULE)
+  PACKAGES.$(LOCAL_MODULE).APKCERTS_FILE := $(LOCAL_APKCERTS_FILE)
+endif
+
 ifneq (APPS,$(LOCAL_MODULE_CLASS))
 ifdef LOCAL_COMPRESSED_MODULE
 $(error $(LOCAL_MODULE) : LOCAL_COMPRESSED_MODULE can only be defined for module class APPS)
