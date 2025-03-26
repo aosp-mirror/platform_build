@@ -23,6 +23,10 @@ rust_defaults {
         "libtinytemplate",
         "libconvert_finalized_flags",
     ],
+    cfgs: select(release_flag("RELEASE_ACONFIG_FINGERPRINT_RUST"), {
+        true: ["enable_fingerprint_rust"],
+        default: [],
+    }),
 }
 
 rust_binary_host {
