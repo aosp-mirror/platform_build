@@ -56,31 +56,6 @@ DATE_FROM_FILE := date -d @$(BUILD_DATETIME_FROM_FILE)
 EMPTY_DIRECTORY := $(OUT_DIR)/empty
 $(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
 
-# CTS-specific config.
--include cts/build/config.mk
-# device-tests-specific-config.
--include tools/tradefederation/build/suites/device-tests/config.mk
-# general-tests-specific-config.
--include tools/tradefederation/build/suites/general-tests/config.mk
-# STS-specific config.
--include test/sts/tools/sts-tradefed/build/config.mk
-# CTS-Instant-specific config
--include test/suite_harness/tools/cts-instant-tradefed/build/config.mk
-# MTS-specific config.
--include test/mts/tools/build/config.mk
-# VTS-Core-specific config.
--include test/vts/tools/vts-core-tradefed/build/config.mk
-# CSUITE-specific config.
--include test/app_compat/csuite/tools/build/config.mk
-# CATBox-specific config.
--include test/catbox/tools/build/config.mk
-# CTS-Root-specific config.
--include test/cts-root/tools/build/config.mk
-# WVTS-specific config.
--include test/wvts/tools/build/config.mk
-# DTS-specific config.
--include test/dts/tools/build/config.mk
-
 
 # Clean rules
 .PHONY: clean-dex-files
@@ -89,9 +64,6 @@ clean-dex-files:
 	$(hide) for i in `find $(OUT_DIR) -name "*.jar" -o -name "*.apk"` ; do ((unzip -l $$i 2> /dev/null | \
 				grep -q "\.dex$$" && rm -f $$i) || continue ) ; done
 	@echo "All dex files and archives containing dex files have been removed."
-
-# Include the google-specific config
--include vendor/google/build/config.mk
 
 # These are the modifier targets that don't do anything themselves, but
 # change the behavior of the build.
