@@ -40,6 +40,8 @@ $(call verify-module-name)
 my_test_data :=
 my_test_config :=
 
+LOCAL_IS_SOONG_MODULE := $(if $(filter $(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK)),true)
+
 LOCAL_IS_HOST_MODULE := $(strip $(LOCAL_IS_HOST_MODULE))
 ifdef LOCAL_IS_HOST_MODULE
   ifneq ($(LOCAL_IS_HOST_MODULE),true)
@@ -128,7 +130,7 @@ include $(BUILD_SYSTEM)/local_current_sdk.mk
 
 # Check if the use of System SDK is correct. Note that, for Soong modules, the system sdk version
 # check is done in Soong. No need to do it twice.
-ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+ifeq (,$(LOCAL_IS_SOONG_MODULE))
 include $(BUILD_SYSTEM)/local_systemsdk.mk
 endif
 
@@ -220,7 +222,7 @@ endif
 # modulo "null-sute", "mts", and "mcts". mts/mcts are automatically added if there's a different
 # suite starting with "m(c)ts-". null-suite seems useless and is sometimes automatically added
 # if no other suites are added.
-ifneq (,$(filter $(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK)))
+ifneq (,$(LOCAL_IS_SOONG_MODULE))
   a := $(filter-out null-suite mts mcts,$(sort $(LOCAL_COMPATIBILITY_SUITE)))
   b := $(filter-out null-suite mts mcts,$(sort $(LOCAL_SOONG_PROVIDER_TEST_SUITES)))
   ifneq ($(a),$(b))
@@ -234,12 +236,14 @@ endif
 # We only support adding a default suite to native tests, native benchmarks, and instrumentation tests.
 # This is because they are the only tests we currently auto-generate test configs for.
 ifndef LOCAL_COMPATIBILITY_SUITE
-  ifneq ($(filter NATIVE_TESTS NATIVE_BENCHMARK, $(LOCAL_MODULE_CLASS)),)
-    LOCAL_COMPATIBILITY_SUITE := null-suite
-  endif
-  ifneq ($(filter APPS, $(LOCAL_MODULE_CLASS)),)
-    ifneq ($(filter $(LOCAL_MODULE_TAGS),tests),)
+  ifndef LOCAL_NO_AUTO_NULL_SUITE
+    ifneq ($(filter NATIVE_TESTS NATIVE_BENCHMARK, $(LOCAL_MODULE_CLASS)),)
       LOCAL_COMPATIBILITY_SUITE := null-suite
+    endif
+    ifneq ($(filter APPS, $(LOCAL_MODULE_CLASS)),)
+      ifneq ($(filter $(LOCAL_MODULE_TAGS),tests),)
+        LOCAL_COMPATIBILITY_SUITE := null-suite
+      endif
     endif
   endif
 endif
@@ -355,7 +359,7 @@ include $(BUILD_SYSTEM)/configure_module_stem.mk
 LOCAL_BUILT_MODULE := $(intermediates)/$(my_built_module_stem)
 
 ifneq (,$(LOCAL_SOONG_INSTALLED_MODULE))
-  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+  ifeq (,$(LOCAL_IS_SOONG_MODULE))
     $(call pretty-error, LOCAL_MODULE_MAKEFILE can only be used from $(SOONG_ANDROID_MK))
   endif
   # Use the install path requested by Soong.
@@ -389,7 +393,7 @@ LOCAL_INTERMEDIATE_TARGETS += $(LOCAL_BUILT_MODULE)
 # Don't create .toc files for Soong shared libraries, that is handled in
 # Soong and soong_cc_prebuilt.mk
 ###########################################################
-ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+ifeq (,$(LOCAL_IS_SOONG_MODULE))
 ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
 LOCAL_INTERMEDIATE_TARGETS += $(LOCAL_BUILT_MODULE).toc
 $(LOCAL_BUILT_MODULE).toc: $(LOCAL_BUILT_MODULE)
@@ -511,7 +515,7 @@ else ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
   $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
 	@echo "Install: $@"
-  ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+  ifneq (,$(LOCAL_IS_SOONG_MODULE))
 	$(copy-file-or-link-to-new-target)
   else
 	$(copy-file-to-new-target)

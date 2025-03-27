@@ -5743,64 +5743,6 @@ INTERNAL_OTATOOLS_FILES := \
 .PHONY: otatools
 otatools: $(INTERNAL_OTATOOLS_FILES)
 
-# For each module, recursively resolve its host shared library dependencies. Then we have a full
-# list of modules whose installed files need to be packed.
-INTERNAL_OTATOOLS_MODULES_WITH_DEPS := \
-  $(sort $(INTERNAL_OTATOOLS_MODULES) \
-      $(foreach m,$(INTERNAL_OTATOOLS_MODULES),$(call get-all-shared-libs-deps,$(m))))
-
-INTERNAL_OTATOOLS_PACKAGE_FILES := \
-  $(filter $(HOST_OUT)/%,$(call module-installed-files,$(INTERNAL_OTATOOLS_MODULES_WITH_DEPS)))
-
-INTERNAL_OTATOOLS_PACKAGE_FILES += \
-  $(sort $(shell find build/make/target/product/security -type f -name "*.x509.pem" -o \
-      -name "*.pk8"))
-
-ifneq (,$(wildcard packages/modules))
-INTERNAL_OTATOOLS_PACKAGE_FILES += \
-  $(sort $(shell find packages/modules -type f -name "*.x509.pem" -o -name "*.pk8" -o -name \
-      "key.pem"))
-endif
-
-ifneq (,$(wildcard device))
-INTERNAL_OTATOOLS_PACKAGE_FILES += \
-  $(sort $(shell find device $(wildcard vendor) -type f -name "*.pk8" -o -name "verifiedboot*" -o \
-      -name "*.pem" -o -name "oem*.prop" -o -name "*.avbpubkey"))
-endif
-ifneq (,$(wildcard external/avb))
-INTERNAL_OTATOOLS_PACKAGE_FILES += \
-  $(sort $(shell find external/avb/test/data -type f -name "testkey_*.pem" -o \
-      -name "atx_metadata.bin"))
-endif
-
-INTERNAL_OTATOOLS_RELEASETOOLS := \
-  $(shell find build/make/tools/releasetools -name "*.pyc" -prune -o \
-      \( -type f -o -type l \) -print | sort)
-
-BUILT_OTATOOLS_PACKAGE := $(PRODUCT_OUT)/otatools.zip
-$(BUILT_OTATOOLS_PACKAGE): PRIVATE_ZIP_ROOT := $(call intermediates-dir-for,PACKAGING,otatools)/otatools
-$(BUILT_OTATOOLS_PACKAGE): PRIVATE_OTATOOLS_PACKAGE_FILES := $(INTERNAL_OTATOOLS_PACKAGE_FILES)
-$(BUILT_OTATOOLS_PACKAGE): PRIVATE_OTATOOLS_RELEASETOOLS := $(INTERNAL_OTATOOLS_RELEASETOOLS)
-$(BUILT_OTATOOLS_PACKAGE): $(INTERNAL_OTATOOLS_PACKAGE_FILES) $(INTERNAL_OTATOOLS_RELEASETOOLS)
-$(BUILT_OTATOOLS_PACKAGE): $(SOONG_ZIP) $(ZIP2ZIP)
-	@echo "Package OTA tools: $@"
-	rm -rf $@ $(PRIVATE_ZIP_ROOT)
-	mkdir -p $(dir $@)
-	$(call copy-files-with-structure,$(PRIVATE_OTATOOLS_PACKAGE_FILES),$(HOST_OUT)/,$(PRIVATE_ZIP_ROOT))
-	$(call copy-files-with-structure,$(PRIVATE_OTATOOLS_RELEASETOOLS),build/make/tools/,$(PRIVATE_ZIP_ROOT))
-	cp $(SOONG_ZIP) $(ZIP2ZIP) $(MERGE_ZIPS) $(PRIVATE_ZIP_ROOT)/bin/
-	$(SOONG_ZIP) -o $@ -C $(PRIVATE_ZIP_ROOT) -D $(PRIVATE_ZIP_ROOT)
-
-$(call declare-1p-container,$(BUILT_OTATOOLS_PACKAGE),build)
-$(call declare-container-license-deps,$(INTERNAL_OTATOOLS_PACKAGE_FILES) $(INTERNAL_OTATOOLS_RELEASETOOLS),$(BUILT_OTATOOLS_PACKAGE):)
-
-.PHONY: otatools-package
-otatools-package: $(BUILT_OTATOOLS_PACKAGE)
-
-$(call dist-for-goals, otatools-package, \
-  $(BUILT_OTATOOLS_PACKAGE) \
-)
-
 endif # build_otatools_package
 
 # -----------------------------------------------------------------
@@ -7988,6 +7930,7 @@ include $(BUILD_SYSTEM)/layoutlib_data.mk
 # -----------------------------------------------------------------
 # Desktop pack common variables.
 PACK_IMAGE_SCRIPT := $(HOST_OUT_EXECUTABLES)/pack_image
+UPDATE_PARTITION_SCRIPT := $(HOST_OUT_EXECUTABLES)/update-partition
 IMAGES := $(INSTALLED_BOOTIMAGE_TARGET) \
 	$(INSTALLED_SUPERIMAGE_TARGET) \
 	$(INSTALLED_INIT_BOOT_IMAGE_TARGET) \
@@ -8049,6 +7992,32 @@ $(call dist-for-goals,dist_files,$(PACKED_RECOVERY_IMAGE_ARCHIVE_TARGET))
 
 .PHONY: pack-recovery-image
 pack-recovery-image: $(PACK_RECOVERY_IMAGE_TARGET)
+
+RECOVERY_SWAP_KERNEL_TARGET := $(PRODUCT_OUT)/recovery-kernel-swap
+
+# Has swap kernel for insecure recovery image.
+ifeq ($(BOARD_USES_DESKTOP_RECOVERY_SWAP_KERNEL),true)
+
+$(call dist-for-goals,dist_files,$(RECOVERY_SWAP_KERNEL_TARGET))
+
+PACK_INSECURE_RECOVERY_IMAGE_TARGET := $(PRODUCT_OUT)/android-desktop_insecure_recovery_image.bin
+
+$(PACK_INSECURE_RECOVERY_IMAGE_TARGET): PRIVATE_SGDISK := $(HOST_OUT_EXECUTABLES)/sgdisk
+$(PACK_INSECURE_RECOVERY_IMAGE_TARGET): $(PACK_RECOVERY_IMAGE_TARGET) $(UPDATE_PARTITION_SCRIPT) $(RECOVERY_SWAP_KERNEL_TARGET)
+	@cp -f $< $@
+	(export SGDISK=$(PRIVATE_SGDISK); $(UPDATE_PARTITION_SCRIPT) KERN-A $@ $(RECOVERY_SWAP_KERNEL_TARGET))
+
+PACKED_INSECURE_RECOVERY_IMAGE_ARCHIVE_TARGET := $(PACK_INSECURE_RECOVERY_IMAGE_TARGET).gz
+
+$(PACKED_INSECURE_RECOVERY_IMAGE_ARCHIVE_TARGET): $(PACK_INSECURE_RECOVERY_IMAGE_TARGET) | $(GZIP)
+	$(GZIP) -fk $(PACK_INSECURE_RECOVERY_IMAGE_TARGET)
+
+$(call dist-for-goals,dist_files,$(PACKED_INSECURE_RECOVERY_IMAGE_ARCHIVE_TARGET))
+
+.PHONY: pack-insecure-recovery-image
+pack-insecure-recovery-image: $(PACK_INSECURE_RECOVERY_IMAGE_TARGET)
+
+endif # BOARD_USES_DESKTOP_RECOVERY_SWAP_KERNEL
 
 endif # BOARD_USES_DESKTOP_RECOVERY_IMAGE
 

@@ -12,10 +12,9 @@ pub struct FlagProvider \{
 }
 
 {{ if has_readwrite- }}
-static PACKAGE_OFFSET: LazyLock<Result<Option<u32>, AconfigStorageError>> = LazyLock::new(|| unsafe \{
+static PACKAGE_CONTEXT: LazyLock<Result<Option<PackageReadContext>, AconfigStorageError>> = LazyLock::new(|| unsafe \{
     get_mapped_storage_file("{container}", StorageFileType::PackageMap)
     .and_then(|package_map| get_package_read_context(&package_map, "{package}"))
-    .map(|context| context.map(|c| c.boolean_start_index))
 });
 
 static FLAG_VAL_MAP: LazyLock<Result<Mmap, AconfigStorageError>> = LazyLock::new(|| unsafe \{
@@ -33,17 +32,38 @@ static CACHED_{flag.name}: LazyLock<bool> = LazyLock::new(|| \{
             .with_tag_on_device("aconfig_rust_codegen")
             .with_max_level(LevelFilter::Info));
 
+    {{ -if use_package_fingerprint }}
+    let fingerprint_check_failed: bool = PACKAGE_CONTEXT
+        .as_ref()
+        .is_ok_and(|package_context| \{
+              match package_context \{
+                Some(context) => \{
+                        return context.fingerprint != {package_fingerprint}
+                    },
+                    None => \{
+                        log!(Level::Info, "aconfig_rust_codegen: missing fingerprint; performing lookup.");
+                        false
+                    }
+                  }
+                });
+
+    if fingerprint_check_failed \{
+      log!(Level::Error, "Fingerprint mismatch for package {package}; returning flag default ({flag.default_value}) for {flag.name}.");
+      return {flag.default_value};
+    }
+    {{ -endif }}
+
     let flag_value_result = FLAG_VAL_MAP
         .as_ref()
         .map_err(|err| format!("failed to get flag val map: \{err}"))
         .and_then(|flag_val_map| \{
-            PACKAGE_OFFSET
+            PACKAGE_CONTEXT
                 .as_ref()
-                .map_err(|err| format!("failed to get package read offset: \{err}"))
-                .and_then(|package_offset| \{
-                    match package_offset \{
-                        Some(offset) => \{
-                            get_boolean_flag_value(&flag_val_map, offset + {flag.flag_offset})
+                .map_err(|err| format!("failed to get package read context: \{err}"))
+                .and_then(|package_context| \{
+                    match package_context \{
+                        Some(context) => \{
+                            get_boolean_flag_value(&flag_val_map, context.boolean_start_index + {flag.flag_offset})
                                 .map_err(|err| format!("failed to get flag: \{err}"))
                         },
                         None => \{
