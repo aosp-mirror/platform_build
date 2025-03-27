@@ -69,8 +69,11 @@ ADDITIONAL_VENDOR_PROPERTIES += \
 endif
 
 ifdef PRODUCT_SHIPPING_VENDOR_API_LEVEL
-ADDITIONAL_VENDOR_PROPERTIES += \
-    ro.vendor.api_level=$(PRODUCT_SHIPPING_VENDOR_API_LEVEL)
+# PRODUCT_SHIPPING_VENDOR_API_LEVEL was used to set ro.vendor.api_level
+# manually for testing. To prevent using this variable for product release,
+# remove this variable and show an error message.
+$(error PRODUCT_SHIPPING_VENDOR_API_LEVEL is not available. ro.vendor.api_level\
+  property must not be set manually)
 endif
 
 ifneq ($(TARGET_BUILD_VARIANT),user)
@@ -94,6 +97,9 @@ ifdef BOARD_API_LEVEL
   ADDITIONAL_VENDOR_PROPERTIES += \
     ro.board.api_level?=$(BOARD_API_LEVEL)
   ifdef BOARD_API_LEVEL_PROP_OVERRIDE
+    # This must be used only for testing purpose. Product must not be released
+    # with the modified api level value.
+    $(warning BOARD_API_LEVEL_PROP_OVERRIDE can be defined only for testing purpose)
     ADDITIONAL_VENDOR_PROPERTIES += \
       ro.board.api_level=$(BOARD_API_LEVEL_PROP_OVERRIDE)
   endif

@@ -14,7 +14,6 @@ $(call add_json_str, SecondaryDex2oatInstructionSetFeatures, $($(TARGET_2ND_ARCH
 $(call add_json_str, BoardPlatform,          $(TARGET_BOARD_PLATFORM))
 $(call add_json_str, BoardShippingApiLevel,  $(BOARD_SHIPPING_API_LEVEL))
 $(call add_json_str, ShippingApiLevel,       $(PRODUCT_SHIPPING_API_LEVEL))
-$(call add_json_str, ShippingVendorApiLevel, $(PRODUCT_SHIPPING_VENDOR_API_LEVEL))
 
 $(call add_json_str, ProductModel,                      $(PRODUCT_MODEL))
 $(call add_json_str, ProductModelForAttestation,        $(PRODUCT_MODEL_FOR_ATTESTATION))
