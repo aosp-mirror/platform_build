@@ -22,17 +22,6 @@ ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
 TARGET_ARCH_VARIANT := riscv64
 endif
 
-# Include the arch-variant-specific configuration file.
-# Its role is to define various ARCH_X86_HAVE_XXX feature macros,
-# plus initial values for TARGET_GLOBAL_CFLAGS
-#
-TARGET_ARCH_SPECIFIC_MAKEFILE := $(BUILD_COMBOS)/arch/$(TARGET_ARCH)/$(TARGET_ARCH_VARIANT).mk
-ifeq ($(strip $(wildcard $(TARGET_ARCH_SPECIFIC_MAKEFILE))),)
-$(error Unknown $(TARGET_ARCH) architecture version: $(TARGET_ARCH_VARIANT))
-endif
-
-include $(TARGET_ARCH_SPECIFIC_MAKEFILE)
-
 define $(combo_var_prefix)transform-shared-lib-to-toc
 $(call _gen_toc_command_for_elf,$(1),$(2))
 endef

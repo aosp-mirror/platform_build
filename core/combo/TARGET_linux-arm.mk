@@ -58,12 +58,10 @@ ifeq ($(strip $(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT)),)
   $(error TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT must be set)
 endif
 
-TARGET_ARCH_SPECIFIC_MAKEFILE := $(BUILD_COMBOS)/arch/$(TARGET_$(combo_2nd_arch_prefix)ARCH)/$(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT).mk
-ifeq ($(strip $(wildcard $(TARGET_ARCH_SPECIFIC_MAKEFILE))),)
-  $(error Unknown ARM architecture version: $(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT))
-endif
-
-include $(TARGET_ARCH_SPECIFIC_MAKEFILE)
+# NEON is mandatory, see: https://developer.android.com/ndk/guides/abis#v7a
+ARCH_ARM_HAVE_VFP               := true
+ARCH_ARM_HAVE_VFP_D32           := true
+ARCH_ARM_HAVE_NEON              := true
 
 define $(combo_var_prefix)transform-shared-lib-to-toc
 $(call _gen_toc_command_for_elf,$(1),$(2))

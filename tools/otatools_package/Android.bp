@@ -188,7 +188,7 @@ cc_genrule {
 }
 
 java_genrule_host {
-    name: "otatools_package",
+    name: "otatools-package",
     tools: ["merge_zips"],
     compile_multilib: "first",
     cmd: "$(location merge_zips) $(out) $(in)",
@@ -199,11 +199,11 @@ java_genrule_host {
         ":otatools_package_dep_libs",
         ":otatools_package_releasetools",
     ],
-    // TODO: Rename as "otatools.zip" when the rest files are ready.
-    out: ["otatools_temp.zip"],
+    out: ["otatools.zip"],
     dist: {
         targets: [
-            "otatools-package-temp",
+            "droidcore",
+            "otatools-package",
         ],
     },
 }
