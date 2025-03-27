@@ -601,14 +601,6 @@ $(call add_json_list, SystemExtManifestFiles, $(SYSTEM_EXT_MANIFEST_FILES) $(SYS
 $(call add_json_list, DeviceManifestFiles, $(DEVICE_MANIFEST_FILE))
 $(call add_json_list, OdmManifestFiles, $(ODM_MANIFEST_FILES))
 
-$(call add_json_map,CompatibilityTestcases)
-$(foreach suite,$(sort $(patsubst COMPATIBILITY_TESTCASES_OUT_%,%,$(filter-out COMPATIBILITY_TESTCASES_OUT_INCLUDE_MODULE_FOLDER_%,$(filter COMPATIBILITY_TESTCASES_OUT_%,$(.VARIABLES))))),\
-  $(call add_json_map, $(suite)) \
-  $(call add_json_str, OutDir, $(COMPATIBILITY_TESTCASES_OUT_$(suite))) \
-  $(call add_json_bool, IncludeModuleFolder, $(COMPATIBILITY_TESTCASES_OUT_INCLUDE_MODULE_FOLDER_$(suite))) \
-  $(call end_json_map))
-$(call end_json_map)
-
 $(call json_end)
 
 $(file >$(SOONG_VARIABLES).tmp,$(json_contents))
